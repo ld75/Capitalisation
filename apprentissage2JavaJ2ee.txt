@@ -24897,7 +24897,7 @@ les alias sous unix: exemple: alias ll = 'ls -l' ou bien alias ll="ls -l"
     pour voir la liste des alias, tapper alias (permet de voir les raccourcis de commandes)
     pour voir le detail d'un alias: alias nomalias
     pour faire des alias persistants: 
-      vi ~/.bash_alias (ce dernier est charge par ~/.bashrc qui contient) voir aussi LINKç'(ç')
+      vi ~/.bash_aliases (ce dernier est charge par ~/.bashrc qui contient) voir aussi LINKç'(ç')
           alias gototemplate='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/' // pour echapper les espaces: alias gotoapprentissage="cd \"/c/Users/Mes documents/apprendre\""
           alias gotocss='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/css'
           alias gotomodule='cd /var/www/www.wenhuaduverge.com/shop/module'
@@ -24905,6 +24905,7 @@ les alias sous unix: exemple: alias ll = 'ls -l' ou bien alias ll="ls -l"
           if [ -f ~/.bash_aliases ]; then
             . ~/.bash_aliases
           fi
+	puis recharger le tout . .bashrc
     
 dans /usr/bin noramlement (on peut retrouver dans les variables d'environnement) on voit tous les programmes que le user peut utiliser (.exe) (les commandes)
 pour recharger un environnement faire cd . (la il y a des fichiers environnement(faire ls -tral pour voir tout) dont le nom est par ex: .env_machin) puis . .env_machin ou . ./.env_machin
