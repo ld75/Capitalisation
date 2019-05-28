@@ -820,7 +820,8 @@ github : guitub :  git : gitub : (installable sur mobaxterm :depoxer le plugin d
             si j'ai error: failed to push some refs to // peut etre j'ai oublié de commité ou bien il faut puller avant
         git config credential.helper store // pour ne plus qu'il demande le user/pass en https
         git pull: avant de faire ca faire git fetch
-        git pull URLouPathRepositoryDistantPeutEtreLocal si il veut pas mettre:--allow-unrelated-histories//recupere les derniers push des autres sur mon HEAD local // si il dit "not a git repository" il faut que je me place dans le projet git
+        la premiere fois faire git pull origin master
+        git pull URLouPathRepositoryDistantPeutEtreLocal si il veut pas et/ou met message refusing to merge unrelated histories mettre:--allow-unrelated-histories//recupere les derniers push des autres sur mon HEAD local // si il dit "not a git repository" il faut que je me place dans le projet git
                     si il dit "....be overwritten by merge" c'est que quelqun a poste sur le repo des choses qu'il n'aurait pas du. 2 solutions: 1)faire un git clone ailleurs du projet puis git rm fichiersquinauraientpasdusetrouverdanslerepo puis commit et push 2)aller sur le repo et les supprimer
 Nativescript :
       generateur d'icones http://nsimage.brosteins.com/
