@@ -22,7 +22,6 @@ function facebookpixelRegister(){
 facebook : 
        https://developers.facebook.com/docs/marketing-api/dynamic-product-ads/product-audiences#setuppixel
 
------------ 
 Negociation salaire : 
   pas depasser un plafond (a definir) ceux qui sont comme moi ont quel salaire?
   qui est-il?
@@ -256,7 +255,6 @@ scrum : management :
       Simple Design: designer que quand necessaire.
       Refactorer pour avoir du clean code.
       TDD: OBLIGATOIRE 
-      
 videos : 
   lightworks :
     couper: placer le in et le out puis le bouton juste a cote "delete the marked section"
@@ -456,7 +454,7 @@ si problemes dans npm : https://github.com/npm/npm/wiki/Troubleshooting
   (path/vers/npm)npm init // cree package.json là ou je suis// il me pause des questions pour bien le remplir ATTENTION pas d'espace dans le nom. l'important c'est le entry-point : indiquernomfichier.js qui est le point d'entree. je peux l'executer en faisant node indiquernomfichier.js
   afficher un module dispo sur le net:
       typings search --name react   ou typings search --name angular
- si je suis sous mon repertoire projet et je fais npm install: //-g pour installer dans le repository(globalement sur mon systeme) et non pas dans le projet; --save alors il ajoute la dependance "dependencies" dans le package.json où je suis. avec --save-dev il ajoute la dependance dans le package.json dans "devDependencies" et dans le repertoire qu'il cree node_modules ou je suis: c'est un package que j'installe qui ne sera utile que pour les tests de dev et non pas la prod
+ si je suis sous mon repertoire projet et je fais npm install: //-g pour installer dans le repository(globalement sur mon systeme) et non pas dans le projet; --save alors il ajoute la dependance "dependencies" dans le package.json où je suis. avec --save-dev il ajoute la dependance dans le package.json dans "devDependencies" et dans le repertoire qu'il cree node_modules ou je suis: c'est un package que j'installe qui ne sera utile que pour les tests de dev et non pas la prod 
         va installer toutes les dependances necessaire du projet (grace a package.json) dans mon repository npm
 mettre à jour npm:// pour installer la derniere version
       npm install npm@latest -g 
@@ -787,6 +785,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm :depoxer le plugin d
       git log --graph --oneline --decorate --all // affiche joli voir joli
       git shortlog -s -n  // voir le nombre de commits par auteur : stats.statistiques
       git diff compare mon workspacepasencoreadded avec le dernier commit
+      git diff --name-only // affiche que les noms des fichiers differents
       git diff HEAD~1 path/dun/fichier.xxx // compare un seul fichier avec le commit precedent
       git diff <optionel num commit> <wildcardPathOptionel> compare repertoire avec index ou unCommit
       git diff <branche1> <branche2>
@@ -795,9 +794,9 @@ github : guitub :  git : gitub : (installable sur mobaxterm :depoxer le plugin d
       git tag 1.2.0 (sans mettre "v")// tag le dernier commit fait dans mon repo. ce tag ne se push pas.... voir Linktaggit
       git tag 1.2.0 iducommit fourni par >git log // cree un tag pour le désigné
       git diff --name-only // affiche que les noms des fichiers differents
-      Linktaggit:  le tag ne se push pas par defaut: pour le pusher faire git push origin <identifiant du tag> 
+      Linktaggit:  le tag ne se push pas par defaut: pour le pusher faire git push origin <identifiant du tag>
       git checkout pathfichiermodifieMaisPasAdded //annuler mes modifs 
-      git checkout <nom_du_tag> pour revenir à une ancienne version// ne marche pas si je veux remplacer mon working directory modifié par le dernier commit: dans ce cas faire git chekout -- pathAvecWildcardDesFichiersQueJaiModifieDansLeWorkSpaceMaisQueJeNaiPasAdded (undo) Linkcheckout  
+      git checkout <nom_du_tag> pour revenir à une ancienne version// ne marche pas si je veux remplacer mon working directory modifié par le dernier commit: dans ce cas faire git chekout -- pathAvecWildcardDesFichiersQueJaiModifieDansLeWorkSpaceMaisQueJeNaiPasAdded (undo) Linkcheckout
       git checkout -f <nom_du_tag> pour ignorer le message "The following untracked working tree files would be overwritten by checkout" ATTENTION d'avoir commité avant et d'etre sur que le warning ne parle que de fichiers dont je m'en fous. LINKcheckoutquandmeme  
       si j'ai l'erreur "Please commit your changes or stash them before you merge." quand je pull faire: une sauvegarde a la mano de tout mon repertoire.
       git stash save "<message a ecrire>"// sauve mes repertoires dans un truc temporaire et revient à la version du dernier commit.
@@ -823,6 +822,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm :depoxer le plugin d
         la premiere fois faire git pull origin master
         git pull URLouPathRepositoryDistantPeutEtreLocal si il veut pas et/ou met message refusing to merge unrelated histories mettre:--allow-unrelated-histories//recupere les derniers push des autres sur mon HEAD local // si il dit "not a git repository" il faut que je me place dans le projet git
                     si il dit "....be overwritten by merge" c'est que quelqun a poste sur le repo des choses qu'il n'aurait pas du. 2 solutions: 1)faire un git clone ailleurs du projet puis git rm fichiersquinauraientpasdusetrouverdanslerepo puis commit et push 2)aller sur le repo et les supprimer
+            
 Nativescript :
       generateur d'icones http://nsimage.brosteins.com/
       guide commandes : https://github.com/NativeScript/nativescript-cli#the-commands
@@ -900,7 +900,6 @@ Pour faire un serveur serveur de chat etc... fonctionnement des sockets
     s.getOutputStream();
  si erreur java.net.SocketException socket closed This exception means that you closed the socket, and then continued to try to use it. os.close(); And you closed it here. Closing either the input or the output stream of a Socket closes the other stream and the Socket. 
                         
-RETIRE EXPRES
    
 Adobe illustrator :
     enlever la grille de perspective
@@ -984,6 +983,7 @@ Piege: pour ajouter des jars dans le classpath: il ne faut pas ajouter les reper
 creer la super classe qui extends etend ma classe actuelle pour remonter des methodes à un niveau plus haut parent 
       sur la classe actuelle: click droit >refactor>extract>superclass...
                             ou click droit > refactor>pullUp
+fermer fichier en cours Ctrl+F4
 fermer tous les fichiers sauf l'actuel close : close all closeall
         windows > editortab >close... 
 debugger debuger tomcat avec intellij : 
@@ -1089,7 +1089,7 @@ voir hierarchie remonter methode parente sur methode faire Ctrl+u
 gotoline Ctrl+g
 methode fonction prochaine precedente suivante debut fin methode: alt+haut / alt+bas
 ctrl+maj+F10: executer run la ou je suis où est le focus
-run rerun redemarrer reexecuter: maj+F10 (optionnel: dans VM options mettre les -Detcetcetc=etcetc -D...)
+run rerun redemarrer reexecuter: maj+F10(optionnel: dans VM options mettre les -Detcetcetc=etcetc -D...)
 tester tous les tests: Ctrl+shift+R
 tester avec couverture coverage: clique droit run xxx with coverage (permet de trouver le code mort :-) si j'ai une couverture à 100%)
 redebug redebugger: Ctrl+F5 ou maj+F9
@@ -1147,7 +1147,7 @@ commenter/decommenter Ctrl+barre oblique Ctrl+maj+barre oblique DU NUMPAD!
 eventsource :sse(server-sent-event) autre alternative aux websocket mais ca ne fonctionne que dans un sens : serveur->client: rafraichit en live la page dans une seule requete
     voir https://github.com/mdn/dom-examples/blob/master/server-sent-events/sse.php
     et voir coté javascript sur MDN: EventSource 
-jwebsocket: (Web Socket) faire un chat :
+jwebsocket : (Web Socket) faire un chat : 
   declarer  JWEBSOCKET_HOME vers D:\LocalData\p036782\jWebSocket-1.0
   en variable d'environnement
    D:\LocalData\p036782\jWebSocket-1.0\bin\jWebSocketAdmin.bat
@@ -3393,7 +3393,7 @@ adapter le css au mobile ecran plus petit switcher entre css en fonction taille 
 Utiliser dans chrome "Responsive...." pas les differentes marques de phone: c trop long. avec responsive je bouge la fenetre à 30% de zoom et je teste tout comme ca d'un coup
       directement dans un css
             @media
-            [not, only] [all, print, screen] and (min-width: 401px) and (max-width: 600px)   // taille fenetre option. 
+            [not, only] [all, print, screen] and (min-width: 401px) and (max-width: 600px)   // taille fenetre option.
             // only c'est compreensible que pour les vieux browsers: n'applique pas ce  @media là si tu ne comprends rien.
             je suis obligé de definir all ou print ou screen si j'utilise not ou only sinon pas obligé 
             only screen and (max-width:480px),   // que pour les ecrans plus petit que 480
@@ -3422,6 +3422,7 @@ Utiliser dans chrome "Responsive...." pas les differentes marques de phone: c tr
             @media only screen and (min-width: 992px) {
             .mondivparent{background-color:black;}
             }
+            
             /* Extra large devices (large laptops and desktops, 1200px and up) */
             @media only screen and (min-width: 1200px) {
             .mondivparent{background-color:green;}
@@ -3524,7 +3525,7 @@ pour faire clignoter un texte :
 pour centrer un tableau une table dans un div lui mettre : 
   pas text-align:center mais margin: 0 auto;
 pour faire une animation en boucle sur une image par exemple avec css. (l'ere des gif annimes est revolue!) panorama defile
-        ATTENTION pour les animations annimations en css utiliser en priorite opacity et transition transform 
+        ATTENTION pour les animations annimations en css utiliser en priorite opacity et transition ou transform 
         mettre les prefix devant chaque animation et keyframe: -webkit-, -moz-, -o-, -ms-
           /* première etape */
           p#doigt a:hover, p#doigt a:focus {
@@ -3739,9 +3740,10 @@ utiliser les fonts telecharges du serveur:
         
         
         
-  pour selectionner un nextSibing d'un element
+pour selectionner un nextSibing d'un element
         elementrepere + elementJusteACoteASelectionner
-  Sinon utiliser plutot nextElementSibling si on veut exclure les textes
+         Sinon utiliser plutot nextElementSibling si on veut exclure les textes
+          
 faire disparaitre un div layer au premier plan pour agir derriere : (voir javascript)
 pour centrer direct:
   flexboxes : flex :flex-boxes :   // genial car peut etre complettement independant de la source html!
@@ -5250,6 +5252,7 @@ Spring-batch :
                                       @Autowired  
                                      TestRestTemplate rest = testRestTemplate;  // tester un webservice
                                       
+                                      
                                       @Autowired ou @Inject
                                       IPermissionDao permissiondao;
                                       
@@ -5335,9 +5338,9 @@ Spring-batch :
                                                   MockHttpServletRequestBuilder content = MockMvcRequestBuilders.fileUpload("/save").file(fichier).param("type", "ZY5N").param("mode","simulation");
                                              		  this.mockMvc.perform(content)
                                               		  .andExpect(status().isOk());
-                             
-                                        
                                           
+                                        ou bien tester un webservice  
+                                        TestRestTemplate rest = new RestTemplate();  
                                          @Test
                                           public void availableTest() {
                                               MockRestServiceServer mockServer=MockRestServiceServer.createServer(rest);
@@ -6711,6 +6714,84 @@ this will show you all of the tables:
 			SELECT VINVA.NATURE FROM VINVA FETCH FIRST 7 ROWS ONLY
 			SELECT W0DCI$.FINVA.NATURE FROM W0DCI$.FINVA FETCH FIRST 7 ROWS ONLY
 
+kafka : A_COMPLETER voir aussi https://github.com/akka/alpakka-kafka qui fait de reactive streaming c a d backpressure c a d si consummer sont debordes par vitesse ils disent au producer de ralentire. voir aussi du code source sur github/jamesward/koober(demo de la voiture et du gars sur le map) 
+        producer1-   kafka
+                  --\---->topic1(copié sur partition1, partition2, partition3)  // 1 partition leader et les autres partitions sont juste des replicats de securité pour eviter perte données
+        producer2  --\--->topic2                "    partition1(0,1,2,3,4...)          -->consummer1
+                  ------->topic3                "                                      -->consummerGroup(consummer2,consummer3)
+        producer3/------->topic4                "
+        logComppaction sert à convertir automatiquement les doublons-triplons... en un seul: gain de place dans le disque
+        producers ont 3modes d'ecrtutre (async: donees pas garanties reçues. commited to leader: confirmation reception par le partition leader. commited to leader & quorum: confirmation reception par leader + une autre partition)
+mongodb : nosql : (il vaut mieux stocker les fichiers images documents dans le systeme de fichier que en blob dans la db. la db c'est pour les metadatas.)
+        -toujours activer l'authentification (par user/password au moins) facultatif sur local pour test.
+        -il faut désactiver l'introspection javascript par sécurité(dans fichier de config mettre javascriptEnabled:false). LinkLKJDSFA
+        -attention!!!! l'ordre des champs du json au niveau n-1 est important! au niveau n pas de probleme( par ex utiliser ordre alphabetique)
+        -si je veux utiliser limit alors toujours utiliser sort avant limit dans une requete.
+        -il faut faire un schema: installer https://studio3t.com/knowledge-base-articles/schema-explorer/
+                        resumé de ce que j'ai lu là :https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design-part-1
+                        si j'ai relation 1-N(peu nombreux): Où je n'aurais jamais besoin de recuperer ces N tout seuls sans leur parents
+                                    alors je peux faire 
+                                                  {
+                                                    name: 'Kate Monster',
+                                                    ssn: '123-456-7890',
+                                                    addresses : [
+                                                       { street: '123 Sesame St', city: 'Anytown', cc: 'USA' }, // j'en ai peu.
+                                                       { street: '123 Avenue Q', city: 'New York', cc: 'USA' }
+                                                    ]
+                                                  }
+                        si j'ai relation 
+                                1-N(une centaine) et que c'est l'application qui gère la recuperation des N pour l'element 1 . mais en fait ca a l'avantage d'etre aussi une relation N-N
+                                    alors je peux faire (un produit contient plusieurs pieces)
+                                    produit:{
+                                        name : 'MON PRODUIT 1',
+                                        pieces : [     // array of references to Part documents
+                                            ObjectID('AAAA'),    // reference vers la piece ci dessous
+                                            ObjectID('F17C'),    // reference to a different Part
+                                            ObjectID('D2AA'),
+                                            // etc
+                                        ]
+                                        }
+                                    piece:{
+                                            _id : ObjectID('AAAA'),
+                                            partno : '123-aff-456',
+                                            name : '#4 grommet',
+                                            qty: 94,
+                                            cost: 0.94,
+                                            price: 3.99
+                                        }                 
+                            si j'ai une relation 1-N où N c'est PLEIN denregistrements. Produit peut avoir plusieurs pieces mais une piece ne peut avoir qu'un seul produit.
+                                    produit:{
+                                        name : 'MON PRODUIT 1',
+                                        _id : ObjectID('AAAA')
+                                        }
+                                    piece:{
+                                            partno : '123-aff-456',
+                                            name : '#4 grommet',
+                                            qty: 94,
+                                            cost: 0.94,
+                                            price: 3.99
+                                            produit: ObjectID('AAAA') // comme dans une base relationelle 1-N
+                                        }                               
+        -il faut desactiver la casesensitive et accent sensitive pour les requetes
+        -l'ordre dans les requetes est important : d'abord filtrer puis trier puis joindre
+        -il faut enable journaling pour recuperer la base old version si devient inconsistent (configuration-> storage.journal.enabled)
+        -requetes ordonnees sortees toujours sur un ou des champs indexés. (sinon sur un-des champs non indexes risques d'overflow donc d'erreur: retourne rien)
+        -des arrays pas trop longues et indexees(ca l'est pas défaut)
+        pour tester online en ligne des requetes : https://docs.mongodb.com/manual/tutorial/query-arrays/ 
+        pour installer mongodb en local: 
+            https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
+            dezipper quelque part, mkdir c:/data/db(ou autre part...)
+        pour démarrer mongodb serveur en local : 
+            puis cmd ceci: 
+            pathVersLeBin/mongod.exe --dbpath="c:\mongodb-win32-x86_64-2008plus-ssl-4.0.9\data\db" // ca demare le serveur par defaut là : mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+        pour demarrer un client mongodb pour administrer la base et pour faire des requetes de test
+            ensuite executer mongo.exe : c'est un client pour faire les requetes (c'est du javascript la dedans) LinkLKJDSFA
+            ou bien mongo mongodb://mongodb0.example.com:28015/testdb?ssl=true // si il est distant
+        exemples de requetes. Une collection = une table relationelle
+            var doc = db.uneCollection.findOne({ _id: 1 })// trouver par id (du coup doc est une variable) 
+            db.uneCollection.remove({ _id: 1 })  
+            db.uneCollection.insert({ _id: 1, jsFunc: function(){ print("hello") } } ) // si uneCollection n'existe pas elle est automatiquement créee
+            db.myNewCollection3.createIndex( { y: 1 } ) // ajoute un indexe dans la collection
 MYSQL :
    apres installation: 
         demarrer le serveur mysql:
@@ -10254,7 +10335,6 @@ ant : avec maven : pour par exemple renommer un fichier apres coup
               <mapper type="glob" from="service-worker-v*.js" to="service-worker-v${version}.js"/>
           </move>
     </target>
-
     </project>
 doc utile sur :
           http://ant.apache.org/manual/
@@ -10664,7 +10744,7 @@ pour faire un jar qui contient les sources java (attention j'ai pas trouve comme
           </execution>
         </executions>
       </plugin>
-pour creer un executable windows .exe: (si plante c'est parce que mon .ico est corrompu ou que j'ai execute le plugin launch4j alors que je dois juste faire mvn package) 
+pour creer un executable windows un .exe: (si plante c'est parce que mon .ico est corrompu ou que j'ai execute le plugin launch4j alors que je dois juste faire mvn package) 
       <plugin>
             <groupId>com.akathist.maven.plugins.launch4j</groupId>
             <artifactId>launch4j-maven-plugin</artifactId>
@@ -10735,15 +10815,17 @@ utilisation du plugin assembly pour créer un zip :
             <assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
                             <id>zip</id> // ce nom à la con Linksljfggg
                             <formats><format>zip</format></formats>
-                            <includeBaseDirectory>false</includeBaseDirectory>
+                            <includeBaseDirectory>false</includeBaseDirectory> // si a true il zip direct le parent qui est target ici.
                             <baseDirectory>target</baseDirectory>
                             <includeSiteDirectory>false</includeSiteDirectory>
                             <files>
                                 <file>
                                     <source>${project.build.directory}/diversitysimulator_v${project.version}.exe</source>
+                                    <outputDirectory>/data</ouputDirectory> // facultatif : pour mettre le fichier source dans le repertoire monZip/data/. Si on le met pas il met le fichier direct a la racine dans le zip quelquesoit son path
                                 </file>
                                 <file>
                                     <source>${project.build.directory}/Sprint1ExcelFormatsv0.04.xlsx</source>
+                                    <outputDirectory>/system</ouputDirectory> // facultatif : pour mettre le fichier source dans le repertoire monZip/data/
                                 </file>
                             </files>
                         </assembly>                                  
@@ -13460,11 +13542,12 @@ logs :    LinkLogutils (ne semble pas marcher si librairie log4j est dans le cla
     et ailleurs dans les classes que je veux logger : 
          (static) private Logger log = Logger.getLogger("diversitysimulator"); // de java.util.logging.Logger // a mettre cote statique 
          log.warning ou info ou severe("No limitations defined in this parameter "+this.key);
-     log.log(Level.SEVERE,"parameter "+key+" doesn't exists in graph "+this.toString());
+         log.log(Level.SEVERE,"parameter "+key+" doesn't exists in graph "+this.toString());
          log.log(Level.SEVERE,"cannot clone scenario",exception);
     dans logging.properties : voir doc http://tutorials.jenkov.com/java-logging/configuration.html 
             handlers = java.util.logging.FileHandler,java.util.logging.ConsoleHandler // liste de classes separee par des espaces
             config   =  //NOOOON ne pas mettre ça sinon les fichiers de logs restent vides
+            
             diversitysimulator.handlers           = java.util.logging.FileHandler,java.util.logging.ConsoleHandler // avec dans le code log = Logger.getLogger("diversitysimulator "); mon logger diversitysimulator utilise les FileHandler et ConsoleHandler ci dessous:
                 si j'ai besoin de logger dans un autre fichier alors creer une classe voir LINKlkjbkkgkgkgkgkgzsfzfz penser à le declarer dans la ligne ci dessus dans la liste des handlers
                 et mettre 
@@ -13485,21 +13568,25 @@ logs :    LinkLogutils (ne semble pas marcher si librairie log4j est dans le cla
             java.util.logging.ConsoleHandler.filter    =
             java.util.logging.ConsoleHandler.formatter =
             java.util.logging.ConsoleHandler.encoding  =
+            
             java.util.logging.StreamHandler.level     = INFO
             java.util.logging.StreamHandler.filter    =
             java.util.logging.StreamHandler.formatter =
             java.util.logging.StreamHandler.encoding  =
+            
             java.util.logging.SocketHandler.level     = INFO
             java.util.logging.SocketHandler.filter    =
             java.util.logging.SocketHandler.formatter =
             java.util.logging.SocketHandler.encoding  =
             java.util.logging.SocketHandler.host      =
             java.util.logging.SocketHandler.port      =
+            
             java.util.logging.MemoryHandler.level     = INFO
             java.util.logging.MemoryHandler.filter    =
             java.util.logging.MemoryHandler.size      =
             java.util.logging.MemoryHandler.push      =
             java.util.logging.MemoryHandler.target    =
+            
             LINKlkjbkkgkgkgkgkgzsfzfz
                      public class OtherFileHandler extends FileHandler
                     {
@@ -13508,6 +13595,7 @@ logs :    LinkLogutils (ne semble pas marcher si librairie log4j est dans le cla
                             super();
                         }
                     }
+
 slf4j : (vieux voir LinkLogutils)Bonne methode copier L'interface  jdk.internal.instrumentation.Logger;(a améliorer car n'accepte que des strings) et créer son propre logger (je ne peux pas l'utiliser dans java10) qui pourra s'appuyer sur slf4j par exemple ou n'importe quoi dautre
 }
      Dependance à ajouter imperativement:    
@@ -13554,6 +13642,7 @@ logback : (mieux que LinkLogutils)
       <artifactId>logback-core</artifactId>
       <version>1.2.3</version>
   </dependency>
+
   configuration: resources/logback.xml et test/resources/logback.xml
           <configuration>
               <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -14631,6 +14720,7 @@ version 5: junit5 : junit 5 :  // https://stackify.com/junit-5/ tests repetees, 
                       @RunWith(JUnitPlatform.class)
                   public class TestSuite{
                   }
+
      
 Version 1.4:
                     package renault.tests;
@@ -14880,6 +14970,7 @@ JMockit(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIRE 
           <version>1.10.19</version>
           <scope>test</scope>
       </dependency>
+
     FilterConfig filterConfig = mock(FilterConfig.class);
     ServletContext context = mock(ServletContext.class);
     when(filterConfig.getServletContext()).thenReturn(context);
@@ -14912,6 +15003,7 @@ cucumber : il fait ce que fait junit mais permet à des non techniciens de compr
 			<version>1.1.8</version>
 		</dependency>
 javafx : jfx :
+        java11 javafx : 
     ma main classe qui est statique doit etendre extends the javafx.application.Application
             start();// entrypoint 
             |                     pour recuperer un parameter parametre argument args du main : partout: Parameters params = ParametersImpl.getParameters(this);
@@ -14942,6 +15034,7 @@ javafx : jfx :
                                                     this.getChildren().add(new BooleanExpressionNodeTreeItem(child)) ;
                                                 }
                                             }
+
     colorer un texte couleur : format de texte :
             private Text key= new Text("Key");
               key.setFill(javafx.scene.paint.Paint.valueOf("blue"));
@@ -14991,6 +15084,7 @@ javafx : jfx :
                 Optional<String> result = alert.showAndWait(); si c'est TextInputDialog  ou ChoiceDialog
                 ou
                 Optional<ButtonType> result = alert.showAndWait(); LINKdkjgdkhlz pas besoin de mettre les boutons dans un CONFIRMATION Alert
+                
                 if (result.get() == ButtonType.OK){  ou buttonTypeOne ou Two...
                       // ... user chose OK
                   } else {
@@ -15025,8 +15119,9 @@ ouvrir une nouvelle fenetre :
                  Scene scene = new Scene(root, 400, 400) ;
                 primaryStage.setScene(scene) ;
                 primaryStage.show() ;
-pour faire une ligne jfx :
+pour faire une ligne jfx trait separation separateur :
             Line line1 = new Line(0, 0, 100, 200);
+
     wrapper avec scoller scrollbar
             combinedStrutsForm = new ScrollPane(combinedStructureParametersPresentor.convertJavaObjectToNode(parameters));
     splitpane pour diviser l'ecran en deux :
@@ -15070,6 +15165,7 @@ pour executer une tache en arriere fond et mettre un sablier pendant que le thre
                   });
               });
               th.start();
+              
         stylees icones :images :
                 <!-- http://aalmiray.github.io/ikonli/
                   we use : http://aalmiray.github.io/ikonli/cheat-sheet-fontawesome.html
@@ -15118,7 +15214,7 @@ faire un save as saveas sauver  avec bouton boutton button parcourir fichier dow
         table.getColumns().addAll(yearCol, salesVolumesCol);
         yearCol.setCellValueFactory(new PropertyValueFactory<VolumeDataModel,String>("year")); // year doit correspondre au nom du champ du bean VolumeDataModel
         salesVolumesCol.setCellValueFactory(new PropertyValueFactory<VolumeDataModel,String>("volume"));
-        table.setItems(FXCollections.observableArrayList(datamodels));
+        table.setItems(FXCollections.observableArrayList(datamodels));      
         voir LINKtablevieweditablestyle pour styler mon tableau
         tableView.getSelectionModel().setCellSelectionEnabled(true); // pour que les cellules selectionnées soient hightlightées avec du css voir LINKtablevieweditablestyle. ca rend le tableau plus sympa pour l'editer                        
     faire un tableau avec des colonnes dynamiques : 
@@ -15152,6 +15248,9 @@ faire un save as saveas sauver  avec bouton boutton button parcourir fichier dow
                 }).reduce((carry,elt)->carry);
             });
             FIN-CETTE PARTIE LA C POUR RENDRE LE TABLEAU EDITABLE
+            
+            
+            
             tableView.getColumns().add(column);
         }
     }
@@ -15179,11 +15278,11 @@ faire un save as saveas sauver  avec bouton boutton button parcourir fichier dow
                                   }
                               };
                           }
-        
+              
                       });
             savoir quelle ligne est selectionnée dans la tableview tableau et recuperer l'objet correspondant 
                     ParameterDataModel selectedPropertyDataModel = table.getSelectionModel().getSelectedItem(); (necessite un typage de tableview<xxx>)                              
-     faire des onglets tabs : 
+  faire des onglets tabs : 
         private TabPane tabPane;
         private Tab genericTab;
         private Tab booleanTree;
@@ -15192,26 +15291,127 @@ border bordure
     ou bien mettre un espace bord centrer 
                 tableNPVAndDiscountRate.setPadding(new Insets(10));
 faire du style css  (bons exemples: http://fxexperience.com/2011/12/styling-fx-buttons-with-css/)
+            java11:utiliser scenicview pour tester la mise en forme : set JAVA_HOME=C:\Java\jdk-11.0.1 puis C:\Users\lduverge\Desktop\ALTRAN\FXSCenicView\scenic-view>gradlew.bat run (demarrer d'abord mon programme avec jdk11)
             unText.setStyle("-fx-font-size:20px;");
             final Label label = new Label("The Once\nand\nFuture King");
             label.setStyle("-fx-text-fill: goldenrod; -fx-font: italic 20 \"serif\"; -fx-padding: 0 0 20 0; -fx-text-alignment: center");
             et aussi : 
-            final String path = ClassLoader.getSystemResource("diversitysimulator.css").toExternalForm(); LINKtablevieweditablestyle
-            tableView.getStylesheets().add(path);
+                final String path = ClassLoader.getSystemResource("diversitysimulator.css").toExternalForm(); LINKtablevieweditablestyle
+                tableView.getStylesheets().add(path);
                 tableView.getStyleClass().add("borderpane");
-            ou dans resources/diversitysimulator.css j'ai : 
+                ou dans resources/diversitysimulator.css j'ai : 
                  .region{
-                  -fx-padding:50px;
+                          -fx-padding:50px;
                           -fx-background-color:linear-gradient(to bottom right, #00B5B5, #0081AA); /*degrade diagonale*/
-                  }
+                          }
                           .button
                           {
                           -fx-text-fill:white;/* couleur du texte */
                           -fx-font-weight: bold;
                           -fx-padding:50px; /* agrandi la taille de l'objet.. ici le bouton */
                           -fx-background-radius: 50; /*boutton rond*/
-                          -fx-background-color:#00B5B5;
-                  }
+                          -fx-background-color:#00B5B5; equivalent a -fx-color: black;  mais ce dernier ajuste aussi automatiquement la couleur du texte.
+                          -fx-border-color: blue;
+                          -fx-border-insets: 5;
+                          -fx-border-width: 3;
+                          -fx-border-style: dashed; 
+                          -fx-effect: dropshadow(three-pass-box, purple, 10, 0, 0, 0); //ombre        
+                          }
+pour faire un toggle button bouton buton boutton annimé animé en javafx jfx utiliser les animations : 
+    public class ToggleButtonApplicationTest extends Application {
+            @Override
+        	    public void start(Stage primaryStage) throws Exception {
+        	        primaryStage.setScene(new Scene(createContent()));
+        	        primaryStage.show();
+        	    }
+        
+        	    public static void main(String[] args) {
+        	        launch(args);
+        	    }
+	    private Parent createContent() { // tout ca c'est main. Le bouton est là LINKkfkfkfkfklsjfllsls
+	        Pane root = new Pane();
+	        root.setPrefSize(300, 300);
+
+	        Rectangle bg = new Rectangle(300, 300);
+
+	        ToggleSwitch toggle = new ToggleSwitch();
+	        toggle.setTranslateX(100);
+	        toggle.setTranslateY(100);
+
+	        Text text = new Text();
+	        text.setFont(Font.font(18));
+	        text.setFill(Color.WHITE);
+	        text.setTranslateX(100);
+	        text.setTranslateY(200);
+	        text.textProperty().bind(Bindings.when(toggle.switchedOnProperty()).then("ON").otherwise("OFF"));
+	        root.getChildren().addAll(toggle, text);
+	        return root;
+	    }
+
+	    private static class ToggleSwitch extends Parent { LINKkfkfkfkfklsjfllsls
+	        private BooleanProperty switchedOn = new SimpleBooleanProperty(false);
+
+	        private TranslateTransition translateAnimation = new TranslateTransition(Duration.seconds(0.25)); // definition durée d'une animation de deplacement
+	        private FillTransition gaucheFillAnimation = new FillTransition(Duration.seconds(0.25)); // definition durée d'une animation de couleur
+	        private FillTransition droiteFillAnimation = new FillTransition(Duration.seconds(0.25));
+
+	        private ParallelTransition animation = new ParallelTransition(translateAnimation, gaucheFillAnimation, droiteFillAnimation); // indispensable 
+
+	        public BooleanProperty switchedOnProperty() {
+	            return switchedOn;
+	        }
+
+	        public ToggleSwitch() {
+	            Rectangle background = new Rectangle(200, 50);
+	            background.setArcWidth(50);
+	            background.setArcHeight(50);
+	            background.setFill(Color.WHITE);
+	            background.setStroke(Color.LIGHTGRAY);
+	            final Text gaucheLabel = new Text("Gauche");
+	            final Text droiteLabel = new Text("Droite");
+	            gaucheLabel.setLayoutY(27);
+	            droiteLabel.setLayoutY(27);
+	            
+	            gaucheLabel.setLayoutX(6);
+	            droiteLabel.setLayoutX(120);
+            
+	          
+
+	            Rectangle trigger = new Rectangle(100,50);
+	            trigger.setArcWidth(50);
+	            trigger.setArcHeight(50);
+	            trigger.setFill(Color.web("#1780af",1.0));
+	            trigger.setStroke(Color.LIGHTGRAY);
+
+	            DropShadow shadow = new DropShadow();
+	            shadow.setRadius(2);
+	            trigger.setEffect(shadow);
+
+	            translateAnimation.setNode(trigger); // j'attache mon animation de type deplacement a un objet
+	            gaucheFillAnimation.setShape(gaucheLabel); // j'attache mon animation de type couleur a un objet
+	            droiteFillAnimation.setShape(droiteLabel);  // j'attache mon animation de type couleur a un objet
+
+	            getChildren().addAll(background, trigger,gaucheLabel,droiteLabel);
+	            
+
+	            switchedOn.addListener((obs, oldState, newState) -> {
+	                boolean isOn = newState.booleanValue();
+	                translateAnimation.setToX(isOn ? 100 : 0);
+	                gaucheFillAnimation.setFromValue(isOn ? Color.WHITE : Color.web("#1780af",1.0));
+	                gaucheFillAnimation.setToValue(isOn ? Color.web("#1780af",1.0): Color.WHITE);
+	                droiteFillAnimation.setFromValue(!isOn ? Color.WHITE : Color.web("#1780af",1.0));
+	                droiteFillAnimation.setToValue(!isOn ? Color.web("#1780af",1.0): Color.WHITE);
+
+	                animation.play(); // l'annimation se joue
+	            });
+
+	            setOnMouseClicked(event -> {
+	                switchedOn.set(!switchedOn.get());
+	            });
+	        }
+	    }
+	}
+
 1) FXProperties fx properties Objets : edition modifier champ modification formulaire en proprietes jfx : javafx : Bind et listner ne marchent que si tout est dans le même thread
                                      Observable  ObservableValue                                                                
                 pourInvalidListner__|      \    /              |_pour les changeListener                                      
@@ -15237,19 +15437,19 @@ LINKbindseveral :   -FluentAPI: String Expression et ObjectExpression et Boolean
                                                                 super.bind(p_ecouté1,p_ecouté2,p_ecouté3......);
                                                                 @Override
                                                                 X computeValue(){...}           
-            }
+                                                            }
 2) FXProperties listes : 
     SimpleListProperty contient ObservableList qui est crée par FXCollections.observableArrayList();
     donc on initialiser comme ça: final ListProperty<SimpleBean> childrens = new SimpleListProperty<>(FXCollections.observableArrayList());
                                     |_pour effacer vider empty faire .clear()
 Abstract: ObservableList<E> maliste = FXCollections.observableArrayList(); ou (unearray ou extractor) // extractor est une @functionnalInterface si on veut ecouter les updates des elements de la liste. LINKmajdansElementdeliste  
-Wrapper:                |_ SortedList<E> ou FilteredList<E> toto = new xxxunObservableList(@FunctionnalInterface)   //unObservableList peut etre maliste ou meme un autre filtered ou sortedlistList<>()                         
+Wrapper:                |_ SortedList<E> ou FilteredList<E> toto = new xxxunObservableList(@FunctionalInterface)   //unObservableList peut etre maliste ou meme un autre filtered ou sortedlistList<>()                         
                                              |                 |                                     |_pour filtrer(predicate) ou pour trier(comparator)->change la liste automatiquement et peut donc declancher un Listner. voir ci dessous
-                              attention remplace               |_.addListener(@FunctionnalInterface) //de l'interface ListChangeListener<E>.onChanged(Change) syntaxe:(ListChangeListener<SimpleBean>)c->{ // capte les evenements des elements de la liste:sorted, add,delete,(pour update voir LINKmajdansElementdeliste parametres paramettres des objets)
+                              attention remplace               |_.addListener(@FunctionalInterface) //de l'interface ListChangeListener<E>.onChanged(Change) syntaxe:(ListChangeListener<SimpleBean>)c->{ // capte les evenements des elements de la liste:sorted, add,delete,(pour update voir LINKmajdansElementdeliste parametres paramettres des objets)
                               un event d'update                |_on met ça dans un tableView.setItem(toto);                                                |_while(change.next()){
                               par un event de add/delete         et ça se met à jour tout seul                                                                if(change.wasUpdated()){} // Uniquement si LINKmajdansElementdeliste   
                               voir LINKmajdansElementdeliste                                                                                                  if(change.wasRemoved()){}
-            }
+                                                                                                                                                                }
     pour cloner une observableList c'est facile:LINKCloner         nouvelArrayindependante= FXCollections.observableArrayList(uneObservableList)); avec les fxproperties ne pas utiliser le clonage avec serialisation. plutot avec la methode constructeur. Encore mieux :voir LINKlkgkgkhgkfdlkjfglk                                                                                                                                                                 
 si on utilise lambda stream pour recuperer l'observableList faire stream....collect(Collectors.toCollection(FXCollections::observableArrayList));                                                                                                                                                                
 LINKmajdansElementdeliste le callback de l'extractor retourne un tableau de Observable qui sont les proprietes que je veux observer de chaque elements de ma liste. On peut s'en passer en ecoutant seulement les removes et adds
@@ -15260,6 +15460,9 @@ http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-j
 java7 :
 http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase7-521261.html  
 JAVA :
+recuperer un fichier selon son path relative relatif et non pas absolu : 
+        grace à System.getProperty("user.dir") qui est toujours dispo.
+        File defaultBusinessDir = new File(System.getProperty("user.dir"), "/src/main/resources/data/business") ; 
  bean couple paire tuple deux :
         utiliser AbstractMap.SimpleEntry ou bien faire la classe
         public class Tuple<X, Y>
@@ -15992,7 +16195,7 @@ Serializer serialiser une classe java au format xml quon peut sauver importer ex
                   XMLDecoder xmlDecoder = new XMLDecoder(new FileInputStream(loadedFile));
                   Object ret= xmlDecoder.readObject();
                   return ret;
-    }                    
+              }            
 Dynamic Dynamique classe loading classloader hotde recharger une classe: issu de http://tutorials.jenkov.com/java-reflection/dynamic-class-loading-reloading.html
           // l'unicite d'une classe est defini par son package, son nom et le classloader qui l'a charge. Un classloader ne recharge jamais une classe qu'il a dejà charge (detecte par cet id unique :package/nom/classloader)
                                   //creer une classloader qui etend classloader parent.
@@ -19693,7 +19896,6 @@ Bonne pratique d'autocommit si autocommit est à false:
                 	}
 
 
-
 se connecter à une base de donnee oracle: 
 			public static Connection initConnection(String driver, String url, String user, String password) throws ClassNotFoundException, SQLException{
 			// ou driver c'est oracle.jdbc.driver.OracleDriver pour oracle.
@@ -19775,6 +19977,8 @@ convertir un double en int integer et convertir un double en long:
       mais
 			       long tailleFinalLong = (long)Math.round(monDouble);
 						int tailleFinalLong = (int)Math.round(monDouble);
+convertir un integer en double
+    double toto = (double)unint;
 convertir un long en double:
       		Long time = new Long(unlong);
     		zyBean.setZY5NDUREEC(time.doubleValue());						
@@ -20023,7 +20227,7 @@ lambdas : lambda : lambdas expression :     (lire http://labs.excilys.com/2014/1
               evite les listes de listes  
               exemple pour recuperer les sous-listes sousliste sous listes à concatenner entre elles : List<Allocations<Component>> allocations = instanceFeatures.stream().map(f -> f.getAllocations()).flatMap(List::stream).collect(Collectors.toList()); ou .collect(Collectors.toCollection(FXCollections::observableArrayList));
             LINKOptsngz optionnal :(c 1 monad): ignore les valeurs empty nulles et retourne un Optional // a utiliser que si j'ai un probleme avec null Traitement des valeurs pouvant etre nulles depuis java8 LINKjajsdfliuaerOpt c'est a utiliser dans le cadre de functionnal programming lambda. Ne jamais mettre un optionnal dans un parametre de methode (ni un setter) mais toujours que en sortie.
-                                            Optional<UneClasse> optional = Optional.ofNullable(unevariablepouvantPotentiellementEtrenull);                                                                                                     |_a la place faire monOptinal.map(unefonction)
+                                             Optional<UneClasse> optional = Optional.ofNullable(unevariablepouvantPotentiellementEtrenull);                                                                                                     |_a la place faire monOptinal.map(unefonction)
                                                                            Optional.ofNullable(unevariablepouvantPotentiellementEtrenull).orElse(variableARetournerSiNull);
                                                                            Optional.ofNullable(unevariablepouvantPotentiellementEtrenull).orElseGet(()->{...}); // une methode a executer qui renverra la bonne valeur a la place de null 
                                                                          = Optional.of(unevariableQuiNestPasNullMaisCPourRenvoyerOptional<X>);
@@ -20041,7 +20245,7 @@ lambdas : lambda : lambdas expression :     (lire http://labs.excilys.com/2014/1
       order by=.sorted() // ordonne alphabetique
       limit= .limit(x) // recupère que les valeurs sous x inclu (faire une boucle LINK3223)
       stop= .takeWhile(s->!s.equals("END"))// ou un boolean onoff global (dès java9)
-      union all=.concat()                                                                          
+      union all=.concat()
       minus :   List<x> intersect = list1.stream().filter(list2::contains).collect(Collectors.toList());                                                                          
         PUIS A METTRE ABSOLUMENT SINON RIEN NE SE PASSE c'est seulement à la dernière commande que tout s'execute. (lazy procedure stockees):
   groupby :grouper : group by :=List<MaClass>.stream.collect(groupingBy(MaClasse::getNameOuObjet,LINKGRPDlsdflkj))) // retourne Map<NameOuObjet,List<MaClasse>> ne plus developper les groupebys!!
@@ -20132,6 +20336,7 @@ LINKconvertiCheckedExceptionDansUnStreamEnUnCheckedExceptionPourQueCaCompile :
                                         public interface ThrowingFunction<T,R, E extends Exception> {
                                             R apply(T t) throws E;
                                         }
+                                        
 POUR LES MAP OU LES FOREACH      static <T,R, E extends Exception> Function<T,R> handlingFunctionWrapper(ThrowingFunction<T,R, E> throwingConsumer, Class<E> exceptionClass) {
                                             return i -> {
                                                 try {
@@ -20149,27 +20354,30 @@ POUR LES MAP OU LES FOREACH      static <T,R, E extends Exception> Function<T,R>
 POUR LES FOREEACH A 2 ARGUMENTS : j'ai d'un coté: 
                                     public static <T,R, E extends Exception> BiConsumer<T,R> handlingFunctionBiArgWrapper(ThrowingBiConsumer<T, R, E> throwingConsumer, Class<E> exceptionClass) {
                                                          return (i,j) -> {
-                                                  try {
+                                                            try {
                                                                  throwingConsumer.accept(i,j);
-                                                  } catch (Exception ex) {
-                                                      try {
-                                                          E exCast = exceptionClass.cast(ex);
-                                                          throw new RuntimeException(exCast);
-                                                      } catch (ClassCastException ccEx) {
-                                                          throw new RuntimeException(ex);
-                                                      }
-                                                  }
-                                              };
-                                          }
-                                          @FunctionalInterface
+                                                            } catch (Exception ex) {
+                                                                try {
+                                                                    E exCast = exceptionClass.cast(ex);
+                                                                    throw new RuntimeException(exCast);
+                                                                } catch (ClassCastException ccEx) {
+                                                                    throw new RuntimeException(ex);
+                                                                }
+                                                            }
+                                                        };
+                                                    }
+                                                    @FunctionalInterface
                                                     public interface ThrowingBiConsumer<T,R, E extends Exception>
                                                     {
                                                         void accept(T o, R o2) throws E;
                                                     }
+
                     et de l'autre, utilisation: componentInstance.getCosts().forEach(handlingFunctionBiArgWrapper((key, value) -> {
                                                 (...)
                                                 if (...) throw new CostlineNotDefinedException("blah");
                                                 (...)
+                                                                                        
+                                        
                 POUR LES FILTRES :    utilisation: .filter(handlingPredicateWrapper(gen ->getThisSameSymbolicParameterValue(gen, classificationNode, parameter).equals("Y"),Exception.class))
                                         declaration:
                                         public static <T, E extends Exception> Predicate<T> handlingPredicateWrapper(ThrowingPredicate<T, E> throwingConsumer, Class<E> exceptionClass) {
@@ -20186,10 +20394,12 @@ POUR LES FOREEACH A 2 ARGUMENTS : j'ai d'un coté:
                                                   }
                                               };
                                           }
+                                      
                                           @FunctionalInterface
                                           public interface ThrowingPredicate<T, X extends Throwable> {
                                               public boolean test(T t) throws X;
                                           }
+                                                        
             exemple lambda imbriquees: une liste A contient une liste B. je dois filtrer A qui ont seulement certains B (converti un stream en liste directement dans le filtre)  A REVOIR
                             List<Result> toto = resultList.stream()
                               .filter(r -> // très mauvais lambda ! clean code:ne pas avoir de ->{ dans ce cas reporter le code dans {} dans une autre methode dans cette classe meme ou dans l'item en cours du stream ou une methode statique quelquepart
@@ -20247,11 +20457,11 @@ fonctionnement des annotations :
               public @interface MonValidateurBean
               {
                 int LINKvariablealacon() default=1; // je peux definir des variables ici qui doivent etre suivies de "()". là il y en a 4 qui par défault auront les valeurs indiquées par "default=..."
-                String message() default="{mon.message.i18n}";
+                String message() default="{mon.message.i18n}"; 
                 Class<?>[] groups() default{};
                 Class<? extends ConstraitPayload>[] payload() default{};
               }
-              ailleurs
+              ailleurs 
               main...
               {
                     je peux faire ça : UneClasseAnnotee toto = new UneClasseAnnotee();
@@ -20273,97 +20483,98 @@ fonctionnement des annotations :
                   return true ou false;
                 }
               }   
+              }
 pour tester la performance : perfs : perf : performances : performences :
             logger.debug("1TestPerformance: "+new Date(System.currentTimeMillis()).toString());
-si j'ai exception outofmemory error heap space faire ca: 
-        Xms : espace alloue à l'init pour les objets(instances)                         |_heap
-        Xmx : espace alloue max pour les objets(instances) si depasse: heapoutofmemory  |
-        MaxPermSize : espace pour les CLASSES (pas les instances mais tout ce qui est static) par defaut 64MegaByte. A partir de java8 c'est stocké dans le metaspace où y a plus de limites         
-				JAVA_OPTIONS="-Xms64m -Xmx256m"----> Xmx512m ou Xmx1024m ou Xmx1800m ou Xmx2048(!!ennorme) pour avoir à disposition 1Go de memoire sur le heap. En general on met 700m Meg sur les applis Renault
-				en theorie : Xms=1/4 de Xmx
-				sur eclipse on peut dans "executer" ecrire dans Arguments VM: -Xmx1024m OU -XX:MaxPermSize=1024m
-				ou bien mettre -XX:-UseGCOverheadLimit et la on a pas de limite mais ca va durer longtemps
-				ou modifier eclipse.ini a cote de eclipse.exe
-				---->-Xmx3072m 2Giga sur une machine 64bits
-				---->-Xmx3072m 3Giga sur une machine 64bits
-				pour que le dump se genere automatiquement au plantage : 
-				        -XX:+HeapDumpOnOutOfMemoryError
-				        -XX:HeapDumpPath=/DumpJVM/ope/.../lkjsdflkj/toto
-				        -XX:+UseG1GC -XX:-UseAdaptiveSizePolicy \   // pour utiliser le garbage garbadge collecteur G1 qui d'après Rachid Asbai est plus intelligent
-				        -XX:+UseZGC (depuis java11 voir ci dessous)
-				        depuis java 11 :java11 : ZGC est super baleze comme garbadge collector. EpsilonGC est un GC de test qui ne garbadge jamais jusqu'à memoryexception
-				pour savoir combien mon poste en local a de mem: gestionnaire de taches windows: >memoire physique > disponible les trois premiers chiffres
-        wikipedia francois foulon :http://collaboration2010.sharepoint.renault.fr/is/dsd/places/tec/Wiki%20Component/IBM%20Support%20Assistant%20at%20RENAULT.asp				
-        pour analyser les problemes de heap space java dump de memoire out of memory exception performance performence oom
-                                ps -ef | grep NOMDUPROCESSDEMONSERVEUR
-                                trouver l'id du process java (dessus est marque le heapdumpPath)
-                                Aller dans le heapdumpPath. Dans ce path, les logs de dump de memoire s'appellent: java_pidxxxx.hprof (le path est /jboss/logs/S07AS01/ chez Renault wec)
-                                telecharger ce fichier sur mon poste.
-                                Demarrer IBM Supprt assistant (de son petit nom ISA): outil pour analyser les logs de de dump memoire heap space out of memory error java
-                                    C:\ISA\ISA5 start_isa.bat en mode admin > aller sur https://localhost:10943/isa5
-                                    tools>Memory Analyzer [Desktop]
-                                    aller dans launch activity > analyse problem >Choisir un analyseur: Ibm Monitoring and Diagnostic Tools for Java Memory Analyser 64 bits
-                                        >Memory Analyzer >File >open heap dump>choisir mon fichier.
-                                        >open denominator tree for entire heap pour voir les plus gros consommateurs
-          pour voir l'evolution de la memoire en live :
-              depuis java11: java flight recorder: 
-                  java -XX:StartFlightRecording (Jamais testé)
-                ou java mission control : https://jdk.java.net/jmc (Jamais testé )
-              avant:
-                  d'abord donner les droits à jstatd de d'envoyer les infos logs JVM à un client sans faire d'exeption de securite
-                  vi /etc/jstatd.policy  et ecrire
-                  grant codebase "file:${java.home}/../lib/tools.jar" {
-                  permission java.security.AllPermission;
-                  }; 
-            ensuie aller dans which java /default/bin
-            et demarrer jstatd : performances 
-              nohup ./jstatd -J-Djava.security.policy=/etc/jstatd.policy &            
-              et apres on peut lancer le client sur mon poste : aller sous la jdk et tapper "jvisualvm"   (D:\LocalData\p036782\visualVM\visualvm_138\bin\visualvm.exe)
-                                                                en local on peut voir tous les process en direct :-) sinon:
-                                                                remote>add Remote Host
-                                                                trouver l'id du process que je veux surveiller
-                                                                ps -ef | grep NOMDUPROCESSDEMONSERVEUR
-                                                                trouver l'id du process java (dessus est marque le heapdumpPath**)
-                                                                et le retrouver ensuite sur jvisualvm et cliquer dessus
-                                                                > onglet visualGC ou Monitor
-              on peut aussi utiliser eclipse LUNA -> eclipse MAT en ouvrant le fichier de dump                                                                
-          JAVA MELODY : JAVAMELODY : bof voir ci dessus visualvm
-                        dans le pom du projet
-                               <dependency>
-                                    <groupId>net.bull.javamelody</groupId>
-                                    <artifactId>javamelody-core</artifactId>
-                                    <version>1.60.0</version>
-                            </dependency>    
-                                dans le
-                                <profiles>...<properties>...
-                                  <!-- JAVA MELODY -->
-                                       <home_sia>D:/temp/javamelody</home_sia>
-                                     <!-- /JAVA MELODY -->
-                                     ...</properties>...</profiles>
-                      dans web.xml
-                                          		<!-- JAVA MELODY -->
-                                        <filter>
-                                                        <filter-name>monitoring</filter-name>
-                                                        <filter-class>net.bull.javamelody.MonitoringFilter</filter-class>
-                                                        <init-param>
-                                                    <param-name>authorized-users</param-name>
-                                                    <param-value>WEC_ADM:WEC1234</param-value>
-                                                </init-param>                              
-                                        </filter>
-                                         
-                                        <filter-mapping>
-                                                        <filter-name>monitoring</filter-name>
-                                                        <url-pattern>/*</url-pattern>
-                                        </filter-mapping>
-                                         
-                                        <listener>
-                                                        <listener-class>net.bull.javamelody.SessionListener</listener-class>
-                                        </listener>
-                                        		<!-- /JAVA MELODY -->
-                                        		
-                                 puis aller sous http://localhost:8080/wec/monitoring       		
-problème de performances en Java? ehcache : 
-      voir http://www.ehcache.org/ +  aussi s'assurer que le navigateur utilise le cache (grace au header) + la connexion ne se ferme pas chaque fois dans le cas du https sinon à chaque requette il faut refaire un shakehands                                        		
+            si j'ai exception outofmemory error heap space faire ca: 
+            Xms : espace alloue à l'init pour les objets(instances)                         |_heap
+            Xmx : espace alloue max pour les objets(instances) si depasse: heapoutofmemory  |
+            MaxPermSize : espace pour les CLASSES (pas les instances mais tout ce qui est static) par defaut 64MegaByte. A partir de java8 c'est stocké dans le metaspace oùy a plus de limites         
+    				JAVA_OPTIONS="-Xms64m -Xmx256m"----> Xmx512m ou Xmx1024m ou Xmx1800m ou Xmx2048(!!ennorme) pour avoir à disposition 1Go de memoire sur le heap. En general on met 700m Meg sur les applis Renault
+    				en theorie : Xms=1/4 de Xmx
+    				sur eclipse on peut dans "executer" ecrire dans Arguments VM: -Xmx1024m OU -XX:MaxPermSize=1024m
+    				ou bien mettre -XX:-UseGCOverheadLimit et la on a pas de limite mais ca va durer longtemps
+    				ou modifier eclipse.ini a cote de eclipse.exe
+    				---->-Xmx3072m 2Giga sur une machine 64bits
+    				---->-Xmx3072m 3Giga sur une machine 64bits
+    				pour que le dump se genere automatiquement au plantage : 
+    				        -XX:+HeapDumpOnOutOfMemoryError
+    				        -XX:HeapDumpPath=/DumpJVM/ope/.../lkjsdflkj/toto
+    				        -XX:+UseG1GC -XX:-UseAdaptiveSizePolicy \   // pour utiliser le garbage garbadge collecteur G1 qui d'après Rachid Asbai est plus intelligent
+    				        -XX:+UseZGC (depuis java11 voir ci dessous)
+    				        depuis java 11 :java11 : ZGC est super baleze comme garbadge collector. EpsilonGC est un GC de test qui ne garbadge jamais jusqu'à memoryexception
+    				pour savoir combien mon poste en local a de mem: gestionnaire de taches windows: >memoire physique > disponible les trois premiers chiffres
+            wikipedia francois foulon :http://collaboration2010.sharepoint.renault.fr/is/dsd/places/tec/Wiki%20Component/IBM%20Support%20Assistant%20at%20RENAULT.asp				
+            pour analyser les problemes de heap space java dump de memoire out of memory exception performance performence oom
+                                    ps -ef | grep NOMDUPROCESSDEMONSERVEUR
+                                    trouver l'id du process java (dessus est marque le heapdumpPath)
+                                    Aller dans le heapdumpPath. Dans ce path, les logs de dump de memoire s'appellent: java_pidxxxx.hprof (le path est /jboss/logs/S07AS01/ chez Renault wec)
+                                    telecharger ce fichier sur mon poste.
+                                    Demarrer IBM Supprt assistant (de son petit nom ISA): outil pour analyser les logs de de dump memoire heap space out of memory error java
+                                        C:\ISA\ISA5 start_isa.bat en mode admin > aller sur https://localhost:10943/isa5
+                                        tools>Memory Analyzer [Desktop]
+                                        aller dans launch activity > analyse problem >Choisir un analyseur: Ibm Monitoring and Diagnostic Tools for Java Memory Analyser 64 bits
+                                            >Memory Analyzer >File >open heap dump>choisir mon fichier.
+                                            >open denominator tree for entire heap pour voir les plus gros consommateurs
+              pour voir l'evolution de la memoire en live :
+                  depuis java11: java flight recorder: 
+                      java -XX:StartFlightRecording (Jamais testé)
+                    ou java mission control : https://jdk.java.net/jmc (Jamais testé )
+                  avant:
+                      d'abord donner les droits à jstatd de d'envoyer les infos logs JVM à un client sans faire d'exeption de securite
+                      vi /etc/jstatd.policy  et ecrire
+                      grant codebase "file:${java.home}/../lib/tools.jar" {
+                      permission java.security.AllPermission;
+                      }; 
+                ensuie aller dans which java /default/bin
+                et demarrer jstatd : performances 
+                  nohup ./jstatd -J-Djava.security.policy=/etc/jstatd.policy &            
+                  et apres on peut lancer le client sur mon poste : aller sous la jdk et tapper "jvisualvm"   (D:\LocalData\p036782\visualVM\visualvm_138\bin\visualvm.exe)
+                                                                    en local on peut voir tous les process en direct :-) sinon:
+                                                                    remote>add Remote Host
+                                                                    trouver l'id du process que je veux surveiller
+                                                                    ps -ef | grep NOMDUPROCESSDEMONSERVEUR
+                                                                    trouver l'id du process java (dessus est marque le heapdumpPath**)
+                                                                    et le retrouver ensuite sur jvisualvm et cliquer dessus
+                                                                    > onglet visualGC ou Monitor
+                  on peut aussi utiliser eclipse LUNA -> eclipse MAT en ouvrant le fichier de dump                                                                
+              JAVA MELODY : JAVAMELODY : bof voir ci dessus visualvm
+                            dans le pom du projet
+                                   <dependency>
+                                        <groupId>net.bull.javamelody</groupId>
+                                        <artifactId>javamelody-core</artifactId>
+                                        <version>1.60.0</version>
+                                </dependency>    
+                                    dans le
+                                    <profiles>...<properties>...
+                                      <!-- JAVA MELODY -->
+                                           <home_sia>D:/temp/javamelody</home_sia>
+                                         <!-- /JAVA MELODY -->
+                                         ...</properties>...</profiles>
+                          dans web.xml
+                                              		<!-- JAVA MELODY -->
+                                            <filter>
+                                                            <filter-name>monitoring</filter-name>
+                                                            <filter-class>net.bull.javamelody.MonitoringFilter</filter-class>
+                                                            <init-param>
+                                                        <param-name>authorized-users</param-name>
+                                                        <param-value>WEC_ADM:WEC1234</param-value>
+                                                    </init-param>                              
+                                            </filter>
+                                             
+                                            <filter-mapping>
+                                                            <filter-name>monitoring</filter-name>
+                                                            <url-pattern>/*</url-pattern>
+                                            </filter-mapping>
+                                             
+                                            <listener>
+                                                            <listener-class>net.bull.javamelody.SessionListener</listener-class>
+                                            </listener>
+                                            		<!-- /JAVA MELODY -->
+                                            		
+                                     puis aller sous http://localhost:8080/wec/monitoring       		
+    problème de performances en Java? ehcache : 
+          voir http://www.ehcache.org/ +  aussi s'assurer que le navigateur utilise le cache (grace au header) + la connexion ne se ferme pas chaque fois dans le cas du https sinon à chaque requette il faut refaire un shakehands   
 java9 : java 9 : java11 : java10 : 
   besoin maven 3.5.x
   Jdk A8 devient divisé en modules xxx.jmod = 1jar = 1 ou plsrs package. un module peut dépendre de x modules et inversement.
@@ -20372,7 +20583,7 @@ java9 : java 9 : java11 : java10 :
                                               monapplimodule2/src/paquage.numero.un/...etc...
                                   module-info.java: // si absent, java9 maet tout en unnamed et ça marche qd meme
                                                                       automatic module : export tout requires tout (jar n'ayant pas de module-info.class: du coup son nom de module c'est le nom du jar et si j'ai IllegalArgumentException FindException Invalid module name c'est parce que le nom du jar a un chiffre et c'est interdit pour un module)
-                                                                      unnamed module: exporte rien requires tout
+                                                                      unamed module: exporte rien requires tout
                                                                       Si deux modules(automatic ou non) qui export le meme package -> interdit: ne pas migrer vers java9
                                     module mon.nom.du.module{ //a un nom (doit être unique dans un repertoire) par forcement le même que le nom des packages dedans (recommandé:= nom package a l'envers) ni le meme nom que le .jar qui le contient(intellij met par defaut le nom du module intellij)
                                         requires autre.module; // liste des modules qu'il importe car il en a besoin (mais ne peut lire que les packages exportés par cet autre module. Si j'utilise la classe sans la déclarer ici: j'ai une erreur à la compile et au runtime)
@@ -20435,7 +20646,7 @@ java9 : java 9 : java11 : java10 :
                       java --module-path C:/Users/Laurent/.m2/repository/log4j/log4j/1.2.14/log4j-1.2.14.jar;memoclap.utils-2.19.0.jar --module memoclap.utils/utils.Utils E:/www/kanail/AudioLoopOnline/java/MemOclapUtils/src/test/resources/d
                       java --module-path C:/Users/Laurent/.m2/repository/log4j/log4j/1.2.14/log4j-1.2.14.jar;memoclap.utils-2.19.0.jar -cp C:/Users/Laurent/.m2/repository/com/googlecode/soundlibs/tritonus-share/0.3.7-2/tritonus-share-0.3.7-2.jar;C:/Users/Laurent/.m2/repository/com/googlecode/soundlibs/mp3spi/1.9.5-1/mp3spi-1.9.5-1.jar;C:/Users/Laurent/.m2/repository/com/googlecode/soundlibs/vorbisspi/1.0.3-1/vorbisspi-1.0.3-1.jar --module memoclap.utils/utils.Utils E:/www/kanail/AudioLoopOnline/java/MemOclapUtils/src/test/resources/d
        repl: jshell:
-            tapper jshell et je peux tester des petit bouts snippets de code java sans m'inqueter des exeptions et des ";" point virgules
+            tapper jshell et je peux tester des petit bouts snippets de code java sans m'inqueter des exeptions et des ";" point virgules                                                       
       depuis java9 existe aussi - VarHandle pour passer rapidos de noeud en noeud d'un coup.
                                 - ProcessBuilder: executer une commande externe sortir pid unix linux autre programme process
 java10 : java 10 :
@@ -20572,7 +20783,7 @@ si on a l'erreur ConcurrentModificationException quand on utilise iterator
       ou utiliser l'objet ListIterator
       
       
-pour utiliser un iterator qui va en arriere: previous: utiliser listiterator:
+pour utiliser un iterator qui va en arriere: capable de repositionneer le curseur previous: utiliser listiterator:
             fieldsCandidate est une ArrayList 
             ListIterator<WEC52_M_CHAMPS> it = fieldsCandidate.listIterator();
             		while (it.hasNext())
@@ -20580,6 +20791,9 @@ pour utiliser un iterator qui va en arriere: previous: utiliser listiterator:
             			if (it.next().equals(field)) break;
             		}
             		previousField = it.previous();
+                    it.set(unDesObjetsDeMaListe); // par contre ça j'ai l'impression que ca ne marche pas: sert à se positionner sur un objet de ma liste.            
+            }
+                    
             		 
 ************************
 pour executer une commande externe en java:
@@ -20629,7 +20843,7 @@ pour faire une expression reguliere : regexp :
 		il y a aussi une api qui s'appelle Perl5Compiler (org.apache.oro.text.regex.Perl5Compiler;)... c'est peut etre bien?
 		regexp majuscules avec accents : utiliser \\p{javaUpperCase}
       exemple: 
-		  replaceAll("(\\p{javaUpperCase}{2,30})", 
+		  replaceAll("(\\p{javaUpperCase}{2,30})",
 pour savoir si pourcent est dans une chaine de caractère, ne pas faire contains mais monstring.indexOf('%'); 
 *********************************	
 Pour faire un traitement deporte d'un batch d'une application j2ee: utiliser un flag dans le systeme de fichier
@@ -20658,7 +20872,7 @@ ATTENTION POI ne compte pas les colonnes (et lignes? ) vides dans son iteration
 //						File outFile = new File(pathDirectory+"/tempxlsfile.xls"); // en donnant le fichier à poi plutot que le inputstream on est plus efficace niveau memoire
 //						FileOutputStream fos = new FileOutputStream(outFile); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
                         si c'est un fichier xlsx:
-                                Workbook wb = XSSFWorkbookFactory.create(excelfile);
+                                Workbook wb = XSSFWorkbookFactory.create(excelfile); 
                                 Sheet sheet = wb.getSheetAt(0);
                                 wb.setSheetName(0, "a");
                                 Iterator<Row> itrow = sheet.rowIterator();
@@ -21398,7 +21612,7 @@ pour convertir un tableau d'objet en list ou meme un String[] tableau de string:
 		Object[] a1d = { "Hello World", new Date(), Calendar.getInstance(), };
 		depuis java9: List<x> l = List.of("aaa","bbb"...);
     avant: List l = Arrays.asList(a1d); // pour creer une liste rapidement attention la liste n'est pas modifiable  (unsupportedoperationexception)
-                                            alors faire : images = new ArrayList<String> (Arrays.asList(dir.list()));
+                          alors faire : images = new ArrayList<String> (Arrays.asList(dir.list()));
                                             
                                             
 pour convertir une collection en list:
@@ -23049,7 +23263,7 @@ select PAGE_URL from SWD_PAGE where PAGE_ID IN (select PAGE_ID from SWD_MENU_ITE
 lecteur distant de Thibaut:
 \\parw00054118\gisodyssee-swd
 
-DEVOPS :
+DEVOPS : 
  voir Linktestdevopsç9349 et LINKDevopslksjqgfvmlka
  pas de specialistes, que des généralistes : rotation.
  reduire le nombre de "handof"(je passe le relai a qq d'autre)
@@ -23121,10 +23335,11 @@ jenkins :
 visual studio :pour javascript:
     zoom et dezoom: ctrl+"+" ou "-" du pavé numérique
     accolade correspondante: ctrl+shift+*
-                      
 eclipse :
 import/export run configuration possible
     menu file>import/export> run/debug ...
+show in package explorer :  
+        Alt+shift+w
 si j'ai eclipse edit source lookup path source not found lors du debuggage:
   peut etre ajouter -DdownloadSources=true après commande maven
   puis
@@ -23168,6 +23383,7 @@ Si il prend trois heures pour builder un projet à cause des facets: (infini) in
     fermer eclipse (forcer) > renommer le repertoire du projet qui merde > relancer eclipse > le projet est ferme. > renomer normalement le repertoire du projet > ouvrir le projet
       
 raccourcis shortcuts utiles: (pour les definir : WIndows>Preference>chercher "shorcut")
+    rechercher partout: alt puis a puis f
     voir les todos : ctrl+shift+q; q > task > tasklist
     fold all plier tout Ctrl+Shift+ / du numpad 
     unfold all plier tout Ctrl+Shift+ * du numpad ou Ctrl + / du numpad                                               
@@ -23184,9 +23400,10 @@ raccourcis shortcuts utiles: (pour les definir : WIndows>Preference>chercher "sh
       CTRL + SHIFT + L : liste des shortcuts raccourcis
       CTRL + SHIFT + P : Atteindre l'accolade correspondante sinon Window > Preferences > Java > Editor and Select Matching brackets highlight
       CTRL + L : goto line number
+      CTRL + shift + G trouver rechercher qui utilise utilisation depend
       CTRL + I : ajuster l'indentation sur la selection en cours mise en forme format
       CTRL + T : heritage pour avoir la hierarchie d'une methode, d'une classe... sous classe implemente
-      CTRL + O : pour avoir le outline super vite. Refaire O pour voir aussi les attributs des classes parentes
+      CTRL + O (ou F4): pour avoir le outline super vite. Refaire O pour voir aussi les attributs des classes parentes
               codes couleurs des fonctions :
                 carre = private
                 rond = public
@@ -23195,24 +23412,24 @@ raccourcis shortcuts utiles: (pour les definir : WIndows>Preference>chercher "sh
                 f = final
                 plein = methode
                 creux = variable
-      
+      terminate stop interrompre : Ctrl+F2      
       CTRL + K : find trouver le prochain (fonctionne que dans fichier java)                                            
       CTRL + SHIFT + / (pas du pave numerique)  : add comment set comment (commenter)
       CTRL + SHIFT + B : toggle breakpoint point d'arret
       CTRL+F6; CTRL+E switcher entre les pages (fichiers)
-      CTRL+F7 switcher entre vues
+      CTRL+F7 switcher entre vues views              
       Alt+Maj+Q, Q : afficher une pannel vue specifique (plus rapide que CTRL+F7)
       ALT+Shift+X; T : lance JUnit test sur la classe en cours.
       CTRL + F8 : switcher entre perspectives
       CTRL + M : maximise/minimise agrandir aggrandir fenetre windows 
-      ctrl+Shift+1 : quickfix pour corriger l'erreur rapidement
+      F2 ou ctrl+Shift+1 : quickfix pour corriger l'erreur rapidement
       ctrl + F7 switch between views
       ctrl + F11 Run last Launched REEXECUTER (se mettre sur un fichier java pour que ça marche)
       F11 Debug last Launched redebugger redebuger REEXECUTERDebuggage Attention bien parametrer le debugger pour que dans les class de jar il alligne bien sinon on a l'impression que c'est desynchronise : Ouput original etc...
       Alt+shift+R : renommer rename ce qu'on veut
-      CTRL+SHIFT+G : Bind this to "Generate getters and setters". This is a "must have".
+      CTRL+SHIFT+H : Bind this to "Generate getters and setters". This is a "must have".
       CTRL+SHIFT+G : find references dependants on workspace
-      CTRL+MAJ+R : trouver un fichier
+      CTRL+MAJ+R : trouver un fichier par son nom
       CTRL+MAJ+T : trouver un fichier dans les lib      
 Si eclipse ne se lance pas parce qu'il ne trouve pas la jvm java jre jdk alors que c'est pourtant parametre dans le path: externe
     modifier eclipse.ini : -vm [retourchariot]path vers le fichier javaw.exe (inclu) ATTENTION ne pas mettre après -vargs car vargs le prendra en parametre
@@ -23418,31 +23635,12 @@ Remplacement de chaine1 (toutes les occurrences de chaine1) ,par chaine2 depuis 
    :1,$ s/632k next 64k/80k next 64k/g			
 pour transformer la case: MAJ -> MIN ou l'inverse: altGR + ~
 
- 	
-
-
-
- 
-
-
-
-
-
-
 
 demarrer > parametres >ajouter une imprimante
 
 quand un fichier xml ne marche pas , essayer:
 <?xml version = "1.0" encoding = "iso8859-1"?>
 <?xml version = "1.0" encoding = "UTF-8"?>
-
-
-
-
-
-
-
-
 decompiler :
       meilleur decompilateur :decode_java (java decompiler); Sinon utiliser Intellij qui peut aussi comparer des repertoires 
       fernflower pour decompiler tout un jar et exporter les sources dans un jar avec des .java à la place des .class (mettre ~1 pour les espaces)
@@ -23841,7 +24039,7 @@ tester que le serveur de mail marche bien
           Some content.
 copy Ctlr+ins ; paste Shift+ins
 2)
-saisir les commandes suivantes pour commander le serveur smtp (pas reçu le mail pourtant....) 
+saisir les commandes suivantes pour commander le serveur smtp (pas reçu le mail pourtant....)
           www-data@kanail:~$ telnet localhost smtp
           Trying ::1...
           Connected to localhost.
@@ -23850,7 +24048,7 @@ saisir les commandes suivantes pour commander le serveur smtp (pas reçu le mail
           EHLO www.mondomaine (www.memoclap.com) -> il dit alors ce qu'il est capable de faire. ou bien faire : HELO justtesting ? 
           MAIL FROM: <projet@memoclap.com>
           250 2.1.0 Ok
-          RCPT TO: <kanailaurent@gmail.com>
+          RCPT TO:<kanailaurent@gmail.com>
           250 2.1.5 Ok
           DATA
           354 End data with <CR><LF>.<CR><LF>
@@ -24114,6 +24312,12 @@ pour savoir en quoi est code un .exe :
       ensuite a la fin de l'executable on voit: GCC
       c'est le compilateur C linux
       donc ca doit être du C ou du C++
+raid :
+    raid0: j'ai plusieurs disque mais une seule interface et je crois avoir qu'un seul disque. Si un disque pete je perds tout.
+    raid1: j'ai plusieurs disques et l'info est dupliquée entre les deux
+    raid1.0 ou 0.1 : j'ai au moins 4 disques 2 dupliqués à 2 et une paire correspond pour moi a un seul disque.
+lvm :
+    equivalent de git avec des snapshots mais pour les disques unix    
 ksh :      
 pour faire une pause dans un script ksh:
       read -p "Press [Enter] key to start backup..."
@@ -24522,7 +24726,7 @@ df -k pour voir si il y a de la place dans les systemes de fichiers. le pourcent
 		Un kilooctet (ko) = 2^10 octets = 1024 octets
     Un Megaoctet (Mo) = 2^20 octets = 1024 ko = 1048576 octets    = 1024 ko donc 252132=252Mega = 1024 ko
     Un Gigaoctet (Go) = 2^30 octets = 1024 Mo = 1073741824 octets = 1024 Mo
-    Un Teraoctet (To) = 2^40 octets = 1024 Go = 1099511627776 octets 1024 Go                                              
+    Un Teraoctet (To) = 2^40 octets = 1024 Go = 1099511627776 octets 1024 Go
 			
 			1 Mo devrait suffire (1 xxx xxx)
 			1.000.000   = 1Giga Go
@@ -25447,7 +25651,7 @@ il faudrait basculer la première à  -ms64m et la deuxième à  priori à  -
 
 mantis: mysql:
 aller sur program files/easyphp/mysql/bin
-mysql -u mantis -	p
+mysql -u mantis -p
 password:mantis
 use mantisDSII
 pour executer un fichier:
@@ -25905,11 +26109,11 @@ Javascript :
            	        ${versionPro?    // ou versionPro=="machin"
                         `duhtmlsioui`
                         :              // cette partie est a mettre obligatoirement pour que ca compile
-                        `duhtmlsinon`
+                        `duhtmlsinon` 
            	            }
            		suiteduhtml`;
     existe un moteur de template de type velocity: nom: mustache pourri regarder plutot template literals
-        import mustache from '/mustache'; (besoin utiliser petit serveur voir npm) ES6
+        import mustache from '/mustache'; (besoin utiliser petit serveur voir npm) ES6 
             mamethode(colonnes, lignes){
               const template= `<table>
               <thead> <tr>{{#colonnes}}<th>{{.}}</th>{{/colonnes}}</tr></thead>
@@ -25958,7 +26162,7 @@ tester le javascript avec Jasmine : et testem : (sinon utiliser https://jsfiddle
         pour executer ce test : 
           >testem ci --launch PhantomJS
 ES6 :modules: une page peut importer une page qui importe aussi: le browser gère les doublons si yen a // pas implemente dans firefox et safari?
-        Top pour faire du singleResponsabilityPrinciple 
+        Top pour faire du singleResponsabilityPrinciple
         pour que ca marche ne plus mettre 
             <script type="text/javascript" src="... 
             mais 
@@ -26054,24 +26258,24 @@ Composition=factoryfunctions tacobell taco bell Linkfactoryfnct: voir plus bas p
 promesses : promese :promeses :Promises :promise : ne plus utiliser les callbacks
       function mamethodeQuiRetourneUnePromesseDoncDedansCestToujoursAsychrone(value) {  
               let promesse= new Promise(function(resolve, reject) { // des lors quand new Promise est appelée, elle est executée (pas besoin de .then pour ça)
-              // un truc asynchrone: genre ajax call
-              let something=true;// ou false si reussi/echec
-               alert("a");
-               if(true)
-               {
+                                          // un truc asynchrone: genre ajax call
+                                          let something=true;// ou false si reussi/echec
+                                           alert("a");
+                                           if(true)
+                                           {
                                               resolve(something à retourner); // toujours mettre au moins un truc (parce que une fois dans une requete ajax il allait dans le then avant meme de passer par le resolve. QUand j'ai mis un truc ça a fonctionné)
-                  }
-                  else
-                  {
+                                              }
+                                              else
+                                              {
                                               reject(something à retourner); // ça renvoit une erreur et donc on va se retrouver sur LINKtootot
-                  }
-                });
-                return promesse;
+                                              }
+                                            });
+                    return promesse;
               }
         utilisation1: il faut remonter la promesse le plus haut j->UI pour que l'utilisateur final voit les erreurs catchees. Ne pas les cacher dans des console.log (mouais...)
               toto = mamethodeQuiRetourneUnePromesseDoncDedansCestToujoursAsychrone("dd")
                                                                 toto.then((res)=>{console.log(res); //res = unobjetarenvoyerici}  // then arrive a un moment on sait pas quand en asynchrone et retourne une promesse. 2 arguments=fonctions: 1ere: si ok 2eme si ko
-                                    , function(err) {console.log(err); //err = l'objetderreurici}
+                                                                       ,function(err) {console.log(err); //err = l'objetderreurici}
                                                                 .then(x=> return Promise.resolve("tata") ou Promise.reject("titi")).then... // on peut meme enchainer donc sur d'autres promises then..then..then
                             ).catch(err=>{return unemethode(err)}) LINKtootot
                             equivalent de 
@@ -26204,8 +26408,8 @@ declarer et executer une fonction encapsulee independante isolee scope:
                 return objetouVariableExporteeAlexterieurfacultatif;
                 ou
                   moduleaaugmenterEtReexporterSiCeModuleEstPartageParPlusieursFichiersDistincts.nouvellemethode=function()....;
-                  return moduleaaugmenterEtReexporterSiCeModuleEstPartageParPlusieursFichiersDistincts; 
-            }(linkplusclairfacultatif, moduleaaugmenterEtReexporterSiCeModuleEstPartageParPlusieursFichiersDistincts||{}  )); // ||{} comme ca n'importe quel fichier peut se charger dans n'importe quel ordre asynchronement ca marche qd meme.
+                  return moduleAAugmenterEtReexporterSiCeModuleEstPartageParPlusieursFichiersDistincts; 
+            }(linkplusclairfacultatif, moduleAAugmenterEtReexporterSiCeModuleEstPartageParPlusieursFichiersDistincts||{}  )); // ||{} comme ca n'importe quel fichier peut se charger dans n'importe quel ordre asynchronement ca marche qd meme.
             ou bien 
             var f = function () {
                 //code non exportable par contre si je fais LINKscopejscommeexport
@@ -26604,7 +26808,7 @@ bordure:
 couleur de fond:
   s.style.backgroundColor="blue";
 pour generer un numero aleatoire hasard hazard en javascript:
-    Math.random()*10 // 10 c'est le numero+1max(donc la on a un num entre 0 et9) voir LINK_haqsdfsaqsdfrd
+    Math.random()*10 // 10 c'est le numero+1max(donc la on a un num entre 0 et9) voir LINK_haqsdfsaqsdfrd 
 pour acceder au filesystem:
     window.requestFileSystem
       (type(PERSISTENT ou TEMPORARY),
@@ -27198,7 +27402,7 @@ pour setter le name l'attribut la propriete d'un element tag html :
 generer une image à la volee:
         var img=new Image();
        img.src="clearmute.png";
-pour faire un onchange en javascript:
+pour faire un onchange en javascript: 
         <input name="files" class="modifier" id="files" onchange="createProject.handleFileSelect(this)" onclick="this.value=null;" type="file" accept="*/*" /> //onclick="this.value=null" c'est pour permettre de rechoisir le meme fichier à uploader
         ou
         elSel.onchange=function(){setSilencesInverseToActorDelimited(actor, this.value, document.getElementById("startFlag").value, document.getElementById("stopFlag").value );};
@@ -27252,15 +27456,15 @@ heritage : THE BEST ! heritage avec de purs objets (duck typing) (import et expo
        
 nouvelle facon de definir les classes et l'heritage : mais en javascript on peut aussi faire des factory functions =composition voir Linkfactoryfnct
        export class Toto {         
-       // je ne peux pas definir de variables ici... faire comme ci dessous          
-          constructor() // Facultatif
+             // je ne peux pas definir de variables ici... faire comme ci dessous          
+                constructor() // Facultatif
                 {
                   this.sound="zzzz"
                 }
                 tals(){
                   alert(this.sound)
                 }
-          let huhu = this.tintin(); // tintin peut etre defini ou overridé dans une sous classe
+                let huhu = this.tintin(); // tintin peut etre defini ou overridé dans une sous classe
           }
           ggg=new Toto()
           ggg.tals()        mais si je fais let xx=toto.tals; alors xx() va faire undefined car this est undefined. Il faut faire xx.bind(toto); xx.(); et là ca marche. Attribue un objet à this.
@@ -27598,7 +27802,7 @@ faire disparaitre un div layer au premier plan pour agir derriere:
           </div>
 pour ajouter ou supprimer une classe dans une liste de classe: 
     this.classList.add('over');
-    this.classList.remove('over');      
+    this.classList.remove('over'); 
     document.getElementById("theID").removeAttribute("class"); //pour les effacer toutes les classes tous remove all      
 changer une classe en javascript:
   document.getElementById("btnTest").className= "buttonType2"
@@ -28382,12 +28586,12 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir fetch.)
                        {
                             callback('Upload Progress ' + Math.round(event.loaded / event.total * 100) + "%");
                             ou
-                        if (e.lengthComputable) 
-                        {
-                          var progressBar = document.querySelector('progress');
-                          progressBar.value = (e.loaded / e.total) * 100;
-                          progressBar.textContent = progressBar.value; // Fallback for unsupported browsers.
-                        }
+                            if (e.lengthComputable) 
+                            {
+                              var progressBar = document.querySelector('progress');
+                              progressBar.value = (e.loaded / e.total) * 100;
+                              progressBar.textContent = progressBar.value; // Fallback for unsupported browsers.
+                            }
                                               	    		
                       xhr.send(file); // marche pas.. plutot envoyer le formulaire comme ci-dessous            	    		
             	    		xhr.send(formData); // on utilise ça que pour du multipart: envoi de fichier ou canvas voir côte servlet là:LINKee"(çà)"
@@ -28612,35 +28816,34 @@ PWA : progressive webapps :
                                     self.addEventListener('install', function(evt) {
                                       console.log('WORKER: The service worker is being installed.');
                                       evt.waitUntil(precache());
-                          });
+                                    });
                                     function precache() {
                                       return caches.open(cacheVersion).then(function (cache) {
                                         return cache.addAll(cacheFiles);
                                       });
-                                      
-                                                                                                        }
-                                      
+                                    }
+                                    
                                     self.addEventListener("activate", function(event) {
                                       console.log('WORKER: The service worker is being activated.');
-                                                  event.waitUntil(
-                                                  caches.keys()
-                                                              .then(function (keys) {
+                                        event.waitUntil(
+                                            caches.keys()
+                                                .then(function (keys) {
                                                     return Promise.all(
-                                                                    keys.filter(function (key) {
+                                                                       keys.filter(function (key) {
                                                                                                 return !key.startsWith(cacheVersion);
-                                                          })
+                                                                                              })
                                                                                               .map((key)=>{
                                                                                                 console.log('WORKER: version '+key+' supprimee.');
-                                                                return caches.delete(key); // on supprime une vieille version
-                                                          })
-                                                      );
-                                                    })
-                                                    .then(function() {
-                                                      console.log('WORKER: activate completed.');
-                                                    })
-                                                );
-                                              });
-                                              
+                                                                                                    return caches.delete(key); // on supprime une vieille version
+                                                                                              })
+                                                                                          );
+                                                                                        })
+                                                                                        .then(function() {
+                                                                                          console.log('WORKER: activate completed.');
+                                                                                        })
+                                                                                    );
+                                                                                  });
+                                    
                                     
                                     self.addEventListener('fetch', function(evt) {
                                       console.log('WORKER: The service worker is serving the asset.');
@@ -28651,6 +28854,8 @@ PWA : progressive webapps :
                                               evt.respondWith(response);
                                        }
                                     });
+                                    
+                                    
                                     function proceedFetch(request,event) {
                                         let requestClone=request.clone();
                                         return getResponseFromNetworkAndCachit(requestClone,400)
@@ -28663,8 +28868,9 @@ PWA : progressive webapps :
                                             return res;
                                             });
                                     }
+                                    
                                     function getResponseFromNetworkAndCachit(request, timeout)
-            {
+                                    {
                                      return new Promise(function (fulfill, reject) {
                                         var timeoutId = setTimeout(reject, timeout);
                                         fetch(request)
@@ -28711,9 +28917,10 @@ PWA : progressive webapps :
                                             );
                                             return res;
                                     }
+                                    
                                     function useFallback(event) {
                                         if (!event.clientId)
-              {
+                                         {
                                             let res = returnImageKO();
                                             return res;
                                          }
@@ -29125,25 +29332,25 @@ https://developers.google.com/web/fundamentals/web-components/customelements#att
  au final dans mon html j'aurais :
  <script src="laurent-moncomponent1.js"/>  
   <laurent-moncompoentn1 blabla="toto"></laurent-moncompoentn1> // toujours mettre la balise fermante
-  
   dans laurent-moncompoentn1.js j'ai: import<-customcomponent(shadowdom(template))
       template :
       const templatexxx=document.createElement("template");
       templatexxx.innerHTML=`
       <style>:host // :host c'est pour dire que ce style s'applique que dans le shadowroot parent de ce template (ne marche que dans un shadowdom)
-                :host(:hover) // mouse souris par dessus. Exemple: :host(:hover)>::slotted(memoclap-menu-sub){display:block;}// dans le shadowroot >DANS le slot l'element de type memoclap-menu-sub seulement
+                :host(:hover) // mouse souris par dessus. Exemple: :host(:hover)>::slotted(memoclap-menu-sub){display:block;}// dans le shadowroot >DANS le slot l'element de type memoclap-menu-sub seulement. Attention le style des slots vient aussi depuis l'exterieur du webcomponent. mais::slotted prend l'avantage (si c'est !important seulement je crois)LINKkdkflkjsdf 
                 :host slot //sur le <slot>
                 :host(.uneclasse) //pour attribuer une classe à mon custom element (hé oui ce n'est pas host.uneclasse)
               {
                 background-color: green;display: block; // du style interne à mon template
                }
-                ::slotted(a) // pour styler les a par exemple qui sont dans mon webcomponent (les slots) ne peut que selectionner les noeuds top niveau et n'est pas prioritaire sur un css general. Styler un slot directement en html ne fonctionne pas on dirait
+                ::slotted(a) // LINKkdkflkjsdf pour styler les a par exemple qui sont dans mon webcomponent (les slots) ne peut que selectionner les noeuds top niveau et n'est pas prioritaire sur un css general. Styler un slot directement en html ne fonctionne pas on dirait
                 {
                     color: white;
                 }
+
       </style> 
           du dom (balises html...) <slot name="toto"></slot>// A FINIR. represente ce qu'ont met dans ce webcomponent dans le html (attention le style de mon shadowdom ci dessus ne s'applique pas dans les slots sauf avec ::slotted)
-          du dom (balises html..ne pas mettre d'appel a des methodes dedans. Marche pas (onclick..marche pas mais faire LINKlkjsdflh)
+          du dom (balises html..ne pas mettre d'appel a des methodes dedans. Marche pas (onclick..marche que si on utilise le javascript direct dedans sans faire appel à des methodes. Si besoin appeler methodes alors faire LINKlkjsdflh)
           `; // ` ` marche partout pour faire des strings qui vont a la ligne ! 
 METHODE CLASS: THEBEST? classes es6
                                                 class MonElement extends HTMLElement ou un autre element webcomponent (avec de l'animation par exemple)
@@ -29156,7 +29363,7 @@ METHODE CLASS: THEBEST? classes es6
                                                           this.id="tata"; // defini direct l'id du dom element|_ATTENTION ne marche que si on instancie la classe en javascript. Pas si on met la balise html dans la page
                                                           this.toto=true;// c'est une propriete properties    |
                                             //         creer un shadowdom : Maintenant FFOx supporte aussi. Avant: (pas encore supporte sur firefox  : besoin faire about:config puis dom.webcomponents.enabled et dom.webcomponents.shadowdom.enabled a true)
-                                                         var root = thisMonElement.attachShadow({mode:'open'}); // host maintenant devient un shadowroot: tout ce qu'il a a l'interieur devient invisible. open/closed= atteignable ou pas par javascript et querySelector('div').shadowRoot.querySelector(xx) du scope general
+                                                         var root = thisMonElement.attachShadow({mode:'open ou closed LINKkddkdkdkd'}); // host maintenant devient un shadowroot: tout ce qu'il a a l'interieur devient invisible. open/closed= atteignable ou pas par javascript et querySelector('div').shadowRoot est visible ou pas selon. LINKkddkdkdkd: si j'ai mis closed alors xxx.shadowRoot=null pour l'avoir faire une variable dans le custom element: this.shadow = this.attachShadow({mode:'closed'});  et je réutilise this.shadow partout.
                                                           on peut juste faire aussi 
                                                           thisMonElement.attachShadow({mode:'open'}); // ca va créer automatiquement this.shadowRoot dans mas classe. Pas besoin de var root                                                        
                                                          var monTemplate = templatexxx; ou `du contenu
@@ -29166,11 +29373,12 @@ METHODE CLASS: THEBEST? classes es6
                                                          var cloneDuTemplate = monTemplate.content.cloneNode(true);  // true: il est recursif dans le dom
                                                         this.shadowRoot.appendChild(cloneDuTemplate); ou root.appendChild(cloneDuTemplate); ou root.appendChild(document.importNode(cloneDuTemplate,true)); ou root.innerHtml=... ou ou this.shadowRoot.innerHTML=""; ou this.shadowRoot.querySelector.....
                                                         sans shadowdom: faire this.cloneDuTemplate=monTemplate.content.cloneNode(true); puis voir LINKsansshadowlkjsdgh
-                                                                dansuneboucleparex P faire: 
-                                                                    cloneDuTemplate.querySelector(...).innerText=untruc;
+                                                          dansuneboucleparex P faire: 
+                                                                     cloneDuTemplate.querySelector(...).innerText=untruc;
                                                                        mondiv ou thisSiJeSuisDansUneClasseHtmlElement.appendChild(cloneDuTemplate); // ajoute le template dans la page (devient visible) MARCHE PAS
-                                                                findansuneboucleparex
+                                                        findansuneboucleparex
                                                         div.setAttribute('unAttributduTagHtml','valeurDeLattribut'); PIEGE! utiliserça et ne pas utiliser unElementHTML.unattribut=xxx (ca ne modifie que la classe pas le html et du coup attributeChangedCallback n'est pas appele)
+                                                        
                                                         on peut ajouter un listnener au slot si celui ci change en javascript: LINK-(r_r_r)
                                                             monslot.addEventListener('slotchange', e => {
                                                                 ...e.currentTarget..
@@ -29223,13 +29431,13 @@ METHODE CLASS: THEBEST? classes es6
                                                                         this.titi=e.detail.unAutreParametreARecuperer;
                                                                          this.parentElement.openclose(); // pour appeller une methode de l'element qui entoure englobe cette classe (pas l'heritage mais au niveau html)
                                                                     }.bind(this) // possible de faire ca si this n'est plus ma classe mais un slot ou quoi... comme ça dans la fonction ci dessus this sera mon custom element.
-                                                        }
+                                                    }
                                                  }
                                                 Puis
                                                 var montag =window.customElements.define('laurent-moncompoentn1', MonElement); //du coup chaque fois qu'il verra <laurent-moncopoentn1> il creera une instance de la classe MonElement
                                                  //instancier mon tag :<laurent-moncompoentn1></laurent-moncompoentn1> // toujours mettre "-"
-                                                                                                                                 //ou en js : faire var toto = document.createElement('laurent-moncompoentn1'); ou var toto = new montag(); 
-                                                                                                                                 //     puis document.body.appendChild(toto);
+                                                 //ou en js : faire var toto = document.createElement('laurent-moncompoentn1'); ou var toto = new montag(); 
+                                                 //     puis document.body.appendChild(toto);
 
         appeller une methode d'un custom element depuis l'exterieur : 
                     var toto = document.querySelector("memoclap-alertmessage");
@@ -31356,11 +31564,22 @@ attention si nouveau compte première fois logguer bien d'abord supprimer tous l
         IE > Option internet > onglet Securite > Choisir le dessin « Internet » > Personnaliser le niveau > trouver script->Activer le filtre XSS > DESACTIVER
 
 Enleve expres car deplace
+JWT :  
+    voir https://jwt.io/ a gauche c'est juste ce qu'il ya a droite en base64. Je peux m'amuser a changer le secret ça change la signature
+    le tooken n'est pas sensé etre stocké dans les cookies ou dans le localstorage du browser.
+    stateless: pas besoin de session ni de base de donnée avec l'utilisateur dedans. Le token suffit a valider que je suis Laurent !=cookie de session ou le serveur conserve une table des sessions.
+    bonne pratique: ajouter dans le payload sub:9830984,exp:0938098Z: subscribe et expire date shortlife: duree de vie courte.: du coup necesite background authentication a chaque requette: pour ça utiliser librairies.
+                        toujour mettre aud: = audience = pour quel service/serveur uniquement sert ce token?
+                        toujours utiliser secret!= ou cle publique != par service/serveur
+                        toujours refuser les token avec algo:null. il faut qu'il y ait un algo. UN ALGO ET UN SEUL
+     archi: [1Client(Mon Browser)]<----1-------->[1Authentificationservice pour tous: il a 1 clé privée differente pour chaque RessourceService a qui il donne la cle publique correspondante.]
+                                   \___2_______>[xRessourcesServices: chacune a une clé publique.] 
+    algoritmes recommandés : ES256(cle publique pour verifier et cle privee pour signer mais plus rapide que RS256)  puis RS256(cle publique pour verifier et cle privee pour signer) puis HS256(ce n'est que un secret=chaine de caractère a garder privée. Attention danger avec ça car dans ce cas le client pourra hacker: Client    Service1JWTOuJeSuisAdmin,    Service2JWTOuJeNeSUisPasAdmin)
 OAuth : OAuth2 : (oltu : https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Client+Quickstart et https://github.com/apache/oltu)
     USER = RessourceOwner = homme = 
-    EDSN = Client
-    FID = AuthenticationServer
-    FIDx = ResourceServer(API)
+    EDSN = Client = l'application qui demande une autorisation pour faire une action dans le ResourceServer.
+    FID = AuthenticationServer=authorization server: accepte de donner le ticket
+    FIDx = ResourceServer(API contenant les resources)
     En amont: 
     créer un abonnement
     FID transmet à EDSN: -id applicatif = client_id
@@ -31386,7 +31605,7 @@ OAuth : OAuth2 : (oltu : https://cwiki.apache.org/confluence/display/OLTU/OAuth+
                                 -------------------------------------frontchannel---------------------->>>>>>>FID présente le prompt d'authentification. USER s'authentifie
                                                                                                               FID présente le consent Screen/scope. USER approuve
                                 <<<<<<<<<<<<<<<<<<<<<<---------------frontchannel-----------------------------FID retourne AuthorizationCode=code=AuthorizationGrant(Dans les en-tête http.)                
-                                                                    url = redirectURI                        
+                                                                    url = redirectURI = callback                        
     
     EDSN renvoit l’AuthorisationCode + idApplicatif + client_secret à FID--------backchannel------------>>>>>
                                      + GrantType=Authorization_code
@@ -31400,12 +31619,12 @@ OAuth : OAuth2 : (oltu : https://cwiki.apache.org/confluence/display/OLTU/OAuth+
     EDSN demande une authorisation                                                                                                              
                    --->GET                                                                                           
                    --->GET  plusieurs fois tant que expir OK.
-                   --->GET----------backchannel/frontSiImplicitMode-----renvoit l'AccessToken----------->>>>>>FIDx Vérifie que l'AccessToken est valide Puis Execute l'action ou                                                                                            FID renvoit un RefreshToken à EDSN
+                   --->GET----------backchannel/frontSiImplicitMode-----renvoit l'AccessToken----------->>>>>>FIDx Vérifie que l'AccessToken est valide Puis Execute l'action ou                                                                                            
                                                                          contient le scope                                                                                     |
                                                                            OU renvoit                                                                                          |
                                                                          getUserInfo si a reçu l'Token_ID                                                                      |
                                                                                                                                                                                |
-                          <<<<<<<<<<<<<<<<<<<<---------------------info demandée(restreinte au scope) backchannel---------------------------------------------------------------------retourne------
+                          <<<<<<<<<<<<<<<<<<<<---------------------info demandée(restreinte au scope) backchannel---------------------------------------------------------------------retourne------FID renvoit un RefreshToken à EDSN
 
 Kerberos : 
     utilisation de d'apache mod_auth_kerb : 
@@ -32448,7 +32667,7 @@ prestashop :
                 Mailjet   mon nom>mon compte > sous facturation : vos habonnements et vos factures
                 Achats Prestashop (paye avec mon compte banquaire mais au nom de SARL MA WENHUA: https://addons.prestashop.com/fr/historique-des-commandes
                 CM-CIC Monetico : Gestion des payements : (MAIS NON! c pas eshop)  
-                Shoptiques Rajouter les ventes dans le fichier excell 
+                Shoptiques Rajouter les ventes dans le fichier excell
                 Facture Free : faire. > mon abonnement > consulter mes facture
                 Envoimoinscher : Mon nom > Factures
           requete de la compta des ventes par internet : 
@@ -32898,7 +33117,7 @@ seo :
         Reseaux sociaux:
           se comparer à la concurrence: il faut etre cite sur fb etc... par plusieurs personnes c tres bon. Attention si personne ne nous cite mais ya bcp de likes et grand popularite: google puni
           A Faire: tweetymail.com > etre notifie quand un tweet interessant pour nous est poste: on peut alors interagir avec le tweet et echanger (sans faire de pub)
-                   facebook et google+ meme chose: faut participer, communiquer aux conversations!>constituer un reseau petit a petit en y passant du temps raisonable. POur ces deux il faut surtout que les personnes likent notre SITE (pas notre page) A FAIRE: mettre bouton facebook et google+ sur notre site bien en evidence. Ne surtout pas acheter de fans! 
+                   facebook et google+ meme chose: faut participer, communiquer aux conversations!>constituer un reseau petit a petit en y passant du temps raisonable. POur ces deux il faut surtout que les personnes likent notre SITE (pas notre page) A FAIRE: mettre bouton facebook et google+ sur notre site bien en evidence. Ne surtout pas acheter de fans!
            faire un tableau
             activite | sous activités variantes | ciblage geographique | ciblage date 
             c a d    |                          |                      |
@@ -32925,7 +33144,7 @@ seo :
                         </sitemap>
                         <sitemap>
                           <loc>urld'unAutreSitemap</loc>
-                        </sitemap>...                                      
+                        </sitemap>...
     attribut de balise html "itemprop" à choisir sur schema.org pour que google comprenne mon site
           exemple:
                <div id="crossselling_list" itemscope itemtype="http://schema.org/Product"> // itemscope pour dire de regarder mes itemxxx; itemtype: type d'objet
