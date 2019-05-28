@@ -1,4 +1,4 @@
-(?=.*int)(?=.*double)
+(?=.*limit)(?=.*char)
 AFAIRE:
 a lire : https://stackoverflow.com/questions/3216780/problem-reloading-a-jar-using-urlclassloader
 <script>
@@ -6715,7 +6715,51 @@ mongodb : nosql : (il vaut mieux stocker les fichiers images documents dans le s
         -il faut désactiver l'introspection javascript par sécurité(dans fichier de config mettre javascriptEnabled:false). LinkLKJDSFA
         -attention!!!! l'ordre des champs du json au niveau n-1 est important! au niveau n pas de probleme( par ex utiliser ordre alphabetique)
         -si je veux utiliser limit alors toujours utiliser sort avant limit dans une requete.
-        -il faut faire un schema: a lire :https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design-part-1 + installer https://studio3t.com/knowledge-base-articles/schema-explorer/
+        -il faut faire un schema: installer https://studio3t.com/knowledge-base-articles/schema-explorer/
+                        resumé de ce que j'ai lu là :https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design-part-1
+                        si j'ai relation 1-N(peu nombreux): Où je n'aurais jamais besoin de recuperer ces N tout seuls sans leur parents
+                                    alors je peux faire 
+                                                  {
+                                                    name: 'Kate Monster',
+                                                    ssn: '123-456-7890',
+                                                    addresses : [
+                                                       { street: '123 Sesame St', city: 'Anytown', cc: 'USA' }, // j'en ai peu.
+                                                       { street: '123 Avenue Q', city: 'New York', cc: 'USA' }
+                                                    ]
+                                                  }
+                        si j'ai relation 
+                                1-N(une centaine) et que c'est l'application qui gère la recuperation des N pour l'element 1 . mais en fait ca a l'avantage d'etre aussi une relation N-N
+                                    alors je peux faire (un produit contient plusieurs pieces)
+                                    produit:{
+                                        name : 'MON PRODUIT 1',
+                                        pieces : [     // array of references to Part documents
+                                            ObjectID('AAAA'),    // reference vers la piece ci dessous
+                                            ObjectID('F17C'),    // reference to a different Part
+                                            ObjectID('D2AA'),
+                                            // etc
+                                        ]
+                                        }
+                                    piece:{
+                                            _id : ObjectID('AAAA'),
+                                            partno : '123-aff-456',
+                                            name : '#4 grommet',
+                                            qty: 94,
+                                            cost: 0.94,
+                                            price: 3.99
+                                        }                 
+                            si j'ai une relation 1-N où N c'est PLEIN denregistrements. Produit peut avoir plusieurs pieces mais une piece ne peut avoir qu'un seul produit.
+                                    produit:{
+                                        name : 'MON PRODUIT 1',
+                                        _id : ObjectID('AAAA')
+                                        }
+                                    piece:{
+                                            partno : '123-aff-456',
+                                            name : '#4 grommet',
+                                            qty: 94,
+                                            cost: 0.94,
+                                            price: 3.99
+                                            produit: ObjectID('AAAA') // comme dans une base relationelle 1-N
+                                        }                               
         -il faut desactiver la casesensitive et accent sensitive pour les requetes
         -l'ordre dans les requetes est important : d'abord filtrer puis trier puis joindre
         -il faut enable journaling pour recuperer la base old version si devient inconsistent (configuration-> storage.journal.enabled)
@@ -10688,7 +10732,7 @@ pour faire un jar qui contient les sources java (attention j'ai pas trouve comme
           </execution>
         </executions>
       </plugin>
-pour creer un executable windows .exe: (si plante c'est parce que mon .ico est corrompu ou que j'ai execute le plugin launch4j alors que je dois juste faire mvn package) 
+pour creer un executable windows un .exe: (si plante c'est parce que mon .ico est corrompu ou que j'ai execute le plugin launch4j alors que je dois juste faire mvn package) 
       <plugin>
             <groupId>com.akathist.maven.plugins.launch4j</groupId>
             <artifactId>launch4j-maven-plugin</artifactId>
@@ -10759,15 +10803,17 @@ utilisation du plugin assembly pour créer un zip :
             <assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
                             <id>zip</id> // ce nom à la con Linksljfggg
                             <formats><format>zip</format></formats>
-                            <includeBaseDirectory>false</includeBaseDirectory>
+                            <includeBaseDirectory>false</includeBaseDirectory> // si a true il zip direct le parent qui est target ici.
                             <baseDirectory>target</baseDirectory>
                             <includeSiteDirectory>false</includeSiteDirectory>
                             <files>
                                 <file>
                                     <source>${project.build.directory}/diversitysimulator_v${project.version}.exe</source>
+                                    <outputDirectory>/data</ouputDirectory> // facultatif : pour mettre le fichier source dans le repertoire monZip/data/. Si on le met pas il met le fichier direct a la racine dans le zip quelquesoit son path
                                 </file>
                                 <file>
                                     <source>${project.build.directory}/Sprint1ExcelFormatsv0.04.xlsx</source>
+                                    <outputDirectory>/system</ouputDirectory> // facultatif : pour mettre le fichier source dans le repertoire monZip/data/
                                 </file>
                             </files>
                         </assembly>                                  
@@ -15063,7 +15109,7 @@ ouvrir une nouvelle fenetre :
                 primaryStage.show() ;
 
 
-pour faire une ligne jfx :
+pour faire une ligne jfx trait separation separateur :
             Line line1 = new Line(0, 0, 100, 200);
 
     wrapper avec scoller scrollbar
@@ -15261,6 +15307,100 @@ faire du style css  (bons exemples: http://fxexperience.com/2011/12/styling-fx-b
                           -fx-border-style: dashed; 
                           -fx-effect: dropshadow(three-pass-box, purple, 10, 0, 0, 0); //ombre        
                           }
+pour faire un toggle button bouton buton boutton annimé animé en javafx jfx utiliser les animations : 
+    public class ToggleButtonApplicationTest extends Application {
+            @Override
+        	    public void start(Stage primaryStage) throws Exception {
+        	        primaryStage.setScene(new Scene(createContent()));
+        	        primaryStage.show();
+        	    }
+        
+        	    public static void main(String[] args) {
+        	        launch(args);
+        	    }
+	    private Parent createContent() { // tout ca c'est main. Le bouton est là LINKkfkfkfkfklsjfllsls
+	        Pane root = new Pane();
+	        root.setPrefSize(300, 300);
+
+	        Rectangle bg = new Rectangle(300, 300);
+
+	        ToggleSwitch toggle = new ToggleSwitch();
+	        toggle.setTranslateX(100);
+	        toggle.setTranslateY(100);
+
+	        Text text = new Text();
+	        text.setFont(Font.font(18));
+	        text.setFill(Color.WHITE);
+	        text.setTranslateX(100);
+	        text.setTranslateY(200);
+	        text.textProperty().bind(Bindings.when(toggle.switchedOnProperty()).then("ON").otherwise("OFF"));
+	        root.getChildren().addAll(toggle, text);
+	        return root;
+	    }
+
+	    private static class ToggleSwitch extends Parent { LINKkfkfkfkfklsjfllsls
+	        private BooleanProperty switchedOn = new SimpleBooleanProperty(false);
+
+	        private TranslateTransition translateAnimation = new TranslateTransition(Duration.seconds(0.25)); // definition durée d'une animation de deplacement
+	        private FillTransition gaucheFillAnimation = new FillTransition(Duration.seconds(0.25)); // definition durée d'une animation de couleur
+	        private FillTransition droiteFillAnimation = new FillTransition(Duration.seconds(0.25));
+
+	        private ParallelTransition animation = new ParallelTransition(translateAnimation, gaucheFillAnimation, droiteFillAnimation); // indispensable 
+
+	        public BooleanProperty switchedOnProperty() {
+	            return switchedOn;
+	        }
+
+	        public ToggleSwitch() {
+	            Rectangle background = new Rectangle(200, 50);
+	            background.setArcWidth(50);
+	            background.setArcHeight(50);
+	            background.setFill(Color.WHITE);
+	            background.setStroke(Color.LIGHTGRAY);
+	            final Text gaucheLabel = new Text("Gauche");
+	            final Text droiteLabel = new Text("Droite");
+	            gaucheLabel.setLayoutY(27);
+	            droiteLabel.setLayoutY(27);
+	            
+	            gaucheLabel.setLayoutX(6);
+	            droiteLabel.setLayoutX(120);
+            
+	          
+
+	            Rectangle trigger = new Rectangle(100,50);
+	            trigger.setArcWidth(50);
+	            trigger.setArcHeight(50);
+	            trigger.setFill(Color.web("#1780af",1.0));
+	            trigger.setStroke(Color.LIGHTGRAY);
+
+	            DropShadow shadow = new DropShadow();
+	            shadow.setRadius(2);
+	            trigger.setEffect(shadow);
+
+	            translateAnimation.setNode(trigger); // j'attache mon animation de type deplacement a un objet
+	            gaucheFillAnimation.setShape(gaucheLabel); // j'attache mon animation de type couleur a un objet
+	            droiteFillAnimation.setShape(droiteLabel);  // j'attache mon animation de type couleur a un objet
+
+	            getChildren().addAll(background, trigger,gaucheLabel,droiteLabel);
+	            
+
+	            switchedOn.addListener((obs, oldState, newState) -> {
+	                boolean isOn = newState.booleanValue();
+	                translateAnimation.setToX(isOn ? 100 : 0);
+	                gaucheFillAnimation.setFromValue(isOn ? Color.WHITE : Color.web("#1780af",1.0));
+	                gaucheFillAnimation.setToValue(isOn ? Color.web("#1780af",1.0): Color.WHITE);
+	                droiteFillAnimation.setFromValue(!isOn ? Color.WHITE : Color.web("#1780af",1.0));
+	                droiteFillAnimation.setToValue(!isOn ? Color.web("#1780af",1.0): Color.WHITE);
+
+	                animation.play(); // l'annimation se joue
+	            });
+
+	            setOnMouseClicked(event -> {
+	                switchedOn.set(!switchedOn.get());
+	            });
+	        }
+	    }
+	}
 
 1) FXProperties fx properties Objets : edition modifier champ modification formulaire en proprietes jfx : javafx : Bind et listner ne marchent que si tout est dans le même thread
                                      Observable  ObservableValue                                                                
@@ -15293,9 +15433,9 @@ LINKbindseveral :   -FluentAPI: String Expression et ObjectExpression et Boolean
     donc on initialiser comme ça: final ListProperty<SimpleBean> childrens = new SimpleListProperty<>(FXCollections.observableArrayList());
                                     |_pour effacer vider empty faire .clear()
 Abstract: ObservableList<E> maliste = FXCollections.observableArrayList(); ou (unearray ou extractor) // extractor est une @functionnalInterface si on veut ecouter les updates des elements de la liste. LINKmajdansElementdeliste  
-Wrapper:                |_ SortedList<E> ou FilteredList<E> toto = new xxxunObservableList(@FunctionnalInterface)   //unObservableList peut etre maliste ou meme un autre filtered ou sortedlistList<>()                         
+Wrapper:                |_ SortedList<E> ou FilteredList<E> toto = new xxxunObservableList(@FunctionalInterface)   //unObservableList peut etre maliste ou meme un autre filtered ou sortedlistList<>()                         
                                              |                 |                                     |_pour filtrer(predicate) ou pour trier(comparator)->change la liste automatiquement et peut donc declancher un Listner. voir ci dessous
-                              attention remplace               |_.addListener(@FunctionnalInterface) //de l'interface ListChangeListener<E>.onChanged(Change) syntaxe:(ListChangeListener<SimpleBean>)c->{ // capte les evenements des elements de la liste:sorted, add,delete,(pour update voir LINKmajdansElementdeliste parametres paramettres des objets)
+                              attention remplace               |_.addListener(@FunctionalInterface) //de l'interface ListChangeListener<E>.onChanged(Change) syntaxe:(ListChangeListener<SimpleBean>)c->{ // capte les evenements des elements de la liste:sorted, add,delete,(pour update voir LINKmajdansElementdeliste parametres paramettres des objets)
                               un event d'update                |_on met ça dans un tableView.setItem(toto);                                                |_while(change.next()){
                               par un event de add/delete         et ça se met à jour tout seul                                                                if(change.wasUpdated()){} // Uniquement si LINKmajdansElementdeliste   
                               voir LINKmajdansElementdeliste                                                                                                  if(change.wasRemoved()){}
@@ -15310,6 +15450,9 @@ http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-j
 java7 :
 http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase7-521261.html  
 JAVA :
+recuperer un fichier selon son path relative relatif et non pas absolu : 
+        grace à System.getProperty("user.dir") qui est toujours dispo.
+        File defaultBusinessDir = new File(System.getProperty("user.dir"), "/src/main/resources/data/business") ; 
  bean couple paire tuple deux :
         utiliser AbstractMap.SimpleEntry ou bien faire la classe
         public class Tuple<X, Y>
@@ -20642,7 +20785,7 @@ si on a l'erreur ConcurrentModificationException quand on utilise iterator
       ou utiliser l'objet ListIterator
       
       
-pour utiliser un iterator qui va en arriere: previous: utiliser listiterator:
+pour utiliser un iterator qui va en arriere: capable de repositionneer le curseur previous: utiliser listiterator:
             fieldsCandidate est une ArrayList 
             ListIterator<WEC52_M_CHAMPS> it = fieldsCandidate.listIterator();
             		while (it.hasNext())
@@ -20650,6 +20793,9 @@ pour utiliser un iterator qui va en arriere: previous: utiliser listiterator:
             			if (it.next().equals(field)) break;
             		}
             		previousField = it.previous();
+                    it.set(unDesObjetsDeMaListe); // par contre ça j'ai l'impression que ca ne marche pas: sert à se positionner sur un objet de ma liste.            
+            }
+                    
             		 
 ************************
 pour executer une commande externe en java:
@@ -31424,11 +31570,22 @@ attention si nouveau compte première fois logguer bien d'abord supprimer tous l
         IE > Option internet > onglet Securite > Choisir le dessin « Internet » > Personnaliser le niveau > trouver script->Activer le filtre XSS > DESACTIVER
 
 Enleve expres car deplace
+JWT :  
+    voir https://jwt.io/ a gauche c'est juste ce qu'il ya a droite en base64. Je peux m'amuser a changer le secret ça change la signature
+    le tooken n'est pas sensé etre stocké dans les cookies ou dans le localstorage du browser.
+    stateless: pas besoin de session ni de base de donnée avec l'utilisateur dedans. Le token suffit a valider que je suis Laurent !=cookie de session ou le serveur conserve une table des sessions.
+    bonne pratique: ajouter dans le payload sub:9830984,exp:0938098Z: subscribe et expire date shortlife: duree de vie courte.: du coup necesite background authentication a chaque requette: pour ça utiliser librairies.
+                        toujour mettre aud: = audience = pour quel service/serveur uniquement sert ce token?
+                        toujours utiliser secret!= ou cle publique != par service/serveur
+                        toujours refuser les token avec algo:null. il faut qu'il y ait un algo. UN ALGO ET UN SEUL
+     archi: [1Client(Mon Browser)]<----1-------->[1Authentificationservice pour tous: il a 1 clé privée differente pour chaque RessourceService a qui il donne la cle publique correspondante.]
+                                   \___2_______>[xRessourcesServices: chacune a une clé publique.] 
+    algoritmes recommandés : ES256(cle publique pour verifier et cle privee pour signer mais plus rapide que RS256)  puis RS256(cle publique pour verifier et cle privee pour signer) puis HS256(ce n'est que un secret=chaine de caractère a garder privée. Attention danger avec ça car dans ce cas le client pourra hacker: Client    Service1JWTOuJeSuisAdmin,    Service2JWTOuJeNeSUisPasAdmin)
 OAuth : OAuth2 : (oltu : https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Client+Quickstart et https://github.com/apache/oltu)
     USER = RessourceOwner = homme = 
-    EDSN = Client
-    FID = AuthenticationServer
-    FIDx = ResourceServer(API)
+    EDSN = Client = l'application qui demande une autorisation pour faire une action dans le ResourceServer.
+    FID = AuthenticationServer=authorization server: accepte de donner le ticket
+    FIDx = ResourceServer(API contenant les resources)
     En amont: 
     créer un abonnement
     FID transmet à EDSN: -id applicatif = client_id
@@ -31454,7 +31611,7 @@ OAuth : OAuth2 : (oltu : https://cwiki.apache.org/confluence/display/OLTU/OAuth+
                                 -------------------------------------frontchannel---------------------->>>>>>>FID présente le prompt d'authentification. USER s'authentifie
                                                                                                               FID présente le consent Screen/scope. USER approuve
                                 <<<<<<<<<<<<<<<<<<<<<<---------------frontchannel-----------------------------FID retourne AuthorizationCode=code=AuthorizationGrant(Dans les en-tête http.)                
-                                                                    url = redirectURI                        
+                                                                    url = redirectURI = callback                        
     
     EDSN renvoit l’AuthorisationCode + idApplicatif + client_secret à FID--------backchannel------------>>>>>
                                      + GrantType=Authorization_code
@@ -31468,12 +31625,12 @@ OAuth : OAuth2 : (oltu : https://cwiki.apache.org/confluence/display/OLTU/OAuth+
     EDSN demande une authorisation                                                                                                              
                    --->GET                                                                                           
                    --->GET  plusieurs fois tant que expir OK.
-                   --->GET----------backchannel/frontSiImplicitMode-----renvoit l'AccessToken----------->>>>>>FIDx Vérifie que l'AccessToken est valide Puis Execute l'action ou                                                                                            FID renvoit un RefreshToken à EDSN
+                   --->GET----------backchannel/frontSiImplicitMode-----renvoit l'AccessToken----------->>>>>>FIDx Vérifie que l'AccessToken est valide Puis Execute l'action ou                                                                                            
                                                                          contient le scope                                                                                     |
                                                                            OU renvoit                                                                                          |
                                                                          getUserInfo si a reçu l'Token_ID                                                                      |
                                                                                                                                                                                |
-                          <<<<<<<<<<<<<<<<<<<<---------------------info demandée(restreinte au scope) backchannel---------------------------------------------------------------------retourne------
+                          <<<<<<<<<<<<<<<<<<<<---------------------info demandée(restreinte au scope) backchannel---------------------------------------------------------------------retourne------FID renvoit un RefreshToken à EDSN
 
 Kerberos : 
     utilisation de d'apache mod_auth_kerb : 
