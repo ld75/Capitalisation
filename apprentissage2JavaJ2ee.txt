@@ -1,4 +1,4 @@
-(?=.*spring)(?=.*boot)(?=.*te)
+(?=.*rest)(?=.*webservice)
 Rule à faire : 
     refaire crossing-covariant mais cette fois les tags * et + et 0/* sont sur les instances! > difficile
 Canvas :
@@ -2402,13 +2402,15 @@ http : un flux http c juste  un string qui passe par une socket. ce string conti
         set-cookie: valeurs renvoyées du serveur vers le navigateur. Ce dernier les renverra ensuite dans ses requetes dans "Cookie"
         location: si redirection, indique l'url cible  
         WWW-Authenticate: Negociate // si la requête contenait WWW-Authenticate et que l'utilisateur n'a pas de session. Dans ce cas le code HTTP est 401                                                              
-erreurs codes http:
+erreurs codes http: LINKcodesHttp
 200: OK
+201: Confirmation que creation OK. Lien vers l'objet crée figure dans le header "Location"
+202: Confirmation que changement accepté mais pas encore terminé. Lien vers l'objet qui sera crée/modifié figure dans le header "Location"
 204: OK mais je reste sur la meme page
 301: redirection permanante et definitive
 302: redirection temporaire. Google n'aimepas
 400: erreur de synthaxe:protocole http non respecte
-401: non authorise (manque login/password): n'a pas encore été authentifé et le navigateur doit maintenant chercher à s'authentifier
+401: non authorise (manque login/password): n'a pas encore été authentifé et le navigateur doit maintenant chercher à s'authentifier. Contient dans le header WWW-Authenticate
 403 407: interdit (login/password incorrect) authentification a échoué
 404: page non trouvee
 405: methode http inadaptee: enlever de ma servlet super.doPost(req, resp); pour que ça marche.
@@ -2949,9 +2951,11 @@ Super methode: recupere la session si il y en a une. Sinon, il en cree une nouve
       }
     ou recuperer adresse ip de l'appelant d'une servlet
         servletRequest.getRemoteAddr()
-    PRG : 
-          never show pages in response to POST
-          always load pages using GET                                          
+    PRG :
+          GET : ne modifie jamais l'état du systeme sauf des trucs comme le logs, ne fait que renvoyer data comme un select. always load pages using GET
+          PUT : ne fait que modifier update un data du système
+          POST : Fait tout ce que PUT ne fait pas: CREATION. never show pages in response to POST
+          DELETE : ne fait que supprimer un data du système. Peut etre async. voir LINKcodesHttp 20x 
           Navigate from POST to GET using REDIRECT LINKredirwebservice998 //on peut faire comme ca dans un webservice qui a une methode post
                         URI go = new URI("https://"+httpRequest.getServerName()+"/app/foryou/denied.html?samlDenied");
                         javax.ws.rs.core.Response response = javax.ws.rs.core.Response.seeOther(go).build(); //LINKRedirectwebservice
@@ -4898,7 +4902,7 @@ Spring : XML STYLE
                             dans les jsp: 
                                   <spring:message code="lacledansmesfichiermsg" text="default text" />
                               en java recuperer le message i18n : 
-                                    @RequestMapping(value = "/inputbadge", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+                                    @RequestMapping(value = "/inputbadge", method = RequestMethod.POST//est GET par defaut, produces = MediaType.APPLICATION_JSON_VALUE)
                                     @ResponseBody
                                     //@ResponseStatus(HttpStatus.OK)
                                     public OutputBadge inputBadge(Locale locale, @RequestBody InputBadge inputBadge, HttpServletResponse httpServletResponse) throws Exception {
@@ -5049,12 +5053,12 @@ Spring : XML STYLE
     Suite springMVC spring mvc mon controlleur :
                             // AVEC ANNOTATION :
                             @Controller
-                            (optionnel)@RequestMapping("/welcome") Si je mets ca , mon url doit etre : /welcome/autrechemin (par ex)
-                            @RestController pour qu'il soit cap de renvoyer que du JSON (pour webservice et ajax) : a mettre en tête de classe: equivaut a mettre : @Controller en tete de classe +  @ResponseBody devant  chaque methode
+                            (optionnel)@RequestMapping("/welcome") Si je mets ca , mon url doit etre : /welcome/autrechemin (par ex) //est GET par defaut
+                            @RestController pour qu'il soit cap de renvoyer que du JSON ou XML(je crois) (pour webservice et ajax) : a mettre en tête de classe: equivaut a mettre : @Controller en tete de classe +  @ResponseBody devant  chaque methode
                             @Scope("request") (par exemp<le) ou @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)                             
                             public class MaClasseMonController // NE PAS l'appeler Controller tout court
                             {
-                                @RequestMapping(value="/monpath.html",method=RequestMethod.POST) (pour mettre les deux get et post et get : method={ RequestMethod.GET, RequestMethod.POST })
+                                @RequestMapping(value="/monpath.html",method=RequestMethod.POST) (pour mettre les deux get et post et get : method={ RequestMethod.GET, RequestMethod.POST }) //est GET par defaut
                                 public ModelAndView helloworld(@ModelAttribute("student1") Student student1, BindingResult sierrorlorsdubiding) //bind les parametres de mon formulaire id="student1" avec les champs ayant un name:"toto" avec mon objet Student qui a une methode getsetToto
                                                                                                               Bind avec n'importe quel type de var : date, arraylist etc...Meme les objets sous-jacents
                                                                                                               si je veux personaliser mon binding il faut utiliser une methode annotee avec @InitBinder (voir InitBinder)
@@ -5071,7 +5075,7 @@ Spring : XML STYLE
                                     }
                                 }
                                 @ResponseBody // en tete de methode ou de classe pour qu'il soit cap de renvoyer que du json même si je retourne un objet java(webservice mais inutile si j'ai mis @RestController en tête de classe)
-                                @RequestMapping(value="/monpath.html",method=RequestMethod.POST)
+                                @RequestMapping(value="/monpath.html",method=RequestMethod.POST) //est GET par defaut
                                 @RequestMapping("/welcome") // plus besoin de mettre dans le frontcontroller
                                 ou bien avec url parametre en get
                                 @RequestMapping("/welcome/{parametre1}/{parametre2}") // url: /welcome/toto/titi
@@ -5096,7 +5100,7 @@ Spring : XML STYLE
 	
                             	public ModelAndView postCommentAgency(@RequestBody Object[]ou ObjetJavaAvecAnnotations  comment) //@RequestPart Map map)// @RequestBody LinkedMultiValueMap<String, Object> requestBody) pour recuperer du JSON ou du XML
 	
-                                ATTENTIO PathVariable c pour l'URL RequestParam c pour la request : pour un post ca se met comme ca dans le body du post : paramname+"="+paramvalue;
+                                ATTENTION @PathVariable c pour l'URL ex:x/y/z @RequestParam c pour la request ex:?filter=x : pour un post ca se met comme ca dans le body du post : paramname+"="+paramvalue;
                                 public ModelAndView helloworld(@PathVariable("parametre1") String monparam1, @PathVariable("parametre2") String monparam2)
                                 public ModelAndView helloworld(@PathVariable Map<String,String> rePathVar)
                                 public ModelAndView helloworld(@RequestParam(value="parametre1",defaultValue="siParametre1EstNullVide", required=true) String monparam1, @RequestParam("parametre2") String monparam2)
@@ -22882,7 +22886,8 @@ pour remplacer les points par des virgules dans un chiffre:
         return dir.delete(); // voir supprimer un fichier  
     }
 
-Webservices : webservice : voir LINKSWAGGER voir exemple de webservice rest sans framework ici : d:\Profiles\lduverge\Desktop\Apprentissage\webservicedemo(attention pour l'entite j'ai pas respecte unclebob) 
+Webservices : webservice : voir LINKSWAGGER voir exemple de webservice rest sans framework ici : d:\Profiles\lduverge\Desktop\Apprentissage\webservicedemo(attention pour l'entite j'ai pas respecte unclebob)
+  dans le cadre de microservices il faut qu'il y ait qun seul entrypoint point de départ de l'histoire et les liens renvoyés par les webservices respectant la norme HATEOAS permettent de savoir quelles autres urls je peux appeler.  
 si erreur java.lang.AbstractMethodError: javax.ws.rs.core.UriBuilder.uri(Ljava/lang/String;)Ljavax/ws/rs/core/UriBuilder
       c parce que j'utilise pas les bonnes versions de librairies jersey/tomcat je crois. upgrader
   webservice renvoit une erreur policy? regarder au niveau "Autorisation"
@@ -22890,7 +22895,7 @@ tutoriel Pour faire des serveurs de webservice : http://www.tutorialspoint.com/r
         webservices: http://users.skynet.be/pascalbotte/
 voir l'outil Soap Ui soapui bien pratique (dans installations)
 SOAP utilise WSDL (le serveur donne au client un wsdl pour qu'il puisse appeller ses methodes) Pour voir les details d'un webservice avec wsdl : http://172.18.68.129:10512/hr-ws/services?wsdl (?wsdl à la fin)
-REST client accède à un service à partir d'un URL et recoit en reponse json ou jpg ou plain text etc (meta-data dedans indique quoi)
+REST client accède à un service à partir d'un URL et recoit en reponse json ou jpg ou plain text ou meme xml etc (meta-data dedans indique quoi) n'est pas forcement du http. Ca peut etre un websocket
 UDDI est un annuaire des webservices sur internet
 pour generer le wsdl a la main :
           se placer dans le repertoire classes et faire :
