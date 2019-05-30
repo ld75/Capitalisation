@@ -1,4 +1,5 @@
 (?=.*id)(?=.*thread)
+
 AFAIRE:
 a lire : https://stackoverflow.com/questions/3216780/problem-reloading-a-jar-using-urlclassloader
 <script>
@@ -11,7 +12,6 @@ function facebookpixelRegister(){
 facebook : 
        https://developers.facebook.com/docs/marketing-api/dynamic-product-ads/product-audiences#setuppixel
 
------------
 Negociation salaire : 
   pas depasser un plafond (a definir) ceux qui sont comme moi ont quel salaire?
   qui est-il?
@@ -245,9 +245,6 @@ scrum : management :
       Simple Design: designer que quand necessaire.
       Refactorer pour avoir du clean code.
       TDD: OBLIGATOIRE 
-      
-      
-            
 videos : 
   lightworks :
     couper: placer le in et le out puis le bouton juste a cote "delete the marked section"
@@ -606,7 +603,7 @@ docker : créer une image (executable)-> builder ->image devient container qd es
   docker build -t(pour tag) unnomquejedonneamoncontainer /pathOuEstDockerfile(. par ex si j'y suis)// Creer mon container docker qui rentre dans la liste. executer ça où ya le fichier Dockerfile                                                                                                                                                                                                                         |
   docker run -it(pour interactif voir LINKjgjgjg) --rm (pour supprimer le container une fois que son execution est terminee:du coup il ne reste que l'image qui run je crois) --name=facultatifUnAutreNomJeCroisQueJeDonneAMonContainer -d (pour executer en background) -p 80:8080 -p 443:8443 nomDeMonConteneurAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path Dans mon container du coup voir l'option -v)// demarrer un contenur à partir de son image. En Foreground si je fais ctrl+c (unix seulement) ça kill le process
                                   -p portdeOS:portOuvertduContainer(je peux en mettre plusieurs)                                                                                                                                  |_peut etre un truc que Docker recupere automatiquement dans le repository docker sur le net (comme une dependance maven)                      
-docker run -it --name=facultatifUnAutreNomJeCroisQueJeDonneAMonContainer -d (pour executer en background) -p 80:8080 -p 443:8443 nomDeMonConteneurAExecuter // demarrer un contenur à partir de son image. En Foreground si je fais ctrl+c (unix seulement) ça kill le process
+  docker run -it --name=facultatifUnAutreNomJeCroisQueJeDonneAMonContainer -d (pour executer en background) -p 80:8080 -p 443:8443 nomDeMonConteneurAExecuter // demarrer un contenur à partir de son image. En Foreground si je fais ctrl+c (unix seulement) ça kill le process
                                   -p portdeOS:portOuvertduContainer(je peux en mettre plusieurs)
   docker run -it -v $(pwd):/ext-mount --rm unicon/shibboleth-idp init-idp.sh (-v...c'est l'option volume. Car Le container n'a pas accès au repertoire du host. donc $(pwd) est le repertoire courant où est le container. Monte moi ce repertoire dans le repertoire /ext-mount dans mon container)
   docker container stop IDDuContainer // pour stopper l'execution d'un container (par son ID ça marche mieux voir donc la liste.)
@@ -626,7 +623,6 @@ visualstudiocode editeur:
 gource : annimation de git
     C:/gource-0.47.win64/gource -a 500 --seconds-per-day 0.5 C:/Users/lduverge/Desktop/ALTRAN/RENAULT/DiversitySimulatorDEV/diversitysimulator // -a pour nombre de secondes a sauter --file-extensions pour ne pas afficher le nom des fichiers mais que leurs extensions
 
-
 github : guitub :  git : gitub : (installable sur mobaxterm :depoxer le plugin dans meme repertorie que mobaxterm.exe)
         (ne pas utiliser le plugin intellij) LINKtortoiseGItsdflk 
           attention tortoiseGit ne pas faire diff with Previous version ça compare la version actuelle avec 2 commits plus loin
@@ -634,11 +630,10 @@ github : guitub :  git : gitub : (installable sur mobaxterm :depoxer le plugin d
   installé sous D:\Dev\Git\bin
    http://bioinfo-fr.net/git-premiers-pas et /http://bioinfo-fr.net/git-usage-collaboratif
    https://onlywei.github.io/explain-git-with-d3/ et https://learngitbranching.js.org/
-   
     repertoireLocal | index(~=pannier=stagging) | HEAD(~=commande) | serveurDistant
                   add                        commit              push
     .gitignore est un fichier à la racine du projet dans lequel j'ecris toutes les extensions de fichiers que je ne veux pas gerer dans git (*.iml)
-    POUR QUIL SOIT PRIS EN COMPTE IL FAUT LE COMMITER ET LE PUSHER
+    POUR QUIL SOIT PRIS EN COMPTE IL FAUT LE COMMITER ET LE PUSHER (ET RECREER LE FICHIER QUI FAIT CH... ?)
               exemple de gitignore
                     # ---- Maven
                     target/
@@ -748,7 +743,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm :depoxer le plugin d
     preparer un commit:(on peut le faire plusieurs fois avant de commiter) 
       git add -v(verbose) * ou /xx/* ou . ou NomFichier ou '**/pom.xml' (si c'est dans un long path sous-repertoire) // repertoirelocal->index est indexe :Pour rajouter QUE LES NOUVEAUX/UPDATED FICHIERS dès lors toutes les modifs faites AVANT add seulement vont etre commitees quand je ferais git commit... si je modif d'autres fichiers Apres et je commit direct, ils ne sont pas envoyes. A utiliser si j'ai erreur "needs merge you need to resolve your current index first" car il desindexe les fichiers qui n'ont pas bien mergé
       si j'ai le message hint: You've added another git repository inside your current repository.... et que je veux conserver le sous module git faire : d'abord "git rm -f --cached phpExtLib/PHPMailer" pour revenir en arriere puis "git submodule add https://github.com/PHPMailer/PHPMailer.git phpExtLib/PHPMailer". Il faudra alors pusher .gitmodules pour les autres developpeurs. Les autres developpeurs devront faire "git submodule init" puis "git submodule update"
-      git rm --cached <filePath> //LINKrmgit a utiliser aussi si gitignore ne semble pas marcher: ignore l'indexation et le suivi d'un fichier. ATTENTION PEUT SUPPRIMER LES FICHIERS. SI je ne veux pas faire git reset HEAD monfichier pour l'ignorer. Les vire de untracked file mais certains fichiers on y arrive pas. .. voir LINKcheckoutquandmeme
+      git rm --cached <filePath1 filePath2> //LINKrmgit a utiliser aussi si gitignore ne semble pas marcher: ignore l'indexation et le suivi d'un fichier. ATTENTION PEUT SUPPRIMER LES FICHIERS. SI je ne veux pas faire git reset HEAD monfichier pour l'ignorer. Les vire de untracked file mais certains fichiers on y arrive pas... voir LINKcheckoutquandmeme
       git rm -r --cached <filePath> //-r pour recursif
       git status -uno//(-uno pour ne pas voir les untracked) pour savoir quels fichiers vont etre commites ( a faire si j'ai le message Changes not staged for commit)
       git commit:  apres commit je peux faire un fetch((recupere du repo distant vers le local dans une autre localisation:pour l'instant n'a pas touché a mon espace de travail) puis pull (pour récupérer les dernières modifs des collegues et le merger avec mon espace de travail) puis ensuite un push
@@ -788,6 +783,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm :depoxer le plugin d
       git diff numcommitavant numcommitapres <wildcardPathOptionel> compare 2 commits (respecter ordre commits pour que ce soit plus comprehensible)
       git tag 1.2.0 (sans mettre "v")// tag le dernier commit fait dans mon repo. ce tag ne se push pas.... voir Linktaggit
       git tag 1.2.0 iducommit fourni par >git log // cree un tag pour le désigné
+      git diff --name-only // affiche que les noms des fichiers differents
       Linktaggit:  le tag ne se push pas par defaut: pour le pusher faire git push origin <identifiant du tag>
       git checkout pathfichiermodifieMaisPasAdded //annuler mes modifs 
       git checkout <nom_du_tag> pour revenir à une ancienne version// ne marche pas si je veux remplacer mon working directory modifié par le dernier commit: dans ce cas faire git chekout -- pathAvecWildcardDesFichiersQueJaiModifieDansLeWorkSpaceMaisQueJeNaiPasAdded (undo) Linkcheckout
@@ -813,7 +809,8 @@ github : guitub :  git : gitub : (installable sur mobaxterm :depoxer le plugin d
             si j'ai error: failed to push some refs to // peut etre j'ai oublié de commité ou bien il faut puller avant
         git config credential.helper store // pour ne plus qu'il demande le user/pass en https
         git pull: avant de faire ca faire git fetch
-        git pull URLouPathRepositoryDistantPeutEtreLocal si il veut pas mettre:--allow-unrelated-histories//recupere les derniers push des autres sur mon HEAD local // si il dit "not a git repository" il faut que je me place dans le projet git
+        la premiere fois faire git pull origin master
+        git pull URLouPathRepositoryDistantPeutEtreLocal si il veut pas et/ou met message refusing to merge unrelated histories mettre:--allow-unrelated-histories//recupere les derniers push des autres sur mon HEAD local // si il dit "not a git repository" il faut que je me place dans le projet git
                     si il dit "....be overwritten by merge" c'est que quelqun a poste sur le repo des choses qu'il n'aurait pas du. 2 solutions: 1)faire un git clone ailleurs du projet puis git rm fichiersquinauraientpasdusetrouverdanslerepo puis commit et push 2)aller sur le repo et les supprimer
             
 Nativescript :
@@ -893,13 +890,6 @@ Pour faire un serveur serveur de chat etc... fonctionnement des sockets
     s.getOutputStream();
  si erreur java.net.SocketException socket closed This exception means that you closed the socket, and then continued to try to use it. os.close(); And you closed it here. Closing either the input or the output stream of a Socket closes the other stream and the Socket. 
                         
-jwebsocket:
-  declarer  JWEBSOCKET_HOME vers D:\LocalData\p036782\jWebSocket-1.0
-  en variable d'environnement
-   D:\LocalData\p036782\jWebSocket-1.0\bin\jWebSocketAdmin.bat
-   D:\LocalData\p036782\jWebSocket-1.0\bin\jWebSocketServer.bat
-   ou 
-   java -jar jWebSocketServer-1.0.jar
    
 Adobe illustrator :
     enlever la grille de perspective
@@ -1002,8 +992,8 @@ formatter forme affichier le xml :
 pour paster un ancien paste du clipboard clip board collé: 
         Ctrl+Shift+Insert
 tapper saisir abrege abregé racourci shortcut pour ecrire methode main : psvm
-Si intellij ne demarre plus a cause d'une erreur initializ initialis fatal xdebug supprimer son cache: reset marche plus 
-  supprimer repertoire D:\Profiles\lduverge\.IdeaIC2017.3
+Si intellij ne demarre plus a cause d'une erreur initializ initialis fatal xdebug supprimer son cache: reset marche plus. Ou si intellij me cache des fichiers meme si dans projet>rouecrantee je coche quil doit tout afficher 
+  supprimer repertoire D:\Profiles\lduverge\.IdeaIC2017.3 ou .idea
 installer un plugin: pluggin :
     settings > plugin > on peut installer un jar.
 indentation indenter format code : Ctrl+Alt+L
@@ -1144,8 +1134,10 @@ Acceder à la methode de la sous classe implementant l'interface : Ctrl+b
 generer la methode d'une sous classe dans l'interface : ajouter @Override et faire alt+entree sur l'erreur affichee > pull upSelectionner de plus en plus Ctrl+w
 commenter/decommenter Ctrl+barre oblique Ctrl+maj+barre oblique DU NUMPAD!
 
-faire un chat : 
-jwebsocket: (Web Socket)
+eventsource :sse(server-sent-event) autre alternative aux websocket mais ca ne fonctionne que dans un sens : serveur->client: rafraichit en live la page dans une seule requete
+    voir https://github.com/mdn/dom-examples/blob/master/server-sent-events/sse.php
+    et voir coté javascript sur MDN: EventSource 
+jwebsocket : (Web Socket) faire un chat : 
   declarer  JWEBSOCKET_HOME vers D:\LocalData\p036782\jWebSocket-1.0
   en variable d'environnement
    D:\LocalData\p036782\jWebSocket-1.0\bin\jWebSocketAdmin.bat
@@ -2400,13 +2392,15 @@ http : un flux http c juste  un string qui passe par une socket. ce string conti
         set-cookie: valeurs renvoyées du serveur vers le navigateur. Ce dernier les renverra ensuite dans ses requetes dans "Cookie"
         location: si redirection, indique l'url cible  
         WWW-Authenticate: Negociate // si la requête contenait WWW-Authenticate et que l'utilisateur n'a pas de session. Dans ce cas le code HTTP est 401                                                              
-erreurs codes http:
+erreurs codes http: LINKcodesHttp
 200: OK
+201: Confirmation que creation OK. Lien vers l'objet crée figure dans le header "Location"
+202: Confirmation que changement accepté mais pas encore terminé. Lien vers l'objet qui sera crée/modifié figure dans le header "Location"
 204: OK mais je reste sur la meme page
 301: redirection permanante et definitive
 302: redirection temporaire. Google n'aimepas
 400: erreur de synthaxe:protocole http non respecte
-401: non authorise (manque login/password): n'a pas encore été authentifé et le navigateur doit maintenant chercher à s'authentifier
+401: non authorise (manque login/password): n'a pas encore été authentifé et le navigateur doit maintenant chercher à s'authentifier. Contient dans le header WWW-Authenticate
 403 407: interdit (login/password incorrect) authentification a échoué
 404: page non trouvee
 405: methode http inadaptee: enlever de ma servlet super.doPost(req, resp); pour que ça marche.
@@ -2947,9 +2941,11 @@ Super methode: recupere la session si il y en a une. Sinon, il en cree une nouve
       }
     ou recuperer adresse ip de l'appelant d'une servlet
         servletRequest.getRemoteAddr()
-    PRG : 
-          never show pages in response to POST
-          always load pages using GET                                          
+    PRG :
+          GET : ne modifie jamais l'état du systeme sauf des trucs comme le logs, ne fait que renvoyer data comme un select. always load pages using GET
+          PUT : ne fait que modifier update un data du système
+          POST : Fait tout ce que PUT ne fait pas: CREATION. never show pages in response to POST
+          DELETE : ne fait que supprimer un data du système. Peut etre async. voir LINKcodesHttp 20x 
           Navigate from POST to GET using REDIRECT LINKredirwebservice998 //on peut faire comme ca dans un webservice qui a une methode post
                         URI go = new URI("https://"+httpRequest.getServerName()+"/app/foryou/denied.html?samlDenied");
                         javax.ws.rs.core.Response response = javax.ws.rs.core.Response.seeOther(go).build(); //LINKRedirectwebservice
@@ -3408,17 +3404,14 @@ Utiliser dans chrome "Responsive...." pas les differentes marques de phone: c tr
             {
             .mondivparent{background-color:red;}
             }
-            
             /* Small devices (portrait tablets and large phones, 600px and up) */
             @media only screen and (min-width: 600px) {
             .mondivparent{background-color:blue;}
             }
-            
             /* Medium devices (landscape tablets, 768px and up) */
             @media only screen and (min-width: 768px) {
             .mondivparent{background-color:yellow;}
             }
-            
             /* Large devices (laptops/desktops, 992px and up) */
             @media only screen and (min-width: 992px) {
             .mondivparent{background-color:black;}
@@ -3526,7 +3519,7 @@ pour faire clignoter un texte :
 pour centrer un tableau une table dans un div lui mettre : 
   pas text-align:center mais margin: 0 auto;
 pour faire une animation en boucle sur une image par exemple avec css. (l'ere des gif annimes est revolue!) panorama defile
-        ATTENTION pour les animations annimations en css utiliser en priorite opacity et transform 
+        ATTENTION pour les animations annimations en css utiliser en priorite opacity et transition ou transform 
         mettre les prefix devant chaque animation et keyframe: -webkit-, -moz-, -o-, -ms-
           /* première etape */
           p#doigt a:hover, p#doigt a:focus {
@@ -3735,6 +3728,12 @@ utiliser les fonts telecharges du serveur:
         	font-size: 1.5em;
         }
         
+        
+
+        
+        
+        
+        
 pour selectionner un nextSibing d'un element
         elementrepere + elementJusteACoteASelectionner
          Sinon utiliser plutot nextElementSibling si on veut exclure les textes
@@ -3750,7 +3749,6 @@ pour centrer direct:
     align-items:center ou...// pour l'alignement du contenu verticallement
     flex-direction: row  ou row-reverse ou column ou column-reverse // transforme complettement le html quel qu'il soit! affichage bien centre en ligne ou colonne. ou bien flex-flow: row ou column ???
     flex-wrap: wrap ou nowrap ou wrap-reverse
-    
   }
   enfants : jouer avec les width:x%; pour passer à la ligne et les padding pour les espaces 
       :nth-child veut dire selctionner element si :
@@ -3879,7 +3877,6 @@ transparance: opacite
                  <slot name="content"></slot>
                  </div>
                 </div>
-        
     Si les span font des retours chariot non souhaites:
     			leur ajouter l'attribut style css: display: inline; // inline si c du texte, block si c'est un div( avec une image par exemple)
     Utiliser les classes : <div class= « maclasse1 maclasse2 »> herite de classe1 puis classe2(override)
@@ -4208,7 +4205,7 @@ maven:
                                                                                                                                                                 
                     public static void main(String[] args) {                                                                                                     
                         SpringApplication.run(Application.class, args);                                                                                                                                                                                     
-                    }        
+                    }                                                                                                                                                                                                                                                    
                     @Override
                     public void addResourceHandlers(ResourceHandlerRegistry registry) {attention peut etre que quand je veux utiliser ça je ne dois pas mettre @EnableWebMvc
                         registry.addResourceHandler("/**.html").addResourceLocations("file:path/to/your/static/html"); // si je veux que mes resources statiques static soient externalisées hors du jar
@@ -4330,7 +4327,7 @@ spring security : spring-security : springsecurity :
       @Qualifier("nom")//facultatif // correspond je crois au name du bean
       private FilterChainProxy springSecurityFilterChain;
       puis dans la methode de test:
-      this.mockMvc=MockMvcBuilders.webApplicationContextSetupOuwebAppContextSetup(this.wac).addFilter(this.springSecurityFilterChain).build();
+      mockMvc=MockMvcBuilders.webApplicationContextSetupOuwebAppContextSetup(this.wac).addFilter(this.springSecurityFilterChain).build(); voir LINKmockmvc 
       et voir plus bas les tests d'urls avec users et roles
   pour connaitre le role d'un utilisateur dans mon controlleur web en java
                 if(request.isUserInRole(Constants.ROLE_GESTFORM))
@@ -4895,7 +4892,7 @@ Spring : XML STYLE
                             dans les jsp: 
                                   <spring:message code="lacledansmesfichiermsg" text="default text" />
                               en java recuperer le message i18n : 
-                                    @RequestMapping(value = "/inputbadge", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+                                    @RequestMapping(value = "/inputbadge", method = RequestMethod.POST//est GET par defaut, produces = MediaType.APPLICATION_JSON_VALUE)
                                     @ResponseBody
                                     //@ResponseStatus(HttpStatus.OK)
                                     public OutputBadge inputBadge(Locale locale, @RequestBody InputBadge inputBadge, HttpServletResponse httpServletResponse) throws Exception {
@@ -5046,12 +5043,12 @@ Spring : XML STYLE
     Suite springMVC spring mvc mon controlleur :
                             // AVEC ANNOTATION :
                             @Controller
-                            (optionnel)@RequestMapping("/welcome") Si je mets ca , mon url doit etre : /welcome/autrechemin (par ex)
-                            @RestController pour qu'il soit cap de renvoyer que du JSON (pour webservice et ajax) : a mettre en tête de classe: equivaut a mettre : @Controller en tete de classe +  @ResponseBody devant  chaque methode
+                            (optionnel)@RequestMapping("/welcome") Si je mets ca , mon url doit etre : /welcome/autrechemin (par ex) //est GET par defaut
+                            @RestController pour qu'il soit cap de renvoyer que du JSON ou XML(je crois) (pour webservice et ajax) : a mettre en tête de classe: equivaut a mettre : @Controller en tete de classe +  @ResponseBody devant  chaque methode
                             @Scope("request") (par exemp<le) ou @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)                             
                             public class MaClasseMonController // NE PAS l'appeler Controller tout court
                             {
-                                @RequestMapping(value="/monpath.html",method=RequestMethod.POST) (pour mettre les deux get et post et get : method={ RequestMethod.GET, RequestMethod.POST })
+                                @RequestMapping(value="/monpath.html",method=RequestMethod.POST) (pour mettre les deux get et post et get : method={ RequestMethod.GET, RequestMethod.POST }) //est GET par defaut
                                 public ModelAndView helloworld(@ModelAttribute("student1") Student student1, BindingResult sierrorlorsdubiding) //bind les parametres de mon formulaire id="student1" avec les champs ayant un name:"toto" avec mon objet Student qui a une methode getsetToto
                                                                                                               Bind avec n'importe quel type de var : date, arraylist etc...Meme les objets sous-jacents
                                                                                                               si je veux personaliser mon binding il faut utiliser une methode annotee avec @InitBinder (voir InitBinder)
@@ -5068,7 +5065,7 @@ Spring : XML STYLE
                                     }
                                 }
                                 @ResponseBody // en tete de methode ou de classe pour qu'il soit cap de renvoyer que du json même si je retourne un objet java(webservice mais inutile si j'ai mis @RestController en tête de classe)
-                                @RequestMapping(value="/monpath.html",method=RequestMethod.POST)
+                                @RequestMapping(value="/monpath.html",method=RequestMethod.POST) //est GET par defaut
                                 @RequestMapping("/welcome") // plus besoin de mettre dans le frontcontroller
                                 ou bien avec url parametre en get
                                 @RequestMapping("/welcome/{parametre1}/{parametre2}") // url: /welcome/toto/titi
@@ -5093,7 +5090,7 @@ Spring : XML STYLE
 	
                             	public ModelAndView postCommentAgency(@RequestBody Object[]ou ObjetJavaAvecAnnotations  comment) //@RequestPart Map map)// @RequestBody LinkedMultiValueMap<String, Object> requestBody) pour recuperer du JSON ou du XML
 	
-                                ATTENTIO PathVariable c pour l'URL RequestParam c pour la request : pour un post ca se met comme ca dans le body du post : paramname+"="+paramvalue;
+                                ATTENTION @PathVariable c pour l'URL ex:x/y/z @RequestParam c pour la request ex:?filter=x : pour un post ca se met comme ca dans le body du post : paramname+"="+paramvalue;
                                 public ModelAndView helloworld(@PathVariable("parametre1") String monparam1, @PathVariable("parametre2") String monparam2)
                                 public ModelAndView helloworld(@PathVariable Map<String,String> rePathVar)
                                 public ModelAndView helloworld(@RequestParam(value="parametre1",defaultValue="siParametre1EstNullVide", required=true) String monparam1, @RequestParam("parametre2") String monparam2)
@@ -5218,7 +5215,9 @@ Spring-batch :
                                           @Bean...etc 
                                     @TestPropertySource(value={"classpath:/config/test.properties,classpath:/app.test.properties","classpath:/database.test.properties"}) // pour que les tests utilisent un autre fichier de propriete // VA REMPLIR VARIABLE ENVIRONNEMENT${xx}dans les configs.xml ET LES ANNOTATIONS @VALUE // voir http://docs.spring.io/spring/docs/4.3.2.RELEASE/javadoc-api/org/springframework/test/context/TestPropertySource.html
                                                     ou  locations=                                                                                 
-                                    @SpringBootTest si spring-boot // recherche la classe annotee @SpringBootApplication pour def ApplicationContext qui est partage entre toutes les methodes et classes de test sauf si on met @DirtiesContext 
+                                    @SpringBootTest(webEnvironment=RANDOM_PORT//facultatif. On peut aussi forcer le port) si spring-boot: demarre carrement le serveur. // recherche la classe annotee @SpringBootApplication pour def ApplicationContext qui est partage entre toutes les methodes et classes de test sauf si on met @DirtiesContext
+                                      ou
+                                    @WebMvcTest(MaClasseControllerATester.class// facultatif) A l'inverse de @SpringBootTest ne demarre pas SpringBoot mais rend les controlleurs accessibles   
                                     DEPRECIE : 
                                     // ne pas mettre @TransactionConfiguration et @Transaction si nos tests appellent des services car ceux ci gèrent dejà les transactions
                                     @TransactionConfiguration(transactionManager="ideaTxManager",defaultRollback=false) // pour que la classe de teste puisse tester directement les dao sans passer par le service.: le service cree automatiquement les transactions mais pas le test donc besoin mettre ca. Ainsi la classe test se comporte comme un service qui appelle les dao
@@ -5244,12 +5243,15 @@ Spring-batch :
                                       MockHttpServletResponse response;
                                       @Autowired
                                       ServletWebRequest webRequest; 
+                                      @Autowired  
+                                     TestRestTemplate rest = testRestTemplate;  // tester un webservice
                                       
                                       
                                       @Autowired ou @Inject
                                       IPermissionDao permissiondao;
                                       
->>>                                   private MockMvc mockMvc;
+                                      @Autowired
+>>>                                   private MockMvc mockMvc; LINKmockmvc
                                       
                                       Mockery context = new JUnit4Mockery(); // pour utiliser Jmock (voir plus bas)<  
                                       
@@ -5296,6 +5298,9 @@ Spring-batch :
                                   			  .andExpect(status().isOk()) // necessite import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
                                   			  .andExpect(content().contentType("application/json"))
                                   			  .andExpect(jsonPath("$.name").value("Lee"));
+                                  		tester la reponse d'un webservice rest	  
+                                  		  ResponseEntity<MmcUser> response = testRestTemplate.getForEntity("/admin/getUsers", MmcUser.class);
+                                        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK); // assertJ est integré directement dans springboot
                                   		ou
 >>>                                 MvcResult result =mockMvc.perform(post("/sirh/user")
                                                     		.header("Api-key", apiKey)
@@ -5327,7 +5332,7 @@ Spring-batch :
                                                   MockHttpServletRequestBuilder content = MockMvcRequestBuilders.fileUpload("/save").file(fichier).param("type", "ZY5N").param("mode","simulation");
                                              		  this.mockMvc.perform(content)
                                               		  .andExpect(status().isOk());
-                             
+                                          
                                         ou bien tester un webservice  
                                         TestRestTemplate rest = new RestTemplate();  
                                          @Test
@@ -6702,6 +6707,7 @@ this will show you all of the tables:
 	pour faire un select des premieres lignes seulement (rownum limit)
 			SELECT VINVA.NATURE FROM VINVA FETCH FIRST 7 ROWS ONLY
 			SELECT W0DCI$.FINVA.NATURE FROM W0DCI$.FINVA FETCH FIRST 7 ROWS ONLY
+
 kafka : A_COMPLETER voir aussi https://github.com/akka/alpakka-kafka qui fait de reactive streaming c a d backpressure c a d si consummer sont debordes par vitesse ils disent au producer de ralentire. voir aussi du code source sur github/jamesward/koober(demo de la voiture et du gars sur le map) 
         producer1-   kafka
                   --\---->topic1(copié sur partition1, partition2, partition3)  // 1 partition leader et les autres partitions sont juste des replicats de securité pour eviter perte données
@@ -15107,8 +15113,6 @@ ouvrir une nouvelle fenetre :
                  Scene scene = new Scene(root, 400, 400) ;
                 primaryStage.setScene(scene) ;
                 primaryStage.show() ;
-
-
 pour faire une ligne jfx trait separation separateur :
             Line line1 = new Line(0, 0, 100, 200);
 
@@ -15461,39 +15465,32 @@ recuperer un fichier selon son path relative relatif et non pas absolu :
                       private Y y;
                       public Tuple()
                       {
-                          
                       }
                       public Tuple(X x, Y y) {
                           this.x = x;
                           this.y = y;}
-                  
                       public X getX()
                       {
                           return x;
                       }
-                  
                       public Y getY()
                       {
                           return y;
                       }
-                  
                       public void setX(X x)
                       {
                           this.x = x;
                       }
-                  
                       public void setY(Y y)
                       {
                           this.y = y;
                       }
-                  
                       @Override
                       public String toString()
                       {
                           return (this.x==null?"":x.toString())+"->"+(this.y==null?"":y.toString());
                       }
                   }
-
  du code java pour aller sur une autre page sans rien faire de special
   res.setContentType("text/html");
   res.setHeader("pragma", "no-cache");
@@ -15514,12 +15511,10 @@ convertir mp3 en wave :
         <dependency><groupId>com.googlecode.soundlibs</groupId><artifactId>mp3spi</artifactId><version>1.9.5-1</version></dependency>
         <dependency><groupId>com.googlecode.soundlibs</groupId><artifactId>jorbis</artifactId><version>0.0.17-2</version></dependency>
         <dependency><groupId>com.googlecode.soundlibs</groupId><artifactId>vorbisspi</artifactId><version>1.0.3-1</version></dependency>
-
 delta entre deux chaines de caracteres characters strings :
          public static String[] difference(String a, String b) {
                 return diffHelper(a, b, new HashMap<>());
             }
-        
             private static String[] diffHelper(String a, String b, Map<Long, String[]> lookup) {
                 return lookup.computeIfAbsent(((long) a.length()) << 32 | b.length(), k -> {
                     if (a.isEmpty() || b.isEmpty()) {
@@ -16139,7 +16134,6 @@ sauver serialiser en java des objets java dans un fichier et pouvoir les recuper
         out.writeObject(new ArrayList(classificationNodes));
         out.writeObject(new ArrayList(getAllocations()));   // grace à Externalizable ici je converti l'observableList en arraylist pour reussir la serialisation
     }
-
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
     {
@@ -16169,7 +16163,6 @@ Serializer serialiser une classe java au format xml quon peut sauver importer ex
                                                                                                         out.writeObject(getX());
                                                                                                         out.writeObject(getY());
                                                                                                     }
-                                                                                                
                                                                                                     @Override
                                                                                                     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
                                                                                                     {
@@ -16694,7 +16687,6 @@ pour convertir un set en arraylist
       List<Criteria> mainList = new ArrayList<Criteria>();
               mainList.addAll(criteria);
               return mainList;
-                                  
 pour convertir un string en Time heure
     DateFormat formatter = new SimpleDateFormat("HH:mm"); // attention n'est pas threadsafe.
     java.sql.Time timeValue = new java.sql.Time(formatter.parse(fajr_prayertime).getTime());              	    
@@ -19898,7 +19890,6 @@ Bonne pratique d'autocommit si autocommit est à false:
                 	}
 
 
-                                        		
 se connecter à une base de donnee oracle: 
 			public static Connection initConnection(String driver, String url, String user, String password) throws ClassNotFoundException, SQLException{
 			// ou driver c'est oracle.jdbc.driver.OracleDriver pour oracle.
@@ -20485,6 +20476,7 @@ fonctionnement des annotations :
                   ... ma logique...
                   return true ou false;
                 }
+              }   
               }
 pour tester la performance : perfs : perf : performances : performences :
             logger.debug("1TestPerformance: "+new Date(System.currentTimeMillis()).toString());
@@ -22884,7 +22876,8 @@ pour remplacer les points par des virgules dans un chiffre:
         return dir.delete(); // voir supprimer un fichier  
     }
 
-Webservices : webservice : voir LINKSWAGGER voir exemple de webservice rest sans framework ici : d:\Profiles\lduverge\Desktop\Apprentissage\webservicedemo(attention pour l'entite j'ai pas respecte unclebob) 
+Webservices : webservice : voir LINKSWAGGER voir exemple de webservice rest sans framework ici : d:\Profiles\lduverge\Desktop\Apprentissage\webservicedemo(attention pour l'entite j'ai pas respecte unclebob)
+  dans le cadre de microservices il faut qu'il y ait qun seul entrypoint point de départ de l'histoire et les liens renvoyés par les webservices respectant la norme HATEOAS permettent de savoir quelles autres urls je peux appeler.  
 si erreur java.lang.AbstractMethodError: javax.ws.rs.core.UriBuilder.uri(Ljava/lang/String;)Ljavax/ws/rs/core/UriBuilder
       c parce que j'utilise pas les bonnes versions de librairies jersey/tomcat je crois. upgrader
   webservice renvoit une erreur policy? regarder au niveau "Autorisation"
@@ -22892,7 +22885,7 @@ tutoriel Pour faire des serveurs de webservice : http://www.tutorialspoint.com/r
         webservices: http://users.skynet.be/pascalbotte/
 voir l'outil Soap Ui soapui bien pratique (dans installations)
 SOAP utilise WSDL (le serveur donne au client un wsdl pour qu'il puisse appeller ses methodes) Pour voir les details d'un webservice avec wsdl : http://172.18.68.129:10512/hr-ws/services?wsdl (?wsdl à la fin)
-REST client accède à un service à partir d'un URL et recoit en reponse json ou jpg ou plain text etc (meta-data dedans indique quoi)
+REST client accède à un service à partir d'un URL et recoit en reponse json ou jpg ou plain text ou meme xml etc (meta-data dedans indique quoi) n'est pas forcement du http. Ca peut etre un websocket
 UDDI est un annuaire des webservices sur internet
 pour generer le wsdl a la main :
           se placer dans le repertoire classes et faire :
@@ -23337,7 +23330,6 @@ jenkins :
 visual studio :pour javascript:
     zoom et dezoom: ctrl+"+" ou "-" du pavé numérique
     accolade correspondante: ctrl+shift+*
-                     
 eclipse :
 import/export run configuration possible
     menu file>import/export> run/debug ...
@@ -23420,7 +23412,7 @@ raccourcis shortcuts utiles: (pour les definir : WIndows>Preference>chercher "sh
       CTRL + SHIFT + / (pas du pave numerique)  : add comment set comment (commenter)
       CTRL + SHIFT + B : toggle breakpoint point d'arret
       CTRL+F6; CTRL+E switcher entre les pages (fichiers)
-      CTRL+F7 switcher entre vues vie              
+      CTRL+F7 switcher entre vues views              
       Alt+Maj+Q, Q : afficher une pannel vue specifique (plus rapide que CTRL+F7)
       ALT+Shift+X; T : lance JUnit test sur la classe en cours.
       CTRL + F8 : switcher entre perspectives
@@ -23476,6 +23468,7 @@ si un projet n'est pas un projet java il faut modifier son fichier .project et r
 si un projet n'est pas un projet web je crois qu'il faut reimporter de svn (ou recreer le projet web dynamique)
 pour changer la langue: menu > preferences > Plateforme cible
 pour commenter tout ce qui est selectionne Ctrl + Maj + /
+pour trouver une classe du src: Ctrl + espace
 pour trouver une classe du src: Ctrl + Shift + R
 pour trouver une classe du src et des libs: Ctrl + Shift + T
 pour ajouter en import les classes manquantes : Ctrl + o
@@ -23643,7 +23636,6 @@ demarrer > parametres >ajouter une imprimante
 quand un fichier xml ne marche pas , essayer:
 <?xml version = "1.0" encoding = "iso8859-1"?>
 <?xml version = "1.0" encoding = "UTF-8"?>
-
 decompiler :
       meilleur decompilateur :decode_java (java decompiler); Sinon utiliser Intellij qui peut aussi comparer des repertoires 
       fernflower pour decompiler tout un jar et exporter les sources dans un jar avec des .java à la place des .class (mettre ~1 pour les espaces)
@@ -24061,8 +24053,6 @@ saisir les commandes suivantes pour commander le serveur smtp (pas reçu le mail
           Date:Fri, 25 Jan 2019 09:04:30 -0400
           testlaurentbody
           QUIT
-
-
 
 LINK984095 sur cygwin ou unix je peux lister trouver chercher tous les documents dans un repository svn en ligne de commande sans client: 
        svn list -R https://svn.ptx.fr.sopra/svnhrasvc/hrasvc > todelete.txt
@@ -26095,6 +26085,10 @@ Typescript :
 
 
 Javascript :
+  pour savoir si une variable est un chiffre: 
+    isNaN(toto); 
+  pour avoir la proportion taille d'un element en pixcel au lieu de pourcentage largeur
+      monelement.clientWidth
     savoir si un string est vide :
         if(!lestring) renvoit true si c'est null, undefined ou "". 
         du coup si je veux passer que si'il est defini faire
@@ -26609,7 +26603,7 @@ pour detecter si navigateur peut lire vorbid audio mp3:
                         }
                     }
                     return ret;
-                  }
+                  }  
                   pour avoir la date en milliseconde: 
                     (new Date).getTime()  
                   //pour comparer deux dates:Retourne:
@@ -28887,8 +28881,6 @@ PWA : progressive webapps :
                                               );
                                         });
                                     }
-                                    
-                                    
                                     function cachIt(request,responseToCache){
                                             caches.open(cacheVersion)
                                             .then(function(cache){
@@ -28896,8 +28888,6 @@ PWA : progressive webapps :
                                             })
                                             return responseToCache.clone();
                                     }
-                                    
-                                    
                                     function fromCacheButFallback(request,event){
                                             let res= caches.open(cacheVersion)
                                             .then(function(cache){
@@ -28922,7 +28912,6 @@ PWA : progressive webapps :
                                             );
                                             return res;
                                     }
-                                    
                                     
                                     function useFallback(event) {
                                         if (!event.clientId)
@@ -29341,7 +29330,7 @@ https://developers.google.com/web/fundamentals/web-components/customelements#att
   dans laurent-moncompoentn1.js j'ai: import<-customcomponent(shadowdom(template))
       template :
       const templatexxx=document.createElement("template");
-      template.innerHTML=`
+      templatexxx.innerHTML=`
       <style>:host // :host c'est pour dire que ce style s'applique que dans le shadowroot parent de ce template (ne marche que dans un shadowdom)
                 :host(:hover) // mouse souris par dessus. Exemple: :host(:hover)>::slotted(memoclap-menu-sub){display:block;}// dans le shadowroot >DANS le slot l'element de type memoclap-menu-sub seulement. Attention le style des slots vient aussi depuis l'exterieur du webcomponent. mais::slotted prend l'avantage (si c'est !important seulement je crois)LINKkdkflkjsdf 
                 :host slot //sur le <slot>
