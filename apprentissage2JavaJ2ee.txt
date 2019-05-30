@@ -1,4 +1,4 @@
-(?=.*limit)(?=.*char)
+(?=.*id)(?=.*thread)
 AFAIRE:
 a lire : https://stackoverflow.com/questions/3216780/problem-reloading-a-jar-using-urlclassloader
 <script>
@@ -23432,7 +23432,7 @@ raccourcis shortcuts utiles: (pour les definir : WIndows>Preference>chercher "sh
       Alt+shift+R : renommer rename ce qu'on veut
       CTRL+SHIFT+H : Bind this to "Generate getters and setters". This is a "must have".
       CTRL+SHIFT+G : find references dependants on workspace
-      CTRL+MAJ+R : trouver un fichier par son nom
+      CTRL+MAJ+R : trouver un fichier par son nom name
       CTRL+MAJ+T : trouver un fichier dans les lib      
 Si eclipse ne se lance pas parce qu'il ne trouve pas la jvm java jre jdk alors que c'est pourtant parametre dans le path: externe
     modifier eclipse.ini : -vm [retourchariot]path vers le fichier javaw.exe (inclu) ATTENTION ne pas mettre après -vargs car vargs le prendra en parametre
@@ -28337,7 +28337,7 @@ Les thread : threads : (ne jamais mettre un controlleur spring dans un thread) (
           les treads : si complexe ne plus utiliser les treads dirrectement mais passer par un ExecutorService         
          currentThread( ) 	 Thread 	 Returns an object reference to the thread in which it is invoked.
          getName( ) 	 String 	 Retrieve the name of the thread object or instance. Exemple: pas la peine de mettre un incrementeur,  dans le thread mettre : logger.info("executing thread"+this.elementblocknumber+" threadsname: "+Thread.currentThread().getName());
-         start( ) 	 void 	 Start the thread by calling its run method.
+         start( ) 	 void 	 Start the thread by calling its run method. On ne peut pas appeler cette methode deux fois sur un meme thread. Si on veut le faire il faut créer un nouveau thread puis faire start.
          run( ) 	 void 	 This method is the entry point to execute thread, like the main method for applications.
          sleep( ) 	 void 	 Suspends a thread for a specified amount of time (in milliseconds).
          isAlive( ) 	 boolean 	 This method is used to determine the thread is running or not.
