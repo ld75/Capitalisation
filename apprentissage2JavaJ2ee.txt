@@ -1,4 +1,4 @@
-(?=.*rest)(?=.*webservice)
+(?=.*ssh)(?=.*log)
 Rule à faire : 
     refaire crossing-covariant mais cette fois les tags * et + et 0/* sont sur les instances! > difficile
 Canvas :
@@ -14371,7 +14371,7 @@ formats : de certificats : certificat :
                               _     prend en charge le stockage des certificats et de tous les certificats du chemin d’accès de certification. (keytool utilise ce format) 
                              | DER X.509 (.cer ou .der) (PKCS #8) La version binaire(!=bas64) de PEM. Tout le monde peut devenir un DER. Ne contiennent "BEGIN CERTIFICATE / END CERTIFICATE"
                              |       Le format DER (Distinguished Encoding Rules) prend en charge le stockage d’un seul certificat. Ce format ne prend pas en charge le stockage de la clé privée ou du chemin d’accès de certification.
-  un.cer .crt peut etre soit | PEM (.pem) version Base64 de DER Chiffré en Base64 X.509 (commence par ----BEGIN fini par END---)
+  un.cer .crt peut etre soit | PEM (.pem) version Base64 de DER Chiffré en Base64 X.509 (commence par ----BEGIN fini par END---) pour en crée une avec mobaxterm faire Conversion>ExportSSH key
   importable dans browser    |       Le format Base64 ASCII prend en charge le stockage d’un seul certificat. Peut etre un csr.
                              |_      Possible y stocker la chaine de certifs et possible la cle privee.
                              KEY (.key) est un PEM ne contenant que la cle privee
@@ -23888,7 +23888,7 @@ creer un nouvel utilisateur :
       useradd -m -s /bin/bash(son shell prefere) -d /chemin/vers/son/home/directory nomduuser
       puis faire 
           passwd nomduuser // pour definir son password 
-      du coup liste des users avec password mots de passe sous /etc/passwd il va y avoir :
+      du coup liste des utilisateurs users avec password mots de passe sous /etc/passwd il va y avoir :
       nomduuser:x(doncLePasswordEstStockeSous/etc/shadow fichier avec mdp chiffres):unChiffre=IdentifiantDeLutilisateur(0=root;1-99=user;100-999=systemUsers):idGroup(stockeSous/etc/group):infobof:/son/home/directory:/bin/bash ou /bin/sh(typeDeSesCommandesShell et si je ne veux pas qu'il se connecte mettre: /usr/sbin/nologin)
       commande unshadow combine le fichier passwd et shadow
             unshadow fichierpasswd fichiershadow > fichierresultant
@@ -23904,7 +23904,7 @@ pour recharger le .profile // fichier chargé lorsque je me connecte a la connex
 les cles cles : la securite : LINK94949494
   la securite est parametree sous /etc/ssh/sshd_config
         si je modifie ce fichier faire  rafraichir ssh refresh recharger(desactiver la connexion par mot de passe :PasswordAuthentication no); PermitRootLogin=yes(root peut se loguer avec mot de passe) ou withou-password (root ne peut pas se loguer avec mot de passe, seulement par cle)
-         service ssh reload ou invoke-rc.d sshd restart ou invoke-rc.d ssh restart ou /etc/init.d/ssh reload
+         service ssh reload ou invoke-rc.d sshd restart ou invoke-rc.d ssh restart ou /etc/init.d/ssh reload LINKsshreload
   les logs sur la securite si je n'arrive pas à me connecter en ssh
   sont sous /var/log/user.log ou /var/log/auth.log  si ça défile par sécurité désactiver la connexion par mot de passe.
   /homeDuUser/.ssh repertoire contient les cles publiques (le creer si il n'existe pas) il doit appartenir à l'utilisateur interessé droit doivent etre rwx-------
@@ -23925,7 +23925,7 @@ les cles cles : la securite : LINK94949494
                           HostName www.wenhuaduverge.com
                           IdentityFile ~/.ssh/wenhua_rsa  //chemin vers un autre fichier contenant la cle privee de l'autre domaine.
                           User root           
-                        recharger le ssh après avoir cree/ecrit dans fichier .ssh/config
+                        recharger le ssh après avoir cree/ecrit dans fichier .ssh/config voir LINKsshreload
       pour ne plus avoir a ressaisir mon mdp quand je fais du scp rsync ssh j'ai besoin de me connecter par key:
                     Copier cle publique dans id_rsa.pub sur autre serveur dans sous homeUtilisateurAvecQuiJeVeuxMeConnecterDansServerB/.ssh/authorized_keys et authorized_keys2 (pour être sur je mets dans les deux... chais pas si c bon.) LINKmljsdf
                           authorized_keys et 2 contient les cles publiques des autres serveurs qui peuvent se connecter ici grace à leur clé privee dans id_rsa.priv et/ou id_rsa
@@ -23960,10 +23960,11 @@ les cles cles : la securite : LINK94949494
 pour downloader recuperer telecharger transferer un fichier d'un serveur à un autre 
 commande: scp :
     -r pour recursif si c un repertoire.
-    pull:
-      scp -i cheminVersMaClePriveeFacultatif user@machine:cequejeveuxcopierDeLaMachineDistante repertoireoujeveuxlecopiersurMAmachine ATTENTION espace interdits apres le :
+    -vvv pour verbose (mode debug)
+    pull: PUTAIN j'arrivaispas à faire marcher avec cle: toujours permission denied (publickey) meme apres avoir declare ma cle publique sur le serveur> il falait utiliser une cle privee de type .pem pour que ca marche et non pas .ppk (sur windows en tout cas)
+      scp -i cheminVersMaClePriveeFacultatifDeType.pem user@machine:cequejeveuxcopierDeLaMachineDistante repertoireoujeveuxlecopiersurMAmachine ATTENTION espace interdits apres le :
     push:
-      scp -i cheminVersMaClePriveeFacultatif cequejeveuxcopierdeMAmachine user@machine:oujeveuxLecopiersurlaamachinedistante
+      scp -i cheminVersMaClePriveeFacultatifDeType.pem cequejeveuxcopierdeMAmachine user@machine:oujeveuxLecopiersurlaamachinedistante
     exemples  
       scp -p admddd\@su571ars.mc2.renault.fr:/data/documentum/applications/a_ddd/ExportPHX/jar/Exporter-0.0.1.jar .
       scp -p admddd\@su571ars.mc2.renault.fr:/data/documentum/applications/a_ddd/ExportPHX/sh/L.ksh .
