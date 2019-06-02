@@ -700,9 +700,9 @@ github : guitub :  git : gitub : (installable sur mobaxterm :depoxer le plugin d
           pour pusher en ssh connecter avec une cle : 
                  ssh-keygen -t rsa -b 4096 -C "kanailaurent@gmail.com" // generer une paire de clé dans gitbash
                  clip < /c/Users/lduverge/.ssh/id_rsa.pub // copier dans le ... ma cle publique.. et ensuite le copier dans github
-                 ssh-add /c/Users/lduverge/.ssh/id_rsa // ajouter 
+                 ssh-add /c/Users/lduverge/.ssh/id_rsa // ajouter (je peux renommer id_rsa comme je veux: toto_rsa par ex) 
                  eval $(ssh-agent -s) // demarrer le ssh-agent (il se peut qu'il ne soit pas demarré c pour ca.) pour une authentification automatique
-                 ssh-add /c/Users/lduverge/.ssh/id_rsa // ajouter ma paire de clé au ssh agent
+                 ssh-add /c/Users/lduverge/.ssh/id_rsa // ajouter ma paire de clé au ssh agent (je peux renommer id_rsa comme je veux: toto_rsa par ex)
           pour definir un proxy : 
                 git config --global http.proxy http://proxyUsername:proxyPassword@proxy.server.com:port
                 pour dégager le proxy : 
@@ -23434,7 +23434,7 @@ raccourcis shortcuts utiles: (pour les definir : WIndows>Preference>chercher "sh
       Alt+shift+R : renommer rename ce qu'on veut
       CTRL+SHIFT+H : Bind this to "Generate getters and setters". This is a "must have".
       CTRL+SHIFT+G : find references dependants on workspace
-      CTRL+MAJ+R : trouver un fichier par son nom
+      CTRL+MAJ+R : trouver un fichier par son nom name
       CTRL+MAJ+T : trouver un fichier dans les lib      
 Si eclipse ne se lance pas parce qu'il ne trouve pas la jvm java jre jdk alors que c'est pourtant parametre dans le path: externe
     modifier eclipse.ini : -vm [retourchariot]path vers le fichier javaw.exe (inclu) ATTENTION ne pas mettre après -vargs car vargs le prendra en parametre
@@ -23911,9 +23911,9 @@ les cles cles : la securite : LINK94949494
     installer ssh :sur debian :
       si serveur openssh deja la faire /etc/init.d/ssh reload
        generer creer paire de cle sur cygwin ou sur unix LINK94949494
-                    ssh-keygen -t rsa // stocke la cle privee sous /repertoireHomeDuUser/.ssh/id_rsa et la cle publique sous /repertoireHomeDuUser/.ssh/id_rsa.pub  (creer ces fichiers si n'existent pas)
+                    ssh-keygen -t rsa // stocke la cle privee sous /repertoireHomeDuUser/.ssh/id_rsa et la cle publique sous /repertoireHomeDuUser/.ssh/id_rsa.pub  (creer ces fichiers si n'existent pas) //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
                     definir passphrase (sauf si c'est pour faire du ssh rsync scp etc... avec un autre serveur, alors ne pas mettre de mot de passe!)
-                    cle prive est dans id_rsa, la cle publique corresp est dans id_rsa.pub.
+                    cle prive est dans id_rsa, la cle publique corresp est dans id_rsa.pub. //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
                     ssh-keygen -y -f id_rsa > id_rsa.pub // ensuite je peux copier cette cle publique et la mettre sur un autre serveur LINKmljsdf
                     On ne peut pas mettre plusieurs cles privées dans id_rsa:dans ce cas faire un fichier .ssh/config avec dedans:
                           Host memoclap www.memoclap.com  //Host petit_nom nom_de_domaine
@@ -23928,7 +23928,7 @@ les cles cles : la securite : LINK94949494
                         recharger le ssh après avoir cree/ecrit dans fichier .ssh/config voir LINKsshreload
       pour ne plus avoir a ressaisir mon mdp quand je fais du scp rsync ssh j'ai besoin de me connecter par key:
                     Copier cle publique dans id_rsa.pub sur autre serveur dans sous homeUtilisateurAvecQuiJeVeuxMeConnecterDansServerB/.ssh/authorized_keys et authorized_keys2 (pour être sur je mets dans les deux... chais pas si c bon.) LINKmljsdf
-                          authorized_keys et 2 contient les cles publiques des autres serveurs qui peuvent se connecter ici grace à leur clé privee dans id_rsa.priv et/ou id_rsa
+                          authorized_keys et 2 contient les cles publiques des autres serveurs qui peuvent se connecter ici grace à leur clé privee dans id_rsa.priv et/ou id_rsa //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
               se connecter alors en faisant depuis serveurA: ssh homeUtilisateurAvecQuiJeVeuxMeConnecterDansServerB@serverB                          
               les droits doivent être comme ça:
                 -rw-r--r-- 1 utisateurInteresse utisateurInteresse  820 nov.  25  2014 authorized_keys2
@@ -23970,8 +23970,7 @@ commande: scp :
       scp -p admddd\@su571ars.mc2.renault.fr:/data/documentum/applications/a_ddd/ExportPHX/sh/L.ksh .
       scp -p admddd\@sum50301:/data/documentum/applications/a_ddd/ExportPHX/tmp/pgn/*.xml .  
 Pour transferer exporter des fichier donnees sur un autre serveur reseau remote(faire un backup)
-  tar cvzf - /etc | ssh root@lautreserveur.com -p2222 "cat >>/data/home/lduverge/etc.gz"
-    tar le repertoire etc et met le dans lautreserveur dans le repertoire data/... etc.gz: besoin connexion par cle peut etre pour que mot de passe n'empeche pas la connection.
+  tar cvzf - /etc | ssh root@lautreserveur.com -p2222 "cat >>/data/home/lduverge/etc.gz" //tar le repertoire etc et met le dans lautreserveur dans le repertoire data/... etc.gz: besoin connexion par cle peut etre pour que mot de passe n'empeche pas la connection.
   pour distribuer automatiquement mes cles publics vers d'autres serveurs
   LINK9939572 2 scripts à ecrire. Le 1er appelle le 2e.
                  executer le script comme ça :  scripts/promotePublicKey.sh .ssh/id_rsa.pub
@@ -28342,7 +28341,7 @@ Les thread : threads : (ne jamais mettre un controlleur spring dans un thread) (
           les treads : si complexe ne plus utiliser les treads dirrectement mais passer par un ExecutorService         
          currentThread( ) 	 Thread 	 Returns an object reference to the thread in which it is invoked.
          getName( ) 	 String 	 Retrieve the name of the thread object or instance. Exemple: pas la peine de mettre un incrementeur,  dans le thread mettre : logger.info("executing thread"+this.elementblocknumber+" threadsname: "+Thread.currentThread().getName());
-         start( ) 	 void 	 Start the thread by calling its run method.
+         start( ) 	 void 	 Start the thread by calling its run method. On ne peut pas appeler cette methode deux fois sur un meme thread. Si on veut le faire il faut créer un nouveau thread puis faire start.
          run( ) 	 void 	 This method is the entry point to execute thread, like the main method for applications.
          sleep( ) 	 void 	 Suspends a thread for a specified amount of time (in milliseconds).
          isAlive( ) 	 boolean 	 This method is used to determine the thread is running or not.
