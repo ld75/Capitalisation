@@ -1,4 +1,4 @@
-(?=.*ssh)(?=.*log)
+(?=.*spring)(?=.*test)
 Rule à faire : 
     refaire crossing-covariant mais cette fois les tags * et + et 0/* sont sur les instances! > difficile
 Canvas :
@@ -4130,17 +4130,14 @@ installer nouveau projet springboot CLI avec sdkman :
     
 SPRINGBOOT :Spring-boot : start spring io (on peut aussi faire un projet avec un serveur jetty embedded sans spring-boot. Voir D:/RD/sampleWebappJettyEmbedded)
         pour une appli war sans tomcat embedded embarqué mais déployable en war: utiliser maven-war-plugin (pas sur que ça marche d'apres quentin) avec <packaging>war</packaging> + application.properties dans /webapps/config Sinon changer ou il vas chercher ton fichier de conf dans le tomcat en ajoutant:-Dspring.config.location=/path/to/config/file  
-A ton JAVA_OPTS
-[‎07/‎06/‎2018 15:46] DUVERGE Laurent: 
-oui 
-et c tout?
-  
   si j'ai ce message ** WARNING ** : Your ApplicationContext is unlikely to start due to a @ComponentScan of the default package.
         je dois mettre mes classes dans un package
   de nombreuses proprietes de spring-boot sont dispos là 
         https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
   dans resources/application.properties 
-        debug=true(pour debugger debuger)  
+        debug=true(pour debugger debuger)  et toutes les proprietes sont récupérables dedans de partout avec  
+                        @Autowired
+                        Environment env; puis env.getRequiredProperty("une.propriete.dans.applicationproperties"); 
  si erreur Error configuring: org.springframework.boot:spring-boot-maven-plugin. Reason: Unable to retrieve component configurator for plugin configuration
       passer à la version maven3
 demarrer un batch tout simple avec spring-boot 
@@ -4209,7 +4206,7 @@ maven:
     si dans maven j'utilise les dependances springboot c cool car il s'occupe de creer les dependances necessaires lui meme : (hibernate etc...)
             classe main
     @SpringBootApplication // trouve les composants annotes par rapport au package de cette classe (dedans et en dessous) +  cette classe devient une classe de configuration où on declare ses beans singletons... //Pas besoin de web.xml. C'est @Configuration (cette classe est une classe de config)+@EnableAutoconfiguration (scan les beans du meme package et enfants + recup les proprietes+ scan les jars poses par mapresents dans classpath) + @Enablemvc (Existe si mvn dependance "spring-web-mvc") + @ComponentScan(basePackages={"..."}) scan les composants.
-     @EnableWebMvc // a mettre aussi dans springboot a cote de ci-dessus si je fais des webservices                                                                                                                                                                =@ComponentGENERIQUEEVITERDUTILISERUtiliser@Named+@Config+@Value (cherche proprietes sous classpath) @Value("${uneval}") ou @Value("${property:valeurpardefautsipastrouve}") String toto; cherche dans *.properties :property=xxx AUTREMETH:@ConfigurationProperties(prefix="connection" ou "connection" tout court) Cette annot peut etre sur une classe Tatato avec getter et setter qui selon nom des champs, les remplis à partir de *.properties (si contient connexion.tata) : Tatato a comme getter : tata se rempli tout seul pour que ca marche besoin que ma classe config ait : @EnableConfigurationProperties(Tatato.class)@ConfigurationProperties peut aussi accompagner un @Bean au dessus d'une methode
+     @EnableWebMvc // a mettre aussi dans springboot a cote de ci-dessus si je fais des webservices                                                                                                                                                                =@ComponentGENERIQUE_EVITER_D_UTILISERUtiliser@Named+@Config+@Value (cherche proprietes sous classpath) @Value("${uneval}") ou @Value("${property:valeurpardefautsipastrouve}") String toto; cherche dans *.properties :property=xxx AUTREMETH:@ConfigurationProperties(prefix="connection" ou "connection" tout court) Cette annot peut etre sur une classe Tatato avec getter et setter qui selon nom des champs, les remplis à partir de *.properties (si contient connexion.tata) : Tatato a comme getter : tata se rempli tout seul pour que ca marche besoin que ma classe config ait : @EnableConfigurationProperties(Tatato.class)@ConfigurationProperties peut aussi accompagner un @Bean au dessus d'une methode
     @EnableResourceServer // active la securite JWT : ce micro service n'est accessible que si on lui envoie un JWToken ( De plus de manière plus fine on peut proteger alors des methodes avec au dessus @PreAuthorize("#oauth2.hasScope('un.scope.defini.dans.le.JWToken.entrant')") Mais besoin alors d'ajouter dans src/main/resources/application.yml où est la cle publique:jwt.keyUri:$xxxx/ma_cle
                 public class Application { // l'executer demarre tomcat                                                                                         
                                                                                                                                                                 
@@ -4462,7 +4459,17 @@ AILLEURS : injecter mes beans par constructeur
                       @ConditionalOnMissingBean(UneClasseQuiPeutEtreEstInstancieeDansUnBean.class) conditionel : Ne cree les beans ci dessous que si un bean de ce type n'existe pas dejà comme ca:@Bean UneClasseQuiPeutEtreEstInstancieeDansUnBean lala(){return null; }
                       @Configuration ou @ComponentGENERIQUEEVITERDUTILISERUtiliser@Named   
                       UneClasse 
-                              
+
+        spring et mongodb :
+                    une classe @Configuration doit contenir aussi l'annotation :
+                                @EnableMongoRepositories(basePackages="package.vers.le.repository.mongodb")
+                                
+                    et sous package.vers.le.repository.mongodb
+                        avoir une classe: 
+                            @Repository
+                            public interface MongoDBRepository extends MongoRepository<MmcUser, String>
+                            {
+                            }                                           
         pour faire des requetes jdbc : le resultat des requtes sql se map avec objets simples java (ne fait pas de mapping objet complexe)
             si j'ai l'erreur IncorrectResultSetColumnCountException : je ne peux pas mappser avec un objet à moi avec car queryForList ne permet pas de faire ce mapping.  
               jdbcTemplate.queryForList(sql, leschampssql, CetteClasseDoitEtreDeTypeSimpleAvecQu'unChampGenrejava.sql.Timestamp.class);
@@ -4507,34 +4514,8 @@ AILLEURS : injecter mes beans par constructeur
                               }    
                             
                         voir ailleurs :@RepositoryRestResource pour ne pas avoir a saisir les requetes
-Spring test : tests : XML et JAVA style:
-      a lire : https://dzone.com/articles/unit-and-integration-tests-in-spring-boot
-                http://stackoverflow.com/questions/12058098/spring-testing-framework-jndi-resource/12058370#12058370        
-      pour faire mes tests sur une base h2 locale :
-                        par defaut : jdbc:h2:~/test
-                        sous test/resources/application.properties
-                              spring.datasource.initialize=true
-                              spring.datasource.driverClassName=org.h2.Driver
-                              spring.datasource.url=jdbc:h2:mem:testdb;Mode=Oracle
-                              spring.datasource.platform=PLATEFORME*//voir ci dessous
-                              spring.datasource.continue-on-error=false
-                              spring.datasource.validation-query=select count(*) from ZY00 (...)
-                              
-                  dans mon test : tests : pour recuperer un jndi
-                  @BeforeClass // recuperer un bean
-                    public static void initJndi() throws Exception {
-                    ApplicationContext applicationContext = new ClassPathXmlApplicationContext("jndi.xml");
-                    SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder();
-                    builder.bind("java:comp/env/jdbc/foo", applicationContext.getBean("dataSource"));
-                    builder.activate();
-                    }
-                              
-                              
-                              
-        au demarrage si spring.datasource.initialize=true springboot execute toujours schema-PLATEFORME*.sql // mettre PLATEFORM=all pot plateformes. 
-                                                                                      data-PLATEFORME*.sql
-                                                                                      to_date n'existe pas utiliser parsedatetime('01/09/13 00:00:00','dd/MM/yy hh:mm:ss')
-              faire du https :sur tomcat :
+        
+ faire du https :sur tomcat :
                     <Connector protocol="org.apache.coyote.http11.Http11Protocol" port="8843" maxThreads="200"  scheme="https" secure="true" SSLEnabled="true"
                           ciphers="TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA_TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES                      keystoreFile="${catalina.base}/conf/yyyy.jks" keystorePass="zzzz" clientAuth="false" sslProtocol="TLS"/>
                      <connector sert à definir le port http et https de tomcat. je ne peux pas mettre deux connector pour le meme port. sinon bind exception                         
@@ -5200,7 +5181,19 @@ Spring-batch :
                                   JobExecution jobExecution = jobLauncherTestUtils.launchStep("step1");
                                   assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
                                           
-  Spring pour tester avec junit :
+  Spring pour tester avec junit :  XML et JAVA style:
+      a lire : https://dzone.com/articles/unit-and-integration-tests-in-spring-boot
+                http://stackoverflow.com/questions/12058098/spring-testing-framework-jndi-resource/12058370#12058370        
+                  pour faire mes tests sur une base h2 locale :
+                                    par defaut : jdbc:h2:~/test
+                                    sous test/resources/application.properties
+                                          spring.datasource.initialize=true //si true, au demarrage springboot execute toujours schema-PLATEFORME*.sql // mettre PLATEFORM=all pot plateformes.
+                                          spring.datasource.driverClassName=org.h2.Driver                                           data-PLATEFORME*.sql
+                                          spring.datasource.url=jdbc:h2:mem:testdb;Mode=Oracle                                      to_date n'existe pas utiliser parsedatetime('01/09/13 00:00:00','dd/MM/yy hh:mm:ss')
+                                          spring.datasource.platform=PLATEFORME*//voir ci dessous
+                                          spring.datasource.continue-on-error=false
+                                          spring.datasource.validation-query=select count(*) from ZY00 (...)
+                                                                                      
                                     package com.project.tests.idea.dao;
                                     import static xxx.yyy.zzz.user // methode statique de Mockery
                                     import static xxx.yyy.zzz.status // methode statique de Mockery
@@ -5209,10 +5202,15 @@ Spring-batch :
                                     import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
                                     import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
                                     import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-                                    //c deux annotations initialisent spring
-                                    @RunWith(SpringJUnit4ClassRunner.class)  ou (JMock.class)  ou (SpringRunner.class) si on veut tester non pas une seule classe mais une classe appelant une autre (qui est mockee) // grace à @RunWith(SpringJUnit4ClassRunner.class) ça initialise la classe SpringJUnit4ClassRunner avant de demarrer les tests. Cette classe permet d'injecter des beans dans cette classe //INDISPENSABLE POUR QUE @TESTPROPERTYSOURCE MARCHE
-                               @ContextHierarchy({ // facultatif. permet de definir une hierarchie de contexts: d'abord parent puis fils
-                                    @ContextConfiguration(locations={"pathVersFichierXml/spring-dsTest-anot.xml","classpath:...","classpath:..."}) ou (classes={uneClasseAnnoteeConfigurationOuAutre.class}) Si on ne met rien il va chercher dans "classpath:/pathVersResources/NomClasseDeTest-context.xml// U que pour tests.// POUR CHARGER UNE CONF DANS LES TESTS. fonctionne de paire avec @TESTPROPERTYSOURCE
+                                                      
+                                    @RunWith(SpringRunner.class) ou (SpringJUnit4ClassRunner.class)  ou (JMock.class)   si on veut tester non pas une seule classe mais une classe appelant une autre (qui est mockee) // grace à @RunWith(SpringJUnit4ClassRunner.class) ça initialise la classe SpringJUnit4ClassRunner avant de demarrer les tests. Cette classe permet d'injecter des beans dans cette classe //INDISPENSABLE POUR QUE @TESTPROPERTYSOURCE MARCHE
+                                    puis
+                                    @SpringBootTest(webEnvironment=RANDOM_PORT//facultatif. Si c'est du springboot. Du coup c'est pour les tests d'integration. Pas pour les tests unitaires. On peut aussi forcer le port) si spring-boot: demarre carrement le serveur. // recherche la classe annotee @SpringBootApplication pour def ApplicationContext qui est partage entre toutes les methodes et classes de test sauf si on met @DirtiesContext
+                                     ou
+                                    @WebMvcTest(MaClasseControllerAvecAnnotationArobaseController_QueJeVeuxTester.class)// facultatif. que pour springboot. Si je ne met pas ca il wire tout. Là il wire Tout aussi mais que le @Controller spécifié. A l'inverse de @SpringBootTest ne demarre pas SpringBoot. Nous permet d'utiliser LINKmockmvc dans cette classe de test
+                                    puis
+                                    @ContextHierarchy({ // facultatif. permet de definir une hierarchie de contexts: d'abord parent puis fils
+                                    @ContextConfiguration(locations={"pathVersFichierXml/spring-dsTest-anot.xml","classpath:...","classpath:..."}) ou (classes={uneClasseAnnoteeConfigurationOuAutre.class}) Si on ne met rien il va chercher dans "classpath:/pathVersResources/NomClasseDeTest-context.xml// U que pour tests.// POUR CHARGER UNE CONF DANS LES TESTS. fonctionne de paire avec @TESTPROPERTYSOURCE. Apparemment inutile de mettre cette anotation si j'ai mis @WebMvcTest qui wire tout par défaut donc charge toutes les @Configuration
                                     @ContextConfiguration({"file:src/main/webapp/WEB-INF/DoncAPartirDeLaRacineDuProjetapplicationContext.xml","file:src/test/resource/oracle-config-test.xml"})
                                                           locations=est facultatif  /cheminabsolu/fichier.xml ou cheminrelatif/fichier.xml cherche dans le classpath c a d :src/main/resources et src/main/java 
                                                           loader=AnnotationConfigContextLoader.class // Indispensable? si dans notre classe de test on a une classe statique de configuration à l'interieur.
@@ -5225,9 +5223,7 @@ Spring-batch :
                                           @Bean...etc 
                                     @TestPropertySource(value={"classpath:/config/test.properties,classpath:/app.test.properties","classpath:/database.test.properties"}) // pour que les tests utilisent un autre fichier de propriete // VA REMPLIR VARIABLE ENVIRONNEMENT${xx}dans les configs.xml ET LES ANNOTATIONS @VALUE // voir http://docs.spring.io/spring/docs/4.3.2.RELEASE/javadoc-api/org/springframework/test/context/TestPropertySource.html
                                                     ou  locations=                                                                                 
-                                    @SpringBootTest(webEnvironment=RANDOM_PORT//facultatif. On peut aussi forcer le port) si spring-boot: demarre carrement le serveur. // recherche la classe annotee @SpringBootApplication pour def ApplicationContext qui est partage entre toutes les methodes et classes de test sauf si on met @DirtiesContext
-                                      ou
-                                    @WebMvcTest(MaClasseControllerATester.class// facultatif) A l'inverse de @SpringBootTest ne demarre pas SpringBoot mais rend les controlleurs accessibles   
+                                       
                                     DEPRECIE : 
                                     // ne pas mettre @TransactionConfiguration et @Transaction si nos tests appellent des services car ceux ci gèrent dejà les transactions
                                     @TransactionConfiguration(transactionManager="ideaTxManager",defaultRollback=false) // pour que la classe de teste puisse tester directement les dao sans passer par le service.: le service cree automatiquement les transactions mais pas le test donc besoin mettre ca. Ainsi la classe test se comporte comme un service qui appelle les dao
@@ -5261,24 +5257,27 @@ Spring-batch :
                                       IPermissionDao permissiondao;
                                       
                                       @Autowired
->>>                                   private MockMvc mockMvc; LINKmockmvc
+>>>                                   private MockMvc mockMvc; //LINKmockmvc
                                       
                                       Mockery context = new JUnit4Mockery(); // pour utiliser Jmock (voir plus bas)<  
                                       
                                       //spring-batch-tester
                                         @Autowired
                                         private JobLauncherTestUtils jobLuncherTestUtils; // pour spring-batch
-                                      @BeforeClass
-                                      {
-                                      ... Rien n'est encore injecte
-                                      }
+                                      @BeforeClass // on peut y recuperer un bean
+                                      public static void initJndi() throws Exception {
+                                            ApplicationContext applicationContext = new ClassPathXmlApplicationContext("jndi.xml");
+                                            SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder();
+                                            builder.bind("java:comp/env/jdbc/foo", applicationContext.getBean("dataSource"));
+                                            builder.activate();
+                                        }
                                       @Before
                                       public void setup()
                                       {
                                             MockitoAnnotations.initMocks(this);
 >>>                                         this.mockMvc=MockMvcBuilders.webApplicationContextSetupOuwebAppContextSetup(this.wac).addFilter(this.springSecurityFilterChain).build();
                                             ou
-                                            this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+                                            this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build(); // inutile si LINKmockmvc ?
                                             ou
 >>>                                         this.mockMvc= MockMvcBuilders.standaloneSetup(wac ou context ou new MonControllerAtester())
                                             .addFilter(this.unFiltreSpring)// je peux ajouter des filtres spring (pas ceux du web.xml mais que ceux de spring)
@@ -5318,8 +5317,9 @@ Spring-batch :
                                                     		.contentType(MediaType.APPLICATION_JSON) ou contentType(MediaType.TEXT_HTML)
                                                     		.with(user("toto").roles("TATA"))
                                                     		.param("jsonobj","{\"destination\":\"yaounde\",\"departure\":\"douala\",\"timedeparture\":\"3\",\"daydeparture\":\"01/01/2016\"}")
-                                                    		.content(request)) // requete envoyee    
+                                                    		.content(request)) // requete envoyee si c'est du POST(je crois) ne s'applique pas pour du GET    
                                                     		.andExpect(content().contentType("application/json;charset=UTF-8")) //tests retours
+                                                            .andExpect(jsonPath("nom").value("toto")); // pour verifier que le contenu renvoyé contient ce json. De org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
                                                     		ou
                                                         .andExpect(status().isForbidden());                
                                                     		.andDo(print())
@@ -6789,7 +6789,7 @@ mongodb : nosql : (il vaut mieux stocker les fichiers images documents dans le s
             puis cmd ceci: 
             pathVersLeBin/mongod.exe --dbpath="c:\mongodb-win32-x86_64-2008plus-ssl-4.0.9\data\db" // ca demare le serveur par defaut là : mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
         pour demarrer un client mongodb pour administrer la base et pour faire des requetes de test
-            ensuite executer mongo.exe : c'est un client pour faire les requetes (c'est du javascript la dedans) LinkLKJDSFA
+            ensuite executer mongo.exe : c'est un client pour faire les requetes (c'est du javascript la dedans) LinkLKJDSFA . On peut aussi utiliser un gui qui s'appelle Robo3T à installer.
             ou bien mongo mongodb://mongodb0.example.com:28015/testdb?ssl=true // si il est distant
         exemples de requetes. Une collection = une table relationelle
             var doc = db.uneCollection.findOne({ _id: 1 })// trouver par id (du coup doc est une variable) 
@@ -13539,7 +13539,8 @@ http://webmessenger.msn.com/default.aspx?R=1
 Merise mcd creation base de donnee: http://www.sam-mag.com/P53,53,5,61,,,default.aspx
 
 ----------------------------------
-logs :    LinkLogutils (ne semble pas marcher si librairie log4j est dans le classpath et est utilisee aussi)
+logs :    LinkLogutils avec java.util.logging.* (ne semble pas marcher si librairie log4j est dans le classpath et est utilisee aussi)
+  1) Methode par fichier de configuration :
     quelquepart faire : 
             LogManager manager = LogManager.getLogManager(); // a mettre cote statique
             manager.readConfiguration(Application.class.getClassLoader().getResourceAsStream("logging.properties")); // a mettre dans instance
@@ -13599,6 +13600,33 @@ logs :    LinkLogutils (ne semble pas marcher si librairie log4j est dans le cla
                             super();
                         }
                     }
+        2) LinkLogutils avec java.util.logging.* Methode avec classe de configuration: 
+                    classes de configuration: 
+                        public class HandlerForGeneralLogger { // je peux faire plusieurs classes comme ça. Une par fichier de log à ecrire.
+                                public static final Logger LOGGER = Logger.getLogger(HandlerForGeneralLogger.class.getName());
+                                public static void init() {
+                                    Handler consoleHandler = null;
+                                    Handler fileHandler  = null;
+                                    try {
+                                        consoleHandler = new ConsoleHandler();
+                                        consoleHandler.setLevel(Level.ALL);
+                                        fileHandler  = new FileHandler("generalLogs.txt"); // generalLogs est le fichier ou il va ecrire et qui se trouve au meme niveau que le jar
+                                        fileHandler.setLevel(Level.ALL);
+                                        fileHandler.setFormatter(new SimpleFormatter());
+                                        LOGGER.addHandler(consoleHandler);
+                                        LOGGER.addHandler(fileHandler);
+                                        LOGGER.setLevel(Level.INFO);
+                                        LOGGER.config("Configuration Generals log done.");
+                                        LOGGER.log(Level.FINE, "Finer logged");
+                                        }
+                                      catch(IOException exception) {
+                                          LOGGER.log(Level.SEVERE, "Error occur in FileHandler.", exception);
+                                      }
+                Utilisation:
+                        au début quand le programme se lance il faut appeler 
+                            HandlerForGeneralLogger.init();
+                        et puis n'importe où ailleurs : 
+                            HandlerForGeneralLogger.LOGGER.log(Level.SEVERE,"Erreur",e+ Utils.printStackTraceOnLogs(e));
 
 slf4j : (vieux voir LinkLogutils)Bonne methode copier L'interface  jdk.internal.instrumentation.Logger;(a améliorer car n'accepte que des strings) et créer son propre logger (je ne peux pas l'utiliser dans java10) qui pourra s'appuyer sur slf4j par exemple ou n'importe quoi dautre
 }
@@ -15640,7 +15668,7 @@ pour deflateandencode :
         }
   pour minuter chronometrer faire des laps lors du programme temps passe duree: utiliser mesurer performances
       System.nanoTime après java 1.5 semble threadsafe
-      StopWatch de spring : n'est pas threadsafe // plus bas stopwatch d'apache
+      StopWatch de spring: n'est pas threadsafe // plus bas stopwatch d'apache
       StopWatch stopwatch= new StopWatch(); ou new StopWatch(AbstractSAMLEntryPoint.class.getName()); // si je ne fais pas ça a chaque fois dans la methode il va cumuller les enregistrements meme entre plusieurs thread indépendants qui passent dans la classe
       	if (stopwatch.isRunning()) stopwatch.stop();
 					stopwatch.start("setprovidersNomMethodeQuiEstExecutee");
@@ -26095,6 +26123,8 @@ Typescript :
 
 
 Javascript :
+    possible de mettre a jour le texte du css avec du javascript mais tout d'un coup pas possible (pas trouvé) de façon chirurgicale
+        document.getElementById("identifiantDeMaBaliseStyle").innerHTML
   pour savoir si une variable est un chiffre: 
     isNaN(toto); 
   pour avoir la proportion taille d'un element en pixcel au lieu de pourcentage largeur
@@ -33049,8 +33079,22 @@ swagger : pour qu'un webservice rest(je pense) exposer ses methodes dans une pag
               <artifactId>springfox-swagger-ui</artifactId>
               <version>2.4.0</version>
             </dependency>
-       et la classe de configuration spring: 
-            SwaggerConfig
+       et la classe de configuration spring: SwaggerConfig ci dessous
+                    @Configuration
+                    @EnableSwagger2
+                    public class SwaggerConfig
+                    {
+                            @Bean
+                            public Docket api() {
+                                return new Docket(DocumentationType.SWAGGER_2)
+                                        .select()
+                                        .apis(RequestHandlerSelectors.any())
+                                        .paths(PathSelectors.any())
+                                        .build();
+                            }
+                    }
+
+            
        copier le json genere par http://localhost:8081/sma-ws/rest/v2/api-docs
        le transformer en Yaml (trouver un convertisseur en ligne:https://www.json2yaml.com/)
        Demarrer swagger-editor :
