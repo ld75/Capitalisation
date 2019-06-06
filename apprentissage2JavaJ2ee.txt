@@ -4206,7 +4206,7 @@ maven:
     si dans maven j'utilise les dependances springboot c cool car il s'occupe de creer les dependances necessaires lui meme : (hibernate etc...)
             classe main
     @SpringBootApplication // trouve les composants annotes par rapport au package de cette classe (dedans et en dessous) +  cette classe devient une classe de configuration où on declare ses beans singletons... //Pas besoin de web.xml. C'est @Configuration (cette classe est une classe de config)+@EnableAutoconfiguration (scan les beans du meme package et enfants + recup les proprietes+ scan les jars poses par mapresents dans classpath) + @Enablemvc (Existe si mvn dependance "spring-web-mvc") + @ComponentScan(basePackages={"..."}) scan les composants.
-     @EnableWebMvc // a mettre aussi dans springboot a cote de ci-dessus si je fais des webservices                                                                                                                                                                =@ComponentGENERIQUE_EVITER_D_UTILISERUtiliser@Named+@Config+@Value (cherche proprietes sous classpath) @Value("${uneval}") ou @Value("${property:valeurpardefautsipastrouve}") String toto; cherche dans *.properties :property=xxx AUTREMETH:@ConfigurationProperties(prefix="connection" ou "connection" tout court) Cette annot peut etre sur une classe Tatato avec getter et setter qui selon nom des champs, les remplis à partir de *.properties (si contient connexion.tata) : Tatato a comme getter : tata se rempli tout seul pour que ca marche besoin que ma classe config ait : @EnableConfigurationProperties(Tatato.class)@ConfigurationProperties peut aussi accompagner un @Bean au dessus d'une methode
+     @EnableWebMvc // a mettre aussi dans springboot a cote de ci-dessus si je fais des webservices                                                                                                                                                               =@ComponentGENERIQUE_EVITER_D_UTILISERUtiliser@Named+@Config+@Value (cherche proprietes sous classpath) voir LINKPropsspring 
     @EnableResourceServer // active la securite JWT : ce micro service n'est accessible que si on lui envoie un JWToken ( De plus de manière plus fine on peut proteger alors des methodes avec au dessus @PreAuthorize("#oauth2.hasScope('un.scope.defini.dans.le.JWToken.entrant')") Mais besoin alors d'ajouter dans src/main/resources/application.yml où est la cle publique:jwt.keyUri:$xxxx/ma_cle
                 public class Application { // l'executer demarre tomcat                                                                                         
                                                                                                                                                                 
@@ -4340,6 +4340,12 @@ spring security : spring-security : springsecurity :
                 if(request.isUserInRole(Constants.ROLE_GESTFORM))
                 sinon utiliser SecurityContextHolderAwareRequestWrapper si jene suis pas dans un controlleur. jamais fait encore. 
 Spring : JAVA STYLE
+  permettre l'auto-completion autocompletion des properties sur mon editeur ide: va generer un fichier index en json qui est utilisé par intellij pour autocompleter.  
+      utiliser dans start.spring.io SpringConfigurationProcessor et du coup dans le pom il y a : 
+          <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-configuration-processor</artifactId><optional>true</optional></dependency>
+  utiliser lombok permet de ne pas avoir a ecrire les constructeurs LINKLombok
+      @AllArgsConstructor
+      @NoArgsConstructor
   charger un fichier xml de configuration
       @ImportResource({"classpath*:context.xml"})// au  dessus d'une autre classe de config
   si au demarrage j'ai un AbstractMethodError: 
@@ -4362,11 +4368,13 @@ Conf java
           @Import(UneAutreClassDeConfig.class)
           @ComponentScan(basePackages = {"my.package.service"}) // PasPourLesTests. cherches les annot sous ce package pour creer les beans Scan specific packages for components (voir equiv en xml)
             proprietes:
-          @PropertySource("classpath:/my.properties") // Mettre au dessus classe de conf.@Configuration() Pour toutes les autres classes qui utilisent @Value("${keyDansFichierPropriete:valeurParDefautFacultatif}") il va chercher la valeur des {$toto.toto} dans ce fichier de propriete sous resources
+          @PropertySource("classpath:/my.properties") // Mettre au dessus classe de conf.@Configuration() Pour toutes les autres classes qui utilisent LINKPropsspring: @Value("${keyDansFichierPropriete:valeurParDefautFacultatif}") String toto il va chercher la valeur des {$toto.toto} dans ce fichier de propriete sous resources ou dans *.properties si PropertySource ne specifie pas.  
                           "file:/C:/..."                                                                                                                       exemples Spring el SPEL: 
                                                                                                                                                                               @Value("#{'${ws.authorized.remoteIp}'.split(',')}") converti un string en listeSpring SPEL expressions
                                                                                                                                                                               @Value("#{systemProperties['os.arch'].equals('x86') ? winDataSource : unixDataSource}")
                                                                                                                                                                               private List<String> authorizedIp;
+                                                                                                                                                              Autre methode pour que les .properties se trouve dans une classe. @ConfigurationProperties(prefix="connection" ou "connection" tout court) Cette annot peut etre sur une classe Tatato avec getter et setter qui selon nom des champs, les remplis à partir de *.properties (si contient connexion.tata) : Tatato a comme getter : tata se rempli tout seul pour que ca marche besoin que ma classe config ait : @EnableConfigurationProperties(Tatato.class)@ConfigurationProperties peut aussi accompagner un @Bean au dessus d'une methode
+                                                                                                                                                              attention Tatato doit contenue le constructeur sans argument et les constructeurs avec tous les arguments. Pour ça utiliser lombok (voir LINKLombok )                        
                    recuperer des proprietes:                          
               mais attention besoin creer been dans la conf comme ci dessous pour que ça marche: 
               @Bean
@@ -16666,9 +16674,11 @@ pour recuperer en secondes la duree d'un fichier wav :
                           	    }
                           	}
 
-pour generer un nom de fichier de maniere aleatoire :pour generer une chaine de charactères aleatoires: LINK_haqsdfsaqsdfrd
+pour generer un nom de fichier de maniere aleatoire :pour generer une chaine de charactères aleatoires hasard hazard: LINK_haqsdfsaqsdfrd
                     java.util.UUID.randomUUID().toString(); // fait pour générer des ID identifiants uniques
                     ou
+                    numero aleatoire:
+                    ThreadLocalRandom toto = ThreadLocalRandom.current(); toto.nextInt(30)// 30 est le max à ne pas depasser je crois
                 	public static String generateFileName(String prefix, Integer max, String ext) throws Exception {
                     		Random random = new Random(Runtime.getRuntime().freeMemory());  (voir aussi uuid)
                     		String nomFichier= prefix+Integer.toString(random.nextInt(max))+Long.toString(Calendar.getInstance().getTime().getTime())+ext;
