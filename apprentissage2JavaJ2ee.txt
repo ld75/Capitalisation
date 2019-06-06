@@ -1,4 +1,4 @@
-(?=.*spring)(?=.*test)
+(?=.*remov)(?=.*listener)
 Rule à faire : 
     refaire crossing-covariant mais cette fois les tags * et + et 0/* sont sur les instances! > difficile
 Canvas :
@@ -1793,32 +1793,8 @@ pour jouer un fichier audio avec mediaplayer il vaut mieux proceder comme ca :
       Windows>Preferences>Android>DDMS>augmenter le timeout
   utilistion du sensor: 
     pas fait voir walkstraight  
-  utilisation du timer squeduler regulier : (thread) voir plus bas "timer" LINKTimersdkjsq
-  	   public void onCreate() 
-       {
-            		  	timer = new Timer();
-            		  	  //schedule et scheduleatfixedrate: (fixedrate rattrape vite le temps perdu)
-            		 timet = new TimerTask() {
-            				
-            				@Override
-            				public void run() 
-                      {
-                        ...
-              				}
-            			};
-         		  	  timer.schedule(timet, Integer.parseInt(params[0].trim())*1000, Integer.parseInt(params[0].trim())*1000);
-
-
-       }
-        public void onStart(Intent intent, int startId) { 
-            timer.schedule(timet, Integer.parseInt(params[0].trim())*1000, Integer.parseInt(params[0].trim())*1000);
-        }
-        public void onDestroy() {
-            		timet.cancel();
-            		timer.purge();
-            		timer.cancel();
-            		super.onDestroy();
-            	}
+   
+  
   si le lancement d'emulateur ne peut pas se faire sur eclipse: pour lancer l'emulateur sans passer par eclipse: 
   D:\Program Files\Android\android-sdk>set ANDROID_EMULATOR_DEBUG=1
   D:\Program Files\Android\android-sdk\tools>emulator @MonEmulateur
@@ -4456,8 +4432,8 @@ AILLEURS : injecter mes beans par constructeur
                                 }
                                 return myBean;
                             }
-                            on peut aussi activer un profile en lancant l'application avec : --spring.profiles.active=unevaleur,unautreprofile ou -Dspring.profiles.active=infosFromURL ou AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(); context.getEnvironment().setActiveProfiles("Linux");
-                      @Profile("unevaleur") // conditionnel alors cette classe ne s'injecte ailleurs que si dans une application.properties : spring.profiles.active=unevaleur,uneautrevaleur ou bien en mettant @ActiveProfiles dans la classe qui execute
+                            on peut aussi activer un profile en lancant l'application avec : --spring.profiles.active=unevaleur,unautreprofile ou -Dspring.profiles.active=infosFromURL ou dans une application.properties : spring.profiles.active=unevaleur,uneautrevaleur ou bien en mettant @ActiveProfiles dans la classe (peut etre une classe de test) qui execute ou AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(); context.getEnvironment().setActiveProfiles("Linux");// ce dernier ne marche pas dans la methode d'initialisation d'une classe de test
+                      @Profile("unevaleur") // conditionnel alors cette classe ne s'injecte ailleurs que si le profile "unevaleur" est activé 
                       @Conditional à mettre dans une methode @Bean de la @Configuration: @Conditional(UneDeMesClasseImplementantConditional.class)
                                                       UneDeMesClasseImplementantConditional implements Condition
                                                       {@Override
@@ -5047,10 +5023,15 @@ Spring : XML STYLE
                             @Scope("request") (par exemp<le) ou @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)                             
                             public class MaClasseMonController // NE PAS l'appeler Controller tout court
                             {
-                                @RequestMapping(value="/monpath.html",method=RequestMethod.POST) (pour mettre les deux get et post et get : method={ RequestMethod.GET, RequestMethod.POST }) //est GET par defaut
-                                public ModelAndView helloworld(@ModelAttribute("student1") Student student1, BindingResult sierrorlorsdubiding) //bind les parametres de mon formulaire id="student1" avec les champs ayant un name:"toto" avec mon objet Student qui a une methode getsetToto
+                                @ResponseBody // en tete de methode ou de classe pour qu'il soit cap de renvoyer que du json même si je retourne un objet java(webservice mais inutile si j'ai mis @RestController en tête de classe)
+                                @RequestMapping(value="/monpath.html" ou "/welcome",method=RequestMethod.POST ou .GET ou method={ RequestMethod.GET, RequestMethod.POST }) //est GET par defaut. ou ("/welcome") ou ("/welcome/{parametre1}/{parametre2}") // url: /welcome/toto/titi. consumes = "multipart/form-data" ou consumes={"toto","titi",MediaType.APPLICATION_JSON_VALUE})
+                                ou 
+                                @GetMapping("/mon/path/{param1}") // c'est comme @RequestMapping avec methode get. param1 se retrouve dans @PathVariable
+                                public ModelAndView helloworld(@ModelAttribute("student1") Student student1, BindingResult sierrorlorsdubiding //bind les parametres de mon formulaire id="student1" avec les champs ayant un name:"toto" avec mon objet Student qui a une methode getsetToto. @Valid//pourPrendreEnCompteLesAnnotAuDessusDesGettersEtSettersDeMesBeansPojo(voir @Size) ou @RequestBody Object[]  request ou ObjetJavaAvecAnnotations ou LinkedMultiValueMap<String, Object>//pour recuperer du JSON ou du XML. request ou @RequestPart Map request ou @PathVariable("parametre1") String monparam1, @PathVariable("parametre2") String monparam2, @PathVariable Map<String,String> rePathVar)// @PathVariable c pour l'URL ex:x/y/z. ou @RequestParam(value="parametre1",defaultValue="siParametre1EstNullVide", required=true) String monparam1, @RequestParam("parametre2") int monparam2) @RequestParam c pour la request ex:?filter=x : pour un post ca se met comme ca dans le body du post : paramname+"="+paramvalue; @RequestParam Map<String,String> reqPar) // du coup j'ai reqPar.get("monParametre1"); reqPar.get("monParametre1");)
                                                                                                               Bind avec n'importe quel type de var : date, arraylist etc...Meme les objets sous-jacents
-                                                                                                              si je veux personaliser mon binding il faut utiliser une methode annotee avec @InitBinder (voir InitBinder)
+                                                                                                              si je veux personaliser mon binding il faut utiliser une methode annotee avec @InitBinder (voir LINKInitBinder)
+                                ou
+                                public String postCommentAgency(MultipartHttpServletRequest request, HttpServletResponse response){...
                                 {
                                   if (sierrorlorsdubiding==true) // si erreurs lors du biding 
                                   {
@@ -5060,76 +5041,12 @@ Spring : XML STYLE
                                   else{
                                     ModelAndView modv = new ModelAndView("leNomDeMaJspDeMaViewEnFait");  grace au viewResolver (voir config spring au dessus)
                                      INUTILE GRACE A @ModelAttribute-> //modv.addObject("student",student); <- inutile.
-                                    return modv;
+                                                                        modv.addObject("monMessage","tataaaaa"+monparam1);
+                                                                        modv.addObject("monMessage",unObjetAvecDesGetters);
+                                    return modv;  // avec le viewResolver ca va afficher du coup : META-INF/leNomDeMaJsp.jsp
                                     }
                                 }
-                                @ResponseBody // en tete de methode ou de classe pour qu'il soit cap de renvoyer que du json même si je retourne un objet java(webservice mais inutile si j'ai mis @RestController en tête de classe)
-                                @RequestMapping(value="/monpath.html",method=RequestMethod.POST) //est GET par defaut
-                                @RequestMapping("/welcome") // plus besoin de mettre dans le frontcontroller
-                                ou bien avec url parametre en get
-                                @RequestMapping("/welcome/{parametre1}/{parametre2}") // url: /welcome/toto/titi
-                                @RequestMapping(value="/welcome", method=RequestMethod.POST ou .GET(pardefaut)) // url: /welcome/toto/titi
-                                public ModelAndView helloworld(@Valid//pourPrendreEnCompteLesAnnotAuDessusDesGettersEtSettersDeMesBeansPojo(voir @Size)@ModelAttribute(") //bind les parametres de mon formulaire avec l'objet Student                                
-                                 {
-                                    ModelAndView modv = new ModelAndView("leNomDeMaJspDeMaViewEnFait");  grace au viewResolver (voir config spring au dessus)
-                                     modv.addObject("student",student);
-                                    return modv; 
-                                }
-                                public ModelAndView helloworld()
-                                {
-                                    ModelAndView modv = new ModelAndView("leNomDeMaJspDeMaViewEnFait");  grace au viewResolver (voir config spring au dessus)
-                                    modv.addObject("monMessage","tataaaaa");
-                                    return modv; // avec le viewResolver ca va afficher du coup : META-INF/leNomDeMaJsp.jsp
-                                }
-                                
-                                
-	//@RequestMapping(value="/postcommentagency", consumes = "multipart/form-data" ou consumes={"toto","titi",MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.POST)
-                                @RequestMapping(value="/postcommentagency", method = RequestMethod.POST) // pour recup en JSON (voir aussi plus haut) un formulaire
-                                	public String postCommentAgency(MultipartHttpServletRequest request, HttpServletResponse response){...          	         
-	
-                            	public ModelAndView postCommentAgency(@RequestBody Object[]ou ObjetJavaAvecAnnotations  comment) //@RequestPart Map map)// @RequestBody LinkedMultiValueMap<String, Object> requestBody) pour recuperer du JSON ou du XML
-	
-                                ATTENTION @PathVariable c pour l'URL ex:x/y/z @RequestParam c pour la request ex:?filter=x : pour un post ca se met comme ca dans le body du post : paramname+"="+paramvalue;
-                                public ModelAndView helloworld(@PathVariable("parametre1") String monparam1, @PathVariable("parametre2") String monparam2)
-                                public ModelAndView helloworld(@PathVariable Map<String,String> rePathVar)
-                                public ModelAndView helloworld(@RequestParam(value="parametre1",defaultValue="siParametre1EstNullVide", required=true) String monparam1, @RequestParam("parametre2") String monparam2)
-	//@RequestMapping(value="/postcommentagency", consumes = "multipart/form-data", method = RequestMethod.POST)
-	//public ModelAndView postCommentAgency(@RequestBody Object[]  comment) //@RequestPart Map map)// @RequestBody LinkedMultiValueMap<String, Object> requestBody)
-	@RequestMapping(value="/postcommentagency", method = RequestMethod.POST)
-	public String postCommentAgency(MultipartHttpServletRequest request, HttpServletResponse response)
-	{
-	System.out.println(request);
-	//commentAgencyDao.postComment(comment, idagency);
-          pour recuperer un fichier des resources sous src\test\resources\json\request.json properties 
-                new ClassPathResource("json/request.json").getFile()
-                exemple : new Scanner(new ClassPathResource("json/request.json").getFile()).useDelimiter("\\Z").next(); //voir regexp LINKçeeçeeçregexpçeeçeeç   
-
-
-	}
-	@RequestMapping(value="/postcommentdeparture", method = RequestMethod.POST)
-	public ModelAndView postCommentDeparture(@RequestParam("comment") String comment, @RequestParam("departure") int iddeparture)
-	{
-
-		commentDepartureDao.postComment(comment, iddeparture);
-		ModelAndView modv = new ModelAndView("detail");
-		modv.addObject("commented",true);
-		return modv;
-	}
-                                
-                                public ModelAndView helloworld(@RequestParam Map<String,String> rePar)
-                                {
-                                  monparam1; //est dispo!
-                                  reqPathVar.get("monParametre1");
-                                  reqPar.get("monParametre1");
-                                
-                                  
-                                    ModelAndView modv = new ModelAndView("leNomDeMaJspDeMaViewEnFait");  grace au viewResolver (voir config spring au dessus)
-                                    modv.addObject("monMessage","tataaaaa"+monparam1);
-                                    modv.addObject("monMessage",unObjetAvecDesGetters);
-                                    return modv; // avec le viewResolver ca va afficher du coup : META-INF/leNomDeMaJsp.jsp
-                                }                        
-                            }
-                            // SANS UTILISER D ANNOTATIONS:
+         // SANS UTILISER D ANNOTATIONS:
                             MaclasseMonCOntrolleur extends AbstractController
                             {
                               handleRequestInternal(Http... request , Htt... respons)
@@ -5139,9 +5056,9 @@ Spring : XML STYLE
                                 return modv; // avec le viewResolver ca va afficher du coup : META-INF/leNomDeMaJsp.jsp
                               }
                             }
-                            @InitBinder
-                            public void monTraitementCustomiseLorsDuBiding(WebDataBinder binder)
-                            {
+                   @InitBinder LINKInitBinder
+                   public void monTraitementCustomiseLorsDuBiding(WebDataBinder binder)
+                   {
                               binder.setDissalowedFields(new String[] {"monChampAIgnorerLorsDuBiding"});
                               SimpleDateFormat dateFormat = new SimpleDateFormat etc et... // attention n'est pas threadsafe.
                               binder.registerCustomEditor(Date.class,"monChampDate",new CustomDateEditor(dateFormat,false)//caPeutEtreUneClasseAMoiPourCustomiser: Build-in PropertyEditors) exemple : 
@@ -5258,7 +5175,7 @@ Spring-batch :
                                       @Autowired
                                       ServletWebRequest webRequest; 
                                       @Autowired  
-                                     TestRestTemplate rest = testRestTemplate;  // tester un webservice
+                                     TestRestTemplate rest;  // tester un webservice en faisant des appels curl (utiliser avec @SpringBootTest. pas avec @WebMvcTest)
                                       
                                       
                                       @Autowired ou @Inject
@@ -5266,8 +5183,10 @@ Spring-batch :
                                       
                                       @Autowired
 >>>                                   private MockMvc mockMvc; //LINKmockmvc
-                                      
-                                      Mockery context = new JUnit4Mockery(); // pour utiliser Jmock (voir plus bas)<  
+                                      @MockBean
+	                                  private MongoDBRepository mongodbRepo; ou une ClasseService maclasseService; LINKavecMockito
+                                        Avant :
+                                        Mockery context = new JUnit4Mockery(); // pour utiliser Jmock voir LINKJmock  
                                       
                                       //spring-batch-tester
                                         @Autowired
@@ -5291,6 +5210,7 @@ Spring-batch :
                                             .addFilter(this.unFiltreSpring)// je peux ajouter des filtres spring (pas ceux du web.xml mais que ceux de spring)
                                             .build();
                                             expect(mockMvc.uneMethode()).andReturn(retourQuelleDevraEnvoyer).anyTimes(); // je prepare mon mockito : qu'est ce que ses methodes devront renvoyer qd on les appelle
+                                            
                                   
                                             session = (IHRSession) wac.getBean("openhr.session"); // recuperer la session 
                                                user = (HRUserImpl) session.connectUser("HRFR", "HR");
@@ -5308,35 +5228,36 @@ Spring-batch :
                                           		  UsernamePasswordAuthenticationToken authenticationQuiEstUnPrincipal = new UsernamePasswordAuthenticationToken(userDetail,userDetail.getPassword(),userDetail.getAuthorities());
                                           		  SecurityContextHolder.getContext().setAuthentication(authenticationQuiEstUnPrincipal); 
                                       //FIN si dans mes controlleurs j'ai besoin que l'utilisateur soit authentifie : simuler qu'il est authentifie:
-                                                                            
+                                      pour recuperer un fichier des resources sous src\test\resources\json\request.json properties                                      
                                       String request = new Scanner(new ClassPathResource("json/request.json").getFile()).useDelimiter("\\Z").next(); //voir regexp LINKçeeçeeçregexpçeeçeeç
-                                      executer un controlleur :
-                                      	this.mockMvc.perform(get("/show")) //necessite import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+                                      executer un controlleur : LINKmockmvc pour test unitaire
+                                            MvcResult result = this.mockMvc.perform(get("/show") ou post("/sirh/user"))*** //necessite import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+                                                                                               .header("Api-key", apiKey)
+                                                                                               .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                                                                                               .contentType(MediaType.APPLICATION_JSON) ou contentType(MediaType.TEXT_HTML)
+                                                                                               .with(user("toto").roles("TATA"))
+                                                                                               .param("jsonobj","{\"destination\":\"yaounde\",\"departure\":\"douala\",\"timedeparture\":\"3\",\"daydeparture\":\"01/01/2016\"}")
+                                                                                               .content(request)) // requete envoyee si c'est du POST(je crois) ne s'applique pas pour du GET
+                                                                                             )***    
                                   			  .andExpect(status().isOk()) // necessite import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-                                  			  .andExpect(content().contentType("application/json"))
+                                  			  .andExpect(content().contentType("application/json" ou "application/json;charset=UTF-8"))
                                   			  .andExpect(jsonPath("$.name").value("Lee"));
-                                  		tester la reponse d'un webservice rest	  
+                                              .andExpect(jsonPath("nom").value("toto")); // pour verifier que le contenu renvoyé contient ce json. De org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+                                              ou
+                                              .andExpect(status().isForbidden());                
+                                              .andDo(print())
+                                              .andReturn();  
+                                                String content = result.getResponse() //ou getRequest() ou getModelAndView()
+                                                    .getContentAsString();
+                                                org.junit.Assert.assertNotNull(content);
+
+                                  		tester la reponse d'un webservice rest pour test d'integration (demarre tout springboot)	  
                                   		  ResponseEntity<MmcUser> response = testRestTemplate.getForEntity("/admin/getUsers", MmcUser.class);
                                         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK); // assertJ est integré directement dans springboot
-                                  		ou
->>>                                 MvcResult result =mockMvc.perform(post("/sirh/user")
-                                                    		.header("Api-key", apiKey)
-                                                    		.accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                                                    		.contentType(MediaType.APPLICATION_JSON) ou contentType(MediaType.TEXT_HTML)
-                                                    		.with(user("toto").roles("TATA"))
-                                                    		.param("jsonobj","{\"destination\":\"yaounde\",\"departure\":\"douala\",\"timedeparture\":\"3\",\"daydeparture\":\"01/01/2016\"}")
-                                                    		.content(request)) // requete envoyee si c'est du POST(je crois) ne s'applique pas pour du GET    
-                                                    		.andExpect(content().contentType("application/json;charset=UTF-8")) //tests retours
-                                                            .andExpect(jsonPath("nom").value("toto")); // pour verifier que le contenu renvoyé contient ce json. De org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-                                                    		ou
-                                                        .andExpect(status().isForbidden());                
-                                                    		.andDo(print())
-                                                    		.andReturn();  
-                                                        String content = result.getResponse() //ou getRequest() ou getModelAndView()
-                                                                               .getContentAsString();
-                                                        org.junit.Assert.assertNotNull(content);
-                                         
-                                        monService = context.mock(InterfaceDeMonService.class) // pour utiliser jmock
+                                      ou   
+                                      LINKavecMockito: given(mongodbRepo.findById(anyString())).willReturn(Optional.ofNullable(new MmcUser("Lee")));  // du coup mongodbRepo va s'injecter direct dans toutes les classes qui l'utilisent
+                                      ou
+                                      LINKjmock: monService = context.mock(InterfaceDeMonService.class)
                                         permissiondao.insert(permission4);
                                     		assertTrue(permissiondao.getAll().size()==4);
                                     		permissiondao.delete(permission4);
@@ -5376,9 +5297,9 @@ Spring-batch :
                                     	{
                                     	}
                                     }
-
-
-                                    
+        si j'ai erreur lors du test
+                        org.springframework.web.client.RestClientException: Error while extracting response for type and content type nested exception is org.springframework.http.converter.HttpMessageNotReadableException: JSON parse error: Cannot construct instance of ... (although at least one Creator exists): cannot deserialize from Object value (no delegate- or property-based Creator); nested exception is com.fasterxml.jackson.databind.exc.MismatchedInputException: Cannot construct instance of ... (although at least one Creator exists): cannot deserialize from Object value (no delegate- or property-based Creator)
+                        c'est parce qu'il manque un constructeur vide dans ma classe entité entity                                    
                               
                   
               JDBC : pour recuperer le dernier Id insere : 
@@ -13548,7 +13469,7 @@ Merise mcd creation base de donnee: http://www.sam-mag.com/P53,53,5,61,,,default
 
 ----------------------------------
 logs :    LinkLogutils avec java.util.logging.* (ne semble pas marcher si librairie log4j est dans le classpath et est utilisee aussi)
-  1) Methode par fichier de configuration :
+  1) Methode par fichier de configuration : (ne marche pas bien si je veux 2 fichiers de logs distincts. utiliser alors methode 2 ci dessous)
     quelquepart faire : 
             LogManager manager = LogManager.getLogManager(); // a mettre cote statique
             manager.readConfiguration(Application.class.getClassLoader().getResourceAsStream("logging.properties")); // a mettre dans instance
@@ -15755,6 +15676,167 @@ pour deflateandencode :
   
       pour savoir si un string est vide empty, ou null:
               org.apache.commons.lang.StringUtils.isEmpty(this.url_redirect)
+Les thread : threads : (ne jamais mettre un controlleur spring dans un thread) (si j'ai RejectedExecutionException c parce que j'ai stoppé un thread et après je lui demande encore un truc malgre tout)
+    Chaque Thread a son stack.
+      Si commplexe, ne plus utiliser les treads directement mais passer par un ExecutorService (a faire voir aussi ExecutorCompletionService )
+        ExecutorService : pour faire un traitement par packets blocs blocks paquets: je traite une longue liste: je la divise en plusieurs et je traite chaque sous liste dans un thread soit en parallele soit les uns apres les autres
+           public List<Future<DossierCommitResult>> doIMportExcell(final IHRUser hrUser, final IHRRole hrRole, final List<T> entries, final ExcelTemplate excelTemplate, final boolean simulation, final IDossierDAO<T> dao) throws InterruptedException {
+              		List<List<T>> entriesPartition = MyPartition.partition(entries, 100);   // sous diviser sousdiviser decouper ma liste en plusieurs listes de 100elmts
+                  Set<Callable<DossierCommitResult>> threadList = new HashSet<Callable<DossierCommitResult>>();
+              				ExecutorService execute = Executors.newSingleThreadExecutor(); // pour une execution d'un thread les uns a la suite des autres
+                  		//ExecutorService execute = Executors.newFixedThreadPool(2); // pour une execution de 2 threads à la fois. 2 doit etre recupéré par int proc = Runtime.getRuntime().availableProcessors(); // permet de recuperer le nb de threads simultanes possibles
+                  		for (final List<T> entriesblock : entriesPartition) {
+                  			Callable<DossierCommitResult> callable = new Callable<DossierCommitResult>() {
+                                  public DossierCommitResult call() throws Exception {
+                            					DossierCommitResult commitResult = dao.write(hrUser, hrRole, excelTemplate, entriesblock, simulation, Integer.parseInt(partitionMaxSize));
+                            					System.out.println("aa");
+                            					Thread.sleep(100);
+                            					return commitResult;
+                  				}
+                              };
+                  			//execute.shutdown(); laisser les tasks en cours se terminer mais ne plus accepter de nouvelles tasks
+                  			//execute.shutdownNow(); ne plus accepter de nouvelles tasks et Stopper les tasks en cours
+                  			// execute.awaitTermination(500, TimeUnit.MILLISECONDS); A mettre apres un shutdown: arrête l'execution du thread principal et attends que toutes les taches soient terminees si toujours pas et que le timeout est atteind alors force l'arret des threads et continue
+                         threadList.add(callable);
+                  		}
+                  		List<Future<DossierCommitResult>> futures = execute.invokeAll(threadList); // ici invokeAll alors que invokeAny execute la premiere task et c tout.
+                  		                                            execute.execute(UnRunnable) // possible aussi pour executer un thread LINKRunnable
+                          // checks for thread termination // ne pas mettre de points d'arret de debuggate dans le traitement des futures parce que ça risque de te faire croire que ça ne marche pas alors que ça marche
+                          /*final boolean isTerminated = execute.isTerminated();
+                          System.out.println(isTerminated);*/
+                          execute.shutdownNow(); // a mettre apres la recuperation des futures dans des objets à moi. pas avant.
+                  		return futures;
+                  	}
+                  }
+          les treads : si complexe ne plus utiliser les treads dirrectement mais passer par un ExecutorService         
+         currentThread( ) 	 Thread 	 Returns an object reference to the thread in which it is invoked.
+         getName( ) 	 String 	 Retrieve the name of the thread object or instance. Exemple: pas la peine de mettre un incrementeur,  dans le thread mettre : logger.info("executing thread"+this.elementblocknumber+" threadsname: "+Thread.currentThread().getName());
+         start( ) 	 void 	 Start the thread by calling its run method. On ne peut pas appeler cette methode deux fois sur un meme thread. Si on veut le faire il faut créer un nouveau thread puis faire start.
+         run( ) 	 void 	 This method is the entry point to execute thread, like the main method for applications.
+         sleep( ) 	 void 	 Suspends a thread for a specified amount of time (in milliseconds).
+         isAlive( ) 	 boolean 	 This method is used to determine the thread is running or not.
+         activeCount( ) 	 int 	 This method returns the number of active threads in a particular thread group and all its subgroups.
+         interrupt( ) 	 void 	 The method interrupt the threads on which it is invoked.
+         yield( ) 	 void 	 By invoking this method the current thread (Thread.yield();) pause its execution temporarily and allow other threads to execute. quand ils ont fini ça reprend la suite de l'execution
+         join( ) 	 void 	 This method and  join(long millisec) Throws InterruptedException.  These two methods are invoked on a thread. These are not returned until either the thread has completed or it is timed out respectively.
+       Depuis java7 ou java8 pour demarrer un thread:     LINK84838
+        Thread th= new Thread(() -> ce qui est execute); (// a partir de java10 apparemment) contraction
+        th.start();// execution en paralele th.run() // execution immediate pas en parallele aucun interet apparemment ne pas utiliser
+			pour faire attendre la fin d'un ou plusieurs threads avant de poursuivre le programme main: 
+			utiliser join. Exemple:
+									public static void main (String args []) {
+								    Coureur c [] = {new Coureur ("un", 2000),new Coureur ("deux", 3000),new Coureur ("trois", 1800)} ;	
+								    for (int i = 0 ; i < c.length ; i ++) c [i].start () ;
+								    for (int i = 0 ; i < c.length ; i ++) {
+								      try {
+								        c [i].join () ; // lors du premier passage, tant que c[0] n'est pas fini, il s'arrete là: c1 c2 c3 etc ne s'executent pas tant que c0 n'a pas fini en fait tout le monde attend. Meme main.
+								      } catch (InterruptedException e) {
+								        System.out.println ("InterruptedException sur " + c [i].nom ()) ;
+								      }
+								    }
+								    System.out.println ("Fin de la course") ;
+								  }
+								}
+
+			pour faire pauser un thread: sleep(duree ms), wait, ne pas utiliser suspend() LINK84838
+					public class MonThread extends (java.lang)Thread (ne jamais mettre un controlleur spring dans un thread) LINK84838 
+					{
+					private	mes variables; (faire les getters et setters)
+					  public void run() 
+					  {
+					  	// pour s'assurer que le thread tourne
+					  			long start = System.currentTimeMillis();
+					  			  if ( System.currentTimeMillis() == start + (1000 * 5))) 
+					  			  {
+					  			  	System.out.println("start");
+					  					start = System.currentTimeMillis();  
+					  			  }
+				    		// faire quelque chose
+			  		}
+			  		ou bien pour faire un thread qui dure un temps defini: (ne jamais mettre un controlleur spring dans un thread)
+					  public void run() 
+					  {
+                	  			long start = System.currentTimeMillis();
+                	  			long end = System.currentTimeMillis() + (1000*8);
+                	  			log.debug("start");
+                	  			log.debug(start);
+                	  			log.debug("end");
+                	  			log.debug(end);
+                
+                	  			  while ( System.currentTimeMillis() <= end) 
+                	  			  {
+                	  					start = System.currentTimeMillis();
+                	  					log.debug(start);
+                	  					// faire quelque chose
+                	  			  }
+    				}
+					dans ma classe appelante: 
+												 MonThread thread = new MonThread(); (ne jamais mettre un controlleur spring dans un thread)
+												    // Activation du Thread
+												    thread.start();
+											   	    // tant que le thread est en vie...
+												    while( thread.isAlive() ) {
+												      // faire un traitement...
+												      System.out.println("Ligne affichee par le main");
+												      try 
+												      {
+												        // et faire une pause
+												        Thread.sleep(800);
+												      }
+												      catch (InterruptedException ex) {}
+												    }
+												  }
+.wait() et .notify() :
+ 	sur un meme objet java (pas forcement un thread), wait() met en pause l'execution tant que sur ce meme objet notify() n'est pas execute. 
+  c'est une ancienne façon de gérer les threads. Il faut que l'appel de ces methodes soient dans des contextes synchronized
+  comme ca : synchronized (this){this.notify(); conditionRequise=false;} attention si le notify arrive avant le wait alors je vais attendre infiniment
+  Mettre le wait dans un while(conditionRequise) 
+synchronisation : (voir aussi volatile) 
+						void methode() {
+						    synchronized(this) {
+						        //section critique DONC ATTENTION, C'EST TOUT L OBJET QUI CONTIENT CETTE METHODE QUI EST LOCKE; PAS SEULEMENT CETTE METHODE DE L OBJET!!!
+						    }
+						}
+		est equivalent a 
+						synchronized void methode() {
+						    //section critique  DONC ATTENTION, C'EST TOUT L OBJET QUI CONTIENT CETTE METHODE QUI EST LOCKE; PAS SEULEMENT CETTE METHODE DE L OBJET!!!
+						}
+		est equivalent en java 1.5 a 
+					void methode() 
+					{
+							Lock l = new ReentrantLock();
+							l.lock();
+							try 
+							{
+								    //section critique
+							} 
+							finally 
+							{
+								    l.unlock();
+							}
+					}
+		attention
+						synchronized(maListe) 
+						{
+				    			maListe = new ArrayList<String>();
+						}
+						ne marche pas si maListe n'est pas final car "maListe" est une reference a l'objet. Pas l'objet lui meme (pointeurs)
+pour faire une liste synchronisee entre plusieurs threads (dans une classe qui va etre partagee par plusieurs threads j'ai la liste. Dans cette classe le code c'est : 
+          public class AspFile {
+            private static transient LinkedList<AspFile> allAspFiles= new LinkedList<AspFile>() {
+          		@Override
+          		public void addLast(AspFile o) {
+          			synchronized (this) {
+          				super.addLast(o);				
+          			}
+          		}
+          		public AspFile removeFirst() {
+          			synchronized (this) {
+          				return super.removeFirst();				
+          			}			
+          		};
+          	};      
+            
         pour faire un prog qui s'execute regulierement: (sinon voir l'API quartz permet plus d'options) LINKTimersdkjsq
           depuis java 1.5:
           ScheduledExecutorService:
@@ -15797,7 +15879,7 @@ pour deflateandencode :
                         }
                
         depuis java 1.3 (old)
-        timer:   utilisation du timer : (thread) faire un schedule execution reguliaire automatique LINKTimersdkjsq
+        timer:   utilisation du timer squeduler regulier : (thread) faire un schedule execution reguliaire automatique LINKTimersdkjsq    
         inconveniants:
           pas de planification complexe
           execution d'une seule tâche à la fois
@@ -16891,7 +16973,7 @@ Remplacement de chaine1 (toutes les occurrences de chaine1) ,par chaine2
           return buffer.toString();
         }
 
-  modulo : pour savoir si un nombre est entier reste de la division est vide, si c'est un multiple de... (utilisation de pourcentage)  
+  modulo : pour savoir si un nombre est entier le reste de la division est vide, si c'est un multiple de... (utilisation de pourcentage)  
       return (nbTask % critNbTask) == 0
       Cela renvoie true si nbTask est un multiple de critNbTask et false dans le cas contraire.
       unGrandChiffre % 4 : ca divise unGrandChiffre (par ex 101) par 4 =25.25; 25*4 =100 et il reste 1 donc resultat = 1.
@@ -23388,7 +23470,8 @@ si j'ai eclipse edit source lookup path source not found lors du debuggage:
   peut etre ajouter -DdownloadSources=true après commande maven
   puis
   package>clique droit sur la librairie maven manquante >Maven>download sources. Ensuite Debug... >onglet sources> add source > external archive > ajouter la librairie xxx.source dans le buidpath (peut etre besoin redemarrer eclipse mais redemarrer le debugger) IL FAUT REDEMARRER LE DEBUGGAGE POUR QUIL PRENNE EN COMPTE
-      
+afficher n'importe quelle vue view rapidement; liste des erreurs problemes: 
+        Alt+shift+q puis q
 comparer les fichiers un a un:
     dans packageExplorer selectionner les deux fichiers > click droit > compare > with eachother
 si il ne cree pas les classes:
@@ -27201,7 +27284,7 @@ pour faire un paint avec canvas: Attention ne jamais donner un style a un canvas
                             // Pencil tool instance.
                             tool = new tool_ecrire();
                             // Attach the mousedown, mousemove and mouseup event listeners.
-                            canvas.removeEventListener('mousedown', ev_canvas, false);
+                            canvas.removeEventListener('mousedown', ev_canvas, false); // removeEventListner des fois ne marche pas parce que c'est chiant faut etre super precis. Du coup faire comme ca LINKrmvEvntListner
                             canvas.removeEventListener('mousemove', ev_canvas, false);
                             canvas.addEventListener('mouseup',   ev_canvas, false);
                             canvas.classList.add('ecrire');
@@ -27364,7 +27447,13 @@ ou
                                                     console.log(ev._x);
                                                       func(ev);
                                                     }
-                                            }         
+                                            }
+                                            
+pour supprimer tous all les eventlisnter LINKrmvEvntListner
+    l'idée est de clonner l'element que je veux nettoyer et que le clone remplace celui qui contient les eventlisnter. Tout est dupliqué sauf les eventlistners:
+            elementANettoyer.parentNode.replaceChild(elementANettoyer.cloneNode(false), elementANettoyer); 
+
+                                                     
 dessiner un cercle dans un canvas:
       context.beginPath();
       context.arc(posx, posy, taille0-100?, 0(angleDeDepart), 2 * Math.PI    (cad angleDeFinEnviron6.3PourFaireUnCercle), false(sensBof));
@@ -28347,165 +28436,7 @@ pour minuter en secondes: execution avec delais:
 pour supprimer un timeout
       var monTimeout = setTimeout("logoMsg()",3000);
       clearTimeout(monTimeout);  
-Les thread : threads : (ne jamais mettre un controlleur spring dans un thread) (si j'ai RejectedExecutionException c parce que j'ai stoppé un thread et après je lui demande encore un truc malgre tout)
-    Chaque Thread a son stack.
-      Si commplexe, ne plus utiliser les treads directement mais passer par un ExecutorService (a faire voir aussi ExecutorCompletionService )
-        ExecutorService : pour faire un traitement par packets blocs blocks paquets: je traite une longue liste: je la divise en plusieurs et je traite chaque sous liste dans un thread soit en parallele soit les uns apres les autres
-           public List<Future<DossierCommitResult>> doIMportExcell(final IHRUser hrUser, final IHRRole hrRole, final List<T> entries, final ExcelTemplate excelTemplate, final boolean simulation, final IDossierDAO<T> dao) throws InterruptedException {
-              		List<List<T>> entriesPartition = MyPartition.partition(entries, 100);   // sous diviser sousdiviser decouper ma liste en plusieurs listes de 100elmts
-                  Set<Callable<DossierCommitResult>> threadList = new HashSet<Callable<DossierCommitResult>>();
-              				ExecutorService execute = Executors.newSingleThreadExecutor(); // pour une execution d'un thread les uns a la suite des autres
-                  		//ExecutorService execute = Executors.newFixedThreadPool(2); // pour une execution de 2 threads à la fois. 2 doit etre recupéré par int proc = Runtime.getRuntime().availableProcessors(); // permet de recuperer le nb de threads simultanes possibles
-                  		for (final List<T> entriesblock : entriesPartition) {
-                  			Callable<DossierCommitResult> callable = new Callable<DossierCommitResult>() {
-                                  public DossierCommitResult call() throws Exception {
-                            					DossierCommitResult commitResult = dao.write(hrUser, hrRole, excelTemplate, entriesblock, simulation, Integer.parseInt(partitionMaxSize));
-                            					System.out.println("aa");
-                            					Thread.sleep(100);
-                            					return commitResult;
-                  				}
-                              };
-                  			//execute.shutdown(); laisser les tasks en cours se terminer mais ne plus accepter de nouvelles tasks
-                  			//execute.shutdownNow(); ne plus accepter de nouvelles tasks et Stopper les tasks en cours
-                  			// execute.awaitTermination(500, TimeUnit.MILLISECONDS); A mettre apres un shutdown: arrête l'execution du thread principal et attends que toutes les taches soient terminees si toujours pas et que le timeout est atteind alors force l'arret des threads et continue
-                         threadList.add(callable);
-                  		}
-                  		List<Future<DossierCommitResult>> futures = execute.invokeAll(threadList); // ici invokeAll alors que invokeAny execute la premiere task et c tout.
-                  		                                            execute.execute(UnRunnable) // possible aussi pour executer un thread LINKRunnable
-                          // checks for thread termination // ne pas mettre de points d'arret de debuggate dans le traitement des futures parce que ça risque de te faire croire que ça ne marche pas alors que ça marche
-                          /*final boolean isTerminated = execute.isTerminated();
-                          System.out.println(isTerminated);*/
-                          execute.shutdownNow(); // a mettre apres la recuperation des futures dans des objets à moi. pas avant.
-                  		return futures;
-                  	}
-                  }
-          les treads : si complexe ne plus utiliser les treads dirrectement mais passer par un ExecutorService         
-         currentThread( ) 	 Thread 	 Returns an object reference to the thread in which it is invoked.
-         getName( ) 	 String 	 Retrieve the name of the thread object or instance. Exemple: pas la peine de mettre un incrementeur,  dans le thread mettre : logger.info("executing thread"+this.elementblocknumber+" threadsname: "+Thread.currentThread().getName());
-         start( ) 	 void 	 Start the thread by calling its run method. On ne peut pas appeler cette methode deux fois sur un meme thread. Si on veut le faire il faut créer un nouveau thread puis faire start.
-         run( ) 	 void 	 This method is the entry point to execute thread, like the main method for applications.
-         sleep( ) 	 void 	 Suspends a thread for a specified amount of time (in milliseconds).
-         isAlive( ) 	 boolean 	 This method is used to determine the thread is running or not.
-         activeCount( ) 	 int 	 This method returns the number of active threads in a particular thread group and all its subgroups.
-         interrupt( ) 	 void 	 The method interrupt the threads on which it is invoked.
-         yield( ) 	 void 	 By invoking this method the current thread (Thread.yield();) pause its execution temporarily and allow other threads to execute. quand ils ont fini ça reprend la suite de l'execution
-         join( ) 	 void 	 This method and  join(long millisec) Throws InterruptedException.  These two methods are invoked on a thread. These are not returned until either the thread has completed or it is timed out respectively.
-       Depuis java7 ou java8 pour demarrer un thread:     LINK84838
-        Thread th= new Thread(() -> ce qui est execute); (// a partir de java10 apparemment) contraction
-        th.start();// execution en paralele th.run() // execution immediate pas en parallele aucun interet apparemment ne pas utiliser
-			pour faire attendre la fin d'un ou plusieurs threads avant de poursuivre le programme main: 
-			utiliser join. Exemple:
-									public static void main (String args []) {
-								    Coureur c [] = {new Coureur ("un", 2000),new Coureur ("deux", 3000),new Coureur ("trois", 1800)} ;	
-								    for (int i = 0 ; i < c.length ; i ++) c [i].start () ;
-								    for (int i = 0 ; i < c.length ; i ++) {
-								      try {
-								        c [i].join () ; // lors du premier passage, tant que c[0] n'est pas fini, il s'arrete là: c1 c2 c3 etc ne s'executent pas tant que c0 n'a pas fini en fait tout le monde attend. Meme main.
-								      } catch (InterruptedException e) {
-								        System.out.println ("InterruptedException sur " + c [i].nom ()) ;
-								      }
-								    }
-								    System.out.println ("Fin de la course") ;
-								  }
-								}
 
-			pour faire pauser un thread: sleep(duree ms), wait, ne pas utiliser suspend() LINK84838
-					public class MonThread extends (java.lang)Thread (ne jamais mettre un controlleur spring dans un thread) LINK84838 
-					{
-					private	mes variables; (faire les getters et setters)
-					  public void run() 
-					  {
-					  	// pour s'assurer que le thread tourne
-					  			long start = System.currentTimeMillis();
-					  			  if ( System.currentTimeMillis() == start + (1000 * 5))) 
-					  			  {
-					  			  	System.out.println("start");
-					  					start = System.currentTimeMillis();  
-					  			  }
-				    		// faire quelque chose
-			  		}
-			  		ou bien pour faire un thread qui dure un temps defini: (ne jamais mettre un controlleur spring dans un thread)
-					  public void run() 
-					  {
-                	  			long start = System.currentTimeMillis();
-                	  			long end = System.currentTimeMillis() + (1000*8);
-                	  			log.debug("start");
-                	  			log.debug(start);
-                	  			log.debug("end");
-                	  			log.debug(end);
-                
-                	  			  while ( System.currentTimeMillis() <= end) 
-                	  			  {
-                	  					start = System.currentTimeMillis();
-                	  					log.debug(start);
-                	  					// faire quelque chose
-                	  			  }
-    				}
-					dans ma classe appelante: 
-												 MonThread thread = new MonThread(); (ne jamais mettre un controlleur spring dans un thread)
-												    // Activation du Thread
-												    thread.start();
-											   	    // tant que le thread est en vie...
-												    while( thread.isAlive() ) {
-												      // faire un traitement...
-												      System.out.println("Ligne affichee par le main");
-												      try 
-												      {
-												        // et faire une pause
-												        Thread.sleep(800);
-												      }
-												      catch (InterruptedException ex) {}
-												    }
-												  }
-.wait() et .notify() :
- 	sur un meme objet java (pas forcement un thread), wait() met en pause l'execution tant que sur ce meme objet notify() n'est pas execute. 
-  c'est une ancienne façon de gérer les threads. En general on met ces trucs là dans des blocks synchronized
-  comme ca : synchronized (this){this.notify();} attention si le notify arrive avant le wait alors je vais attendre infiniment
-synchronisation : (voir aussi volatile) 
-						void methode() {
-						    synchronized(this) {
-						        //section critique DONC ATTENTION, C'EST TOUT L OBJET QUI CONTIENT CETTE METHODE QUI EST LOCKE; PAS SEULEMENT CETTE METHODE DE L OBJET!!!
-						    }
-						}
-		est equivalent a 
-						synchronized void methode() {
-						    //section critique  DONC ATTENTION, C'EST TOUT L OBJET QUI CONTIENT CETTE METHODE QUI EST LOCKE; PAS SEULEMENT CETTE METHODE DE L OBJET!!!
-						}
-		est equivalent en java 1.5 a 
-					void methode() 
-					{
-							Lock l = new ReentrantLock();
-							l.lock();
-							try 
-							{
-								    //section critique
-							} 
-							finally 
-							{
-								    l.unlock();
-							}
-					}
-		attention
-						synchronized(maListe) 
-						{
-				    			maListe = new ArrayList<String>();
-						}
-						ne marche pas si maListe n'est pas final car "maListe" est une reference a l'objet. Pas l'objet lui meme (pointeurs)
-pour faire une liste synchronisee entre plusieurs threads (dans une classe qui va etre partagee par plusieurs threads j'ai la liste. Dans cette classe le code c'est : 
-          public class AspFile {
-            private static transient LinkedList<AspFile> allAspFiles= new LinkedList<AspFile>() {
-          		@Override
-          		public void addLast(AspFile o) {
-          			synchronized (this) {
-          				super.addLast(o);				
-          			}
-          		}
-          		public AspFile removeFirst() {
-          			synchronized (this) {
-          				return super.removeFirst();				
-          			}			
-          		};
-          	};      
 pour executer un code regulierement à interval regulier: 
           Lance un traitement javascript code repete à intervalle regulier de delai millisecondes.
           Ce traitement à intervalle regulier peut être arrête avec clearInterval().
@@ -28718,6 +28649,8 @@ svg :
    Z = closepath
     </svg>
 HTML :
+ pour faire un ancre : 
+        <a href="#x" // x c'est en fait l'identifant de l'element vers lequel je veux que mon scroll pointe. exemple : href= "#3"
 email  :<a href="mailto:webmaster@example.com">
 pour faire les icones des boutons bouttons c mieux de les faire en vectoriel avec fontawesome (LINKfontaw)
 faire un separateur hr personnalise avec label titre
@@ -29380,7 +29313,7 @@ https://developers.google.com/web/fundamentals/web-components/customelements#att
   <laurent-moncompoentn1 blabla="toto"></laurent-moncompoentn1> // toujours mettre la balise fermante
   dans laurent-moncompoentn1.js j'ai: import<-customcomponent(shadowdom(template))
       template :
-      const templatexxx=document.createElement("template");
+      LINKCustomTemplate const templatexxx=document.createElement("template");
       templatexxx.innerHTML=`
       <style>:host // :host c'est pour dire que ce style s'applique que dans le shadowroot parent de ce template (ne marche que dans un shadowdom)
                 :host(:hover) // mouse souris par dessus. Exemple: :host(:hover)>::slotted(memoclap-menu-sub){display:block;}// dans le shadowroot >DANS le slot l'element de type memoclap-menu-sub seulement. Attention le style des slots vient aussi depuis l'exterieur du webcomponent. mais::slotted prend l'avantage (si c'est !important seulement je crois)LINKkdkflkjsdf 
@@ -29412,8 +29345,8 @@ METHODE CLASS: THEBEST? classes es6
                                                          var root = thisMonElement.attachShadow({mode:'open ou closed LINKkddkdkdkd'}); // host maintenant devient un shadowroot: tout ce qu'il a a l'interieur devient invisible. open/closed= atteignable ou pas par javascript et querySelector('div').shadowRoot est visible ou pas selon. LINKkddkdkdkd: si j'ai mis closed alors xxx.shadowRoot=null pour l'avoir faire une variable dans le custom element: this.shadow = this.attachShadow({mode:'closed'});  et je réutilise this.shadow partout.
                                                           on peut juste faire aussi 
                                                           thisMonElement.attachShadow({mode:'open'}); // ca va créer automatiquement this.shadowRoot dans mas classe. Pas besoin de var root                                                        
-                                                         var monTemplate = templatexxx; ou `du contenu
-                                                                                              <span>SSSS<slot name(facultatif)='aaa'>bBBBB</slot><slot name='bbb'/>CCCC</span>   //se remplira avec le HTML de base qui est comme ça:<h1 slot='aaa'>bla</h1><div slot='bbb'></div>
+                                                         var monTemplate = templatexxx; ou voir LINKCustomTemplate=`du contenu
+                                                                                              <span>SSSS<slot name(facultatif)='aaa'>bBBBB</slot><slot name='bbb'/>CCCC</span>   //se remplira avec par defaut le HTML qui est dans la page dans ma balise custom element sinon si name existe alors avec le HTML de base qui est comme ça:<mon-customelement><h1 slot='aaa'>bla</h1><div slot='bbb'></div></mon-customelement>
                                                                                              html${this.variable}html` // pour que ${this.variable} marche il faut mettre tout ce bloc non pas dans constructor mais dans connectedcallback en ayant préalablement défini MaCLasse.variabl=xx
                                                                                         ou autre facon de definir un template: <template id="x">lkjsdf</template>
                                                          var cloneDuTemplate = monTemplate.content.cloneNode(true);  // true: il est recursif dans le dom
@@ -29425,15 +29358,23 @@ METHODE CLASS: THEBEST? classes es6
                                                         findansuneboucleparex
                                                         div.setAttribute('unAttributduTagHtml','valeurDeLattribut'); PIEGE! utiliserça et ne pas utiliser unElementHTML.unattribut=xxx (ca ne modifie que la classe pas le html et du coup attributeChangedCallback n'est pas appele)
                                                         
-                                                        on peut ajouter un listnener au slot si celui ci change en javascript: LINK-(r_r_r)
+                                                        on peut ajouter un listnener au slot si celui ci change en javascript: par contre si je veux modifier le innerhtml du slot voir LINKrmvEvntListner
                                                             monslot.addEventListener('slotchange', e => {
                                                                 ...e.currentTarget..
-                                                                this.innerHTML;  // est alors accessible. C'est la propriete: contenu de la balise. Par contre this.outerText; et this.innerText; n'ont pas marche?
+                                                                this.innerHTML;  // est alors accessible. C'est la propriete: contenu de la balise de mon custom element. This est mon custom element. Par contre this.outerText; et this.innerText; n'ont pas marche?
                                                                 du coup faire: si jai <slot name="contenu">-> querySelector("slot[name=contenu]") si je suis hors du slot
                                                                 et si je suis dans le slot:
                                                                 this.querySelector("[slot=contenu]").style.height=this.taillecontenu; // je change le contenu dynamique dans mon customelement
-                                                                this.querySelector("[slot=contenu]").outerHTML; // permet de recuperer le node vers lequel pointe pointeur mon slot
+                                                                this.querySelector("[slot=contenu]").outerHTML; // permet de recuperer le node vers lequel pointe pointeur mon slot                       
                                                             });
+                                                                LINKrmvEvntListner : this.shadowRoot.querySelector("slot").addEventListener('slotchange', this.changeHtml.bind(this),false);
+                                                            }//fin de constructor.
+                                                                  et  LINKrmvEvntListner suite: changeHtml(e)
+                                                                    {
+                                                                        this.shadowRoot.querySelector("slot").parentNode.replaceChild(this.shadowRoot.querySelector("slot").cloneNode(false), this.shadowRoot.querySelector("slot"));
+                                                                        this.contenu =this.innerHTML;
+                                                                        this.innerHTML=this.contenu.substring(0,10)+"<a href='console.log(\"haha\");'>Suite...</a>"; // l'eventlistner n'existant plus on a plus une loop infernale
+                                                                    }
                                                         }
                                               4)       connectedCallback()//execute chaque fois que l'element est insere dans le DOM ATTENTION! Execute une fois AVANT le constructor!!! disconnectedCallback() existe aussi
                                                         { 
@@ -29441,12 +29382,12 @@ METHODE CLASS: THEBEST? classes es6
                                                                                  if (this.cloneDuTemplate!=undefined){
                                                                                     this.appendChild(this.cloneDuTemplate);
                                                                                   }
-                                                          this.addEventListener('mousedown' ou 'click',function(evt){varmaclasse.maMethodeOnClick);} // ailleurs dans la classe: maMethodeOnClick(e){...} LINKlkjsdflh voir LINKautredatabiding
+                                                          this.addEventListener('mousedown' ou 'click',function(evt){varmaclasse.maMethodeOnClick();} // ailleurs dans la classe: maMethodeOnClick(e){...} LINKlkjsdflh voir LINKautredatabiding
                                                           et si c'est un string faire : // convertir un string en fonction function
                                                             this.maMethodeOnClick=new Function ("uneMethode(argument);");
 
                                                         }
-                                                        adoptedCallback(oldDoc,newDoc) // execute chaque fois que this est deplace ailleurs// attention executé une fois avant que le slot ne s'ajoute 
+                                              5)       adoptedCallback(oldDoc,newDoc) // execute chaque fois que this est deplace ailleurs// attention executé une fois avant que le slot ne s'ajoute 
                                                         {
                                                         }
                                                         // attribute c'est : <totot CA="ça">ici c'est properties</totot>
