@@ -23500,7 +23500,8 @@ jenkins :
     node1           node2 // peut etre sur une machine distante
     
     quietPeriod : laisser une valeur >=5 sec
-    pollSCM : c a d executer le run quand qqun commit           
+    pollSCM : c a d executer le run quand qqun commit         
+      
 visual studio :pour javascript:
     zoom et dezoom: ctrl+"+" ou "-" du pavé numérique
     accolade correspondante: ctrl+shift+*
