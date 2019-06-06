@@ -1793,32 +1793,8 @@ pour jouer un fichier audio avec mediaplayer il vaut mieux proceder comme ca :
       Windows>Preferences>Android>DDMS>augmenter le timeout
   utilistion du sensor: 
     pas fait voir walkstraight  
-  utilisation du timer squeduler regulier : (thread) voir plus bas "timer" LINKTimersdkjsq
-  	   public void onCreate() 
-       {
-            		  	timer = new Timer();
-            		  	  //schedule et scheduleatfixedrate: (fixedrate rattrape vite le temps perdu)
-            		 timet = new TimerTask() {
-            				
-            				@Override
-            				public void run() 
-                      {
-                        ...
-              				}
-            			};
-         		  	  timer.schedule(timet, Integer.parseInt(params[0].trim())*1000, Integer.parseInt(params[0].trim())*1000);
-
-
-       }
-        public void onStart(Intent intent, int startId) { 
-            timer.schedule(timet, Integer.parseInt(params[0].trim())*1000, Integer.parseInt(params[0].trim())*1000);
-        }
-        public void onDestroy() {
-            		timet.cancel();
-            		timer.purge();
-            		timer.cancel();
-            		super.onDestroy();
-            	}
+   
+  
   si le lancement d'emulateur ne peut pas se faire sur eclipse: pour lancer l'emulateur sans passer par eclipse: 
   D:\Program Files\Android\android-sdk>set ANDROID_EMULATOR_DEBUG=1
   D:\Program Files\Android\android-sdk\tools>emulator @MonEmulateur
@@ -13540,7 +13516,7 @@ Merise mcd creation base de donnee: http://www.sam-mag.com/P53,53,5,61,,,default
 
 ----------------------------------
 logs :    LinkLogutils avec java.util.logging.* (ne semble pas marcher si librairie log4j est dans le classpath et est utilisee aussi)
-  1) Methode par fichier de configuration :
+  1) Methode par fichier de configuration : (ne marche pas bien si je veux 2 fichiers de logs distincts. utiliser alors methode 2 ci dessous)
     quelquepart faire : 
             LogManager manager = LogManager.getLogManager(); // a mettre cote statique
             manager.readConfiguration(Application.class.getClassLoader().getResourceAsStream("logging.properties")); // a mettre dans instance
@@ -15747,6 +15723,166 @@ pour deflateandencode :
   
       pour savoir si un string est vide empty, ou null:
               org.apache.commons.lang.StringUtils.isEmpty(this.url_redirect)
+Les thread : threads : (ne jamais mettre un controlleur spring dans un thread) (si j'ai RejectedExecutionException c parce que j'ai stoppé un thread et après je lui demande encore un truc malgre tout)
+    Chaque Thread a son stack.
+      Si commplexe, ne plus utiliser les treads directement mais passer par un ExecutorService (a faire voir aussi ExecutorCompletionService )
+        ExecutorService : pour faire un traitement par packets blocs blocks paquets: je traite une longue liste: je la divise en plusieurs et je traite chaque sous liste dans un thread soit en parallele soit les uns apres les autres
+           public List<Future<DossierCommitResult>> doIMportExcell(final IHRUser hrUser, final IHRRole hrRole, final List<T> entries, final ExcelTemplate excelTemplate, final boolean simulation, final IDossierDAO<T> dao) throws InterruptedException {
+              		List<List<T>> entriesPartition = MyPartition.partition(entries, 100);   // sous diviser sousdiviser decouper ma liste en plusieurs listes de 100elmts
+                  Set<Callable<DossierCommitResult>> threadList = new HashSet<Callable<DossierCommitResult>>();
+              				ExecutorService execute = Executors.newSingleThreadExecutor(); // pour une execution d'un thread les uns a la suite des autres
+                  		//ExecutorService execute = Executors.newFixedThreadPool(2); // pour une execution de 2 threads à la fois. 2 doit etre recupéré par int proc = Runtime.getRuntime().availableProcessors(); // permet de recuperer le nb de threads simultanes possibles
+                  		for (final List<T> entriesblock : entriesPartition) {
+                  			Callable<DossierCommitResult> callable = new Callable<DossierCommitResult>() {
+                                  public DossierCommitResult call() throws Exception {
+                            					DossierCommitResult commitResult = dao.write(hrUser, hrRole, excelTemplate, entriesblock, simulation, Integer.parseInt(partitionMaxSize));
+                            					System.out.println("aa");
+                            					Thread.sleep(100);
+                            					return commitResult;
+                  				}
+                              };
+                  			//execute.shutdown(); laisser les tasks en cours se terminer mais ne plus accepter de nouvelles tasks
+                  			//execute.shutdownNow(); ne plus accepter de nouvelles tasks et Stopper les tasks en cours
+                  			// execute.awaitTermination(500, TimeUnit.MILLISECONDS); A mettre apres un shutdown: arrête l'execution du thread principal et attends que toutes les taches soient terminees si toujours pas et que le timeout est atteind alors force l'arret des threads et continue
+                         threadList.add(callable);
+                  		}
+                  		List<Future<DossierCommitResult>> futures = execute.invokeAll(threadList); // ici invokeAll alors que invokeAny execute la premiere task et c tout.
+                  		                                            execute.execute(UnRunnable) // possible aussi pour executer un thread LINKRunnable
+                          // checks for thread termination // ne pas mettre de points d'arret de debuggate dans le traitement des futures parce que ça risque de te faire croire que ça ne marche pas alors que ça marche
+                          /*final boolean isTerminated = execute.isTerminated();
+                          System.out.println(isTerminated);*/
+                          execute.shutdownNow(); // a mettre apres la recuperation des futures dans des objets à moi. pas avant.
+                  		return futures;
+                  	}
+                  }
+          les treads : si complexe ne plus utiliser les treads dirrectement mais passer par un ExecutorService         
+         currentThread( ) 	 Thread 	 Returns an object reference to the thread in which it is invoked.
+         getName( ) 	 String 	 Retrieve the name of the thread object or instance. Exemple: pas la peine de mettre un incrementeur,  dans le thread mettre : logger.info("executing thread"+this.elementblocknumber+" threadsname: "+Thread.currentThread().getName());
+         start( ) 	 void 	 Start the thread by calling its run method. On ne peut pas appeler cette methode deux fois sur un meme thread. Si on veut le faire il faut créer un nouveau thread puis faire start.
+         run( ) 	 void 	 This method is the entry point to execute thread, like the main method for applications.
+         sleep( ) 	 void 	 Suspends a thread for a specified amount of time (in milliseconds).
+         isAlive( ) 	 boolean 	 This method is used to determine the thread is running or not.
+         activeCount( ) 	 int 	 This method returns the number of active threads in a particular thread group and all its subgroups.
+         interrupt( ) 	 void 	 The method interrupt the threads on which it is invoked.
+         yield( ) 	 void 	 By invoking this method the current thread (Thread.yield();) pause its execution temporarily and allow other threads to execute. quand ils ont fini ça reprend la suite de l'execution
+         join( ) 	 void 	 This method and  join(long millisec) Throws InterruptedException.  These two methods are invoked on a thread. These are not returned until either the thread has completed or it is timed out respectively.
+       Depuis java7 ou java8 pour demarrer un thread:     LINK84838
+        Thread th= new Thread(() -> ce qui est execute); (// a partir de java10 apparemment) contraction
+        th.start();// execution en paralele th.run() // execution immediate pas en parallele aucun interet apparemment ne pas utiliser
+			pour faire attendre la fin d'un ou plusieurs threads avant de poursuivre le programme main: 
+			utiliser join. Exemple:
+									public static void main (String args []) {
+								    Coureur c [] = {new Coureur ("un", 2000),new Coureur ("deux", 3000),new Coureur ("trois", 1800)} ;	
+								    for (int i = 0 ; i < c.length ; i ++) c [i].start () ;
+								    for (int i = 0 ; i < c.length ; i ++) {
+								      try {
+								        c [i].join () ; // lors du premier passage, tant que c[0] n'est pas fini, il s'arrete là: c1 c2 c3 etc ne s'executent pas tant que c0 n'a pas fini en fait tout le monde attend. Meme main.
+								      } catch (InterruptedException e) {
+								        System.out.println ("InterruptedException sur " + c [i].nom ()) ;
+								      }
+								    }
+								    System.out.println ("Fin de la course") ;
+								  }
+								}
+
+			pour faire pauser un thread: sleep(duree ms), wait, ne pas utiliser suspend() LINK84838
+					public class MonThread extends (java.lang)Thread (ne jamais mettre un controlleur spring dans un thread) LINK84838 
+					{
+					private	mes variables; (faire les getters et setters)
+					  public void run() 
+					  {
+					  	// pour s'assurer que le thread tourne
+					  			long start = System.currentTimeMillis();
+					  			  if ( System.currentTimeMillis() == start + (1000 * 5))) 
+					  			  {
+					  			  	System.out.println("start");
+					  					start = System.currentTimeMillis();  
+					  			  }
+				    		// faire quelque chose
+			  		}
+			  		ou bien pour faire un thread qui dure un temps defini: (ne jamais mettre un controlleur spring dans un thread)
+					  public void run() 
+					  {
+                	  			long start = System.currentTimeMillis();
+                	  			long end = System.currentTimeMillis() + (1000*8);
+                	  			log.debug("start");
+                	  			log.debug(start);
+                	  			log.debug("end");
+                	  			log.debug(end);
+                
+                	  			  while ( System.currentTimeMillis() <= end) 
+                	  			  {
+                	  					start = System.currentTimeMillis();
+                	  					log.debug(start);
+                	  					// faire quelque chose
+                	  			  }
+    				}
+					dans ma classe appelante: 
+												 MonThread thread = new MonThread(); (ne jamais mettre un controlleur spring dans un thread)
+												    // Activation du Thread
+												    thread.start();
+											   	    // tant que le thread est en vie...
+												    while( thread.isAlive() ) {
+												      // faire un traitement...
+												      System.out.println("Ligne affichee par le main");
+												      try 
+												      {
+												        // et faire une pause
+												        Thread.sleep(800);
+												      }
+												      catch (InterruptedException ex) {}
+												    }
+												  }
+.wait() et .notify() :
+ 	sur un meme objet java (pas forcement un thread), wait() met en pause l'execution tant que sur ce meme objet notify() n'est pas execute. 
+  c'est une ancienne façon de gérer les threads. En general on met ces trucs là dans des blocks synchronized
+  comme ca : synchronized (this){this.notify();} attention si le notify arrive avant le wait alors je vais attendre infiniment
+synchronisation : (voir aussi volatile) 
+						void methode() {
+						    synchronized(this) {
+						        //section critique DONC ATTENTION, C'EST TOUT L OBJET QUI CONTIENT CETTE METHODE QUI EST LOCKE; PAS SEULEMENT CETTE METHODE DE L OBJET!!!
+						    }
+						}
+		est equivalent a 
+						synchronized void methode() {
+						    //section critique  DONC ATTENTION, C'EST TOUT L OBJET QUI CONTIENT CETTE METHODE QUI EST LOCKE; PAS SEULEMENT CETTE METHODE DE L OBJET!!!
+						}
+		est equivalent en java 1.5 a 
+					void methode() 
+					{
+							Lock l = new ReentrantLock();
+							l.lock();
+							try 
+							{
+								    //section critique
+							} 
+							finally 
+							{
+								    l.unlock();
+							}
+					}
+		attention
+						synchronized(maListe) 
+						{
+				    			maListe = new ArrayList<String>();
+						}
+						ne marche pas si maListe n'est pas final car "maListe" est une reference a l'objet. Pas l'objet lui meme (pointeurs)
+pour faire une liste synchronisee entre plusieurs threads (dans une classe qui va etre partagee par plusieurs threads j'ai la liste. Dans cette classe le code c'est : 
+          public class AspFile {
+            private static transient LinkedList<AspFile> allAspFiles= new LinkedList<AspFile>() {
+          		@Override
+          		public void addLast(AspFile o) {
+          			synchronized (this) {
+          				super.addLast(o);				
+          			}
+          		}
+          		public AspFile removeFirst() {
+          			synchronized (this) {
+          				return super.removeFirst();				
+          			}			
+          		};
+          	};      
+            
         pour faire un prog qui s'execute regulierement: (sinon voir l'API quartz permet plus d'options) LINKTimersdkjsq
           depuis java 1.5:
           ScheduledExecutorService:
@@ -15789,7 +15925,7 @@ pour deflateandencode :
                         }
                
         depuis java 1.3 (old)
-        timer:   utilisation du timer : (thread) faire un schedule execution reguliaire automatique LINKTimersdkjsq
+        timer:   utilisation du timer squeduler regulier : (thread) faire un schedule execution reguliaire automatique LINKTimersdkjsq    
         inconveniants:
           pas de planification complexe
           execution d'une seule tâche à la fois
@@ -23377,7 +23513,8 @@ si j'ai eclipse edit source lookup path source not found lors du debuggage:
   peut etre ajouter -DdownloadSources=true après commande maven
   puis
   package>clique droit sur la librairie maven manquante >Maven>download sources. Ensuite Debug... >onglet sources> add source > external archive > ajouter la librairie xxx.source dans le buidpath (peut etre besoin redemarrer eclipse mais redemarrer le debugger) IL FAUT REDEMARRER LE DEBUGGAGE POUR QUIL PRENNE EN COMPTE
-      
+liste des erreurs problemes: 
+        Alt+shift+q puis x
 comparer les fichiers un a un:
     dans packageExplorer selectionner les deux fichiers > click droit > compare > with eachother
 si il ne cree pas les classes:
@@ -28336,165 +28473,7 @@ pour minuter en secondes: execution avec delais:
 pour supprimer un timeout
       var monTimeout = setTimeout("logoMsg()",3000);
       clearTimeout(monTimeout);  
-Les thread : threads : (ne jamais mettre un controlleur spring dans un thread) (si j'ai RejectedExecutionException c parce que j'ai stoppé un thread et après je lui demande encore un truc malgre tout)
-    Chaque Thread a son stack.
-      Si commplexe, ne plus utiliser les treads directement mais passer par un ExecutorService (a faire voir aussi ExecutorCompletionService )
-        ExecutorService : pour faire un traitement par packets blocs blocks paquets: je traite une longue liste: je la divise en plusieurs et je traite chaque sous liste dans un thread soit en parallele soit les uns apres les autres
-           public List<Future<DossierCommitResult>> doIMportExcell(final IHRUser hrUser, final IHRRole hrRole, final List<T> entries, final ExcelTemplate excelTemplate, final boolean simulation, final IDossierDAO<T> dao) throws InterruptedException {
-              		List<List<T>> entriesPartition = MyPartition.partition(entries, 100);   // sous diviser sousdiviser decouper ma liste en plusieurs listes de 100elmts
-                  Set<Callable<DossierCommitResult>> threadList = new HashSet<Callable<DossierCommitResult>>();
-              				ExecutorService execute = Executors.newSingleThreadExecutor(); // pour une execution d'un thread les uns a la suite des autres
-                  		//ExecutorService execute = Executors.newFixedThreadPool(2); // pour une execution de 2 threads à la fois. 2 doit etre recupéré par int proc = Runtime.getRuntime().availableProcessors(); // permet de recuperer le nb de threads simultanes possibles
-                  		for (final List<T> entriesblock : entriesPartition) {
-                  			Callable<DossierCommitResult> callable = new Callable<DossierCommitResult>() {
-                                  public DossierCommitResult call() throws Exception {
-                            					DossierCommitResult commitResult = dao.write(hrUser, hrRole, excelTemplate, entriesblock, simulation, Integer.parseInt(partitionMaxSize));
-                            					System.out.println("aa");
-                            					Thread.sleep(100);
-                            					return commitResult;
-                  				}
-                              };
-                  			//execute.shutdown(); laisser les tasks en cours se terminer mais ne plus accepter de nouvelles tasks
-                  			//execute.shutdownNow(); ne plus accepter de nouvelles tasks et Stopper les tasks en cours
-                  			// execute.awaitTermination(500, TimeUnit.MILLISECONDS); A mettre apres un shutdown: arrête l'execution du thread principal et attends que toutes les taches soient terminees si toujours pas et que le timeout est atteind alors force l'arret des threads et continue
-                         threadList.add(callable);
-                  		}
-                  		List<Future<DossierCommitResult>> futures = execute.invokeAll(threadList); // ici invokeAll alors que invokeAny execute la premiere task et c tout.
-                  		                                            execute.execute(UnRunnable) // possible aussi pour executer un thread LINKRunnable
-                          // checks for thread termination // ne pas mettre de points d'arret de debuggate dans le traitement des futures parce que ça risque de te faire croire que ça ne marche pas alors que ça marche
-                          /*final boolean isTerminated = execute.isTerminated();
-                          System.out.println(isTerminated);*/
-                          execute.shutdownNow(); // a mettre apres la recuperation des futures dans des objets à moi. pas avant.
-                  		return futures;
-                  	}
-                  }
-          les treads : si complexe ne plus utiliser les treads dirrectement mais passer par un ExecutorService         
-         currentThread( ) 	 Thread 	 Returns an object reference to the thread in which it is invoked.
-         getName( ) 	 String 	 Retrieve the name of the thread object or instance. Exemple: pas la peine de mettre un incrementeur,  dans le thread mettre : logger.info("executing thread"+this.elementblocknumber+" threadsname: "+Thread.currentThread().getName());
-         start( ) 	 void 	 Start the thread by calling its run method. On ne peut pas appeler cette methode deux fois sur un meme thread. Si on veut le faire il faut créer un nouveau thread puis faire start.
-         run( ) 	 void 	 This method is the entry point to execute thread, like the main method for applications.
-         sleep( ) 	 void 	 Suspends a thread for a specified amount of time (in milliseconds).
-         isAlive( ) 	 boolean 	 This method is used to determine the thread is running or not.
-         activeCount( ) 	 int 	 This method returns the number of active threads in a particular thread group and all its subgroups.
-         interrupt( ) 	 void 	 The method interrupt the threads on which it is invoked.
-         yield( ) 	 void 	 By invoking this method the current thread (Thread.yield();) pause its execution temporarily and allow other threads to execute. quand ils ont fini ça reprend la suite de l'execution
-         join( ) 	 void 	 This method and  join(long millisec) Throws InterruptedException.  These two methods are invoked on a thread. These are not returned until either the thread has completed or it is timed out respectively.
-       Depuis java7 ou java8 pour demarrer un thread:     LINK84838
-        Thread th= new Thread(() -> ce qui est execute); (// a partir de java10 apparemment) contraction
-        th.start();// execution en paralele th.run() // execution immediate pas en parallele aucun interet apparemment ne pas utiliser
-			pour faire attendre la fin d'un ou plusieurs threads avant de poursuivre le programme main: 
-			utiliser join. Exemple:
-									public static void main (String args []) {
-								    Coureur c [] = {new Coureur ("un", 2000),new Coureur ("deux", 3000),new Coureur ("trois", 1800)} ;	
-								    for (int i = 0 ; i < c.length ; i ++) c [i].start () ;
-								    for (int i = 0 ; i < c.length ; i ++) {
-								      try {
-								        c [i].join () ; // lors du premier passage, tant que c[0] n'est pas fini, il s'arrete là: c1 c2 c3 etc ne s'executent pas tant que c0 n'a pas fini en fait tout le monde attend. Meme main.
-								      } catch (InterruptedException e) {
-								        System.out.println ("InterruptedException sur " + c [i].nom ()) ;
-								      }
-								    }
-								    System.out.println ("Fin de la course") ;
-								  }
-								}
 
-			pour faire pauser un thread: sleep(duree ms), wait, ne pas utiliser suspend() LINK84838
-					public class MonThread extends (java.lang)Thread (ne jamais mettre un controlleur spring dans un thread) LINK84838 
-					{
-					private	mes variables; (faire les getters et setters)
-					  public void run() 
-					  {
-					  	// pour s'assurer que le thread tourne
-					  			long start = System.currentTimeMillis();
-					  			  if ( System.currentTimeMillis() == start + (1000 * 5))) 
-					  			  {
-					  			  	System.out.println("start");
-					  					start = System.currentTimeMillis();  
-					  			  }
-				    		// faire quelque chose
-			  		}
-			  		ou bien pour faire un thread qui dure un temps defini: (ne jamais mettre un controlleur spring dans un thread)
-					  public void run() 
-					  {
-                	  			long start = System.currentTimeMillis();
-                	  			long end = System.currentTimeMillis() + (1000*8);
-                	  			log.debug("start");
-                	  			log.debug(start);
-                	  			log.debug("end");
-                	  			log.debug(end);
-                
-                	  			  while ( System.currentTimeMillis() <= end) 
-                	  			  {
-                	  					start = System.currentTimeMillis();
-                	  					log.debug(start);
-                	  					// faire quelque chose
-                	  			  }
-    				}
-					dans ma classe appelante: 
-												 MonThread thread = new MonThread(); (ne jamais mettre un controlleur spring dans un thread)
-												    // Activation du Thread
-												    thread.start();
-											   	    // tant que le thread est en vie...
-												    while( thread.isAlive() ) {
-												      // faire un traitement...
-												      System.out.println("Ligne affichee par le main");
-												      try 
-												      {
-												        // et faire une pause
-												        Thread.sleep(800);
-												      }
-												      catch (InterruptedException ex) {}
-												    }
-												  }
-.wait() et .notify() :
- 	sur un meme objet java (pas forcement un thread), wait() met en pause l'execution tant que sur ce meme objet notify() n'est pas execute. 
-  c'est une ancienne façon de gérer les threads. En general on met ces trucs là dans des blocks synchronized
-  comme ca : synchronized (this){this.notify();} attention si le notify arrive avant le wait alors je vais attendre infiniment
-synchronisation : (voir aussi volatile) 
-						void methode() {
-						    synchronized(this) {
-						        //section critique DONC ATTENTION, C'EST TOUT L OBJET QUI CONTIENT CETTE METHODE QUI EST LOCKE; PAS SEULEMENT CETTE METHODE DE L OBJET!!!
-						    }
-						}
-		est equivalent a 
-						synchronized void methode() {
-						    //section critique  DONC ATTENTION, C'EST TOUT L OBJET QUI CONTIENT CETTE METHODE QUI EST LOCKE; PAS SEULEMENT CETTE METHODE DE L OBJET!!!
-						}
-		est equivalent en java 1.5 a 
-					void methode() 
-					{
-							Lock l = new ReentrantLock();
-							l.lock();
-							try 
-							{
-								    //section critique
-							} 
-							finally 
-							{
-								    l.unlock();
-							}
-					}
-		attention
-						synchronized(maListe) 
-						{
-				    			maListe = new ArrayList<String>();
-						}
-						ne marche pas si maListe n'est pas final car "maListe" est une reference a l'objet. Pas l'objet lui meme (pointeurs)
-pour faire une liste synchronisee entre plusieurs threads (dans une classe qui va etre partagee par plusieurs threads j'ai la liste. Dans cette classe le code c'est : 
-          public class AspFile {
-            private static transient LinkedList<AspFile> allAspFiles= new LinkedList<AspFile>() {
-          		@Override
-          		public void addLast(AspFile o) {
-          			synchronized (this) {
-          				super.addLast(o);				
-          			}
-          		}
-          		public AspFile removeFirst() {
-          			synchronized (this) {
-          				return super.removeFirst();				
-          			}			
-          		};
-          	};      
 pour executer un code regulierement à interval regulier: 
           Lance un traitement javascript code repete à intervalle regulier de delai millisecondes.
           Ce traitement à intervalle regulier peut être arrête avec clearInterval().
