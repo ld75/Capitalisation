@@ -15835,8 +15835,9 @@ Les thread : threads : (ne jamais mettre un controlleur spring dans un thread) (
 												  }
 .wait() et .notify() :
  	sur un meme objet java (pas forcement un thread), wait() met en pause l'execution tant que sur ce meme objet notify() n'est pas execute. 
-  c'est une ancienne façon de gérer les threads. En general on met ces trucs là dans des blocks synchronized
-  comme ca : synchronized (this){this.notify();} attention si le notify arrive avant le wait alors je vais attendre infiniment
+  c'est une ancienne façon de gérer les threads. Il faut que l'appel de ces methodes soient dans des contextes synchronized
+  comme ca : synchronized (this){this.notify(); conditionRequise=false;} attention si le notify arrive avant le wait alors je vais attendre infiniment
+  Mettre le wait dans un while(conditionRequise) 
 synchronisation : (voir aussi volatile) 
 						void methode() {
 						    synchronized(this) {
@@ -17017,7 +17018,7 @@ Remplacement de chaine1 (toutes les occurrences de chaine1) ,par chaine2
           return buffer.toString();
         }
 
-  modulo : pour savoir si un nombre est entier reste de la division est vide, si c'est un multiple de... (utilisation de pourcentage)  
+  modulo : pour savoir si un nombre est entier le reste de la division est vide, si c'est un multiple de... (utilisation de pourcentage)  
       return (nbTask % critNbTask) == 0
       Cela renvoie true si nbTask est un multiple de critNbTask et false dans le cas contraire.
       unGrandChiffre % 4 : ca divise unGrandChiffre (par ex 101) par 4 =25.25; 25*4 =100 et il reste 1 donc resultat = 1.
@@ -23514,8 +23515,8 @@ si j'ai eclipse edit source lookup path source not found lors du debuggage:
   peut etre ajouter -DdownloadSources=true après commande maven
   puis
   package>clique droit sur la librairie maven manquante >Maven>download sources. Ensuite Debug... >onglet sources> add source > external archive > ajouter la librairie xxx.source dans le buidpath (peut etre besoin redemarrer eclipse mais redemarrer le debugger) IL FAUT REDEMARRER LE DEBUGGAGE POUR QUIL PRENNE EN COMPTE
-liste des erreurs problemes: 
-        Alt+shift+q puis x
+afficher n'importe quelle vue view rapidement; liste des erreurs problemes: 
+        Alt+shift+q puis q
 comparer les fichiers un a un:
     dans packageExplorer selectionner les deux fichiers > click droit > compare > with eachother
 si il ne cree pas les classes:
