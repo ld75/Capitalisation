@@ -1,4 +1,4 @@
-(?=.*spring)(?=.*test)
+(?=.*remov)(?=.*listener)
 Rule à faire : 
     refaire crossing-covariant mais cette fois les tags * et + et 0/* sont sur les instances! > difficile
 Canvas :
@@ -4424,8 +4424,8 @@ AILLEURS : injecter mes beans par constructeur
                                 }
                                 return myBean;
                             }
-                            on peut aussi activer un profile en lancant l'application avec : --spring.profiles.active=unevaleur,unautreprofile ou -Dspring.profiles.active=infosFromURL ou AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(); context.getEnvironment().setActiveProfiles("Linux");
-                      @Profile("unevaleur") // conditionnel alors cette classe ne s'injecte ailleurs que si dans une application.properties : spring.profiles.active=unevaleur,uneautrevaleur ou bien en mettant @ActiveProfiles dans la classe qui execute
+                            on peut aussi activer un profile en lancant l'application avec : --spring.profiles.active=unevaleur,unautreprofile ou -Dspring.profiles.active=infosFromURL ou dans une application.properties : spring.profiles.active=unevaleur,uneautrevaleur ou bien en mettant @ActiveProfiles dans la classe (peut etre une classe de test) qui execute ou AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(); context.getEnvironment().setActiveProfiles("Linux");// ce dernier ne marche pas dans la methode d'initialisation d'une classe de test
+                      @Profile("unevaleur") // conditionnel alors cette classe ne s'injecte ailleurs que si le profile "unevaleur" est activé 
                       @Conditional à mettre dans une methode @Bean de la @Configuration: @Conditional(UneDeMesClasseImplementantConditional.class)
                                                       UneDeMesClasseImplementantConditional implements Condition
                                                       {@Override
@@ -5226,7 +5226,7 @@ Spring-batch :
                                       @Autowired
                                       ServletWebRequest webRequest; 
                                       @Autowired  
-                                     TestRestTemplate rest = testRestTemplate;  // tester un webservice
+                                     TestRestTemplate rest;  // tester un webservice en faisant des appels curl (utiliser avec @SpringBootTest. pas avec @WebMvcTest)
                                       
                                       
                                       @Autowired ou @Inject
@@ -5278,32 +5278,31 @@ Spring-batch :
                                       //FIN si dans mes controlleurs j'ai besoin que l'utilisateur soit authentifie : simuler qu'il est authentifie:
                                                                             
                                       String request = new Scanner(new ClassPathResource("json/request.json").getFile()).useDelimiter("\\Z").next(); //voir regexp LINKçeeçeeçregexpçeeçeeç
-                                      executer un controlleur :
-                                      	this.mockMvc.perform(get("/show")) //necessite import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+                                      executer un controlleur : LINKmockmvc pour test unitaire
+                                            MvcResult result = this.mockMvc.perform(get("/show") ou post("/sirh/user"))*** //necessite import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+                                                                                               .header("Api-key", apiKey)
+                                                                                               .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                                                                                               .contentType(MediaType.APPLICATION_JSON) ou contentType(MediaType.TEXT_HTML)
+                                                                                               .with(user("toto").roles("TATA"))
+                                                                                               .param("jsonobj","{\"destination\":\"yaounde\",\"departure\":\"douala\",\"timedeparture\":\"3\",\"daydeparture\":\"01/01/2016\"}")
+                                                                                               .content(request)) // requete envoyee si c'est du POST(je crois) ne s'applique pas pour du GET
+                                                                                             )***    
                                   			  .andExpect(status().isOk()) // necessite import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-                                  			  .andExpect(content().contentType("application/json"))
+                                  			  .andExpect(content().contentType("application/json" ou "application/json;charset=UTF-8"))
                                   			  .andExpect(jsonPath("$.name").value("Lee"));
-                                  		tester la reponse d'un webservice rest	  
+                                              .andExpect(jsonPath("nom").value("toto")); // pour verifier que le contenu renvoyé contient ce json. De org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+                                              ou
+                                              .andExpect(status().isForbidden());                
+                                              .andDo(print())
+                                              .andReturn();  
+                                                String content = result.getResponse() //ou getRequest() ou getModelAndView()
+                                                    .getContentAsString();
+                                                org.junit.Assert.assertNotNull(content);
+
+                                  		tester la reponse d'un webservice rest pour test d'integration (demarre tout springboot)	  
                                   		  ResponseEntity<MmcUser> response = testRestTemplate.getForEntity("/admin/getUsers", MmcUser.class);
                                         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK); // assertJ est integré directement dans springboot
-                                  		ou
->>>                                 MvcResult result =mockMvc.perform(post("/sirh/user")
-                                                    		.header("Api-key", apiKey)
-                                                    		.accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                                                    		.contentType(MediaType.APPLICATION_JSON) ou contentType(MediaType.TEXT_HTML)
-                                                    		.with(user("toto").roles("TATA"))
-                                                    		.param("jsonobj","{\"destination\":\"yaounde\",\"departure\":\"douala\",\"timedeparture\":\"3\",\"daydeparture\":\"01/01/2016\"}")
-                                                    		.content(request)) // requete envoyee si c'est du POST(je crois) ne s'applique pas pour du GET    
-                                                    		.andExpect(content().contentType("application/json;charset=UTF-8")) //tests retours
-                                                            .andExpect(jsonPath("nom").value("toto")); // pour verifier que le contenu renvoyé contient ce json. De org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-                                                    		ou
-                                                        .andExpect(status().isForbidden());                
-                                                    		.andDo(print())
-                                                    		.andReturn();  
-                                                        String content = result.getResponse() //ou getRequest() ou getModelAndView()
-                                                                               .getContentAsString();
-                                                        org.junit.Assert.assertNotNull(content);
-                                         
+                                      ou   
                                         monService = context.mock(InterfaceDeMonService.class) // pour utiliser jmock
                                         permissiondao.insert(permission4);
                                     		assertTrue(permissiondao.getAll().size()==4);
@@ -5344,9 +5343,9 @@ Spring-batch :
                                     	{
                                     	}
                                     }
-
-
-                                    
+        si j'ai erreur lors du test
+                        org.springframework.web.client.RestClientException: Error while extracting response for type and content type nested exception is org.springframework.http.converter.HttpMessageNotReadableException: JSON parse error: Cannot construct instance of ... (although at least one Creator exists): cannot deserialize from Object value (no delegate- or property-based Creator); nested exception is com.fasterxml.jackson.databind.exc.MismatchedInputException: Cannot construct instance of ... (although at least one Creator exists): cannot deserialize from Object value (no delegate- or property-based Creator)
+                        c'est parce qu'il manque un constructeur vide dans ma classe entité entity                                    
                               
                   
               JDBC : pour recuperer le dernier Id insere : 
@@ -27329,7 +27328,7 @@ pour faire un paint avec canvas: Attention ne jamais donner un style a un canvas
                             // Pencil tool instance.
                             tool = new tool_ecrire();
                             // Attach the mousedown, mousemove and mouseup event listeners.
-                            canvas.removeEventListener('mousedown', ev_canvas, false);
+                            canvas.removeEventListener('mousedown', ev_canvas, false); // removeEventListner des fois ne marche pas parce que c'est chiant faut etre super precis. Du coup faire comme ca LINKrmvEvntListner
                             canvas.removeEventListener('mousemove', ev_canvas, false);
                             canvas.addEventListener('mouseup',   ev_canvas, false);
                             canvas.classList.add('ecrire');
@@ -27492,7 +27491,13 @@ ou
                                                     console.log(ev._x);
                                                       func(ev);
                                                     }
-                                            }         
+                                            }
+                                            
+pour supprimer tous all les eventlisnter LINKrmvEvntListner
+    l'idée est de clonner l'element que je veux nettoyer et que le clone remplace celui qui contient les eventlisnter. Tout est dupliqué sauf les eventlistners:
+            elementANettoyer.parentNode.replaceChild(elementANettoyer.cloneNode(false), elementANettoyer); 
+
+                                                     
 dessiner un cercle dans un canvas:
       context.beginPath();
       context.arc(posx, posy, taille0-100?, 0(angleDeDepart), 2 * Math.PI    (cad angleDeFinEnviron6.3PourFaireUnCercle), false(sensBof));
@@ -28688,6 +28693,8 @@ svg :
    Z = closepath
     </svg>
 HTML :
+ pour faire un ancre : 
+        <a href="#x" // x c'est en fait l'identifant de l'element vers lequel je veux que mon scroll pointe. exemple : href= "#3"
 email  :<a href="mailto:webmaster@example.com">
 pour faire les icones des boutons bouttons c mieux de les faire en vectoriel avec fontawesome (LINKfontaw)
 faire un separateur hr personnalise avec label titre
@@ -29350,7 +29357,7 @@ https://developers.google.com/web/fundamentals/web-components/customelements#att
   <laurent-moncompoentn1 blabla="toto"></laurent-moncompoentn1> // toujours mettre la balise fermante
   dans laurent-moncompoentn1.js j'ai: import<-customcomponent(shadowdom(template))
       template :
-      const templatexxx=document.createElement("template");
+      LINKCustomTemplate const templatexxx=document.createElement("template");
       templatexxx.innerHTML=`
       <style>:host // :host c'est pour dire que ce style s'applique que dans le shadowroot parent de ce template (ne marche que dans un shadowdom)
                 :host(:hover) // mouse souris par dessus. Exemple: :host(:hover)>::slotted(memoclap-menu-sub){display:block;}// dans le shadowroot >DANS le slot l'element de type memoclap-menu-sub seulement. Attention le style des slots vient aussi depuis l'exterieur du webcomponent. mais::slotted prend l'avantage (si c'est !important seulement je crois)LINKkdkflkjsdf 
@@ -29382,8 +29389,8 @@ METHODE CLASS: THEBEST? classes es6
                                                          var root = thisMonElement.attachShadow({mode:'open ou closed LINKkddkdkdkd'}); // host maintenant devient un shadowroot: tout ce qu'il a a l'interieur devient invisible. open/closed= atteignable ou pas par javascript et querySelector('div').shadowRoot est visible ou pas selon. LINKkddkdkdkd: si j'ai mis closed alors xxx.shadowRoot=null pour l'avoir faire une variable dans le custom element: this.shadow = this.attachShadow({mode:'closed'});  et je réutilise this.shadow partout.
                                                           on peut juste faire aussi 
                                                           thisMonElement.attachShadow({mode:'open'}); // ca va créer automatiquement this.shadowRoot dans mas classe. Pas besoin de var root                                                        
-                                                         var monTemplate = templatexxx; ou `du contenu
-                                                                                              <span>SSSS<slot name(facultatif)='aaa'>bBBBB</slot><slot name='bbb'/>CCCC</span>   //se remplira avec le HTML de base qui est comme ça:<h1 slot='aaa'>bla</h1><div slot='bbb'></div>
+                                                         var monTemplate = templatexxx; ou voir LINKCustomTemplate=`du contenu
+                                                                                              <span>SSSS<slot name(facultatif)='aaa'>bBBBB</slot><slot name='bbb'/>CCCC</span>   //se remplira avec par defaut le HTML qui est dans la page dans ma balise custom element sinon si name existe alors avec le HTML de base qui est comme ça:<mon-customelement><h1 slot='aaa'>bla</h1><div slot='bbb'></div></mon-customelement>
                                                                                              html${this.variable}html` // pour que ${this.variable} marche il faut mettre tout ce bloc non pas dans constructor mais dans connectedcallback en ayant préalablement défini MaCLasse.variabl=xx
                                                                                         ou autre facon de definir un template: <template id="x">lkjsdf</template>
                                                          var cloneDuTemplate = monTemplate.content.cloneNode(true);  // true: il est recursif dans le dom
@@ -29395,15 +29402,23 @@ METHODE CLASS: THEBEST? classes es6
                                                         findansuneboucleparex
                                                         div.setAttribute('unAttributduTagHtml','valeurDeLattribut'); PIEGE! utiliserça et ne pas utiliser unElementHTML.unattribut=xxx (ca ne modifie que la classe pas le html et du coup attributeChangedCallback n'est pas appele)
                                                         
-                                                        on peut ajouter un listnener au slot si celui ci change en javascript: LINK-(r_r_r)
+                                                        on peut ajouter un listnener au slot si celui ci change en javascript: par contre si je veux modifier le innerhtml du slot voir LINKrmvEvntListner
                                                             monslot.addEventListener('slotchange', e => {
                                                                 ...e.currentTarget..
-                                                                this.innerHTML;  // est alors accessible. C'est la propriete: contenu de la balise. Par contre this.outerText; et this.innerText; n'ont pas marche?
+                                                                this.innerHTML;  // est alors accessible. C'est la propriete: contenu de la balise de mon custom element. This est mon custom element. Par contre this.outerText; et this.innerText; n'ont pas marche?
                                                                 du coup faire: si jai <slot name="contenu">-> querySelector("slot[name=contenu]") si je suis hors du slot
                                                                 et si je suis dans le slot:
                                                                 this.querySelector("[slot=contenu]").style.height=this.taillecontenu; // je change le contenu dynamique dans mon customelement
-                                                                this.querySelector("[slot=contenu]").outerHTML; // permet de recuperer le node vers lequel pointe pointeur mon slot
+                                                                this.querySelector("[slot=contenu]").outerHTML; // permet de recuperer le node vers lequel pointe pointeur mon slot                       
                                                             });
+                                                                LINKrmvEvntListner : this.shadowRoot.querySelector("slot").addEventListener('slotchange', this.changeHtml.bind(this),false);
+                                                            }//fin de constructor.
+                                                                  et  LINKrmvEvntListner suite: changeHtml(e)
+                                                                    {
+                                                                        this.shadowRoot.querySelector("slot").parentNode.replaceChild(this.shadowRoot.querySelector("slot").cloneNode(false), this.shadowRoot.querySelector("slot"));
+                                                                        this.contenu =this.innerHTML;
+                                                                        this.innerHTML=this.contenu.substring(0,10)+"<a href='console.log(\"haha\");'>Suite...</a>"; // l'eventlistner n'existant plus on a plus une loop infernale
+                                                                    }
                                                         }
                                               4)       connectedCallback()//execute chaque fois que l'element est insere dans le DOM ATTENTION! Execute une fois AVANT le constructor!!! disconnectedCallback() existe aussi
                                                         { 
@@ -29411,12 +29426,12 @@ METHODE CLASS: THEBEST? classes es6
                                                                                  if (this.cloneDuTemplate!=undefined){
                                                                                     this.appendChild(this.cloneDuTemplate);
                                                                                   }
-                                                          this.addEventListener('mousedown' ou 'click',function(evt){varmaclasse.maMethodeOnClick);} // ailleurs dans la classe: maMethodeOnClick(e){...} LINKlkjsdflh voir LINKautredatabiding
+                                                          this.addEventListener('mousedown' ou 'click',function(evt){varmaclasse.maMethodeOnClick();} // ailleurs dans la classe: maMethodeOnClick(e){...} LINKlkjsdflh voir LINKautredatabiding
                                                           et si c'est un string faire : // convertir un string en fonction function
                                                             this.maMethodeOnClick=new Function ("uneMethode(argument);");
 
                                                         }
-                                                        adoptedCallback(oldDoc,newDoc) // execute chaque fois que this est deplace ailleurs// attention executé une fois avant que le slot ne s'ajoute 
+                                              5)       adoptedCallback(oldDoc,newDoc) // execute chaque fois que this est deplace ailleurs// attention executé une fois avant que le slot ne s'ajoute 
                                                         {
                                                         }
                                                         // attribute c'est : <totot CA="ça">ici c'est properties</totot>
