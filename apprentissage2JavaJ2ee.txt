@@ -5018,7 +5018,7 @@ Spring : XML STYLE
                                 @ResponseBody // en tete de methode ou de classe pour qu'il soit cap de renvoyer que du json même si je retourne un objet java(webservice mais inutile si j'ai mis @RestController en tête de classe)
                                 @RequestMapping(value="/monpath.html" ou "/welcome",method=RequestMethod.POST ou .GET ou method={ RequestMethod.GET, RequestMethod.POST }) //est GET par defaut. ou ("/welcome") ou ("/welcome/{parametre1}/{parametre2}") // url: /welcome/toto/titi. consumes = "multipart/form-data" ou consumes={"toto","titi",MediaType.APPLICATION_JSON_VALUE})
                                 ou 
-                                @GetMapping("/mon/path/{param1}") // c'est comme @RequestMapping avec methode get.
+                                @GetMapping("/mon/path/{param1}") // c'est comme @RequestMapping avec methode get. param1 se retrouve dans @PathVariable
                                 public ModelAndView helloworld(@ModelAttribute("student1") Student student1, BindingResult sierrorlorsdubiding //bind les parametres de mon formulaire id="student1" avec les champs ayant un name:"toto" avec mon objet Student qui a une methode getsetToto. @Valid//pourPrendreEnCompteLesAnnotAuDessusDesGettersEtSettersDeMesBeansPojo(voir @Size) ou @RequestBody Object[]  request ou ObjetJavaAvecAnnotations ou LinkedMultiValueMap<String, Object>//pour recuperer du JSON ou du XML. request ou @RequestPart Map request ou @PathVariable("parametre1") String monparam1, @PathVariable("parametre2") String monparam2, @PathVariable Map<String,String> rePathVar)// @PathVariable c pour l'URL ex:x/y/z. ou @RequestParam(value="parametre1",defaultValue="siParametre1EstNullVide", required=true) String monparam1, @RequestParam("parametre2") int monparam2) @RequestParam c pour la request ex:?filter=x : pour un post ca se met comme ca dans le body du post : paramname+"="+paramvalue; @RequestParam Map<String,String> reqPar) // du coup j'ai reqPar.get("monParametre1"); reqPar.get("monParametre1");)
                                                                                                               Bind avec n'importe quel type de var : date, arraylist etc...Meme les objets sous-jacents
                                                                                                               si je veux personaliser mon binding il faut utiliser une methode annotee avec @InitBinder (voir LINKInitBinder)
@@ -5175,8 +5175,10 @@ Spring-batch :
                                       
                                       @Autowired
 >>>                                   private MockMvc mockMvc; //LINKmockmvc
-                                      
-                                      Mockery context = new JUnit4Mockery(); // pour utiliser Jmock (voir plus bas)<  
+                                      @MockBean
+	                                  private MongoDBRepository mongodbRepo; ou une ClasseService maclasseService; LINKavecMockito
+                                        Avant :
+                                        Mockery context = new JUnit4Mockery(); // pour utiliser Jmock voir LINKJmock  
                                       
                                       //spring-batch-tester
                                         @Autowired
@@ -5200,6 +5202,7 @@ Spring-batch :
                                             .addFilter(this.unFiltreSpring)// je peux ajouter des filtres spring (pas ceux du web.xml mais que ceux de spring)
                                             .build();
                                             expect(mockMvc.uneMethode()).andReturn(retourQuelleDevraEnvoyer).anyTimes(); // je prepare mon mockito : qu'est ce que ses methodes devront renvoyer qd on les appelle
+                                            
                                   
                                             session = (IHRSession) wac.getBean("openhr.session"); // recuperer la session 
                                                user = (HRUserImpl) session.connectUser("HRFR", "HR");
@@ -5244,7 +5247,9 @@ Spring-batch :
                                   		  ResponseEntity<MmcUser> response = testRestTemplate.getForEntity("/admin/getUsers", MmcUser.class);
                                         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK); // assertJ est integré directement dans springboot
                                       ou   
-                                        monService = context.mock(InterfaceDeMonService.class) // pour utiliser jmock
+                                      LINKavecMockito: given(mongodbRepo.findById(anyString())).willReturn(Optional.ofNullable(new MmcUser("Lee")));  // du coup mongodbRepo va s'injecter direct dans toutes les classes qui l'utilisent
+                                      ou
+                                      LINKjmock: monService = context.mock(InterfaceDeMonService.class)
                                         permissiondao.insert(permission4);
                                     		assertTrue(permissiondao.getAll().size()==4);
                                     		permissiondao.delete(permission4);
