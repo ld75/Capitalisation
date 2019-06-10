@@ -446,7 +446,7 @@ Heroku :      https://devcenter.heroku.com/articles/getting-started-with-spring-
 nodejs : node.js : node : npm :  (https://www.npmjs.com/package tous les programmes sont là) : c'est le maven du javascript. A remplacé bower. Yarn fait pareil mais s'appuye sur npm. npm etait fait pour nodejs à la base
       defs : browserify : permet à des applis nodes (contiennent "require" car cote serveur require est comme import. mais browser interdit acces au filesystem) d'etres comprises par les browsers: il remplace "require par la concatenation des fichiers js dans un seul
             webpack fait comme browserify mais en plus avec plus de choses. voir LINKWPKCS
-            babel converti du javascript recent pour les vieuw navigateurs voir LINKBBLE
+            babel converti du javascript recent pour les vieux navigateurs voir LINKBBLE
 si problemes dans npm : https://github.com/npm/npm/wiki/Troubleshooting
   installer npm:
    aller sur https://nodejs.org/en/download/ (downloader npm : sur internet)
@@ -457,7 +457,7 @@ si problemes dans npm : https://github.com/npm/npm/wiki/Troubleshooting
  si je suis sous mon repertoire projet et je fais npm install: //-g pour installer dans le repository(globalement sur mon systeme) et non pas dans le projet; --save alors il ajoute la dependance "dependencies" dans le package.json où je suis. avec --save-dev il ajoute la dependance dans le package.json dans "devDependencies" et dans le repertoire qu'il cree node_modules ou je suis: c'est un package que j'installe qui ne sera utile que pour les tests de dev et non pas la prod 
         va installer toutes les dependances necessaire du projet (grace a package.json) dans mon repository npm
 mettre à jour npm:// pour installer la derniere version
-      npm install npm@latest -g 
+      npm i npm ou npm install npm@latest -g 
 installer un autre programme dans mon repository npm (en ajoutant -g)      
       npm install nomAutreProgramme@latest -g --save //-g pour qu'il l'installe dans mon repository npm et --save pour qu'il modifie mon package.json pour y ajouter cette dependance(uniquement, pas les dependancessousjacentes mais dans le repertoire node_modules si.)
       npm install nomAutreProgramme@^3.1.0 -g // pour installer une version specifique. Si je sais pas le num version mettre un num bidon il me proposera...                                                                                                                                                                     
@@ -23446,7 +23446,7 @@ DEVOPS :
 
 
 jenkins :
-  jenkins home directory contient: // parametrable dans l'admin web. Existe commandes CLI plus rapidesque ihm  
+  jenkins home directory contient: // parametrable dans l'admin web. Existe commandes CLI plus rapides que ihm  
         /etc/...
         /.jenkins/config
         ...
@@ -27537,10 +27537,12 @@ pour setter le name l'attribut la propriete d'un element tag html :
 generer une image à la volee:
         var img=new Image();
        img.src="clearmute.png";
-pour faire un onchange en javascript: 
+pour faire un onchange en javascript: upload de fichier: 
         <input name="files" class="modifier" id="files" onchange="createProject.handleFileSelect(this)" onclick="this.value=null;" type="file" accept="*/*" /> //onclick="this.value=null" c'est pour permettre de rechoisir le meme fichier à uploader
         ou
         elSel.onchange=function(){setSilencesInverseToActorDelimited(actor, this.value, document.getElementById("startFlag").value, document.getElementById("stopFlag").value );};
+        ou 
+        this.shadowRoot.querySelector("#imageFile").addEventListener('change',function(evt){maclasse.putImageInCanvas(this);});
 les objets en javascript sont des fonctions qui peuvent contenir des proprietes et des fonctions et ces objets peuvent etre tranformes en string json:
             pour faire un objet independant avec ses methodes et ses variables: 
                     // je definis mon objet
@@ -29495,7 +29497,7 @@ pour afficher les erreurs dans la page d'erreur jsp:
                                   if ((Exception)request.getAttribute("javax.servlet.error.exception") != null) {
                                   	 ((Exception)request.getAttribute("javax.servlet.error.exception")).printStackTrace(new java.io.PrintWriter(out));
                                   } %> 
-pour simuler un click sur un bouton parcourir ou un autre element : 
+pour simuler un click sur un bouton parcourir ou un autre element upload file : 
         function openParcourir()
         {
           //document.getElementById("files").click();
