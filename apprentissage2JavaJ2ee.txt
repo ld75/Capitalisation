@@ -1,3 +1,5 @@
+nulls last
+
 (?=.*remov)(?=.*listener)
 Rule à faire : 
     refaire crossing-covariant mais cette fois les tags * et + et 0/* sont sur les instances! > difficile
@@ -7001,7 +7003,7 @@ pour faire un order by customise:
                when currency = 'EUR' then '002'
                else currency
             end  desc
-pour remplacer les null par autre chose : 
+pour remplacer les null par autre chose : utile dans un group by 
   nvl(PREMIERCHAMPRECUPEREPEUTETRENULL, ALORSREMPLACERPARCECHAMPLA)
 pour afficher que les lignes se repetant plusieurs fois: doublons, occurences
 SELECT 
