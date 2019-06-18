@@ -1,6 +1,4 @@
-nulls last
-
-(?=.*remov)(?=.*listener)
+(?=.*string)(?=.*vide)
 Rule à faire : 
     refaire crossing-covariant mais cette fois les tags * et + et 0/* sont sur les instances! > difficile
 Canvas :
@@ -612,7 +610,7 @@ docker : créer une image (executable)-> builder ->image devient container qd es
             build: . (tu te buildera à la racine du container docker (?)
             command: npm run // overrite CMD ci dessus: en general la commande ici sert à demarrer un serveur
           postgres: // deuxieme service = 1 container                                                                                                                                                                                                                                                                                                                                                                       _ce nom peut etre lu grace à "docker image ls" voir LINKdckrimgls
-  docker build -t(pour tag) unnomquejedonneamoncontainer /pathOuEstDockerfile(. par ex si j'y suis)// Creer mon container docker qui rentre dans la liste. executer ça où ya le fichier Dockerfile                                                                                                                                                                                                                         |
+  docker build -t(pour tag) unnomquejedonneamoncontainer /pathOuEstDockerfile(. par ex si j'y suis)// Creer mon container docker qui rentre dans la liste. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto
   docker run -it(pour interactif voir LINKjgjgjg) --rm (pour supprimer le container une fois que son execution est terminee:du coup il ne reste que l'image qui run je crois) --name=facultatifUnAutreNomJeCroisQueJeDonneAMonContainer -d (pour executer en background) -p 80:8080 -p 443:8443 nomDeMonConteneurAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path Dans mon container du coup voir l'option -v)// demarrer un contenur à partir de son image. En Foreground si je fais ctrl+c (unix seulement) ça kill le process
                                   -p portdeOS:portOuvertduContainer(je peux en mettre plusieurs)                                                                                                                                  |_peut etre un truc que Docker recupere automatiquement dans le repository docker sur le net (comme une dependance maven)                      
   docker run -it --name=facultatifUnAutreNomJeCroisQueJeDonneAMonContainer -d (pour executer en background) -p 80:8080 -p 443:8443 nomDeMonConteneurAExecuter // demarrer un contenur à partir de son image. En Foreground si je fais ctrl+c (unix seulement) ça kill le process
@@ -754,8 +752,8 @@ github : guitub :  git : gitub : (installable sur mobaxterm :depoxer le plugin d
                                 >>>>>>>>>>>>>>> blablabla
     preparer un commit:(on peut le faire plusieurs fois avant de commiter) 
       git add -v(verbose) * ou /xx/* ou . ou NomFichier ou '**/pom.xml' (si c'est dans un long path sous-repertoire) // repertoirelocal->index est indexe :Pour rajouter QUE LES NOUVEAUX/UPDATED FICHIERS dès lors toutes les modifs faites AVANT add seulement vont etre commitees quand je ferais git commit... si je modif d'autres fichiers Apres et je commit direct, ils ne sont pas envoyes. A utiliser si j'ai erreur "needs merge you need to resolve your current index first" car il desindexe les fichiers qui n'ont pas bien mergé
-      si j'ai le message hint: You've added another git repository inside your current repository.... et que je veux conserver le sous module git faire : d'abord "git rm -f --cached phpExtLib/PHPMailer" pour revenir en arriere puis "git submodule add https://github.com/PHPMailer/PHPMailer.git phpExtLib/PHPMailer". Il faudra alors pusher .gitmodules pour les autres developpeurs. Les autres developpeurs devront faire "git submodule init" puis "git submodule update"
-      git rm --cached <filePath1 filePath2> //LINKrmgit a utiliser aussi si gitignore ne semble pas marcher: ignore l'indexation et le suivi d'un fichier. ATTENTION PEUT SUPPRIMER LES FICHIERS. SI je ne veux pas faire git reset HEAD monfichier pour l'ignorer. Les vire de untracked file mais certains fichiers on y arrive pas... voir LINKcheckoutquandmeme
+      si j'ai le message hint: You've added another git repository inside your current repository embedded.... et que je veux conserver le sous module git faire : d'abord "git rm -f --cached phpExtLib/PHPMailer" pour revenir en arriere puis "git submodule add https://github.com/PHPMailer/PHPMailer.git phpExtLib/PHPMailer". Il faudra alors pusher .gitmodules pour les autres developpeurs. Les autres developpeurs devront faire "git submodule init" puis "git submodule update"
+      git rm --cached <filePath1 filePath2> //LINKrmgit a utiliser aussi si gitignore ne semble pas marcher ou si j'ai l'erreur in unpopulated submodule(c parce que j'ai supprimé .git): ignore l'indexation et le suivi d'un fichier. ATTENTION PEUT SUPPRIMER LES FICHIERS. SI je ne veux pas faire git reset HEAD monfichier pour l'ignorer. Les vire de untracked file mais certains fichiers on y arrive pas... voir LINKcheckoutquandmeme
       git rm -r --cached <filePath> //-r pour recursif
       git status -uno//(-uno pour ne pas voir les untracked) pour savoir quels fichiers vont etre commites ( a faire si j'ai le message Changes not staged for commit)
       git commit:  apres commit je peux faire un fetch((recupere du repo distant vers le local dans une autre localisation:pour l'instant n'a pas touché a mon espace de travail) puis pull (pour récupérer les dernières modifs des collegues et le merger avec mon espace de travail) puis ensuite un push
@@ -2401,6 +2399,40 @@ erreurs codes http: LINKcodesHttp
 
 
 J2EE :
+AFAIRE: tester: mvn archetype:generate -DarchetypeGroupId=com.airhacks -DarchetypeArtifactId=javaee8-essentials-archetype -DarchetypeVersion=0.0.4 -DgroupId=test.laurent -DartifactId="laurent.artefact" -Dversion=0.0.1 -Darchetype.interactive=false --batch-mode
+quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.io/guides/cdi-reference.html. quarkus-reasteasy:c'est jaxRS
+        creer un nouveau projet from scrash de n'importe où: 
+        mvn io.quarkus:quarkus-maven-plugin:0.16.1:create -DclassName="org.acme.quickstart.MaClasseWebServiceResource" -Dpath="/urlDeCeWebServiceHelloWorld" 
+                dans le pom, io.rest-assured c'est pour les tests voir LINKtestetresrtest. ATTENTION remplacer la dependance <artifactId>quarkus-resteasy</artifactId> par <artifactId>quarkus-resteasy-jsonb</artifactId> si je veux faire du rest json 
+  mvnw compile quarkus:dev -Ddebug(si je veux debugger)// execute en dev (demarre un serveur http). quarkus:dev c'est pour que le serveur ecoute les changements et s'auto-refresh. Comment? Reponse:Refreshing the browser triggers a scan of the workspace, and if any changes are detected, the Java files are recompiled and the application is redeployed; your request is then serviced by the redeployed application. If there are any issues with compilation or deployment an error page will let you know.
+  mvnw package // recompile et package 2jars. Un executable -runner.jar (executable par "java -jar target/getting-started-1.0-SNAPSHOT-runner.jar") qui demarre le serveur jboss attention les librairies utilisées sont externes dans target/lib voir son MANIFEST.MF. Un autre qui ne contient pas l'embedded serveur 
+  mvnw package -Pnative // recompile et package un binaire executable dans target environnement dépendant donc attention:executable sans besoin de jvm mais fonctionne que sur mon type d'environnement actuel
+    du coup rajouter:-Dnative-image.docker-build=true // je crois qui cree un executable metable dans un container docker (voir le dockerfile  genere par quarkus)
+  docker build -f src/main/docker/Dockerfile.native -t quarkus-quickstart/quickstart // creer l'image docker
+  docker run -i --rm -p 8080:8080 quarkus-quickstart/quickstart // executer dans docker ou kubernetes
+       quarkus tests :
+            @QuarkusTest // le serveur jboss demarre sur port 8081(modifiable par quarkus.http.test-port dans application.properties) et rest-assured utilise ce port. Toutes les injections se font.
+            public class GreetingResourceTest {
+                @Test
+                public void testHelloEndpoint() {
+                    given() // de rest-assured. SI je veux forcer moi meme l'url alors faire  @TestHTTPResource("/monPath") URL ou String monUrl dans ma classe de test
+                      .when().get("/hello")
+                      .then()
+                         .statusCode(200)
+                         .body(is("hello"));
+                }
+                @Test
+                public void testGreetingEndpoint() {
+                    String uuid = UUID.randomUUID().toString();
+                    given()
+                            .pathParam("name", uuid)  // rempli le {name} ci dessous
+                            .when().get("/hello/hello/{name}")
+                            .then()
+                            .statusCode(200)
+                            .body(is("hello " + uuid + "\n"));
+                            .body("utilisateur.nom", equalTo("jean"),"lotto.winners.winnerId", hasItems(23, 54));//marche meme si c'est du json. permet de valider le json sans avoir à convertir en objet java LINKtestetresrtest
+                }
+            si dans un service rest j'ai l'erreur can not access a member of class c'est parce que je ne peux pas convertir en json une classe qui est inner d'une autre classe.       
 
 
 JAAS :
@@ -2424,6 +2456,7 @@ AppConfigurationEntry localAppConfigurationEntry = localConfiguration.getAppConf
                                                                                                                                                                                                                   
                                                                                                                                                                                                                 
 web.xml : webxml :
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" version="4.0" metadata-complete="true">
             icon Le chemin d'accès a une icône qui peut être employee par un outil graphique pour representer l'application Web. 
             display-name Un nom qui peut être employe par un outil de gestion d'applications pour representer l'application Web. 
             description Une description de l'application. 
@@ -3948,8 +3981,7 @@ bootstrap : (c'est de la merde. utiliser css grid cssgrid)
         dedans: rows puis cols
 
 CSS grids : cssgrid : css grid :
-
-
+       
 SPRING :      https://start.spring.io/
 Spring roo :
                         project --topLevelPackage com.transportadmin
@@ -4068,7 +4100,7 @@ Springbatch : spring-batch : spring batch :
 		</property> 
 	</bean>
 
-      mapping d'une classe A en une classe B
+      mapping mapper mappage d'une classe A en une classe B
       public class MaClasseItemProcessor implements ItemProcessor<ClasseA, ClasseB> 
       {
               @Override
@@ -4457,7 +4489,7 @@ AILLEURS : injecter mes beans par constructeur
                             {
                             }                                           
         pour faire des requetes jdbc : le resultat des requtes sql se map avec objets simples java (ne fait pas de mapping objet complexe)
-            si j'ai l'erreur IncorrectResultSetColumnCountException : je ne peux pas mappser avec un objet à moi avec car queryForList ne permet pas de faire ce mapping.  
+            si j'ai l'erreur IncorrectResultSetColumnCountException : je ne peux pas mapper avec un objet à moi avec car queryForList ne permet pas de faire ce mapping.  
               jdbcTemplate.queryForList(sql, leschampssql, CetteClasseDoitEtreDeTypeSimpleAvecQu'unChampGenrejava.sql.Timestamp.class);
             si j'ai erreur  given 1 parameters but expected 0  ou si j'ai Incorrect result size: expected 1, actual 0 alors peutetre
                   remplacer ? par =:nudoss
@@ -4869,7 +4901,7 @@ Spring : XML STYLE
                             dans les jsp: 
                                   <spring:message code="lacledansmesfichiermsg" text="default text" />
                               en java recuperer le message i18n : 
-                                    @RequestMapping(value = "/inputbadge", method = RequestMethod.POST//est GET par defaut, produces = MediaType.APPLICATION_JSON_VALUE)
+                                    @RequestMapping(value = "/inputbadge", method = RequestMethod.POST//est GET par defaut, produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE)
                                     @ResponseBody
                                     //@ResponseStatus(HttpStatus.OK)
                                     public OutputBadge inputBadge(Locale locale, @RequestBody InputBadge inputBadge, HttpServletResponse httpServletResponse) throws Exception {
@@ -6835,7 +6867,11 @@ pour concatener plusieurs lignes en une seule : (equivalent de listagg sur oracl
         inner join ps_attribute_lang on ps_attribute_lang.id_attribute=ps_attribut  e.id_attribute and id_lang=1
         where ps_product_attribute.id_product=33
         group by ps_product_attribute.id_product_attribute
+        group by ps_product_attribute.id_product_attribute cube(champ1, champ2) //cree un sous total comme rollups ci-dessous
+        group by GROUPING SETS ((c1, c2),(c1),(c2),()) // evite de devoir rajouter des lignes avec union pour rajouter des lignes de sous totaux
+        with rollups // permet de rajouter une ligne au resultat avec une aggregation comptage total des lignes au dessus. comme cube ci dessus
         order by id_product,id_product_attribute,id_attribute
+        ORDER BY monthlyLimit DESC NULLS LAST // nulls last permet de mettre les champs à nulls à la fin je crois dans l'ordre
 
 pour supprimer une primary cle primaire (sans supprimer les donnees ni la colonne)
       alter table TB0012_USER drop primary key (supprime la clef primaire. Si cette clef n'existe pas, cette commande effacera le premier index UNIQUE  de la table. (MySQL marque la première clef UNIQUE en tant que PRIMARY KEY si aucune PRIMARY KEY  n'a ete specifiee explicitement.) 
@@ -10233,7 +10269,7 @@ ren %WEB-INF-PAE%\classes\_integr.log4j.properties.template log4j.properties.tem
 
 ------------------
 
-ant : avec maven : pour par exemple renommer un fichier apres coup 
+ant : avec maven: pour par exemple renommer un fichier apres coup 
     utiliser maven avec ant :
         dans le pom:  
           <plugin>
@@ -10932,7 +10968,7 @@ Tous les scopes:
                       import (only available in Maven 2.0.9 or later) ses parametres scope et version  sont remplace par le meme artefct sous <dependencyManagement> du pom parent de ce pom. Les eventuelles exclusions sont aussi importees depuis le pom parent pour cet artifact
                               exemple:
                       PARENT 
-                              <dependencyManagement>  // ca c'est dans un pom parent. Les dependances ici ne sont pas prises en compte dans ce projet pom je crois mais dans les projets fils. LINKlkjsdf
+                              <dependencyManagement>  // ca c'est dans un pom parent ou fils. Les dependances ici ne sont pas prises en compte dans ce projet pom mais du coup grace a ca les poms fils et lui meme n'ont pas besoin de specif la version. LINKlkjsdfaaaaaaaaaaa
                                 <dependencies>
                                   <dependency>
                                     <groupId>org.springframework.cloud</groupId>
@@ -10948,11 +10984,11 @@ Tous les scopes:
                                 </dependencies>
                               </dependencyManagement>
                       FILS:
-                                <dependencies>                     // c c'est dans qq pom fils LINKlkjsdf
+                                <dependencies>                     // c c'est dans qq pom fils LINKlkjsdfaaaaaaaaaaa
                                   <dependency>
                                     <groupId>org.springframework.cloud</groupId>
                                     <artifactId>spring-cloud-dependencies</artifactId>
-                                      //pas besoin de mettre a version ni le scope puisque c'est importe du parent  
+                                      //pas besoin de mettre a version ni le scope puisque c'est importe par dependencyManagement  
                                     <type>pom</type> // inutile de mettre ca si c'est un jar car dans ce cas c importe du parent
                                     </dependency>
                                     <dependency>
@@ -12586,6 +12622,20 @@ cette erreur peut etre due au fait que le champ des libelles est à nul sur au m
 
 Effacer expres
 LDAP :
+    de edfgroupnet:
+    Pour supprimer des entrees dans le ldap utiliser ldapbrowser... ca marche top du top
+      pour importer un ldif dans le LDAP:
+      dabord sauver ce qui est sur le LDAP c a d faire un export:
+      db2ldif -o nom_fichier_qu_il_va_creer.ldiff
+      ensuite faire l'import:
+      ldif2db -i nom_ficher_existant_qui_contient_les_nouvelles_donnees.ldiff
+      quand on fait ca, il integre les donnees dans le ldap, mais si elles certaines sont deja existantes, il ne les touche pas: c comme si on dezippait un .zip dans un repertoire existant
+      sous opt/IBMldapc lancer /ldapmodifyd -f nomfichier_a_importer_et_a_jour.ldif -D "cn=root" -w "edfgroupnet" pour modifier les entrees existantes: les mettre à  jour quoi.
+      on peut aussi faire une recherche:
+      ./ldapsearchd  -D "cn=root" -w "edfgroupnet" -b "ou=correspondants, o=edfgdf-extranet.fr" "cn=r*" "sn"
+      
+      
+
   si erreur org.springframework.dao.IncorrectResultSizeDataAccessException: base: 'dc=ALINEA-1,dc=fr'; filter: '(&(objectclass=user)(pager=ALIS007105))'.
           Cela signifie que le filtre de recherche ldap 'dc=ALINEA-1,dc=fr'; filter: '(&(objectclass=user)(pager~=ALIS007105))' //~ c'est pour ignorer la casse casse insensitive
           heu... a completer. j'ai efface l'explication
@@ -14244,7 +14294,7 @@ OSGI :  Karaf : 1classloader/bundle
                   */
                   @GET ou @POST 
                   @Path("/lafindelurl") // mettre {monparamdanspath} si on veut utiliser @PathParam("userlogin")String login ci dessous LINK5464  
-                  @Produces("application/xml")
+                  @Produces("application/xml") // possible aussi mais à traduire : produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE
                   public Collection getFeatures( @FormParam("parametrePost") String unParametre  ) throws Exception;
                                                   ou 
                                                       @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464
@@ -14639,10 +14689,14 @@ version 5: junit5 : junit 5 :  // https://stackify.com/junit-5/ tests repetees, 
           import org.junit.jupiter.api.Nested;
           import org.junit.jupiter.api.Test;
         public class TestUtilsTest { // les classes de test doivent toujours se terminer par Test ou Tests
+        @Rule public TestName name = new TestName(); // sert à savoir quel test est lancé voir (pas sur que ce soit ca sur junit5) LINKjgjgjgiiiii
           @BeforeAll(...) //remplace @BeforeClass.
           public static void xxxx()....
              @BeforeEach // remplace @Before
              public void reset() throws IOException
+             {
+                System.out.println("=========================="+name.getMethodName()); // LINKjgjgjgiiiii
+             }
             @Test
                   public void siJaiCetEtat_AlorsJeMattendsACa...
             @AfterAll(...) //remplace @AfterClass
@@ -14699,7 +14753,7 @@ Version 1.4:
                     @RunWith(.... ou HierarchicalContextRunner) 
                     public class UtilityTest 
                     {
-                    
+                    @Rule public TestName name = new TestName(); // sert à savoir quel test est lancé voir (pas sur que ce soit ca sur junit5) LINKjgjgjgiiiii            
                     Tester qu'il y a une exception particulière (a mettre dans la methode de test en amont de l'execution)
                               @Rule
                               public ExpectedException expectedEx = ExpectedException.none(); // a mettre dans la classe de test. peut servir a toutes ses methodes.
@@ -14728,6 +14782,7 @@ Version 1.4:
                     	}
                     	@Before public void setUp(){ de1 = new Object();} // s'execute avant chaque test de la classe (comme @After si je veux faire before et after uniquement sur une methode de test jouer avec try et finally)
                     	  //testunitaires: ATTENTION sur JUNIT4 , si le nom de notre methode commence par "test" il va executer systematiquement cette methode
+                          System.out.println("=========================="+name.getMethodName()); // LINKjgjgjgiiiii
                     	/*@Test(expected=NoDatabaseException.class)
                     	 *		public void siJaiCetEtat_AlorsJeMattendsACa() throws NoDatabaseException
                     			{
@@ -15505,7 +15560,7 @@ pour ajouter des elements à un tableau de type [] passer par des Arrays.
 si j'ai erreur 
       java.lang.AbstractMethodError c'est peut etre parce que j'ai mis un @override alors qu'il n'y a pas de raison.(peut etre)
 si j'ai erreur Error:java: exporting a package from system module java.instrument is not allowed with --release
-    Maven : maven-compiler-plugin passer à la bonne version (8->9->10)
+    Maven: maven-compiler-plugin passer à la bonne version (8->9->10)
   LINK_URLENCODEDECODE  quand un string contient des pourcentages % a cause de l'URI
     url encoder :
           en java faire : user = (java.net.)URLEncoder.encode(user, "UTF-8");
@@ -15565,7 +15620,7 @@ pour deflateandencode :
 		      
   logguer tracer debugger debuger les methodes appelantes : 
           	protected void printStacktrace(String label) { linkgetStringStackTrace
-                      StackTraceElement[] stck = Thread.currentThread().getStackTrace();
+                      StackTraceElement[] stck = Thread.currentThread().getStackTrace(); // permet aussi de recuperer le nom de la methode fonction en cours d'execution
                   StringWriter sw = new StringWriter();
               		PrintWriter pw = new PrintWriter(sw, true);
               		pw.write("PrintStackTrace "+label+": \n");
@@ -15676,7 +15731,7 @@ pour deflateandencode :
                             	}
                             }
   
-      pour savoir si un string est vide empty, ou null:
+      pour savoir si un string chaine est vide empty, ou null:
               org.apache.commons.lang.StringUtils.isEmpty(this.url_redirect)
 Les thread : threads : (ne jamais mettre un controlleur spring dans un thread) (si j'ai RejectedExecutionException c parce que j'ai stoppé un thread et après je lui demande encore un truc malgre tout)
     Chaque Thread a son stack.
@@ -20778,7 +20833,7 @@ java9 : java 9 : java11 : java10 :
 java10 : java 10 :
     var: bof eviter                                                                         
 pour lancer executer un programme java faire ca: (ATTENTION ne marche plus depuis la version 1.6?)
-depuis java9 si j'ai Caused by: java.lang.ClassNotFoundException: javax.activation.DataSource (c parce que ca a degagé de la jvm alors ratacher le module automatique avec maven : 
+depuis java9 si j'ai Caused by: java.lang.ClassNotFoundException: javax.activation.DataSource (c parce que ca a degagé de la jvm alors ratacher le module automatique avec maven: 
                 <dependency>
                   <groupId>com.sun.activation</groupId>
                   <artifactId>javax.activation</artifactId>
@@ -20836,8 +20891,28 @@ Depuis la version 1.6 utiliser -classpath ou -cp (c pareil) et separer par des ;
 		Si on a mis cette execution dans un point bat et qu'il ne trouve pas le chemin vers la jre: metre ca:
 					Set Path=C:\Program files/JavaSoft/JRE/1.5.0_08/bin
 					java  -jar SeleniumLogToPrimaLog.jar
-pour copier les proprietes d'un bean formulaire vers un autre bean de type info par exemple faire: mapper maper un objet java transformer en un autre bean  
-						org.apache.commons.beanutils.BeanUtils.copyProperties(Object dest, Object orig) // preferer peut etre ModelMapper plus parametrable mais pas tres performant 
+pour copier les proprietes d'un bean formulaire vers un autre bean de type info par exemple faire: convertir mapper maper un objet java transformer en un autre bean  
+						org.apache.commons.beanutils.BeanUtils.copyProperties(Object dest, Object orig) // preferer peut etre ModelMapper plus parametrable mais pas tres performant. le plus performant c'est mapstruct (il genere les classes de mapping au compile time par maven.)
+                     avec ModelMapper :
+                             ModelMapper modelMapper = new ModelMapper();
+                      		PropertyMap<ClasseSource, ClasseDestinataire> surclasse new PropertyMap<ClasseSource, ClasseDestinataire>() { // pour personnaliser le mapping au plus fin
+                      			  protected void configure() {
+                                  String blala= source.getMethod();
+                      			    map().setMethod(blabla+"tata");
+                      			  }
+                      			};
+                      	PropertyMap<SousClasseSource, SousClasseDestinataire> uneSousClasse new PropertyMap<SousClasseSource, SousClasseDestinataire>() {
+                      				  protected void configure() {
+                      				    map().setMethod(null);
+                      				  }
+                      				};
+                      			modelMapper.addMappings(surclasse);
+                      			modelMapper.addMappings(uneSousClasse);
+                              ClasseDestinataire toto = modelMapper.map(monObjetInitial, ClasseDestinataire.class);
+                                     
+                      		return toto;
+                            OrderDTO orderDTO = modelMapper.map(order, OrderDTO.class);
+                             
 pour recuperer une variable d'environnement qui est declaree dans web.xml:
 			pour recuperer le numero de version
 			String ttfPath = (String)ServiceLocator.getInstance().getRefByName("NOM_DE_LA_VARIABLE");
@@ -23026,7 +23101,7 @@ pour generer le wsdl a la main :
           il va generer le wsdl et le xsd sous classes
 pour generer java a partir de wsdl mais beurk : 
       "C:\Program Files\Java\jdk1.6.0_24\bin\wsimport" TestWebServiceBeanService.wsdl -verbose -keep -d repertoireOuGenererLeCodeSource
- pour generer java à partir de wsdl via maven : creer un projet maven avec le pom:
+ pour generer java à partir de wsdl via maven: creer un projet maven avec le pom:
                                 <?xml version="1.0" encoding="UTF-8"?>
                               <project xmlns="http://maven.apache.org/POM/4.0.0"
                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -23464,6 +23539,7 @@ visual studio :pour javascript:
     zoom et dezoom: ctrl+"+" ou "-" du pavé numérique
     accolade correspondante: ctrl+shift+*
 eclipse :
+Si je modifie le pom.xml: rafraichir reimporter: click droit sur projet>mven>updateproject
 import/export run configuration possible
     menu file>import/export> run/debug ...
 show in package explorer :  
@@ -23529,7 +23605,7 @@ raccourcis shortcuts utiles: (pour les definir : WIndows>Preference>chercher "sh
       CTRL + SHIFT + L : liste des shortcuts raccourcis
       CTRL + SHIFT + P : Atteindre l'accolade correspondante sinon Window > Preferences > Java > Editor and Select Matching brackets highlight
       CTRL + L : goto line number
-      CTRL + shift + G trouver rechercher qui utilise utilisation depend
+      CTRL + shift + G trouver rechercher qui utilise utilisation depend methode appelante appelente
       CTRL + I : ajuster l'indentation sur la selection en cours mise en forme format
       CTRL + T : heritage pour avoir la hierarchie d'une methode, d'une classe... sous classe implemente
       CTRL + O (ou F4): pour avoir le outline super vite. Refaire O pour voir aussi les attributs des classes parentes
@@ -23546,7 +23622,7 @@ raccourcis shortcuts utiles: (pour les definir : WIndows>Preference>chercher "sh
       CTRL + SHIFT + / (pas du pave numerique)  : add comment set comment (commenter)
       CTRL + SHIFT + B : toggle breakpoint point d'arret
       CTRL+F6; CTRL+E switcher entre les pages (fichiers)
-      CTRL+F7 switcher entre vues views              
+      CTRL+F7 switcher entre vues views dont la console              
       Alt+Maj+Q, Q : afficher une pannel vue specifique (plus rapide que CTRL+F7)
       ALT+Shift+X; T : lance JUnit test sur la classe en cours.
       CTRL + F8 : switcher entre perspectives
@@ -23810,30 +23886,6 @@ Guitar tablature Editor
 AOLInstant Messenger
 RealPlayer
 
-
-http://etudes-w3.edfgdf.fr
-
-
-MOREAU OLIVIER  01 47 65 31 89  473189  
-
-spip esp: http://dev-particuliers.der.edf.fr/spip_login.php3
-mot de passe: dit-mco
-user: dit-mco
-spip:
-\\clr26ak\icame\dev-particuliers
-user: jacquin
-pass: edf123
-
-pour recuperer un appel telephoneique: 16
-
-thomas garrel: 475193
-Christelle Gouret 01 56 65 07 40
-whilliam Whiteway : 0156651126
-
-Olivier Trachet: 0534458509
-
-Marc Chassin: 475237
-julien remi 475327
 
 procedure de mise a jour de la partie dynamique de ESP
 fichier web_dev à  comparer avec web_mco et mettre web_mco à  jour en finction de web_dev
@@ -25799,39 +25851,6 @@ mysql> create table testdata (
                key c'est les index
                auto_increment equivalent de la sequence sur oracle. Commence à compter à partir de.
 
-Groupnet: 
-Pour supprimer des entrees dans le ldap utiliser ldapbrowser... ca marche top du top
-
-pour importer un ldif dans le LDAP:
-dabord sauver ce qui est sur le LDAP c a d faire un export:
-db2ldif -o nom_fichier_qu_il_va_creer.ldiff
-ensuite faire l'import:
-ldif2db -i nom_ficher_existant_qui_contient_les_nouvelles_donnees.ldiff
-quand on fait ca, il integre les donnees dans le ldap, mais si elles certaines sont deja existantes, il ne les touche pas: c comme si on dezippait un .zip dans un repertoire existant
-sous opt/IBMldapc lancer /ldapmodifyd -f nomfichier_a_importer_et_a_jour.ldif -D "cn=root" -w "edfgroupnet" pour modifier les entrees existantes: les mettre à  jour quoi.
-on peut aussi faire une recherche:
-./ldapsearchd  -D "cn=root" -w "edfgroupnet" -b "ou=correspondants, o=edfgdf-extranet.fr" "cn=r*" "sn"
-
-
-Groupnet: pour remplacer la base de recette par la base de prod:
-tout est dans clgrpns1 home00/mntegn/Install/tmp_oracle/dump
-faire un df -k pour verifier qu'on a suffisemment de place: 
-1 Mo devrait suffire (1 xxx xxx)
-1.000.000 kilo = 1Giga Go
-1.000 kilo = 1 Mega Mo
-MCO = repertoire de sauvegarde, Prod= prod
-sauvegarder la base courante:
-modifier exp_db_egn.sh de maniere à  ce que le nom du dump comporte la date d'aujourd'hui.
-
-se connecter sous oracle sur l'instance DB_EGN et executer le script exp_db_egn.sh
-et bien sur si je veux importer juste la base JIVE, (arreter par groupnet stop avant puis)je me connecte sous l'instanc JIVE_EGN of course.. voir le fichier imp_jive.sh pour decompresser un XXX.Z faire:
-uncompress XXX.Z
-modifier imp_db_egn.sh de maniere à  ce que tout soit coherent, 
-Arreter groupnet: groupnet stop
-se connecter sous Oracle sur l'instance DB_EGN (ou pas car dans le script imp_db_egn.sh il se connecte sur l'instance)
-et executer le script
-
-
 
 toad : pour voir les parametres oracle qui sont aussi dans ini.ora aller dans View>oracle parameters
 on peut voir la taille des tablespace sous toad pour verifier si ils ne sont pas satures.
@@ -26357,7 +26376,7 @@ erreur : (intermediate value)(...) is not a function
                                                                                 && act[Math.floor(document.getElementById(lecteur).currentTime)]!=undefined
                                                                                && act[Math.floor(document.getElementById(lecteur).currentTime)]!=null)})
                                                  .length>0)
-    http://jshint.com // existe un plugin maven : sert à verifier la syntaxe javascript
+    http://jshint.com // existe un plugin maven: sert à verifier la syntaxe javascript
     on peut faire un prompt browser: 
         window.prompt("maquestion");
   chargement asynchrone de css: 
