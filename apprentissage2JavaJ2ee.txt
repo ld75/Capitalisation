@@ -456,8 +456,20 @@ si problemes dans npm : https://github.com/npm/npm/wiki/Troubleshooting
       typings search --name react   ou typings search --name angular
  si je suis sous mon repertoire projet et je fais npm install: //-g pour installer dans le repository(globalement sur mon systeme) et non pas dans le projet; --save alors il ajoute la dependance "dependencies" dans le package.json où je suis. avec --save-dev il ajoute la dependance dans le package.json dans "devDependencies" et dans le repertoire qu'il cree node_modules ou je suis: c'est un package que j'installe qui ne sera utile que pour les tests de dev et non pas la prod 
         va installer toutes les dependances necessaire du projet (grace a package.json) dans mon repository npm
-mettre à jour npm:// pour installer la derniere version
-      npm i npm ou npm install npm@latest -g 
+mettre à jour npm:// pour installer la derniere version update upgrade
+      npm i npm ou npm install npm@latest -g
+mettre à jour update upgrade node
+  sur linux unix:
+    node -v //pour voir la version
+    npm cache clean -f // d'abord nettoyer cache
+    puis
+    npm cache clean -f 
+    puis 
+    n stable ou n latest // selon si je veux le dernier stable ou le dernier
+    puis
+    ln -sf /usr/local/n/versions/node/11.8.0/bin/node usr/bin/node
+  sur windows:
+         reexecuter node.msi.
 installer un autre programme dans mon repository npm (en ajoutant -g)      
       npm install nomAutreProgramme@latest -g --save //-g pour qu'il l'installe dans mon repository npm et --save pour qu'il modifie mon package.json pour y ajouter cette dependance(uniquement, pas les dependancessousjacentes mais dans le repertoire node_modules si.)
       npm install nomAutreProgramme@^3.1.0 -g // pour installer une version specifique. Si je sais pas le num version mettre un num bidon il me proposera...                                                                                                                                                                     
@@ -471,8 +483,8 @@ installer un autre programme dans mon repository npm (en ajoutant -g)
               installer angular-cli
                 npm install -g angular-cli
 faire rapidos un serveur http : 
-      npm install -g live-server //(avant pourri : http-server) si pas deja fait : installe un ptit serveur sous repertoire de npm (watch- (pas reussi à le faire marcher)pour que ca rafraichit le cache du browser. sinon l'effacer  à la main. Est facultatif)
-      puis :live-server ou npm run live-server // demarre un ptit serveur http pour servir là ou je suis (watch- pour que ca rafraichit à chaud. Est facultatif)   
+      npm install -g live-server //(avant pourri : http-server) si pas deja fait : installe un ptit serveur sous repertoire de npm (watch- (pas reussi à le faire marcher)pour que ca rafraichit le cache du browser. sinon l'effacer  à la main. Est facultatif) Attention LINKlkjdfgkhkghkhk
+      puis :live-server ou npm run live-server // demarre un ptit serveur http pour servir là ou je suis (watch- pour que ca rafraichit à chaud. Est facultatif) Attention LINKlkjdfgkhkghkhk   
   ancienne methode compiler le typescript:
       npm run tsc:w (compile en mode watch: si je modif le typescript il recompile à la volee)
       tsc nomfichier.ts compile un fichier typescript en fichier javascript// meme si il ya des erreurs il les ecrit mais cree un .js
@@ -494,7 +506,8 @@ faire rapidos un serveur http :
   },
   "devDependencies": {},
   "scripts": {
-    "start": "node index.js", // quand je ferais npm start il va executer node index.js donc node executera mon index.js à la racine du projet
+    "start": "node index.js", // quand je ferais npm start il va executer node index.js donc node executera mon index.js à la racine du projet Attention LINKlkjdfgkhkghkhk
+             "react-scripts start", // là il va carrement demarrer un petit serveur et afficher la page d'accueil de mon projet react
     "test": "echo \"Error: no test specified\" && exit 1" // mettre "test":"jest" et là voir Linktestjest
      "build": "webpack --progress -p",    // quand je fais npm run build: lit webpack.config.js et execute webpack. Pour ne plus avoir besoin d'executer webpack à la main chaque fois que je veux builder et deployer mon projet npm
      "preinstall"ou "postinstall": xxxx ces deux la sont speciaux = triggers: s'executent avant et apres npm install.
@@ -505,7 +518,11 @@ faire rapidos un serveur http :
   "author": "",
   "license": "ISC"
 }
-
+   LINKlkjdfgkhkghkhk si le browser ne rafraichit pas : Intellij>settings>system>decocher use safe write
+yarn :
+  installation s'installe sur windows avec un .msi à downloader
+  si je fais yarn add redux react-redux : attention a l'executer DANS mon repertoire projet. en fait j'ai vu il ne fait que rajouter la dépendance dans mon package.json et il rajoute un fichier yarn.lock dans mon projet
+  yarn start c'est comme npm start.
 webpack : LINKWPKCS   
   npm install webpack --save-dev //installer webpack
   config à la racine du projet
@@ -538,7 +555,7 @@ babel : LINKBBLE
                   babel-core=core
                   babel-preset-env=environ comme core
                   babel-loader= pour fonctionner avec webpack 
-reactjs : react.js :
+reactjs : react.js + redux:
   installer npx avec npm.
   npx create-react-app my-app (crée un projet react)
   cd my-app
@@ -23458,7 +23475,7 @@ jenkins :
     quietPeriod : laisser une valeur >=5 sec
     pollSCM : c a d executer le run quand qqun commit         
       
-visual studio :pour javascript:
+visual studio (preferer vs code): vs full version: un peu comme intellij. vs free express = vs full mais seulement pour une techno au choix: js, java, c#. vs free community= full version simplifié. vs code : marche sur tout OS et est vide mais a un système de pluggins
     zoom et dezoom: ctrl+"+" ou "-" du pavé numérique
     accolade correspondante: ctrl+shift+*
 eclipse :
