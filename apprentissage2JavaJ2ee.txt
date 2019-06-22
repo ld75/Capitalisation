@@ -15626,6 +15626,24 @@ http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-j
 java7 :
 http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase7-521261.html  
 JAVA :
+decompiler :
+      meilleur decompilateur :decode_java (java decompiler); Sinon utiliser Intellij qui peut aussi comparer des repertoires 
+      fernflower pour decompiler tout un jar et exporter les sources dans un jar avec des .java à la place des .class (mettre ~1 pour les espaces)
+          java -jar D:/Dev/fernflower/fernflower.jar D:/Projets/Toulon~1/casclient-2.1.1-1.jar D:/Projets/Toulon~1/esupcasclient/
+          java -jar D:\Dev\fernflower\fernflower.jar D:\Projets\CISIRH\IQhr-online-query\WEB-INF\lib\hr-query-server-7.40.01005.00000.jar D:\Projets\CISIRH\hr-query-server\
+          java -jar D:\Dev\fernflower\fernflower.jar D:\RD\hr-kernel-7.30.03004.1234-sources\hr-kernel-7.30.03004.1234.jar D:\RD\hr-kernel-7.30.03004.1234-sources\
+          java -jar D:\Dev\fernflower\fernflower.jar D:\Projets\CRCA\4you\com.soprahr.hub.ds.usermgt.hra.main-2.1.3.jar D:\Projets\CRCA\4you\decompile\
+          java -jar D:\Dev\fernflower\fernflower.jar D:\Projets\INRA\conf\__hr-connecteur-inra-loginModule-1.0.jar D:\Projets\INRA\conf\__hr-connecteur-inra-loginModule-1.0jar
+          java -jar D:/Dev/fernflower/fernflower.jar D:\Projets\Speig\LDAPS\speigloginmodulee2save\__speig-login-module-1.0E2ForLogas.jar D:\Projets\Speig\LDAPS\speigloginmodulee2save\                     
+          java -jar D:/Dev/fernflower/fernflower.jar D:\Projets\Speig\LDAPS\speigloginmodulee2\__speig-login-module-1.0E2ME.jar D:\Projets\Speig\LDAPS\speigloginmodulee2\
+          aussi decompiler un repertoire plein de jars :-) (il va aussi dans les sous-repertoires)
+              java -jar D:\Dev\fernflower\fernflower.jar D:\Projets\lib\ D:\Projets\src\
+          aussi decompiler un repertoire plein de .class il ajoute les .java a cote de chaque classe
+              java -jar D:\Dev\fernflower\fernflower.jar D:\Dev\hraccessCodeSource\hra-space\WEB-INF\classes D:\Dev\hraccessCodeSource\hra-space\WEB-INF\classes
+          java -jar D:\Dev\fernflower\fernflower.jar D:\Dev\hraccessCodeSource\hra-space\WEB-INF\classes D:\Dev\hraccessCodeSource\hra-space\WEB-INF\classes
+          java -jar D:\Dev\fernflower\fernflower.jar D:\Projets\FondationDAuteuilSAML\hraspace\classes D:\Projets\FondationDAuteuilSAML\hraspace\classes
+      JavaDecompiler (jad nt ). mieux: mettre le plugin net.sf.jadclipse_3.3.0.jar J'ai mis jad sous D:/installation. faire : "d:\Installations>jad d:\LocalData\p036782\Desktop\theo\WEB-INF\classes\renault\wec\dmd\form\FicheForm.class"
+
     PARFOIS IL FAUT DEFINIR DES LIBRAIRIES SUR LA MACHINE VIRTUELLE JAVA: dans: D:\Program Files\jdk1.2.2\jre\lib\security\java.security (par ex) il a fallu rajoutter la ligne: security.provider.2=com.sun.crypto.provider.SunJCE
 recuperer un fichier selon son path relative relatif et non pas absolu : 
         grace à System.getProperty("user.dir") qui est toujours dispo.
@@ -23541,7 +23559,7 @@ Laurent
 execution d'une procedure stockee :
 	declare 	
 	@error_code int  ,
- 	@id_msg     varchar(200)  , // ici ca veut dire qu'il met 200 bytes (pas 200 caracteres) si on veut 200 caracters il faut mettre VARCHAR(200 char) sous reserve que le paramètre de base NLS_LENGTH_SEMANTICS soit positionne à  sa valeur defaut : BYTE).
+ 	@id_msg     varchar(200)  , // ici ca veut dire qu'il met 200 bytes (pas 200 caracteres) si on veut 200 caracters il faut mettre VARCHAR(200 char) sous reserve que le paramètre de base NLS_LENGTH_SEMANTICS soit positionne à  sa valeur defaut: BYTE).
 	@msg_param  varchar(200)  
 	exec PS_CALENDARCLPLX_LIST @error_code Output,@id_msg Output,@msg_param  Output,'%','%','%'
 
@@ -23564,68 +23582,15 @@ end
 close    selectCalendCplx
 deallocate cursor selectCalendCplx		
 
-
-
-Log de recette et de prod:
-http://viewfiles-bp2s.ams.echonet/
-goe_web
-gisodyssee
-liste du haut pour la recette: TITSS303 ou TITSS311: regarder dans code source en tete pour le savoir
--> regarder system.out.. ou autre.
-
-
-*****FIN procedures stockees Sybase:************
-RECETTE: connexion à  gisOdysee avec compte d'abdo:
-user 294470
-mdp 294470 OU MDP: Bach81
-moi:
-user 340795
-pass: it_123
-
-sybase: 
-descriptif d'une table: sp_help NOMTABLE
-sp_helptext NOM DE LA  STOCKEE
-
-BNP:
-AMS-ASSET MANAGEMENT AND SERVICES
-AFFECTATION/ BP2S - TECHNOLOGIE FRANCE 07220
-ACI: CTA02A1
-MAIL: laurent.duverge@bnpparibas.com
-pass lotus: laurentduverge
-UID: 340795 ASSISTANT EXTERIEUR
-Identifiant annuaire: 340795
-Code analytique:l PFS: 07220
-code unix: u93522 mot de passe: 1235 (utiliser la carte)
-base de donnee dev: TIT10_PAR_DEV_SQL
-user: titris
-pass: titris
-base de donnee test: TIT1_PAR_TST_SQL
-user: sil_titris
-pass: sil_titris
-base de donnee prod:FR43_PAR_LIV_SQL
-user: d_gisodyssee
-pass: DBO_titr1s
-
-Starteam:
-user:340795
-password: Laurentduverge8589 (avec L majuscule!)
-
-Menus en base: SWD_MENU_ITEM.MENU_ITEM_LB SWD_MENU_ITEM.PAGE_ID -> SWD_PAGE.PAGE_URL
-select PAGE_URL from SWD_PAGE where PAGE_ID IN (select PAGE_ID from SWD_MENU_ITEM where MENU_ITEM_LB like "Dashboard")
-
-
-lecteur distant de Thibaut:
-\\parw00054118\gisodyssee-swd
-
 DEVOPS : 
  voir Linktestdevopsç9349 et LINKDevopslksjqgfvmlka
- pas de specialistes, que des généralistes : rotation.
+ pas de specialistes, que des généralistes: rotation.
  reduire le nombre de "handof"(je passe le relai a qq d'autre)
  Automatiser -creation des environnements(doivent être = le + possible:loadbalancer etc...) ,execution(le processus de depl doit ê le meme pot les envs) tests(Run tests auto à chaque commit (et non pas periodiquement) (les tests doivent s'executer en //(process != pour plus de rapidite sinon 30 min c trop long. il faut moins de 20min pour les tests) + smoketest(=connectivité avc ext [=selenium]), deploiements: un seule team (5-10pers max (tous doivent etre cap de builder->livrer dans les !=envs: devs et ops)) le fait pour reduire les dependances
  possible rollback en 1 click sur 1 bouton
- historisation des deploys: qui? quand? VersQuelEnv? pourQuelResultat? diffAvant-Apres? : a chaque deploy tous recoivent cet historique par email ou chat
- pas de branches: trunk based developpement : tous dans le trunck des que les tests automatises signalent une erreur, tout le monde s'arrete et on corrige l'erreur.->vert. Chaque commit peut tout casser. C normal voir LINKgatedcommit. Reception alerte automatique ->on repare tout de suite.
- LINKgatedcommit : gated commit : lors du commit, avant le system regarde si merge et build ok. Si ko le commit ne se fait pas->alerte au developpeur 
+ historisation des deploys: qui? quand? VersQuelEnv? pourQuelResultat? diffAvant-Apres?: a chaque deploy tous recoivent cet historique par email ou chat
+ pas de branches: trunk based developpement: tous dans le trunck des que les tests automatises signalent une erreur, tout le monde s'arrete et on corrige l'erreur.->vert. Chaque commit peut tout casser. C normal voir LINKgatedcommit. Reception alerte automatique ->on repare tout de suite.
+ LINKgatedcommit: gated commit: lors du commit, avant le system regarde si merge et build ok. Si ko le commit ne se fait pas->alerte au developpeur 
  On ne répare plus un environnement, on le remplace: creation d'un env est très rapide et automatique. Interdit de modif en prod. passer par version control et tout recreer from scrach
  reduire le nombre de "handof"(je passe le relai a qq d'autre)
  usecase->dev->test->opProd: livrer 100x/jour des touts petits lots(a chaque dev terminé)(incite la com) businessvaluevisiblespour client. Livrer de A à Z(prod) avant de faire autre chose.
@@ -23635,8 +23600,8 @@ DEVOPS :
       with un autre etat
       then retour attendu 
       exemple: 
-        SPRINT1 : manage a tennis GAME within a set of a tennis match
-          User Story 1 :
+        SPRINT1: manage a tennis GAME within a set of a tennis match
+          User Story 1:
           As a tennis referee
           With  simple Game rules
           Then display to me the current Game score of each player
@@ -23648,30 +23613,30 @@ DEVOPS :
  les environnements aussi doivent être dans versionControlGit-svn. Sont versionnés.
  Si pb detecté pendant livraison: feedback(a chaque livr) info a transmettre à tous.(pas blamer mais informer)
  Chaque jour meeting(avec les devs+ops): ce que j'ai fait hier, ce que je fais aujourd'hui, ce qui m'empêche d'avancer
- meeting fin d'un cycle de dev : ce qui a fonctionné, ce qui peut etre amélioré
+ meeting fin d'un cycle de dev: ce qui a fonctionné, ce qui peut etre amélioré
   Tout le monde (Dev et Ops) utilisent le meme mantis
   chat avec historique et possible à plusieurs. 
  2 façon de releaser en prod: (deployement!=release) 
-  ENVIRONMENT-BASED-releasepattern : (loadbalancer est cap de diriger un % qualifié de users sur l'un ou l'autre des serveurs). Ajouter à ça clusterImmuneSystem cap detecter problemes(perfs, nbvisite chutte...) apres livraison en PROD
+  ENVIRONMENT-BASED-releasepattern: (loadbalancer est cap de diriger un % qualifié de users sur l'un ou l'autre des serveurs). Ajouter à ça clusterImmuneSystem cap detecter problemes(perfs, nbvisite chutte...) apres livraison en PROD
   a) blue-green pattern
           DBBlue ServAppl servWebBlue____
                                          \_loadbalancer ne dirige que sur serveur Blue les clients. et sur serveurGreen l'équipeDev. tous les deployement se font d'abord sur serveur Green puis quand on a bien testé: on met en readonly DBBlue, Backup DBBlue, Copie data DBBlue vers DBGreen, release!: bascule le trafic sur serveur Green et dorénevent les push se font sur serveurBlue. 
           DBGreen ServApp2 servWebGreen                                                                                                                                                                                                                                                                                                                                               
-  b) decoupledDatabase : a utiliser de preference si + de 2 versions derriere le loadbalancer car ça devient compliqué de gerer les versions de DB.
+  b) decoupledDatabase: a utiliser de preference si + de 2 versions derriere le loadbalancer car ça devient compliqué de gerer les versions de DB.
                     ServAppl servWebBlue____
            1seuleDB/                        \_loadbalancer ne dirige que sur serveur Blue les clients. et sur serveurGreen l'équipeDev. tous les deployement se font d'abord sur serveur Green puis quand on a bien testé. Bascule sur ServeurGreen. On a developpe pour que DB soit la meme car on fait extensions et non pas modifs de la DB. bascule le trafic sur serveur Green et dorénevent les push se font sur serveurBlue.
                    \ServApp2 servWebGreen                                                                                                                                                                                                                                                                                                                                               
                 
         
-  APPLICATION-BASED-releasepattern : (=darklaunching) 
+  APPLICATION-BASED-releasepattern: (=darklaunching) 
             chaque evol est accessible en prod qu'à un nombre limité de personnes (besoin modif code applicatif pour ça. 1% des clients + Tous les devs + 50% des admins par ex) et au fur et à mesure des tests on ouvres les fonctionnalités à tout le monde via modif de conf prise en compte à chaud. Rollback facile.
             implique que en horsprods toutes les nouvelles fonctionnalites soient à ON pour tous. pour etre sur que qui peut le plus peut le moins
   RUN:
     monitor envPRODouRECouEtc... doit etre très dispo. Plus que l'env lui meme.
     Centraliser les logs et metrics de tous(DB,app,builds,deploiementMVN....) au meme endroit. Logs rotation auto, deletion auto. voir linux syslog -> donnees statistiques/logs + durees exec ->(StatsD+Graphite accessible a tous)->conf alertes->notifications auto(mail+(jenkins+catlight))
           si Docker ne pas loguer dans des fichiers mais dans stderr et stdout et laisser docker gerer (???)
-    logs : sur: authent et logout, accessdata, updates des droits, modifs niveau crud, invalid input, ram et cpu dispo, service repond? erreurs, delais,SAVok ou ko, valeurs business(nbventes...) durees transactions requettes
-    alertes : alerts : alert : qd existe ko quels logs avant? les rajouter dans les alertes.
+    logs: sur: authent et logout, accessdata, updates des droits, modifs niveau crud, invalid input, ram et cpu dispo, service repond? erreurs, delais,SAVok ou ko, valeurs business(nbventes...) durees transactions requettes
+    alertes: alerts: alert: qd existe ko quels logs avant? les rajouter dans les alertes.
 
 
 jenkins :
@@ -23684,12 +23649,14 @@ jenkins :
           /         \
     node1           node2 // peut etre sur une machine distante
     
-    quietPeriod : laisser une valeur >=5 sec
-    pollSCM : c a d executer le run quand qqun commit         
+    quietPeriod: laisser une valeur >=5 sec
+    pollSCM: c a d executer le run quand qqun commit         
       
-visual studio (preferer vs code): vs full version: un peu comme intellij. vs free express = vs full mais seulement pour une techno au choix: js, java, c#. vs free community= full version simplifié. vs code : marche sur tout OS et est vide mais a un système de pluggins
+visual studio :(preferer vs code):= vs full version: un peu comme intellij. vs free express = vs full mais seulement pour une techno au choix: js, java, c#. vs free community= full version simplifié.
+vs code : marche sur tout OS et est vide mais a un système de pluggins
     zoom et dezoom: ctrl+"+" ou "-" du pavé numérique
     accolade correspondante: ctrl+shift+*
+    
 eclipse :
 pour faire demarer en remote sous eclipse:
         program arguments: 
@@ -23697,7 +23664,7 @@ pour faire demarer en remote sous eclipse:
 Si je modifie le pom.xml: rafraichir reimporter: click droit sur projet>mven>updateproject
 import/export run configuration possible
     menu file>import/export> run/debug ...
-show in package explorer :  
+show in package explorer:  
         Alt+shift+w
 si j'ai eclipse edit source lookup path source not found lors du debuggage:
   peut etre ajouter -DdownloadSources=true après commande maven
@@ -23714,57 +23681,57 @@ creer workspace avec projets existants:
     sinon si c pas un projet mais le code source: import>java project...
 prend trop de temps pour valider les fichiers xml 
     prop>General>Validation>Decocher validations xml buid et manuel
-Tout reduire plier : Ctrl+shift+/(pave numerique) tout déplier Ctrl+shift+*
-si une view pannel ne s'affiche plus : 
+Tout reduire plier: Ctrl+shift+/(pave numerique) tout déplier Ctrl+shift+*
+si une view pannel ne s'affiche plus: 
     windows->reset perspective
 Setter le working directory workingdirectory: 
       sous eclipse dans RUN>workingpath on peut definir le chemin d'execution du programme. pour le setter en ligne de commande 
           utiliser "-Duser.dir=..."
-si auto inplementation ctrl space ctrl espace controle espace ne marche plus :
+si auto inplementation ctrl space ctrl espace controle espace ne marche plus:
     preferences>java>editor>contentAssit>advenced  
-si j'ai ce message : Referenced classpath provider does not exist: org.eclipse.m2e.launchconfig.classpathProvider
+si j'ai ce message: Referenced classpath provider does not exist: org.eclipse.m2e.launchconfig.classpathProvider
       installer/reinstaller le plugin maven et ca marche
 si le repository maven n'a pas l'air de se raffraichir recharger jar
     supprimer dans le repository local le fichier correspondant lastUpdated puis   
     windows> preferences> maven> update settings, Reindex, Apply, OK
 defiler sans bouger curseur: 
     Ctrl + fleches haut ou bas
-pour ajouter une librairie dll :car erreur native manquant: ou dependency blabla
+pour ajouter une librairie dll:car erreur native manquant: ou dependency blabla
   ajouter les .dll sous mon C:\Program Files\Java\jdk1.7.0\jre\bin\là.
   si c'etait sur unix on met libjivonatts_native.so là: 
   /usr/lib
   j'ai essaye ca ci-dessous mais ca n'a pas marche:    
-  dans run>vm arguments ajouter :(mettre le chemin complet)
+  dans run>vm arguments ajouter:(mettre le chemin complet)
       -Djava.library.path=file:C:\wamp\www\kanail\AudioLoopOnline\java\sivox\donnees\IvonaNative\i686-pc-win32\jivonatts_native.dll
    
-Pour specifier ou est la javadoc :
+Pour specifier ou est la javadoc:
     projet > properties > javadoc > javadoclocation
 Si il prend trois heures pour builder un projet à cause des facets: (infini) invoking faceted project validation builder
     fermer eclipse (forcer) > renommer le repertoire du projet qui merde > relancer eclipse > le projet est ferme. > renomer normalement le repertoire du projet > ouvrir le projet
       
-raccourcis shortcuts utiles: (pour les definir : WIndows>Preference>chercher "shorcut")
+raccourcis shortcuts utiles: (pour les definir: WIndows>Preference>chercher "shorcut")
     rechercher partout: alt puis a puis f
-    voir les todos : ctrl+shift+q; q > task > tasklist
+    voir les todos: ctrl+shift+q; q > task > tasklist
     fold all plier tout Ctrl+Shift+ / du numpad 
     unfold all plier tout Ctrl+Shift+ * du numpad ou Ctrl + / du numpad                                               
     Ctrl + shift + fleche haut ou fleche bas: passer d'une methode a l'autre de la classe
-      debug : 
+      debug: 
           F5: entrer
-          F6 : un pas
-          F7 : sortir
+          F6: un pas
+          F7: sortir
           F8: continuer
-      Atteindre la methode : F3
+      Atteindre la methode: F3
       Ctrl+g: il faut selectionner un truc: recherche partout la selection  
-      F2 : affiche l'erreur en grand
+      F2: affiche l'erreur en grand
       pour surligner les occurances de l'element selectionne: Preferences>Java>Editeur>Marquage des occurences
-      CTRL + SHIFT + L : liste des shortcuts raccourcis
-      CTRL + SHIFT + P : Atteindre l'accolade correspondante sinon Window > Preferences > Java > Editor and Select Matching brackets highlight
-      CTRL + L : goto line number
+      CTRL + SHIFT + L: liste des shortcuts raccourcis
+      CTRL + SHIFT + P: Atteindre l'accolade correspondante sinon Window > Preferences > Java > Editor and Select Matching brackets highlight
+      CTRL + L: goto line number
       CTRL + shift + G trouver rechercher qui utilise utilisation depend methode appelante appelente
-      CTRL + I : ajuster l'indentation sur la selection en cours mise en forme format
-      CTRL + T : heritage pour avoir la hierarchie d'une methode, d'une classe... sous classe implemente
+      CTRL + I: ajuster l'indentation sur la selection en cours mise en forme format
+      CTRL + T: heritage pour avoir la hierarchie d'une methode, d'une classe... sous classe implemente
       CTRL + O (ou F4): pour avoir le outline super vite. Refaire O pour voir aussi les attributs des classes parentes
-              codes couleurs des fonctions :
+              codes couleurs des fonctions:
                 carre = private
                 rond = public
                 triangle = non specifie: par defaut non modifier
@@ -23772,40 +23739,40 @@ raccourcis shortcuts utiles: (pour les definir : WIndows>Preference>chercher "sh
                 f = final
                 plein = methode
                 creux = variable
-      terminate stop interrompre : Ctrl+F2      
-      CTRL + K : find trouver le prochain (fonctionne que dans fichier java)                                            
-      CTRL + SHIFT + / (pas du pave numerique)  : add comment set comment (commenter)
-      CTRL + SHIFT + B : toggle breakpoint point d'arret
+      terminate stop interrompre: Ctrl+F2      
+      CTRL + K: find trouver le prochain (fonctionne que dans fichier java)                                            
+      CTRL + SHIFT + / (pas du pave numerique): add comment set comment (commenter)
+      CTRL + SHIFT + B: toggle breakpoint point d'arret
       CTRL+F6; CTRL+E switcher entre les pages (fichiers)
       CTRL+F7 switcher entre vues views dont la console              
-      Alt+Maj+Q, Q : afficher une pannel vue specifique (plus rapide que CTRL+F7)
-      ALT+Shift+X; T : lance JUnit test sur la classe en cours.
-      CTRL + F8 : switcher entre perspectives
-      CTRL + M : maximise/minimise agrandir aggrandir fenetre windows 
-      F2 ou ctrl+Shift+1 : quickfix pour corriger l'erreur rapidement
+      Alt+Maj+Q, Q: afficher une pannel vue specifique (plus rapide que CTRL+F7)
+      ALT+Shift+X; T: lance JUnit test sur la classe en cours.
+      CTRL + F8: switcher entre perspectives
+      CTRL + M: maximise/minimise agrandir aggrandir fenetre windows 
+      F2 ou ctrl+Shift+1: quickfix pour corriger l'erreur rapidement
       ctrl + F7 switch between views
       ctrl + F11 Run last Launched REEXECUTER (se mettre sur un fichier java pour que ça marche)
-      F11 Debug last Launched redebugger redebuger REEXECUTERDebuggage Attention bien parametrer le debugger pour que dans les class de jar il alligne bien sinon on a l'impression que c'est desynchronise : Ouput original etc...
-      Alt+shift+R : renommer rename ce qu'on veut
-      CTRL+SHIFT+H : Bind this to "Generate getters and setters". This is a "must have".
-      CTRL+SHIFT+G : find references dependants on workspace
-      CTRL+MAJ+R : trouver un fichier par son nom name
-      CTRL+MAJ+T : trouver un fichier dans les lib      
+      F11 Debug last Launched redebugger redebuger REEXECUTERDebuggage Attention bien parametrer le debugger pour que dans les class de jar il alligne bien sinon on a l'impression que c'est desynchronise: Ouput original etc...
+      Alt+shift+R: renommer rename ce qu'on veut
+      CTRL+SHIFT+H: Bind this to "Generate getters and setters". This is a "must have".
+      CTRL+SHIFT+G: find references dependants on workspace
+      CTRL+MAJ+R: trouver un fichier par son nom name
+      CTRL+MAJ+T: trouver un fichier dans les lib      
 Si eclipse ne se lance pas parce qu'il ne trouve pas la jvm java jre jdk alors que c'est pourtant parametre dans le path: externe
-    modifier eclipse.ini : -vm [retourchariot]path vers le fichier javaw.exe (inclu) ATTENTION ne pas mettre après -vargs car vargs le prendra en parametre
+    modifier eclipse.ini: -vm [retourchariot]path vers le fichier javaw.exe (inclu) ATTENTION ne pas mettre après -vargs car vargs le prendra en parametre
 Quand je debug: 
   F5 = go inside
   F6 = one step
   F8 = play until next stop
 plugin svn a utiliser:
-	plugin tigris.subversion :
+	plugin tigris.subversion : svn :
 	coller ce lien http://subclipse.tigris.org/update_1.6.x dans addsite de eclipse
       si il a besoin de dependances on s'en fout on les decoche et on ignore
-     subclipse utilise CollabNet Merge Client (2.2.3) qui :requires plug-in "org.eclipse.ui (3.3.0)", or later version.  Subclipse Integration for Mylyn 3.x (Optional) (3.0.0) requires plug-in "org.eclipse.mylyn.tasks.core (3.0.0)", or compatible.
+     subclipse utilise CollabNet Merge Client (2.2.3) qui:requires plug-in "org.eclipse.ui (3.3.0)", or later version.  Subclipse Integration for Mylyn 3.x (Optional) (3.0.0) requires plug-in "org.eclipse.mylyn.tasks.core (3.0.0)", or compatible.
     pour utiliser un autre compte svn:
 			on peut pas modifier un mot de passe svn.
 			La solution est de supprimer le fichier qui stock le/les login(s) et password(s), pour que ensuite lors de la reconnexion au repository, un prompt s'affiche dans lequel on rentre notre nouveau login/password.
-			Le fichier à supprimer est :
+			Le fichier à supprimer est:
 			C:\Users\p036782\AppData\Roaming\Subversion\auth
       c:\Documents and Settings\username\Application Data\Subversion\auth\svn.simple\ becd5acd3dfc3ff61fddc367c813862e(le nom du fichier varie selon le login).
 			Il est par la suite recree.
@@ -23813,9 +23780,7 @@ plugin svn a utiliser:
    Pour merger la branche dans le trunk: PAS de branches:DEVOPS
       Selectionner le trunk> Modify> Merge from URL 
       (toujours se plasser sur la cible)
-
-       
-pour exporter un projet :
+pour exporter un projet:
     Exporter > Autre > Echange de projet
 pour Importer:
     (pareil que ci-dessus)
@@ -23823,7 +23788,7 @@ pour importer un projet dejà existant dans le workspace:
     Import > Project > cocher "search for nested projects" decocher "copy project..."    
 pour generer rapidement une interface d'une classe: 
 	se mettre sur notre classe: click droit > restructurer > extraire une interface...
-autocompletion des jsp: Ctrl + espace (si ca ne marche plus faire ca : Preference>java>editor>contentAssist>Advanced et cocher sur default (les proposals etaient decochees !!!!))
+autocompletion des jsp: Ctrl + espace (si ca ne marche plus faire ca: Preference>java>editor>contentAssist>Advanced et cocher sur default (les proposals etaient decochees !!!!))
 Pour afficher la hierarchie d'un objet: 
 			Ctrl+t
 recuperer restorer une classe supprimee: click droit sur projet >restore from history
@@ -23836,7 +23801,7 @@ pour commenter tout ce qui est selectionne Ctrl + Maj + /
 pour trouver une classe du src: Ctrl + espace
 pour trouver une classe du src: Ctrl + Shift + R
 pour trouver une classe du src et des libs: Ctrl + Shift + T
-pour ajouter en import les classes manquantes : Ctrl + o
+pour ajouter en import les classes manquantes: Ctrl + o
 pour ajouter un commentaire description methode javadoc rapidement: tapper /** et faire shift + entree
 eclipse: si on a une erreur  eclipse JVM terminated. Exit code = 13  eclipse ne redemarre paslancer à  partir du raccourcis eclipse avec l'option -clean
 			exemple: C:\eclipse\eclipse.exe -clean -data C:\prodis_ws_1.2.0
@@ -23848,329 +23813,27 @@ eclipse: si on a une erreur  eclipse JVM terminated. Exit code = 13  eclipse ne 
 pour demarrer eclipse avec une autre jvm si j'ai le message "version of jvm is not suitable":
 		eclipse.exe -vm "C:\Program Files\Java\jre1.5.0_09\bin\javaw.exe"
     Si eclipse ne se lance pas parce qu'il ne trouve pas la jvm java jre jdk alors que c'est pourtant parametre dans le path: externe
-        modifier eclipse.ini : -vm [retourchariot]path vers le fichier javaw.exe (inclu) ATTENTION ne pas mettre après -vargs car vargs le prendra en parametre		
+        modifier eclipse.ini: -vm [retourchariot]path vers le fichier javaw.exe (inclu) ATTENTION ne pas mettre après -vargs car vargs le prendra en parametre		
 pour demarer eclipse avec plus de memoire si il fait des runtime exception outofmemoryexception
           exemple: "C:\WASCE 2.1.0.1\eclipse.exe" -Xmx1800m ou modifier eclipse.ini a cote de eclipse.exe
 si c'est toujours le meme workspace qui s'ouvre parce qu'on a decoche un bouton:
-			-data pour pointer vers et autre projet et si ca marche pas : modifier la table des registres (voir sur internet)
+			-data pour pointer vers et autre projet et si ca marche pas: modifier la table des registres (voir sur internet)
 			ou bien à  la racine de l'installation d'eclipse wsad: un fichier ini avec une variable: reinitialiserla variable dedans
-			ou bien : ajouter -setworkspace à  la ligne de commande pour activer le choix du workspace sous wsad 
+			ou bien: ajouter -setworkspace à  la ligne de commande pour activer le choix du workspace sous wsad 
 pour lancer une appli java avec des arguments: 
-        remplir "program arguments" avec : 
+        remplir "program arguments" avec: 
         monargument1 monargument2
-pour mettre weblogic en mode debug EN REMOTE: vers la fin du fichier "startmanagedweblogic.cmd" mettre :
+pour mettre weblogic en mode debug EN REMOTE: vers la fin du fichier "startmanagedweblogic.cmd" mettre:
 set STARTMODE=false
 echo on
 "%JAVA_HOME%\bin\java" -classic -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,address=5000,suspend=y,server=y -ms64m -mx64m -classpath "%CLASSPATH%" -Dweblogic.Domain=jcdomain -Dfile.encoding=ISO-8859-1 -Dbea.home="C:\bea61SP2" -Dweblogic.management.password=%WLS_PW% -Dweblogic.ProductionModeEnabled=%STARTMODE% -Dweblogic.Name=%SERVER_NAME% -Dweblogic.management.server=%ADMIN_URL% "-Djava.security.policy==C:\bea61SP2\wlserver6.1/lib/weblogic.policy" weblogic.Server
 goto finish
-
-Voir le dessin weblogicdebug1.bmp
-
-
-
-sur notes pour signaler qu'on est absent: action > outils > absences
-
-jc kueny: 473472
-
-ftp de log de prod:
-clwdev2
-user: esp
-pass: vhk234
-
-olivia lay 01.56.65.12.09
-
-Si je veux recuperer des fichiers sous unix vers windows, je peux tarer les fichiers: tar -cvf lksdjf.tar * et les importer avec ftp puis les deziper avec winrar sur windows
-
-thomas artiguebielle: 475752
-
-exodus: user: laurent mdp: calotte server: clf70c3.der.edf.fr
-
-weblogic cle85an: console: user: system password: zazou!zazou!
-
-sylvie machicote: 475938
-
-
-sur sed :
-  elements de sed:  (http://www.shellunix.com/sed.html)
- -e "ma_commande" fichier
- où ma_commande = num_premiere_ligne,num_derniere_ligne/expression reguliere/remplacee par/flag
- où flag=... 
-sed -e "s/4095,4095/\([0-9][0-9]*\)/**\1**/" fichier
-
-sur vi : 
-pour affichier avec des fonts colorees couleurs: aptitude: charger vim
-view nomfichier pour afficher en lecture seule
-http://www.ledman.ch/eti_linux/08vi.html
-attention, vi n'affiche jamais les caractères accentues c'est trop galère d'editer un fichier utf-8 avec accents sur VI: utiliser plutot pspad
-          Sinon c qd meme possible: tapper caractère avec accent et tapper caractere suivant jusqu'a ce qu'on le voit puis continuer tapper. 
-          Par la suite il peut ne pas tout afficher à la saisie mais pourtant c bien enregistre: :e! ou fermer et reouvrir pour mieux voir
-replace remplacer tout remplacer un mot par un autre puis repeter:
-  se metre au debut du mot a remplace; faire cw ecrire ce qu'on veut pettre a la place; esc; se mettre sur le prochain mot à rempalcer; puis . pour executer pareil.
-pour afficher le numero de la lignes (interupteur on/off)
-:set number
-pour atteindre le caractere character numero x ( la colonne numero x) de la ligne courante:
-x|
-escape: mode deplacement ou mode ligne de commande
-:e annule tout
-h: retour à  gauche: mot à mot :w: deplacement à  droite mot à  mot avance suivant
-l: droite. mot à mot: b
-j: descend. 
-k: monter
-H: position en haut à  gauche
-L: position en haut à  gauche de l'ecran actif
-^ puis espace pour se placer à gauche de la ligne au debut
-% recherche parenthèse accolade correspondante
-:n editer prochain next file (si on a edite plusieurs fichiers) ouvrir fichier suivant
-:prev pour aller au fichier file precedent precedant
-nG  	atteindre la ligne saute à la ligne n (premiere ligne = 1)(:n identique) : en mode escape tapper le numero puis Maj+G (on ne voit pas saisir c normal)
-fc  	saut sur le caractère character c
-$  	se positionner à la fin de la ligne
-_  ou 0 se positionner au debut de la ligne
-M: Ligne centrale de l'ecran een cours
-G: position sur le numero de ligne entre (1G par ex)
-Ctrl F: avance d'une page
-Ctrl B: recule d'une page
-e: sur la fin du prochain mot 
-b: debut du mot precedent
-G ou :$ pour aller a la derniere ligne (fin du document)
-:f connaitre le nom du fichier et son nb de lignes
-pour effacer tout: 
-		:f (entree) -> retourne le nb de lignes
-		puis se mettre en debut du document(1G) et ecrire nbligne dd
-Mode insertion: i pouis tapper. pour sortir: echap
-i: insertion du texte au debut de la ligne courante
-a: insertion du texte à  la fin de la ligne + mode insertion
-R: Remplacer: pratique car on peut faire cpier coller pour remplacer un mot
-o:insert une ligne +mode insertion
-O: insert une ligne au dessus + mode insertion
-x: suppr
-X:suppupression charactere
-dw: supprimer un mot
-virer le retour chariot de la ligne courante :
-     se mettre sur la premiere ligne et faire J 
-dd: supprimer une ligne (en fait il fait un couper)(copier mais supprime) 
-2dd: supprimer deux lignes  (en fait il fait un couper)
-100dd: supprimer cent lignes (en fait il fait un couper)
-D: supprimer à  partir du curseur (en fait il fait un couper je crois) jusqu'à la fin de la ligne
-yy: copier ligne puis P: coller ligne
-4yy puis P: le faire pour 4 lgines
-copier-coller bouts :
-  v puis bouger fleche pour selectionner puis d pour couper ou y pour copier puis P pour coller ce que j'avais selectionne
-faire une recherche find :faire / ou /\c exemple: /\cmotcherche pour case insensitive ignorer majuscule minuscules et tapper. pour faire next, tapper n (pour echapper les / slash faire un backslash) pour rechercher en arrière : N
-?: recherche de bas en haut
-u: undo si multiple undo ne marche pas : aptitude et charger vim
-.:redo Ou plutot  Ctrl+r
-:e! pour recharger rafraichir, refresh le fichier: à  utiliser si problèmes de bufferisation ATTENTION SAUVER AVANT!
-:q! quitter sans sauver
-:wq sauve et quitter enregistrer et quitter
-:w sauve enregistrer
-:w "autrenom" pour sauver sous enregistrer sous save as un aure nom
-:!MaCommande faire une commande unix executer une commande unix
-:r ! MaCommande faire une commande unix et le resultat de la commande rentre dans le texte
-shift G pour aller en bas du fichier
-Remplacement de chaine1 (toutes les occurrences de chaine1) ,par chaine2 depuis la ligne n1 jusqu'à  la ligne n2  
-		:n1,n2 s/chaine1/chaine2/g
-    ou bien avec confirmation : on definit pas les lignes mais il ya confirmation a chaque fois: 
-    :%s/chaineARemmpacer/ChaineQuiRemplace/gc
-    :%s/e1/e2/gc 
-		ou bien 
-		remplace de ligne 1 à  dernière ligne : $. toto remplace par 0
-		:1,$ s/toto /0/g  -- faut il entourer 0 de "" ?
-		ou
-		:1,$ s/toto/titi/g (remplace tous les toto par des titi)
-		ou bien pour remplacer " par ':
-		:1,$ s/"/'/g
-		ou bien pour remplacer '' par \':
-		:1,$ s/''/\\'/g
-		ou remplacer ">" par "&gt"
-	     :1,$ s/>/\&gt;/g
-	     :1,$ s/< /\&lt;/g
-			remarque : -si n2 est egal à  $ alors on effectue le remplacement jusqu'à  la fin du document. - /g indique que c'est une option de remplacement; les autres ne sont pas documentees ici car pas interessantes ( man vi ...).  
-			Attention: dans la chaine 2 seulement, certains caractères sont specialises (ex / ," ,[ ,] ,\ ,',{,},etc..), il faut donc les despecialiser, ceci se fait en inserant un \ avant ce caractère. le caractère \ ne despecialise qu'un seul caractère; il faut donc le repeter devant chaque caractère specialiser à  remplacer. 
-			ex: :1,$ s/\/bug\"/\\\\correction/g 
-			Cet exemple remplace dans tout le texte l'expression 
-			/bug" par \\correction
-      :s/\n//g
-   exemples :
-   :1,$ s/632k next 64k/80k next 64k/g			
-pour transformer la case: MAJ -> MIN ou l'inverse: altGR + ~
-
-
-demarrer > parametres >ajouter une imprimante
-
 quand un fichier xml ne marche pas , essayer:
 <?xml version = "1.0" encoding = "iso8859-1"?>
 <?xml version = "1.0" encoding = "UTF-8"?>
-decompiler :
-      meilleur decompilateur :decode_java (java decompiler); Sinon utiliser Intellij qui peut aussi comparer des repertoires 
-      fernflower pour decompiler tout un jar et exporter les sources dans un jar avec des .java à la place des .class (mettre ~1 pour les espaces)
-          java -jar D:/Dev/fernflower/fernflower.jar D:/Projets/Toulon~1/casclient-2.1.1-1.jar D:/Projets/Toulon~1/esupcasclient/
-          java -jar D:\Dev\fernflower\fernflower.jar D:\Projets\CISIRH\IQhr-online-query\WEB-INF\lib\hr-query-server-7.40.01005.00000.jar D:\Projets\CISIRH\hr-query-server\
-          java -jar D:\Dev\fernflower\fernflower.jar D:\RD\hr-kernel-7.30.03004.1234-sources\hr-kernel-7.30.03004.1234.jar D:\RD\hr-kernel-7.30.03004.1234-sources\
-          java -jar D:\Dev\fernflower\fernflower.jar D:\Projets\CRCA\4you\com.soprahr.hub.ds.usermgt.hra.main-2.1.3.jar D:\Projets\CRCA\4you\decompile\
-          java -jar D:\Dev\fernflower\fernflower.jar D:\Projets\INRA\conf\__hr-connecteur-inra-loginModule-1.0.jar D:\Projets\INRA\conf\__hr-connecteur-inra-loginModule-1.0jar
-          java -jar D:/Dev/fernflower/fernflower.jar D:\Projets\Speig\LDAPS\speigloginmodulee2save\__speig-login-module-1.0E2ForLogas.jar D:\Projets\Speig\LDAPS\speigloginmodulee2save\                     
-          java -jar D:/Dev/fernflower/fernflower.jar D:\Projets\Speig\LDAPS\speigloginmodulee2\__speig-login-module-1.0E2ME.jar D:\Projets\Speig\LDAPS\speigloginmodulee2\
-          aussi decompiler un repertoire plein de jars :-) (il va aussi dans les sous-repertoires)
-              java -jar D:\Dev\fernflower\fernflower.jar D:\Projets\lib\ D:\Projets\src\
-          aussi decompiler un repertoire plein de .class il ajoute les .java a cote de chaque classe
-              java -jar D:\Dev\fernflower\fernflower.jar D:\Dev\hraccessCodeSource\hra-space\WEB-INF\classes D:\Dev\hraccessCodeSource\hra-space\WEB-INF\classes
-          java -jar D:\Dev\fernflower\fernflower.jar D:\Dev\hraccessCodeSource\hra-space\WEB-INF\classes D:\Dev\hraccessCodeSource\hra-space\WEB-INF\classes
-          java -jar D:\Dev\fernflower\fernflower.jar D:\Projets\FondationDAuteuilSAML\hraspace\classes D:\Projets\FondationDAuteuilSAML\hraspace\classes
-      JavaDecompiler (jad nt ). mieux: mettre le plugin net.sf.jadclipse_3.3.0.jar J'ai mis jad sous D:/installation. faire : "d:\Installations>jad d:\LocalData\p036782\Desktop\theo\WEB-INF\classes\renault\wec\dmd\form\FicheForm.class"
-JbuilderW
-PowerAMC
-UltraEdit 32
-WinRar ou 7ZIP si fichiers trop aux noms trop longs
-Winzip
-XMLSPLY
-TOAD
-Eclipse
-Wincvs
-Apache V1 et V2
-BeyondCompare v1.9f
-TopStlyle3
-EasyPHP
-Maguma Studio
-Oracle
-
-
-
-chais pas
-Guitar tablature Editor
-AOLInstant Messenger
-RealPlayer
-
-
-procedure de mise a jour de la partie dynamique de ESP
-fichier web_dev à  comparer avec web_mco et mettre web_mco à  jour en finction de web_dev
-(compare whith each other : eclipse)
-
-modifier xdoclet sous esp/ESP_EJB>metainf>xdoclet: targetversion=dev ->mco (remplacer par mco pour la livraison)
-pareil pour sous esp/ESP_DYNAMICS/web-inf sous build.xml targetversion=mco au lieu de dev
-
-sous eclipse à  droite sous lombozJ2EEview: onglet module clic droit sur ESP_EJB > generateEJBFiles
-
-faire un eclipse>projetct>RebuildALL
-
-sous eclipse à  droite sous lombozJ2EEview: onglet module clic droit sur ESP_EJB > Deploy (il va creer le .jar)
-
-ensuite comme d'hab, lancer sous ESP_DYNAMICS build.xml et build.ear (comme dh'ab)
-
-ouvrir la console weblogic
-http://cle85an:7001/console
-
-enlever la coche "deploy" sous Deployement>application>ESP_1.8.X
-detargetter ESP_DYNAMIC et ESP_EJB
-
-reinstaller la nouvelle version de ESP_1.8.X.jar: install a new application
-choisir mon ear local
-redeployer
-retargetter ESP_EJB sous WLS2 puis ESP_DYNAMICS sous WLS1
-
-
-user:aeldev pass: aeldev pour root faire su - password:luna85
-faire sudo su -
-sudo -u wecapp macommande exemple: sudo -u wecapp mkdir v9.1.7
-aller sous /appli/bea/wl-domains/config/DOMAINE-DEFAULT faire un stop de wls1 puis ensuite relancer wls1 en principe ca suffit pour marcher (il faut etre root avec apli deployee et targuettee)
-ou
-relancer wls2 puis wls1 (on ne pourras pas les relancer si on est pas root)
-(les instances doivent etre targettees et l'appli deployee avant de faire ca)
-
-pour modifier la partie statique, utiliser hummingburd sur clxs0aa sous logiciels/
-
-
-* transferer par ftp le tar cree precedemment de la machine clxs0aa (user mntesp, port 591) 
-vers la machine clwgc2a (user mntwgc , password wgc___ , port 21,                port 21 est le port ftp par defaut
-repertoire : /home00/mntwgc/Livraisons/ESP/ )
-* compresser le fichier avec gzip
-telnet clwgc2a (user mntwgc, pass wgc___ , port  23 , repertoire : /home00/mntwgc/Livraisons/ESP/ )
-gzip ESP-STATIC-1-7-67.tar
-
-4ème etape : creation de la fiche cogito
-
-* creer une demande de travail à  l'attention de la cellule CND_INFRA_INET.
-nouveau : nom: ... 
-categorie: demande
-sous categorie: catalogue
-Gravite: non bloquant
-Delai: 2h
-bien: CLAYAMUT
-application:ESP
-Creer une demande
-
-exemple commentaire article : 
-MISE A JOUR PARTIE STATIQUE ESP 
- 
-Bonjour, 
-J'ai place dans le repertoire \home00\mntwgc\Livraisons\ESP de la machine clwgc2a le fichier suivant : 
-- ESP-STATIC-2.2.tar.gz . 
-Ce fichier est à  exporter dans le repertoire 'document root' apache du site particuliers.edf.fr. 
-Une fois l'operation effectuee, merci de me prevenir par mail . 
- 
-Note : connexion au serveur clwgc2a : 
-login = mntwgc 
-password = wgc___ 
- 
-Cdlt, 
- 
-Laurent Duverge
-
-Creer une demande
-aller sur la demande et rajouter un article: XXXINTERNET > XXXSTATIQUE > Ecrire la description de l'article > APPUYER SUR TRAITEMENT!!!!!
-
-
-5ème et dernière etape : verification en ligne et confirmation MOA
-
-- verifier que le site s'affiche bien http://particuliers.edf.fr
--contacter la MOA pour leur dire que le site a ete MAJ (William Whiteway, copie à  Olivia Lay, Christelle Gouret, DIT-GP-MAINT)
-mail: 
-Jean-Christophe KUENY/E/EDFGDF/FR@EDFGDF, Olivier TRACHE/A/EDFGDF/FR@EDFGDF, William WHITEWAY/DCPE/EGS/EDFGDF/FR@EDFGDF, Olivia LAY/DCPE/EGS/EDFGDF/FR, Christelle GOURET/RETD/EDFGDF/FR
------------------------------------------------
-
-le mode de passe du poste de js kueny = edfedf ou laurent
-
-
-smtpprod: mailhost.edf.fr
-smtp egn prod clsmtps1.edf.fr port 26
-barrer
-
-smtp local esp:
-mail.smtp.port=25
-mail.transport.protocol=smtp
-mail.smtp.host=mailhost.der.edf.fr
-
-smtp mco esp:
-mail.smtp.port=25
-mail.transport.protocol=smtp
-mail.smtp.host=130.98.118.118
-
-
-
-cogito:
-user: laurent.duverge@edfgdf.fr
-password: rcwkdr
-ou zoclos
-
-ftp ftp.edf.fr
-user:edfgdf
-password: ftpeg-01
-bi (pour telecharger en mode binaire)
-
-WORD :
-pour replace remplacer c'est dans l'onglet home avec la souris 
-si il me supprime m'efface vide mon doc suite à une sauvegarde mauvaise foireuse
-    le reouvrir via le menu démarrer
-copier coller la mise en forme
-  ctrl+shift+C puis  ctrl+shift+V
-pour faire des caractères barres rapidement: 
-    Outils/Personnaliser/Clavier (pour creer un raccourci)
-pour faire des references super cool facon laure deneux: 
-	Insertion >  Reference > ne pas utiliser type signet mais plutot type Figure
-pour generer un menu index :
-  Reference > table des matières
+  
 UNIX : linux :(unix est la plus basse couche; linux est au dessus mais il a été complettement réecrit, c le kernel=noyau; ubuntu(https://wiki.ubuntu.com/Releases) et debian sont deux distrib au dessus de linux. Sont differentes mais ubuntu est un layer par dessus debian)
-  pour savoir quel process tourne sur un fichier en particulier :
+  pour savoir quel process tourne sur un fichier en particulier:
       fuser
   il existe la commande ldapsearch sous unix pour faire des requettes ldap
   apres avoir fait "dmt &" faire vmstat 2 pour garder la session (2 pour rafficher toutes les deux secondes)
@@ -24185,14 +23848,14 @@ UNIX : linux :(unix est la plus basse couche; linux est au dessus mais il a ét�
       et/ou (pour connaitre le kernel)
       uname -a pour savoir sur quelle plateforme on est os systeme d'exploitation
       uname -a nom machine etc...
-  pour upgrader updater ubuntu : 
-    https://help.ubuntu.com/community/UpgradeNotes (en principe la commande est : do-release-upgrade// si je suis sur un LongTimeService LTS il va installer le prochain LTS automatiquement tout seul)      
+  pour upgrader updater ubuntu: 
+    https://help.ubuntu.com/community/UpgradeNotes (en principe la commande est: do-release-upgrade// si je suis sur un LongTimeService LTS il va installer le prochain LTS automatiquement tout seul)      
   un fichier avec asterix à la fin c'est un executable.
   dzdo c'est les droits pour lancer des commande comme root
-  sudo :
+sudo :
     sudo -l // pour voir quels sudo je peux executer.
     sudo -L // pour voir la liste des options sudo dispo
-    sudo unecommande //execute cette commande avec les droits de root// si message erreur is not a sudoer : se connecter en root et faire : adduser nomMonUtilisateur sudo
+    sudo unecommande //execute cette commande avec les droits de root// si message erreur is not a sudoer: se connecter en root et faire adduser nomMonUtilisateur sudo
     sudo su unuser //pour devenir ce user
     pour passer en role profile root: sudo su
     pour éditer le comportement de sudo faire "visudo"
@@ -24203,7 +23866,7 @@ UNIX : linux :(unix est la plus basse couche; linux est au dessus mais il a ét�
                 utilisateur   connexionLocaleOuDistanteOuLesDeux   = (quelle(s)Identite(s)IlALeDroitDePrendre)    Quelle,Commandes,Il,PourraAlors,ExecuterSepares,Par,Virgule,Wildcart?possiblesMaisPas*UNALIASCOMMANCETOUJOURSPARUNEMAJUSCULE // je peux mettre mon alias ci dessus ici
                 ou                                                    ou 
                 %groupe(utilisateurs appartenant à ce groupe)         NOPASSWD:
-                lire la suite ici :http://www.linuxpedia.fr/doku.php/commande/su_sudo
+                lire la suite ici:http://www.linuxpedia.fr/doku.php/commande/su_sudo
                 
   avant on utilisait "su"
     su // switch ma session dans la connexion d'un autre utilisateur. Par defaut root.
@@ -24221,13 +23884,16 @@ UNIX : linux :(unix est la plus basse couche; linux est au dessus mais il a ét�
     /opt logiciels commerciaux installes
     /home repertoires persos pour utilisateur
     /var donnees frequements reecrites
-changer mot de passe d'un utilisateur :
+les comptes utilisateurs sont sur etc/passwd (si un jour un gars qu'on ne connait pas fait des trucs)
+pour recharger le .profile // fichier chargé lorsque je me connecte a la connexion initialise. dedans je peux mettre des commandes qui s'executent lors de ma connexion 
+    faire: cd ou cd . puis . .profile (faire ls -tral pour voir tout (attention pas tout forcement... mais je ne sais pas pourquoi)
+changer mot de passe d'un utilisateur:
   changepasswd nomutilisateur (je crois)    
-creer un nouvel utilisateur : 
+creer un nouvel utilisateur: 
       useradd -m -s /bin/bash(son shell prefere) -d /chemin/vers/son/home/directory nomduuser
       puis faire 
           passwd nomduuser // pour definir son password 
-      du coup liste des utilisateurs users avec password mots de passe sous /etc/passwd il va y avoir :
+      du coup liste des utilisateurs users avec password mots de passe sous /etc/passwd il va y avoir:
       nomduuser:x(doncLePasswordEstStockeSous/etc/shadow fichier avec mdp chiffres):unChiffre=IdentifiantDeLutilisateur(0=root;1-99=user;100-999=systemUsers):idGroup(stockeSous/etc/group):infobof:/son/home/directory:/bin/bash ou /bin/sh(typeDeSesCommandesShell et si je ne veux pas qu'il se connecte mettre: /usr/sbin/nologin)
       commande unshadow combine le fichier passwd et shadow
             unshadow fichierpasswd fichiershadow > fichierresultant
@@ -24236,20 +23902,17 @@ supprimer un user (il va le supprimer dans passwd lui meme)
 liste des machines qui ont le droit de se logger sur mon serveur
   vi /etc/hosts.allow 
   je peux interdir à une adresse ip de se connecter sous /etc/hosts.deny
-
-les comptes utilisateurs sont sur etc/passwd (si un jour un gars qu'on ne connait pas fait des trucs)
-pour recharger le .profile // fichier chargé lorsque je me connecte a la connexion initialise. dedans je peux mettre des commandes qui s'executent lors de ma connexion 
-    faire: cd ou cd . puis . .profile (faire ls -tral pour voir tout (attention pas tout forcement... mais je ne sais pas pourquoi)
-les cles cles : la securite : LINK94949494
-  la securite est parametree sous /etc/ssh/sshd_config
-        si je modifie ce fichier faire  rafraichir ssh refresh recharger(desactiver la connexion par mot de passe :PasswordAuthentication no); PermitRootLogin=yes(root peut se loguer avec mot de passe) ou withou-password (root ne peut pas se loguer avec mot de passe, seulement par cle)
-         service ssh reload ou invoke-rc.d sshd restart ou invoke-rc.d ssh restart ou /etc/init.d/ssh reload LINKsshreload
-  les logs sur la securite si je n'arrive pas à me connecter en ssh
-  sont sous /var/log/user.log ou /var/log/auth.log  si ça défile par sécurité désactiver la connexion par mot de passe.
-  /homeDuUser/.ssh repertoire contient les cles publiques (le creer si il n'existe pas) il doit appartenir à l'utilisateur interessé droit doivent etre rwx-------
-    installer ssh :sur debian :
+ssh : se logger sur une machine a distance
+    installer ssh sur debian:
       si serveur openssh deja la faire /etc/init.d/ssh reload
-       generer creer paire de cle sur cygwin ou sur unix LINK94949494
+      les cles cles : la securite : LINK94949494
+          la securite est parametree sous /etc/ssh/sshd_config
+                si je modifie ce fichier faire  rafraichir ssh refresh recharger(desactiver la connexion par mot de passe:PasswordAuthentication no); PermitRootLogin=yes(root peut se loguer avec mot de passe) ou withou-password (root ne peut pas se loguer avec mot de passe, seulement par cle)
+                service ssh reload ou invoke-rc.d sshd restart ou invoke-rc.d ssh restart ou /etc/init.d/ssh reload LINKsshreload
+                les logs sur la securite si je n'arrive pas à me connecter en ssh
+                sont sous /var/log/user.log ou /var/log/auth.log  si ça défile par sécurité désactiver la connexion par mot de passe.
+                /homeDuUser/.ssh repertoire contient les cles publiques (le creer si il n'existe pas) il doit appartenir à l'utilisateur interessé droit doivent etre rwx-------
+          generer creer paire de cle sur cygwin ou sur unix:
                     ssh-keygen -t rsa // stocke la cle privee sous /repertoireHomeDuUser/.ssh/id_rsa et la cle publique sous /repertoireHomeDuUser/.ssh/id_rsa.pub  (creer ces fichiers si n'existent pas) //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
                     definir passphrase (sauf si c'est pour faire du ssh rsync scp etc... avec un autre serveur, alors ne pas mettre de mot de passe!)
                     cle prive est dans id_rsa, la cle publique corresp est dans id_rsa.pub. //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
@@ -24276,7 +23939,7 @@ les cles cles : la securite : LINK94949494
                  mais si je veux automatiser le transfert de clé publique dans le serveur sur lequel je veux me connecter: voir voir LINK9939572
       changer mot de passe de la cle privee
          ssh-keygen -p
-      pour qu'il retienne toujours mon mot de passe :(bof. MobaXterm retient) 
+      pour qu'il retienne toujours mon mot de passe:(bof. MobaXterm retient) 
                 editer dans mon home ~/ le fichier .bash_profile et rajouter
                       ## only ask for my SSH key passphrase once!
                       #use existing ssh-agent if possible
@@ -24288,95 +23951,15 @@ les cles cles : la securite : LINK94949494
                          . ${HOME}/.ssh-agent > /dev/null
                       fi
                       ssh-add ~/.ssh/id_rsa
-                    recharger ce fichier : . .bash_profile       
- ssh: se logger sur une machine a distance
+                    recharger ce fichier: . .bash_profile       
+    Pour transferer exporter des fichier donnees sur un autre serveur reseau remote(faire un backup)
+      tar cvzf - /etc | ssh root@lautreserveur.com -p2222 "cat >>/data/home/lduverge/etc.gz" //tar le repertoire etc et met le dans lautreserveur dans le repertoire data/... etc.gz: besoin connexion par cle peut etre pour que mot de passe n'empeche pas la connection.
     ssh user@machinedistante -i pathVersmaclepriveeFacultatifSiPasBesoin
     ssh www-data@www.memoclap.com
-    executer directement une commande en ssh : 
-            ssh user@machinedistante "macommandeunix; uneautrecommandeunix"    
-
-IMAGES GENEREES EN JAVA SUR UNIX :
-Question:
-Why is the following error message displayed "java.lang.InternalError: Can't connect to X11 window server using ':0.0' as the value of the DISPLAY variable" ?
-Answer:
-The error is related to the xhost on Unix-shell based systems. The xhost program is used to add or revert access to the X server for specified hosts. Set a display variable and issue the following command on the system:
-setenv DISPLAY :0
-/usr/openwin/bin/xhost + 
-or simply: 
-"xhost +" 
-"xhost +" will allow all users access to the xhost. If more security is necessary, specify specific users after the "+" sign.
-Please understand that the xhost is a utility built into Unix shells and is not supported by MapInfo Technical Support. For more information, check out the manual pages for xhost by issuing "man xhost" at the command shell, or by consulting unix/linux documentation.
-Last Modified: 
-Document URL: http://testdrive.mapinfo.com/techsupp/miprod.nsf/kbase_by_product/D3BE2C4137D3197D85256C24005EBD3D
-Error "java.lang.InternalError: Can't connect to X11 window server using ':0.0' as the value of the DISPLAY variable".^D3BE2C4137D3197D85256C24005EBD3D^Y
-------------------------------
-Sun's AWT requires an X server to operate. You must have your DISPLAY variable set to a functioning X server. 
-For example: setenv DISPLAY=localhost:0.0 export DISPLAY 
-When using JSP with Apache try the following:
-add wrapper.env=DISPLAY=system_name:0.0 to jserv.properties
-Make sure the system is logged in with a display running and the system has access to the display using the xhost + command. 
-Sun's patch 107078-18 corrects some of the "Can't connect to X11 server" problems on Solaris. 
-On Redhat Linux try this: in an xterm session (shell) type xhost +
-------------------------------
-LD_LIBRARY_PATH=/logiciels/bea/wlserver6.1SP2/lib/solaris:/logiciels/bea/wlserver6.1SP2/lib/solaris/oci816_8
-CLASSPATH=/logiciels/bea/jdk131/lib/tools.jar:/logiciels/bea/wlserver6.1SP2/lib/weblogic_sp.jar:/logiciels/bea/wlserver6.1SP2/lib/weblogic.jar:
-PATH=/logiciels/bea/wlserver6.1SP2/bin:/logiciels/bea/jdk131/jre/bin:/logiciels/bea/jdk131/bin:/logiciels/bea/wlserver6.1SP2/lib/solaris:/usr/sbin:/usr/bin:/usr/ucb:/usr/openwin/bin:/usr/opt/SUNWmd/sbin:/opt/VRTSvmsa/bin:/etc/vx/bin:/usr/local/bin:/usr/local/sbin:/usr/local/etc
-logiciels/bea/wlserver6.1SP2/lib/solaris
-____________
-Xvfb
-Get a RPM named XFree86-Xvfb-3.3.5-3.i386.rpm 
-I use it like this : 
-/usr/bin/X11/Xvfb -screen 0 640x480x24 -fp /usr/X11R6/lib/X11/fonts/misc -co 
-/usr/X11R6/lib/X11/rgb -pixdepths 8 16 24 32 & 
-Here is information I posted sometime ago that should help: 
-Try running Xvfb (virtual frame buffer). We used it to produce GIF 
-files on 
-our Solaris system. 
-http://mapserver.arsdigita.com/pms/doc/xvfb.adp 
-This is the startup script I am using: 
-#!/bin/sh 
-# start the X Virtual Framebuffer (Xvfb) *kob* 3/22/96 
-if [ -f /usr/X11R6/bin/Xvfb ]; then 
-        echo "***Starting up the Virtual Frame Buffer on Screen 1***" 
-        /usr/X11R6/bin/Xvfb :1 -screen 0 1152x900x8 2>> 
-/usr/var/adm/Xvfb.log 
-fi 
-
-I added the following to srun.sh: 
-
-# 
-# for Xvfb 
-# 
-DISPLAY=:1.0 
-export DISPLAY 
-
-FYI We're using the Acme gifEncoder for the GIF rendering. 
-__________________________
-# Set user-defined variables.
-JAVA_HOME=/logiciels/bea/jdk131
-WL_HOME=/logiciels/bea/wlserver6.1SP2
-JAVA_OPTIONS="-Xms64m -Xmx256m"
-# PJA options: Drawing in offscreen withowt X11 DISPLAY
-PJA_OPTIONS="-Xbootclasspath/a:$WL_HOME/ext/pja.jar:$WL_HOME/ext/javachart.jar -Djava.awt.fonts=$JAVA_HOME/jre/lib/fonts -Djava.awt.graphicsenv=com.eteks.java2d.PJAGraphicsEnvironment -Djava2d.font.usePlatformFont=false -Dawt.toolkit=com.eteks.awt.PJAToolkit"
-SERVER_NAME=WLS1-WGC
-ADMIN_URL=http://130.98.232.97:7001
-  
-pour downloader recuperer telecharger transferer un fichier d'un serveur à un autre 
-commande: scp :
-    -r pour recursif si c un repertoire.
-    -vvv pour verbose (mode debug)
-    pull: PUTAIN j'arrivaispas à faire marcher avec cle: toujours permission denied (publickey) meme apres avoir declare ma cle publique sur le serveur> il falait utiliser une cle privee de type .pem pour que ca marche et non pas .ppk (sur windows en tout cas)
-      scp -i cheminVersMaClePriveeFacultatifDeType.pem user@machine:cequejeveuxcopierDeLaMachineDistante repertoireoujeveuxlecopiersurMAmachine ATTENTION espace interdits apres le:
-    push:
-      scp -i cheminVersMaClePriveeFacultatifDeType.pem cequejeveuxcopierdeMAmachine user@machine:oujeveuxLecopiersurlaamachinedistante
-    exemples  
-      scp -p admddd\@su571ars.mc2.renault.fr:/data/documentum/applications/a_ddd/ExportPHX/jar/Exporter-0.0.1.jar .
-      scp -p admddd\@su571ars.mc2.renault.fr:/data/documentum/applications/a_ddd/ExportPHX/sh/L.ksh .
-      scp -p admddd\@sum50301:/data/documentum/applications/a_ddd/ExportPHX/tmp/pgn/*.xml .  
-Pour transferer exporter des fichier donnees sur un autre serveur reseau remote(faire un backup)
-  tar cvzf - /etc | ssh root@lautreserveur.com -p2222 "cat >>/data/home/lduverge/etc.gz" //tar le repertoire etc et met le dans lautreserveur dans le repertoire data/... etc.gz: besoin connexion par cle peut etre pour que mot de passe n'empeche pas la connection.
-pour distribuer automatiquement mes cles publics vers d'autres serveurs
-  LINK9939572 2 scripts à ecrire. Le 1er appelle le 2e.
+    executer directement une commande en ssh: 
+    ssh user@machinedistante "macommandeunix; uneautrecommandeunix"    
+    pour distribuer automatiquement mes cles publics vers d'autres serveurs
+      LINK9939572 2 scripts à ecrire. Le 1er appelle le 2e.
                  executer le script comme ça:  scripts/promotePublicKey.sh .ssh/id_rsa.pub
                  voici les scripts ci-dessous à creer d'abord
                   1.
@@ -24433,6 +24016,18 @@ pour distribuer automatiquement mes cles publics vers d'autres serveurs
                       	chmod 0600 .ssh/authorized_keys
                       	cat $1 >> .ssh/authorized_keys
                       	rm -f $1
+scp :commande
+  pour downloader recuperer telecharger transferer un fichier d'un serveur à un autre
+    -r pour recursif si c un repertoire.
+    -vvv pour verbose (mode debug)
+    pull: PUTAIN j'arrivaispas à faire marcher avec cle: toujours permission denied (publickey) meme apres avoir declare ma cle publique sur le serveur> il falait utiliser une cle privee de type .pem pour que ca marche et non pas .ppk (sur windows en tout cas)
+      scp -i cheminVersMaClePriveeFacultatifDeType.pem user@machine:cequejeveuxcopierDeLaMachineDistante repertoireoujeveuxlecopiersurMAmachine ATTENTION espace interdits apres le:
+    push:
+      scp -i cheminVersMaClePriveeFacultatifDeType.pem cequejeveuxcopierdeMAmachine user@machine:oujeveuxLecopiersurlaamachinedistante
+    exemples  
+      scp -p admddd\@su571ars.mc2.renault.fr:/data/documentum/applications/a_ddd/ExportPHX/jar/Exporter-0.0.1.jar .
+      scp -p admddd\@su571ars.mc2.renault.fr:/data/documentum/applications/a_ddd/ExportPHX/sh/L.ksh .
+      scp -p admddd\@sum50301:/data/documentum/applications/a_ddd/ExportPHX/tmp/pgn/*.xml .
 smtp :
     tester que le serveur de mail marche bien
 1)  recuperer ssmtp sur aptitude (il est obsolete: utiliser msmtp)
@@ -24572,6 +24167,110 @@ compter le nombre de fichiers dans un repertoire:
 clear de l'ecran 
     clear ou Ctrl+l
 a faire: verifier que la declaration des paths se fait dans le fichier bashsrc ou un truc pareil
+sur sed :
+  elements de sed:  (http://www.shellunix.com/sed.html)
+ -e "ma_commande" fichier
+ où ma_commande = num_premiere_ligne,num_derniere_ligne/expression reguliere/remplacee par/flag
+ où flag=... 
+sed -e "s/4095,4095/\([0-9][0-9]*\)/**\1**/" fichier
+
+sur vi : 
+pour affichier avec des fonts colorees couleurs: aptitude: charger vim
+view nomfichier pour afficher en lecture seule
+http://www.ledman.ch/eti_linux/08vi.html
+attention, vi n'affiche jamais les caractères accentues c'est trop galère d'editer un fichier utf-8 avec accents sur VI: utiliser plutot pspad
+          Sinon c qd meme possible: tapper caractère avec accent et tapper caractere suivant jusqu'a ce qu'on le voit puis continuer tapper. 
+          Par la suite il peut ne pas tout afficher à la saisie mais pourtant c bien enregistre::e! ou fermer et reouvrir pour mieux voir
+replace remplacer tout remplacer un mot par un autre puis repeter:
+  se metre au debut du mot a remplace; faire cw ecrire ce qu'on veut pettre a la place; esc; se mettre sur le prochain mot à rempalcer; puis . pour executer pareil.
+pour afficher le numero de la lignes (interupteur on/off)
+:set number
+pour atteindre le caractere character numero x ( la colonne numero x) de la ligne courante:
+x|
+escape: mode deplacement ou mode ligne de commande
+:e annule tout
+h: retour à  gauche: mot à mot:w: deplacement à  droite mot à  mot avance suivant
+l: droite. mot à mot: b
+j: descend. 
+k: monter
+H: position en haut à  gauche
+L: position en haut à  gauche de l'ecran actif
+^ puis espace pour se placer à gauche de la ligne au debut
+% recherche parenthèse accolade correspondante
+:n editer prochain next file (si on a edite plusieurs fichiers) ouvrir fichier suivant
+:prev pour aller au fichier file precedent precedant
+nG  	atteindre la ligne saute à la ligne n (premiere ligne = 1)(:n identique): en mode escape tapper le numero puis Maj+G (on ne voit pas saisir c normal)
+fc  	saut sur le caractère character c
+$  	se positionner à la fin de la ligne
+_  ou 0 se positionner au debut de la ligne
+M: Ligne centrale de l'ecran een cours
+G: position sur le numero de ligne entre (1G par ex)
+Ctrl F: avance d'une page
+Ctrl B: recule d'une page
+e: sur la fin du prochain mot 
+b: debut du mot precedent
+G ou:$ pour aller a la derniere ligne (fin du document)
+:f connaitre le nom du fichier et son nb de lignes
+pour effacer tout: 
+		:f (entree) -> retourne le nb de lignes
+		puis se mettre en debut du document(1G) et ecrire nbligne dd
+Mode insertion: i pouis tapper. pour sortir: echap
+i: insertion du texte au debut de la ligne courante
+a: insertion du texte à  la fin de la ligne + mode insertion
+R: Remplacer: pratique car on peut faire cpier coller pour remplacer un mot
+o:insert une ligne +mode insertion
+O: insert une ligne au dessus + mode insertion
+x: suppr
+X:suppupression charactere
+dw: supprimer un mot
+virer le retour chariot de la ligne courante:
+     se mettre sur la premiere ligne et faire J 
+dd: supprimer une ligne (en fait il fait un couper)(copier mais supprime) 
+2dd: supprimer deux lignes  (en fait il fait un couper)
+100dd: supprimer cent lignes (en fait il fait un couper)
+D: supprimer à  partir du curseur (en fait il fait un couper je crois) jusqu'à la fin de la ligne
+yy: copier ligne puis P: coller ligne
+4yy puis P: le faire pour 4 lgines
+copier-coller bouts:
+  v puis bouger fleche pour selectionner puis d pour couper ou y pour copier puis P pour coller ce que j'avais selectionne
+faire une recherche find:faire / ou /\c exemple: /\cmotcherche pour case insensitive ignorer majuscule minuscules et tapper. pour faire next, tapper n (pour echapper les / slash faire un backslash) pour rechercher en arrière: N
+?: recherche de bas en haut
+u: undo si multiple undo ne marche pas: aptitude et charger vim
+.:redo Ou plutot  Ctrl+r
+:e! pour recharger rafraichir, refresh le fichier: à  utiliser si problèmes de bufferisation ATTENTION SAUVER AVANT!
+:q! quitter sans sauver
+:wq sauve et quitter enregistrer et quitter
+:w sauve enregistrer
+:w "autrenom" pour sauver sous enregistrer sous save as un aure nom
+:!MaCommande faire une commande unix executer une commande unix
+:r ! MaCommande faire une commande unix et le resultat de la commande rentre dans le texte
+shift G pour aller en bas du fichier
+Remplacement de chaine1 (toutes les occurrences de chaine1) ,par chaine2 depuis la ligne n1 jusqu'à  la ligne n2  
+		:n1,n2 s/chaine1/chaine2/g
+    ou bien avec confirmation: on definit pas les lignes mais il ya confirmation a chaque fois: 
+    >:%s/chaineARemmpacer/ChaineQuiRemplace/gc
+    >:%s/e1/e2/gc 
+		ou bien 
+		remplace de ligne 1 à  dernière ligne: $. toto remplace par 0
+		>:1,$ s/toto /0/g  -- faut il entourer 0 de "" ?
+		ou
+		>:1,$ s/toto/titi/g (remplace tous les toto par des titi)
+		ou bien pour remplacer " par ':
+		>:1,$ s/"/'/g
+		ou bien pour remplacer '' par \':
+		>:1,$ s/''/\\'/g
+		ou remplacer ">" par "&gt"
+	     >:1,$ s/>/\&gt;/g
+	     >:1,$ s/< /\&lt;/g
+			remarque: -si n2 est egal à  $ alors on effectue le remplacement jusqu'à  la fin du document. - /g indique que c'est une option de remplacement; les autres ne sont pas documentees ici car pas interessantes ( man vi ...).  
+			Attention: dans la chaine 2 seulement, certains caractères sont specialises (ex / ," ,[ ,] ,\ ,',{,},etc..), il faut donc les despecialiser, ceci se fait en inserant un \ avant ce caractère. le caractère \ ne despecialise qu'un seul caractère; il faut donc le repeter devant chaque caractère specialiser à  remplacer. 
+			ex: >:1,$ s/\/bug\"/\\\\correction/g 
+			Cet exemple remplace dans tout le texte l'expression 
+			/bug" par \\correction
+      >:s/\n//g
+   exemples:
+   >:1,$ s/632k next 64k/80k next 64k/g			
+pour transformer la case: MAJ -> MIN ou l'inverse: altGR + ~
 
 bash :KSH :
       pour faire une pause dans un script ksh:
@@ -25430,6 +25129,73 @@ deziper: unzip GroupNet.zip (on peut aussi deziper un ear et un war) PEUT ETRE b
 pour zipper ziper un fichier ziper: zip monfichier.zip *
 pour zipper ziper un repertoire ziper: zip -r lenomdemonzip.zip * (* contient le repertoire.) -r pour zipper de manière recursive 
 
+
+
+IMAGES GENEREES EN JAVA SUR UNIX :
+Question:
+Why is the following error message displayed "java.lang.InternalError: Can't connect to X11 window server using ':0.0' as the value of the DISPLAY variable" ?
+Answer:
+The error is related to the xhost on Unix-shell based systems. The xhost program is used to add or revert access to the X server for specified hosts. Set a display variable and issue the following command on the system:
+setenv DISPLAY:0
+/usr/openwin/bin/xhost + 
+or simply: 
+"xhost +" 
+"xhost +" will allow all users access to the xhost. If more security is necessary, specify specific users after the "+" sign.
+Please understand that the xhost is a utility built into Unix shells and is not supported by MapInfo Technical Support. For more information, check out the manual pages for xhost by issuing "man xhost" at the command shell, or by consulting unix/linux documentation.
+Last Modified: 
+Document URL: http://testdrive.mapinfo.com/techsupp/miprod.nsf/kbase_by_product/D3BE2C4137D3197D85256C24005EBD3D
+Error "java.lang.InternalError: Can't connect to X11 window server using ':0.0' as the value of the DISPLAY variable".^D3BE2C4137D3197D85256C24005EBD3D^Y
+------------------------------
+Sun's AWT requires an X server to operate. You must have your DISPLAY variable set to a functioning X server. 
+For example: setenv DISPLAY=localhost:0.0 export DISPLAY 
+When using JSP with Apache try the following:
+add wrapper.env=DISPLAY=system_name:0.0 to jserv.properties
+Make sure the system is logged in with a display running and the system has access to the display using the xhost + command. 
+Sun's patch 107078-18 corrects some of the "Can't connect to X11 server" problems on Solaris. 
+On Redhat Linux try this: in an xterm session (shell) type xhost +
+------------------------------
+LD_LIBRARY_PATH=/logiciels/bea/wlserver6.1SP2/lib/solaris:/logiciels/bea/wlserver6.1SP2/lib/solaris/oci816_8
+CLASSPATH=/logiciels/bea/jdk131/lib/tools.jar:/logiciels/bea/wlserver6.1SP2/lib/weblogic_sp.jar:/logiciels/bea/wlserver6.1SP2/lib/weblogic.jar:
+PATH=/logiciels/bea/wlserver6.1SP2/bin:/logiciels/bea/jdk131/jre/bin:/logiciels/bea/jdk131/bin:/logiciels/bea/wlserver6.1SP2/lib/solaris:/usr/sbin:/usr/bin:/usr/ucb:/usr/openwin/bin:/usr/opt/SUNWmd/sbin:/opt/VRTSvmsa/bin:/etc/vx/bin:/usr/local/bin:/usr/local/sbin:/usr/local/etc
+logiciels/bea/wlserver6.1SP2/lib/solaris
+____________
+Xvfb
+Get a RPM named XFree86-Xvfb-3.3.5-3.i386.rpm 
+I use it like this: 
+/usr/bin/X11/Xvfb -screen 0 640x480x24 -fp /usr/X11R6/lib/X11/fonts/misc -co 
+/usr/X11R6/lib/X11/rgb -pixdepths 8 16 24 32 & 
+Here is information I posted sometime ago that should help: 
+Try running Xvfb (virtual frame buffer). We used it to produce GIF 
+files on 
+our Solaris system. 
+http://mapserver.arsdigita.com/pms/doc/xvfb.adp 
+This is the startup script I am using: 
+#!/bin/sh 
+# start the X Virtual Framebuffer (Xvfb) *kob* 3/22/96 
+if [ -f /usr/X11R6/bin/Xvfb ]; then 
+        echo "***Starting up the Virtual Frame Buffer on Screen 1***" 
+        /usr/X11R6/bin/Xvfb:1 -screen 0 1152x900x8 2>> 
+/usr/var/adm/Xvfb.log 
+fi 
+
+I added the following to srun.sh: 
+
+# 
+# for Xvfb 
+# 
+DISPLAY=:1.0 
+export DISPLAY 
+
+FYI We're using the Acme gifEncoder for the GIF rendering. 
+__________________________
+# Set user-defined variables.
+JAVA_HOME=/logiciels/bea/jdk131
+WL_HOME=/logiciels/bea/wlserver6.1SP2
+JAVA_OPTIONS="-Xms64m -Xmx256m"
+# PJA options: Drawing in offscreen withowt X11 DISPLAY
+PJA_OPTIONS="-Xbootclasspath/a:$WL_HOME/ext/pja.jar:$WL_HOME/ext/javachart.jar -Djava.awt.fonts=$JAVA_HOME/jre/lib/fonts -Djava.awt.graphicsenv=com.eteks.java2d.PJAGraphicsEnvironment -Djava2d.font.usePlatformFont=false -Dawt.toolkit=com.eteks.awt.PJAToolkit"
+SERVER_NAME=WLS1-WGC
+ADMIN_URL=http://130.98.232.97:7001
     si on a ce genre d'erreur dans l'execution sous unix de programme de type traitement image: 
     java.lang.InternalError: Can't connect to X11 window server using ':0.0' as the value of the DISPLAY variable.
             at sun.awt.X11GraphicsEnvironment.initDisplay(Native Method)
@@ -29595,7 +29361,10 @@ choose et when: (when doit etre inclu dans choose)
 									</a>
 									</xsl:when></xsl:choose>
 
-Procedure stockee : sybase :
+sybase :
+descriptif d'une table: sp_help NOMTABLE
+sp_helptext NOM DE LA  STOCKEE
+Procedure stockee : 
 proc sybase
 /******************************************************************************/
 /* Nom: PS_CREANCES_LIST							         */
@@ -31946,6 +31715,19 @@ windows8 :
     on peut voir le resultat des services qui se lancent au demarrage en faisant: ctlr+alt+sup puis onglet demarrage
 les ear sont planques sur was 2 sous: 
 /srvappli/wacint20/logiciel/was/apps5/installedApps/wndint01/
+
+WORD :
+pour replace remplacer c'est dans l'onglet home avec la souris 
+si il me supprime m'efface vide mon doc suite à une sauvegarde mauvaise foireuse
+    le reouvrir via le menu démarrer
+copier coller la mise en forme
+  ctrl+shift+C puis  ctrl+shift+V
+pour faire des caractères barres rapidement: 
+    Outils/Personnaliser/Clavier (pour creer un raccourci)
+pour faire des references super cool facon laure deneux: 
+	Insertion >  Reference > ne pas utiliser type signet mais plutot type Figure
+pour generer un menu index:
+  Reference > table des matières
 
 envoismoinscher : 
     pli
