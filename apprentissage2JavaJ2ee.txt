@@ -2414,7 +2414,11 @@ erreurs codes http: LINKcodesHttp
 
 
 J2EE :
-    du code java pour aller sur une autre page sans rien faire de special
+pour recuperer une variable d'environnement qui est declaree dans web.xml:
+			pour recuperer le numero de version
+			String ttfPath = (String)ServiceLocator.getInstance().getRefByName("NOM_DE_LA_VARIABLE");
+            
+ du code java pour aller sur une autre page sans rien faire de special
     res.setContentType("text/html");
     res.setHeader("pragma", "no-cache");
     ServletOutputStream out = res.getOutputStream();
@@ -14533,10 +14537,7 @@ formats : de certificats : certificat :
                              |_      Possible y stocker la chaine de certifs et possible la cle privee.
                              KEY (.key) est un PEM ne contenant que la cle privee
                              PKCS #10 csr peut etre transcodé en .pem                                        
-       pour pourvoir faire du https :(recevoir des requetes https sur mon serveur):
-          cryptage : (voir aussi openssl)
-              cryptage AES avec generation de cle etc etc...
-                  voir article http://java.sun.com/developer/technicalArticles/Security/AES/AES_v1.html
+                          voir LINKhttpslkjsdgfml
           ATTENTION ne pas tester avec IE car si certif non authentifie on dirait que ça ne marche pas sur IE
 CSRF(CrossSiteRequestForgery) : LINKc.s.r.f (Cross-site scripting appartient à csrf)
     inciter quelqu'un qui est connecté avec sa session sur le site X à lui faire executer une requette HTTP (genre rm -r*) par javascript caché (dans une image par ex)           
@@ -15168,6 +15169,59 @@ cucumber : il fait ce que fait junit mais permet à des non techniciens de compr
 			<artifactId>cucumber-junit</artifactId>
 			<version>1.1.8</version>
 		</dependency>
+Swing :
+en Swing code pour farie un save, saveAS et cancel en java:
+				private String file = null; 
+				private boolean saved = true; 
+				... 
+				public void open() { 
+				boolean cancel = false; 
+				       FilterFile filter = new FilterFile("sim", "Fichier simulation"); // cf composant java 
+				       JFileChooser fileChooser = new JFileChooser(repDefaut); // ex repDefaut = System.getProperty("user.home");  
+				       fileChooser.setDialogType(JFileChooser.FILES_ONLY); 
+				       fileChooser.setFileFilter(filter); 
+				       if ( fullPath != null ) { 
+				               if ( !saved ) { 
+				                       int result = JOptionPane.showConfirmDialog( this, 
+				                               "Fichier dejà  ouvert.\nVoulez-vous le sauvegarder ?", 
+				                               "Question", 
+				                               JOptionPane.YES_NO_CANCEL_OPTION, 
+				                               JOptionPane.QUESTION_MESSAGE ); 
+				                       if ( result == JOptionPane.CANCEL_OPTION ) cancel = true; 
+				                       else if ( result == JOptionPane.OK_OPTION ) // Sauvegarde du fichier en cours 
+				               } 
+				       } 
+				       if ( !cancel ) { 
+				       if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION && 
+				       fileChooser.getSelectedFile() != null) { 
+				               file = fileChooser.getSelectedFile().getAbsolutePath(); 
+				               saved = true; 
+				               // Ouverture du nouveau fichier 
+				       } 
+				       } 
+				} 
+				public void saveAs() { 
+				String tmp = null; 
+				       FilterFile filter = new FilterFile("sim", "Fichier simulation"); // cf composant java 
+				       JFileChooser fileChooser = new JFileChooser(repDefaut); // ex repDefaut = System.getProperty("user.home"); 
+				       fileChooser.setDialogType(JFileChooser.FILES_ONLY); 
+				       fileChooser.setFileFilter(filter); 
+				       if (fileChooser.showSaveDialog(ecran) == JFileChooser.APPROVE_OPTION) { 
+				               tmp = fileChooser.getSelectedFile().getAbsolutePath(); 
+				               if ( tmp.indexOf(".sim") == -1 ) tmp += ".sim"; 
+				               // Sauvegarde du fichier 
+				               file = tmp; 
+				               saved = true; 
+				       } 
+				} 
+				public void save() { 
+				       if (file != null) { 
+				               // Sauvegarde du fichier 
+				               saved = true; 
+				       } else saveAs(); 
+				} 
+
+
 javafx : jfx :
         java11 javafx : 
     ma main classe qui est statique doit etendre extends the javafx.application.Application
@@ -20785,13 +20839,6 @@ POUR LES FOREEACH A 2 ARGUMENTS : j'ai d'un coté:
         System.out.println("something else");
     }
   }
-  inverser changer l'order ordre d'une arraylist  A MIEUX DOCUMENTER voir aussi LINKordrelkjglfkdjss
-             List<IProcessor> decorateds = Arrays.asList(decorated); //convertir en liste si c'est un tableau
-                  Deque<IProcessor> inverseDecorateds =
-                          decorateds.stream().collect(Collector.of(
-                                  ArrayDeque::new,
-                                  (deq, t) -> deq.addFirst(t),
-                                  (d1, d2) -> { d2.addAll(d1); return d2; }));
 fonctionnement des annotations :
                 @MonValidateurBean(LINKvariablealacon=999) // customise, voir ci-dessous
                 public String maPropriete; ou bien public class UneClasseAnnotee{
@@ -20812,7 +20859,7 @@ fonctionnement des annotations :
               ailleurs 
               main...
               {
-                    je peux faire ça : UneClasseAnnotee toto = new UneClasseAnnotee();
+                    je peux faire ça: UneClasseAnnotee toto = new UneClasseAnnotee();
                                         Class classe = toto.getClass();
                                         Annotation annot = classe.getAnnotation(MonValidateurBean.class)
                                         MonValidateurBean sonAnnotation = (MonValidateurBean)annot;
@@ -20838,24 +20885,24 @@ pour tester la performance : perfs : perf : performances : performences :
             il n'est pas normal d'avoir l'option -ms256m  et -mx256m
             il faudrait basculer la première à  -ms64m et la deuxième à  priori à  -mx128m sauf si l'appli est vraiment consommatrice de memoire (à§a existe !) auquel cas -mx256m est pas mal
             si j'ai exception outofmemory error heap space faire ca: 
-            Xms : espace alloue à l'init pour les objets(instances)                         |_heap
-            Xmx : espace alloue max pour les objets(instances) si depasse: heapoutofmemory  |
-            MaxPermSize : espace pour les CLASSES (pas les instances mais tout ce qui est static) par defaut 64MegaByte. A partir de java8 c'est stocké dans le metaspace oùy a plus de limites         
+            Xms: espace alloue à l'init pour les objets(instances)                         |_heap
+            Xmx: espace alloue max pour les objets(instances) si depasse: heapoutofmemory  |
+            MaxPermSize: espace pour les CLASSES (pas les instances mais tout ce qui est static) par defaut 64MegaByte. A partir de java8 c'est stocké dans le metaspace oùy a plus de limites         
     				JAVA_OPTIONS="-Xms64m -Xmx256m"----> Xmx512m ou Xmx1024m ou Xmx1800m ou Xmx2048(!!ennorme) pour avoir à disposition 1Go de memoire sur le heap. En general on met 700m Meg sur les applis Renault
-    				en theorie : Xms=1/4 de Xmx
+    				en theorie: Xms=1/4 de Xmx
     				sur eclipse on peut dans "executer" ecrire dans Arguments VM: -Xmx1024m OU -XX:MaxPermSize=1024m
     				ou bien mettre -XX:-UseGCOverheadLimit et la on a pas de limite mais ca va durer longtemps
     				ou modifier eclipse.ini a cote de eclipse.exe
     				---->-Xmx3072m 2Giga sur une machine 64bits
     				---->-Xmx3072m 3Giga sur une machine 64bits
-    				pour que le dump se genere automatiquement au plantage : 
+    				pour que le dump se genere automatiquement au plantage: 
     				        -XX:+HeapDumpOnOutOfMemoryError
     				        -XX:HeapDumpPath=/DumpJVM/ope/.../lkjsdflkj/toto
     				        -XX:+UseG1GC -XX:-UseAdaptiveSizePolicy \   // pour utiliser le garbage garbadge collecteur G1 qui d'après Rachid Asbai est plus intelligent
     				        -XX:+UseZGC (depuis java11 voir ci dessous)
-    				        depuis java 11 :java11 : ZGC est super baleze comme garbadge collector. EpsilonGC est un GC de test qui ne garbadge jamais jusqu'à memoryexception
+    				        depuis java 11:java11: ZGC est super baleze comme garbadge collector. EpsilonGC est un GC de test qui ne garbadge jamais jusqu'à memoryexception
     				pour savoir combien mon poste en local a de mem: gestionnaire de taches windows: >memoire physique > disponible les trois premiers chiffres
-            wikipedia francois foulon :http://collaboration2010.sharepoint.renault.fr/is/dsd/places/tec/Wiki%20Component/IBM%20Support%20Assistant%20at%20RENAULT.asp				
+            wikipedia francois foulon:http://collaboration2010.sharepoint.renault.fr/is/dsd/places/tec/Wiki%20Component/IBM%20Support%20Assistant%20at%20RENAULT.asp				
             pour analyser les problemes de heap space java dump de memoire out of memory exception performance performence oom
                                     ps -ef | grep NOMDUPROCESSDEMONSERVEUR
                                     trouver l'id du process java (dessus est marque le heapdumpPath)
@@ -20867,10 +20914,10 @@ pour tester la performance : perfs : perf : performances : performences :
                                         aller dans launch activity > analyse problem >Choisir un analyseur: Ibm Monitoring and Diagnostic Tools for Java Memory Analyser 64 bits
                                             >Memory Analyzer >File >open heap dump>choisir mon fichier.
                                             >open denominator tree for entire heap pour voir les plus gros consommateurs
-              pour voir l'evolution de la memoire en live :
+              pour voir l'evolution de la memoire en live:
                   depuis java11: java flight recorder: 
                       java -XX:StartFlightRecording (Jamais testé)
-                    ou java mission control : https://jdk.java.net/jmc (Jamais testé )
+                    ou java mission control: https://jdk.java.net/jmc (Jamais testé )
                   avant:
                       d'abord donner les droits à jstatd de d'envoyer les infos logs JVM à un client sans faire d'exeption de securite
                       vi /etc/jstatd.policy  et ecrire
@@ -20878,10 +20925,10 @@ pour tester la performance : perfs : perf : performances : performences :
                       permission java.security.AllPermission;
                       }; 
                 ensuie aller dans which java /default/bin
-                et demarrer jstatd : performances 
+                et demarrer jstatd: performances 
                   nohup ./jstatd -J-Djava.security.policy=/etc/jstatd.policy &            
-                  et apres on peut lancer le client sur mon poste : aller sous la jdk et tapper "jvisualvm"   (D:\LocalData\p036782\visualVM\visualvm_138\bin\visualvm.exe)
-                                                                    en local on peut voir tous les process en direct :-) sinon:
+                  et apres on peut lancer le client sur mon poste: aller sous la jdk et tapper "jvisualvm"   (D:\LocalData\p036782\visualVM\visualvm_138\bin\visualvm.exe)
+                                                                    en local on peut voir tous les process en direct:-) sinon:
                                                                     remote>add Remote Host
                                                                     trouver l'id du process que je veux surveiller
                                                                     ps -ef | grep NOMDUPROCESSDEMONSERVEUR
@@ -20889,7 +20936,7 @@ pour tester la performance : perfs : perf : performances : performences :
                                                                     et le retrouver ensuite sur jvisualvm et cliquer dessus
                                                                     > onglet visualGC ou Monitor
                   on peut aussi utiliser eclipse LUNA -> eclipse MAT en ouvrant le fichier de dump                                                                
-              JAVA MELODY : JAVAMELODY : bof voir ci dessus visualvm
+              JAVA MELODY: JAVAMELODY: bof voir ci dessus visualvm
                             dans le pom du projet
                                    <dependency>
                                         <groupId>net.bull.javamelody</groupId>
@@ -20922,18 +20969,17 @@ pour tester la performance : perfs : perf : performances : performences :
                                                             <listener-class>net.bull.javamelody.SessionListener</listener-class>
                                             </listener>
                                             		<!-- /JAVA MELODY -->
-                                            		
                                      puis aller sous http://localhost:8080/wec/monitoring       		
-    problème de performances en Java? ehcache : 
+    problème de performances en Java? ehcache: 
           voir http://www.ehcache.org/ +  aussi s'assurer que le navigateur utilise le cache (grace au header) + la connexion ne se ferme pas chaque fois dans le cas du https sinon à chaque requette il faut refaire un shakehands   
-java9 : java 9 : java11 : java10 : 
+modules :java 9 : java9 : java10 : java11 : depuis java9 
   besoin maven 3.5.x
   Jdk A8 devient divisé en modules xxx.jmod = 1jar = 1 ou plsrs package. un module peut dépendre de x modules et inversement.
                                   defini dans monapplimodule1/src/main/java/module-info.java |_lun ou l'autre mais ca doit etre le repertoire declare comme source
                                               monapplimodule2/src/module-info.java           |
                                               monapplimodule2/src/paquage.numero.un/...etc...
                                   module-info.java: // si absent, java9 maet tout en unnamed et ça marche qd meme
-                                                                      automatic module : export tout requires tout (jar n'ayant pas de module-info.class: du coup son nom de module c'est le nom du jar et si j'ai IllegalArgumentException FindException Invalid module name c'est parce que le nom du jar a un chiffre et c'est interdit pour un module)
+                                                                      automatic module: export tout requires tout (jar n'ayant pas de module-info.class: du coup son nom de module c'est le nom du jar et si j'ai IllegalArgumentException FindException Invalid module name c'est parce que le nom du jar a un chiffre et c'est interdit pour un module)
                                                                       unamed module: exporte rien requires tout
                                                                       Si deux modules(automatic ou non) qui export le meme package -> interdit: ne pas migrer vers java9
                                     module mon.nom.du.module{ //a un nom (doit être unique dans un repertoire) par forcement le même que le nom des packages dedans (recommandé:= nom package a l'envers) ni le meme nom que le .jar qui le contient(intellij met par defaut le nom du module intellij)
@@ -20964,9 +21010,10 @@ java9 : java 9 : java11 : java10 :
                                                                   UneClasse toto = new UneClasse();
                                                               }
                                                           }
-                  compiler:
+compiler : compilation :
+                java9 : java10 : java11 :
                       javac --module-path /=ModulePath/chemin/vers/les/modules/dont/ici/je/depend -d repertoire/de/sortie/des/class 'find pathFichiersjavaatrouver -name *.java' // devient un .class
-                              maven: pour les dependances à des automatic modules utiliser : 
+                              maven: pour les dependances à des automatic modules utiliser: 
                                           <plugin>
                                                   <groupId>org.apache.maven.plugins</groupId>
                                                   <artifactId>maven-compiler-plugin</artifactId>
@@ -20978,10 +21025,11 @@ java9 : java 9 : java11 : java10 :
                                                   </configuration>
                                               </plugin>
 
-                  creer jar:
+creer jar :
                        jar -c -f repertoire/nouveaujar.jar --module-version x.y.z(--module-version estFacultatif) --main-class facultatif.package.et.classeMain -C chemin/ousontMesClassCompilees //-c créer une archive; -f situation et nom du jar.
                        jar -p -f repertoire/nouveaujar.jar // pour voir le détail de ce module, sa version et ses requires ses exports et ses conceals(ce qu'il n'exporte pas je crois) //-p equivalent de --module-path 
-                  executer: 
+execution : executer :
+                java9 : java10 : java11 :
                       java --module-path /=ModulePath/chemin/vers/les/modules/dont/ici/je/depend -m nom.du.module(/facultatif.package.et.ClassMainAExecuter) // entre parentheses: obligatoire si je n'ai pas compilé avec --main-class ci dessus
                           -classpath est valide si on veut porter du code/jars java <9 sur un java9 // tout ce qui sera dans le classpath sera stocké dans un unnamedmodule mais les named modules java9 ne peuvent pas dependre de ces unnamedmodules.
                   Créer un executable adapté à la plateforme sur laquelle je suis. est léger: attention jlink ne marche pas avec les automatic modules dont mon rootmodule depend
@@ -21000,8 +21048,8 @@ java9 : java 9 : java11 : java10 :
             tapper jshell et je peux tester des petit bouts snippets de code java sans m'inqueter des exeptions et des ";" point virgules                                                       
       depuis java9 existe aussi - VarHandle pour passer rapidos de noeud en noeud d'un coup.
                                 - ProcessBuilder: executer une commande externe sortir pid unix linux autre programme process
-java10 : java 10 :
-    var: bof eviter                                                                         
+    java10 : java 10 :
+        var: bof eviter                                                                         
 pour lancer executer un programme java faire ca: (ATTENTION ne marche plus depuis la version 1.6?)
 depuis java9 si j'ai Caused by: java.lang.ClassNotFoundException: javax.activation.DataSource (c parce que ca a degagé de la jvm alors ratacher le module automatique avec maven: 
                 <dependency>
@@ -21011,7 +21059,7 @@ depuis java9 si j'ai Caused by: java.lang.ClassNotFoundException: javax.activati
               </dependency>
 Depuis la version 1.6 utiliser -classpath ou -cp (c pareil) et separer par des ; sur unix ou: sur windows (on peut metre * (mais pas dans le manifest)) Attention! (-cp;-classpath) et -jar sont incompatibles: -jar prend le dessus donc faire un manifest voir LINK5*55*5
     exemple: java -cp "C:\jdevStudioWorkspace\Dialogys_MPF_pour_serveur\LibrairiesDialogys\*";"DialogysServer.jar"  dialogys.rmi.serveur.vue.Serveur
-              java -classpath acrobat.zip;AppClasses.jar ; ou plutot : commons-httpclient-2.0.jar;ou:commons-logging.jar dialogys.chapeau.DialogysStarter
+              java -classpath acrobat.zip;AppClasses.jar ; ou plutot: commons-httpclient-2.0.jar;ou:commons-logging.jar dialogys.chapeau.DialogysStarter
               java -Duser.dir=C:\jdevStudioWorkspace\Dialogys_OC\Dialogys_MPF_pour_serveur\data -Djava.library.path="C:\jdevStudioWorkspace\Librairies~1" -jar Dialogys.jar dialogys.chapeau.DialogysStarter 
 			     java -cp JimiProClasses.jar:. convertisseur.Lancer (le jar qui contient la classe main qu'on veut lancer doit etre dans le classpath -cp)
 			     si j'ai erreur no main manifest attribute ou bien aucun attribut manifest principal 
@@ -21061,9 +21109,10 @@ Depuis la version 1.6 utiliser -classpath ou -cp (c pareil) et separer par des ;
 		Si on a mis cette execution dans un point bat et qu'il ne trouve pas le chemin vers la jre: metre ca:
 					Set Path=C:\Program files/JavaSoft/JRE/1.5.0_08/bin
 					java  -jar SeleniumLogToPrimaLog.jar
+mapping :
 pour copier les proprietes d'un bean formulaire vers un autre bean de type info par exemple faire: convertir mapper maper un objet java transformer en un autre bean  
 						org.apache.commons.beanutils.BeanUtils.copyProperties(Object dest, Object orig) // ModelMapper c'est de la merde faut pas l'utiliser. le plus performant c'est mapstruct (il genere les classes de mapping au compile time par maven.)
-                     avec ModelMapper : // de la merde oublie!!!! parce que je voulais transormer un string en Method: ca c pas évidant à faire.
+                     avec ModelMapper: // de la merde oublie!!!! parce que je voulais transormer un string en Method: ca c pas évidant à faire.
                              ModelMapper modelMapper = new ModelMapper();
                       		PropertyMap<ClasseSource, ClasseDestinataire> surclasse new PropertyMap<ClasseSource, ClasseDestinataire>() { // pour personnaliser le mapping au plus fin
                       			  protected void configure() {
@@ -21083,17 +21132,15 @@ pour copier les proprietes d'un bean formulaire vers un autre bean de type info 
                       		return toto;
                             OrderDTO orderDTO = modelMapper.map(order, OrderDTO.class);
                              
-pour recuperer une variable d'environnement qui est declaree dans web.xml:
-			pour recuperer le numero de version
-			String ttfPath = (String)ServiceLocator.getInstance().getRefByName("NOM_DE_LA_VARIABLE");
 
+chaines : strings : string :
 pour recuperer le retour chariot: public static final String CHARIO = System.getProperty("line.separator"); // a partir de java 5.1 on peut mettre "%n" // recupère prop de la jvm voir LINKù*ù
 pour recuperer le caractere espace: c'est ca tout simplement: " "
 pour savoir si un charactere est de type espace:  Character.isSpaceChar(echar)
 pour transformer un tableau de byte en string: 
 ByteArrayOutputStream byaos = new ByteArrayOutputStream(tableau de byte);
 byaos.toString();
-
+tableaux :
 Bonne pratique d'utilisation de tableaux en Java: (et de tableaux de tableaux)
 PREFERER List à Vector et Map à Hashtable (Map est l'interface de Hashtable). On peut utiliser HashMap quand nous ne travaillons pas en multithreading sinon utiliser HashTable (car est synchronise. mais bof. preferer utiliser HashMap avec Collections.synchronizedMap()). La modification en HashMap sera plus rapide si le reste du code utilise l'interface Map. Map n'est pas trié trie
                                 |_Hashtable peut etre gourmand en ressources si trop utilisé (n'accepte pas de cle et valeurs nulles)
@@ -21167,8 +21214,9 @@ pour utiliser un iterator qui va en arriere: capable de repositionneer le curseu
                     
             		 
 ************************
+externe : systeme : depuis java :
 pour executer une commande externe en java:
-Pour lancer votre application externe il vous suffit maintenant d'appeler l'une des six methodes exec() de la classe Runtime et dont voici les declarations :
+Pour lancer votre application externe il vous suffit maintenant d'appeler l'une des six methodes exec() de la classe Runtime et dont voici les declarations:
 ne pas faire ca:
 Runtime runtime = Runtime.getRuntime();
 runtime.exec("monappli param1 param2");
@@ -21192,14 +21240,14 @@ si a=true, b=false,c=true ->if est false MAIS il va d'abord tout evaluer avant d
 
 if(a||b||c)
 si a=true ->if est true
-si a=false et b=true ->if est true : il s'arrete toute de suite si il voit un true
+si a=false et b=true ->if est true: il s'arrete toute de suite si il voit un true
 
 if(a|b|c)
 si a=true evalue qd meme b et c puis retourne true car a = true.
 si a=false et b=true -> evalue qd meme c puis retourne true car b=true
 
-autre notation: contraction :de if :
-libelle.equals("") ? "%" : libelle
+autre notation: contraction:de if:
+libelle.equals("") ? "%": libelle
 equivaut à
 if (libelle.equals("")) {return "%";}
 else {return libelle;}
@@ -21208,14 +21256,6 @@ site=site==null?"%":site;
 *********************************	
 pour catcher toutes les exception possibles: 
 		catcher Throwable
-pour faire une expression reguliere : regexp : 
-		String str=blabla;
-		if (str.matches("[^|]*[|][^|]*[|][^|]*[|][^|]*[|]")) etc etc... ici on cherche une chaine qui ressebmble à lqjsdf|lksdfj|sjklhf|kljsdf|
-		il y a aussi une api qui s'appelle Perl5Compiler (org.apache.oro.text.regex.Perl5Compiler;)... c'est peut etre bien?
-		regexp majuscules avec accents : utiliser \\p{javaUpperCase}
-      exemple: 
-		  replaceAll("(\\p{javaUpperCase}{2,30})",
-pour savoir si pourcent est dans une chaine de caractère, ne pas faire contains mais monstring.indexOf('%'); 
 *********************************	
 Pour faire un traitement deporte d'un batch d'une application j2ee: utiliser un flag dans le systeme de fichier
 *********************************
@@ -21230,12 +21270,1494 @@ pour faire un message avec des {0}{1}{2}...  qui sont remplace par des strings:
           MessageFormat form= new MessageFormat(  "The disk \"{1}\" contains {0} file(s).");
           String result = form.format(arguments);
 **********************************	
+expressions regulieres :regexp :LINKçeeçeeçregexpçeeçeeç
+pour faire une expression reguliere: regexp: 
+		String str=blabla;
+		if (str.matches("[^|]*[|][^|]*[|][^|]*[|][^|]*[|]")) etc etc... ici on cherche une chaine qui ressebmble à lqjsdf|lksdfj|sjklhf|kljsdf|
+		il y a aussi une api qui s'appelle Perl5Compiler (org.apache.oro.text.regex.Perl5Compiler;)... c'est peut etre bien?
+		regexp majuscules avec accents: utiliser \\p{javaUpperCase}
+      exemple: 
+		  replaceAll("(\\p{javaUpperCase}{2,30})",
+pour savoir si pourcent est dans une chaine de caractère, ne pas faire contains mais monstring.indexOf('%');	
+Pour utilisation des expressions regulieres conditionnelles avec sorte de callback en java pour trouver un caractère: regexp: attention !!! ca ne marche pas pareil sur unix: super galere donc eviter. Ruser avec Substring plutot
+ici on cherche des coommentaires: *
+private boolean contientCommentStart(String ligne) {
+        StringBuffer resultString = new StringBuffer();
+        String regexp="/\\*([A-Z])";
+		Pattern pattern = Pattern.compile(regexp); // le mettre en tete de classe en static final car ca bouffe memoire
+		Matcher matcher = pattern.matcher(ligne);
+		while (matcher.find()) {
+		  System.out.println(m.group(1)); // renvoit donc contenu de la premiere parenthese (commence par 1)
+          regexMatcher.appendReplacement(resultString, "replacement"); // ajoute dans resultString (le stringbuffer) en remplacant TOUT regexp par "remplacement" 
+		}
+        regexMatcher.appendTail(resultString); // ajoute la fin du texte dans resultString (le stringbuffer)
+	} 
+	autre exemple:
+	private boolean contient(String ligne) {
+		Pattern pattern = Pattern.compile("\\[COMP"); // le mettre en tete de classe en static final car ca bouffe memoire
+		Matcher matcher = pattern.matcher(ligne);
+		while (matcher.find()) {
+			return true;
+		}
+		return false;
+	}
+	exemples: (le design pattern de pspad: rempalcement avec $1.. marche!)
+	ici on remplace tous les chiffres colle a des chars par la meme chose separe par des espaces:
+	                    si whitespace mettre \\s (voir plus bas)
+            				if (string.matches(".*[0-9][a-z].*") || string.matches(".*[a-z][0-9].*"))
+            			{
+            				string = string.replaceAll("(.*[0-9])([a-z].*)", "$1 $2");
+            				string = string.replaceAll("(.*[a-z])([0-9].*)", "$1 $2");
+            				
+            			}
+	     Pattern pattern1 = Pattern.compile("//\\D{2,3}\\d+[_]"); cherche "//sdf5646540_" ou "//DF54455_"
+	 Summary of regular-expression constructs
+                            Construct 	Matches
+                             
+                            Characters
+                            x 	The character x
+                            \\ 	The backslash character
+                            \0n 	The character with octal value 0n (0 <= n <= 7)
+                            \0nn 	The character with octal value 0nn (0 <= n <= 7)
+                            \0mnn 	The character with octal value 0mnn (0 <= m <= 3, 0 <= n <= 7)
+                            \xhh 	The character with hexadecimal value 0xhh
+                            \uhhhh 	The character with hexadecimal value 0xhhhh
+                            \t 	The tab character ('\u0009')
+                            \n 	The newline (line feed) character ('\u000A')
+                            \r 	The carriage-return character ('\u000D')
+                            \f 	The form-feed character ('\u000C')
+                            \a 	The alert (bell) character ('\u0007')
+                            \e 	The escape character ('\u001B')
+                            \cx 	The control character corresponding to x
+                             
+                            Character classes
+                            [abc] 	a, b, or c (simple class)
+                            [^abc] 	Any character except a, b, or c (negation) ne contient pas
+                            [a-zA-Z] 	a through z or A through Z, inclusive (range)
+                            [a-d[m-p]] 	a through d, or m through p: [a-dm-p] (union)
+                            [a-z&&[def]] 	d, e, or f (intersection)
+                            [a-z&&[^bc]] 	a through z, except for b and c: [ad-z] (subtraction)
+                            [a-z&&[^m-p]] 	a through z, and not m through p: [a-lq-z](subtraction)
+                             
+                            Predefined character classes
+                            . 	Any character (may or may not match line terminators)
+                            \d 	A digit: [0-9]
+                               d+ c'est un chiffre nombre
+                            \D 	A non-digit: [^0-9]
+                            \s 	A whitespace character: [ \t\n\x0B\f\r] (exemple: Pattern.compile("\\s(W0[A-Z0-9]{3,6}\\.[TV][A-Z0-9]{2,11})\\s");)
+                      			       \\s c'est un espace \\s* c'est 0 ou x espaces
+                            \S 	A non-whitespace character: [^\s]
+                            \w 	A word character: [a-zA-Z_0-9]
+                            \W 	A non-word character: [^\w]
+                             
+                            POSIX character classes (US-ASCII only)
+                            \p{Lower} 	A lower-case alphabetic character: [a-z]
+                            \p{Upper} 	An upper-case alphabetic character:[A-Z]
+                            \p{ASCII} 	All ASCII:[\x00-\x7F]
+                            \p{Alpha} 	An alphabetic character:[\p{Lower}\p{Upper}]
+                            \p{Digit} 	A decimal digit: [0-9]
+                            \p{Alnum} 	An alphanumeric character:[\p{Alpha}\p{Digit}]
+                            \p{Punct} 	Punctuation: One of !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+                            \p{Graph} 	A visible character: [\p{Alnum}\p{Punct}]
+                            \p{Print} 	A printable character: [\p{Graph}]
+                            \p{Blank} 	A space or a tab: [ \t]
+                            \p{Cntrl} 	A control character: [\x00-\x1F\x7F]
+                            \p{XDigit} 	A hexadecimal digit: [0-9a-fA-F]
+                            \p{Space} 	A whitespace character: [ \t\n\x0B\f\r]
+                             
+                            Classes for Unicode blocks and categories
+                            \p{InGreek} 	A character in the Greek block (simple block)
+                            \p{Lu} 	An uppercase letter (simple category)
+                            \p{Sc} 	A currency symbol
+                            \P{InGreek} 	Any character except one in the Greek block (negation)
+                            [\p{L}&&[^\p{Lu}]]  	Any letter except an uppercase letter (subtraction)
+                             
+                            Boundary matchers
+                            ^ 	The beginning of a line
+                            $ 	The end of a line
+                            \b 	A word boundary
+                            \B 	A non-word boundary
+                            \A 	The beginning of the input
+                            \G 	The end of the previous match
+                            \Z 	The end of the input but for the final terminator marche pas pour les retours chariot 
+                            \z 	The end of the input
+                             
+                            Greedy quantifiers
+                            X? 	X, once or not at all
+                            X* 	X, zero or more times
+                            X+ 	X, one or more times
+                            X{n} 	X, exactly n times
+                            X{n,} 	X, at least n times
+                            X{n,m} 	X, at least n but not more than m times
+                             
+                            Reluctant quantifiers
+                            X?? 	X, once or not at all
+                            X*? 	X, zero or more times
+                            X+? 	X, one or more times
+                            X{n}? 	X, exactly n times
+                            X{n,}? 	X, at least n times
+                            X{n,m}? 	X, at least n but not more than m times
+                             
+                            Possessive quantifiers
+                            X?+ 	X, once or not at all
+                            X*+ 	X, zero or more times
+                            X++ 	X, one or more times
+                            X{n}+ 	X, exactly n times
+                            X{n,}+ 	X, at least n times
+                            X{n,m}+ 	X, at least n but not more than m times
+                             
+                            Logical operators
+                            XY 	X followed by Y
+                            X|Y 	Either X or Y
+                            (X) 	X, as a capturing group
+                             
+                            Back references
+                            \n 	Whatever the nth capturing group matched
+                             
+                            Quotation
+                            \ 	Nothing, but quotes the following character
+                            \Q 	Nothing, but quotes all characters until \E
+                            \E 	Nothing, but ends quoting started by \Q
+                             
+                            Special constructs (non-capturing)
+                            (?:X) 	X, as a non-capturing group
+                            (?idmsux-idmsux)  	Nothing, but turns match flags on - off
+                            (?idmsux-idmsux:X)   	X, as a non-capturing group with the given flags on - off
+                            (?=X) 	X, via zero-width positive lookahead
+                            (?!X) 	X, via zero-width negative lookahead
+                            (?<=X) 	X, via zero-width positive lookbehind
+                            (?<!X) 	X, via zero-width negative lookbehind
+                            (?>X) 	X, as an independent, non-capturing group
+conversions : convertir :
+pour convertir un tableau d'objet en list ou meme un String[] tableau de string: on peut aussi convertir directement un tableau d'objet en stream. pas besoin de passer par une liste
+		Object[] a1d = { "Hello World", new Date(), Calendar.getInstance(), };
+		depuis java9: List<x> l = List.of("aaa","bbb"...);
+    avant: List l = Arrays.asList(a1d); // pour creer une liste rapidement attention la liste n'est pas modifiable  (unsupportedoperationexception)
+                          alors faire: images = new ArrayList<String> (Arrays.asList(dir.list()));
+                                            
+pour convertir une collection en list:
+			      List templates  = new ArrayList(result);
+A l'inverse convertir une List<Object> en Object[]: 
+    List<Object> parameters = new ArrayList<Object>();
+		parameters.add(idFactory);
+    parameters.toArray(); -> renvoit Object[] si on fait parameters.toArray(new File[0]) -> renvoit un tableau de files     
+pour convertir un List en Vecteur
+	   List l = Arrays.asList(a1d); // pour creer une liste rapidement attention la liste n'est pas modifiable  (unsupportedoperationexception)
+	                                             alors faire images = new ArrayList<String> (Arrays.asList(dir.list()));
+    Vector v;
+    v = new Vector(l);
+convertir un string en list
+  List<String> myList = new ArrayList<String>(Arrays.asList(s.split(","))))
+pour convertir un boolean en string
+    new Boolean(b).toString();    
+pour convertir un byte[]  en string
+      arrayOfByte2 est un byte[]
+    return  new String(arrayOfByte2);
+pour convertir un int en string 
+							et vice et versa string en int: utiliser la classe statique Integer: Integer.parseInt ou Integer.toString(int)...
+		convertir un long en string: String.valueOf(long)
+		convertir un long en date puis en string: new Date(long).toString();
+		convertir un string en long: long.toString() //mais attention je crois qu'il insert des espaces dans le string a chaque centaines et milliers: donc passer par int plutot(intValue())
+		convertir un int en bigdecimal: int i=125; BigDecimal j = new BigDecimal(i);
+		convertir un big decimal en int: ((BigDecimal) ht.get("ISFORONEFILE")).intValue()
+		convertir un char en string: Character.toString(content[i]) (ou content[i] serait un char) c'est indispensable à faire dans les tags jsp sinon on va avoir l'erreur:java/lang/StringBuffer.append(C)Ljava/lang/Appendable;
+		ou bien pour convertir un char[] en string: char[] password; c'est mieux de faire String.valueOf(password) avant: new String(password)
+		convertir un string en char[] g.toCharArray(); 
+		convertir un tableau d'objet quelquconque en array ou list:
+				List<File> list =  Arrays.asList(f); // f ne doit pas etre un tableau de primitif mais un tableau d'objets
+		convertir un array ou list en tableau:
+				String[] stringArray = (String[])list.toArray(new String[list.size()]); 
+		convertir un int en short:
+				(short)3 ou bien: int toto =3; (short)toto;
+		convertir un Integer en short: // je crois(... ou plutot un int?)
+		    Integer.valueOf(2).shortValue();
+		convertir un string en date:
+				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy"); pour les heures minutes secondes: hh:mm:ss // attention n'est pas threadsafe.
+					Date after = formatter.parse("01/01/09");
+					pour ecrire une date etla formater:
+                  SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy"); // attention n'est pas threadsafe.
+                String toto = formatter.format(h.getVPA04_DATE()); // objet Date 
+    convertir un string en float:
+        String s = "1234567.1234567f";
+        float f = Float.parseFloat(fs);
+***********************************************************************
+Utils : Utils java :
+pour spliter un string: decouper un string en plusieurs morceaux(tooken tocken toocken token separateur): on coupe là  ou il y a marque "blabla" en enlevant "blabla:
+si pattern.toString = "blabla" // pattern c pour le expression regulieres.. a eviter (voir pq ci dessus...)
+String[] split = ligne.split(pattern.toString());
+			for (int i = 0; i < split.length; i++) {
+				system.out.println(split[i];
+				}
+				remaque: le caractère d'echappement est "\\" si par exemple on veut splitter sur "|" il faut mettre "\\|"
+				si on veut splitter avec "\" ou "\\" il faut faire: return ligne.split(Pattern.quote("\\")); //blackslash mais c'est plus long à l'execution. "\\\\" semble fonctionner
+en JAVA =<1.3: 
+    StringTokenizer st = new StringTokenizer(mon_string, "mon separateur"); // déconseillé d'utiliser StringTokenizer. préférer split ou java.util.regex
+    String bli = (String)st.nextElement()) ;	
+--------
+pour classer les elements d'une liste dans l'ordre alphabetique:
+Collections.sort(namesList);
+		ou nameList est une liste. Attention c'est un ordre alpha pas top avec les chiffres: besoin mettre un zero avant les dizaines...
+pour faire un tri (trier ordonner ordre) une ArrayList qui contient des objets: LINKordrelkjglfkdjss
+    avec les lambdas: 
+        personList.sort((p1, p2) -> p1.firstName.compareTo(p2.firstName));
+        les dates les chiffres: 
+        hour.sort((p1, p2) -> p1.before(p2)?-1:1); // tri du plus petit au plus grand
+	ArrayList<SyntheseObj> synthese = new ArrayList<SyntheseObj>(indic.size()); // liste à trier
+	Collections.sort(synthese, new ComparSynthese());
+	mais c'est mieux de faire pour les acces concurents:
+    malistnontriee=uneliste... 
+    Set<T> unSetTrie = new ConcurrentSkipListSet<Employee>();
+    unSetTrie= new ConcurrentSkipListSet<Element>(new ComparSynthese());
+    unSetTrie.addAll(malistnontriee); // le tri se fait là. 
+	public class ComparSynthese implements Comparator
+	{
+		public int compare(Object o1, Object o2) {
+			SyntheseObj s1= (SyntheseObj)o1;
+			SyntheseObj s2= (SyntheseObj)o2;
+			// si c'est des chiffres:
+										if (Integer.parseInt(s1.val2)>Integer.parseInt(s2.val2)) return 1;
+										else if (Integer.parseInt(s1.val2)<Integer.parseInt(s2.val2)) return -1;
+										else return 0; // meme niveau
+			// si c'est caracteres (string)  
+										int i = 0;
+										if (s1.getLabel().compareTo(s2.getLabel())>0) i=1;
+										else if (s1.getLabel().compareTo(s2.getLabel())<0) i=-1;
+										else i=0;
+										return i;
+		}
+	}
+pour faire un tri on peut aussi utiliser l'objet java.util.TreeSet();
+inverser changer l'order ordre d'une arraylist  A MIEUX DOCUMENTER voir aussi LINKordrelkjglfkdjss
+             List<IProcessor> decorateds = Arrays.asList(decorated); //convertir en liste si c'est un tableau
+                  Deque<IProcessor> inverseDecorateds =
+                          decorateds.stream().collect(Collector.of(
+                                  ArrayDeque::new,
+                                  (deq, t) -> deq.addFirst(t),
+                                  (d1, d2) -> { d2.addAll(d1); return d2; }));
+------------
+pour savoir quel string passe en premier dans un ordre alphabetique: 
+		"laquelle est la 1ere dans l'ordre alphabetique",  s1.compareTo(s2). ca retourne CHIFFRE(attention pas que des 1 et 0) negatif si c'est s1 < s2, un positif si s1 > s2 et 0 si c'est egale.
+-----------------------------
+Pour recuperer la liste de fichiers d'un directory:
+File.list()
+-------			
+ Pour savoir si un char est un numero numerique numerique est un chiffre:
+      // en effet l'Action est executee deux fois donc l'entete et une donnee sont enleves: c un bug du a harmony.
+      //test pour savoir si il y aun entete dansle tableau. Si oui on l'enleve si non on le laisse car ce sont des donnees:
+      char n =  ((String[])listeKeyFormule.get(0))[0].charAt(0);
+      if (!Character.isDigit(n)) listeKeyFormule.remove(0);
+--------------
+
+pour intercaller un string dans une liste d'autre strings: 
+                       StringUtils.join(["a", "b", "c"], "--")  = "a--b--c"
+                       StringUtils.join(["a", "b", "c"], null)  = "abc"
+
+    StringUtils.join
+    recuperer la liste des headers d'une requete:
+      private Map<String,String> getHeadersInfo(HttpServletRequest request)
+      	{
+      		Map<String,String> map = new HashMap<String,String>();
+      		Enumeration headerNames = request.getHeaderNames();
+      		while (headerNames.hasMoreElements())
+      		{
+      			String key=(String) headerNames.nextElement();
+      			String value = request.getHeader(key);
+      			map.put(key, value);
+      		}
+      		return map;
+      	}
+      	
+    /*afficher clairement une requete de preparedstatement */
+                public static String preparedStatementFriendly(String query, String[] params)
+              	{
+              		for (String param: params) 
+              		{
+              			query = query.replaceFirst("\\?", param); // remplacer un point d'interrogation
+              		}
+              		return query;
+              	}
+	/**
+	 * Returns true if the table is empty
+	 * 
+	 * @param table
+	 * @return
+	 * @throws Exception
+	 */
+	public static boolean isTableEmpty(String[] table) throws Exception {
+		boolean ret = false;
+		StringBuffer str = new StringBuffer();
+		for (int i = 0; i < table.length; i++) {
+			str.append(table[i]);
+		}
+		log.debug(str.toString().trim());
+		log.debug(str.toString().trim().length());
+		if (str.toString().trim().length() < 1)
+			ret = true;
+		return ret;
+	}
+	--------------------------------
+/**
+	 * Tool method returning a right string if the object is null
+	 * (not "null", but "") => TODO see if return "" or null
+	 * @param obj
+	 * @return String
+	 */
+	public static String isNull(Object obj){
+		if (obj != null && !((String)obj).equals("null")){
+			return (String)obj;
+		}
+		return "";
+	}
+	--------------------------------
+	/** 
+	 * Cut a word with length>3 characters exemple: 1234567890 becomes: 123-456-789
+	 * @param word
+	 * @return the word cut
+	 */
+	public static String cutWord(String word){
+		String result = "";
+		if(word!=null && word.length()>3){
+			result = word.substring(0, 2)+"-"+cutWord(word.substring(2, word.length()));
+			return result;
+		}else{
+			return word;
+		}
+	}
+--------------------------------
+	/**
+	 * Check if a string is a date according to the given pattern. (expression reguliere de date)
+	 * 
+	 * @param input String
+	 * @param df SimpleDateFormat
+	 * @return boolean
+	 */
+	public static boolean isDateValid(String input,SimpleDateFormat df) {
+  		boolean isValid = false;
+  		ParsePosition pos = new ParsePosition(0);
+  		df.setLenient(false); // ca veut dire que si je mets par ex le 32 janvier il va renvoyer une erreur. Si c lenient il rectifie en mettant le 1er fev.
+  		try {
+  			Date date = df.parse(input,pos);
+  			//Test si la chaine est vide ou n'a pas ete lue totalement.
+  			isValid = (date==null || pos.getIndex()<input.length()) ? false: true;
+  		} catch (Exception e) {
+  			isValid = false;
+  		}
+  		return isValid;
+	}
+--------------------
+	public final static String[] TBL_INVALIDS_CHARACTERS = {"\\", "/", ":", "*", "?", " \"", "<", ">", "|"};
+		/**
+	 * Check if the string doesn't contain invalid digits
+	 * 
+	 * @param String the string to control 
+	 * @return true if the string contains an invalid digit, false otherwise.
+	 */
+	public static boolean isContainInvalidDigit(String str){
+		boolean result = false;
+		
+		for (int i = 0; i < Constants.TBL_INVALIDS_CHARACTERS.length; i++) {
+			if (str.contains(Constants.TBL_INVALIDS_CHARACTERS[i])){
+				result = true;
+				break;
+			}
+		}
+		
+		return result; 
+		
+	}
+--------------------------------
+returns a subtable of a table of string (sublist) sous liste soustabl sousar
+public static String[] SubstrTableString(String[] value, int start , int end) throws Exception
+	{
+		String[] ret = new String[end-start];
+		for (int i=0; i<value.length; i++)
+		{
+			if (i>=start && i<end)
+			{
+				ret[i-(start)]=value[i];
+			}
+		}
+		return ret;
+	}
+	
+meme chose mais cette fois avec un offset et un limit:          (offset = nombre d'elements ignores en debut de liste) 
+        public static WECM53_STORAGE_CONTROL[] SubstrTableString(WECM53_STORAGE_CONTROL[] value, int offset , int limit) throws Exception
+    	{
+        	WECM53_STORAGE_CONTROL[] ret = new WECM53_STORAGE_CONTROL[limit];
+    		for (int i=0; i<value.length; i++)
+    		{
+    			if (i>=offset && i<limit+offset)
+    			{
+    				ret[i-(offset)]=value[i];
+    			}
+    		}
+    		return ret;
+Sinon on peut aussi faire ca sublist subtable subarr:
+      WECM55_STORAGE_IAO_CONTROL[] res =  (WECM55_STORAGE_IAO_CONTROL[]) pm.detachCopyAll(allProducts).toArray(new WECM55_STORAGE_IAO_CONTROL[0]);
+			List<WECM55_STORAGE_IAO_CONTROL> l = Arrays.asList(res);
+			WECM55_STORAGE_IAO_CONTROL[] resret = l.subList(config.getOffset(), config.getOffset()+config.getLimit()).toArray(new WECM55_STORAGE_IAO_CONTROL[0]);
+	--------------------------------
+private static final String MYSQL_DATE_FORMAT = "yyyy-MM-dd";
+pour convertir une Date en texte
+	/**
+	 * @param date Java Date instance 
+	 * @return return a formatted date following MySql pattern 
+	 * yyyy-MM-dd HH:mm:ss 
+	 */
+	public static String getMySqlDateFormat (Date date) {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat(Utils.MYSQL_DATE_FORMAT); ("HH:mm:ss dd/MM/yyyy")              HH pour 24h sinon hh pour 12hampm // attention n'est pas threadsafe.
+		String strDate ="";
+		
+		// Using Calendar as Date methodes are  deprecated
+		Calendar calendar = Calendar.getInstance(); 
+		calendar.setTime(date);
+		
+		strDate = sdf.format(calendar.getTime());
+		
+		return strDate;
+	}
+----------------
+	/**
+	 * Transform a Date into a String with the given format
+	 * 
+	 * @param dateToFormat
+	 * @param format
+	 */
+	public static String getFormatedDate(Date dateToFormat, String format){
+		SimpleDateFormat form = new SimpleDateFormat(format); // attention n'est pas threadsafe.
+		return form.format(dateToFormat);
+	}
+	--------------------------------
+	/**
+	 * 
+	 * <strong>Object</strong> supposed to convert all kind of objects to appropriate string
+	 *
+	 * @author Duverge Laurent
+	 * @since 19 nov. 09
+	 * @param an Object that can be null or a string or a BigDecimal
+	 * @return String value of the object
+	 * @throws Exception
+	 */
+	public static String fieldToString(Object a) throws Exception
+	{
+//		System.out.println(a.getClass().getCanonicalName());
+		String b = Constants.EMPTY;
+		
+		if (a.getClass().isInstance(new String())) linkinstanceof
+		{
+			b = (String)a;
+		}
+		else if (a ==null)
+		{
+			b=Constants.NULL;
+		}
+		else if (a.getClass().getCanonicalName().contains("BigDecimal"))
+		{
+			b = ((BigDecimal)a).toString();
+		}
+		b=b.equals(Constants.NULL)?Constants.EMPTY:b;
+		return b;
+	}
+	--------------------------------
+	/**
+	 * 
+	 * <strong>Object</strong> convert a list of string into something like "'a','b','c'" (pour les in  pour faire des in , pour faire un in )
+	 StringUtils.collectionToDelimitedString(uneListeDeString, "toto") // toto est le separateur.	 
+	 Avant je faisais comme ça:
+	 * @author Duverge Laurent
+	 * @since 19 nov. 09
+	 * @param parametre1 Saisir explication du paramètre 1. Au moins un caractère dont espace.
+	 * @return Saisir explication de ce que renvoi la methode Exemple Saisir exemple renvoit
+	 * @throws typeException commentaire
+	 */
+    	public static String convertListToSqlInCriteria(List<String> valueList)throws Exception
+    	{
+    		StringBuffer ipns = new StringBuffer();
+    		String ret=Constants.EMPTYQUOTES;
+    		if (valueList.size()>0)
+    		{
+    		ipns.append("'");
+    		for (String ipn: valueList)
+    		{
+    			ipns.append(ipn);
+    			ipns.append("','");
+    		}
+    		int size = ipns.toString().length();
+    		ret= ipns.toString().substring(0,size-2);
+    		}
+    		return ret;
+    	}
+    }
+ou bien ca: 
+        sql.append("DELETE FROM R0813_PREAVIS WHERE R0813IDPARENT IN (");
+        
+        			for (int i = 0; i < preNoticeIds.length; i++) {
+        				sql.append((i > 0) ? ",?": "?");
+        			}
+        
+        			sql.append(")");
+--------------------------------
+pour supprimer les doublons d'une liste: (c'est pas forcement LinkedList ca peut etre une autre type de liste)
+			public LinkedList removeDuplicates(LinkedList liste)
+				{
+				    Set set = new HashSet() ;
+				    set.addAll(liste) ;
+				    LinkedList distinctList = new LinkedList(set) ;
+				    return distinctList;
+				}
+				pour etre sur que ca marche sur des objets il faut  override equals and hashcode for your class
+				sinon faire
+          				private static List<EmployeeReport> duplicateDeletion(List<EmployeeReport> warnings) {
+          		java.util.Vector<String> matcles = new Vector(warnings.size());
+          			Iterator it = warnings.iterator();
+          			while (it.hasNext())
+          			{
+          				EmployeeReport sce = (EmployeeReport)it.next();
+          				if (matcles.contains(sce.getEmployeeId().getMatcle()))
+          				{
+          					it.remove();
+          				}
+          				else
+          				{
+          					matcles.add(sce.getEmployeeId().getMatcle());
+          				}
+          
+          			}
+          			return warnings;
+          		}
+	Autre facon plus moche:pour supprimer les doublons d'une liste 
+            	java.util.Vector vecResD = cmd.getVecResult() ;			
+            			java.util.Vector vecRes =null;
+            			// suppression doublons à faire en java
+            			if (vecResD!=null && vecResD.size()>1)
+            			{
+            				vecRes = new Vector(vecResD.size());
+            				Iterator it = vecResD.iterator();
+            				String prevId="";
+            				while (it.hasNext())
+            				{
+            					SceInf sce = (SceInf)it.next();
+            					if (!prevId.equals(sce.getId()))
+            					{
+            						vecRes.add(sce);
+            					}
+            					prevId=sce.getId();
+            				}
+            			}
+            			// fin suppression doublons
+            			
+				--------------------------------
+pour zipper un fichier:
+													static final int BUFFER = 2048;
+														byte data[] = new byte[BUFFER];
+														public void createArchive (String excelFolder, String fileName, String zipFolder, String zipName) throws FileNotFoundException {
+															FileOutputStream destination = new BufferedOutputStream(new FileOutputStream(newFile(zipFolder + File.separator(c'est le slash adequat separateur) + zipName))); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
+															BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(destination);
+															ZipOutputStream zipOutputStream = new ZipOutputStream(bufferedOutputStream);
+															zipOutputStream.setMethod(ZipOutputStream.DEFLATED);
+															zipOutputStream.setLevel(9);
+															File file = new File(excelFolder + fileName);		
+															FileInputStream fileInputStream = new FileInputStream(file);
+															BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream, BUFFER);
+															ZipEntry zipEntry = new ZipEntry(fileName);
+															try {
+																zipOutputStream.putNextEntry(zipEntry);
+																int count;
+																while((count = bufferedInputStream.read(data, 0, BUFFER)) != -1) {
+																	zipOutputStream.write(data, 0, count);
+																}
+																zipOutputStream.closeEntry();
+																bufferedInputStream.close();
+																zipOutputStream.close();
+															} catch (IOException e) {
+																e.printStackTrace();
+															}
+														}
+pour dezipper un fichier:
+        private void Unzip(File aspFile, File destFolder) throws Exception 
+      	{
+      		try 
+      		{
+      			BufferedOutputStream dest = null;
+      			FileInputStream fis = new FileInputStream(aspFile);
+      			ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
+      			ZipEntry entry;
+      			while((entry = zis.getNextEntry()) != null) 
+      			{
+      				log.debug("Laurent: extracting: "  +entry + " to: " + destFolder.getPath().concat(File.separator.concat(entry.getName())));
+      				int count;
+      				byte data[] = new byte[BUFFER];
+      				// write the files to the disk
+      				FileOutputStream fos = new FileOutputStream(destFolder.getPath().concat(File.separator.concat(entry.getName()))); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
+      				dest = new BufferedOutputStream(fos, BUFFER);
+      				while ((count = zis.read(data, 0, BUFFER))!= -1) 
+      				{
+      					dest.write(data, 0, count);
+      				}
+      				dest.flush(); //Flushes this output stream and forces any buffered output bytes to be written out.
+      				dest.close();
+      			}
+      			zis.close();
+      
+      		}
+      		catch (Exception e)
+      		{
+      			throw e;
+      		}
+      	}
+on peut avoir un access denied ou access refuse  acces refuse Accès refuse on fait:
+                    FileInputStream fileInputStream = new FileInputStream(file); c parce que file est un repertoire je crois...
+pour copier un repertoire de manière recursive:
+    FileUtils.copyDirectory(srcDir, destDir) (de apache: <dependency>	<groupId>org.apache.commons</groupId>	<artifactId>commons-io</artifactId>	<version>1.3.2</version></dependency>            ) 
+Pour zipper un repertoire de maniere recursive: 
+                                  	public void startCreateArchive(String folderToZip, String pathOfZipFileToCreate) throws Exception
+                                  	{
+                                  	   //create a ZipOutputStream to zip the data to 
+                                      ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(pathOfZipFileToCreate)); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
+                                  	zos.setMethod(ZipOutputStream.DEFLATED);
+                                  	zos.setLevel(9);
+                                      //assuming that there is a directory named inFolder (If there 
+                                      //isn't create one) in the same directory as the one the code runs from,
+                                      //call the zipDir method 
+                                      createArchive(folderToZip, zos); 
+                                      //close the stream 
+                                      zos.close();
+                                  	}
+                                  	private void createArchive (String dir2zip, ZipOutputStream zos) {
+                                  		{ 
+                                  			  try 
+                                  			   { 
+                                  			        //create a new File object based on the directory we have to zip File    
+                                  			           File zipDir = new File(dir2zip); 
+                                  			        //get a listing of the directory content 
+                                  			        String[] dirList = zipDir.list(); 
+                                  			        byte[] readBuffer = new byte[2156]; 
+                                  			        int bytesIn = 0; 
+                                  			        //loop through dirList, and zip the files 
+                                  			        for(int i=0; i<dirList.length; i++) 
+                                  			        { 
+                                  			            File f = new File(zipDir, dirList[i]); 
+                                  			        if(f.isDirectory()) 
+                                  			        { 
+                                  			                //if the File object is a directory, call this 
+                                  			                //function again to add its content recursively 
+                                  			            String filePath = f.getPath(); 
+                                  			            createArchive(filePath, zos); 
+                                  			                //loop again 
+                                  			            continue; 
+                                  			        } 
+                                  			            //if we reached here, the File object f was not a directory 
+                                  			            //create a FileInputStream on top of f 
+                                  			            FileInputStream fis = new FileInputStream(f); 
+                                  			            //create a new zip entry 
+                                  			        ZipEntry anEntry = new ZipEntry(f.getPath()); 
+                                  			            //place the zip entry in the ZipOutputStream object 
+                                  			        zos.putNextEntry(anEntry); 
+                                  			            //now write the content of the file to the ZipOutputStream 
+                                  			            while((bytesIn = fis.read(readBuffer)) != -1) 
+                                  			            { 
+                                  			                zos.write(readBuffer, 0, bytesIn);
+                                                        a titre d'exemple:pour convertir en char: si strContent est un StringBuffer: strContent.append((char) bytesIn);  
+                                  			            } 
+                                  			           //close the Stream 
+                                  			           fis.close(); 
+                                  			    } 
+                                  			} 
+                                  			catch(Exception e) 
+                                  			{ 
+                                  			    //handle exception 
+                                  			} 
+                                  
+                                  
+                                  	}
+                                  	}
+--------------------------------
+pour verifier que tout est en Maj Majuscules pas minuscules:
+                        public boolean isAllUpper(String string) throws Exception {
+                        		boolean ret=false;
+                        		for (int i=0; i<string.length(); i++)
+                        		{
+                        			if (Character.isUpperCase(string.charAt(i)))
+                        			{
+                        				ret=true;
+                        				
+                        			}
+                        			else if (!Character.isLetter(string.charAt(i)))
+                        			{
+                        				ret=true;
+                        			}
+                        			else if (Character.isSpaceChar(string.charAt(i)))
+                        			{}
+                        			else
+                        			{
+                        				ret=false;
+                        				break;
+                        			}
+                        		}
+                        			
+                        		return ret;
+                        	}
+
+pour supprimer tous les caractères non ascii(chelous):
+            String convertToASCII(String toTrim) throws Exception
+            	{
+            		CharsetEncoder e = Charset.forName("US-ASCII").newEncoder(); 
+            		StringBuilder ret = new StringBuilder();
+            		char[] a = toTrim.toCharArray();
+            		for(int i =0; i<a.length; i++)
+            		{
+            			if (e.canEncode(a[i]))
+            			{
+            				ret.append(a[i]);
+            			}
+            		}
+            				return ret.toString();
+            	}                        	
+pour supprimer les caracteres trop chelous d'un string:
+              premiere methode:
+              public String removeAllNonChar(String string) throws Exception 
+                      	{
+                      		StringBuffer ret = new StringBuffer();
+                      		for (int i =0; i<string.length(); i++)
+                      		{
+                      			if (Character.isLetter(string.charAt(i)))
+                      			{
+                      				ret.append(string.charAt(i));
+                      			}
+                      		}
+                      		return ret.toString();
+                      	}
+               deuxeme methode: 
+										/**
+										 * <strong>Objectif</strong> Supprimer les caractères que le parseur XML ne pourras pas supporter
+										 * @author Duverge Laurent
+										 * @since 16 juil. 08
+										 * @param String donnee a traitee: on supprime les char de type 15
+										 * @return Un string sans les caracteres mal supportes
+										 */
+										public static String removeCharType15(String data)
+										{
+											StringBuffer result=new StringBuffer();
+											char[] chars = data.toCharArray();
+											for (int i=0;i<chars.length;i++)
+											{
+												if(Character.getType(chars[i])!=15) result.append(chars[i]);
+											}
+											return result.toString();
+										}
+__________________
+pour detecter supprimer tous les caracteres non iso: 
+   public boolean hasAccentuatedChar(String string) {
+      		   String sSansAccent;
+      		   StringBuffer sb = new StringBuffer("&'(-_ç)=}]@^`|[|{\\\"'^$£¨ùµ*%!§:/;.,?<>");
+      		   for (int i =0; i<sb.length(); i++)
+      		   {
+      			   if (string.indexOf(sb.charAt(i))>-1) return true;
+      		   }
+      		   
+      		try 
+      		{
+      			sSansAccent = new String(string.getBytes(), "US-ASCII" );
+      		}
+      		catch (UnsupportedEncodingException e) 
+      		{
+      			return true;
+      		}
+      		   if (sSansAccent.equals(string))   return false; 
+      		   else return true;
+      	}
+supprimer les accents:
+		public String removeAccents(String var) 
+		{
+			logger.debug("withAccent: "+var);
+	        StringBuilder sb = new StringBuilder(var.length());
+	        var = Normalizer.normalize(var, Normalizer.Form.NFD);
+	        logger.debug("normalized: "+var);
+	        for (char c: var.toCharArray()) {
+	            if (c <= '\u007F') sb.append(c);
+	        }
+	        logger.debug("withoutAccent: "+sb.toString());
+	        return sb.toString();
+		}
+
+      	
+--------------------------------
+pour avoir le numero de la semaine en fonction d'une date.
+    * si null est passe , la date du jour est prise en compte
+    * @param madate
+    * @return int (numero de semaine de l'annee) // ou possibilite d'avoir numero du jour de la semaine
+    */
+   public static final int getNosem(Date madate) {
+       /*
+       Pour faire des tests:
+       GregorianCalendar toto = new GregorianCalendar(2010,0,4);
+       madate= toto.getTime();*/
+       int result;
+       Calendar calendar = Calendar.getInstance();
+       calendar.setLenient(false);
+
+       try{
+           calendar.setMinimalDaysInFirstWeek(4);
+           calendar.setFirstDayOfWeek(Calendar.MONDAY);
+           calendar.setTimeInMillis(madate.getTime());
+           result = calendar.get(Calendar.WEEK_OF_YEAR);// ou DAY_OF_WEEK si on veut avoir le jour de la semaine
+       } catch(IllegalArgumentException iAE) {
+           result = calendar.get(Calendar.WEEK_OF_YEAR);// ou DAY_OF_WEEK si on veut avoir le jour de la semaine
+       } catch(Exception e) {
+           result = calendar.get(Calendar.WEEK_OF_YEAR); // ou DAY_OF_WEEK si on veut avoir le jour de la semaine
+       }
+       return result;       }
+--------------------------------
+pour envoyer un mail avec une piece jointe: Plutot que ca, avec spring c'est plus facile. Voir http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mail.html
+import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeUtility;
+
+	    // Creation d'un message
+	    Properties props = new Properties();
+			props.put("mail.smtp.host", mailSmtp); // ou mailSmtp: wsmtp.renault.fr
+			props.put("mail.debug", "true"); // si besoin quand ca marche pas
+			
+			Session session = Session.getDefaultInstance(props, null);
+			session.setDebug(true); // pour comprendre pourquoi ca ne marche pas sinon mettre:
+			session.setDebug(false);
+	    Message messageAdm = new MimeMessage (session);
+	    // Modification de l'expediteur
+	    messageAdm.setFrom (new InternetAddress (from));
+	    // Modification du destinataire
+	    String AdressMailAdmin = AdminIterator.next().toString();
+	    InternetAddress [] addressadm =  {new InternetAddress (AdressMailAdmin)};
+	    messageAdm.setRecipients (Message.RecipientType.TO, addressadm);
+	    // Modification du sujet
+	    messageAdm.setSubject (subjectadm);
+	    attention: il se peut qua cause de l'environnement le header dont le subjet soit mal encode et on a des choses du style =?ANSI_X3.4-1968?Q?GDV-_Demande_de_validation_d'entr=3Fe_d'un_visiteur?= 
+      dans ce cas peut etre fair ca plutot 
+	     message.setSubject(MimeUtility.encodeText(monSubjectAvecDesCaracteresAccentues, "utf-8", null));
+	    //contenu message administrateur: corp du message
+	    String  contentadm = "Ci joint les logs du jour.";
+	    String Dir = DirMail.substring(0,21);
+	    Multipart multipart = new MimeMultipart();
+	    DataSource source = new FileDataSource(Dir+"logparse.txt");
+	//    if (fichier_analyser.exists())
+	    //   {
+	//      DataSource source3 = new FileDataSource(fichier_analyser);
+	    DataSource source3 = new FileDataSource(Dir+"logbord.txt");
+	    BodyPart messageBodyPart3 = new MimeBodyPart();
+	    messageBodyPart3.setDataHandler(new DataHandler(source3));
+	    messageBodyPart3.setFileName("logbord.txt");
+	    multipart.addBodyPart(messageBodyPart3);
+	//    }
+	    BodyPart messageBodyPart = new MimeBodyPart();
+	    BodyPart messageBodyPart2 = new MimeBodyPart();
+	    messageBodyPart2.setContent(contentadm.toString(), "text/plain"); (ou "text/html")
+	    
+	    
+	             si ça ne marche pas au format text/html essayer come ca: 
+                  			DataHandler.setDataContentHandlerFactory( new WecFonction().new UtlMailContentFactory() );
+                  			msg.setDataHandler(new DataHandler(new ByteArrayDataSource(message.toString(), "text/html")) );
+                  					//msg.setText(message);
+                  			msg.setSentDate(new java.util.Date());
+                        
+                        avec: 
+                              public class UtlMailContentFactory implements DataContentHandlerFactory {
+                              
+                              	public UtlMailContentFactory() {
+                              	}
+                              	public DataContentHandler createDataContentHandler( String parm1 ) {
+                              	if( parm1.equalsIgnoreCase( "text/plain") )
+                              	return new com.sun.mail.handlers.text_plain();
+                              	else if ( parm1.equalsIgnoreCase( "text/html" ) )
+                              	return new com.sun.mail.handlers.text_html();
+                              	else
+                              	return null;
+                              	}
+                              	}
+	    
+	    
+	    messageBodyPart.setDataHandler(new DataHandler(source));
+	    messageBodyPart.setFileName("logparse.txt");
+	    multipart.addBodyPart(messageBodyPart);
+	    multipart.addBodyPart(messageBodyPart2);
+	    // si le fichier est tronque a la reception (truncated tronque) utiliser cette methode:
+ 					 MimeBodyPart mbp2 = new MimeBodyPart();
+					 FileDataSource fds = new FileDataSource(attachment);
+					 mbp2.setDataHandler(new DataHandler(fds));
+					 mbp2.setFileName(attachment.getName());
+					 multipart.addBodyPart(mbp2);
+	  //FIN si le fichier est tronque a la reception (truncated tronque) utiliser cette methode:
+	    messageAdm.setContent(multipart);
+	    Transport.send (messageAdm);
+	    cat.info("Message envoye a administrateur "+AdressMailAdmin);
+pour envoyer un mail simple avec javax.mail et qu'on a eu un message d'erreur de non authentification ou probleme startttssslchaispas quoi:
+					Properties props = new Properties();
+					props.put("mail.smtp.host", "smtp.googlemail.com");
+					props.put("mail.smtp.starttls.enable", "true");
+//					 props.put("mail.user", "kanailaurent@gmail.com");
+//					 props.put("mail.password", "calottezoclos");
+					props.put ("mail.smtp.auth","true");
+					props.setProperty("mail.smtp.submitter", authenticator.getPasswordAuthentication().getUserName());
+					//properties.setProperty("mail.smtp.port", "25");
+					javax.mail.Session mailSession =javax.mail.Session.getDefaultInstance(props, authenticator);
+					avec
+          static MyAuthenticator authenticator = new StartParse().new MyAuthenticator();
+              	private class MyAuthenticator extends javax.mail.Authenticator 
+               	 {
+               		 private PasswordAuthentication authentication;
+               		 public MyAuthenticator() 
+               		 {
+               		 String username = "kanailaurent@gmail.com";
+               		 String password = "calottezoclos";
+               		 authentication = new PasswordAuthentication(username, password);
+               		 }
+               		 protected PasswordAuthentication getPasswordAuthentication() 
+               		 {
+               		  return authentication;
+               		 }
+               	 }					
+--------------------------------
+pour envoyer un mail simple avec apache mail: librairie dispo ici: http://commons.apache.org/email/download_email.cgi
+      Email email = new SimpleEmail();
+      email.setHostName("smtp.googlemail.com");
+      email.setSmtpPort(465);
+      email.setAuthenticator(new DefaultAuthenticator("username", "password"));
+      email.setSSLOnConnect(true);
+      email.setFrom("user@gmail.com");
+      email.setSubject("TestMail");
+      email.setMsg("This is a test mail ...:-)");
+      email.addTo("foo@bar.com");
+      email.send();
+
+convertir une date en string:
+						static Date actuelle = new Date();
+						static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // attention n'est pas threadsafe.
+						String dat = dateFormat.format(actuelle);
+exemple genial qui marche de fonction pour formater une date: 
+					 public static String formatDate(String date, String startPattern("dd/MM/yy"), String endPattern("yyyy-MM-dd")) throws Exception
+						{
+							SimpleDateFormat formatter = new SimpleDateFormat(startPattern); // attention n'est pas threadsafe.
+							Date after = formatter.parse(date);
+							SimpleDateFormat dateFormat = new SimpleDateFormat(endPattern);
+							String dat = dateFormat.format(after);
+							log.debug("formatter before: " + date + "after:"+dat);
+							return dat;
+						}
+exemple pour autoformater une string de date en DATE dans tous les cas possibles de pattern de date qui arrivent: (trois methodes super utiles a reutiliser dans un Utils)
+								private static String formatDate(String date, String startPattern, String endPattern) throws Exception
+									{
+										SimpleDateFormat formatter = new SimpleDateFormat(startPattern);
+										Date after = formatter.parse(date);
+										SimpleDateFormat dateFormat = new SimpleDateFormat(endPattern);
+										String dat = dateFormat.format(after);
+										log.debug("formatter before: " + date + "after:"+dat);
+										return dat;
+									}
+									private static String formatDate(String date, String endPattern) throws Exception
+									{
+										
+										Date after = autoParseDate(date);
+										SimpleDateFormat dateFormat = new SimpleDateFormat(endPattern);
+										String dat = dateFormat.format(after);
+										log.debug("formatter before: " + date + "after:"+dat);
+										return dat;
+									}
+									
+									public static Date autoParseDate(String date) throws Exception
+									{
+										Date ret = new Date();
+										if (date!=null && (date.length()==8 || date.length()==10))
+										{
+											try
+											{
+												SimpleDateFormat formatter = new SimpleDateFormat();
+												
+												if(date.length()==8) formatter = new SimpleDateFormat("dd/mm/yy");
+												else if(date.length()==10) formatter = new SimpleDateFormat("yyyy-MM-dd"); ou HH:mm:ss dd/MM/yyyy
+												try
+												{
+													ret = formatter.parse(date);	
+												}
+												catch (Exception e)
+												{
+													formatter = new SimpleDateFormat("dd/mm/yyyy");
+													try
+													{
+														ret= formatter.parse(date);
+													}
+													catch(Exception e1)
+													{
+														throw e1;
+													}
+												}
+											}
+											catch (Exception e)
+											{
+												StringWriter sw = new StringWriter();
+												PrintWriter pw = new PrintWriter(sw, true);
+												e.printStackTrace(pw);
+												pw.flush(); //Flushes this output stream and forces any buffered output bytes to be written out.
+												sw.flush();
+												log.error(sw.toString());
+												throw e;
+											}
+										}
+										return ret;
+									}
+--------------------------------
+Pour formater un chiffre: taille zeros string 
+numberTest = 1;
+private static DecimalFormat  nf = new DecimalFormat("000" ); ou "00.000" ou "##.###" (dans ce dernier cas c pas pareil: je crois que les zero apres virgules ne s'affichent pas si c'est zero)
+            decimalformat peut etre remplacé par string.format pour ecrire les millions  String.format("%.2fM", theNumber/ 1000000.0); ou String.format("%,.2f",totalNPV) LINKStringFOrmatNumb 
+String retour =code.concat(nf.format(numberTest));
+retour va etre egal à 001
+--------------
+erreurs exception java: faire un e.printStackTrace() linkgetStringStackTrace pour avoir plus de details sur l'erreur java. afficher le stacktrace depuis java9 utiliser StackWalker
+		mais pour le printer dans un log faire: 
+					StringWriter sw = new StringWriter();
+	        PrintWriter pw = new PrintWriter(sw, true);
+	        e.printStackTrace(pw);
+	        pw.flush();
+	        sw.flush(); //Flushes this output stream and forces any buffered output bytes to be written out.
+	        log.error(sw.toString());
+   ou mieux si on utilise log4j:
+   	logger.error(ex, ex); ca fait un stacktrace voir afficher imprimer
+---------------------------
+	/**
+	 * 
+	 * @param date
+	 * @return String: returns the current date in the format: YYYYSS 
+	 */
+	public static String getDateForFileName(Date date) {
+		GregorianCalendar calendar = new GregorianCalendar();
+		if (date != null) {
+			calendar.setGregorianChange(date);
+		}
+		return (""+calendar.get(Calendar.YEAR)+""+precedByZerosForLenght(calendar.get(Calendar.WEEK_OF_YEAR),2));
+------------------------------
+	/**
+	 * Return a string representation of a java.sql.timestamp object 
+	 */
+	public static String sqlTimestampToString (Object date)  {
+		try {
+			if (null == date) {
+				return "";
+				
+			} else{
+				Timestamp time = (Timestamp) date;
+				return time.toString();
+			}
+			
+		} catch (Exception e) {
+			return "";
+		}
+	}
+------------------------------------
+	/**
+	 * Return a string representation of a java.sql.time object
+	 */
+	public static String sqlTimeToString (Object date)  {
+		try {
+			if (null == date) {
+				return "";
+				
+			} else{
+				Time time = (Time) date;
+				return time.toString();
+			}
+			
+		} catch (Exception e) {
+			return "";
+		}
+	}
+------------------------------------
+	/**
+	 * Return a string representation of a a number and concat "0" in the beggining of this string returned
+	 * so that the string have the lenght of "lenght" parameter
+	 * @param date Object
+	 * @return a string representation of a int
+	 */
+	public static String precedByZerosForLenght(int number , int lenght )// regarder plutot DecimalFormat
+	{                                                                    
+		String numberWithZeros=Integer.toString(number);                   
+		while (numberWithZeros.length()<lenght)                            
+		{                                                                  
+			numberWithZeros = "0".concat(numberWithZeros);                   
+		}                                                                  
+		return numberWithZeros;                                            
+	}                                                                    
+------------------------------------
+	/**
+	 * Get string representation for the current year and month YYYYMM
+	 */
+	public static String getYearMonth()  throws Exception {
+		 StringBuffer yearmonth = new StringBuffer();
+		 
+		 //add 1 because months begin at 0 (0:jan, 1:feb...)
+		 int month = Calendar.getInstance().get(Calendar.MONTH)+1;
+		 // add a zero before month value 
+		 // ex: for May instead of 5 we got 05 as month
+		 String mois = (month < 10)? ("0" + month): ("" + month); 
+		 
+		 yearmonth.append(Calendar.getInstance().get(Calendar.YEAR));
+		 yearmonth.append(mois);
+		 
+		 return yearmonth.toString();
+	}
+------------------------------
+/**
+	 * <strong>Sort a strings array in lexicographical order</strong>
+	 */
+	public static String [] sortElements(String [] files) {
+		
+		List<String> list = new ArrayList<String> (Arrays.asList(files));
+		
+		Collections.sort(list);
+		
+		Object [] objs = list.toArray();
+		String [] result = new String [objs.length];
+		int i=0;
+		
+		for (Object obj: list) {
+			result [i++] = (String) obj;
+		}
+		
+		return result;
+		
+	}
+---------------------------
+	/**
+	 * Copy a file from srcPath to dstPath. 
+	 * 
+	 * @param srcPath
+	 * @param dstPath
+	 * 
+	 * @return true if the copy is done.
+	 * 
+	 * @author SEI
+	 * 
+	 */
+	public static boolean copyFile(String srcPath, String dstPath) throws Exception {
+		boolean isDone = false;
+		
+        // Create channel on the source
+        FileChannel srcChannel = new FileInputStream(srcPath).getChannel();
+    
+        // Create channel on the destination
+        FileChannel dstChannel = new FileOutputStream(dstPath).getChannel(); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
+    
+        // Copy file contents from source to destination
+        dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
+    
+        // Close the channels
+        srcChannel.close();
+        dstChannel.close();
+	        
+		return isDone;
+	}
+---------------------------
+	/**
+	 * Apply a pattern to a number value.   
+	 * 
+	 * 
+	 * @param number
+	 * @param pattern
+	 * @return the number formatted 
+	 * 
+	 */
+	public static String convertToPercentFormat(double number, String pattern) {
+		DecimalFormat df = new DecimalFormat(pattern, new DecimalFormatSymbols(Locale.US));
+		String numberFormatted = df.format(number);
+		return numberFormatted;
+	}
+--------------------	
+pour convertir un chiffre 1000000000 en 1 000 000 000 mettre des espaces: separateur de millier: 
+      	public static String addSpacesForThousand(String string) {
+      		String ret = "";
+      		String string2 = "";
+      		try
+      		{
+      				int i = string.indexOf(",");
+      				if (i!=-1)
+      					{
+      					string2 = string.substring(0,string.indexOf(","));
+      					}
+      				else string2 = string;
+      				Long a = Long.parseLong(string2);
+      				 NumberFormat nf = NumberFormat.getInstance();
+      				 				 NumberFormat nf = NumberFormat.getInstance(Locale.FRENCH); // c mieux de faire ca!!!!
+      			        ret =  nf.format(a).toString();
+      			        if (i!=-1) ret=ret.concat(",").concat((string.substring(i+1,string.length())));
+      			   ret = ret.replace(' ', '\u00a0');
+      		}
+      		catch(Exception e)
+      		{
+      			ret=string;
+      		}
+      		return ret;
+      	}
+
+pour remplacer les points par des virgules dans un chiffre: 
+          public static String replaceDotByCommaForNumbers(String data)
+          	{
+          		try
+          		{
+          			data= data.trim();
+          			boolean isNumber = true;
+          			String[] split = data.split("\\.");
+          			StringBuffer newData = new StringBuffer();
+          			for (int i = 0; i < split.length; i++) 
+          			{
+          				if (!isInteger(split[i])) {	
+          				isNumber=false;
+          				}
+          				newData.append(split[i]);
+          				if (i!=split.length-1)
+          				{
+          				newData.append(",");
+          				}
+          			}
+          			if (isNumber)
+          			{
+          				data = newData.toString();
+          			}
+          		}
+          		catch (Exception e)
+          		{
+          			logger.error(e,e);
+          		}
+          		return data;
+          	}
+	/**
+	* recursively delete directories repertoire safely 
+	* @param dir the directory to remove 
+	*/
+    private static boolean deleteDir(File dir) {
+        File[] files = dir.listFiles();
+        if (files != null) { // ou files.lenght >0?
+            for (File file: files) {
+                boolean deleted = file.delete(); // voir supprimer un fichier
+                if (!deleted) {
+                    // directory
+                    if (file.isDirectory()) deleteDir(file);
+                    // otherwise, there's nothing else we can do
+                }
+            }
+        }
+        return dir.delete(); // voir supprimer un fichier  
+    }
+-----------------------
+traitement de fichiers : fichier :
+Pour ecrire des lignes dans un fichier:
+/** Write fixed content to the given file. */
+  void write() throws IOException  {
+    log("Writing to file named " + fFileName + ". Encoding: " + fEncoding);
+    Writer out = new OutputStreamWriter(new FileOutputStream(fFileName), fEncoding); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
+    try {
+      out.write(FIXED_TEXT);
+    }
+    finally {
+      out.close();
+    }
+  }
+// AVANT: mais pb encodage ci-dessous
+//creation ou ajout dans le fichier texte
+		try {
+		// attention fileWriter et FileReader utilisent l'encodage du systeme!!! donc pas bon!
+			FileWriter fw = new FileWriter (fichier);
+			BufferedWriter bw = new BufferedWriter (fw);
+			PrintWriter fichierSortie = new PrintWriter (bw); 
+				fichierSortie.println (chaine+"\n test de lecture et ecriture !!"); 
+			fichierSortie.close();
+			System.out.println("Le fichier " + fichier + " a ete cree!"); 
+		}
+		catch (Exception e){
+			System.out.println(e.toString());
+		}		
+
+-----------
+Pour lire les lignes d'un fichier: 
+FileInputStream lire = new FileInputStream(fichier); // fichier est un File
+			BufferedReader reader = new BufferedReader(new InputStreamReader(lire));
+			NON!!! il faut utiliser les BufferedInputStream et output stream parce que buffered reader encode! // en fait si ca marche pour les fichiers UTF-8 à lire (utiliser mark et reset si besoin faire l'equivalent de pos de RandomAccessFile mais bon courage:-))
+			BufferedInputStream reader = new BufferedInputStream(lire);
+			String ligne;
+			while ((ligne=reader.readLine())!=null){
+				System.out.println(ligne);
+			}
+			reader.close(); 
+pour lire les lignes d'un fichier en conservant l'encodage parser un fichier:
+
+  /** Read the contents of the given file. */
+  void read() throws IOException {
+    log("Reading from file.");
+        String request = new Scanner(new ClassPathResource("json/request.json").getFile()).useDelimiter("\\Z").next(); // voir regexp LINKçeeçeeçregexpçeeçeeç
+        scanner.useDelimiter(expessionreguliere);// a partir de maintenant quand je vais faire scanner.next() et scanner.hasNext() il va se baser sur expressionreguliere pour passer au suivant
+        scanner.useDelimiter(System.getProperty("line.separator")); // pour delimiter selon retour chariot
+    AVANT:
+    String NL = System.getProperty("line.separator"); // a partir de java 5.1 on peut mettre "%n" // recupère prop de la jvm voir LINKù*ù
+    StringBuilder text = new StringBuilder();
+    Scanner scanner = new Scanner(new FileInputStream(fFileName), fEncoding);
+    try {
+      while (scanner.hasNextLine()){
+        text.append(scanner.nextLine() + NL);
+      }
+    }
+    finally{
+      scanner.close();
+    }
+    log("Text read in: " + text);
+  }
+Pour utiliser readLine() qui permet de lire un fichier encode en utf8 et conserver son encodage: 
+        	/** Reads UTF-8 character data; lines are terminated with '\n' */ 
+        	public static String readLine(InputStream in) throws IOException 
+        	{
+        		ByteArrayOutputStream buffer = new ByteArrayOutputStream(); 
+        		while (true) 
+        		{ 
+        			int b = in.read();
+        			if (b < 0) 
+        			{
+        				//throw new IOException("Data truncated");
+        				break;
+        			}
+        			if (b == 0x0A) 
+        			{
+        				break; 
+        			}
+        			buffer.write(b); 
+        		}
+        		if (buffer.size()==0)
+        		{
+        			return null;
+        		}
+        		else
+        		{
+        			return new String(buffer.toByteArray(), "UTF-8");
+        		}
+        	}
+proprietes : properties :
+pour lire charger recuperer les properties proprietes d'un fichier de configuration dans un batch java: (voir aussi ci dessous PropertyResourceBundle) 
+public static void loadProperties () throws Exception {
+		InputStream is = MaClaseActuelle.class.getClassLoader().getResourceAsStream (Constants.PROPERTIES_FILE); // KO en java9 voir LINKgetRes9 le fichier de propriete doit etre dans le classpath verifier avec System.out.println("CLASSPATH: " + System.getProperty("java.class.path")); System.out.println("ClassLoader resource path: " + HRParameters.class.getClassLoader().getResource("hr-openhr-for-ta.properties")); System.out.println("ClassLoader resource path: " + ClassLoader.getSystemResourceAsStream("hr-openhr-for-ta.properties"));
+		ou                                                    "." on peut mettre ça. 
+    String path = this.getClass().getClassLoader().getResource("users.xml").getPath(); // KO en java9 voir LINKgetRes9. pour avoir le path d'un fichier de propriete sous resources
+		if (null == is ) {
+			throw new Exception ("Cann't find properties file");
+		}
+		Properties properties = new Properties();
+		properties.load(is);
+		PtlInitialize.commandFile = properties.getProperty("command").trim();
+		PtlInitialize.filelock = properties.getProperty("lock").trim();
+		PtlInitialize.interval = Long.parseLong(properties.getProperty("lock_interval").trim());
+		on peut utiliser String toto = StrSubstitutor.replaceSystemProperties("un texte avec ${uneproprietesysteme} blabla"); // pour resoudre les properties proprietes systeme environnement ${catalina.out} par exemple
+		      est dans
+		                <dependency>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                    <version>3.5</version>
+                    </dependency>
+		ATTENTION! NE PAS OUBLIER DE FERMER TOUT (close) A LA FIN et (peut etre) d'en faire un singleton sinon on va avoir l'erreur: too many file opened
+		
+si ces proprietes sont externalisees du classpath: 
+FileInputStream fis = new FileInputStream("c:/temp/mybundle.txt"); //si je met juste un nom de fichier il va le chercher au meme niveau que le jar qui est executé
+try {
+  PropertyResourceBundle configurations= new PropertyResourceBundle(fis); // aucun problème d'accent avec ça (sauf si html peutetre utiliser &eacute;) par contre les ":" (deux points)à gauche doivent etre remplaces par "\:"
+  buffer = configurations.getString("APP_NAME");
+} finally {
+  fis.close();
+}
+pour sauver ecrire dans le fichier properties proprietes: 
+    				FileWriter fw = new FileWriter (PATH);
+    				props.store(fw, "unCommentaireSertARien");
+	       			fw.close();
+
+pour ecrire un blob dans un fichier: (attention, si on arrive pas a lire le fichier peut etre qu'il a ete zippe avant d'etre mis dans la base? hahah)
+		public static void tableauDeBytesVersFichier (byte[] tableau, java.io.File fichier) throws Exception {
+			java.io.FileWriter f = new java.io.FileWriter(fichier);
+			//on itère sur chaque element, car il n'y a pas de fonction globale
+			for (int i = 0; i < tableau.length; i++)
+				f.write(tableau[i]);
+			f.close();
+		}
+Image -> blob: 
+            public void sauveIMG(String location, String name) throws Exception 
+            {
+              File monImage = new File(location);
+              FileInputStream istreamImage = new FileInputStream(monImage);
+              try 
+              {
+                PreparedStatement ps = conn.prepareStatement("insert into image (name, img) values (?,?)");
+                try 
+                {
+                    ps.setString(1, name);
+                    ps.setBinaryStream(2, istreamImage, (int) monImage.length());
+                    ps.executeUpdate();
+                }
+                finally 
+                {
+                  ps.close();
+                }
+              } 
+              finally 
+              {
+                istreamImage.close();
+              }
+            }
+blob -> Image:
+          public void chargeIMG(String name, String location) throws Exception
+          {
+            File monImage = new File(location);
+            FileOutputStream ostreamImage = new FileOutputStream(monImage); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
+                      
+            try
+            {
+              PreparedStatement ps = conn.prepareStatement("select img from image where name=?");
+          
+              try
+              {
+                ps.setString(1,name);
+                ResultSet rs = ps.executeQuery();
+                
+                try
+                {
+                  if(rs.next())
+                  {
+                	  InputStream istreamImage = rs.getBinaryStream("img");
+                
+                	  byte[] buffer = new byte[1024];
+                	  int length = 0;
+          	
+                	  while((length = istreamImage.read(buffer)) != -1)
+                	  {
+                	    ostreamImage.write(buffer, 0, length);
+          	  }
+            	}
+                }
+                finally
+                {
+                  rs.close();
+                }
+              }
+              finally
+              {
+                ps.close();
+              }
+            }
+            finally
+            {
+              ostreamImage.close();
+            }
+          }
+-------------------------------
 itext :
 Pour generer du pdf en java utiliser l'api Itext (signature possible) (possible faire du excell aussi)
-*********************************	
+*********************************
 poi : (la version qui marche et qui est homologuee chez Renault c'est 3.0.1)
 ATTENTION POI ne compte pas les colonnes (et lignes? ) vides dans son iteration
-    // si on veut renvoyer du serveur :
+    // si on veut renvoyer du serveur:
     		        	response.setContentType("application/vnd.ms-excel");
 								  response.setHeader("Content-Disposition", "attachment; filename=" + "WecExportCommentComp.xls");
 			exemple 1 d'utilisation (avec fonction excell) 
@@ -21278,7 +22800,7 @@ ATTENTION POI ne compte pas les colonnes (et lignes? ) vides dans son iteration
 											{
 												cell.setCellFormula(cols[j]); // (attention cols[j] ne doit pas depasser 255 char)
 												short nbcom =(short) cols[j].split(exelCar).length; //LINKs.sp.it 
-											exemples : 
+											exemples: 
         											cell.setCellFormula("IF(ISERROR(           M"+numrow+"-R"+numrow+   "),\"N/A\",    M"+numrow+"-R"+numrow+")");
         											cell.setCellFormula("IF(OR(ISBLANK(M"+numrow+"),ISBLANK(R"+numrow+")),\"N/A\",M"+numrow+"-R"+numrow+")");
         											cell.setCellFormula("OR(ISBLANK(M"+numrow+"),ISBLANK(R"+numrow+"))");
@@ -21327,7 +22849,7 @@ ATTENTION POI ne compte pas les colonnes (et lignes? ) vides dans son iteration
          		}
             value = new HSSFRichTextString(action.getElement().getIdentification().toString());
 		        row.getCell((short) Constants.ACTION_IDENTIFICA_COLNUM).setCellValue(value);
-  pour ecrire des cellules au format date :
+  pour ecrire des cellules au format date:
         				String lngdates="";
         				String simpleDateFormatlngdate="";
         				String exelCar="";
@@ -21362,11 +22884,11 @@ ATTENTION POI ne compte pas les colonnes (et lignes? ) vides dans son iteration
 									     cell.setCellStyle(csDate);
 									     cell.setCellValue(date1);
 							   }
-pour faire des formules excell : 
+pour faire des formules excell: 
     cell.setCellFormula("IF(M"+numrow+"<=L"+numrow+",\"OK\",IF(S"+numrow+"<=10,\"OK\",\"KO\"))");
   	cell.setCellFormula("IF(M"+numrow+">L"+numrow+",IF(M"+numrow+"<(R"+numrow+"+10),\"Pas de retard\",MIN((M"+numrow+"-L"+numrow+"),(M"+numrow+"-(R"+numrow+"+10)))),\"Pas de retard\")");
 pour lire un gros fichier avec poi :
-      ma classe main :
+      ma classe main:
                                     	        FileInputStream fin = new FileInputStream(new File("C:/temp/wec/jalonpanama.xls"));
                               	        //FileInputStream fin = new FileInputStream(new File("C:/temp/wec/test1.xml"));
                               	        // create a new org.apache.poi.poifs.filesystem.Filesystem
@@ -21557,7 +23079,7 @@ pour lire un gros fichier avec poi :
                               				break;
                               				 
 spreadsheet :
-pour ecire et lire un fichier excell spreadsheet : mais peut etre que c'est mieux d'utiliser jxl (non! ne pas utiliser jxl il est depasse par POI qui fait tout et en plus xlsx)
+pour ecrire et lire un fichier excell spreadsheet: mais peut etre que c'est mieux d'utiliser jxl (non! ne pas utiliser jxl il est depasse par POI qui fait tout et en plus xlsx)
 	Pour ecrire un fichier excell spreadsheet dans un fichier si on a un tableau de bytes (avec f1j11swing.jar)
 	public static void tableauDeBytesVersFichier (byte[] tableau, java.io.File fichier) throws Exception {
 			FileOutputStream out = new BufferedOutputStream(new FileOutputStream(fichier)); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
@@ -21680,1311 +23202,11 @@ pour retoucher un fichier excell et l'envoyer en response: avec f1j11swing.jar s
 					return null;
 					}
 					} 
-********************************* 
-LINKçeeçeeçregexpçeeçeeç	
-Pour utilisation des expressions regulieres conditionnelles avec sorte de callback en java pour trouver un caractère: regexp : attention !!! ca ne marche pas pareil sur unix: super galere donc eviter. Ruser avec Substring plutot
-ici on cherche des coommentaires: *
-private boolean contientCommentStart(String ligne) {
-        StringBuffer resultString = new StringBuffer();
-        String regexp="/\\*([A-Z])";
-		Pattern pattern = Pattern.compile(regexp); // le mettre en tete de classe en static final car ca bouffe memoire
-		Matcher matcher = pattern.matcher(ligne);
-		while (matcher.find()) {
-		  System.out.println(m.group(1)); // renvoit donc contenu de la premiere parenthese (commence par 1)
-          regexMatcher.appendReplacement(resultString, "replacement"); // ajoute dans resultString (le stringbuffer) en remplacant TOUT regexp par "remplacement" 
-		}
-        regexMatcher.appendTail(resultString); // ajoute la fin du texte dans resultString (le stringbuffer)
-	} 
-	autre exemple:
-	private boolean contient(String ligne) {
-		Pattern pattern = Pattern.compile("\\[COMP"); // le mettre en tete de classe en static final car ca bouffe memoire
-		Matcher matcher = pattern.matcher(ligne);
-		while (matcher.find()) {
-			return true;
-		}
-		return false;
-	}
-	exemples : (le design pattern de pspad: rempalcement avec $1.. marche!)
-	ici on remplace tous les chiffres colle a des chars par la meme chose separe par des espaces :
-	                    si whitespace mettre \\s (voir plus bas)
-            				if (string.matches(".*[0-9][a-z].*") || string.matches(".*[a-z][0-9].*"))
-            			{
-            				string = string.replaceAll("(.*[0-9])([a-z].*)", "$1 $2");
-            				string = string.replaceAll("(.*[a-z])([0-9].*)", "$1 $2");
-            				
-            			}
-	     Pattern pattern1 = Pattern.compile("//\\D{2,3}\\d+[_]"); cherche "//sdf5646540_" ou "//DF54455_"
-	 Summary of regular-expression constructs
-                            Construct 	Matches
-                             
-                            Characters
-                            x 	The character x
-                            \\ 	The backslash character
-                            \0n 	The character with octal value 0n (0 <= n <= 7)
-                            \0nn 	The character with octal value 0nn (0 <= n <= 7)
-                            \0mnn 	The character with octal value 0mnn (0 <= m <= 3, 0 <= n <= 7)
-                            \xhh 	The character with hexadecimal value 0xhh
-                            \uhhhh 	The character with hexadecimal value 0xhhhh
-                            \t 	The tab character ('\u0009')
-                            \n 	The newline (line feed) character ('\u000A')
-                            \r 	The carriage-return character ('\u000D')
-                            \f 	The form-feed character ('\u000C')
-                            \a 	The alert (bell) character ('\u0007')
-                            \e 	The escape character ('\u001B')
-                            \cx 	The control character corresponding to x
-                             
-                            Character classes
-                            [abc] 	a, b, or c (simple class)
-                            [^abc] 	Any character except a, b, or c (negation) ne contient pas
-                            [a-zA-Z] 	a through z or A through Z, inclusive (range)
-                            [a-d[m-p]] 	a through d, or m through p: [a-dm-p] (union)
-                            [a-z&&[def]] 	d, e, or f (intersection)
-                            [a-z&&[^bc]] 	a through z, except for b and c: [ad-z] (subtraction)
-                            [a-z&&[^m-p]] 	a through z, and not m through p: [a-lq-z](subtraction)
-                             
-                            Predefined character classes
-                            . 	Any character (may or may not match line terminators)
-                            \d 	A digit: [0-9]
-                               d+ c'est un chiffre nombre
-                            \D 	A non-digit: [^0-9]
-                            \s 	A whitespace character: [ \t\n\x0B\f\r] (exemple: Pattern.compile("\\s(W0[A-Z0-9]{3,6}\\.[TV][A-Z0-9]{2,11})\\s");)
-                      			       \\s c'est un espace \\s* c'est 0 ou x espaces
-                            \S 	A non-whitespace character: [^\s]
-                            \w 	A word character: [a-zA-Z_0-9]
-                            \W 	A non-word character: [^\w]
-                             
-                            POSIX character classes (US-ASCII only)
-                            \p{Lower} 	A lower-case alphabetic character: [a-z]
-                            \p{Upper} 	An upper-case alphabetic character:[A-Z]
-                            \p{ASCII} 	All ASCII:[\x00-\x7F]
-                            \p{Alpha} 	An alphabetic character:[\p{Lower}\p{Upper}]
-                            \p{Digit} 	A decimal digit: [0-9]
-                            \p{Alnum} 	An alphanumeric character:[\p{Alpha}\p{Digit}]
-                            \p{Punct} 	Punctuation: One of !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
-                            \p{Graph} 	A visible character: [\p{Alnum}\p{Punct}]
-                            \p{Print} 	A printable character: [\p{Graph}]
-                            \p{Blank} 	A space or a tab: [ \t]
-                            \p{Cntrl} 	A control character: [\x00-\x1F\x7F]
-                            \p{XDigit} 	A hexadecimal digit: [0-9a-fA-F]
-                            \p{Space} 	A whitespace character: [ \t\n\x0B\f\r]
-                             
-                            Classes for Unicode blocks and categories
-                            \p{InGreek} 	A character in the Greek block (simple block)
-                            \p{Lu} 	An uppercase letter (simple category)
-                            \p{Sc} 	A currency symbol
-                            \P{InGreek} 	Any character except one in the Greek block (negation)
-                            [\p{L}&&[^\p{Lu}]]  	Any letter except an uppercase letter (subtraction)
-                             
-                            Boundary matchers
-                            ^ 	The beginning of a line
-                            $ 	The end of a line
-                            \b 	A word boundary
-                            \B 	A non-word boundary
-                            \A 	The beginning of the input
-                            \G 	The end of the previous match
-                            \Z 	The end of the input but for the final terminator marche pas pour les retours chariot 
-                            \z 	The end of the input
-                             
-                            Greedy quantifiers
-                            X? 	X, once or not at all
-                            X* 	X, zero or more times
-                            X+ 	X, one or more times
-                            X{n} 	X, exactly n times
-                            X{n,} 	X, at least n times
-                            X{n,m} 	X, at least n but not more than m times
-                             
-                            Reluctant quantifiers
-                            X?? 	X, once or not at all
-                            X*? 	X, zero or more times
-                            X+? 	X, one or more times
-                            X{n}? 	X, exactly n times
-                            X{n,}? 	X, at least n times
-                            X{n,m}? 	X, at least n but not more than m times
-                             
-                            Possessive quantifiers
-                            X?+ 	X, once or not at all
-                            X*+ 	X, zero or more times
-                            X++ 	X, one or more times
-                            X{n}+ 	X, exactly n times
-                            X{n,}+ 	X, at least n times
-                            X{n,m}+ 	X, at least n but not more than m times
-                             
-                            Logical operators
-                            XY 	X followed by Y
-                            X|Y 	Either X or Y
-                            (X) 	X, as a capturing group
-                             
-                            Back references
-                            \n 	Whatever the nth capturing group matched
-                             
-                            Quotation
-                            \ 	Nothing, but quotes the following character
-                            \Q 	Nothing, but quotes all characters until \E
-                            \E 	Nothing, but ends quoting started by \Q
-                             
-                            Special constructs (non-capturing)
-                            (?:X) 	X, as a non-capturing group
-                            (?idmsux-idmsux)  	Nothing, but turns match flags on - off
-                            (?idmsux-idmsux:X)   	X, as a non-capturing group with the given flags on - off
-                            (?=X) 	X, via zero-width positive lookahead
-                            (?!X) 	X, via zero-width negative lookahead
-                            (?<=X) 	X, via zero-width positive lookbehind
-                            (?<!X) 	X, via zero-width negative lookbehind
-                            (?>X) 	X, as an independent, non-capturing group
---------
-pour spliter un string: decouper un string en plusieurs morceaux(tooken tocken toocken token separateur): on coupe là  ou il y a marque "blabla" en enlevant "blabla:
-si pattern.toString = "blabla" // pattern c pour le expression regulieres.. a eviter (voir pq ci dessus...)
-String[] split = ligne.split(pattern.toString());
-			for (int i = 0; i < split.length; i++) {
-				system.out.println(split[i];
-				}
-				remaque: le caractère d'echappement est "\\" si par exemple on veut splitter sur "|" il faut mettre "\\|"
-				si on veut splitter avec "\" ou "\\" il faut faire : return ligne.split(Pattern.quote("\\")); //blackslash mais c'est plus long à l'execution. "\\\\" semble fonctionner
-en JAVA =<1.3 : 
-    StringTokenizer st = new StringTokenizer(mon_string, "mon separateur"); // déconseillé d'utiliser StringTokenizer. préférer split ou java.util.regex
-    String bli = (String)st.nextElement()) ;	
---------
-pour classer les elements d'une liste dans l'ordre alphabetique:
-Collections.sort(namesList);
-		ou nameList est une liste. Attention c'est un ordre alpha pas top avec les chiffres: besoin mettre un zero avant les dizaines...
-pour faire un tri (trier ordonner ordre) une ArrayList qui contient des objets: LINKordrelkjglfkdjss
-    avec les lambdas: 
-        personList.sort((p1, p2) -> p1.firstName.compareTo(p2.firstName));
-        les dates les chiffres : 
-        hour.sort((p1, p2) -> p1.before(p2)?-1:1); // tri du plus petit au plus grand
-	ArrayList<SyntheseObj> synthese = new ArrayList<SyntheseObj>(indic.size()); // liste à trier
-	Collections.sort(synthese, new ComparSynthese());
-	mais c'est mieux de faire pour les acces concurents:
-    malistnontriee=uneliste... 
-    Set<T> unSetTrie = new ConcurrentSkipListSet<Employee>();
-    unSetTrie= new ConcurrentSkipListSet<Element>(new ComparSynthese());
-    unSetTrie.addAll(malistnontriee); // le tri se fait là. 
-	public class ComparSynthese implements Comparator
-	{
-		public int compare(Object o1, Object o2) {
-			SyntheseObj s1= (SyntheseObj)o1;
-			SyntheseObj s2= (SyntheseObj)o2;
-			// si c'est des chiffres:
-										if (Integer.parseInt(s1.val2)>Integer.parseInt(s2.val2)) return 1;
-										else if (Integer.parseInt(s1.val2)<Integer.parseInt(s2.val2)) return -1;
-										else return 0; // meme niveau
-			// si c'est caracteres (string)  
-										int i = 0;
-										if (s1.getLabel().compareTo(s2.getLabel())>0) i=1;
-										else if (s1.getLabel().compareTo(s2.getLabel())<0) i=-1;
-										else i=0;
-										return i;
-		}
-	}
-pour faire un tri on peut aussi utiliser l'objet java.util.TreeSet();
-------
-pour savoir quel string passe en premier dans un ordre alphabetique : 
-		"laquelle est la 1ere dans l'ordre alphabetique",  s1.compareTo(s2). ca retourne CHIFFRE(attention pas que des 1 et 0) negatif si c'est s1 < s2, un positif si s1 > s2 et 0 si c'est egale. 
-------
-Pour ecrire des lignes dans un fichier
-/** Write fixed content to the given file. */
-  void write() throws IOException  {
-    log("Writing to file named " + fFileName + ". Encoding: " + fEncoding);
-    Writer out = new OutputStreamWriter(new FileOutputStream(fFileName), fEncoding); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
-    try {
-      out.write(FIXED_TEXT);
-    }
-    finally {
-      out.close();
-    }
-  }
-// AVANT: mais pb encodage ci-dessous
-//creation ou ajout dans le fichier texte
-		try {
-		// attention fileWriter et FileReader utilisent l'encodage du systeme!!! donc pas bon!
-			FileWriter fw = new FileWriter (fichier);
-			BufferedWriter bw = new BufferedWriter (fw);
-			PrintWriter fichierSortie = new PrintWriter (bw); 
-				fichierSortie.println (chaine+"\n test de lecture et ecriture !!"); 
-			fichierSortie.close();
-			System.out.println("Le fichier " + fichier + " a ete cree!"); 
-		}
-		catch (Exception e){
-			System.out.println(e.toString());
-		}		
-
------------
-Pour lire les lignes d'un fichier: 
-FileInputStream lire = new FileInputStream(fichier); // fichier est un File
-			BufferedReader reader = new BufferedReader(new InputStreamReader(lire));
-			NON!!! il faut utiliser les BufferedInputStream et output stream parce que buffered reader encode! // en fait si ca marche pour les fichiers UTF-8 à lire (utiliser mark et reset si besoin faire l'equivalent de pos de RandomAccessFile mais bon courage :-))
-			BufferedInputStream reader = new BufferedInputStream(lire);
-			String ligne;
-			while ((ligne=reader.readLine())!=null){
-				System.out.println(ligne);
-			}
-			reader.close(); 
-pour lire les lignes d'un fichier en conservant l'encodage parser un fichier:
-
-  /** Read the contents of the given file. */
-  void read() throws IOException {
-    log("Reading from file.");
-        String request = new Scanner(new ClassPathResource("json/request.json").getFile()).useDelimiter("\\Z").next(); // voir regexp LINKçeeçeeçregexpçeeçeeç
-        scanner.useDelimiter(expessionreguliere);// a partir de maintenant quand je vais faire scanner.next() et scanner.hasNext() il va se baser sur expressionreguliere pour passer au suivant
-        scanner.useDelimiter(System.getProperty("line.separator")); // pour delimiter selon retour chariot
-    AVANT:
-    String NL = System.getProperty("line.separator"); // a partir de java 5.1 on peut mettre "%n" // recupère prop de la jvm voir LINKù*ù
-    StringBuilder text = new StringBuilder();
-    Scanner scanner = new Scanner(new FileInputStream(fFileName), fEncoding);
-    try {
-      while (scanner.hasNextLine()){
-        text.append(scanner.nextLine() + NL);
-      }
-    }
-    finally{
-      scanner.close();
-    }
-    log("Text read in: " + text);
-  }
-Pour utiliser readLine() qui permet de lire un fichier encode en utf8 et conserver son encodage : 
-        	/** Reads UTF-8 character data; lines are terminated with '\n' */ 
-        	public static String readLine(InputStream in) throws IOException 
-        	{
-        		ByteArrayOutputStream buffer = new ByteArrayOutputStream(); 
-        		while (true) 
-        		{ 
-        			int b = in.read();
-        			if (b < 0) 
-        			{
-        				//throw new IOException("Data truncated");
-        				break;
-        			}
-        			if (b == 0x0A) 
-        			{
-        				break; 
-        			}
-        			buffer.write(b); 
-        		}
-        		if (buffer.size()==0)
-        		{
-        			return null;
-        		}
-        		else
-        		{
-        			return new String(buffer.toByteArray(), "UTF-8");
-        		}
-        	}
-
--------			
-			
- //test pour savoir si il y aun entete dansle tableau. Si oui on l'enleve si non on le laisse car ce sont des donnees:
- Pour savoir si un char est un numero numerique numerique est un chiffre:
-      // en effet l'Action est executee deux fois donc l'entete et une donnee sont enleves: c un bug du a harmony.
-      char n =  ((String[])listeKeyFormule.get(0))[0].charAt(0);
-      if (!Character.isDigit(n)) listeKeyFormule.remove(0);
-      
-      
-pour convertir un tableau d'objet en list ou meme un String[] tableau de string: on peut aussi convertir directement un tableau d'objet en stream. pas besoin de passer par une liste
-		Object[] a1d = { "Hello World", new Date(), Calendar.getInstance(), };
-		depuis java9: List<x> l = List.of("aaa","bbb"...);
-    avant: List l = Arrays.asList(a1d); // pour creer une liste rapidement attention la liste n'est pas modifiable  (unsupportedoperationexception)
-                          alors faire : images = new ArrayList<String> (Arrays.asList(dir.list()));
-                                            
-                                            
-pour convertir une collection en list:
-			      List templates  = new ArrayList(result);
-A l'inverse convertir une List<Object> en Object[]: 
-    List<Object> parameters = new ArrayList<Object>();
-		parameters.add(idFactory);
-    parameters.toArray(); -> renvoit Object[] si on fait parameters.toArray(new File[0]) -> renvoit un tableau de files     
-pour convertir un List en Vecteur
-	   List l = Arrays.asList(a1d); // pour creer une liste rapidement attention la liste n'est pas modifiable  (unsupportedoperationexception)
-	                                             alors faire images = new ArrayList<String> (Arrays.asList(dir.list()));
-    Vector v;
-    v = new Vector(l);
-convertir un string en list
-  List<String> myList = new ArrayList<String>(Arrays.asList(s.split(","))))
-pour convertir un boolean en string
-    new Boolean(b).toString();    
-pour convertir un byte[]  en string
-      arrayOfByte2 est un byte[]
-    return  new String(arrayOfByte2);
-pour convertir un int en string 
-							et vice et versa string en int: utiliser la classe statique Integer: Integer.parseInt ou Integer.toString(int)...
-		convertir un long en string: String.valueOf(long)
-		convertir un long en date puis en string: new Date(long).toString();
-		convertir un string en long: long.toString() //mais attention je crois qu'il insert des espaces dans le string a chaque centaines et milliers: donc passer par int plutot(intValue())
-		convertir un int en bigdecimal: int i=125; BigDecimal j = new BigDecimal(i);
-		convertir un big decimal en int: ((BigDecimal) ht.get("ISFORONEFILE")).intValue()
-		convertir un char en string: Character.toString(content[i]) (ou content[i] serait un char) c'est indispensable à faire dans les tags jsp sinon on va avoir l'erreur:java/lang/StringBuffer.append(C)Ljava/lang/Appendable;
-		ou bien pour convertir un char[] en string: char[] password; c'est mieux de faire String.valueOf(password) avant : new String(password)
-		convertir un string en char[] g.toCharArray(); 
-		convertir un tableau d'objet quelquconque en array ou list :
-				List<File> list =  Arrays.asList(f); // f ne doit pas etre un tableau de primitif mais un tableau d'objets
-		convertir un array ou list en tableau:
-				String[] stringArray = (String[])list.toArray(new String[list.size()]); 
-		convertir un int en short:
-				(short)3 ou bien: int toto =3; (short)toto;
-		convertir un Integer en short: // je crois(... ou plutot un int?)
-		    Integer.valueOf(2).shortValue();
-		convertir un string en date:
-				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy"); pour les heures minutes secondes : hh:mm:ss // attention n'est pas threadsafe.
-					Date after = formatter.parse("01/01/09");
-					pour ecrire une date etla formater:
-                  SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy"); // attention n'est pas threadsafe.
-                String toto = formatter.format(h.getVPA04_DATE()); // objet Date 
-    convertir un string en float:
-        String s = "1234567.1234567f";
-        float f = Float.parseFloat(fs);
---------------------------------
-en Swing code pour farie un save, saveAS et cancel en java:
-				private String file = null; 
-				private boolean saved = true; 
-				... 
-				public void open() { 
-				boolean cancel = false; 
-				       FilterFile filter = new FilterFile("sim", "Fichier simulation"); // cf composant java 
-				       JFileChooser fileChooser = new JFileChooser(repDefaut); // ex repDefaut = System.getProperty("user.home");  
-				       fileChooser.setDialogType(JFileChooser.FILES_ONLY); 
-				       fileChooser.setFileFilter(filter); 
-				       if ( fullPath != null ) { 
-				               if ( !saved ) { 
-				                       int result = JOptionPane.showConfirmDialog( this, 
-				                               "Fichier dejà  ouvert.\nVoulez-vous le sauvegarder ?", 
-				                               "Question", 
-				                               JOptionPane.YES_NO_CANCEL_OPTION, 
-				                               JOptionPane.QUESTION_MESSAGE ); 
-				                       if ( result == JOptionPane.CANCEL_OPTION ) cancel = true; 
-				                       else if ( result == JOptionPane.OK_OPTION ) // Sauvegarde du fichier en cours 
-				               } 
-				       } 
-				       if ( !cancel ) { 
-				       if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION && 
-				       fileChooser.getSelectedFile() != null) { 
-				               file = fileChooser.getSelectedFile().getAbsolutePath(); 
-				               saved = true; 
-				               // Ouverture du nouveau fichier 
-				       } 
-				       } 
-				} 
-				public void saveAs() { 
-				String tmp = null; 
-				       FilterFile filter = new FilterFile("sim", "Fichier simulation"); // cf composant java 
-				       JFileChooser fileChooser = new JFileChooser(repDefaut); // ex repDefaut = System.getProperty("user.home"); 
-				       fileChooser.setDialogType(JFileChooser.FILES_ONLY); 
-				       fileChooser.setFileFilter(filter); 
-				       if (fileChooser.showSaveDialog(ecran) == JFileChooser.APPROVE_OPTION) { 
-				               tmp = fileChooser.getSelectedFile().getAbsolutePath(); 
-				               if ( tmp.indexOf(".sim") == -1 ) tmp += ".sim"; 
-				               // Sauvegarde du fichier 
-				               file = tmp; 
-				               saved = true; 
-				       } 
-				} 
-				public void save() { 
-				       if (file != null) { 
-				               // Sauvegarde du fichier 
-				               saved = true; 
-				       } else saveAs(); 
-				} 
---------------
-Pour recuperer la liste de fichiers d'un directory:
-File.list()
-***********************************************************************
-Utils : Utils java:
-pour intercaller un string dans une liste d'autre strings : 
-                       StringUtils.join(["a", "b", "c"], "--")  = "a--b--c"
-                       StringUtils.join(["a", "b", "c"], null)  = "abc"
-
-    StringUtils.join
-    recuperer la liste des headers d'une requete:
-      private Map<String,String> getHeadersInfo(HttpServletRequest request)
-      	{
-      		Map<String,String> map = new HashMap<String,String>();
-      		Enumeration headerNames = request.getHeaderNames();
-      		while (headerNames.hasMoreElements())
-      		{
-      			String key=(String) headerNames.nextElement();
-      			String value = request.getHeader(key);
-      			map.put(key, value);
-      		}
-      		return map;
-      	}
-      	
-    /*afficher clairement une requete de preparedstatement */
-                public static String preparedStatementFriendly(String query, String[] params)
-              	{
-              		for (String param : params) 
-              		{
-              			query = query.replaceFirst("\\?", param); // remplacer un point d'interrogation
-              		}
-              		return query;
-              	}
-	/**
-	 * Returns true if the table is empty
-	 * 
-	 * @param table
-	 * @return
-	 * @throws Exception
-	 */
-	public static boolean isTableEmpty(String[] table) throws Exception {
-		boolean ret = false;
-		StringBuffer str = new StringBuffer();
-		for (int i = 0; i < table.length; i++) {
-			str.append(table[i]);
-		}
-		log.debug(str.toString().trim());
-		log.debug(str.toString().trim().length());
-		if (str.toString().trim().length() < 1)
-			ret = true;
-		return ret;
-	}
-	--------------------------------
-/**
-	 * Tool method returning a right string if the object is null
-	 * (not "null", but "") => TODO see if return "" or null
-	 * @param obj
-	 * @return String
-	 */
-	public static String isNull(Object obj){
-		if (obj != null && !((String)obj).equals("null")){
-			return (String)obj;
-		}
-		return "";
-	}
-	--------------------------------
-	/** 
-	 * Cut a word with length>3 characters exemple: 1234567890 becomes: 123-456-789
-	 * @param word
-	 * @return the word cut
-	 */
-	public static String cutWord(String word){
-		String result = "";
-		if(word!=null && word.length()>3){
-			result = word.substring(0, 2)+"-"+cutWord(word.substring(2, word.length()));
-			return result;
-		}else{
-			return word;
-		}
-	}
---------------------------------
-	/**
-	 * Check if a string is a date according to the given pattern. (expression reguliere de date)
-	 * 
-	 * @param input String
-	 * @param df SimpleDateFormat
-	 * @return boolean
-	 */
-	public static boolean isDateValid(String input,SimpleDateFormat df) {
-  		boolean isValid = false;
-  		ParsePosition pos = new ParsePosition(0);
-  		df.setLenient(false); // ca veut dire que si je mets par ex le 32 janvier il va renvoyer une erreur. Si c lenient il rectifie en mettant le 1er fev.
-  		try {
-  			Date date = df.parse(input,pos);
-  			//Test si la chaine est vide ou n'a pas ete lue totalement.
-  			isValid = (date==null || pos.getIndex()<input.length()) ? false : true;
-  		} catch (Exception e) {
-  			isValid = false;
-  		}
-  		return isValid;
-	}
---------------------
-	public final static String[] TBL_INVALIDS_CHARACTERS = {"\\", "/", ":", "*", "?", " \"", "<", ">", "|"};
-		/**
-	 * Check if the string doesn't contain invalid digits
-	 * 
-	 * @param String the string to control 
-	 * @return true if the string contains an invalid digit, false otherwise.
-	 */
-	public static boolean isContainInvalidDigit(String str){
-		boolean result = false;
-		
-		for (int i = 0; i < Constants.TBL_INVALIDS_CHARACTERS.length; i++) {
-			if (str.contains(Constants.TBL_INVALIDS_CHARACTERS[i])){
-				result = true;
-				break;
-			}
-		}
-		
-		return result; 
-		
-	}
---------------------------------
-returns a subtable of a table of string (sublist) sous liste soustabl sousar
-public static String[] SubstrTableString(String[] value, int start , int end) throws Exception
-	{
-		String[] ret = new String[end-start];
-		for (int i=0; i<value.length; i++)
-		{
-			if (i>=start && i<end)
-			{
-				ret[i-(start)]=value[i];
-			}
-		}
-		return ret;
-	}
-	
-meme chose mais cette fois avec un offset et un limit :          (offset = nombre d'elements ignores en debut de liste) 
-        public static WECM53_STORAGE_CONTROL[] SubstrTableString(WECM53_STORAGE_CONTROL[] value, int offset , int limit) throws Exception
-    	{
-        	WECM53_STORAGE_CONTROL[] ret = new WECM53_STORAGE_CONTROL[limit];
-    		for (int i=0; i<value.length; i++)
-    		{
-    			if (i>=offset && i<limit+offset)
-    			{
-    				ret[i-(offset)]=value[i];
-    			}
-    		}
-    		return ret;
-Sinon on peut aussi faire ca sublist subtable subarr:
-      WECM55_STORAGE_IAO_CONTROL[] res =  (WECM55_STORAGE_IAO_CONTROL[]) pm.detachCopyAll(allProducts).toArray(new WECM55_STORAGE_IAO_CONTROL[0]);
-			List<WECM55_STORAGE_IAO_CONTROL> l = Arrays.asList(res);
-			WECM55_STORAGE_IAO_CONTROL[] resret = l.subList(config.getOffset(), config.getOffset()+config.getLimit()).toArray(new WECM55_STORAGE_IAO_CONTROL[0]);
-	--------------------------------
-private static final String MYSQL_DATE_FORMAT = "yyyy-MM-dd";
-pour convertir une Date en texte
-	/**
-	 * @param date Java Date instance 
-	 * @return return a formatted date following MySql pattern 
-	 * yyyy-MM-dd HH:mm:ss 
-	 */
-	public static String getMySqlDateFormat (Date date) {
-		
-		SimpleDateFormat sdf = new SimpleDateFormat(Utils.MYSQL_DATE_FORMAT); ("HH:mm:ss dd/MM/yyyy")              HH pour 24h sinon hh pour 12hampm // attention n'est pas threadsafe.
-		String strDate ="";
-		
-		// Using Calendar as Date methodes are  deprecated
-		Calendar calendar = Calendar.getInstance(); 
-		calendar.setTime(date);
-		
-		strDate = sdf.format(calendar.getTime());
-		
-		return strDate;
-	}
-----------------
-	/**
-	 * Transform a Date into a String with the given format
-	 * 
-	 * @param dateToFormat
-	 * @param format
-	 */
-	public static String getFormatedDate(Date dateToFormat, String format){
-		SimpleDateFormat form = new SimpleDateFormat(format); // attention n'est pas threadsafe.
-		return form.format(dateToFormat);
-	}
-	--------------------------------
-	/**
-	 * 
-	 * <strong>Object</strong> supposed to convert all kind of objects to appropriate string
-	 *
-	 * @author Duverge Laurent
-	 * @since 19 nov. 09
-	 * @param an Object that can be null or a string or a BigDecimal
-	 * @return String value of the object
-	 * @throws Exception
-	 */
-	public static String fieldToString(Object a) throws Exception
-	{
-//		System.out.println(a.getClass().getCanonicalName());
-		String b = Constants.EMPTY;
-		
-		if (a.getClass().isInstance(new String())) linkinstanceof
-		{
-			b = (String)a;
-		}
-		else if (a ==null)
-		{
-			b=Constants.NULL;
-		}
-		else if (a.getClass().getCanonicalName().contains("BigDecimal"))
-		{
-			b = ((BigDecimal)a).toString();
-		}
-		b=b.equals(Constants.NULL)?Constants.EMPTY:b;
-		return b;
-	}
-	--------------------------------
-	/**
-	 * 
-	 * <strong>Object</strong> convert a list of string into something like "'a','b','c'" (pour les in  pour faire des in , pour faire un in )
-	 StringUtils.collectionToDelimitedString(uneListeDeString, "toto") // toto est le separateur.	 
-	 Avant je faisais comme ça:
-	 * @author Duverge Laurent
-	 * @since 19 nov. 09
-	 * @param parametre1 Saisir explication du paramètre 1. Au moins un caractère dont espace.
-	 * @return Saisir explication de ce que renvoi la methode Exemple Saisir exemple renvoit
-	 * @throws typeException commentaire
-	 */
-    	public static String convertListToSqlInCriteria(List<String> valueList)throws Exception
-    	{
-    		StringBuffer ipns = new StringBuffer();
-    		String ret=Constants.EMPTYQUOTES;
-    		if (valueList.size()>0)
-    		{
-    		ipns.append("'");
-    		for (String ipn : valueList)
-    		{
-    			ipns.append(ipn);
-    			ipns.append("','");
-    		}
-    		int size = ipns.toString().length();
-    		ret= ipns.toString().substring(0,size-2);
-    		}
-    		return ret;
-    	}
-    }
-ou bien ca: 
-        sql.append("DELETE FROM R0813_PREAVIS WHERE R0813IDPARENT IN (");
-        
-        			for (int i = 0; i < preNoticeIds.length; i++) {
-        				sql.append((i > 0) ? ",?" : "?");
-        			}
-        
-        			sql.append(")");
---------------------------------
-pour supprimer les doublons d'une liste: (c'est pas forcement LinkedList ca peut etre une autre type de liste)
-			public LinkedList removeDuplicates(LinkedList liste)
-				{
-				    Set set = new HashSet() ;
-				    set.addAll(liste) ;
-				    LinkedList distinctList = new LinkedList(set) ;
-				    return distinctList;
-				}
-				pour etre sur que ca marche sur des objets il faut  override equals and hashcode for your class
-				sinon faire
-          				private static List<EmployeeReport> duplicateDeletion(List<EmployeeReport> warnings) {
-          		java.util.Vector<String> matcles = new Vector(warnings.size());
-          			Iterator it = warnings.iterator();
-          			while (it.hasNext())
-          			{
-          				EmployeeReport sce = (EmployeeReport)it.next();
-          				if (matcles.contains(sce.getEmployeeId().getMatcle()))
-          				{
-          					it.remove();
-          				}
-          				else
-          				{
-          					matcles.add(sce.getEmployeeId().getMatcle());
-          				}
-          
-          			}
-          			return warnings;
-          		}
-	Autre facon plus moche : 
-            	java.util.Vector vecResD = cmd.getVecResult() ;			
-            			java.util.Vector vecRes =null;
-            			// suppression doublons à faire en java
-            			if (vecResD!=null && vecResD.size()>1)
-            			{
-            				vecRes = new Vector(vecResD.size());
-            				Iterator it = vecResD.iterator();
-            				String prevId="";
-            				while (it.hasNext())
-            				{
-            					SceInf sce = (SceInf)it.next();
-            					if (!prevId.equals(sce.getId()))
-            					{
-            						vecRes.add(sce);
-            					}
-            					prevId=sce.getId();
-            				}
-            			}
-            			// fin suppression doublons
-            			
-				--------------------------------
-pour zipper un fichier:
-													static final int BUFFER = 2048;
-														byte data[] = new byte[BUFFER];
-														public void createArchive (String excelFolder, String fileName, String zipFolder, String zipName) throws FileNotFoundException {
-															FileOutputStream destination = new BufferedOutputStream(new FileOutputStream(newFile(zipFolder + File.separator(c'est le slash adequat separateur) + zipName))); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
-															BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(destination);
-															ZipOutputStream zipOutputStream = new ZipOutputStream(bufferedOutputStream);
-															zipOutputStream.setMethod(ZipOutputStream.DEFLATED);
-															zipOutputStream.setLevel(9);
-															File file = new File(excelFolder + fileName);		
-															FileInputStream fileInputStream = new FileInputStream(file);
-															BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream, BUFFER);
-															ZipEntry zipEntry = new ZipEntry(fileName);
-															try {
-																zipOutputStream.putNextEntry(zipEntry);
-																int count;
-																while((count = bufferedInputStream.read(data, 0, BUFFER)) != -1) {
-																	zipOutputStream.write(data, 0, count);
-																}
-																zipOutputStream.closeEntry();
-																bufferedInputStream.close();
-																zipOutputStream.close();
-															} catch (IOException e) {
-																e.printStackTrace();
-															}
-														}
-pour dezipper un fichier:
-        private void Unzip(File aspFile, File destFolder) throws Exception 
-      	{
-      		try 
-      		{
-      			BufferedOutputStream dest = null;
-      			FileInputStream fis = new FileInputStream(aspFile);
-      			ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
-      			ZipEntry entry;
-      			while((entry = zis.getNextEntry()) != null) 
-      			{
-      				log.debug("Laurent: extracting : "  +entry + " to : " + destFolder.getPath().concat(File.separator.concat(entry.getName())));
-      				int count;
-      				byte data[] = new byte[BUFFER];
-      				// write the files to the disk
-      				FileOutputStream fos = new FileOutputStream(destFolder.getPath().concat(File.separator.concat(entry.getName()))); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
-      				dest = new BufferedOutputStream(fos, BUFFER);
-      				while ((count = zis.read(data, 0, BUFFER))!= -1) 
-      				{
-      					dest.write(data, 0, count);
-      				}
-      				dest.flush(); //Flushes this output stream and forces any buffered output bytes to be written out.
-      				dest.close();
-      			}
-      			zis.close();
-      
-      		}
-      		catch (Exception e)
-      		{
-      			throw e;
-      		}
-      	}
-
-on peut avoir un access denied ou access refuse  acces refuse Accès refuse on fait :
-                    FileInputStream fileInputStream = new FileInputStream(file); c parce que file est un repertoire je crois...
-pour copier un repertoire de manière recursive:
-    FileUtils.copyDirectory(srcDir, destDir) (de apache: <dependency>	<groupId>org.apache.commons</groupId>	<artifactId>commons-io</artifactId>	<version>1.3.2</version></dependency>            ) 
-Pour zipper un repertoire de maniere recursive: 
-                                  	public void startCreateArchive(String folderToZip, String pathOfZipFileToCreate) throws Exception
-                                  	{
-                                  	   //create a ZipOutputStream to zip the data to 
-                                      ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(pathOfZipFileToCreate)); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
-                                  	zos.setMethod(ZipOutputStream.DEFLATED);
-                                  	zos.setLevel(9);
-                                      //assuming that there is a directory named inFolder (If there 
-                                      //isn't create one) in the same directory as the one the code runs from,
-                                      //call the zipDir method 
-                                      createArchive(folderToZip, zos); 
-                                      //close the stream 
-                                      zos.close();
-                                  	}
-                                  	private void createArchive (String dir2zip, ZipOutputStream zos) {
-                                  		{ 
-                                  			  try 
-                                  			   { 
-                                  			        //create a new File object based on the directory we have to zip File    
-                                  			           File zipDir = new File(dir2zip); 
-                                  			        //get a listing of the directory content 
-                                  			        String[] dirList = zipDir.list(); 
-                                  			        byte[] readBuffer = new byte[2156]; 
-                                  			        int bytesIn = 0; 
-                                  			        //loop through dirList, and zip the files 
-                                  			        for(int i=0; i<dirList.length; i++) 
-                                  			        { 
-                                  			            File f = new File(zipDir, dirList[i]); 
-                                  			        if(f.isDirectory()) 
-                                  			        { 
-                                  			                //if the File object is a directory, call this 
-                                  			                //function again to add its content recursively 
-                                  			            String filePath = f.getPath(); 
-                                  			            createArchive(filePath, zos); 
-                                  			                //loop again 
-                                  			            continue; 
-                                  			        } 
-                                  			            //if we reached here, the File object f was not a directory 
-                                  			            //create a FileInputStream on top of f 
-                                  			            FileInputStream fis = new FileInputStream(f); 
-                                  			            //create a new zip entry 
-                                  			        ZipEntry anEntry = new ZipEntry(f.getPath()); 
-                                  			            //place the zip entry in the ZipOutputStream object 
-                                  			        zos.putNextEntry(anEntry); 
-                                  			            //now write the content of the file to the ZipOutputStream 
-                                  			            while((bytesIn = fis.read(readBuffer)) != -1) 
-                                  			            { 
-                                  			                zos.write(readBuffer, 0, bytesIn);
-                                                        a titre d'exemple :pour convertir en char: si strContent est un StringBuffer: strContent.append((char) bytesIn);  
-                                  			            } 
-                                  			           //close the Stream 
-                                  			           fis.close(); 
-                                  			    } 
-                                  			} 
-                                  			catch(Exception e) 
-                                  			{ 
-                                  			    //handle exception 
-                                  			} 
-                                  
-                                  
-                                  	}
-                                  	}
---------------------------------
-pour verifier que tout est en Maj :
-                        public boolean isAllUpper(String string) throws Exception {
-                        		boolean ret=false;
-                        		for (int i=0; i<string.length(); i++)
-                        		{
-                        			if (Character.isUpperCase(string.charAt(i)))
-                        			{
-                        				ret=true;
-                        				
-                        			}
-                        			else if (!Character.isLetter(string.charAt(i)))
-                        			{
-                        				ret=true;
-                        			}
-                        			else if (Character.isSpaceChar(string.charAt(i)))
-                        			{}
-                        			else
-                        			{
-                        				ret=false;
-                        				break;
-                        			}
-                        		}
-                        			
-                        		return ret;
-                        	}
-
-pour supprimer tous les caractères non ascii(chelous) :
-            String convertToASCII(String toTrim) throws Exception
-            	{
-            		CharsetEncoder e = Charset.forName("US-ASCII").newEncoder(); 
-            		StringBuilder ret = new StringBuilder();
-            		char[] a = toTrim.toCharArray();
-            		for(int i =0; i<a.length; i++)
-            		{
-            			if (e.canEncode(a[i]))
-            			{
-            				ret.append(a[i]);
-            			}
-            		}
-            				return ret.toString();
-            	}                        	
-pour supprimer les caracteres trop chelous d'un string:
-              premiere methode:
-              public String removeAllNonChar(String string) throws Exception 
-                      	{
-                      		StringBuffer ret = new StringBuffer();
-                      		for (int i =0; i<string.length(); i++)
-                      		{
-                      			if (Character.isLetter(string.charAt(i)))
-                      			{
-                      				ret.append(string.charAt(i));
-                      			}
-                      		}
-                      		return ret.toString();
-                      	}
-               deuxeme methode: 
-										/**
-										 * <strong>Objectif</strong> Supprimer les caractères que le parseur XML ne pourras pas supporter
-										 * @author Duverge Laurent
-										 * @since 16 juil. 08
-										 * @param String donnee a traitee: on supprime les char de type 15
-										 * @return Un string sans les caracteres mal supportes
-										 */
-										public static String removeCharType15(String data)
-										{
-											StringBuffer result=new StringBuffer();
-											char[] chars = data.toCharArray();
-											for (int i=0;i<chars.length;i++)
-											{
-												if(Character.getType(chars[i])!=15) result.append(chars[i]);
-											}
-											return result.toString();
-										}
-__________________
-pour detecter supprimer tous les caracteres non iso: 
-   public boolean hasAccentuatedChar(String string) {
-      		   String sSansAccent;
-      		   StringBuffer sb = new StringBuffer("&'(-_ç)=}]@^`|[|{\\\"'^$£¨ùµ*%!§:/;.,?<>");
-      		   for (int i =0; i<sb.length(); i++)
-      		   {
-      			   if (string.indexOf(sb.charAt(i))>-1) return true;
-      		   }
-      		   
-      		try 
-      		{
-      			sSansAccent = new String(string.getBytes(), "US-ASCII" );
-      		}
-      		catch (UnsupportedEncodingException e) 
-      		{
-      			return true;
-      		}
-      		   if (sSansAccent.equals(string))   return false; 
-      		   else return true;
-      	}
-supprimer les accents :
-		public String removeAccents(String var) 
-		{
-			logger.debug("withAccent: "+var);
-	        StringBuilder sb = new StringBuilder(var.length());
-	        var = Normalizer.normalize(var, Normalizer.Form.NFD);
-	        logger.debug("normalized: "+var);
-	        for (char c : var.toCharArray()) {
-	            if (c <= '\u007F') sb.append(c);
-	        }
-	        logger.debug("withoutAccent: "+sb.toString());
-	        return sb.toString();
-		}
-
-      	
---------------------------------
-pour avoir le numero de la semaine en fonction d'une date.
-    * si null est passe , la date du jour est prise en compte
-    * @param madate
-    * @return int (numero de semaine de l'annee) // ou possibilite d'avoir numero du jour de la semaine
-    */
-   public static final int getNosem(Date madate) {
-       /*
-       Pour faire des tests:
-       GregorianCalendar toto = new GregorianCalendar(2010,0,4);
-       madate= toto.getTime();*/
-       int result;
-       Calendar calendar = Calendar.getInstance();
-       calendar.setLenient(false);
-
-       try{
-           calendar.setMinimalDaysInFirstWeek(4);
-           calendar.setFirstDayOfWeek(Calendar.MONDAY);
-           calendar.setTimeInMillis(madate.getTime());
-           result = calendar.get(Calendar.WEEK_OF_YEAR);// ou DAY_OF_WEEK si on veut avoir le jour de la semaine
-       } catch(IllegalArgumentException iAE) {
-           result = calendar.get(Calendar.WEEK_OF_YEAR);// ou DAY_OF_WEEK si on veut avoir le jour de la semaine
-       } catch(Exception e) {
-           result = calendar.get(Calendar.WEEK_OF_YEAR); // ou DAY_OF_WEEK si on veut avoir le jour de la semaine
-       }
-       return result;       }
---------------------------------
-pour envoyer un mail avec une piece jointe: Plutot que ca, avec spring c'est plus facile. Voir http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mail.html
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeUtility;
-
-	    // Creation d'un message
-	    Properties props = new Properties();
-			props.put("mail.smtp.host", mailSmtp); // ou mailSmtp: wsmtp.renault.fr
-			props.put("mail.debug", "true"); // si besoin quand ca marche pas
-			
-			Session session = Session.getDefaultInstance(props, null);
-			session.setDebug(true); // pour comprendre pourquoi ca ne marche pas sinon mettre:
-			session.setDebug(false);
-	    Message messageAdm = new MimeMessage (session);
-	    // Modification de l'expediteur
-	    messageAdm.setFrom (new InternetAddress (from));
-	    // Modification du destinataire
-	    String AdressMailAdmin = AdminIterator.next().toString();
-	    InternetAddress [] addressadm =  {new InternetAddress (AdressMailAdmin)};
-	    messageAdm.setRecipients (Message.RecipientType.TO, addressadm);
-	    // Modification du sujet
-	    messageAdm.setSubject (subjectadm);
-	    attention: il se peut qua cause de l'environnement le header dont le subjet soit mal encode et on a des choses du style =?ANSI_X3.4-1968?Q?GDV-_Demande_de_validation_d'entr=3Fe_d'un_visiteur?= 
-      dans ce cas peut etre fair ca plutot 
-	     message.setSubject(MimeUtility.encodeText(monSubjectAvecDesCaracteresAccentues, "utf-8", null));
-	    //contenu message administrateur: corp du message
-	    String  contentadm = "Ci joint les logs du jour.";
-	    String Dir = DirMail.substring(0,21);
-	    Multipart multipart = new MimeMultipart();
-	    DataSource source = new FileDataSource(Dir+"logparse.txt");
-	//    if (fichier_analyser.exists())
-	    //   {
-	//      DataSource source3 = new FileDataSource(fichier_analyser);
-	    DataSource source3 = new FileDataSource(Dir+"logbord.txt");
-	    BodyPart messageBodyPart3 = new MimeBodyPart();
-	    messageBodyPart3.setDataHandler(new DataHandler(source3));
-	    messageBodyPart3.setFileName("logbord.txt");
-	    multipart.addBodyPart(messageBodyPart3);
-	//    }
-	    BodyPart messageBodyPart = new MimeBodyPart();
-	    BodyPart messageBodyPart2 = new MimeBodyPart();
-	    messageBodyPart2.setContent(contentadm.toString(), "text/plain"); (ou "text/html")
-	    
-	    
-	             si ça ne marche pas au format text/html essayer come ca : 
-                  			DataHandler.setDataContentHandlerFactory( new WecFonction().new UtlMailContentFactory() );
-                  			msg.setDataHandler(new DataHandler(new ByteArrayDataSource(message.toString(), "text/html")) );
-                  					//msg.setText(message);
-                  			msg.setSentDate(new java.util.Date());
-                        
-                        avec : 
-                              public class UtlMailContentFactory implements DataContentHandlerFactory {
-                              
-                              	public UtlMailContentFactory() {
-                              	}
-                              	public DataContentHandler createDataContentHandler( String parm1 ) {
-                              	if( parm1.equalsIgnoreCase( "text/plain") )
-                              	return new com.sun.mail.handlers.text_plain();
-                              	else if ( parm1.equalsIgnoreCase( "text/html" ) )
-                              	return new com.sun.mail.handlers.text_html();
-                              	else
-                              	return null;
-                              	}
-                              	}
-	    
-	    
-	    messageBodyPart.setDataHandler(new DataHandler(source));
-	    messageBodyPart.setFileName("logparse.txt");
-	    multipart.addBodyPart(messageBodyPart);
-	    multipart.addBodyPart(messageBodyPart2);
-	    // si le fichier est tronque a la reception (truncated tronque) utiliser cette methode:
- 					 MimeBodyPart mbp2 = new MimeBodyPart();
-					 FileDataSource fds = new FileDataSource(attachment);
-					 mbp2.setDataHandler(new DataHandler(fds));
-					 mbp2.setFileName(attachment.getName());
-					 multipart.addBodyPart(mbp2);
-	  //FIN si le fichier est tronque a la reception (truncated tronque) utiliser cette methode:
-	    messageAdm.setContent(multipart);
-	    Transport.send (messageAdm);
-	    cat.info("Message envoye a administrateur "+AdressMailAdmin);
-pour envoyer un mail simple avec javax.mail et qu'on a eu un message d'erreur de non authentification ou probleme startttssslchaispas quoi :
-					Properties props = new Properties();
-					props.put("mail.smtp.host", "smtp.googlemail.com");
-					props.put("mail.smtp.starttls.enable", "true");
-//					 props.put("mail.user", "kanailaurent@gmail.com");
-//					 props.put("mail.password", "calottezoclos");
-					props.put ("mail.smtp.auth","true");
-					props.setProperty("mail.smtp.submitter", authenticator.getPasswordAuthentication().getUserName());
-					//properties.setProperty("mail.smtp.port", "25");
-					javax.mail.Session mailSession =javax.mail.Session.getDefaultInstance(props, authenticator);
-					avec
-          static MyAuthenticator authenticator = new StartParse().new MyAuthenticator();
-              	private class MyAuthenticator extends javax.mail.Authenticator 
-               	 {
-               		 private PasswordAuthentication authentication;
-               		 public MyAuthenticator() 
-               		 {
-               		 String username = "kanailaurent@gmail.com";
-               		 String password = "calottezoclos";
-               		 authentication = new PasswordAuthentication(username, password);
-               		 }
-               		 protected PasswordAuthentication getPasswordAuthentication() 
-               		 {
-               		  return authentication;
-               		 }
-               	 }					
---------------------------------
-pour envoyer un mail simple avec apache mail : librairie dispo ici: http://commons.apache.org/email/download_email.cgi
-      Email email = new SimpleEmail();
-      email.setHostName("smtp.googlemail.com");
-      email.setSmtpPort(465);
-      email.setAuthenticator(new DefaultAuthenticator("username", "password"));
-      email.setSSLOnConnect(true);
-      email.setFrom("user@gmail.com");
-      email.setSubject("TestMail");
-      email.setMsg("This is a test mail ... :-)");
-      email.addTo("foo@bar.com");
-      email.send();
-
-pour ecrire un blob dans un fichier: (attention, si on arrive pas a lire le fichier peut etre qu'il a ete zippe avant d'etre mis dans la base? hahah)
-		public static void tableauDeBytesVersFichier (byte[] tableau, java.io.File fichier) throws Exception {
-			java.io.FileWriter f = new java.io.FileWriter(fichier);
-			//on itère sur chaque element, car il n'y a pas de fonction globale
-			for (int i = 0; i < tableau.length; i++)
-				f.write(tableau[i]);
-			f.close();
-		}
-Image -> blob: 
-            public void sauveIMG(String location, String name) throws Exception 
-            {
-              File monImage = new File(location);
-              FileInputStream istreamImage = new FileInputStream(monImage);
-              try 
-              {
-                PreparedStatement ps = conn.prepareStatement("insert into image (name, img) values (?,?)");
-                try 
-                {
-                    ps.setString(1, name);
-                    ps.setBinaryStream(2, istreamImage, (int) monImage.length());
-                    ps.executeUpdate();
-                }
-                finally 
-                {
-                  ps.close();
-                }
-              } 
-              finally 
-              {
-                istreamImage.close();
-              }
-            }
-blob -> Image:
-          public void chargeIMG(String name, String location) throws Exception
-          {
-            File monImage = new File(location);
-            FileOutputStream ostreamImage = new FileOutputStream(monImage); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
-                      
-            try
-            {
-              PreparedStatement ps = conn.prepareStatement("select img from image where name=?");
-          
-              try
-              {
-                ps.setString(1,name);
-                ResultSet rs = ps.executeQuery();
-                
-                try
-                {
-                  if(rs.next())
-                  {
-                	  InputStream istreamImage = rs.getBinaryStream("img");
-                
-                	  byte[] buffer = new byte[1024];
-                	  int length = 0;
-          	
-                	  while((length = istreamImage.read(buffer)) != -1)
-                	  {
-                	    ostreamImage.write(buffer, 0, length);
-          	  }
-            	}
-                }
-                finally
-                {
-                  rs.close();
-                }
-              }
-              finally
-              {
-                ps.close();
-              }
-            }
-            finally
-            {
-              ostreamImage.close();
-            }
-          }
-	--------------------------------
-convertir une date en string:
-						static Date actuelle = new Date();
-						static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // attention n'est pas threadsafe.
-						String dat = dateFormat.format(actuelle);
-exemple genial qui marche de fonction pour formater une date: 
-					 public static String formatDate(String date, String startPattern("dd/MM/yy"), String endPattern("yyyy-MM-dd")) throws Exception
-						{
-							SimpleDateFormat formatter = new SimpleDateFormat(startPattern); // attention n'est pas threadsafe.
-							Date after = formatter.parse(date);
-							SimpleDateFormat dateFormat = new SimpleDateFormat(endPattern);
-							String dat = dateFormat.format(after);
-							log.debug("formatter before: " + date + "after :"+dat);
-							return dat;
-						}
-exemple pour autoformater une string de date en DATE dans tous les cas possibles de pattern de date qui arrivent: (trois methodes super utiles a reutiliser dans un Utils)
-								private static String formatDate(String date, String startPattern, String endPattern) throws Exception
-									{
-										SimpleDateFormat formatter = new SimpleDateFormat(startPattern);
-										Date after = formatter.parse(date);
-										SimpleDateFormat dateFormat = new SimpleDateFormat(endPattern);
-										String dat = dateFormat.format(after);
-										log.debug("formatter before: " + date + "after :"+dat);
-										return dat;
-									}
-									private static String formatDate(String date, String endPattern) throws Exception
-									{
-										
-										Date after = autoParseDate(date);
-										SimpleDateFormat dateFormat = new SimpleDateFormat(endPattern);
-										String dat = dateFormat.format(after);
-										log.debug("formatter before: " + date + "after :"+dat);
-										return dat;
-									}
-									
-									public static Date autoParseDate(String date) throws Exception
-									{
-										Date ret = new Date();
-										if (date!=null && (date.length()==8 || date.length()==10))
-										{
-											try
-											{
-												SimpleDateFormat formatter = new SimpleDateFormat();
-												
-												if(date.length()==8) formatter = new SimpleDateFormat("dd/mm/yy");
-												else if(date.length()==10) formatter = new SimpleDateFormat("yyyy-MM-dd"); ou HH:mm:ss dd/MM/yyyy
-												try
-												{
-													ret = formatter.parse(date);	
-												}
-												catch (Exception e)
-												{
-													formatter = new SimpleDateFormat("dd/mm/yyyy");
-													try
-													{
-														ret= formatter.parse(date);
-													}
-													catch(Exception e1)
-													{
-														throw e1;
-													}
-												}
-											}
-											catch (Exception e)
-											{
-												StringWriter sw = new StringWriter();
-												PrintWriter pw = new PrintWriter(sw, true);
-												e.printStackTrace(pw);
-												pw.flush(); //Flushes this output stream and forces any buffered output bytes to be written out.
-												sw.flush();
-												log.error(sw.toString());
-												throw e;
-											}
-										}
-										return ret;
-									}
---------------------------------
-Pour formater un chiffre: taille zeros string 
-numberTest = 1;
-private static DecimalFormat  nf = new DecimalFormat("000" ); ou "00.000" ou "##.###" (dans ce dernier cas c pas pareil: je crois que les zero apres virgules ne s'affichent pas si c'est zero)
-            decimalformat peut etre remplacé par string.format pour ecrire les millions  String.format("%.2fM", theNumber/ 1000000.0); ou String.format("%,.2f",totalNPV) LINKStringFOrmatNumb 
-String retour =code.concat(nf.format(numberTest));
-retour va etre egal à 001
---------------
-proprietes : properties :
-pour lire charger recuperer les properties proprietes d'un fichier de configuration dans un batch java: (voir aussi ci dessous PropertyResourceBundle) 
-public static void loadProperties () throws Exception {
-		InputStream is = MaClaseActuelle.class.getClassLoader().getResourceAsStream (Constants.PROPERTIES_FILE); // KO en java9 voir LINKgetRes9 le fichier de propriete doit etre dans le classpath verifier avec System.out.println("CLASSPATH: " + System.getProperty("java.class.path")); System.out.println("ClassLoader resource path: " + HRParameters.class.getClassLoader().getResource("hr-openhr-for-ta.properties")); System.out.println("ClassLoader resource path: " + ClassLoader.getSystemResourceAsStream("hr-openhr-for-ta.properties"));
-		ou                                                    "." on peut mettre ça. 
-    String path = this.getClass().getClassLoader().getResource("users.xml").getPath(); // KO en java9 voir LINKgetRes9. pour avoir le path d'un fichier de propriete sous resources
-		if (null == is ) {
-			throw new Exception ("Cann't find properties file");
-		}
-		Properties properties = new Properties();
-		properties.load(is);
-		PtlInitialize.commandFile = properties.getProperty("command").trim();
-		PtlInitialize.filelock = properties.getProperty("lock").trim();
-		PtlInitialize.interval = Long.parseLong(properties.getProperty("lock_interval").trim());
-		on peut utiliser String toto = StrSubstitutor.replaceSystemProperties("un texte avec ${uneproprietesysteme} blabla"); // pour resoudre les properties proprietes systeme environnement ${catalina.out} par exemple
-		      est dans
-		                <dependency>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-lang3</artifactId>
-                    <version>3.5</version>
-                    </dependency>
-		ATTENTION! NE PAS OUBLIER DE FERMER TOUT (close) A LA FIN et (peut etre) d'en faire un singleton sinon on va avoir l'erreur: too many file opened
-		
-si ces proprietes sont externalisees du classpath : 
-FileInputStream fis = new FileInputStream("c:/temp/mybundle.txt"); //si je met juste un nom de fichier il va le chercher au meme niveau que le jar qui est executé
-try {
-  PropertyResourceBundle configurations= new PropertyResourceBundle(fis); // aucun problème d'accent avec ça (sauf si html peutetre utiliser &eacute;) par contre les ":" (deux points)à gauche doivent etre remplaces par "\:"
-  buffer = configurations.getString("APP_NAME");
-} finally {
-  fis.close();
-}
-pour sauver ecrire dans le fichier properties proprietes : 
-    				FileWriter fw = new FileWriter (PATH);
-    				props.store(fw, "unCommentaireSertARien");
-	       			fw.close();		
-....
---------------------------------
-erreurs exception java: faire un e.printStackTrace() linkgetStringStackTrace pour avoir plus de details sur l'erreur java. afficher le stacktrace depuis java9 utiliser StackWalker
-		mais pour le printer dans un log faire: 
-					StringWriter sw = new StringWriter();
-	        PrintWriter pw = new PrintWriter(sw, true);
-	        e.printStackTrace(pw);
-	        pw.flush();
-	        sw.flush(); //Flushes this output stream and forces any buffered output bytes to be written out.
-	        log.error(sw.toString());
-   ou mieux si on utilise log4j:
-   	logger.error(ex, ex); ca fait un stacktrace voir afficher imprimer
---------------------------------
 /**
 	 * Convert a File to a the CSV format
 	 * 
 	 * @param file File file to convert
-	 * @return CSVReader : the file in the CSV format
+	 * @return CSVReader: the file in the CSV format
 	 */
 	public static CSVReader convertToCSV(String path) {
 		//initialize the log4j logger
@@ -22996,7 +23218,7 @@ erreurs exception java: faire un e.printStackTrace() linkgetStringStackTrace pou
 		File scrFile = new File(path);
 
 		if ((null == scrFile) || (!scrFile.canRead())){
-			loggerPle.info("The file doesn't exist : " + path);
+			loggerPle.info("The file doesn't exist: " + path);
 		}else{
 			try {
 				fileInputStream = new FileInputStream(scrFile);
@@ -23007,7 +23229,7 @@ erreurs exception java: faire un e.printStackTrace() linkgetStringStackTrace pou
 				/** read csv file with separator as parameter */
 				csvReader = new CSVReader(inputStreamReader, Constants.FIELDS_SEPARATOR);
 				csvReader.readNext();
-				// parcourir : 
+				// parcourir: 
 				    String[] cols = new String[]{};
     			 while ((cols = csvReadingFile.readNext()) != null) {
     			{
@@ -23015,261 +23237,68 @@ erreurs exception java: faire un e.printStackTrace() linkgetStringStackTrace pou
     			}
 			} catch (CharacterCodingException mie) {
 				//the file is not in the expected charset
-				loggerPle.info("The file is not in the expected charset : " + path);
+				loggerPle.info("The file is not in the expected charset: " + path);
 				csvReader = null;
 			} catch (IOException ioe) {
-				loggerPle.info("PLE --- FilesImportProcess IOException : " + ioe.getMessage());
+				loggerPle.info("PLE --- FilesImportProcess IOException: " + ioe.getMessage());
 				csvReader = null;
 			} catch (Exception e) {
-				loggerPle.info("PTL --- FilesImportProcess Exception : " + e.getMessage());
+				loggerPle.info("PTL --- FilesImportProcess Exception: " + e.getMessage());
 				csvReader = null;
 			}	
 		}
 
 		return csvReader;
 ---------------------------
-	/**
-	 * 
-	 * @param date
-	 * @return String : returns the current in the format : YYYYSS 
-	 */
-	public static String getDateForFileName(Date date) {
-		GregorianCalendar calendar = new GregorianCalendar();
-		if (date != null) {
-			calendar.setGregorianChange(date);
-		}
-		return (""+calendar.get(Calendar.YEAR)+""+precedByZerosForLenght(calendar.get(Calendar.WEEK_OF_YEAR),2));
-------------------------------
-	/**
-	 * Return a string representation of a java.sql.timestamp object 
-	 */
-	public static String sqlTimestampToString (Object date)  {
-		try {
-			if (null == date) {
-				return "";
-				
-			} else{
-				Timestamp time = (Timestamp) date;
-				return time.toString();
-			}
-			
-		} catch (Exception e) {
-			return "";
-		}
-	}
-------------------------------------
-	/**
-	 * Return a string representation of a java.sql.time object
-	 */
-	public static String sqlTimeToString (Object date)  {
-		try {
-			if (null == date) {
-				return "";
-				
-			} else{
-				Time time = (Time) date;
-				return time.toString();
-			}
-			
-		} catch (Exception e) {
-			return "";
-		}
-	}
-------------------------------------
-	/**
-	 * Return a string representation of a a number and concat "0" in the beggining of this string returned
-	 * so that the string have the lenght of "lenght" parameter
-	 * @param date Object
-	 * @return a string representation of a int
-	 */
-	public static String precedByZerosForLenght(int number , int lenght )// regarder plutot DecimalFormat
-	{                                                                    
-		String numberWithZeros=Integer.toString(number);                   
-		while (numberWithZeros.length()<lenght)                            
-		{                                                                  
-			numberWithZeros = "0".concat(numberWithZeros);                   
-		}                                                                  
-		return numberWithZeros;                                            
-	}                                                                    
-------------------------------------
-	/**
-	 * Get string representation for the current year and month YYYYMM
-	 */
-	public static String getYearMonth()  throws Exception {
-		 StringBuffer yearmonth = new StringBuffer();
-		 
-		 //add 1 because months begin at 0 (0:jan, 1:feb...)
-		 int month = Calendar.getInstance().get(Calendar.MONTH)+1;
-		 // add a zero before month value 
-		 // ex: for May instead of 5 we got 05 as month
-		 String mois = (month < 10)? ("0" + month): ("" + month); 
-		 
-		 yearmonth.append(Calendar.getInstance().get(Calendar.YEAR));
-		 yearmonth.append(mois);
-		 
-		 return yearmonth.toString();
-	}
-------------------------------
-/**
-	 * <strong>Sort a strings array in lexicographical order</strong>
-	 */
-	public static String [] sortElements(String [] files) {
-		
-		List<String> list = new ArrayList<String> (Arrays.asList(files));
-		
-		Collections.sort(list);
-		
-		Object [] objs = list.toArray();
-		String [] result = new String [objs.length];
-		int i=0;
-		
-		for (Object obj : list) {
-			result [i++] = (String) obj;
-		}
-		
-		return result;
-		
-	}
----------------------------
-	/**
-	 * Copy a file from srcPath to dstPath. 
-	 * 
-	 * @param srcPath
-	 * @param dstPath
-	 * 
-	 * @return true if the copy is done.
-	 * 
-	 * @author SEI
-	 * 
-	 */
-	public static boolean copyFile(String srcPath, String dstPath) throws Exception {
-		boolean isDone = false;
-		
-        // Create channel on the source
-        FileChannel srcChannel = new FileInputStream(srcPath).getChannel();
-    
-        // Create channel on the destination
-        FileChannel dstChannel = new FileOutputStream(dstPath).getChannel(); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
-    
-        // Copy file contents from source to destination
-        dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
-    
-        // Close the channels
-        srcChannel.close();
-        dstChannel.close();
-	        
-		return isDone;
-	}
----------------------------
-	/**
-	 * Apply a pattern to a number value.   
-	 * 
-	 * 
-	 * @param number
-	 * @param pattern
-	 * @return the number formatted 
-	 * 
-	 */
-	public static String convertToPercentFormat(double number, String pattern) {
-		DecimalFormat df = new DecimalFormat(pattern, new DecimalFormatSymbols(Locale.US));
-		String numberFormatted = df.format(number);
-		return numberFormatted;
-	}
-	
-pour convertir un chiffre 1000000000 en 1 000 000 000 mettre des espaces: separateur de millier: 
-      	public static String addSpacesForThousand(String string) {
-      		String ret = "";
-      		String string2 = "";
-      		try
-      		{
-      				int i = string.indexOf(",");
-      				if (i!=-1)
-      					{
-      					string2 = string.substring(0,string.indexOf(","));
-      					}
-      				else string2 = string;
-      				Long a = Long.parseLong(string2);
-      				 NumberFormat nf = NumberFormat.getInstance();
-      				 				 NumberFormat nf = NumberFormat.getInstance(Locale.FRENCH); // c mieux de faire ca!!!!
-      			        ret =  nf.format(a).toString();
-      			        if (i!=-1) ret=ret.concat(",").concat((string.substring(i+1,string.length())));
-      			   ret = ret.replace(' ', '\u00a0');
-      		}
-      		catch(Exception e)
-      		{
-      			ret=string;
-      		}
-      		return ret;
-      	}
-
-pour remplacer les points par des virgules dans un chiffre: 
-          public static String replaceDotByCommaForNumbers(String data)
-          	{
-          		try
-          		{
-          			data= data.trim();
-          			boolean isNumber = true;
-          			String[] split = data.split("\\.");
-          			StringBuffer newData = new StringBuffer();
-          			for (int i = 0; i < split.length; i++) 
-          			{
-          				if (!isInteger(split[i])) {	
-          				isNumber=false;
-          				}
-          				newData.append(split[i]);
-          				if (i!=split.length-1)
-          				{
-          				newData.append(",");
-          				}
-          			}
-          			if (isNumber)
-          			{
-          				data = newData.toString();
-          			}
-          		}
-          		catch (Exception e)
-          		{
-          			logger.error(e,e);
-          		}
-          		return data;
-          	}
----------------------------
-	/**
-	* recursively delete directories repertoire safely 
-	* @param dir the directory to remove 
-	*/
-    private static boolean deleteDir(File dir) {
-        File[] files = dir.listFiles();
-        if (files != null) { // ou files.lenght >0?
-            for (File file : files) {
-                boolean deleted = file.delete(); // voir supprimer un fichier
-                if (!deleted) {
-                    // directory
-                    if (file.isDirectory()) deleteDir(file);
-                    // otherwise, there's nothing else we can do
-                }
-            }
-        }
-        return dir.delete(); // voir supprimer un fichier  
-    }
-
-Webservices : webservice : voir LINKSWAGGER voir exemple de webservice rest sans framework ici : d:\Profiles\lduverge\Desktop\Apprentissage\webservicedemo(attention pour l'entite j'ai pas respecte unclebob)
-  dans le cadre de microservices il faut qu'il y ait qun seul entrypoint point de départ de l'histoire et les liens renvoyés par les webservices respectant la norme HATEOAS permettent de savoir quelles autres urls je peux appeler.  
+microservices :
+    bonnes pratiques
+        dans le cadre de microservices il faut qu'il y ait qun seul entrypoint point de départ de l'histoire et les liens renvoyés par les webservices respectant la norme HATEOAS permettent de savoir quelles autres urls je peux appeler.
+webservice : webservices : voir LINKSWAGGER 
+    UDDI est un annuaire des webservices sur internet
+REST : webservice : webservices : client accède à un service à partir d'un URL et recoit en reponse json ou jpg ou plain text ou meme xml etc (meta-data dedans indique quoi) n'est pas forcement du http. Ca peut etre un websocket
+voir exemple de webservice rest sans framework ici: d:\Profiles\lduverge\Desktop\Apprentissage\webservicedemo(attention pour l'entite j'ai pas respecte unclebob)
 si erreur java.lang.AbstractMethodError: javax.ws.rs.core.UriBuilder.uri(Ljava/lang/String;)Ljavax/ws/rs/core/UriBuilder
       c parce que j'utilise pas les bonnes versions de librairies jersey/tomcat je crois. upgrader
   webservice renvoit une erreur policy? regarder au niveau "Autorisation"
-tutoriel Pour faire des serveurs de webservice : http://www.tutorialspoint.com/restful/restful_first_application.htm (avec REST et Jersey : utilise annotation. Facile. )
+tutoriel Pour faire des serveurs de webservice : http://www.tutorialspoint.com/restful/restful_first_application.htm
         webservices: http://users.skynet.be/pascalbotte/
+pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facile. ) 
+          <dependency>
+              	<groupId>com.sun.jersey</groupId>
+              	<artifactId>jersey-server</artifactId>
+              	<version>1.19</version>
+              </dependency>
+              <dependency>
+              	<groupId>com.sun.jersey</groupId>
+              	<artifactId>jersey-client</artifactId>
+              	<version>1.19</version>
+              </dependency>
+              <dependency>
+              	<groupId>org.apache.httpcomponents</groupId>
+              	<artifactId>httpcore</artifactId>
+              	<version>4.4-beta1</version>
+              </dependency>
+              <dependency>
+              	<groupId>org.apache.httpcomponents</groupId>
+              	<artifactId>httpclient</artifactId>
+              	<version>4.4-beta1</version>
+              </dependency>
+              <dependency>
+              	<groupId>org.json</groupId>
+              	<artifactId>json</artifactId>
+              	<version>20141113</version>
+              </dependency> 
+        
+
+SOAP : webservice : webservices :
 voir l'outil Soap Ui soapui bien pratique (dans installations)
-SOAP utilise WSDL (le serveur donne au client un wsdl pour qu'il puisse appeller ses methodes) Pour voir les details d'un webservice avec wsdl : http://172.18.68.129:10512/hr-ws/services?wsdl (?wsdl à la fin)
-REST client accède à un service à partir d'un URL et recoit en reponse json ou jpg ou plain text ou meme xml etc (meta-data dedans indique quoi) n'est pas forcement du http. Ca peut etre un websocket
-UDDI est un annuaire des webservices sur internet
-pour generer le wsdl a la main :
-          se placer dans le repertoire classes et faire :
+utilise WSDL (le serveur donne au client un wsdl pour qu'il puisse appeller ses methodes) Pour voir les details d'un webservice avec wsdl: http://172.18.68.129:10512/hr-ws/services?wsdl (?wsdl à la fin) existe aussi Spring-WS
+pour generer le wsdl a la main:
+          se placer dans le repertoire classes et faire:
           "C:\Program Files\Java\jdk1.6.0_24\bin\wsgen" -verbose -keep -cp . com.test.TestSessionBeanBean -wsdl // ou com.test.TestSessionBeanBean  est une classe contenant anotation @WebService(et @Statefull si c un EJB aussi) et @WebMethod au niveau des meths
            cette classe doit implementer une interface qui est annotee de @WebService  et @WebMethod de la meme facon. 
           il va generer le wsdl et le xsd sous classes
-pour generer java a partir de wsdl mais beurk : 
+pour generer java a partir de wsdl mais beurk: 
       "C:\Program Files\Java\jdk1.6.0_24\bin\wsimport" TestWebServiceBeanService.wsdl -verbose -keep -d repertoireOuGenererLeCodeSource
  pour generer java à partir de wsdl via maven: creer un projet maven avec le pom:
                                 <?xml version="1.0" encoding="UTF-8"?>
@@ -23299,7 +23328,7 @@ pour generer java a partir de wsdl mais beurk :
                               </build>
                               </project>
                  deposer dans resources mes .wsdl (et .xsd facultatif) et faire mvn package (ou bien mvn clean generate-sources?): ca cree un jar pour le webservice.     
-         autre methode avec une autre librairie pour generer le java à partir du wsdl : voir la doc D:\Projets\CDC\Guide mise en oeuvre web service JAXWS-1.7.pdf au bon chapitre :Developpement d'un client web service conforme JAX-WS
+         autre methode avec une autre librairie pour generer le java à partir du wsdl: voir la doc D:\Projets\CDC\Guide mise en oeuvre web service JAXWS-1.7.pdf au bon chapitre:Developpement d'un client web service conforme JAX-WS
                                   <plugin>
                                               <groupId>org.jvnet.jax-ws-commons</groupId>
                                               <artifactId>jaxws-maven-plugin</artifactId>
@@ -23333,109 +23362,17 @@ pour generer java a partir de wsdl mais beurk :
                                                   </dependency>
                                               </dependencies>
                                           </plugin>
-                                           
-pour appeller un webservice soap xml:     existe aussi Spring-WS
-		URL urlWebService = new URL("http://su340ars.mc2.renault.fr:17051/ewf_wsv/services/GRMLoadNewRequest");
+    pour appeler le webservice:
+		URL url = new URL("http://su340ars.mc2.renault.fr:17051/ewf_wsv/services/GRMLoadNewRequest");
 		GRMLoadNewRequestServiceLocator locator = new GRMLoadNewRequestServiceLocator();
-			GRMLoadNewRequest proxy = locator.getGRMLoadNewRequest(urlWebService);... a terminer a faire
- autre methode pour appeller un webservice SOAP canal securise crypte :
- ou si j'ai l'erreur : unable to find valid certification path to requested target. Pour bypasser ignorer le trust handshake ssl :
-            	String accesspoint = "https://ipam.intra.renault.fr/interfaces/ws.php";
-             //String accesspoint = "https://s0218tts.mc2.Renault.fr/interfaces/ws.php";
-             
-             // Les lignes suivantes permettent d'ignorer un certificat SSL errone.(ou pas voir ci dessous)
-              TrustManager[] tms = new TrustManager[0];
-            try {
-                            utilisable aussi là:LINK54636489
-                SI je m'en fous de la securite:
-                
-                public class TrustAllHostNameVerifier implements HostnameVerifier {   //uniquement je crois pour HttpsURLConnection 
-                    public boolean verify(String hostname, SSLSession session) {
-                      return true;
-                    }
-                  }
-                
-                      tms = new TrustManager[]
-                        {
-                                new X509TrustManager()
-                                {
-                                    public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; } // ou retur null;? 
-                                    public void checkClientTrusted(X509Certificate[] certs, String authType) {}
-                                    public void checkServerTrusted(X509Certificate[] certs, String authType) {}  // ca c pour ignorer la securite trust.
-                                }
-                        };
-                OU si je veux bien prendre en compte mon trustmanager et tester le handshake
-                    String alg = TrustManagerFactory.getDefaultAlgorithm();
-                    TrustManagerFactory tmFact = TrustManagerFactory.getInstance(alg);
-                    FileInputStream fis = new FileInputStream("/hraccess9/AUCTSTBB/openhr/conf/kbane_ldap.jks");// vers un .jks et pas un .cer
-                    java.security.KeyStore ks = java.security.KeyStore.getInstance("jks");
-                    String password = "jkspass";      
-                    ks.load(fis, password.toCharArray()); ou ks.load(fis, null); // a gauche le pwd sera obligatoire et à droite password pas necessaire facultatif si truststore) 
-                    fis.close();
-                    tmFact.init(ks);
-                    TrustManager[] tms = tmFact.getTrustManagers();
-                    //KeyStore
-                    //KeyManager[] kms = getKeyManagers();
-            PUIS
-             SSLContext sc = SSLContext.getInstance("SSL"); ou "TLS"?
-             sc.init(null, tms, new java.security.SecureRandom());
-             // sc.init(kms, tms, null);
-                sc.init(null, tms, null);
-
-             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory()); // si c'est du http
-             httpsConnection.setHostnameVerifier(new TrustAllHostNameVerifier ());  // si on veut ignorer un certificat SSL. (voir ci dessus la declaration de TrustAllHostNameVerifier)
-             ou  LINK54636489
-               // Facultatif: faire ça pour tester le handshake
-                  SSLSocket socket = (SSLSocket) sc.getSocketFactory().createSocket(host, port); 
-                  socket.setSoTimeout(10000);
-                  socket.startHandshake();
-                  socket.close();
-              // FIN Facultatif: on peut faire ça pour tester le handshake
-             ManagedSSLSocketFactory.setSocketFactory(sc.getSocketFactory() ); //si c'est du ldaps avec la classe ManagedSSLSocketFactory ci dessous  
-             Thread.currentThread().setContextClassLoader(ManagedSSLSocketFactory.class.getClassLoader()); 
-                                      public static abstract class ManagedSSLSocketFactory extends SSLSocketFactory ou SocketFactory les deux marchent mais SSLSocketFactory est moins verbeux. Moins secure? Sais pas. 
-                                      {
-                                         private static final ThreadLocal<SSLSocketFactory> local = new ThreadLocal<SSLSocketFactory>();
-                                         ou 
-                                         static ThreadLocal<SocketFactory> local = new ThreadLocal();
-                                         
-                                          public static void setSocketFactory(SSLSocketFactory factory) {local.set(factory);}
-                                          ou 
-                                          public static void set(SocketFactory factory) {local.set(factory);}
-                                        
-                                        public static SSLSocketFactory getDefault() {
-                                        SSLSocketFactory result = local.get();
-                                        ou
-                                        SocketFactory result = (SocketFactory)local.get();
-                                        if (result== null) {
-                                            throw new IllegalStateException("No SSLSocketFactory parameters have been set!");
-                                         }
-                                         return result;
-                                      }
-                                    }
-                                    
-                                    
-          pour tracer tls ssl debugger debuger je peux demarrer avec les options : -Djavax.net.debug=ssl:handshake:verbose
-                                                      ou     -Djavax.net.debug=all
-                                                            -Djava.security.debug=certpath
-             // c'est aussi comme ça qu'on envoie une requette post (voir aussi plus loin) LINKrequ939302
-                       URL url = new URL(urlgen + "ws/subscribe");
-                          URLConnection  conn = (URLConnection) url.openConnection();
-                          conn.setReadTimeout(10000);
-                          conn.setConnectTimeout(15000);
-                          conn.setDoInput(true);
-                          conn.setDoOutput(true);
-                          OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-                          wr.write( "user="+user);
-                          wr.flush();
-                          conn.getInputStream();
-             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-             HttpsURLConnection.setDefaultHostnameVerifier(hv);
-             CA NE MARCHE PAS SUR ANDROID :
-             // Construction d'une connexion vers l'url
-             HttpsURLConnection con = (HttpsURLConnection ) new URL(accesspoint).openConnection();
+			GRMLoadNewRequest proxy = locator.getGRMLoadNewRequest(url);... a terminer a faire
+           con c'est soit
+           HttpsURLConnection con
+           soit 
+           URLConnection  con = (URLConnection) url.openConnection(); ou HttpsURLConnection (voir SSL) 
              con.setConnectTimeout(60*1000);
              con.setReadTimeout(60*1000);
+             con.setDoInput(true);
              con.setDoOutput(true);
              con.setRequestMethod("POST");
              // Headers standard pour un appel SOAP.
@@ -23471,10 +23408,11 @@ pour appeller un webservice soap xml:     existe aussi Spring-WS
              reqXML += "</urn:ip_subnet_list>";
              reqXML += "</soapenv:Body>";
              reqXML += "</soapenv:Envelope>";
+             
              // On envoit la requête
-             //log.error("getOutputStream ");
-             OutputStream reqStream = con.getOutputStream();
-             reqStream.write(reqXML.getBytes());
+             envoyer requete :LINKrequ939302                                        
+             OutputStream reqStream = con.getOutputStream(); ou OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+             reqStream.write(reqXML.getBytes());             ou wr.write( "user="+user); puis wr.flush();
              // On recupere la reponse
              //log.error("getInputStream");
              InputStream reqResponse = con.getInputStream();
@@ -23494,94 +23432,87 @@ pour appeller un webservice soap xml:     existe aussi Spring-WS
              } finally {
                  if (reader != null) try { reader.close(); } catch (IOException logOrIgnore) {}
              }
+SSL : TLS : https :
+    pour tracer tls ssl debugger debuger je peux demarrer avec les options: -Djavax.net.debug=ssl:handshake:verbose
+                                                      ou     -Djavax.net.debug=all
+                                                            -Djava.security.debug=certpath
+    pour pourvoir faire du https:(recevoir des requetes https sur mon serveur): LINKhttpslkjsdgfml
+              cryptage: (voir aussi openssl)
+                  cryptage AES avec generation de cle etc etc...
+                      voir article http://java.sun.com/developer/technicalArticles/Security/AES/AES_v1.html                                                            
+si j'ai l'erreur: unable to find valid certification path to requested target. Pour bypasser ignorer le trust handshake ssl:
+            	String accesspoint = "https://ipam.intra.renault.fr/interfaces/ws.php";
+             // Les lignes suivantes permettent d'ignorer un certificat SSL errone.(ou pas voir ci dessous). SI je m'en fous de la securite:
+              TrustManager[] tms = new TrustManager[0];
+               tms = new TrustManager[]
+                        {
+                                new X509TrustManager()
+                                {
+                                    public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; } // ou retur null;? 
+                                    public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+                                    public void checkServerTrusted(X509Certificate[] certs, String authType) {}  // ca c pour ignorer la securite trust.
+                                }
+                        };
+                public class TrustAllHostNameVerifier implements HostnameVerifier {   //uniquement je crois pour HttpsURLConnection 
+                    public boolean verify(String hostname, SSLSession session) {
+                      return true;
+                    }
+                  }
+                OU si je veux bien prendre en compte mon trustmanager et tester le handshake
+                    String alg = TrustManagerFactory.getDefaultAlgorithm();
+                    TrustManagerFactory tmFact = TrustManagerFactory.getInstance(alg);
+                    FileInputStream fis = new FileInputStream("/hraccess9/AUCTSTBB/openhr/conf/kbane_ldap.jks");// vers un .jks et pas un .cer
+                    java.security.KeyStore ks = java.security.KeyStore.getInstance("jks");
+                    String password = "jkspass";      
+                    ks.load(fis, password.toCharArray()); ou ks.load(fis, null); // a gauche le pwd sera obligatoire et à droite password pas necessaire facultatif si truststore) 
+                    fis.close();
+                    tmFact.init(ks);
+                    TrustManager[] tms = tmFact.getTrustManagers();
+                    //KeyStore
+                    //KeyManager[] kms = getKeyManagers();
+            PUIS
+             SSLContext sc = SSLContext.getInstance("SSL"); ou "TLS"?
+             sc.init(null, tms, new java.security.SecureRandom());
+             // sc.init(kms, tms, null);
+                sc.init(null, tms, null);
 
-
-pour utiliser jersey avec maven pour les webservices: 
-          <dependency>
-              	<groupId>com.sun.jersey</groupId>
-              	<artifactId>jersey-server</artifactId>
-              	<version>1.19</version>
-              </dependency>
-              <dependency>
-              	<groupId>com.sun.jersey</groupId>
-              	<artifactId>jersey-client</artifactId>
-              	<version>1.19</version>
-              </dependency>
-              <dependency>
-              	<groupId>org.apache.httpcomponents</groupId>
-              	<artifactId>httpcore</artifactId>
-              	<version>4.4-beta1</version>
-              </dependency>
-              <dependency>
-              	<groupId>org.apache.httpcomponents</groupId>
-              	<artifactId>httpclient</artifactId>
-              	<version>4.4-beta1</version>
-              </dependency>
-              <dependency>
-              	<groupId>org.json</groupId>
-              	<artifactId>json</artifactId>
-              	<version>20141113</version>
-              </dependency> 
-
-Compilation des proc (livrees sur starteam) en recette:
-supprimer C:\projects\GISOdyssee-swd\recV7\build\recette\db\proc\erreur_compil_proc.txt
-executer C:\projects\GISOdyssee-swd\recV7\build\recette\build.bat
-(il va appeller un fichier ant qui va lui ouvrir le fichier de propriete 
-C:\projects\GISOdyssee-swd\recV7\build\common\common-parameters.properties
-pour pouvoir acceder à  Starteam et recuperer tous les .pro.
-selectionner l'option 3 pour generer le script des pro concatenees.
-ensuite executer 
-ATTENTION!!! : visiblement SYBASE NE SUPPORTE PAS DES COMPILATIONS MASSIVES DE PROC, IL FAUT DONC LES COMPILER PAR BLOCS SINON IL VA MAL COMPILER ET ON Y VERRA QUE DU FEU SAUF QUE CA VA PLANTER A L'EXECUTION ET ON NE SAURA PAS POURQUOI.
-C:\projects\GISOdyssee-swd\recV7\build\recette\db\proc\compile_proc.bat pour compliler (le regarder avant)
-
-livraison de l'ear en recette:
-supprimer C:\projects\GISOdyssee-swd\recV7\build\recette\db\proc\erreur_compil_proc.txt
-tout recuperer sur start team et être bien à  jour et surtout TOUT LIVRER CAR IL RECUPERERA DE STARTEAM
-supprimer C:\projects\GISOdyssee-swd\recV7\build\recette\ant-error.err
-executer C:\projects\GISOdyssee-swd\recV7\build\recette\build.bat
-selectionner l'option 1
-verifier que C:\projects\GISOdyssee-swd\recV7\build\recette\ant-error.err est vide
-Se connecter (transfert FTP) sur le serveur d'application UNIX correspondant avec avec winSCP avec mon compte u93522.mot de passe: 1235+(utiliser la carte)
-	serveurs was:
-	DEV: titss204
-	REC: titss311
-winscp marche avec pageant: http://winscp.net/eng/docs/ui_pageant
-3) envoyer un mail 
-Alain PICAS/BPSS/FR/EUROPE/GROUP@BNPPARIBAS, Pierre QUILBEUF/BPSS/FR/EUROPE/GROUP, PARIS BP2S GIS IT GISODYSSEE
-Debut Deploiement Recette
-
-Un deploiement en recette commence dans 2 minutes. 
-Merci de vous deconnecter et d'attendre mon feu vert pour toute reconnexion.
-Laurent
-
-------------------------------
-*****procedures stockees Sybase :************
-execution d'une procedure stockee :
-	declare 	
-	@error_code int  ,
- 	@id_msg     varchar(200)  , // ici ca veut dire qu'il met 200 bytes (pas 200 caracteres) si on veut 200 caracters il faut mettre VARCHAR(200 char) sous reserve que le paramètre de base NLS_LENGTH_SEMANTICS soit positionne à  sa valeur defaut: BYTE).
-	@msg_param  varchar(200)  
-	exec PS_CALENDARCLPLX_LIST @error_code Output,@id_msg Output,@msg_param  Output,'%','%','%'
-
-declare  selectCalendCplx cursor for
-	select 	ID_CCX, LIBELLE, CODE, STATUS, COMPOSITION from #tmp_calendcplx
-open selectCalendCplx
-fetch selectCalendCplx into @id, @lib, @code, @status, @composition
-while (@@sqlstatus = 0)
-begin
-
-	select @nm_calend = ''
-	
-.....
-
-
-
-
-fetch selectCalendCplx into @id, @lib, @code, @status, @composition
-end
-close    selectCalendCplx
-deallocate cursor selectCalendCplx		
-
+             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory()); // si c'est du http
+             httpsConnection.setHostnameVerifier(new TrustAllHostNameVerifier ());  // si on veut ignorer un certificat SSL. (voir ci dessus la declaration de TrustAllHostNameVerifier)
+             ou
+             HttpsURLConnection.setDefaultHostnameVerifier(hv);
+                          
+             HttpsURLConnection con = (HttpsURLConnection ) new URL(accesspoint).openConnection(); //CA NE MARCHE PAS SUR ANDROID: Construction d'une connexion vers l'url
+            
+               // Facultatif: faire ça pour tester le handshake LINK54636489
+                  SSLSocket socket = (SSLSocket) sc.getSocketFactory().createSocket(host, port); 
+                  socket.setSoTimeout(10000);
+                  socket.startHandshake();
+                  socket.close();
+              // FIN Facultatif: on peut faire ça pour tester le handshake
+             ManagedSSLSocketFactory.setSocketFactory(sc.getSocketFactory() ); //si c'est du ldaps avec la classe ManagedSSLSocketFactory ci dessous  
+             Thread.currentThread().setContextClassLoader(ManagedSSLSocketFactory.class.getClassLoader()); 
+                                      public static abstract class ManagedSSLSocketFactory extends SSLSocketFactory ou SocketFactory les deux marchent mais SSLSocketFactory est moins verbeux. Moins secure? Sais pas. 
+                                      {
+                                         private static final ThreadLocal<SSLSocketFactory> local = new ThreadLocal<SSLSocketFactory>();
+                                         ou 
+                                         static ThreadLocal<SocketFactory> local = new ThreadLocal();
+                                         
+                                          public static void setSocketFactory(SSLSocketFactory factory) {local.set(factory);}
+                                          ou 
+                                          public static void set(SocketFactory factory) {local.set(factory);}
+                                        
+                                        public static SSLSocketFactory getDefault() {
+                                        SSLSocketFactory result = local.get();
+                                        ou
+                                        SocketFactory result = (SocketFactory)local.get();
+                                        if (result== null) {
+                                            throw new IllegalStateException("No SSLSocketFactory parameters have been set!");
+                                         }
+                                         return result;
+                                      }
+                                    }
+ 
+ 
 DEVOPS : 
  voir Linktestdevopsç9349 et LINKDevopslksjqgfvmlka
  pas de specialistes, que des généralistes: rotation.
@@ -23839,7 +23770,7 @@ UNIX : linux :(unix est la plus basse couche; linux est au dessus mais il a ét�
   apres avoir fait "dmt &" faire vmstat 2 pour garder la session (2 pour rafficher toutes les deux secondes)
   vmstat: la consomation cpu se lit sous cpu et sous us + sy
   & le et commercial sert à  lancer la thread en tache de fond sous unix
-  les alias sous unix: exemple : alias ll = 'ls -l' ou bien alias ll="ls -l"
+  les alias sous unix: exemple: alias ll = 'ls -l' ou bien alias ll="ls -l"
   supprimer l'alias: faire unalias nomdel'alias
   quelle est ma version type de linux:
       cat /etc/*-release
@@ -29364,7 +29295,27 @@ choose et when: (when doit etre inclu dans choose)
 sybase :
 descriptif d'une table: sp_help NOMTABLE
 sp_helptext NOM DE LA  STOCKEE
-Procedure stockee : 
+Procedure stockee : ATTENTION!!! : visiblement SYBASE NE SUPPORTE PAS DES COMPILATIONS MASSIVES DE PROC, IL FAUT DONC LES COMPILER PAR BLOCS SINON IL VA MAL COMPILER ET ON Y VERRA QUE DU FEU SAUF QUE CA VA PLANTER A L'EXECUTION ET ON NE SAURA PAS POURQUOI.
+execution d'une procedure stockee :
+	declare 	
+	@error_code int  ,
+ 	@id_msg     varchar(200)  , // ici ca veut dire qu'il met 200 bytes (pas 200 caracteres) si on veut 200 caracters il faut mettre VARCHAR(200 char) sous reserve que le paramètre de base NLS_LENGTH_SEMANTICS soit positionne à  sa valeur defaut: BYTE).
+	@msg_param  varchar(200)  
+	exec PS_CALENDARCLPLX_LIST @error_code Output,@id_msg Output,@msg_param  Output,'%','%','%'
+    
+    declare  selectCalendCplx cursor for
+    	select 	ID_CCX, LIBELLE, CODE, STATUS, COMPOSITION from #tmp_calendcplx
+    open selectCalendCplx
+    fetch selectCalendCplx into @id, @lib, @code, @status, @composition
+    while (@@sqlstatus = 0)
+    begin
+    
+    	select @nm_calend = ''
+    fetch selectCalendCplx into @id, @lib, @code, @status, @composition
+    end
+    close    selectCalendCplx
+    deallocate cursor selectCalendCplx		
+ 
 proc sybase
 /******************************************************************************/
 /* Nom: PS_CREANCES_LIST							         */
