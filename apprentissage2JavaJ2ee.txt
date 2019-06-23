@@ -2414,6 +2414,14 @@ erreurs codes http: LINKcodesHttp
 
 
 J2EE :
+pour acceder à un fichier sous webcontent en java: 
+	request.getSession(false ou true).getServletContext().getRealPath("/resources/Tableau_de_bord.xls") // attention recree une  nouvelle session si elle n'existe plus (mettre false si on veut que ca renvoit null en cas de perte de session)
+        // ou getServet().getServletContext()
+  	where /resources/Tableau_de_bord.xls is present inside the webcontent
+	ou 
+    ClassificationNodeTest.class.getClassLoader().getResource(".")	ClassLoader.getResourceAsStream() ; ClassLoader.getResource() voir LINKgetRes9 verifier avec System.out.println("CLASSPATH: " + System.getProperty("java.class.path")); System.out.println("ClassLoader resource path: " + HRParameters.class.getClassLoader().getResource("hr-openhr-for-ta.properties")); voir LINKgetRes9 System.out.println("ClassLoader resource path: " + ClassLoader.getSystemResourceAsStream("hr-openhr-for-ta.properties"));
+    WelcomePresentor.class.getClassLoader().findResource("demo.css").getPath()
+
 pour recuperer une variable d'environnement qui est declaree dans web.xml:
 			pour recuperer le numero de version
 			String ttfPath = (String)ServiceLocator.getInstance().getRefByName("NOM_DE_LA_VARIABLE");
@@ -15680,6 +15688,8 @@ http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-j
 java7 :
 http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase7-521261.html  
 JAVA :
+java10 : java 10 :
+        var: bof eviter
 decompiler :
       meilleur decompilateur :decode_java (java decompiler); Sinon utiliser Intellij qui peut aussi comparer des repertoires 
       fernflower pour decompiler tout un jar et exporter les sources dans un jar avec des .java à la place des .class (mettre ~1 pour les espaces)
@@ -19872,409 +19882,36 @@ Pour faire un graphique dans une appli web:
     	}
       ... a finir...(projet OPA)
         
-pour savoir si un nombre est paire ou impaire:
-      if ( n % 2 == 0 ) {
-         System.out.println(n + " est pair.");
-      else {
-         System.out.println(n + " est impair.");
-setMarkupAttribute("border", "1");
-pour savoir si un int est defini par defaut il est egal à 0.
-DOM parseur : avec Xpath (a partir de java 5 je crois)
-                            Document document =null;
-                            		File fileObj = new File(filePath);
-                            		DocumentBuilderFactory builderFactory =DocumentBuilderFactory.newInstance();
-                            		DocumentBuilder builder = null;
-                            		try {
-                            		    builder = builderFactory.newDocumentBuilder();
-                            		} catch (ParserConfigurationException e) {
-                            		    e.printStackTrace();  
-                            		}			
-                            		try {
-                            		    document = builder.parse(new FileInputStream(filePath));
-                            		      ou
-                            		    document = builder.parse( new InputSource( new StringReader( respXML ) ) );
-                            		} catch (SAXException e) {
-                            		    e.printStackTrace();
-                            		} catch (IOException e) {
-                            		    e.printStackTrace();
-                            		}
-                            		XPath xPath =  XPathFactory.newInstance().newXPath();
-                            		 //TOTOTOT/TOTITIT//DNFSDF  ici on cherche tous les enfants DNFSDF meme indirects
-                            		 TATATA/ancestor:TETETE  ici on cherche un parent meme indirect egal a <TETETE>
-                            		//String expression = "//RN-CLIP-LAUNCH-ACTUATOR/@ACTUATOR-CODE";
-                            		String expression = "//RN-CLIP-LAUNCH-ACTUATOR | //RN-CLIP-DISPLAY-DEFAULTS | //RN-CLIP-ERASE-ALL-DEFAULTS | //RN-CLIP-DISPLAY-DEFAULTS | RN-CLIP-DISPLAY";	 		 
-                            
-                            		//read a string value
-                            		String email = xPath.compile(expression).evaluate(document);
-                            		 
-                            		//read an xml node using xpath
-                            		Node node = (Node) xPath.compile(expression).evaluate(document, XPathConstants.NODE);
-                            		 
-                            		//read a nodelist using xpath
-                            		NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(document, XPathConstants.NODESET);
-Creer depuis xsd une grappe d'objets classes java pour la conversion convertir en deux sens xml et java
-      D:\Java\jdk1.8.0_151>xjc -encoding UTF-8 pathVersFichierXsdOuMemeUneURLD:/Profiles/lduverge/workspace/wenhuaduvergeamazonfeed/src/main/resources/product.xsd -p com.wenhuaduverge.jaxb -d D:\Profiles\lduverge\workspace\wenhuaduvergeamazonfeed\src\main\java
-Convertir un objet java contenant une liste d'objets java en fichier xml:
-  context = JAXBContext.newInstance(MaClasse.class); // attention depuis java11 jaxb degage
-  Marshaller m=context.createMarshaller();
-  m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,true);
-  m.marshal(UneListeDeMaClasse,newStreamResult(newFileOutptStream(new File("xx"));
 
-  
- 
-Convertir parser xml en objet java:
-    classe de definition:
-          import java.util.List;
-            import javax.xml.bind.annotation.XmlElement;
-            import javax.xml.bind.annotation.XmlRootElement;
-                  @XmlRootElement(name = "users")
-                  public class JaxbUserRepository {
-                      @XmlElement(name = "user")
-                      private List<JaxbUser> users;              
-                      public List<JaxbUser> getUsers() {
-                          return users;
-                      }
-                          @XmlAttribute(required = true)
-                          private String password;
-                          @XmlElement(name="group")
-                          @Path("titito") // facultatif : je crois que c'est pour changer le path dans le xml resultant
-                          private List<String> groups;
 
-                  }
-       dans le main:
-          import javax.xml.bind.JAXBContext;
-          import javax.xml.bind.JAXBException;
-          import javax.xml.bind.Unmarshaller;
-            final JAXBContext jc = JAXBContext.newInstance(JaxbUserRepository.class);
-            final Unmarshaller u = jc.createUnmarshaller();
-            final JaxbUserRepository jaxbUserRepository =
-                    (JaxbUserRepository)u.unmarshal( new File( userFilePath ) );
-
-            final List<JaxbUser> jaxbUsers = jaxbUserRepository.getUsers();
-
-    
-DOM parseur : (vieille methode) 
-// permet de parser un xml avec xpath et on peut soit ecrire le contenu des nodes trouves (uniquement le texte) ou bien tout le contenu grace a la methode getElementContent ci dessous:
-                                                                          package ddd.com;
-                                                                          
-                                                                          import java.io.File;
-                                                                          import java.io.FileInputStream;
-                                                                          import java.io.IOException;
-                                                                          import java.io.StringWriter;
-                                                                          import java.util.Hashtable;
-                                                                          import java.util.LinkedHashSet;
-                                                                          import java.util.Map;
-                                                                          
-                                                                          import javax.xml.parsers.DocumentBuilder;
-                                                                          import javax.xml.parsers.DocumentBuilderFactory;
-                                                                          import javax.xml.parsers.ParserConfigurationException;
-                                                                          import javax.xml.transform.OutputKeys;
-                                                                          import javax.xml.transform.Transformer;
-                                                                          import javax.xml.transform.TransformerException;
-                                                                          import javax.xml.transform.TransformerFactory;
-                                                                          import javax.xml.transform.dom.DOMSource;
-                                                                          import javax.xml.transform.stream.StreamResult;
-                                                                          import javax.xml.xpath.XPath;
-                                                                          import javax.xml.xpath.XPathConstants;
-                                                                          import javax.xml.xpath.XPathFactory;
-                                                                          
-                                                                          import org.junit.Test;
-                                                                          import org.w3c.dom.Document;
-                                                                          import org.w3c.dom.Node;
-                                                                          import org.w3c.dom.NodeList;
-                                                                          import org.xml.sax.SAXException;
-                                                                          
-                                                                          import com.documentum.fc.client.IDfSession;
-                                                                          
-                                                                          public class Tests {
-                                                                          
-                                                                          	static java.io.FileOutputStream destinationFile=null;
-                                                                          	static File xmlFile=null;
-                                                                          	static IDfSession session;
-                                                                          	static Map<String,String> xpaths= new Hashtable<String,String>();
-                                                                          	static Map<String,LinkedHashSet<String[]>> xmlElements= new Hashtable<String,LinkedHashSet<String[]>>();
-                                                                          	private static String extraction;
-                                                                          
-                                                                              	
-                                                                                 
-                                                                              	
-                                                                              	@Test
-                                                                                public void oneTest() throws Exception
-                                                                              	{
-                                                                              		//xpaths.put("mdsie30_mr", "//PTXT/RN-RDC-ACCESS");
-                                                                              		xpaths.put("mdsie30_mr", "//ptxt/RN-RDC-ACCESS");
-                                                                              		LinkedHashSet<String[]> xmlElement = new LinkedHashSet<String[]>();
-                                                                              		xmlElement = new LinkedHashSet<String[]>();
-                                                                              		xmlElement.add(new String[]{"RN_RDC_ACCESS_COMPLET",XmlObjectEnum.attribute.label});
-                                                                              		xmlElement.add(new String[]{"RDC-ELEMENT-DESC",XmlObjectEnum.attribute.label});
-                                                                              		xmlElement.add(new String[]{"RDC-ELEMENT-REF",XmlObjectEnum.attribute.label});
-                                                                              		xmlElement.add(new String[]{"RDC-OPERATION-DESC",XmlObjectEnum.attribute.label});
-                                                                              		xmlElement.add(new String[]{"RDC-ELEMENT-REF",XmlObjectEnum.attribute.label});
-                                                                              		xmlElements.put("mdsie30_mr", xmlElement);
-                                                                                  
-                                                                              		xmlFile=new File("//f-mehen/home5$/p036782/MyDocs/DDD/resultatRequetes/090135f3803533dc.xml");
-                                                                              		recherchedansxml(xpaths.get("mdsie30_mr"));
-                                                                              		
-                                                                              	}
-                                                                              	public static void recherchedansxml(String expression) throws Exception
-                                                                              	{
-                                                                              		Document document =null;
-                                                                              			DocumentBuilderFactory builderFactory =DocumentBuilderFactory.newInstance();
-                                                                              			DocumentBuilder builder = null;
-                                                                              			try {
-                                                                              			    builder = builderFactory.newDocumentBuilder();
-                                                                              			} catch (ParserConfigurationException e) {
-                                                                              			    e.printStackTrace();  
-                                                                              			    throw e;
-                                                                              			}			
-                                                                              			try {
-                                                                              				System.out.println("parsexml");
-                                                                              			    document = builder.parse(new FileInputStream(xmlFile));
-                                                                              			} catch (SAXException e) {
-                                                                              			    e.printStackTrace();
-                                                                              			    throw e;
-                                                                              			} catch (IOException e) {
-                                                                              			    e.printStackTrace();
-                                                                              			    throw e;
-                                                                              			}
-                                                                              			XPath xPath =  XPathFactory.newInstance().newXPath();
-                                                                              			//read a string value
-                                                                              			//String email = xPath.compile(expression).evaluate(document);
-                                                                              			 
-                                                                              			//read an xml node using xpath
-                                                                              			//Node node = (Node) xPath.compile(expression).evaluate(document, XPathConstants.NODE);
-                                                                              			 
-                                                                              			//read a nodelist using xpath
-                                                                              			NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(document, XPathConstants.NODESET);
-                                                                              			for( int i =0; i<nodeList.getLength(); i++)
-                                                                              			{
-                                                                              				System.out.println(getElementContent(nodeList.item(i).getParentNode(),"--"));
-                                                                              			}
-                                                                              	}
-                                                                              	public static String getElementContent(Node element,String defaultStr) throws Exception
-                                                                              	{
-                                                                              		TransformerFactory transFactory = TransformerFactory.newInstance();
-                                                                              		Transformer transformer = transFactory.newTransformer();
-                                                                              		StringWriter buffer = new StringWriter();
-                                                                              		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-                                                                              		transformer.transform(new DOMSource(element), new StreamResult(buffer));
-                                                                              		String str = buffer.toString();
-                                                                              		return str;
-                                                                              	}
-                                                                              	 public static String getElementContentOLD(Node element, String defaultStr)
-                                                                                   throws Exception
-                                                                                {
-                                                                                   if (element == null)
-                                                                                      return defaultStr;
-                                                                          
-                                                                                   NodeList children = element.getChildNodes();
-                                                                                   String result = "";
-                                                                                   for (int i = 0; i < children.getLength(); i++)
-                                                                                   {
-                                                                                      if (children.item(i).getNodeType() == Node.TEXT_NODE || 
-                                                                                          children.item(i).getNodeType() == Node.CDATA_SECTION_NODE)
-                                                                                      {
-                                                                                         result += children.item(i).getNodeValue();
-                                                                                      }
-                                                                                      else if( children.item(i).getNodeType() == Node.COMMENT_NODE )
-                                                                                      {
-                                                                                         // Ignore comment nodes
-                                                                                      }
-                                                                                   }
-                                                                                   return result.trim();
-                                                                                }
-                                                                              	
-                                                                              	public enum XmlObjectEnum 
-                                                                              	{
-                                                                              	 	attribute(0,"attribute"),name(1,"name"),content(2,"content"); // ici j'ai defini deux elements de liste de l'enum. (ca appelle le constructeur ci dessous)
-                                                                              		private int id;
-                                                                              		private String label;
-                                                                          
-                                                                              		private XmlObjectEnum(int typeId, String labelId)
-                                                                              		{
-                                                                              			this.id = typeId;
-                                                                              			this.label = labelId;
-                                                                              		}
-                                                                              		// methode standard pour les enums
-                                                                              		public static XmlObjectEnum getEnum(String type)
-                                                                              		{
-                                                                              			return (XmlObjectEnum)XmlObjectEnum.valueOf(XmlObjectEnum.class, type);
-                                                                              		}
-                                                                              	 }
-                                                                          
-                                                                          }
-VIEILLE METHODE. Depuis java 5 ou 6 ca ne marche plus car on utilise plus apache mais javax
-    import org.apache.xerces.parsers.DOMParser;
-    import org.w3c.dom.Document;
-    import org.w3c.dom.Node;
-    import org.w3c.dom.Element;
-    import org.w3c.dom.NodeList;
-    import org.xml.sax.*;
-    import org.apache.xpath.XPathAPI;
-        private static void LancerParsageFichiers()
-        {
-            try
-            {
-                (...)
-                VerifConformiteXml(i); // voir methode apres celle ci dessous
-                DOMParser parser = new DOMParser();
-                parser.setFeature ("http://xml.org/sax/features/validation", false);
-                // on va parser sans interrompre le traitement si xml n est pas conforme au dtd:
-                IgnorerDTD(i);         // voir methode apres celle ci dessous
-                parser.parse("chemin vers mon fichier xml");
-                // parsage
-                Document document = parser.getDocument();
-                Traverse(document);         // voir methode apres celle ci dessous
-            }
-          catch (SAXException e)
-          {
-            cat.fatal("SaxExceptionboucle "+e);//err
-          }
-          catch (IOException e)
-          {
-            cat.fatal("IOException"+e);//err
-          }
-          catch (SecurityException e)
-          {
-            cat.fatal("SecutityIOException"+e);//err
-          }
-          catch (ClassNotFoundException e)
-          {
-            cat.fatal("ClassNotFoundException " + e);
-          }
-        }
-    VERIFIER CONFORMITE FICHIER XML :
-          private static void VerifConformiteXml(int i)
-          {
-            //Verification du xml vis a vis du dtd local dont le nom doit etre "Action.dtd"
-            cat.debug("> VerifConformiteXml");
-            DOMParser ParserVerif = new DOMParser();
-            try
-            {
-              //verification du xml suivant le dtd
-              ParserVerif.setFeature ("http://xml.org/sax/features/validation", true);
-              //valide avec precision
-              ParserVerif.setErrorHandler(new ErrorHandler()
-              {
-                public void warning(SAXParseException ex) throws SAXException
-                {
-                  throw ex;
-                }
-                public void error(SAXParseException ex) throws SAXException
-                {
-                  throw ex;
-                }
-                public void fatalError(SAXParseException ex) throws SAXException
-                {
-                  throw ex;
-                }
-              }
-              );
-              //indique le chemin du dtd
-              ParserVerif.setEntityResolver( new EntityResolver()
-              {
-                public InputSource resolveEntity(String publicID, String systemID) throws IOException, SAXException
-                {
-                  if(systemID.endsWith("Action.dtd"))
-                  {
-                    cat.debug("recupere dtd local");
-                    return new InputSource(DirGespro+"Action.dtd");
-                  }
-                  return null;
-                }
-              });
-        
-              ParserVerif.parse(DirGespro.concat(nomsfich[i]));
-              Document DocumentVerif = ParserVerif.getDocument();
-              ParserVerif.reset();
-            }
-            catch (java.lang.Exception e)
-            {
-              cat.warn("Fichier xml non conforme au dtd OU Chemin du dtd non specifie dans le fichier xml: "+e); //err
-            }
-           /* catch (SAXNotRecognizedException e)
-            {
-               log("SAXNotRecognizedException WARNING: "+e); //err
-            }
-            catch (SAXNotSupportedException e)
-            {
-               log("SAXNotSupportedException WARNING: "+e); //err
-            }
-            catch (IOException e)
-            {
-              log("ALERT SYSTEM: IOException"+e); //err
-            }
-            catch (SAXException e)
-            {
-               log("ALERT SYSTEM: SaxExceptionVerifXml"+e); //err
-            }*/
-          }
-          private static void IgnorerDTD (int i)
-            {
-              cat.debug(">ignorerdtd");
-              // Pour supprimer du fichier xml la premiere ligne ligne contenant le chemin vers le dtd
-              try
-              {
-                RandomAccessFile lirexml = new RandomAccessFile(new File (DirGespro.concat(nomsfich[i])),"rw");
-                // attention, RandomAccessFile.readLine() est incapable de lire de l'encodage utf-8 pour cela utiliser la methode voir: readLine() 
-                long filePointer = 0;
-                String ligne = "";
-                while ((ligne = lirexml.readLine())!=null)
-                {
-          
-                  filePointer = lirexml.getFilePointer();
-                  cat.debug("ligne en cours " + ligne);
-                  if (ligne.startsWith("<!DOC"))
-                  {
-                    long longueur = ligne.length();
-                    lirexml.seek(filePointer - longueur -2); // -2: correspond a \n... pas elegant il faut trouver mieux
-                    for (i=0; i<longueur; i++)
-                    {
-                      lirexml.writeBytes(" ");
-                    }
-                    cat.debug ("fin instruction");
-                    break;
-                  }
-                }
-                lirexml.close();
-              }
-              catch (IOException e)
-              {
-                cat.fatal ("IOException"+e);//err
-              }
-            }
-            
-         private static void Traverse (Node node)  throws IOException
-            {
-              int type = node.getNodeType();
-              String name = node.getNodeName();
-              if (name.compareToIgnoreCase("InscriptionAgent")==0)
-              {
-                if (node.getAttributes().getLength()==4 && node.getChildNodes().item(1).getNodeName().compareTo("IA_Apprenant")==0)
-                {
-                  if (node.getAttributes().getNamedItem("datedebut")!= null)
-                    datedebut=node.getAttributes().getNamedItem("datedebut").getNodeValue();
-              (...)
-              NodeList children = node.getChildNodes();
-              if (children !=null)
-              {
-                for (int i=0; i<children.getLength(); i++) Traverse(children.item(i));
-              }
-              //pour mettre des retours chariots apres manipulation du xml si tout s'ecrit a la ligne
-                /*TransformerFactory tfactory = TransformerFactory.newInstance();
-                Transformer tranformer = tfactory.newTransformer();
-                tranformer.setOutputProperty(OutputKeys.INDENT, "yes"); */
-            }
-             // pour faire une requete xpath: 
-             NodeIterator  nl = XPathAPI.selectNodeIterator(document, "mon xpath!");
-
-pour connaitre savoir le type d'une classe: LINKkgjhjhjhjhjhjc 
-    	instanceof
-    	   exemple:
-          if (maclasse instanceof Command)...
-    	ou bien:
-    	e.getClass().getName()
-Objet java.sql.Statement: 
+connexion : base de donnee : relationelle :
+    se connecter à une base de donnee oracle: 
+    			public static Connection initConnection(String driver, String url, String user, String password) throws ClassNotFoundException, SQLException{
+    			// ou driver c'est oracle.jdbc.driver.OracleDriver pour oracle.
+    				Connection conn = null; 
+    				try{
+    					Logger.out.debug("Openinig DB Connection");
+    					Class.forName(driver);            // important pour declarer le driver au driver manager. driver c par exemple: "oracle.jdbc.driver.OracleDriver" ou "com.mysql.jdbc.Driver"
+            					(
+                          //on peut aussi faire ca pour declarer le driver, mais jamais essaye
+                            import oracle.jdbc.driver.OracleDriver;
+                            DriverManager.registerDriver(new OracleDriver());
+                      )
+    					conn = DriverManager.getConnection(url, user, password); // exemple: java.sql.DriverManager.getConnection("jdbc:oracle:thin:@hpsd1805.mc2.renault.fr:1526:sajdevo01", "saj_adm", "saj_adm_01");
+    				}catch (ClassNotFoundException ce){
+    					Logger.out.error("Oracle Driver not found: " + ce);
+    					throw ce;
+    				}catch (SQLException se){
+    					Logger.out.error("Unable to connect with the Oracle DataBase:" + se);
+    					throw se;
+    				}catch (Throwable se){
+    					Logger.out.error("Unable to connect with the Oracle DataBase:" + se);
+    					throw se;
+    				}finally{
+    					return conn;
+    				}
+    			}
+        Objet java.sql.Statement: 
 		attention quand on fait des addBatch("une requete"); à la suite, à la fin faire connection.commit(); et non pas addBatch("commit");
 		pour commiter si on est en Autocommit à false
 		toujours declarer la connection et le statement à null en dehors de try
@@ -20297,56 +19934,19 @@ Bonne pratique d'autocommit si autocommit est à false:
                 		}
                 	}
 
-
-se connecter à une base de donnee oracle: 
-			public static Connection initConnection(String driver, String url, String user, String password) throws ClassNotFoundException, SQLException{
-			// ou driver c'est oracle.jdbc.driver.OracleDriver pour oracle.
-				Connection conn = null; 
-				try{
-					Logger.out.debug("Openinig DB Connection");
-					Class.forName(driver);            // important pour declarer le driver au driver manager. driver c par exemple: "oracle.jdbc.driver.OracleDriver" ou "com.mysql.jdbc.Driver"
-        					(
-                      //on peut aussi faire ca pour declarer le driver, mais jamais essaye
-                        import oracle.jdbc.driver.OracleDriver;
-                        DriverManager.registerDriver(new OracleDriver());
-                  )
-					conn = DriverManager.getConnection(url, user, password); // exemple: java.sql.DriverManager.getConnection("jdbc:oracle:thin:@hpsd1805.mc2.renault.fr:1526:sajdevo01", "saj_adm", "saj_adm_01");
-				}catch (ClassNotFoundException ce){
-					Logger.out.error("Oracle Driver not found: " + ce);
-					throw ce;
-				}catch (SQLException se){
-					Logger.out.error("Unable to connect with the Oracle DataBase:" + se);
-					throw se;
-				}catch (Throwable se){
-					Logger.out.error("Unable to connect with the Oracle DataBase:" + se);
-					throw se;
-				}finally{
-					return conn;
-				}
-			}
+principes :
 break:
 		ne sort que d'un niveau si par exemple il y a deux boucles imbriquees et qu'on met le break dans la deuxieme boucle, la premiere continue.
 les short: 
 	 vont jusqu'a 32000
 
-pour acceder à un fichier sous webcontent en java: 
-	request.getSession(false ou true).getServletContext().getRealPath("/resources/Tableau_de_bord.xls") // attention recree une  nouvelle session si elle n'existe plus (mettre false si on veut que ca renvoit null en cas de perte de session)
-        // ou getServet().getServletContext()
-  	where /resources/Tableau_de_bord.xls is present inside the webcontent
-	ou 
-    ClassificationNodeTest.class.getClassLoader().getResource(".")	ClassLoader.getResourceAsStream() ; ClassLoader.getResource() voir LINKgetRes9 verifier avec System.out.println("CLASSPATH: " + System.getProperty("java.class.path")); System.out.println("ClassLoader resource path: " + HRParameters.class.getClassLoader().getResource("hr-openhr-for-ta.properties")); voir LINKgetRes9 System.out.println("ClassLoader resource path: " + ClassLoader.getSystemResourceAsStream("hr-openhr-for-ta.properties"));
-    WelcomePresentor.class.getClassLoader().findResource("demo.css").getPath()
-pour acceder à un fichier depuis une jsp 	
-	pageContext.getServletContext().getRealPath (url) 
-pour acceder à un fichier situe dans le classpath: 
-			this.getClass().(getClassLoader()?.)getResourceAsStream("cheminVers/monFichier.toto)); (getClass est une methode de l'objet java "Object" verifier avec System.out.println("CLASSPATH: " + System.getProperty("java.class.path")); System.out.println("ClassLoader resource path: " + SaveXMLTest.class.getClassLoader().getResource("").getPath() ou HRParameters.class.getClassLoader().getResource("hr-openhr-for-ta.properties")); System.out.println("ClassLoader resource path: " + ClassLoader.getSystemResourceAsStream("hr-openhr-for-ta.properties"));   LINKgetRes9
-pour faire une classe abstraite: // on ne peut pas faire  new maclasseabstraite . ses enfants peuvent utiliser ses var et method qui doivent alors etre public ou protected 
+pour faire une classe abstraite abstract: // on ne peut pas faire  new maclasseabstraite . ses enfants peuvent utiliser ses var et method qui doivent alors etre public ou protected 
 	public abstract class AbstractIndicateur {
 	   possible exister methode abstaites sans corp devant etre overridé par les methodes filles
                 exemple: public abstract IController returnController(String controllerName) throws Exception;
 	   Grace a ca je peux dans cette classe abstraite appeler cette methode qui n'existe pas ici mais que dans les filles. (Attention à bien mettre public ou protected)
 	}
-	classe fille:
+classe fille:
       super: en java: appele la classe au dessus... (extend)
 Varargs : pour envoyer des arguments à une methode :
 			pour une methode qui a cette signature : public static String format(String pattern, Object... arguments);  trois petits points
@@ -20355,41 +19955,8 @@ Varargs : pour envoyer des arguments à une methode :
 							String result = format("balblabla", arguments);
 			ou comme ca: 
 							String result = format("blablabla",7, new Date(), "a Disturbance in the Force");
-les sous classes de collection sont:
-    AbstractCollection, AbstractList, AbstractSet, ArrayList, BeanContextServicesSupport, BeanContextSupport, HashSet (ordre pourri non fiable, vire les doublons, non threadsafe) , LinkedHashSet(conserve l'ordre d'insertion), LinkedList(comme arraylist: ordonné et duplicats possibles mais il gere mieux la memoire si données dedans sont tres manipulées), TreeSet garde l'ordre?, Vector
-pour faire un minus: list A moins list B en utilisant removeall (on peut aussi utiliser retainall) avec des objets de type non primitifs dans les listes:
-retainall: LINKDLKJSDF Retains only the elements in this Vector that are contained in the specified Collection. In other words, removes from this Vector all of its elements that are not contained in the specified Collection. 
-				il faut que notre objet non primitif ait cette signature de methode pour que ca marche: 
-				@override  // a utilser aussi quand je veux verifier qu'un objet n'exite pas dejà dans une liste du meme objet : ajouter cetrt e methode à l'objet
-        public boolean equals(Object a)
-					{
-						Select sa = (Select)a;
-						boolean ret=false;
-						if (sa.value.equals(this.value)) ret= true;
-						return ret;
-					}
-pour parcourir une liste d'objets: 
-parcourir une collection c'est pareil
-				List<Transporteur> transporteurs = findActiveTransporteurs();
-				for (Transporteur t : transporteurs) {
-convertir un Number en int: 
-		Number.intValue()
-convertir un double en int integer et convertir un double en long: 
-            ne pas utiliser Double.doubleToLongBits(tailleFinal)
-      mais
-			       long tailleFinalLong = (long)Math.round(monDouble);
-						int tailleFinalLong = (int)Math.round(monDouble);
-convertir un integer en double
-    double toto = (double)unint;
-convertir un long en double:
-      		Long time = new Long(unlong);
-    		zyBean.setZY5NDUREEC(time.doubleValue());						
-convertir un float en int: 
-    float convertisseur = dureeBOrig*inputStream.getFormat().getFrameRate()*inputStream.getFormat().getFrameSize();
-		  //optionnel: convertisseur = Math.round(convertisseur); 
-      int convertisseurInt=(int)convertisseur;
-      ou plutot 
-      int convertisseurInt=(int)Math.round(convertisseur);
+
+
 switch-case en java: switch : case : 
 					switch (i) 
 					{ 
@@ -20399,15 +19966,9 @@ switch-case en java: switch : case :
 					if (i>=0 && i<=10) 
 					<actionCommune>; 
 					}
-pour recuperer le nom d'une classe: 
-	maclasseinconue.getClass().getCanonicalName();
-	.getEnclosingClass() recupere le nom de la superclasse je crois
-pour merger deux collections:
-		Collection.retainAll(Collection c) (c'est comme un "et") voir LINKDLKJSDF
-pour faire un "ou"
-		Collection.addAll(Collection c)
-		
-pointeurs :     "En java, les paramètres pour les types primitifs sont passes par valeur, et pour les types objets c’est une copie de la reference Java (un Handle) qui est transmise."
+
+pointeurs :
+     "En java, les paramètres pour les types primitifs sont passes par valeur, et pour les types objets c’est une copie de la reference Java (un Handle) qui est transmise."
                 Toto toto = new Toto("1");
                  Lala lala = transform(toto);
                  public Lala transform(Toto toto) 
@@ -20440,26 +20001,15 @@ pointeurs :     "En java, les paramètres pour les types primitifs sont passes p
           		ret.put("boolean", startFtpTransfert); // la hashmap est mise a jour
           		ret.put("fileId", fileId);             // la hashmap est mise a jour
            
-     List<MonObjet> : mods est un objet de type List<ModDto>.
+     List<MonObjet>: mods est un objet de type List<ModDto>.
         for (ModDto modDto: mods) {
         					if (modDto.getNumQu().equals(queDto.getNumQu())) {
         						modDto.setTransverse(transverse);//ici je modifie directement dans le tableau la valeur!! pointeur.
         					}
         				}
-  getter de tableaux (list map...): 
+      getter de tableaux (list map...): 
   		attention dans une classe quand on fait un getteur de tableau la classe va renvoyer un pointeur de ce tableau. (car type non primitif)
         		regle aca: Exposition de tableau interne: Une methode ne doit pas retourner un tableau interne directement mais sa copie.
-		cloner :Clone :	LINKCloner du coup faire comme ca: voir https://programming.guide/java/copying-objects-deep-and-shallow.html. Encore mieux: voir LINKlkgkgkhgkfdlkjfglk (serialisation permet de cloner.) 
-  						public List<Object[]> getOtherValues() 
-  						{
-  							ArrayList<Object[]> pointer = (ArrayList<Object[]>)this.otherValues;
-  							return (List<Object[]>)pointer.clone(); // LINKCloner attention ça clone que le premier niveau de l'array (c a d shallow cloning)
-                                                                        pour tout copier cloner meme dans les sous niveau je peux faire de la serialization
-  						}
-  			sinon pour cloner un objet: lui mettre un constructeur comme ca:     public Result(Result another) {
-                                                                                        this.agencyName = another.agencyName;
-                                                                                        this.agencyDescr = another.agencyDescr;...}
-
   	 idemn pour une methode
   	 Map<String, IndComodifDto> indicateursMap = new HashMap<String, IndComodifDto>();
   	 this.getLupAcceptees(code, debut, fin, indicateursMap);
@@ -20474,6 +20024,18 @@ pointeurs :     "En java, les paramètres pour les types primitifs sont passes p
             result.add(entityID);
           }
           result est directement modifie en dehors de la methode!
+
+cloner :Clone :	LINKCloner du coup faire comme ca: voir https://programming.guide/java/copying-objects-deep-and-shallow.html. Encore mieux: voir LINKlkgkgkhgkfdlkjfglk (serialisation permet de cloner.) 
+  						public List<Object[]> getOtherValues() 
+  						{
+  							ArrayList<Object[]> pointer = (ArrayList<Object[]>)this.otherValues;
+  							return (List<Object[]>)pointer.clone(); // LINKCloner attention ça clone que le premier niveau de l'array (c a d shallow cloning)
+                                                                        pour tout copier cloner meme dans les sous niveau je peux faire de la serialization
+  						}
+  			sinon pour cloner un objet: lui mettre un constructeur comme ca:     public Result(Result another) {
+                                                                                        this.agencyName = another.agencyName;
+                                                                                        this.agencyDescr = another.agencyDescr;...}
+
   pour copier une liste d'objets "Dog" sans les references mais en faisant des listes d'objets "Dog" independents:
 		Deux methodes: Constructeur ou clone:
 				Constructeur:
@@ -20518,29 +20080,30 @@ pointeurs :     "En java, les paramètres pour les types primitifs sont passes p
 									            throw new Error("Is too");
 									        }
 									    }
-									}
-pour instancer une interface sans creer sa sous classe qui l'implemente : comme une classe anonyme :
-      ici HostnameVerifier est une interface dans Java7: 
-      HostnameVerifier hv = new HostnameVerifier() 
-        {
-           public boolean verify(String hostname, SSLSession session) 
-           {
-            return true; // j'ai implemente la methode! pas besoin de creer une sous classe qui implemente HostnameVerifier  
-            } 
-        }		
-pour executer une interface en passant le nom d'une classe de cette interface en dur: introspection
+	
+introspection :
+pour connaitre savoir le type d'une classe: LINKkgjhjhjhjhjhjc 
+    	instanceof
+    	   exemple:
+          if (maclasse instanceof Command)...
+    	ou bien:
+    	e.getClass().getName()
+pour recuperer le nom d'une classe: 
+	maclasseinconue.getClass().getCanonicalName();
+	.getEnclosingClass() recupere le nom de la superclasse je crois
+    pour executer une interface en passant le nom d'une classe de cette interface en dur: introspection
 			IState state = (IState) Class.forName("cpi.sm." + clase).newInstance(); // peut etre c mieux d'utiliser chez Spring: ClassUtils.forName("mon.package.MaClasse", classLoader (c'est CetteClasse.class.getClassLoader());
 			state.execute(conn, bean);
-pour creer une instance par constructeur avec un argument par introspection :
-      EdsnGroup sdf = (EdsnGroup)ConstructorUtils.invokeConstructor( Class.forName("com.soprahr.edsn.usermanager." + edsnClass), edsnPerim); Attention le classloader n'est peut etre pas celui que je veux: risque de bug de type: la classe n'est pas visible ailleurs			
-pour executer une methode function fonction de cette classe instanciee par son nom: (introspection)
+    pour creer une instance par constructeur avec un argument par introspection:
+          EdsnGroup sdf = (EdsnGroup)ConstructorUtils.invokeConstructor( Class.forName("com.soprahr.edsn.usermanager." + edsnClass), edsnPerim); Attention le classloader n'est peut etre pas celui que je veux: risque de bug de type: la classe n'est pas visible ailleurs
+    pour executer une methode function fonction de cette classe instanciee par son nom: (introspection)
           		try
           		{ // ici action = un string qui correspond au nom de ma methode. new Class c'est le tableau de type des parametres qu'on envoit a la methode
           					java.lang.reflect.Method methodExecute = FixPackCommand.class.getMethod(action, new Class[] {argument1.classOuObjetClass, argument2.classOuObjetClass}); // attention ma methode doit etre public!!! sinon ne la trouve pas
           					                                                                             exemple:new Class[]{clazzDataStructure, String.class} );
           					methodExecute.invoke(this(CaDireObjetQuiPossedeLaMethode), (Object[])new Class[] {}); // comme on a mis "this" si la methode set un parametre de null a xxx, et bien notre classe this aura mis a jour son parametre!! genial!
           					              exemple:this,new Object[] {enum_ZY, information.getHrName().substring(2)});
-          		    recuperer les champs d'une classe par inscropection :
+          		    recuperer les champs d'une classe par inscropection:
           		            codeListBean = ClassUtils.forName(Constants.PACKAGE_CODE_BEAN_NAME + ".CodeListBean", this.getClass().getClassLoader());
 			                     Field[] fields = codeListBean.getFields();
 			                     // savoir c'est quoi comme genre de champ? publique? static? (c'est le modifier) et son type:
@@ -20563,282 +20126,7 @@ pour executer une methode function fonction de cette classe instanciee par son n
 		                if (methodName.startsWith("set")) {(...)
 									java.lang.reflect.Method methodExecute = obj.getMethod("execute", new Class[] {});
 									methodExecute.invoke(obj, new Class[] {});
-encodage :
-		En interne en Java toutes les Strings, les char et charset sont encodes en UTF-16. En Java il est abberant de vouloir changer l'encodage d'une String !
-		String str = "blah";		// c'est forcement de l'utf16
-		Cependant je peux forcer tout mon programe java à fonctionner avec un autre encodage en lancant mon programme java comme ca:
-		java -Dfile.encoding=ISO-8859-15 -Dlog4j.configuration=file:/var/w(...)tchs/log4j.properties -Dconfpath=/v(...)tchs/Parser.properties -jar /var/www(...)adMails.jar 
-		CharsetEncoder isoencoder = Charset.forName("iso-8859-1").newEncoder();
-		CharsetEncoder utf8Encoder = Charset.forName("UTF-8").newEncoder();
-		/*pour savoir si cette chaine de caractere peut etre encodee en iso-8859*/
-		boolean okutf8 = utf8Encoder.canEncode(query);
-		boolean okiso = isoencoder.canEncode(query);
-		// on essaye d'ecoder en utf8
-		1)		InputStream inputStream = new ByteArrayInputStream(monString.getBytes());
-					InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
-		2)			byte[] bytes = utf8Encoder.encode(CharBuffer.wrap(query.toCharArray())).array(); // on a un tableau de byte en utf8
-		3)			String toto = new String(bytes); // on reconverti de utf8-> utf16: le string en fait devient du n'importe quoi.
-				// on converti un string en ISO puis en UTF-8 (pas sur que ca marche puisque un string est toujours en utf16)
-		4)			String stringISO = new String (query.getBytes(), "ISO-8859-1" ); // marche ! 
-		5)			String stringUTF8 = new String (bytes, "UTF-8" );
-		unicode -> UTF-8
-		        byte[] utf8Bytes = originalUnicode.getBytes("UTF8");
-              String roundTrip = new String(utf8Bytes, "UTF8");
-              ou bien   chaine = StringEscapeUtils.unescapeHtml(chaine);
 
-    String roundTrip = new String(utf8Bytes, "UTF8");
-attention la fonction File.renameTo peut ne pas marcher: LINKjgdlkqjfqdgmlk 
-		toujours verifier par la variable de retour que ca s'est bien passe car en fonction des os win-unix pb compatibilite
-
-java8 :
-voir LocalDateTime!!!! 
-lambdas : lambda : lambdas expression :     (lire http://labs.excilys.com/2014/10/28/prise-en-main-des-lambdas-expressions-dans-java-8/ que je n'ai pas mis ici)
-      dès que je vois Linterface a=(y)-> y.tata    je dis "Linterface a = new class toto implement Linterface" 
-                                                                            luniqueMethode(TypeDe y){
-                                                                              return y.tata;
-                                                                          }" Finallement ce qu'il y a après -> est execute. c tout. et renvoye si ->{} (voir plus bas Linklksdjgghgh)
-       SQL      LAMBDA     "ne pas traiter d'objet mutable dans le stream car ils pourraient être partages par plusieurs threads"                                                                     
-      table   =.stream()   //.parallelStream() attention: cree un max de threads pour rendre une reponse très rapide vite mais utilise tous les threads possibles. Un stream n'est pas une donnee concrete c'est des methodes + un flux
-                              stream peut etre sized/non-sized(infini pour faire une boucle:Stream.iterate(n,e->e+1);LINK3223) ordered/non-ordered(les elements n'ont pas de position); distinct/non-distinct(pas de doublons possibles); sorted/non-sorted(alpha)
-      unMap<x,y>.entrySet().stream(entry->entry.getValue()...entry.getKey()) // voir aussi LINKmaptomapsldkjfa pour convertir une map en une autre map                               
-      select  =.map(e-> (D)e) ou contraction:(::) .mapOuForeach(this::uneFonctionDeCetteClasseQuiMapL'objetEntrantEnObjetEnSortie)   // utilise pour transformer l'objet.(meme calculs) transforme un objet en un autre  exemple classeTOTO devient classeTITI c'est du transcodage mappage mapping d'un element en un autre
-                                                  .map(UneClasse::new) // map en une autre classe grace au constructeur de cette autre classe
-                                                   .unelisteDuneInterface.stream().map(i->(ComponentGeneric)i)... //en un autre casting
-                                                   convertir une observablelist observable liste en liste :
-                                                    observableliste.stream().collect(Collectors.toList());  
-        on peut faire: maclasse.envoimail("adresse",UneClasse::uneMethodeDeUneClasse); c'est la mort du pattern strategie strategy-template ou encore voir DesignPatterns.doc  
-                xxx.foreach() : avec un biconsumer :exemple: // si xxx est un map on ne peut pas retourner une valeur avec. Il faut passer par un stream
-                                volumesInnerData.innerDataPerYear.forEach(new BiConsumer<Integer, InnerData>()
-                                  {
-                                      @Override
-                                      public void accept(Integer year, InnerData innerData)
-                                      {
-                                          int newVolume = (int)Math.round(InnerData.this.percent * innerData.volume);
-                                          InnerData.this.innerDataPerYear.put(year,new InnerData(newVolume));
-                                      }
-                                  });
-               .mapToDouble() // pareil que ci dessus mais contracte.
-                .reduce(unevaleurinitiale,(carry,elt)->carry+elt) // ca permet par exemple de cumuler les elements.  carry est le resultat renvoye par element calcule precedent
-                 .sum() // fait pareil que reduce mais contracte et pas de valeur initiale.
-                 .max() // retourne la seule valeure maximal de tout le stream
-                 .average() // retourne la moyenne de tout le stream
-                 .orElse(valeurAretournerSiACeNiveauOptionalEstEmpty)
-      distinct=.distinct() // vire les doublons. 
-      join    =.flatMap(e->...stream()) // fonctionne avec Optional : LINKOptsngz exemple flatMap(c->c.getSubElements().stream()) (recupere proprement la sousliste)   
-                      retourne les fils    
-              evite les listes de listes  
-              exemple pour recuperer les sous-listes sousliste sous listes à concatenner entre elles : List<Allocations<Component>> allocations = instanceFeatures.stream().map(f -> f.getAllocations()).flatMap(List::stream).collect(Collectors.toList()); ou .collect(Collectors.toCollection(FXCollections::observableArrayList));
-            LINKOptsngz optionnal :(c 1 monad): ignore les valeurs empty nulles et retourne un Optional // a utiliser que si j'ai un probleme avec null Traitement des valeurs pouvant etre nulles depuis java8 LINKjajsdfliuaerOpt c'est a utiliser dans le cadre de functionnal programming lambda. Ne jamais mettre un optionnal dans un parametre de methode (ni un setter) mais toujours que en sortie.
-                                             Optional<UneClasse> optional = Optional.ofNullable(unevariablepouvantPotentiellementEtrenull);                                                                                                     |_a la place faire monOptinal.map(unefonction)
-                                                                           Optional.ofNullable(unevariablepouvantPotentiellementEtrenull).orElse(variableARetournerSiNull);
-                                                                           Optional.ofNullable(unevariablepouvantPotentiellementEtrenull).orElseGet(()->{...}); // une methode a executer qui renverra la bonne valeur a la place de null 
-                                                                         = Optional.of(unevariableQuiNestPasNullMaisCPourRenvoyerOptional<X>);
-                                                                         = Optional.empty(); // pour retourner Optional à la place de null pour le traitement dans lambda
-                                                                              List<Optional<Maclasse>> uneListeAvecDesOptionals. pour la filtrer sans prise de tete la convertir d'abord en list<Maclasse> en virant les nulls comme ça :        
-                                                                                    List<IParameter> parameters= optionalparameters.stream().filter(Optional::isPresent).map(obj ->obj.get()).collect(Collectors.toList()); ou .collect(Collectors.toCollection(FXCollections::observableArrayList));
-                                                                                    List<MaClasse> parameters= uneListeAvecDesOptionals.stream().filter(Optional::isPresent).map(obj ->obj.get()).collect(Collectors.toList()); ou .collect(Collectors.toCollection(FXCollections::observableArrayList));                                                                                                         
-                                            optional.or(()->autreMethode()); // si unevariablepouvantetrenull est null rempacer sa valeur par ce que renvoit autreMethode();
-                                            optional.isPresent()
-                                            optional.orElse("N/A").toString(); ou (String)unOptional.map(classeDedansOptional->((ClasseDedansOptional)u).methodeDeClasseDedans()).orElse("N/A")); // pas trouvé mieux pour faire un si present appelle une methode de mon objet dans optionel sinon fait autre chose
-                                            optional.ifPresentOrElse(methode1(),methode2());
-                                            optional.ifPresent(unConsumer); // exemple: aroot.getParameterByKey("pays").ifPresent(x->Assertions.assertEquals("FR",x.getValue()));
-                                            optional.get() // extrait(unwrap) la valeur du contexte Optional
-      where   =.filter(e-> e==2) // bloque cettains elements s'ils ne repondent pas à la condition dedans.
-      order by=.sorted() // ordonne alphabetique
-      limit= .limit(x) // recupère que les valeurs sous x inclu (faire une boucle LINK3223)
-      stop= .takeWhile(s->!s.equals("END"))// ou un boolean onoff global (dès java9)
-      union all=.concat()
-      minus :   List<x> intersect = list1.stream().filter(list2::contains).collect(Collectors.toList());                                                                          
-        PUIS A METTRE ABSOLUMENT SINON RIEN NE SE PASSE c'est seulement à la dernière commande que tout s'execute. (lazy procedure stockees):
-  groupby :grouper : group by :=List<MaClass>.stream.collect(groupingBy(MaClasse::getNameOuObjet,LINKGRPDlsdflkj))) // retourne Map<NameOuObjet,List<MaClasse>> ne plus developper les groupebys!!
-                ou
-                                List<MaClass>.stream.collect(groupingBy(maClasse->new AutreBean(maClass.champ1,maClass.champ2)))  // Map<AutreBean,List<MaClass>
-                    LINKGRPDlsdflkj:facultatif: ,mapping(MaClasse::getUnAutreParametre, toList())))  //  pour faire un Map<getNameOuObjet,List<getUnAutreParametre>>
-                                                ,toSet() // pour faire un Map<getNameOuObjet,Set<MaClasse>>
-                                                ,groupingBy(MaClasse::AutreChamp) // grouper par plusieurs champs A MIEUX DOCUMENTER
-                                                ,SummingInt(MaClasse::getLikes)   // group et calcul somme par champ A MIEUX DOCUMENTER   
-                  stream.collect(toList() ou toSet()//renvoit une liste  toSet vire les doublons ou  
-                            convertir un map en autre map: unemap.entrySet().stream()...collect(Collectors.toMap(elt->elt.getKey().a,elt->elt.getValue().b)) // renvoit une genre de liste concrete. Utile pour convertir une map en une autre map LINKmaptomapsldkjfa
-                                A ECRIRE JUSQUAU BOUT SINON CA NE COMPILE PAS!!!
-                .findFirst().get() // get[0]              
-                .forEach(System.out::println);
-                .sum();
-            codecasts.removeIf(c->c.getId()==i) // pour supprimer remove delete un element d'une liste de facon conditionnelle                
-            clientsRoles.getItems().stream().forEach(w->logger.debug("clients role: "+ w));                                                                          
-               public class Calculator 
-               {
-                  @FunctionalInterface // ne compile plus si j'ai plus de deux methodes non default dans l'interface. Le reste des methodes peut etre "default"
-                  interface IntegerMath // juste une interface Linklksdjgghgh 
-                  {
-                      int operation(int a, int b); // il faut qu'il n'y ait qu'une seule methode pour que ca marche *   
-                      default public void xxx(){etc}
-                      default public void yyy(){etc}
-                  }
-                
-                  public int operateBinary(int a, int b, IntegerMath op) // juste une execution de la methode de la classe qui etend l'interface 
-                  {
-                      return op.operation(a, b);
-                  }
-                  public static void main(String... args) 
-                  {
-                      Calculator myApp = new Calculator();                    ON DEFINIT ENTRE ACCOLADE CE QUE VA EXECUTER LA METHODE DE L INTERFACE (qui n'a q'une methode)
-                      IntegerMath addition = (a, b) -> a + b; // equivaut à = new class titi implements IntegerMath
-                                                                            { 
-                                                                              int operation(a,b){return a+b;} * car ya qu'une methode
-                                                                            }
-                      IntegerMath subtraction = (a, b) -> a - b;
-                      //si on a qu'un parametre on peut faire 
-                        monparam -> monparam.titi; // ne return rien
-                        monparam -> {monparam.titi}; // return
-                      System.out.println("40 + 2 = " + myApp.operateBinary(40, 2, addition));
-                      System.out.println("20 - 10 = " + myApp.operateBinary(20, 10, subtraction));    
-                  }
-              }
-                exemple java8 pour facilement filtrer une liste ou une collection:(recuperer fichiers )filtrer les fichiers 
-                         int sum = maCollection.stream() ou bien Arrays.stream(maList) 
-                            .filter(w -> w.getColor() == RED)
-                            .mapToInt(w -> w.getWeight()) ou mapToDouble()
-                            .sum();						
-                exemple java8 grouper en un chiffre le resultat de l'addition d'une liste de map d'objet
-                            List<Map<Integer, InnerData>> yearlyinnerdatas = allInstanceFeatures.stream().map(f -> f.getInnerData().innerDataPerYear).collect(Collectors.toList());
-                            List<InnerData> allInnerDatas = yearlyinnerdatas.stream().map(mapper -> mapper.values()).flatMap(f -> f.stream()).collect(Collectors.toList());
-                            Integer totalvolume = allInnerDatas.stream().map(i -> i.volume).reduce((carry, innerdata) -> carry + innerdata).get();
-                exemple java8 recuperer le premier element d'une liste dont le field des elements match une valeur: 
-                          Result toto = resultats.stream().filter(r -> r.getTransitPlace().equals("arriveplace")).findFirst().get(););                            						
-                exmeple java8 recuperer liste des fichiers les fichiers par leur nom dans un repertoire possible filtrer rapidement:
-                               				File rootFolder = new File(Application.ROOT);
-                                				List<String> fileNames = Arrays.stream(rootFolder.listFiles())
-                                						.map(f -> f.getName())
-                                						.filter(f -> f.startsWith(Integer.toString(ag.getId())+"."))
-                                						.collect(Collectors.toList());
-LINKconvertiCheckedExceptionDansUnStreamEnUnCheckedExceptionPourQueCaCompile :
-           on utilise comme ça ci dessous. Si impossible alors thrower  une RuntimeException
-           monarray.stream().map(handlingFunctionWrapper(x->lamethodeQuiRenvoitExeption(x), Exception.class))... // POUR LES MAPS
-           et on mets ça:
-                POUR LES FOREACH   @FunctionalInterface // pour un foreach par exemple
-                                        public interface ThrowingConsumer<T, E extends Exception> {
-                                            void accept(T t) throws E;
-                                        }
-                                        static <T, E extends Exception> Consumer<T> handlingConsumerWrapper(ThrowingConsumer<T, E> throwingConsumer, Class<E> exceptionClass) {
-                                            return i -> {
-                                                try {
-                                                    throwingConsumer.accept(i);
-                                                } catch (Exception ex) {
-                                                    try {
-                                                        E exCast = exceptionClass.cast(ex);
-                                                        System.err.println(
-                                                                "Exception occured : " + exCast.getMessage());
-                                                    } catch (ClassCastException ccEx) {
-                                                        throw new RuntimeException(ex);
-                                                    }
-                                                }
-                                            };
-                                        }
-                                        @FunctionalInterface // pour un map par exemple
-                                        public interface ThrowingFunction<T,R, E extends Exception> {
-                                            R apply(T t) throws E;
-                                        }
-                                        
-POUR LES MAP OU LES FOREACH      static <T,R, E extends Exception> Function<T,R> handlingFunctionWrapper(ThrowingFunction<T,R, E> throwingConsumer, Class<E> exceptionClass) {
-                                            return i -> {
-                                                try {
-                                                    return throwingConsumer.apply(i);
-                                                } catch (Exception ex) {
-                                                    try {
-                                                        E exCast = exceptionClass.cast(ex);
-                                                        throw new RuntimeException(exCast);
-                                                    } catch (ClassCastException ccEx) {
-                                                        throw new RuntimeException(ex);
-                                                    }
-                                                }
-                                            };
-                                        }
-POUR LES FOREEACH A 2 ARGUMENTS : j'ai d'un coté: 
-                                    public static <T,R, E extends Exception> BiConsumer<T,R> handlingFunctionBiArgWrapper(ThrowingBiConsumer<T, R, E> throwingConsumer, Class<E> exceptionClass) {
-                                                         return (i,j) -> {
-                                                            try {
-                                                                 throwingConsumer.accept(i,j);
-                                                            } catch (Exception ex) {
-                                                                try {
-                                                                    E exCast = exceptionClass.cast(ex);
-                                                                    throw new RuntimeException(exCast);
-                                                                } catch (ClassCastException ccEx) {
-                                                                    throw new RuntimeException(ex);
-                                                                }
-                                                            }
-                                                        };
-                                                    }
-                                                    @FunctionalInterface
-                                                    public interface ThrowingBiConsumer<T,R, E extends Exception>
-                                                    {
-                                                        void accept(T o, R o2) throws E;
-                                                    }
-
-                    et de l'autre, utilisation: componentInstance.getCosts().forEach(handlingFunctionBiArgWrapper((key, value) -> {
-                                                (...)
-                                                if (...) throw new CostlineNotDefinedException("blah");
-                                                (...)
-                                                                                        
-                                        
-                POUR LES FILTRES :    utilisation: .filter(handlingPredicateWrapper(gen ->getThisSameSymbolicParameterValue(gen, classificationNode, parameter).equals("Y"),Exception.class))
-                                        declaration:
-                                        public static <T, E extends Exception> Predicate<T> handlingPredicateWrapper(ThrowingPredicate<T, E> throwingConsumer, Class<E> exceptionClass) {
-                                              return i -> {                                         // ca retourne donc un PREDICATE
-                                                  try {
-                                                      return ThrowingPredicate.test(i);              // ca retourne donc un PREDICATE donc ThrowingPredicate a la meme methode que Predicate mais lui il throw une exception contrairement a predicate
-                                                  } catch (Exception ex) {
-                                                      try {
-                                                          E exCast = exceptionClass.cast(ex);
-                                                          throw new RuntimeException(exCast);
-                                                      } catch (ClassCastException ccEx) {
-                                                          throw new RuntimeException(ex);
-                                                      }
-                                                  }
-                                              };
-                                          }
-                                      
-                                          @FunctionalInterface
-                                          public interface ThrowingPredicate<T, X extends Throwable> {
-                                              public boolean test(T t) throws X;
-                                          }
-                                                        
-            exemple lambda imbriquees: une liste A contient une liste B. je dois filtrer A qui ont seulement certains B (converti un stream en liste directement dans le filtre)  A REVOIR
-                            List<Result> toto = resultList.stream()
-                              .filter(r -> // très mauvais lambda ! clean code:ne pas avoir de ->{ dans ce cas reporter le code dans {} dans une autre methode dans cette classe meme ou dans l'item en cours du stream ou une methode statique quelquepart
-                              {               
-                                  try {
-                                      List<Time> hour = r.splitDepartureTimes();
-                                      List<Time> hoursAfter = hour.stream()
-                                              .filter(h ->
-                                              {
-                                                  try {        //eviter les trycatch dans lambda voir LINKconvertiCheckedExceptionDansUnStreamEnUnCheckedExceptionPourQueCaCompile
-                                                      if (h.after(hourFormat.parse(timeDeparture)) || h.equals(hourFormat.parse((timeDeparture)))) {
-                                                          return true;
-                                                      } else return false;
-              
-                                                  } catch (Exception e) {
-                                                      e.printStackTrace();
-                                                      return false;
-                                                  }
-                                              }).collect(Collectors.<Time>toList());
-                                      if (hoursAfter.toArray().length > 0) {
-                                          return true;
-                                      }
-                                      else return false;
-                                  } catch (Exception e) {
-                                      e.printStackTrace();
-                                      return false;
-                                  }
-                              }).collect(Collectors.<Result>toList());
-              
-                      return resultList;
-                lambda : virer les doublons:
-                    listWithDuplicates.parallelStream().distinct().collect(Collectors.toList());
-  public interface B { 
-    default void printSomething() {  // pas besoin d'implementer cette methode dans les filles. nouveau dans java8 interfaces
-        System.out.println("something else");
-    }
-  }
 fonctionnement des annotations :
                 @MonValidateurBean(LINKvariablealacon=999) // customise, voir ci-dessous
                 public String maPropriete; ou bien public class UneClasseAnnotee{
@@ -20971,7 +20259,8 @@ pour tester la performance : perfs : perf : performances : performences :
                                             		<!-- /JAVA MELODY -->
                                      puis aller sous http://localhost:8080/wec/monitoring       		
     problème de performances en Java? ehcache: 
-          voir http://www.ehcache.org/ +  aussi s'assurer que le navigateur utilise le cache (grace au header) + la connexion ne se ferme pas chaque fois dans le cas du https sinon à chaque requette il faut refaire un shakehands   
+          voir http://www.ehcache.org/ +  aussi s'assurer que le navigateur utilise le cache (grace au header) + la connexion ne se ferme pas chaque fois dans le cas du https sinon à chaque requette il faut refaire un shakehands
+             
 modules :java 9 : java9 : java10 : java11 : depuis java9 
   besoin maven 3.5.x
   Jdk A8 devient divisé en modules xxx.jmod = 1jar = 1 ou plsrs package. un module peut dépendre de x modules et inversement.
@@ -21048,15 +20337,13 @@ execution : executer :
             tapper jshell et je peux tester des petit bouts snippets de code java sans m'inqueter des exeptions et des ";" point virgules                                                       
       depuis java9 existe aussi - VarHandle pour passer rapidos de noeud en noeud d'un coup.
                                 - ProcessBuilder: executer une commande externe sortir pid unix linux autre programme process
-    java10 : java 10 :
-        var: bof eviter                                                                         
-pour lancer executer un programme java faire ca: (ATTENTION ne marche plus depuis la version 1.6?)
-depuis java9 si j'ai Caused by: java.lang.ClassNotFoundException: javax.activation.DataSource (c parce que ca a degagé de la jvm alors ratacher le module automatique avec maven: 
-                <dependency>
-                  <groupId>com.sun.activation</groupId>
-                  <artifactId>javax.activation</artifactId>
-                  <version>1.2.0</version>
-              </dependency>
+        pour lancer executer un programme java faire ca: (ATTENTION ne marche plus depuis la version 1.6?)
+        depuis java9 si j'ai Caused by: java.lang.ClassNotFoundException: javax.activation.DataSource (c parce que ca a degagé de la jvm alors ratacher le module automatique avec maven: 
+                        <dependency>
+                          <groupId>com.sun.activation</groupId>
+                          <artifactId>javax.activation</artifactId>
+                          <version>1.2.0</version>
+                      </dependency>
 Depuis la version 1.6 utiliser -classpath ou -cp (c pareil) et separer par des ; sur unix ou: sur windows (on peut metre * (mais pas dans le manifest)) Attention! (-cp;-classpath) et -jar sont incompatibles: -jar prend le dessus donc faire un manifest voir LINK5*55*5
     exemple: java -cp "C:\jdevStudioWorkspace\Dialogys_MPF_pour_serveur\LibrairiesDialogys\*";"DialogysServer.jar"  dialogys.rmi.serveur.vue.Serveur
               java -classpath acrobat.zip;AppClasses.jar ; ou plutot: commons-httpclient-2.0.jar;ou:commons-logging.jar dialogys.chapeau.DialogysStarter
@@ -21109,6 +20396,265 @@ Depuis la version 1.6 utiliser -classpath ou -cp (c pareil) et separer par des ;
 		Si on a mis cette execution dans un point bat et qu'il ne trouve pas le chemin vers la jre: metre ca:
 					Set Path=C:\Program files/JavaSoft/JRE/1.5.0_08/bin
 					java  -jar SeleniumLogToPrimaLog.jar
+java7 :
+    pour instancer une interface sans creer sa sous classe qui l'implemente : comme une classe anonyme :
+          ici HostnameVerifier est une interface dans Java7: 
+          HostnameVerifier hv = new HostnameVerifier() 
+            {
+               public boolean verify(String hostname, SSLSession session) 
+               {
+                return true; // j'ai implemente la methode! pas besoin de creer une sous classe qui implemente HostnameVerifier  
+                } 
+            }		
+java8 :
+voir LocalDateTime!!!! 
+lambdas : lambda : lambdas expression :     (lire http://labs.excilys.com/2014/10/28/prise-en-main-des-lambdas-expressions-dans-java-8/ que je n'ai pas mis ici)
+      dès que je vois Linterface a=(y)-> y.tata    je dis "Linterface a = new class toto implement Linterface" 
+                                                                            luniqueMethode(TypeDe y){
+                                                                              return y.tata;
+                                                                          }" Finallement ce qu'il y a après -> est execute. c tout. et renvoye si ->{} (voir plus bas Linklksdjgghgh)
+       SQL      LAMBDA     "ne pas traiter d'objet mutable dans le stream car ils pourraient être partages par plusieurs threads"                                                                     
+      table   =.stream()   //.parallelStream() attention: cree un max de threads pour rendre une reponse très rapide vite mais utilise tous les threads possibles. Un stream n'est pas une donnee concrete c'est des methodes + un flux
+                              stream peut etre sized/non-sized(infini pour faire une boucle:Stream.iterate(n,e->e+1);LINK3223) ordered/non-ordered(les elements n'ont pas de position); distinct/non-distinct(pas de doublons possibles); sorted/non-sorted(alpha)
+      unMap<x,y>.entrySet().stream(entry->entry.getValue()...entry.getKey()) // voir aussi LINKmaptomapsldkjfa pour convertir une map en une autre map                               
+      select  =.map(e-> (D)e) ou contraction:(::) .mapOuForeach(this::uneFonctionDeCetteClasseQuiMapL'objetEntrantEnObjetEnSortie)   // utilise pour transformer l'objet.(meme calculs) transforme un objet en un autre  exemple classeTOTO devient classeTITI c'est du transcodage mappage mapping d'un element en un autre
+                                                  .map(UneClasse::new) // map en une autre classe grace au constructeur de cette autre classe
+                                                   .unelisteDuneInterface.stream().map(i->(ComponentGeneric)i)... //en un autre casting
+                                                   convertir une observablelist observable liste en liste:
+                                                    observableliste.stream().collect(Collectors.toList());  
+        on peut faire: maclasse.envoimail("adresse",UneClasse::uneMethodeDeUneClasse); c'est la mort du pattern strategie strategy-template ou encore voir DesignPatterns.doc  
+                xxx.foreach(): avec un biconsumer:exemple: // si xxx est un map on ne peut pas retourner une valeur avec. Il faut passer par un stream
+                                volumesInnerData.innerDataPerYear.forEach(new BiConsumer<Integer, InnerData>()
+                                  {
+                                      @Override
+                                      public void accept(Integer year, InnerData innerData)
+                                      {
+                                          int newVolume = (int)Math.round(InnerData.this.percent * innerData.volume);
+                                          InnerData.this.innerDataPerYear.put(year,new InnerData(newVolume));
+                                      }
+                                  });
+               .mapToDouble() // pareil que ci dessus mais contracte.
+                .reduce(unevaleurinitiale,(carry,elt)->carry+elt) // ca permet par exemple de cumuler les elements.  carry est le resultat renvoye par element calcule precedent
+                 .sum() // fait pareil que reduce mais contracte et pas de valeur initiale.
+                 .max() // retourne la seule valeure maximal de tout le stream
+                 .average() // retourne la moyenne de tout le stream
+                 .orElse(valeurAretournerSiACeNiveauOptionalEstEmpty)
+      distinct=.distinct() // vire les doublons. 
+      join    =.flatMap(e->...stream()) // fonctionne avec Optional: LINKOptsngz exemple flatMap(c->c.getSubElements().stream()) (recupere proprement la sousliste)   
+                      retourne les fils    
+              evite les listes de listes  
+              exemple pour recuperer les sous-listes sousliste sous listes à concatenner entre elles: List<Allocations<Component>> allocations = instanceFeatures.stream().map(f -> f.getAllocations()).flatMap(List::stream).collect(Collectors.toList()); ou .collect(Collectors.toCollection(FXCollections::observableArrayList));
+            LINKOptsngz optionnal:(c 1 monad): ignore les valeurs empty nulles et retourne un Optional // a utiliser que si j'ai un probleme avec null Traitement des valeurs pouvant etre nulles depuis java8 LINKjajsdfliuaerOpt c'est a utiliser dans le cadre de functionnal programming lambda. Ne jamais mettre un optionnal dans un parametre de methode (ni un setter) mais toujours que en sortie.
+                                             Optional<UneClasse> optional = Optional.ofNullable(unevariablepouvantPotentiellementEtrenull);                                                                                                     |_a la place faire monOptinal.map(unefonction)
+                                                                           Optional.ofNullable(unevariablepouvantPotentiellementEtrenull).orElse(variableARetournerSiNull);
+                                                                           Optional.ofNullable(unevariablepouvantPotentiellementEtrenull).orElseGet(()->{...}); // une methode a executer qui renverra la bonne valeur a la place de null 
+                                                                         = Optional.of(unevariableQuiNestPasNullMaisCPourRenvoyerOptional<X>);
+                                                                         = Optional.empty(); // pour retourner Optional à la place de null pour le traitement dans lambda
+                                                                              List<Optional<Maclasse>> uneListeAvecDesOptionals. pour la filtrer sans prise de tete la convertir d'abord en list<Maclasse> en virant les nulls comme ça:        
+                                                                                    List<IParameter> parameters= optionalparameters.stream().filter(Optional::isPresent).map(obj ->obj.get()).collect(Collectors.toList()); ou .collect(Collectors.toCollection(FXCollections::observableArrayList));
+                                                                                    List<MaClasse> parameters= uneListeAvecDesOptionals.stream().filter(Optional::isPresent).map(obj ->obj.get()).collect(Collectors.toList()); ou .collect(Collectors.toCollection(FXCollections::observableArrayList));                                                                                                         
+                                            optional.or(()->autreMethode()); // si unevariablepouvantetrenull est null rempacer sa valeur par ce que renvoit autreMethode();
+                                            optional.isPresent()
+                                            optional.orElse("N/A").toString(); ou (String)unOptional.map(classeDedansOptional->((ClasseDedansOptional)u).methodeDeClasseDedans()).orElse("N/A")); // pas trouvé mieux pour faire un si present appelle une methode de mon objet dans optionel sinon fait autre chose
+                                            optional.ifPresentOrElse(methode1(),methode2());
+                                            optional.ifPresent(unConsumer); // exemple: aroot.getParameterByKey("pays").ifPresent(x->Assertions.assertEquals("FR",x.getValue()));
+                                            optional.get() // extrait(unwrap) la valeur du contexte Optional
+      where   =.filter(e-> e==2) // bloque cettains elements s'ils ne repondent pas à la condition dedans.
+      order by=.sorted() // ordonne alphabetique
+      limit= .limit(x) // recupère que les valeurs sous x inclu (faire une boucle LINK3223)
+      stop= .takeWhile(s->!s.equals("END"))// ou un boolean onoff global (dès java9)
+      union all=.concat()
+      minus:   List<x> intersect = list1.stream().filter(list2::contains).collect(Collectors.toList());                                                                          
+        PUIS A METTRE ABSOLUMENT SINON RIEN NE SE PASSE c'est seulement à la dernière commande que tout s'execute. (lazy procedure stockees):
+  groupby:grouper: group by:=List<MaClass>.stream.collect(groupingBy(MaClasse::getNameOuObjet,LINKGRPDlsdflkj))) // retourne Map<NameOuObjet,List<MaClasse>> ne plus developper les groupebys!!
+                ou
+                                List<MaClass>.stream.collect(groupingBy(maClasse->new AutreBean(maClass.champ1,maClass.champ2)))  // Map<AutreBean,List<MaClass>
+                    LINKGRPDlsdflkj:facultatif: ,mapping(MaClasse::getUnAutreParametre, toList())))  //  pour faire un Map<getNameOuObjet,List<getUnAutreParametre>>
+                                                ,toSet() // pour faire un Map<getNameOuObjet,Set<MaClasse>>
+                                                ,groupingBy(MaClasse::AutreChamp) // grouper par plusieurs champs A MIEUX DOCUMENTER
+                                                ,SummingInt(MaClasse::getLikes)   // group et calcul somme par champ A MIEUX DOCUMENTER   
+                  stream.collect(toList() ou toSet()//renvoit une liste  toSet vire les doublons ou  
+                            convertir un map en autre map: unemap.entrySet().stream()...collect(Collectors.toMap(elt->elt.getKey().a,elt->elt.getValue().b)) // renvoit une genre de liste concrete. Utile pour convertir une map en une autre map LINKmaptomapsldkjfa
+                                A ECRIRE JUSQUAU BOUT SINON CA NE COMPILE PAS!!!
+                .findFirst().get() // get[0]              
+                .forEach(System.out::println);
+                .sum();
+            codecasts.removeIf(c->c.getId()==i) // pour supprimer remove delete un element d'une liste de facon conditionnelle                
+            clientsRoles.getItems().stream().forEach(w->logger.debug("clients role: "+ w));                                                                          
+               public class Calculator 
+               {
+                  @FunctionalInterface // ne compile plus si j'ai plus de deux methodes non default dans l'interface. Le reste des methodes peut etre "default"
+                  interface IntegerMath // juste une interface Linklksdjgghgh 
+                  {
+                      int operation(int a, int b); // il faut qu'il n'y ait qu'une seule methode pour que ca marche *   
+                      default public void xxx(){etc}
+                      default public void yyy(){etc}
+                  }
+                
+                  public int operateBinary(int a, int b, IntegerMath op) // juste une execution de la methode de la classe qui etend l'interface 
+                  {
+                      return op.operation(a, b);
+                  }
+                  public static void main(String... args) 
+                  {
+                      Calculator myApp = new Calculator();                    ON DEFINIT ENTRE ACCOLADE CE QUE VA EXECUTER LA METHODE DE L INTERFACE (qui n'a q'une methode)
+                      IntegerMath addition = (a, b) -> a + b; // equivaut à = new class titi implements IntegerMath
+                                                                            { 
+                                                                              int operation(a,b){return a+b;} * car ya qu'une methode
+                                                                            }
+                      IntegerMath subtraction = (a, b) -> a - b;
+                      //si on a qu'un parametre on peut faire 
+                        monparam -> monparam.titi; // ne return rien
+                        monparam -> {monparam.titi}; // return
+                      System.out.println("40 + 2 = " + myApp.operateBinary(40, 2, addition));
+                      System.out.println("20 - 10 = " + myApp.operateBinary(20, 10, subtraction));    
+                  }
+              }
+                exemple java8 pour facilement filtrer une liste ou une collection:(recuperer fichiers )filtrer les fichiers 
+                         int sum = maCollection.stream() ou bien Arrays.stream(maList) 
+                            .filter(w -> w.getColor() == RED)
+                            .mapToInt(w -> w.getWeight()) ou mapToDouble()
+                            .sum();						
+                exemple java8 grouper en un chiffre le resultat de l'addition d'une liste de map d'objet
+                            List<Map<Integer, InnerData>> yearlyinnerdatas = allInstanceFeatures.stream().map(f -> f.getInnerData().innerDataPerYear).collect(Collectors.toList());
+                            List<InnerData> allInnerDatas = yearlyinnerdatas.stream().map(mapper -> mapper.values()).flatMap(f -> f.stream()).collect(Collectors.toList());
+                            Integer totalvolume = allInnerDatas.stream().map(i -> i.volume).reduce((carry, innerdata) -> carry + innerdata).get();
+                exemple java8 recuperer le premier element d'une liste dont le field des elements match une valeur: 
+                          Result toto = resultats.stream().filter(r -> r.getTransitPlace().equals("arriveplace")).findFirst().get(););                            						
+                exmeple java8 recuperer liste des fichiers les fichiers par leur nom dans un repertoire possible filtrer rapidement:
+                               				File rootFolder = new File(Application.ROOT);
+                                				List<String> fileNames = Arrays.stream(rootFolder.listFiles())
+                                						.map(f -> f.getName())
+                                						.filter(f -> f.startsWith(Integer.toString(ag.getId())+"."))
+                                						.collect(Collectors.toList());
+LINKconvertiCheckedExceptionDansUnStreamEnUnCheckedExceptionPourQueCaCompile:
+           on utilise comme ça ci dessous. Si impossible alors thrower  une RuntimeException
+           monarray.stream().map(handlingFunctionWrapper(x->lamethodeQuiRenvoitExeption(x), Exception.class))... // POUR LES MAPS
+           et on mets ça:
+                POUR LES FOREACH   @FunctionalInterface // pour un foreach par exemple
+                                        public interface ThrowingConsumer<T, E extends Exception> {
+                                            void accept(T t) throws E;
+                                        }
+                                        static <T, E extends Exception> Consumer<T> handlingConsumerWrapper(ThrowingConsumer<T, E> throwingConsumer, Class<E> exceptionClass) {
+                                            return i -> {
+                                                try {
+                                                    throwingConsumer.accept(i);
+                                                } catch (Exception ex) {
+                                                    try {
+                                                        E exCast = exceptionClass.cast(ex);
+                                                        System.err.println(
+                                                                "Exception occured: " + exCast.getMessage());
+                                                    } catch (ClassCastException ccEx) {
+                                                        throw new RuntimeException(ex);
+                                                    }
+                                                }
+                                            };
+                                        }
+                                        @FunctionalInterface // pour un map par exemple
+                                        public interface ThrowingFunction<T,R, E extends Exception> {
+                                            R apply(T t) throws E;
+                                        }
+                                        
+POUR LES MAP OU LES FOREACH      static <T,R, E extends Exception> Function<T,R> handlingFunctionWrapper(ThrowingFunction<T,R, E> throwingConsumer, Class<E> exceptionClass) {
+                                            return i -> {
+                                                try {
+                                                    return throwingConsumer.apply(i);
+                                                } catch (Exception ex) {
+                                                    try {
+                                                        E exCast = exceptionClass.cast(ex);
+                                                        throw new RuntimeException(exCast);
+                                                    } catch (ClassCastException ccEx) {
+                                                        throw new RuntimeException(ex);
+                                                    }
+                                                }
+                                            };
+                                        }
+POUR LES FOREEACH A 2 ARGUMENTS: j'ai d'un coté: 
+                                    public static <T,R, E extends Exception> BiConsumer<T,R> handlingFunctionBiArgWrapper(ThrowingBiConsumer<T, R, E> throwingConsumer, Class<E> exceptionClass) {
+                                                         return (i,j) -> {
+                                                            try {
+                                                                 throwingConsumer.accept(i,j);
+                                                            } catch (Exception ex) {
+                                                                try {
+                                                                    E exCast = exceptionClass.cast(ex);
+                                                                    throw new RuntimeException(exCast);
+                                                                } catch (ClassCastException ccEx) {
+                                                                    throw new RuntimeException(ex);
+                                                                }
+                                                            }
+                                                        };
+                                                    }
+                                                    @FunctionalInterface
+                                                    public interface ThrowingBiConsumer<T,R, E extends Exception>
+                                                    {
+                                                        void accept(T o, R o2) throws E;
+                                                    }
+
+                    et de l'autre, utilisation: componentInstance.getCosts().forEach(handlingFunctionBiArgWrapper((key, value) -> {
+                                                (...)
+                                                if (...) throw new CostlineNotDefinedException("blah");
+                                                (...)
+                                                                                        
+                                        
+                POUR LES FILTRES:    utilisation: .filter(handlingPredicateWrapper(gen ->getThisSameSymbolicParameterValue(gen, classificationNode, parameter).equals("Y"),Exception.class))
+                                        declaration:
+                                        public static <T, E extends Exception> Predicate<T> handlingPredicateWrapper(ThrowingPredicate<T, E> throwingConsumer, Class<E> exceptionClass) {
+                                              return i -> {                                         // ca retourne donc un PREDICATE
+                                                  try {
+                                                      return ThrowingPredicate.test(i);              // ca retourne donc un PREDICATE donc ThrowingPredicate a la meme methode que Predicate mais lui il throw une exception contrairement a predicate
+                                                  } catch (Exception ex) {
+                                                      try {
+                                                          E exCast = exceptionClass.cast(ex);
+                                                          throw new RuntimeException(exCast);
+                                                      } catch (ClassCastException ccEx) {
+                                                          throw new RuntimeException(ex);
+                                                      }
+                                                  }
+                                              };
+                                          }
+                                      
+                                          @FunctionalInterface
+                                          public interface ThrowingPredicate<T, X extends Throwable> {
+                                              public boolean test(T t) throws X;
+                                          }
+                                                        
+            exemple lambda imbriquees: une liste A contient une liste B. je dois filtrer A qui ont seulement certains B (converti un stream en liste directement dans le filtre)  A REVOIR
+                            List<Result> toto = resultList.stream()
+                              .filter(r -> // très mauvais lambda ! clean code:ne pas avoir de ->{ dans ce cas reporter le code dans {} dans une autre methode dans cette classe meme ou dans l'item en cours du stream ou une methode statique quelquepart
+                              {               
+                                  try {
+                                      List<Time> hour = r.splitDepartureTimes();
+                                      List<Time> hoursAfter = hour.stream()
+                                              .filter(h ->
+                                              {
+                                                  try {        //eviter les trycatch dans lambda voir LINKconvertiCheckedExceptionDansUnStreamEnUnCheckedExceptionPourQueCaCompile
+                                                      if (h.after(hourFormat.parse(timeDeparture)) || h.equals(hourFormat.parse((timeDeparture)))) {
+                                                          return true;
+                                                      } else return false;
+              
+                                                  } catch (Exception e) {
+                                                      e.printStackTrace();
+                                                      return false;
+                                                  }
+                                              }).collect(Collectors.<Time>toList());
+                                      if (hoursAfter.toArray().length > 0) {
+                                          return true;
+                                      }
+                                      else return false;
+                                  } catch (Exception e) {
+                                      e.printStackTrace();
+                                      return false;
+                                  }
+                              }).collect(Collectors.<Result>toList());
+              
+                      return resultList;
+                lambda : virer les doublons:
+                    listWithDuplicates.parallelStream().distinct().collect(Collectors.toList());
+  public interface B { 
+    default void printSomething() {  // pas besoin d'implementer cette methode dans les filles. nouveau dans java8 interfaces
+        System.out.println("something else");
+    }
+  }
 mapping :
 pour copier les proprietes d'un bean formulaire vers un autre bean de type info par exemple faire: convertir mapper maper un objet java transformer en un autre bean  
 						org.apache.commons.beanutils.BeanUtils.copyProperties(Object dest, Object orig) // ModelMapper c'est de la merde faut pas l'utiliser. le plus performant c'est mapstruct (il genere les classes de mapping au compile time par maven.)
@@ -21133,14 +20679,30 @@ pour copier les proprietes d'un bean formulaire vers un autre bean de type info 
                             OrderDTO orderDTO = modelMapper.map(order, OrderDTO.class);
                              
 
-chaines : strings : string :
-pour recuperer le retour chariot: public static final String CHARIO = System.getProperty("line.separator"); // a partir de java 5.1 on peut mettre "%n" // recupère prop de la jvm voir LINKù*ù
-pour recuperer le caractere espace: c'est ca tout simplement: " "
-pour savoir si un charactere est de type espace:  Character.isSpaceChar(echar)
-pour transformer un tableau de byte en string: 
-ByteArrayOutputStream byaos = new ByteArrayOutputStream(tableau de byte);
-byaos.toString();
+
 tableaux :
+les sous classes de collection sont:
+    AbstractCollection, AbstractList, AbstractSet, ArrayList, BeanContextServicesSupport, BeanContextSupport, HashSet (ordre pourri non fiable, vire les doublons, non threadsafe) , LinkedHashSet(conserve l'ordre d'insertion), LinkedList(comme arraylist: ordonné et duplicats possibles mais il gere mieux la memoire si données dedans sont tres manipulées), TreeSet garde l'ordre?, Vector
+pour faire un minus: list A moins list B en utilisant removeall (on peut aussi utiliser retainall) avec des objets de type non primitifs dans les listes:
+retainall: LINKDLKJSDF Retains only the elements in this Vector that are contained in the specified Collection. In other words, removes from this Vector all of its elements that are not contained in the specified Collection. 
+				il faut que notre objet non primitif ait cette signature de methode pour que ca marche: 
+  	    @override  // a utilser aussi quand je veux verifier qu'un objet n'exite pas dejà dans une liste du meme objet: ajouter cette methode à l'objet
+        public boolean equals(Object a)
+					{
+						Select sa = (Select)a;
+						boolean ret=false;
+						if (sa.value.equals(this.value)) ret= true;
+						return ret;
+					}
+pour parcourir une liste d'objets: 
+parcourir une collection c'est pareil
+				List<Transporteur> transporteurs = findActiveTransporteurs();
+				for (Transporteur t: transporteurs) {
+pour merger deux collections listes:
+		Collection.retainAll(Collection c) (c'est comme un "et") voir LINKDLKJSDF
+pour faire un "ou"
+		Collection.addAll(Collection c)
+		
 Bonne pratique d'utilisation de tableaux en Java: (et de tableaux de tableaux)
 PREFERER List à Vector et Map à Hashtable (Map est l'interface de Hashtable). On peut utiliser HashMap quand nous ne travaillons pas en multithreading sinon utiliser HashTable (car est synchronise. mais bof. preferer utiliser HashMap avec Collections.synchronizedMap()). La modification en HashMap sera plus rapide si le reste du code utilise l'interface Map. Map n'est pas trié trie
                                 |_Hashtable peut etre gourmand en ressources si trop utilisé (n'accepte pas de cle et valeurs nulles)
@@ -21228,6 +20790,32 @@ ou runtime.exec(new String[] { "monappli", "un paramètre avec des espaces", "pa
 ou runtime.exec(new String[] { "C:\\Program Files\\MonAppli\\monappli.exe" } );
 Remarque: Les variables d'environnement specifiees doivent l'être selon le format nom=valeur. 
 ************************
+encodage :
+		En interne en Java toutes les Strings, les char et charset sont encodes en UTF-16. En Java il est abberant de vouloir changer l'encodage d'une String !
+		String str = "blah";		// c'est forcement de l'utf16
+		Cependant je peux forcer tout mon programe java à fonctionner avec un autre encodage en lancant mon programme java comme ca:
+		java -Dfile.encoding=ISO-8859-15 -Dlog4j.configuration=file:/var/w(...)tchs/log4j.properties -Dconfpath=/v(...)tchs/Parser.properties -jar /var/www(...)adMails.jar 
+		CharsetEncoder isoencoder = Charset.forName("iso-8859-1").newEncoder();
+		CharsetEncoder utf8Encoder = Charset.forName("UTF-8").newEncoder();
+		/*pour savoir si cette chaine de caractere peut etre encodee en iso-8859*/
+		boolean okutf8 = utf8Encoder.canEncode(query);
+		boolean okiso = isoencoder.canEncode(query);
+		// on essaye d'ecoder en utf8
+		1)		InputStream inputStream = new ByteArrayInputStream(monString.getBytes());
+					InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
+		2)			byte[] bytes = utf8Encoder.encode(CharBuffer.wrap(query.toCharArray())).array(); // on a un tableau de byte en utf8
+		3)			String toto = new String(bytes); // on reconverti de utf8-> utf16: le string en fait devient du n'importe quoi.
+				// on converti un string en ISO puis en UTF-8 (pas sur que ca marche puisque un string est toujours en utf16)
+		4)			String stringISO = new String (query.getBytes(), "ISO-8859-1" ); // marche ! 
+		5)			String stringUTF8 = new String (bytes, "UTF-8" );
+		unicode -> UTF-8
+		        byte[] utf8Bytes = originalUnicode.getBytes("UTF8");
+              String roundTrip = new String(utf8Bytes, "UTF8");
+              ou bien   chaine = StringEscapeUtils.unescapeHtml(chaine);
+
+    String roundTrip = new String(utf8Bytes, "UTF8");
+
+------------------------------
 algoritmes java condition : conditions : condition : conditionnels : if :
 if (oldUIApplElementInfo.getApplPcbd()!=null && uiapplelementinfo.getApplPcbd()!=null)
 if(a&&b&&c)
@@ -21429,6 +21017,24 @@ private boolean contientCommentStart(String ligne) {
                             (?<!X) 	X, via zero-width negative lookbehind
                             (?>X) 	X, as an independent, non-capturing group
 conversions : convertir :
+convertir un Number en int: 
+		Number.intValue()
+convertir un double en int integer et convertir un double en long: 
+            ne pas utiliser Double.doubleToLongBits(tailleFinal)
+      mais
+			       long tailleFinalLong = (long)Math.round(monDouble);
+						int tailleFinalLong = (int)Math.round(monDouble);
+convertir un integer en double
+    double toto = (double)unint;
+convertir un long en double:
+      		Long time = new Long(unlong);
+    		zyBean.setZY5NDUREEC(time.doubleValue());						
+convertir un float en int: 
+    float convertisseur = dureeBOrig*inputStream.getFormat().getFrameRate()*inputStream.getFormat().getFrameSize();
+		  //optionnel: convertisseur = Math.round(convertisseur); 
+      int convertisseurInt=(int)convertisseur;
+      ou plutot 
+      int convertisseurInt=(int)Math.round(convertisseur);
 pour convertir un tableau d'objet en list ou meme un String[] tableau de string: on peut aussi convertir directement un tableau d'objet en stream. pas besoin de passer par une liste
 		Object[] a1d = { "Hello World", new Date(), Calendar.getInstance(), };
 		depuis java9: List<x> l = List.of("aaa","bbb"...);
@@ -21480,8 +21086,24 @@ pour convertir un int en string
     convertir un string en float:
         String s = "1234567.1234567f";
         float f = Float.parseFloat(fs);
+
+        
 ***********************************************************************
 Utils : Utils java :
+nombres :
+pour savoir si un int est defini par defaut il est egal à 0.
+pour savoir si un nombre est paire ou impaire:
+      if ( n % 2 == 0 ) {
+         System.out.println(n + " est pair.");
+      else {
+         System.out.println(n + " est impair.");
+chaines : strings : string :
+pour recuperer le retour chariot: public static final String CHARIO = System.getProperty("line.separator"); // a partir de java 5.1 on peut mettre "%n" // recupère prop de la jvm voir LINKù*ù
+pour recuperer le caractere espace: c'est ca tout simplement: " "
+pour savoir si un charactere est de type espace:  Character.isSpaceChar(echar)
+pour transformer un tableau de byte en string: 
+ByteArrayOutputStream byaos = new ByteArrayOutputStream(tableau de byte);
+byaos.toString();
 pour spliter un string: decouper un string en plusieurs morceaux(tooken tocken toocken token separateur): on coupe là  ou il y a marque "blabla" en enlevant "blabla:
 si pattern.toString = "blabla" // pattern c pour le expression regulieres.. a eviter (voir pq ci dessus...)
 String[] split = ligne.split(pattern.toString());
@@ -21540,6 +21162,9 @@ pour savoir quel string passe en premier dans un ordre alphabetique:
 -----------------------------
 Pour recuperer la liste de fichiers d'un directory:
 File.list()
+--------------------
+attention la fonction File.renameTo peut ne pas marcher: LINKjgdlkqjfqdgmlk 
+		toujours verifier par la variable de retour que ca s'est bien passe car en fonction des os win-unix pb compatibilite
 -------			
  Pour savoir si un char est un numero numerique numerique est un chiffre:
       // en effet l'Action est executee deux fois donc l'entete et une donnee sont enleves: c un bug du a harmony.
@@ -22639,6 +22264,8 @@ Pour utiliser readLine() qui permet de lire un fichier encode en utf8 et conserv
         		}
         	}
 proprietes : properties :
+pour acceder à un fichier situe dans le classpath: 
+			this.getClass().(getClassLoader()?.)getResourceAsStream("cheminVers/monFichier.toto)); (getClass est une methode de l'objet java "Object" verifier avec System.out.println("CLASSPATH: " + System.getProperty("java.class.path")); System.out.println("ClassLoader resource path: " + SaveXMLTest.class.getClassLoader().getResource("").getPath() ou HRParameters.class.getClassLoader().getResource("hr-openhr-for-ta.properties")); System.out.println("ClassLoader resource path: " + ClassLoader.getSystemResourceAsStream("hr-openhr-for-ta.properties"));   LINKgetRes9
 pour lire charger recuperer les properties proprietes d'un fichier de configuration dans un batch java: (voir aussi ci dessous PropertyResourceBundle) 
 public static void loadProperties () throws Exception {
 		InputStream is = MaClaseActuelle.class.getClassLoader().getResourceAsStream (Constants.PROPERTIES_FILE); // KO en java9 voir LINKgetRes9 le fichier de propriete doit etre dans le classpath verifier avec System.out.println("CLASSPATH: " + System.getProperty("java.class.path")); System.out.println("ClassLoader resource path: " + HRParameters.class.getClassLoader().getResource("hr-openhr-for-ta.properties")); System.out.println("ClassLoader resource path: " + ClassLoader.getSystemResourceAsStream("hr-openhr-for-ta.properties"));
@@ -23260,7 +22887,7 @@ voir exemple de webservice rest sans framework ici: d:\Profiles\lduverge\Desktop
 si erreur java.lang.AbstractMethodError: javax.ws.rs.core.UriBuilder.uri(Ljava/lang/String;)Ljavax/ws/rs/core/UriBuilder
       c parce que j'utilise pas les bonnes versions de librairies jersey/tomcat je crois. upgrader
   webservice renvoit une erreur policy? regarder au niveau "Autorisation"
-tutoriel Pour faire des serveurs de webservice : http://www.tutorialspoint.com/restful/restful_first_application.htm
+tutoriel Pour faire des serveurs de webservice: http://www.tutorialspoint.com/restful/restful_first_application.htm
         webservices: http://users.skynet.be/pascalbotte/
 pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facile. ) 
           <dependency>
@@ -23289,6 +22916,391 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
               	<version>20141113</version>
               </dependency> 
         
+parser xml :
+Convertir parser xml en objet java:
+    classe de definition:
+          import java.util.List;
+            import javax.xml.bind.annotation.XmlElement;
+            import javax.xml.bind.annotation.XmlRootElement;
+                  @XmlRootElement(name = "users")
+                  public class JaxbUserRepository {
+                      @XmlElement(name = "user")
+                      private List<JaxbUser> users;              
+                      public List<JaxbUser> getUsers() {
+                          return users;
+                      }
+                          @XmlAttribute(required = true)
+                          private String password;
+                          @XmlElement(name="group")
+                          @Path("titito") // facultatif: je crois que c'est pour changer le path dans le xml resultant
+                          private List<String> groups;
+
+                  }
+       dans le main:
+          import javax.xml.bind.JAXBContext;
+          import javax.xml.bind.JAXBException;
+          import javax.xml.bind.Unmarshaller;
+            final JAXBContext jc = JAXBContext.newInstance(JaxbUserRepository.class);
+            final Unmarshaller u = jc.createUnmarshaller();
+            final JaxbUserRepository jaxbUserRepository =
+                    (JaxbUserRepository)u.unmarshal( new File( userFilePath ) );
+
+            final List<JaxbUser> jaxbUsers = jaxbUserRepository.getUsers();
+Creer depuis xsd une grappe d'objets classes java pour la conversion convertir en deux sens xml et java
+      D:\Java\jdk1.8.0_151>xjc -encoding UTF-8 pathVersFichierXsdOuMemeUneURLD:/Profiles/lduverge/workspace/wenhuaduvergeamazonfeed/src/main/resources/product.xsd -p com.wenhuaduverge.jaxb -d D:\Profiles\lduverge\workspace\wenhuaduvergeamazonfeed\src\main\java
+Convertir un objet java contenant une liste d'objets java en fichier xml:
+  context = JAXBContext.newInstance(MaClasse.class); // attention depuis java11 jaxb degage
+  Marshaller m=context.createMarshaller();
+  m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,true);
+  m.marshal(UneListeDeMaClasse,newStreamResult(newFileOutptStream(new File("xx"));
+DOM parseur : avec Xpath (a partir de java 5 je crois)
+                            Document document =null;
+                            		File fileObj = new File(filePath);
+                            		DocumentBuilderFactory builderFactory =DocumentBuilderFactory.newInstance();
+                            		DocumentBuilder builder = null;
+                            		try {
+                            		    builder = builderFactory.newDocumentBuilder();
+                            		} catch (ParserConfigurationException e) {
+                            		    e.printStackTrace();  
+                            		}			
+                            		try {
+                            		    document = builder.parse(new FileInputStream(filePath));
+                            		      ou
+                            		    document = builder.parse( new InputSource( new StringReader( respXML ) ) );
+                            		} catch (SAXException e) {
+                            		    e.printStackTrace();
+                            		} catch (IOException e) {
+                            		    e.printStackTrace();
+                            		}
+                            		XPath xPath =  XPathFactory.newInstance().newXPath();
+                            		 //TOTOTOT/TOTITIT//DNFSDF  ici on cherche tous les enfants DNFSDF meme indirects
+                            		 TATATA/ancestor:TETETE  ici on cherche un parent meme indirect egal a <TETETE>
+                            		//String expression = "//RN-CLIP-LAUNCH-ACTUATOR/@ACTUATOR-CODE";
+                            		String expression = "//RN-CLIP-LAUNCH-ACTUATOR | //RN-CLIP-DISPLAY-DEFAULTS | //RN-CLIP-ERASE-ALL-DEFAULTS | //RN-CLIP-DISPLAY-DEFAULTS | RN-CLIP-DISPLAY";	 		 
+                            
+                            		//read a string value
+                            		String email = xPath.compile(expression).evaluate(document);
+                            		 
+                            		//read an xml node using xpath
+                            		Node node = (Node) xPath.compile(expression).evaluate(document, XPathConstants.NODE);
+                            		 
+                            		//read a nodelist using xpath
+                            		NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(document, XPathConstants.NODESET);
+
+DOM parseur: (vieille methode) 
+// permet de parser un xml avec xpath et on peut soit ecrire le contenu des nodes trouves (uniquement le texte) ou bien tout le contenu grace a la methode getElementContent ci dessous:
+                                                                          package ddd.com;
+                                                                          
+                                                                          import java.io.File;
+                                                                          import java.io.FileInputStream;
+                                                                          import java.io.IOException;
+                                                                          import java.io.StringWriter;
+                                                                          import java.util.Hashtable;
+                                                                          import java.util.LinkedHashSet;
+                                                                          import java.util.Map;
+                                                                          
+                                                                          import javax.xml.parsers.DocumentBuilder;
+                                                                          import javax.xml.parsers.DocumentBuilderFactory;
+                                                                          import javax.xml.parsers.ParserConfigurationException;
+                                                                          import javax.xml.transform.OutputKeys;
+                                                                          import javax.xml.transform.Transformer;
+                                                                          import javax.xml.transform.TransformerException;
+                                                                          import javax.xml.transform.TransformerFactory;
+                                                                          import javax.xml.transform.dom.DOMSource;
+                                                                          import javax.xml.transform.stream.StreamResult;
+                                                                          import javax.xml.xpath.XPath;
+                                                                          import javax.xml.xpath.XPathConstants;
+                                                                          import javax.xml.xpath.XPathFactory;
+                                                                          
+                                                                          import org.junit.Test;
+                                                                          import org.w3c.dom.Document;
+                                                                          import org.w3c.dom.Node;
+                                                                          import org.w3c.dom.NodeList;
+                                                                          import org.xml.sax.SAXException;
+                                                                          
+                                                                          import com.documentum.fc.client.IDfSession;
+                                                                          
+                                                                          public class Tests {
+                                                                          
+                                                                          	static java.io.FileOutputStream destinationFile=null;
+                                                                          	static File xmlFile=null;
+                                                                          	static IDfSession session;
+                                                                          	static Map<String,String> xpaths= new Hashtable<String,String>();
+                                                                          	static Map<String,LinkedHashSet<String[]>> xmlElements= new Hashtable<String,LinkedHashSet<String[]>>();
+                                                                          	private static String extraction;
+                                                                          
+                                                                              	
+                                                                                 
+                                                                              	
+                                                                              	@Test
+                                                                                public void oneTest() throws Exception
+                                                                              	{
+                                                                              		//xpaths.put("mdsie30_mr", "//PTXT/RN-RDC-ACCESS");
+                                                                              		xpaths.put("mdsie30_mr", "//ptxt/RN-RDC-ACCESS");
+                                                                              		LinkedHashSet<String[]> xmlElement = new LinkedHashSet<String[]>();
+                                                                              		xmlElement = new LinkedHashSet<String[]>();
+                                                                              		xmlElement.add(new String[]{"RN_RDC_ACCESS_COMPLET",XmlObjectEnum.attribute.label});
+                                                                              		xmlElement.add(new String[]{"RDC-ELEMENT-DESC",XmlObjectEnum.attribute.label});
+                                                                              		xmlElement.add(new String[]{"RDC-ELEMENT-REF",XmlObjectEnum.attribute.label});
+                                                                              		xmlElement.add(new String[]{"RDC-OPERATION-DESC",XmlObjectEnum.attribute.label});
+                                                                              		xmlElement.add(new String[]{"RDC-ELEMENT-REF",XmlObjectEnum.attribute.label});
+                                                                              		xmlElements.put("mdsie30_mr", xmlElement);
+                                                                                  
+                                                                              		xmlFile=new File("//f-mehen/home5$/p036782/MyDocs/DDD/resultatRequetes/090135f3803533dc.xml");
+                                                                              		recherchedansxml(xpaths.get("mdsie30_mr"));
+                                                                              		
+                                                                              	}
+                                                                              	public static void recherchedansxml(String expression) throws Exception
+                                                                              	{
+                                                                              		Document document =null;
+                                                                              			DocumentBuilderFactory builderFactory =DocumentBuilderFactory.newInstance();
+                                                                              			DocumentBuilder builder = null;
+                                                                              			try {
+                                                                              			    builder = builderFactory.newDocumentBuilder();
+                                                                              			} catch (ParserConfigurationException e) {
+                                                                              			    e.printStackTrace();  
+                                                                              			    throw e;
+                                                                              			}			
+                                                                              			try {
+                                                                              				System.out.println("parsexml");
+                                                                              			    document = builder.parse(new FileInputStream(xmlFile));
+                                                                              			} catch (SAXException e) {
+                                                                              			    e.printStackTrace();
+                                                                              			    throw e;
+                                                                              			} catch (IOException e) {
+                                                                              			    e.printStackTrace();
+                                                                              			    throw e;
+                                                                              			}
+                                                                              			XPath xPath =  XPathFactory.newInstance().newXPath();
+                                                                              			//read a string value
+                                                                              			//String email = xPath.compile(expression).evaluate(document);
+                                                                              			 
+                                                                              			//read an xml node using xpath
+                                                                              			//Node node = (Node) xPath.compile(expression).evaluate(document, XPathConstants.NODE);
+                                                                              			 
+                                                                              			//read a nodelist using xpath
+                                                                              			NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(document, XPathConstants.NODESET);
+                                                                              			for( int i =0; i<nodeList.getLength(); i++)
+                                                                              			{
+                                                                              				System.out.println(getElementContent(nodeList.item(i).getParentNode(),"--"));
+                                                                              			}
+                                                                              	}
+                                                                              	public static String getElementContent(Node element,String defaultStr) throws Exception
+                                                                              	{
+                                                                              		TransformerFactory transFactory = TransformerFactory.newInstance();
+                                                                              		Transformer transformer = transFactory.newTransformer();
+                                                                              		StringWriter buffer = new StringWriter();
+                                                                              		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+                                                                              		transformer.transform(new DOMSource(element), new StreamResult(buffer));
+                                                                              		String str = buffer.toString();
+                                                                              		return str;
+                                                                              	}
+                                                                              	 public static String getElementContentOLD(Node element, String defaultStr)
+                                                                                   throws Exception
+                                                                                {
+                                                                                   if (element == null)
+                                                                                      return defaultStr;
+                                                                          
+                                                                                   NodeList children = element.getChildNodes();
+                                                                                   String result = "";
+                                                                                   for (int i = 0; i < children.getLength(); i++)
+                                                                                   {
+                                                                                      if (children.item(i).getNodeType() == Node.TEXT_NODE || 
+                                                                                          children.item(i).getNodeType() == Node.CDATA_SECTION_NODE)
+                                                                                      {
+                                                                                         result += children.item(i).getNodeValue();
+                                                                                      }
+                                                                                      else if( children.item(i).getNodeType() == Node.COMMENT_NODE )
+                                                                                      {
+                                                                                         // Ignore comment nodes
+                                                                                      }
+                                                                                   }
+                                                                                   return result.trim();
+                                                                                }
+                                                                              	
+                                                                              	public enum XmlObjectEnum 
+                                                                              	{
+                                                                              	 	attribute(0,"attribute"),name(1,"name"),content(2,"content"); // ici j'ai defini deux elements de liste de l'enum. (ca appelle le constructeur ci dessous)
+                                                                              		private int id;
+                                                                              		private String label;
+                                                                          
+                                                                              		private XmlObjectEnum(int typeId, String labelId)
+                                                                              		{
+                                                                              			this.id = typeId;
+                                                                              			this.label = labelId;
+                                                                              		}
+                                                                              		// methode standard pour les enums
+                                                                              		public static XmlObjectEnum getEnum(String type)
+                                                                              		{
+                                                                              			return (XmlObjectEnum)XmlObjectEnum.valueOf(XmlObjectEnum.class, type);
+                                                                              		}
+                                                                              	 }
+                                                                          
+                                                                          }
+VIEILLE METHODE. Depuis java 5 ou 6 ca ne marche plus car on utilise plus apache mais javax
+    import org.apache.xerces.parsers.DOMParser;
+    import org.w3c.dom.Document;
+    import org.w3c.dom.Node;
+    import org.w3c.dom.Element;
+    import org.w3c.dom.NodeList;
+    import org.xml.sax.*;
+    import org.apache.xpath.XPathAPI;
+        private static void LancerParsageFichiers()
+        {
+            try
+            {
+                (...)
+                VerifConformiteXml(i); // voir methode apres celle ci dessous
+                DOMParser parser = new DOMParser();
+                parser.setFeature ("http://xml.org/sax/features/validation", false);
+                // on va parser sans interrompre le traitement si xml n est pas conforme au dtd:
+                IgnorerDTD(i);         // voir methode apres celle ci dessous
+                parser.parse("chemin vers mon fichier xml");
+                // parsage
+                Document document = parser.getDocument();
+                Traverse(document);         // voir methode apres celle ci dessous
+            }
+          catch (SAXException e)
+          {
+            cat.fatal("SaxExceptionboucle "+e);//err
+          }
+          catch (IOException e)
+          {
+            cat.fatal("IOException"+e);//err
+          }
+          catch (SecurityException e)
+          {
+            cat.fatal("SecutityIOException"+e);//err
+          }
+          catch (ClassNotFoundException e)
+          {
+            cat.fatal("ClassNotFoundException " + e);
+          }
+        }
+    VERIFIER CONFORMITE FICHIER XML:
+          private static void VerifConformiteXml(int i)
+          {
+            //Verification du xml vis a vis du dtd local dont le nom doit etre "Action.dtd"
+            cat.debug("> VerifConformiteXml");
+            DOMParser ParserVerif = new DOMParser();
+            try
+            {
+              //verification du xml suivant le dtd
+              ParserVerif.setFeature ("http://xml.org/sax/features/validation", true);
+              //valide avec precision
+              ParserVerif.setErrorHandler(new ErrorHandler()
+              {
+                public void warning(SAXParseException ex) throws SAXException
+                {
+                  throw ex;
+                }
+                public void error(SAXParseException ex) throws SAXException
+                {
+                  throw ex;
+                }
+                public void fatalError(SAXParseException ex) throws SAXException
+                {
+                  throw ex;
+                }
+              }
+              );
+              //indique le chemin du dtd
+              ParserVerif.setEntityResolver( new EntityResolver()
+              {
+                public InputSource resolveEntity(String publicID, String systemID) throws IOException, SAXException
+                {
+                  if(systemID.endsWith("Action.dtd"))
+                  {
+                    cat.debug("recupere dtd local");
+                    return new InputSource(DirGespro+"Action.dtd");
+                  }
+                  return null;
+                }
+              });
+        
+              ParserVerif.parse(DirGespro.concat(nomsfich[i]));
+              Document DocumentVerif = ParserVerif.getDocument();
+              ParserVerif.reset();
+            }
+            catch (java.lang.Exception e)
+            {
+              cat.warn("Fichier xml non conforme au dtd OU Chemin du dtd non specifie dans le fichier xml: "+e); //err
+            }
+           /* catch (SAXNotRecognizedException e)
+            {
+               log("SAXNotRecognizedException WARNING: "+e); //err
+            }
+            catch (SAXNotSupportedException e)
+            {
+               log("SAXNotSupportedException WARNING: "+e); //err
+            }
+            catch (IOException e)
+            {
+              log("ALERT SYSTEM: IOException"+e); //err
+            }
+            catch (SAXException e)
+            {
+               log("ALERT SYSTEM: SaxExceptionVerifXml"+e); //err
+            }*/
+          }
+          private static void IgnorerDTD (int i)
+            {
+              cat.debug(">ignorerdtd");
+              // Pour supprimer du fichier xml la premiere ligne ligne contenant le chemin vers le dtd
+              try
+              {
+                RandomAccessFile lirexml = new RandomAccessFile(new File (DirGespro.concat(nomsfich[i])),"rw");
+                // attention, RandomAccessFile.readLine() est incapable de lire de l'encodage utf-8 pour cela utiliser la methode voir: readLine() 
+                long filePointer = 0;
+                String ligne = "";
+                while ((ligne = lirexml.readLine())!=null)
+                {
+          
+                  filePointer = lirexml.getFilePointer();
+                  cat.debug("ligne en cours " + ligne);
+                  if (ligne.startsWith("<!DOC"))
+                  {
+                    long longueur = ligne.length();
+                    lirexml.seek(filePointer - longueur -2); // -2: correspond a \n... pas elegant il faut trouver mieux
+                    for (i=0; i<longueur; i++)
+                    {
+                      lirexml.writeBytes(" ");
+                    }
+                    cat.debug ("fin instruction");
+                    break;
+                  }
+                }
+                lirexml.close();
+              }
+              catch (IOException e)
+              {
+                cat.fatal ("IOException"+e);//err
+              }
+            }
+            
+         private static void Traverse (Node node)  throws IOException
+            {
+              int type = node.getNodeType();
+              String name = node.getNodeName();
+              if (name.compareToIgnoreCase("InscriptionAgent")==0)
+              {
+                if (node.getAttributes().getLength()==4 && node.getChildNodes().item(1).getNodeName().compareTo("IA_Apprenant")==0)
+                {
+                  if (node.getAttributes().getNamedItem("datedebut")!= null)
+                    datedebut=node.getAttributes().getNamedItem("datedebut").getNodeValue();
+              (...)
+              NodeList children = node.getChildNodes();
+              if (children !=null)
+              {
+                for (int i=0; i<children.getLength(); i++) Traverse(children.item(i));
+              }
+              //pour mettre des retours chariots apres manipulation du xml si tout s'ecrit a la ligne
+                /*TransformerFactory tfactory = TransformerFactory.newInstance();
+                Transformer tranformer = tfactory.newTransformer();
+                tranformer.setOutputProperty(OutputKeys.INDENT, "yes"); */
+            }
+             // pour faire une requete xpath: 
+             NodeIterator  nl = XPathAPI.selectNodeIterator(document, "mon xpath!");
 
 SOAP : webservice : webservices :
 voir l'outil Soap Ui soapui bien pratique (dans installations)
@@ -29014,6 +29026,8 @@ angular : Angularjs2 : ANGULAR2 : typescript :
       
             
 JSP :                      
+pour acceder à un fichier depuis une jsp 	
+	pageContext.getServletContext().getRealPath (url) 
 pour que le request soit transfere a une autre page:
       <jsp:forward page="/utils/errorReporter.jsp" /> (en dur)
       ou bien
