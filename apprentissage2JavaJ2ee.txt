@@ -2414,6 +2414,99 @@ erreurs codes http: LINKcodesHttp
 
 
 J2EE :
+du code java pour aller afficher une page html sans rien faire de special
+  res.setContentType("text/html");
+  res.setHeader("pragma", "no-cache");
+  ServletOutputStream out = res.getOutputStream();
+  TemplateContext context = new ProxyBundle();
+  context.setOutputStream(out);
+  getPage("html.docIntrouvable").print(context);
+  out.close();
+
+backend :
+    fichier :
+Pour recuperer telecharger downloader un fichier java à partir d'une url http lien et stocker ce fichier localement :
+	 public static void urlFileToLocalFile(String urlFullpath, String localFullPath)
+	    {
+	        InputStream input = null;
+	        FileOutputStream writeFile = null;
+
+	        try
+	        {
+	        //requete requette get
+	            URL url = new URL(urlFullpath);
+	            URLConnection connection = url.openConnection();
+	            int fileLength = connection.getContentLength();
+
+	            if (fileLength == -1)
+	            {
+	                System.out.println("Invalide URL or file.");
+	                return;
+	            }
+
+	            input = connection.getInputStream();
+	            String fileName = url.getFile().substring(url.getFile().lastIndexOf('/') + 1);
+	            writeFile = new FileOutputStream(localFullPath); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
+	            byte[] buffer = new byte[1024];
+	            int read;
+
+	            while ((read = input.read(buffer)) > 0)
+	                writeFile.write(buffer, 0, read);
+	            writeFile.flush();
+	        }
+	        catch (IOException e)
+	        {
+	            System.out.println("Error while trying to download the file.");
+	            e.printStackTrace();
+	        }
+	        finally
+	        {
+	            try
+	            {
+	                writeFile.close();
+	                input.close();
+	            }
+	            catch (IOException e)
+	            {
+	                e.printStackTrace();
+	            }
+	        }
+	    }
+
+Pour lire un fichier sur le serveur et le renvoyer pour ouverture dans le browser : 
+                    public static void downloadFichier(HttpServletRequest request, HttpServletResponse response, String type_PJ, String nomFichier) throws DaoException
+                    	{
+                    		String debut_msgConsole = "ERROR FROM PJsDao.downloadFichier()";
+                    		try
+                    		{
+                    		byte[] bytes = Files.readAllBytes(Paths.get(unObjetURL.getPath())));
+                    		avant: 
+                    			String filePath = getUploadDirectory(request) + "/" + type_PJ + "/" + nomFichier ;
+                    			FileInputStream stream = new FileInputStream(filePath); //chemin absolu necessaire
+                    			byte buf[] = new byte[stream.available()];
+                    			stream.read(buf);
+                    			response.reset();
+                    			response.setHeader("Expires", "0") ;
+                    			response.setHeader("Cache-Control","must-revalidate, post-check=0, pre-check=0, public");
+                    			
+                    			if(StringHelper.getExtensionFichier(nomFichier).equalsIgnoreCase("html"))
+                    			{
+                    				response.setContentType("text/html");
+                    			}
+                    			else
+                    			{
+                    				response.setContentType("application/x-file-download");
+                    				response.setHeader("Content-Disposition", "attachment; filename=" + nomFichier);
+                    			}
+                    			
+                    			ServletOutputStream outStream = response.getOutputStream();
+                    			outStream.write(buf) ;
+                    			outStream.flush();
+                    			stream.close();// pas besoin si je fais try(Writer writer = new FileWriter(unfichier)){
+                    			outStream.close();
+                    			//BufferedInputStream  bis = new BufferedInputStream(stream);
+                    			//outStream.write()
+                    		}
 Pour faire un graphique dans une appli web:
   une bonne librairie javascript: 
             <script src="<%=request.getContextPath()%>/js/jquery.min.js"></script>
@@ -15215,9 +15308,10 @@ Version 1.3:
       			fail ("Exception thrown " + e.getMessage());
       		}
          }
-Mockito : mockery : mock : tests :
-JMockit(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIRE comprendre jmockit et à documenter voir D:\RD\hello-world-war-master\src\test\tests\JMockitTest.java
-    JMOCKIT : JMOKIT : (plus reussi à le faire marcher avec Junit5. Mais Mockito si)
+AFAIRE: continuer à monter à partir d'ici
+tests : mocks :
+JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIRE comprendre jmockit et à documenter voir D:\RD\hello-world-war-master\src\test\tests\JMockitTest.java
+    (plus reussi à le faire marcher avec Junit5. Mais Mockito si)
                              <dependency>
                 			<groupId>org.jmockit</groupId>
                 			<artifactId>jmockit</artifactId>
@@ -15238,8 +15332,8 @@ JMockit(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIRE 
                           @RunWith(JMockit.class) // est facultatif (en tout cas a virer avec junit5)
                           public class JMockitTest {
                               @Tested private UneClasseATesterPasUneInterface; // Obligatoire pour que je reste fonctionne. c la classe qui est testee et dedans j'ai plein de dependances soit injectees soit instanciees et je dois les mocker
-                              Injecter et mocked le moins possible : mieux vaut réecrire les classes dans la classe de test. sinon jmockit bug avec l'ordre des expectations.
-                              @Injectable private JMockitTest.Collaborator collaborator="valeurFacultative"; // Mieux vaut mettre ca en param de methode de test. je mock les objets dans ma classe testee : ca va remplacer les autowired dans ma classe testee par une seule instance mockee . ATTENTION le nom de la variable est important je crois
+                              Injecter et mocked le moins possible: mieux vaut réecrire les classes dans la classe de test. sinon jmockit bug avec l'ordre des expectations.
+                              @Injectable private JMockitTest.Collaborator collaborator="valeurFacultative"; // Mieux vaut mettre ca en param de methode de test. je mock les objets dans ma classe testee: ca va remplacer les autowired dans ma classe testee par une seule instance mockee . ATTENTION le nom de la variable est important je crois
                               @Injectable private IReportManager reportManager; // seulement Un champ, celui ci, de ma classe testee va être moqué pour toute la classe. Eviter:plutot mettre dans meth.
                               @Mocked HttpServletRequest httpServletRequest; // ca ca remplace carrement tous les objets de ce type dans ma classe testee meme si c pas des autowired mais des instanciees en dur (heu sur? parce que pour une methode de test il n'a pas été injecté)
                               
@@ -15392,10 +15486,10 @@ en Swing code pour farie un save, saveAS et cancel en java:
 
 
 javafx : jfx :
-        java11 javafx : 
+        java11 javafx: 
     ma main classe qui est statique doit etendre extends the javafx.application.Application
             start();// entrypoint 
-            |                     pour recuperer un parameter parametre argument args du main : partout: Parameters params = ParametersImpl.getParameters(this);
+            |                     pour recuperer un parameter parametre argument args du main: partout: Parameters params = ParametersImpl.getParameters(this);
             V                                                                                            String mainParameter = params.getUnnamed().get(0);
             Stage___________________________
             |                    |    ...
@@ -15406,7 +15500,7 @@ javafx : jfx :
                  Root = (StackPane..., )
                             p redim
                           contient  
-     arbre :                  V
+     arbre:                  V
                         TreeView contient arbre de 
                             TreeItem(dont1estroot) = TreeCell retourné par cellFactory
                             |_fils:TreeItem
@@ -15424,12 +15518,12 @@ javafx : jfx :
                                                 }
                                             }
 
-    colorer un texte couleur : format de texte :
+    colorer un texte couleur: format de texte:
             private Text key= new Text("Key");
               key.setFill(javafx.scene.paint.Paint.valueOf("blue"));
               Text scenetitle = new Text(parameter.getClass().getSimpleName()); 
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-    mettre un placeholder au texte : 
+    mettre un placeholder au texte: 
         final TextField volumeTextField = new TextField();
         volumeTextField.setPromptText("volume");     
      faire un confirm confirmation: 
@@ -15440,7 +15534,7 @@ javafx : jfx :
                 alert.setContentText(alertDialogContexte);
                 return alert.showAndWait();
             }
-               Utilisation : 
+               Utilisation: 
                Optional<ButtonType> result = Utils.openConfirmationDialog("Confirm","Confirm", "Delete " + ((ClassificationNodeDataModel) newValue).getBusinessReference().getName() + "?");
                 if (result.get() == ButtonType.OK)
                 {               
@@ -15455,7 +15549,7 @@ javafx : jfx :
                 // DEBUT pour changer l'icone
                 Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
                 stage.getIcons().add(new Image(this.getClass().getResource("login.png").toString()));
-                                        // pour faire une image jfx :            final ImageView imageView = new ImageView(
+                                        // pour faire une image jfx:            final ImageView imageView = new ImageView(
                                                                                     new Image("https://upload.wikimedia.org/wikipedia/commons/b/b7/Idylls_of_the_King_3.jpg")
                                                                             );
                                                                             imageView.setFitHeight(300);
@@ -15500,7 +15594,7 @@ stackpane superpose des layers les uns par dessus les autres
             glass.getChildren().addAll(tree,label,line1);
 pour faire de beaux panes de page avec top botom bottom left right center 
     BorderPane leftPane = new BorderPane() ;            
-ouvrir une nouvelle fenetre :
+ouvrir une nouvelle fenetre:
                 Stage primaryStage = new Stage();
                 primaryStage.setTitle("Console");
                 StackPane root = new StackPane() ;
@@ -15508,12 +15602,12 @@ ouvrir une nouvelle fenetre :
                  Scene scene = new Scene(root, 400, 400) ;
                 primaryStage.setScene(scene) ;
                 primaryStage.show() ;
-pour faire une ligne jfx trait separation separateur :
+pour faire une ligne jfx trait separation separateur:
             Line line1 = new Line(0, 0, 100, 200);
 
     wrapper avec scoller scrollbar
             combinedStrutsForm = new ScrollPane(combinedStructureParametersPresentor.convertJavaObjectToNode(parameters));
-    splitpane pour diviser l'ecran en deux :
+    splitpane pour diviser l'ecran en deux:
             vSplit = new SplitPane(); 
             vSplit.getItems().addAll(treeNode, hSplit);
             vSplit.setDividerPositions(0.3f); // place par defaut le diviseur à 0.3/1.0. ON peut en mettre plusieurs à la suite
@@ -15555,9 +15649,9 @@ pour executer une tache en arriere fond et mettre un sablier pendant que le thre
               });
               th.start();
               
-        stylees icones :images :
+        stylees icones:images:
                 <!-- http://aalmiray.github.io/ikonli/
-                  we use : http://aalmiray.github.io/ikonli/cheat-sheet-fontawesome.html
+                  we use: http://aalmiray.github.io/ikonli/cheat-sheet-fontawesome.html
                   -->
                       <dependency>
                           <groupId>org.kordamp.ikonli</groupId>
@@ -15571,9 +15665,9 @@ pour executer une tache en arriere fond et mettre un sablier pendant que le thre
                   </dependency>
             imageUrl=FontAwesome.COG.getDescription();
             MenuItem add = new MenuItem(label,new FontIcon(imageUrl));
-    arbre click listener :
+    arbre click listener:
             ((TreeView<IParameter>)treeNode).getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> refreshVboxView(newValue));
-    toggle :boutton :ou boutton :tout court bouton :button :buton :y mettre un listener :
+    toggle:boutton:ou boutton:tout court bouton:button:buton:y mettre un listener:
             ((ToggleButton)toggleButton).setOnAction(event ->{
                     if (toggleButton.isSelected()){...
                    
@@ -15595,7 +15689,7 @@ faire un save as saveas sauver  avec bouton boutton button parcourir fichier dow
                   Utils.displayMessage("Export OK");
               }
           }
-    faire un tableau table tableview :
+    faire un tableau table tableview:
         List<VolumeDataModel> datamodels =new ArrayList<VolumeDataModel>();
         TableView table = new TableView();
         TableColumn yearCol = new TableColumn("Year");
@@ -15606,9 +15700,9 @@ faire un save as saveas sauver  avec bouton boutton button parcourir fichier dow
         table.setItems(FXCollections.observableArrayList(datamodels));      
         voir LINKtablevieweditablestyle pour styler mon tableau
         tableView.getSelectionModel().setCellSelectionEnabled(true); // pour que les cellules selectionnées soient hightlightées avec du css voir LINKtablevieweditablestyle. ca rend le tableau plus sympa pour l'editer                        
-    faire un tableau avec des colonnes dynamiques : 
+    faire un tableau avec des colonnes dynamiques: 
         tableView = new TableView();
-        List<List<String>> parametersdata// contient : -List<String> des labels-colonnes de la table
+        List<List<String>> parametersdata// contient: -List<String> des labels-colonnes de la table
         if(parametersdata.size()>0){                   -List<String> valeurs ligne 1
             buildHeader(parametersdata);               -List<String> valeurs ligne 2.
             buildBody(parametersdata);                 -...      .
@@ -15671,7 +15765,7 @@ faire un save as saveas sauver  avec bouton boutton button parcourir fichier dow
                       });
             savoir quelle ligne est selectionnée dans la tableview tableau et recuperer l'objet correspondant 
                     ParameterDataModel selectedPropertyDataModel = table.getSelectionModel().getSelectedItem(); (necessite un typage de tableview<xxx>)                              
-  faire des onglets tabs : 
+  faire des onglets tabs: 
         private TabPane tabPane;
         private Tab genericTab;
         private Tab booleanTree;
@@ -15680,15 +15774,15 @@ border bordure
     ou bien mettre un espace bord centrer 
                 tableNPVAndDiscountRate.setPadding(new Insets(10));
 faire du style css  (bons exemples: http://fxexperience.com/2011/12/styling-fx-buttons-with-css/)
-            java11:utiliser scenicview pour tester la mise en forme : set JAVA_HOME=C:\Java\jdk-11.0.1 puis C:\Users\lduverge\Desktop\ALTRAN\FXSCenicView\scenic-view>gradlew.bat run (demarrer d'abord mon programme avec jdk11)
+            java11:utiliser scenicview pour tester la mise en forme: set JAVA_HOME=C:\Java\jdk-11.0.1 puis C:\Users\lduverge\Desktop\ALTRAN\FXSCenicView\scenic-view>gradlew.bat run (demarrer d'abord mon programme avec jdk11)
             unText.setStyle("-fx-font-size:20px;");
             final Label label = new Label("The Once\nand\nFuture King");
             label.setStyle("-fx-text-fill: goldenrod; -fx-font: italic 20 \"serif\"; -fx-padding: 0 0 20 0; -fx-text-alignment: center");
-            et aussi : 
+            et aussi: 
                 final String path = ClassLoader.getSystemResource("diversitysimulator.css").toExternalForm(); LINKtablevieweditablestyle
                 tableView.getStylesheets().add(path);
                 tableView.getStyleClass().add("borderpane");
-                ou dans resources/diversitysimulator.css j'ai : 
+                ou dans resources/diversitysimulator.css j'ai: 
                  .region{
                           -fx-padding:50px;
                           -fx-background-color:linear-gradient(to bottom right, #00B5B5, #0081AA); /*degrade diagonale*/
@@ -15706,7 +15800,7 @@ faire du style css  (bons exemples: http://fxexperience.com/2011/12/styling-fx-b
                           -fx-border-style: dashed; 
                           -fx-effect: dropshadow(three-pass-box, purple, 10, 0, 0, 0); //ombre        
                           }
-pour faire un toggle button bouton buton boutton annimé animé en javafx jfx utiliser les animations : 
+pour faire un toggle button bouton buton boutton annimé animé en javafx jfx utiliser les animations: 
     public class ToggleButtonApplicationTest extends Application {
             @Override
         	    public void start(Stage primaryStage) throws Exception {
@@ -15785,10 +15879,10 @@ pour faire un toggle button bouton buton boutton annimé animé en javafx jfx ut
 
 	            switchedOn.addListener((obs, oldState, newState) -> {
 	                boolean isOn = newState.booleanValue();
-	                translateAnimation.setToX(isOn ? 100 : 0);
-	                gaucheFillAnimation.setFromValue(isOn ? Color.WHITE : Color.web("#1780af",1.0));
+	                translateAnimation.setToX(isOn ? 100: 0);
+	                gaucheFillAnimation.setFromValue(isOn ? Color.WHITE: Color.web("#1780af",1.0));
 	                gaucheFillAnimation.setToValue(isOn ? Color.web("#1780af",1.0): Color.WHITE);
-	                droiteFillAnimation.setFromValue(!isOn ? Color.WHITE : Color.web("#1780af",1.0));
+	                droiteFillAnimation.setFromValue(!isOn ? Color.WHITE: Color.web("#1780af",1.0));
 	                droiteFillAnimation.setToValue(!isOn ? Color.web("#1780af",1.0): Color.WHITE);
 
 	                animation.play(); // l'annimation se joue
@@ -15801,7 +15895,7 @@ pour faire un toggle button bouton buton boutton annimé animé en javafx jfx ut
 	    }
 	}
 
-1) FXProperties fx properties Objets : edition modifier champ modification formulaire en proprietes jfx : javafx : Bind et listner ne marchent que si tout est dans le même thread
+1) javaFXProperties :jfxproperties :Objets: edition modifier champ modification formulaire en proprietes jfx: javafx: Bind et listner ne marchent que si tout est dans le même thread
                                      Observable  ObservableValue                                                                
                 pourInvalidListner__|      \    /              |_pour les changeListener                                      
                                         ReadOnlyXXXProperty                                                                   
@@ -15817,17 +15911,17 @@ pour faire un toggle button bouton buton boutton annimé animé en javafx jfx ut
                                                           |_dans ce cas setMonchamp doit etre private
                     uneproprieteChangeSiLAutreChange: biding uni ou bidirectionelle(les deux proprietes s'ecoutent mutuellement) ATTENTION uneProp ne peut .bind qu'1 seule autre Prop. Donc voir LINKbindseveral si besoin
                       |_Du coup exception si est settee par ailleurs. Besoin de unbinder d'abord si on a besoin de la setter
-LINKbindseveral :   -FluentAPI: String Expression et ObjectExpression et BooleanExpression et NumberExpression.add(x).and(y).isEqualTo(z).length().etc etc du coup on passe par ça pour qu'une propriete soit bindé à plusieurs autres exemple: prop.bind(uneautreprop.isEmpty().or(une3eprop.estTruc())
+LINKbindseveral:   -FluentAPI: String Expression et ObjectExpression et BooleanExpression et NumberExpression.add(x).and(y).isEqualTo(z).length().etc etc du coup on passe par ça pour qu'une propriete soit bindé à plusieurs autres exemple: prop.bind(uneautreprop.isEmpty().or(une3eprop.estTruc())
                     -FactoryMethods que methodes statiques: unepropriete.bind(Bindings.concat("x",unePropriete,Binding.size(uneprop)).asString().when(...
                                                                     p.bind(Bindings.createXBinding(()->{formatage,laprop1QueJecoute,laprop2QueJecoute,...}));
                                                                     pText.bind(Bindings.createStringBinding(()->{leFormatage,laprop1QueJecoute,laprop2QueJecoute,...}
                                                                 equivalent à ci dessous qui est plus verbeux                                                                    
-                    -CustomBindings : p_ecouteur.bind(new XBinding(){ 
+                    -CustomBindings: p_ecouteur.bind(new XBinding(){ 
                                                                 super.bind(p_ecouté1,p_ecouté2,p_ecouté3......);
                                                                 @Override
                                                                 X computeValue(){...}           
                                                             }
-2) FXProperties listes : 
+2) FXProperties listes: 
     SimpleListProperty contient ObservableList qui est crée par FXCollections.observableArrayList();
     donc on initialiser comme ça: final ListProperty<SimpleBean> childrens = new SimpleListProperty<>(FXCollections.observableArrayList());
                                     |_pour effacer vider empty faire .clear()
@@ -15839,10 +15933,10 @@ Wrapper:                |_ SortedList<E> ou FilteredList<E> toto = new xxxunObse
                               par un event de add/delete         et ça se met à jour tout seul                                                                if(change.wasUpdated()){} // Uniquement si LINKmajdansElementdeliste   
                               voir LINKmajdansElementdeliste                                                                                                  if(change.wasRemoved()){}
                                                                                                                                                                 }
-    pour cloner une observableList c'est facile:LINKCloner         nouvelArrayindependante= FXCollections.observableArrayList(uneObservableList)); avec les fxproperties ne pas utiliser le clonage avec serialisation. plutot avec la methode constructeur. Encore mieux :voir LINKlkgkgkhgkfdlkjfglk                                                                                                                                                                 
+    pour cloner une observableList c'est facile:LINKCloner         nouvelArrayindependante= FXCollections.observableArrayList(uneObservableList)); avec les fxproperties ne pas utiliser le clonage avec serialisation. plutot avec la methode constructeur. Encore mieux:voir LINKlkgkgkhgkfdlkjfglk                                                                                                                                                                 
 si on utilise lambda stream pour recuperer l'observableList faire stream....collect(Collectors.toCollection(FXCollections::observableArrayList));                                                                                                                                                                
 LINKmajdansElementdeliste le callback de l'extractor retourne un tableau de Observable qui sont les proprietes que je veux observer de chaque elements de ma liste. On peut s'en passer en ecoutant seulement les removes et adds
-                        pour que ça marche donc faire :ListProperty<SimpleBean> childrens = new SimpleListProperty<>(FXCollections.observableArrayList(simplebean->new ObservableValue[]{simplebean.unChampAObserver()}));                                                                             
+                        pour que ça marche donc faire:ListProperty<SimpleBean> childrens = new SimpleListProperty<>(FXCollections.observableArrayList(simplebean->new ObservableValue[]{simplebean.unChampAObserver()}));                                                                             
 
 java6 :
 http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase6-419409.html 
@@ -15869,148 +15963,16 @@ decompiler :
           java -jar D:\Dev\fernflower\fernflower.jar D:\Projets\FondationDAuteuilSAML\hraspace\classes D:\Projets\FondationDAuteuilSAML\hraspace\classes
       JavaDecompiler (jad nt ). mieux: mettre le plugin net.sf.jadclipse_3.3.0.jar J'ai mis jad sous D:/installation. faire : "d:\Installations>jad d:\LocalData\p036782\Desktop\theo\WEB-INF\classes\renault\wec\dmd\form\FicheForm.class"
 
-    PARFOIS IL FAUT DEFINIR DES LIBRAIRIES SUR LA MACHINE VIRTUELLE JAVA: dans: D:\Program Files\jdk1.2.2\jre\lib\security\java.security (par ex) il a fallu rajoutter la ligne: security.provider.2=com.sun.crypto.provider.SunJCE
-recuperer un fichier selon son path relative relatif et non pas absolu : 
-        grace à System.getProperty("user.dir") qui est toujours dispo.
-        File defaultBusinessDir = new File(System.getProperty("user.dir"), "/src/main/resources/data/business") ; 
- bean couple paire tuple deux :
-        utiliser AbstractMap.SimpleEntry ou bien faire la classe
-        public class Tuple<X, Y>
-                  {
-                      private X x;
-                      private Y y;
-                      public Tuple()
-                      {
-                      }
-                      public Tuple(X x, Y y) {
-                          this.x = x;
-                          this.y = y;}
-                      public X getX()
-                      {
-                          return x;
-                      }
-                      public Y getY()
-                      {
-                          return y;
-                      }
-                      public void setX(X x)
-                      {
-                          this.x = x;
-                      }
-                      public void setY(Y y)
-                      {
-                          this.y = y;
-                      }
-                      @Override
-                      public String toString()
-                      {
-                          return (this.x==null?"":x.toString())+"->"+(this.y==null?"":y.toString());
-                      }
-                  }
- du code java pour aller sur une autre page sans rien faire de special
-  res.setContentType("text/html");
-  res.setHeader("pragma", "no-cache");
-  ServletOutputStream out = res.getOutputStream();
-  TemplateContext context = new ProxyBundle();
-  context.setOutputStream(out);
-  getPage("html.docIntrouvable").print(context);
-  out.close();
-convertir mp3 en wave : 
-    utiliser 
-    tritonus-share-0.3.7-2.jar
-    mp3spi-1.9.5-1.jar
-    jorbis-0.0.17-2.jar
-    jlayer-1.0.1-1.jar
-    vorbisspi-1.0.3-1.jar
-            <dependency><groupId>com.googlecode.soundlibs</groupId><artifactId>tritonus-share</artifactId><version>0.3.7-2</version></dependency>
-        <dependency><groupId>com.googlecode.soundlibs</groupId><artifactId>jlayer</artifactId><version>1.0.1-1</version></dependency>
-        <dependency><groupId>com.googlecode.soundlibs</groupId><artifactId>mp3spi</artifactId><version>1.9.5-1</version></dependency>
-        <dependency><groupId>com.googlecode.soundlibs</groupId><artifactId>jorbis</artifactId><version>0.0.17-2</version></dependency>
-        <dependency><groupId>com.googlecode.soundlibs</groupId><artifactId>vorbisspi</artifactId><version>1.0.3-1</version></dependency>
-delta entre deux chaines de caracteres characters strings :
-         public static String[] difference(String a, String b) {
-                return diffHelper(a, b, new HashMap<>());
-            }
-            private static String[] diffHelper(String a, String b, Map<Long, String[]> lookup) {
-                return lookup.computeIfAbsent(((long) a.length()) << 32 | b.length(), k -> {
-                    if (a.isEmpty() || b.isEmpty()) {
-                        return new String[]{a, b};
-                    } else if (a.charAt(0) == b.charAt(0)) {
-                        return diffHelper(a.substring(1), b.substring(1), lookup);
-                    } else {
-                        String[] aa = diffHelper(a.substring(1), b, lookup);
-                        String[] bb = diffHelper(a, b.substring(1), lookup);
-                        if (aa[0].length() + aa[1].length() < bb[0].length() + bb[1].length()) {
-                            return new String[]{a.charAt(0) + aa[0], aa[1]};
-                        } else {
-                            return new String[]{bb[0], b.charAt(0) + bb[1]};
-                        }
-                    }
-                });
-            }
-pour ajouter des elements à un tableau de type [] passer par des Arrays.
+    
+ 
+erreurs : messages : messages d'erreur :
 si j'ai erreur 
       java.lang.AbstractMethodError c'est peut etre parce que j'ai mis un @override alors qu'il n'y a pas de raison.(peut etre)
 si j'ai erreur Error:java: exporting a package from system module java.instrument is not allowed with --release
     Maven: maven-compiler-plugin passer à la bonne version (8->9->10)
-  LINK_URLENCODEDECODE  quand un string contient des pourcentages % a cause de l'URI
-    url encoder :
-          en java faire : user = (java.net.)URLEncoder.encode(user, "UTF-8");
-          ou bien 
-                      public static char[] encodeURL(String str) throws UnsupportedEncodingException {
-                    char[] temp = URLEncoder.encode(str, "UTF-8").toCharArray();
-                    for (int i = 0; i < temp.length; i++) {
-                        if (temp[i] == '%') {
-                            temp[i + 1] = Character.toLowerCase(temp[i + 1]);
-                            temp[i + 2] = Character.toLowerCase(temp[i + 2]);
-                        }
-                    }
-                    return temp;
-                }
-    url decoder : 
-    java.net.URLDecoder.decode(url, "UTF-8");
-    
-pour deflateandencode : 
-      import java.util.zip.Deflater;
-      import java.util.zip.DeflaterOutputStream;
-      import org.apache.commons.codec.binary.Base64; de <dependency><groupId>commons-codec</groupId><artifactId>commons-codec</artifactId><version>1.10</version></dependency>// ou org.opensaml.xml.util.Base64...
-      public static String deflateAndEncodeBase64(String samlRequest) throws IOException {
-            // Deflate the SAMLResponse value
-            ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-            Deflater deflater = new Deflater(Deflater.DEFLATED, true);
-            DeflaterOutputStream deflaterStream = new DeflaterOutputStream(
-                    bytesOut, deflater);
-            deflaterStream.write(samlRequest.getBytes());
-            deflaterStream.finish();
-
-            // Encoded the deflatedResponse in base64
-            Base64 base64encoder = new Base64();
-            String base64response = new String(base64encoder.encode(bytesOut.toByteArray()), "UTF-8");
-            return base64response;
-        }
-        // sinon: mais bof n'utilise pas de string
-       Deflater deflater = new Deflater(Deflater.DEFLATED, true);
-            DeflaterOutputStream deflaterStream = new DeflaterOutputStream(bytesOut, deflater);
-            deflaterStream.write(messageStr.getBytes());
-            deflaterStream.finish();
-        String res = Base64.encodeBytes(bytesOut.toByteArray(), Base64.DONT_BREAK_LINES);
-
-  pour savoir si mon java est en 32bits ou 64bits
-      path/vers/java/java -d64 -version
-  mettre dans methode statique static main inner class qu'on execute:
-        public class MetadataDownloader {
-            	public static void main(String[] args) {
-            		ProcessDownload process = new MetadataDownloader().getProcessDownload();
-            		process.downloadFile();
-            	}
-            	public ProcessDownload getProcessDownload(){
-            	return new ProcessDownload();
-            }
-            	public class ProcessDownload
-            	{
-
+  
 		      
-  logguer tracer debugger debuger les methodes appelantes : 
+logguer : logger :tracer :debugger debuger les methodes appelantes : 
           	protected void printStacktrace(String label) { linkgetStringStackTrace
                       StackTraceElement[] stck = Thread.currentThread().getStackTrace(); // permet aussi de recuperer le nom de la methode fonction en cours d'execution
                   StringWriter sw = new StringWriter();
@@ -16024,117 +15986,48 @@ pour deflateandencode :
               		sw.flush(); //Flushes this output stream and forces any buffered output bytes to be written out.
               		logger.debug(sw.toString());
               	}
-  pour savoir si c'est le premiers jour ouvre ouvrable ouvre du mois
-     public boolean isFirstDayofMonth(Calendar calender){
-            	Date d1 = new Date(); depuis Java8 voir LocalDateTime!!!!
-            		boolean ret = true;
-            		Calendar calendar = new GregorianCalendar();
-            		calendar.setTime(d1);
-            		if (calendar.get(Calendar.DAY_OF_MONTH)==1)
-            		{
-            			if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) 
-            			{
-            				ret=false;
-            			}
-            		}
-            		else if (!(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY && (calendar.get(Calendar.DAY_OF_MONTH)==1 || calendar.get(Calendar.DAY_OF_MONTH)==2)))
-            		{
-            			ret=false;
-            		}
-            	}
-            	return ret;
-        }
-  pour minuter chronometrer faire des laps lors du programme temps passe duree: utiliser mesurer performances
-      System.nanoTime après java 1.5 semble threadsafe
-      StopWatch de spring: n'est pas threadsafe // plus bas stopwatch d'apache
-      StopWatch stopwatch= new StopWatch(); ou new StopWatch(AbstractSAMLEntryPoint.class.getName()); // si je ne fais pas ça a chaque fois dans la methode il va cumuller les enregistrements meme entre plusieurs thread indépendants qui passent dans la classe
-      	if (stopwatch.isRunning()) stopwatch.stop();
-					stopwatch.start("setprovidersNomMethodeQuiEstExecutee");
-        setProviders(providers);
-        stopwatch.stop();
-        stopwatch.start("initialize");
-        initialize();
-        stopwatch.stop();
-      } finally {
-    		if (stopwatch.isRunning()) sw.stop();
-    		log.debug("AUDIT1: "+stopwatch.prettyPrint()); // encore : mieux: fait un rapport de ouf
-        ou 
-        logger.info(stopwatch.toString()); 
-      stomwatch d'apache: sais pas si c'est threadsafe
-            StopWatch stopwatch= new StopWatch(); 
-        		stopwatch.start();
-        		String[] res=new String[100];
-        				for (int i=0; i<2000; i++)
-        				{
-      	  			res = UtilitaireChaines.decouperLignePivotAvecSeparateur("a;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;ba;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;ba;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;ba;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;ba;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;ba;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;ba;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;ba;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;ba;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;ba;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;ba;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;b", ";");
-        				}
-      	  		     System.out.println(res.length);
-                stopwatch.stop();
-                System.out.println(stopwatch.toString());
-                stopwatch.reset();
-                stopwatch.start();
-
-		}
-		
-      log(sw.getTotalTimeMillis());
-  //TODO: //FIXME: sympa pour mettre des flags.
-  pour partitionner decouper sousliste subliste une liste en liste de liste d'objets à traiter par blocs :
-        List<IHRKey> hrKeys = new ArrayList<IHRKey>();
-        ...                         
-        List<List<IHRKey>> hrKeysPartitions = MyPartition.partition(hrKeys, 20); // 20 taille des blocs
-                                          public class MyPartition {
-                            	public static <T> List<List<T>> partition(List<T> list, int size) {
-                            		if (list == null)
-                            			throw new NullPointerException("'list' must not be null");
-                            		if (!(size > 0))
-                            			throw new IllegalArgumentException("'size' must be greater than 0");
-                            		return new Partition<T>(list, size);
-                            	}
-                            	private static class Partition<T> extends AbstractList<List<T>> { // si erreur There is no default constructor available in dans la methode je dois faire super(xxx)
-                            		final List<T> list;
-                            		final int size;
-                            		Partition(List<T> list, int size) {
-                            			this.list = list;
-                            			this.size = size;
-                            		}
-                            		@Override
-                            		public List<T> get(int index) {
-                            			int listSize = size();
-                            			if (listSize < 0)
-                            				throw new IllegalArgumentException("negative size: " + listSize);
-                            			if (index < 0)
-                            				throw new IndexOutOfBoundsException("index " + index
-                            						+ " must not be negative");
-                            			if (index >= listSize)
-                            				throw new IndexOutOfBoundsException("index " + index
-                            						+ " must be less than size " + listSize);
-                            			int start = index * size;
-                            			int end = Math.min(start + size, list.size());
-                            			return list.subList(start, end);
-                            		}
-                            		@Override
-                            		public int size() {
-                            			return (list.size() + size - 1) / size;
-                            		}
-                            		@Override
-                            		public boolean isEmpty() {
-                            			return list.isEmpty();
-                            		}
-                            	}
-                            }
   
-      pour savoir si un string chaine est vide empty, ou null:
-              org.apache.commons.lang.StringUtils.isEmpty(this.url_redirect)
-Les thread : threads : (ne jamais mettre un controlleur spring dans un thread) (si j'ai RejectedExecutionException c parce que j'ai stoppé un thread et après je lui demande encore un truc malgre tout)
+miscelaneous :
+si sur unix j'ai le message "processus arrete" a l'execution d'un batch
+    du java prend trop de memoire, virer une tache java
+
+dans un listener, quand on fait this on a pas accès au parent du listener: pour acceder au parent contenanant le listener, faire ca:
+    MaClasseParente.this.monObjetDansMaClasseParente.monParamDansMaClasseParente=2;
+
+threads : thread :
+definition threadsafe thread safe:
+    si threadsafe: ca peut etre un singleton et plusieurs thread l'atteingnent
+    si non thread safe il ne faut pas que ce soit un singleton: il doit etre instancie a chaque fois par un thread
+
+faire un peu durer le temps: 
+        	  			 long start = System.currentTimeMillis();
+        	  			long end = System.currentTimeMillis() + (1000*2);
+        	  			  while ( System.currentTimeMillis() <= end) 
+        	  			  {
+        	  					//log.debug("wait...");
+        	  					// jattends quil se bouge le cul
+        	  			  }
+pour attendre qu'une resource se libere: 
+    int i=0;
+	    	while (!file.exists())
+	    	{
+	    		Thread.sleep(800);
+	    		i++;
+	    		if (i==4)
+	    		{
+	    			break;
+	    		}
+	    	}
+(ne jamais mettre un controlleur spring dans un thread) (si j'ai RejectedExecutionException c parce que j'ai stoppé un thread et après je lui demande encore un truc malgre tout)
     Chaque Thread a son stack.
       Si commplexe, ne plus utiliser les treads directement mais passer par un ExecutorService (a faire voir aussi ExecutorCompletionService )
-        ExecutorService : pour faire un traitement par packets blocs blocks paquets: je traite une longue liste: je la divise en plusieurs et je traite chaque sous liste dans un thread soit en parallele soit les uns apres les autres
+        ExecutorService: pour faire un traitement par packets blocs blocks paquets: je traite une longue liste: je la divise en plusieurs et je traite chaque sous liste dans un thread soit en parallele soit les uns apres les autres
            public List<Future<DossierCommitResult>> doIMportExcell(final IHRUser hrUser, final IHRRole hrRole, final List<T> entries, final ExcelTemplate excelTemplate, final boolean simulation, final IDossierDAO<T> dao) throws InterruptedException {
               		List<List<T>> entriesPartition = MyPartition.partition(entries, 100);   // sous diviser sousdiviser decouper ma liste en plusieurs listes de 100elmts
                   Set<Callable<DossierCommitResult>> threadList = new HashSet<Callable<DossierCommitResult>>();
               				ExecutorService execute = Executors.newSingleThreadExecutor(); // pour une execution d'un thread les uns a la suite des autres
                   		//ExecutorService execute = Executors.newFixedThreadPool(2); // pour une execution de 2 threads à la fois. 2 doit etre recupéré par int proc = Runtime.getRuntime().availableProcessors(); // permet de recuperer le nb de threads simultanes possibles
-                  		for (final List<T> entriesblock : entriesPartition) {
+                  		for (final List<T> entriesblock: entriesPartition) {
                   			Callable<DossierCommitResult> callable = new Callable<DossierCommitResult>() {
                                   public DossierCommitResult call() throws Exception {
                             					DossierCommitResult commitResult = dao.write(hrUser, hrRole, excelTemplate, entriesblock, simulation, Integer.parseInt(partitionMaxSize));
@@ -16157,9 +16050,9 @@ Les thread : threads : (ne jamais mettre un controlleur spring dans un thread) (
                   		return futures;
                   	}
                   }
-          les treads : si complexe ne plus utiliser les treads dirrectement mais passer par un ExecutorService         
+          les treads: si complexe ne plus utiliser les treads dirrectement mais passer par un ExecutorService         
          currentThread( ) 	 Thread 	 Returns an object reference to the thread in which it is invoked.
-         getName( ) 	 String 	 Retrieve the name of the thread object or instance. Exemple: pas la peine de mettre un incrementeur,  dans le thread mettre : logger.info("executing thread"+this.elementblocknumber+" threadsname: "+Thread.currentThread().getName());
+         getName( ) 	 String 	 Retrieve the name of the thread object or instance. Exemple: pas la peine de mettre un incrementeur,  dans le thread mettre: logger.info("executing thread"+this.elementblocknumber+" threadsname: "+Thread.currentThread().getName());
          start( ) 	 void 	 Start the thread by calling its run method. On ne peut pas appeler cette methode deux fois sur un meme thread. Si on veut le faire il faut créer un nouveau thread puis faire start.
          run( ) 	 void 	 This method is the entry point to execute thread, like the main method for applications.
          sleep( ) 	 void 	 Suspends a thread for a specified amount of time (in milliseconds).
@@ -16235,12 +16128,12 @@ Les thread : threads : (ne jamais mettre un controlleur spring dans un thread) (
 												      catch (InterruptedException ex) {}
 												    }
 												  }
-.wait() et .notify() :
+.wait() et .notify():
  	sur un meme objet java (pas forcement un thread), wait() met en pause l'execution tant que sur ce meme objet notify() n'est pas execute. 
   c'est une ancienne façon de gérer les threads. Il faut que l'appel de ces methodes soient dans des contextes synchronized
-  comme ca : synchronized (this){this.notify(); conditionRequise=false;} attention si le notify arrive avant le wait alors je vais attendre infiniment
+  comme ca: synchronized (this){this.notify(); conditionRequise=false;} attention si le notify arrive avant le wait alors je vais attendre infiniment
   Mettre le wait dans un while(conditionRequise) 
-synchronisation : (voir aussi volatile) 
+synchronisation: (voir aussi volatile) 
 						void methode() {
 						    synchronized(this) {
 						        //section critique DONC ATTENTION, C'EST TOUT L OBJET QUI CONTIENT CETTE METHODE QUI EST LOCKE; PAS SEULEMENT CETTE METHODE DE L OBJET!!!
@@ -16253,7 +16146,7 @@ synchronisation : (voir aussi volatile)
 		est equivalent en java 1.5 a 
 					void methode() 
 					{
-							Lock l = new ReentrantLock();
+							Lock l = new ReentrantLock(); // le thread qui a locké ici en premier peut revenir et avoir un laissé passer pour continuer
 							l.lock();
 							try 
 							{
@@ -16270,7 +16163,7 @@ synchronisation : (voir aussi volatile)
 				    			maListe = new ArrayList<String>();
 						}
 						ne marche pas si maListe n'est pas final car "maListe" est une reference a l'objet. Pas l'objet lui meme (pointeurs)
-pour faire une liste synchronisee entre plusieurs threads (dans une classe qui va etre partagee par plusieurs threads j'ai la liste. Dans cette classe le code c'est : 
+pour faire une liste synchronisee entre plusieurs threads (dans une classe qui va etre partagee par plusieurs threads j'ai la liste. Dans cette classe le code c'est: 
           public class AspFile {
             private static transient LinkedList<AspFile> allAspFiles= new LinkedList<AspFile>() {
           		@Override
@@ -16328,7 +16221,7 @@ pour faire une liste synchronisee entre plusieurs threads (dans une classe qui v
                         }
                
         depuis java 1.3 (old)
-        timer:   utilisation du timer squeduler regulier : (thread) faire un schedule execution reguliaire automatique LINKTimersdkjsq    
+        timer:   utilisation du timer squeduler regulier: (thread) faire un schedule execution reguliaire automatique LINKTimersdkjsq    
         inconveniants:
           pas de planification complexe
           execution d'une seule tâche à la fois
@@ -16372,637 +16265,14 @@ pour faire une liste synchronisee entre plusieurs threads (dans une classe qui v
                 			   }
                 		    }
                 		}
-          ou bien par crontab qui execute .sh qui execute .java .jar:
-            crontab: 
-            30 23 * * * /opt/hnbas/metadatadownloader/metadatadownloader.sh 
-            sh:
-            #!/bin/bash
-                PATH=/usr/java/jdk1.7.0_51/bin:/usr/lib64/qt-3.3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/opt/puppetlabs/bin
-                java -DpropertiesFullpath=/opt/hnbas/metadatadownloader/metadatadownloader.properties -jar MetadataDownloader-0.0.1.jar
-si j'ai erreur "java.nio.file.InvalidPathException: Trailing char < > at index 33: ImportFileForImportUnitTests.xlsx "
-    c'est peut etre parce que j'ai un espace dans le nom de mon fichier que je donne dans le programme java. Interdit.
-pour formater une chaine de caractères (mapper convertir fichier)
-pour faire un message avec des {0}{1}{2}...  qui sont remplace par des strings: (utilisable comme moteur de template?) 
-  Utiliser MessageFormat (pour echaper escape des accolades brackets brakets les entourer de signe quote ')
-  exemple: 
-        Object[] arguments = {new Integer(7),new Date(System.currentTimeMillis()),"a disturbance in the Force"};
-          String result = MessageFormat.format("At {0,time} on {1,date}, there was {2} on planet {0,number,integer}.", arguments);
-          // attention si notre string qui contient les marqueurs a des single quotes guillement ca ne marche pas!! il faut les remplacer par des doubles single quotes (echappement)
-          output: At 12:30 PM on Jul 3, 2053, there was a disturbance in the Force on planet 7.
-          ou
-          MessageFormat form= new MessageFormat(  "The disk \"{1}\" contains {0} file(s).");
-          String result = form.format(arguments);
-ou bien 
-   String toto = String.format("%4$-5S(PASDESPACEICI)%3$2s(PASDESPACEICI)%2$2s(PASDESPACEICI)%1$2s", "a","b","c","dd"); //%argumentNumeroCommenceParUn$-tailleMinARespecterAjouteEspaceSiPlusPetit (si l'argument est plus grand que -xS il ne le tronque pas) S ou s pour la casse
-   retourne DD     c  b  a                                                                                   |                                                                               |
-   exemple :                                                                                                 (-): les espaces sont a droite. si rien les espaces sont a gauche                x doit etre superieur à 0 mais le nombre d'espace visible sera x+1 donc je dois mettre nombreDespaceVoulu-1 
-   logger.warn("User "+String.format("%s %s %s", tPrincipal.getNom(),tPrincipal.getLogin(),tPrincipal.getEmail())+ "in webservice has no roles");
-   retourne a b bc
-        permet aussi d'afficher en millions milliards un chiffre voir LINKStringFOrmatNumb
-singleton : dès java 7, 8(je crois)
-         est threadsafe: (donc il est implicitement volatile non?)
-         public class Singleton
-          {		
-          	/** Constructeur prive */	
-          	private Singleton()
-          	{
-            initialisation unique
-            }
-             public String unChamp;
-          	/** Holder */
-          	private static class SingletonHolder
-          	{		
-          		/** Instance unique non preinitialisee */
-          		private final static Singleton instance = new Singleton();
-          	}
-           
-          	/** Point d'accès pour l'instance unique du singleton */
-          	public static Singleton getInstance()
-          	{
-          		return SingletonHolder.instance;
-          	}
-          }
-           
-definition threadsafe thread safe :
-    si threadsafe : ca peut etre un singleton et plusieurs thread l'atteingnent
-    si non thread safe il ne faut pas que ce soit un singleton: il doit etre instancie a chaque fois par un thread
-    
-  UnknownHostException
-    peut etre qu'il faut rajouter les parametres pour qu'il attaque le proxy (sur tomcat à mettre dans setup.sh) 
-      # Specifique AUCHAN pour SSO CAS (mettre les -D avant le -jar si j'execute un programme. Sur tomcat ceci se met dans setenv.sh)
-        JAVA_OPTS="$JAVA_OPTS"" -Dhttps.proxyHost=FRSOPSLINFV01"
-        JAVA_OPTS="$JAVA_OPTS"" -Dhttps.proxyPort=8080"
-
-javaUnsupported major.minor version 51.0
-    c parce que je run en java <7 un programme compile en >=7
-      Java SE 8 = 52 (0x34 hex)
-      Java SE 7 = 51 (0x33 hex)
-      Java SE 6.0 = 50 (0x32 hex)
-      Java SE 5.0 = 49 (0x31 hex)
-immutable : objet ne pouvant pas etre modifie apres l'avoir cree : c mieux de faire un update sur des objets mutables car ca consomme moins que si on recree de nouveaux objets immutables. Mais c'est threadsafe de travailler avec des immutable donc si pas d'updates prevus: mettre final sur les proprietes de mon objet pour qu'il soit immutable
-les objets statiques sont partages par tous les objets dans la jvm à conditions que les programmes utilisent le meme classloader dans la jvm
-recuperer une variable d'environnement en java:
-    System.getenv("lavariable"); // recupere une variable d'environnement settee sur la machine (unix...windows?)voir LINK4488
-au lieu de faire un if pour les conditions d'executions, mettre Assertion.isTrue() c'est plus rapide: si c pas verifie ca renvoie erreur direct.                                                              
-pour se connecter à un LDAP : voir exemple projet D:\RD\LdapTestConnexion\src\main\java\TestLdapConnexion.java
-               		Hashtable<String, String> env = new Hashtable<String, String>();
-                      env.put(Context.INITIAL_CONTEXT_FACTORY, contextFactoryClassName); //INITIAL_CONTEXT_FACTORY=java.naming.factory.initial ET contextFactoryClassName="com.sun.jndi.ldap.LdapCtxFactory"
-                      env.put(Context.PROVIDER_URL, ldapUrl); // ldap(s)://blabla:port (mettre port :636 si c'est du ldaps)
-                      env.put("java.naming.ldap.version","2" ou "3");
-                      // locate keystore file  Specify SSL voir pour faire du ldaps
-                      if (url.startsWith("ldaps:")) {
-                      Methode 1: (est generique) LINKAAKJDLKIHE // locate truststore file
-                        System.setProperty("javax.net.ssl.trustStore", keyStore); //besoin si Moi client appel serveur par https. le trustore m'a ete donne par le serveur distant.
-                                                                      "C:/toto/soncertif.jks"); // ne mettre que un jks. Un .cer ça ne marche pas //besoin si Moi client appel serveur par https. le trustore m'a ete donne par le serveur distant (ou je l'ai récupéré avec le browser navigateur:un .cer encodé en base64).  Dans ce truststore qui est un jks je peux mettre autant de trusts que necessaire si je tappe plusieurs serveurs en SSL
-                        System.setProperty("javax.net.ssl.trustStorePassword", this.trustStorePassword); // est facultatif pour un truststore
-                  			System.setProperty("javax.net.ssl.trustStoreType", "jks"); //semble facultatif 
-                  			System.setProperty("com.ibm.jsse2.overrideDefaultProtocol","TLSv12"); // si erreur si j'ai erreur java.lang.ArrayIndexOutOfBoundsException: Array index out of range: 64
-                      autre methode : 
-                        Properties systemSettings = System.getProperties();// recupère prop de la jvm voir LINKù*ù
-                        systemSettings.put("javax.net.ssl.trustStore",TRUST_STORE_FILE_PATH); //ne mettre que un jks je crois. un .cer ça ne marche pas
-                        systemSettings.put("javax.net.ssl.trustStorePassword", TRUST_STORE_ROOT_PASSWORD);
-                        System.setProperties(systemSettings);
-                    Methode 2:(est chirurgical)
-             	                       env.put(Context.SECURITY_PROTOCOL, "ssl");
-                                     env.put("java.naming.ldap.factory.socket", ManagedSSLSocketFactory.class.getName());
-                                     voir LINK54636489 et mettre ici.
-                    //FIN SI LDAPS
-                      if (! StringUtils.isBlank(securityAuthentication)) {
-                          // Sets the authentification scheme to access the directory: "simple" ou none ou ??
-                          env.put(Context.SECURITY_AUTHENTICATION, securityAuthentication);
-                      }
-                      String principal = "cn=" + distinguishedName + "," + ldapSearchFilter;
-                      env.put(Context.SECURITY_PRINCIPAL, principal); // compte ldap de service ou userquelconque ex:uid=fr-kb-horoquartz-reader,ou=applicationAccounts,o=corp.leroymerlin.com
-                      if (! StringUtils.isBlank(password)) {          // permet de tester la connexion d'un utilisateur
-                          // Password is available, sets the user's credentials
-                          env.put(Context.SECURITY_CREDENTIALS, password);
-                      }
-              	        }
-            PUIS             
-                    pour gerer la pagination ldap voir projet eclipse apca-hrdossier-maj                              
-                    // AirFrance : sur le modele du ProxyLdapAuthenticate HRv5
-                      env.put(Context.REFERRAL, "ignore"); //ou follow si j'ai l'erreur javax.naming.PartialResultException: Unprocessed Continuation Reference(s); remaining name '...'???
-                      try {
-                       //faire une connexion ldap: 
-                        InitialDirContext ou DirContext initialdircontext = new InitialDirContext(env); // il se connecte avec le compte service ci desssous: si echoue peut envoyer erreurs à catcher permet de verifier que connexion compte service fonctionne
-                        //modifier les attributs update mise à jour maj .. pas encore très clair...              
-                               ModificationItem amodificationitem[] = new ModificationItem[2];
-                              amodificationitem[0] = new ModificationItem(3, new BasicAttribute("nomdelattribut", s1.getBytes("UTF-16LE")));
-                              amodificationitem[1] = new ModificationItem(1, new BasicAttribute("nomdelattribut", s2.getBytes("UTF-16LE")));          
-                              initialdircontext.modifyAttributes("CN=etc..distiguishname..", amodificationitem);
-                        //rechercher recuperer les attributs
-                                  Methode 1:
-                                      SearchControls attributsàretourner = new SearchControls();
-                                      attributsàretourner.setSearchScope(SearchControls.SUBTREE_SCOPE); // 2 ou 3
-                                      attributsàretourner.setReturningAttributes(new String[] { attribut1, attribut2... }); // les attributs qu'on veut recuperer. Mettre null pour retourner tous les attributs
-                                      String filter = "(&(objectclass=" + this.userClassName + ")(cn=" + userId + "))";
-                                      NamingEnumeration results = initialdircontext.search(this.baseDN, filter, attributsàretourner);
-                                      if (results.hasMoreElements()) 
-                                      {
-                                          SearchResult result = (SearchResult)results.nextElement();
-                                          Attributes attributes = result.getAttributes();
-                                      } 
-                                  Methode 2:
-                                        Attributes attributes = initialdircontext.getAttributes("CN=etc..distiguishname..", {"attribut1","attribut2"}); // attributs c'est un String[]
-                        // parcourir les attributs                
-                                          for (Enumeration<String> e = attributes.getIDs(); e.hasMoreElements();)
-                                          ou
-                                          for(NamingEnumeration e = attributes.getAll(); e.hasMore();) 
-                                          {
-                                          	logger.error("Debugflag9102 "+e.nextElement());
-                                          	Attribute attribute = (Attribute)e.next(); // si namingenumeration
-                                          }
-                                          // recuperer le groupe d'un user...
-                                          Attribute attribute = attributes.get("memberOf");//"memberOf" ou autre chose
-                                          NamingEnumeration enumeration = attribute.getAll(); // un attribut peut contenir une liste
-                                                                        ou attribute.get().toString();
-                                          while (enumeration.hasMoreElements()) 
-                                          {
-                                              Object value = enumeration.nextElement();
-                                          }
-                                       }
-                              Methode3:pour faire une recherche ldap recuperer le groupe d'un user et verifier que le user appartien bien à ce groupe:
-                                          NamingEnumeration results = dirContext.search(this.baseDN, filter, constraints);
-                                          LdapEdsnUser user = null;
-                                          if (results.hasMoreElements()) 
-                                          {
-                                            SearchResult result = (SearchResult)results.nextElement();
-                                            String id = getAttributeValue(result, "cn");
-                                            String firstName = getAttributeValue(result, "unattribut");
-                                            Attributes attributes = result.getAttributes();
-                                            for (Enumeration<String> e = attributes.getIDs(); e.hasMoreElements();) 
-                                            {
-                                            	logger.error("Debugflag9102 "+e.nextElement());
-                                            }
-                                            // recuperer le groupe d'un user...
-                                            Attribute attribute = attributes.get("memberOf");//"memberOf" ou autre chose
-                                            Set<String> groupDNs = new HashSet<String>();
-                                            NamingEnumeration enumeration = attribute.getAll();
-                                            while (enumeration.hasMoreElements()) 
-                                            {
-                                                Object value = enumeration.nextElement();
-                                                groupDNs.add(value.toString());
-                                            }
-                                            // verifier que le user est bien dans ce groupe
-                                           for (String groupDN : groupDNs) 
-                                           {
-                                              Attributes groupAttributes = dirContext.getAttributes(groupDN, new String[] { "cn" }); //"cn" ou autre chose
-                                              Attribute groupAttr = groupAttributes.get("cn");
-                                              String groupId = groupAttr.get().toString();
-                                              EdsnGroup group = EdsnGroupUtils.parse(groupId);
-                                              groups.add(group);
-                                           }
-                                         }
- 
-                      	context.close();
-                      	return true;
-                      } catch (AuthenticationException e) {
-                      	if (logger.isDebugEnabled()) {
-                      		logger.debug("Authentication failed for user " + userId + ": " + e.getMessage());
-                      	}
-                      	return false;
-                      } catch (LoginException e) {
-                          logger.error(e.getMessage());
-                          return false;
-                      } 
-                      catch (NamingException e) {
-                         // Air France : affichage pour debug
-                         logger.info(distinguishedName + "," + e);
-              
-                         if (e.getMessage().startsWith("[LDAP: error code 19")) {
-                            
-                            if (e.getMessage().endsWith("suspendu]")) {
-                               throw new AuthenticationException("Erreur HABILE : compte suspendu", e);
-                            } else if (e.getMessage().endsWith("expire]")) {
-                               throw new AuthenticationException("Erreur HABILE : mot de passe expire", e);
-                            } else {
-                               throw new AuthenticationException("Erreur HABILE : mot de passe reinitialise ou compte inactif", e);
-                            }
-                       
-                         } else if (e.getMessage().startsWith("[LDAP: error code 49")) {
-                             throw new AuthenticationException("Erreur HABILE : couple login/mot de passe non valide", e);
-                         } else {
-                             //throw new AuthenticationException("Erreur d'authentification LDAP", e);
-                             throw new AuthenticationException("Erreur d'authentification HABILE", e);
-                         }
-                      } 
-              	}
-pour faire du ldaps :
-            protected void setupSsl(Hashtable env) throws LoginException {
-                    try {
-                        logger.debug("Setting up SSL");
-                        env.put(Context.SECURITY_PROTOCOL, "ssl");
-                        env.put("java.naming.ldap.factory.socket", ManagedSSLSocketFactory.class.getName());
-                        SSLSocketFactory socketFactory = (SSLSocketFactory) getSSLSocketFactory();
-            
-                        ManagedSSLSocketFactory.setSocketFactory(socketFactory);
-                        Thread.currentThread().setContextClassLoader(ManagedSSLSocketFactory.class.getClassLoader());
-                    } catch (Exception e) {
-                        throw new LoginException("Unable to setup SSL support for LDAP: " + e.getMessage());
-                    }
-                }
-            
-                public static abstract class ManagedSSLSocketFactory extends SSLSocketFactory {
-            
-                    private static final ThreadLocal<SSLSocketFactory> factories = new ThreadLocal<SSLSocketFactory>();
-            
-                    public static void setSocketFactory(SSLSocketFactory factory) {
-                        factories.set(factory);
-                    }
-            
-                    public static SSLSocketFactory getDefault() {
-                        SSLSocketFactory factory = factories.get();
-            
-                        if (factory == null) {
-                            throw new IllegalStateException("No SSLSocketFactory parameters have been set!");
-                        }
-                        return factory;
-                    }
-                }                  	
-      
-pour faire un upload telecharger en https regarder code de mathieu:
-                uploadItem(httpClient, httpHost, headers, resource, fileName, annotations);
-encoder en base 64 encoder en base64 : (depuis java 1.8 utiliser java.util.Base64)
-      byte[] token = unstring.getBytes(Charset.forName("UTF-8"));
-		  String unStringEncodeEnBase64=Base64.encodeBase64String(token));
-Decoder de base64 
-		      String toto = new String(Base64.decodeBase64(unStringEncodeEnBase64));
-          ou
-          String sUserPwdDecode = new String(Base64.getDecoder().decode(sUserPwdCode));  
-recherche existance d'un objet dans une liste : dans l'objet redefinir equals : et je pourrais alors utiliser "contains"
-      @Override
-    public boolean equals(Object v) {
-        boolean retVal = false;
-
-        if (v instanceof Price){
-            Price ptr = (Price) v;
-            retVal = ptr.id == this.id;
-        }
-        return retVal;
-    }
-
-recherche trouver un element dans un tableau avec la recherche dichotomique : voir tribul hipsort 
-        static boolean exists(int[] ints, int k)
-    {
-        int res = rechercheDicho(ints, ints.length, k);
-        if (res==-1)
-        {
-            return false;
-        }
-        else return true;
-    }
-    private static	int rechercheDicho(int tab[], int nbVal, int val) //tableau, taille tableau, valeur cherchee
-    {
-              /* declaration des variables locales à la fonction */
-        boolean trouve;  //vaut faux tant que la valeur "val" n'aura pas ete trouvee
-        int id;  //indice de debut
-        int ifin;  //indice de fin
-        int im;  //indice de "milieu"
-                                                          
-              /* initialisation de ces variables avant la boucle de recherche */
-        trouve = false;  //la valeur n'a pas encore ete trouvee
-        id = 0;  //intervalle de recherche compris entre 0...
-        ifin = nbVal;  //...et nbVal
-
-              /* boucle de recherche */
-        while(!trouve && ((ifin - id) > 1))
-        {
-
-            im = (id + ifin)/2;  //on determine l'indice de milieu
-
-            trouve = (tab[im] == val);  //on regarde si la valeur recherchee est à cet indice
-
-            if(tab[im] > val) ifin = im;  //si la valeur qui est à la case "im" est superieure à la valeur recherchee, l'indice de fin "ifin" << devient >> l'indice de milieu, ainsi l'intervalle de recherche est restreint lors du prochain tour de boucle
-            else id = im;  //sinon l'indice de debut << devient >> l'indice de milieu et l'intervalle est de la même façon restreint
-        }
-
-              /* test conditionnant la valeur que la fonction va renvoyer */
-        if(tab[id] == val) return(id);  //si on a trouve la bonne valeur, on retourne l'indice
-        else return(-1);  //sinon on retourne -1
-
-    }
-pour creer un fichier temporaire de travail : 
-  nomFichierTemporaireCourant = File.createTempFile super pratique car genere lui meme le nom du fichier aleatoires
-  nomFichierTemporaireCourant.deleteOnExit(); // supprime le fichier quand la JVM a fini le process
-            
-Dynamic Dynamique classe loading classloader hotde recharger une classe: issu de http://tutorials.jenkov.com/java-reflection/dynamic-class-loading-reloading.html
-          // l'unicite d'une classe est defini par son package, son nom et le classloader qui l'a charge. Un classloader ne recharge jamais une classe qu'il a dejà charge (detecte par cet id unique :package/nom/classloader)
-                                  //creer une classloader qui etend classloader parent.
-                                    public class MyClassLoader extends ClassLoader{ (// a voir utiliser URLClassLoader capable de lire dans des .jar)
-                                    
-                                        public MyClassLoader(ClassLoader parent) {
-                                            super(parent);
-                                        }
-                                    
-                                        public Class loadClass(String name) throws ClassNotFoundException { //methode appellee par la jvm chaque fois qu'une classe de mon application fait un new UneClasse()
-                                            if(!"mon.package.maClasse".equals(name))
-                                            { //Toutes les autres classes que je ne veux pas reactualiser doivent être chargees par le classloader parent
-                                                    return super.loadClass(name); //invoquera findClass(String name) pour d'abord trouver la classe si elle est déja chargee 
-                                             }
-                                            try {
-                                            // on force le rechargement de la classe
-                                                String url = "file:C:/data/projects/tutorials/web/WEB-INF/classes/reflection/MaClasse.class"; // le path vers la classe que je veux reloader
-                                                URL myUrl = new URL(url);
-                                                URLConnection connection = myUrl.openConnection();
-                                                InputStream input = connection.getInputStream();
-                                                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                                                int data = input.read();
-                                    
-                                                while(data != -1){
-                                                    buffer.write(data);
-                                                    data = input.read();
-                                                }
-                                    
-                                                input.close();
-                                    
-                                                byte[] classData = buffer.toByteArray();
-                                    
-                                                return defineClass("mon.package.maClasse", classData, 0, classData.length); //defineClass transforme un array of bytes en une instance de classe.
-                                    
-                                            } catch (MalformedURLException e) {
-                                                e.printStackTrace();
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
-                                    
-                                            return null;
-                                        }
-                                    
-                                    }
-                                    
-                          Comment utiliser ce classloader:
-                                    public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException 
-                                    {
-                                        ClassLoader parentClassLoader = MyClassLoader.class.getClassLoader();
-                                        MyClassLoader classLoader = new MyClassLoader(parentClassLoader);
-                                        Class maClasse = classLoader.loadClass("mon.package.maClasse");
-                                    
-                                        ImaClasseInterface object1 =(ImaClasseInterface) maClasse.newInstance(); // on est oblige de creer une interface ou une super-classe à l'objet que je veux reloader. Cet interface ou super classe elle ne doit pas être reloade par le classe loader. Elle doit être loade une fois par le classloader parent (comme toutes les autres classes d'ailleurs)
-                                         // deuxieme exemple avec une super classe. On peut utiliser interface ou super classe.                                    
-                                        MaClasseSuperClass object2 =(MaClasseSuperClass) maClasse.newInstance();
-                                    
-                                        //Et ci-dessous, je reload ma classe! Je la rafraichis!:
-                                        classLoader = new MyClassLoader(parentClassLoader);
-                                        maClasse = classLoader.loadClass("mon.package.MaClasse");
-                                        object1 = (ImaClasseInterface)  maClasse.newInstance();
-                                        object2 = (MaClasseSuperClass) maClasse.newInstance();
-                                    }
-                                    
-                                    Et voici ma classe qui herite MaClasseSuperClass et implemente ImaClasseInterface mais on a pas desoin de mettre deux parents comme ca: on peut juste mettre une interface ou une superclasse:
-                                    public class MaClasse extends MaClasseSuperClass implements MaClasseInterface
-                                    {
-                                        //... body of class ... override superclass methods
-                                        //    or implement interface methods
-                                    }
-boucles :
-    break : sort de la boucle
-    continue : dans une boucle, passe à l'iteration suivante de la boucle sans executer la suite dans la boucle.
-    utiliser iterator si on veut supprimer les elements d'une liste dans laquelle on boucle loop avec iterator.remove. Si on a besoin de l'index parcourir a l'enver
-pour savoir si un char est un apostrophe :
-  if(c == '\'')...
-Pour recuperer telecharger downloader un fichier java à partir d'une url http lien et stocker ce fichier localement :
-	 public static void urlFileToLocalFile(String urlFullpath, String localFullPath)
-	    {
-	        InputStream input = null;
-	        FileOutputStream writeFile = null;
-
-	        try
-	        {
-	        //requete requette get
-	            URL url = new URL(urlFullpath);
-	            URLConnection connection = url.openConnection();
-	            int fileLength = connection.getContentLength();
-
-	            if (fileLength == -1)
-	            {
-	                System.out.println("Invalide URL or file.");
-	                return;
-	            }
-
-	            input = connection.getInputStream();
-	            String fileName = url.getFile().substring(url.getFile().lastIndexOf('/') + 1);
-	            writeFile = new FileOutputStream(localFullPath); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
-	            byte[] buffer = new byte[1024];
-	            int read;
-
-	            while ((read = input.read(buffer)) > 0)
-	                writeFile.write(buffer, 0, read);
-	            writeFile.flush();
-	        }
-	        catch (IOException e)
-	        {
-	            System.out.println("Error while trying to download the file.");
-	            e.printStackTrace();
-	        }
-	        finally
-	        {
-	            try
-	            {
-	                writeFile.close();
-	                input.close();
-	            }
-	            catch (IOException e)
-	            {
-	                e.printStackTrace();
-	            }
-	        }
-	    }
-Generer un fichier pdf avec Jasper et des donnees data:
-	@Test
-	public void testJasper()
-	{
-	try { 
-			HashMap hm = new HashMap<String,String>(); 
-		String filePath="d:\\Profiles\\ndubechot\\Desktop\\Capit RenoiRH\\xml files\\NUMMAR.xml"; // donnees 
-		InputStream inputStream = new FileInputStream(new File(filePath)); //chemin absolu necessaire 
-		JRXmlDataSource ds=new JRXmlDataSource(inputStream,"/"); 
-		ds.setDatePattern(date_pattern_jasperreport);
-		ds.setLocale(new Locale("fr","FR"));
-		JasperReport jasperReport;
-		JasperPrint jasperPrint; 
-		jasperReport = JasperCompileManager.compileReport("d:\\Profiles\\ndubechot\\Desktop\\RPT013.jrxml"); // template besoin fichiers .jasper aussi au meme endroit
-		jasperPrint = JasperFillManager.fillReport(jasperReport, hmOuNull, ds); 
-		JasperExportManager.exportReportToPdfFile(jasperPrint, "d:\\Profiles\\ndubechot\\Desktop\\simple_report.pdf"); 
-		} 
-    catch (Exception e) {
-     e.printStackTrace();
-     }
-	}}
-Pour lire un fichier sur le serveur et le renvoyer pour ouverture dans le browser : 
-                    public static void downloadFichier(HttpServletRequest request, HttpServletResponse response, String type_PJ, String nomFichier) throws DaoException
-                    	{
-                    		String debut_msgConsole = "ERROR FROM PJsDao.downloadFichier()";
-                    		try
-                    		{
-                    		byte[] bytes = Files.readAllBytes(Paths.get(unObjetURL.getPath())));
-                    		avant: 
-                    			String filePath = getUploadDirectory(request) + "/" + type_PJ + "/" + nomFichier ;
-                    			FileInputStream stream = new FileInputStream(filePath); //chemin absolu necessaire
-                    			byte buf[] = new byte[stream.available()];
-                    			stream.read(buf);
-                    			response.reset();
-                    			response.setHeader("Expires", "0") ;
-                    			response.setHeader("Cache-Control","must-revalidate, post-check=0, pre-check=0, public");
-                    			
-                    			if(StringHelper.getExtensionFichier(nomFichier).equalsIgnoreCase("html"))
-                    			{
-                    				response.setContentType("text/html");
-                    			}
-                    			else
-                    			{
-                    				response.setContentType("application/x-file-download");
-                    				response.setHeader("Content-Disposition", "attachment; filename=" + nomFichier);
-                    			}
-                    			
-                    			ServletOutputStream outStream = response.getOutputStream();
-                    			outStream.write(buf) ;
-                    			outStream.flush();
-                    			stream.close();// pas besoin si je fais try(Writer writer = new FileWriter(unfichier)){
-                    			outStream.close();
-                    			//BufferedInputStream  bis = new BufferedInputStream(stream);
-                    			//outStream.write()
-                    		}
-
-si sur unix j'ai le message "processus arrete" a l'execution d'un batch
-    du java prend trop de memoire, virer une tache java
-pour lire le java.library.path: 
-    System.getProperty("java.library.path");// recupère prop de la jvm voir LINKù*ù
-pour executer un programme en 64bits : 
-      /usr/local/java/bin/java -d64 -Dfile.encoding=ISO-8859-15 -Dlog4j.configuration=log4j.properties -jar Parser-1.0.0.jar nomProjet test0 FrenchIvona fox.txt projet@memoclap.com
-pour ajouter une librairie dll :car erreur native manquant: ou dependency blabla
-        ajouter les .dll sous mon C:\Program Files\Java\jdk1.7.0\jre\bin\là. ou sous : C:\Program Files\Java\jdk1.7.0\bin\là
-  si c'etait sur unix on met libjivonatts_native.so là: 
-      /usr/lib
-  envoyer des arguments à la jvm : 
-      java -Darg1=foo1 -Darg2=foo2  -Darg3=foo3 com.MyClass
-   ajouter les librairies en bloc qui elles se trouvent dans un repertoire : pas besoin de les noter une à une : 
-      java -Djava.endorsed.dir=path/vers/repertoire/contenant/les/jar ... 
-donnees variables numeriques:
-        Type	Signification	Taille (en octets)	Plage de valeurs acceptees
-        char	Caractère Unicode	2	'\u0000' → '\uffff' (0 à 65535)
-        byte	Entier très court	1	-128 → +127
-        short	Entier court	2	-32 768 → +32 767
-        int	Entier	4	-231≈-2,147×109 → +231-1≈2,147×109
-        long	Entier long	8	-263≈-9,223×1018 → +263-1≈9,223×1018
-        float	Nombre reel simple	4	±2-149≈1.4×10-45 → ±2128-2104≈3.4×1038
-        double	Nombre reel double	8	±2-1074≈4,9×10-324 → ±21024-2971≈1,8×10308
-        boolean	Valeur logique (booleen)	1	true (vrai), ou false (faux)
-Connaitre la duree d'un son en secondes: 
-    	public static int getLenghtInSecond(AudioInputStream bOrig) 
-    	{
-    		AudioFormat format = bOrig.getFormat();
-    	  return (int) (bOrig.getFrameLength() / format.getFrameRate());
-    	}
-pour convertire un wav foireux en bon wave
-	public static void convertWav(File fi) throws Exception 
-	{
-		File temp = new File(fi.getPath()+"temp.wav");
-		AudioInputStream clip1 = AudioSystem.getAudioInputStream(fi);
-		AudioFormat sourceFormat = clip1.getFormat();
-	//	long long1 = clip1.getFrameLength();
-        AudioFormat convertFormat = new AudioFormat(AudioFormat.Encoding.PCM_FLOAT, sourceFormat.getSampleRate(), 16, sourceFormat.getChannels(), sourceFormat.getChannels()*2, sourceFormat.getFrameRate(), false);
-        AudioInputStream convert1AIS = AudioSystem.getAudioInputStream(convertFormat, clip1);
-        AudioSystem.write(convert1AIS, AudioFileFormat.Type.WAVE, temp);
-        convert1AIS.close();
-        clip1.close();
-        fi.delete();
-        temp.renameTo(fi); // pour deplacer bouger move un fichier voir LINKjgdlkqjfqdgmlk
-	}
-pour mixer deux sons ou meme plus :
-	      AudioInputStream clip1 = AudioSystem.getAudioInputStream(new File("C:/wamp/www/kanail/AudioLoopOnline/sons/20121107963241352287465954/1531352287502673=Lovely0.wav"));
-        AudioInputStream clip2 = AudioSystem.getAudioInputStream(new File("C:/wamp/www/kanail/AudioLoopOnline/sons/20121107963241352287465954/1531352287502673=Lovely1.wav"));
-        pour initialiser rapidement une arraylist : shortcut :
-              List<Price> lp =  new ArrayList<Price>(Arrays.asList(p,d,a,e)); // pour creer une liste rapidement
-        List<AudioInputStream> audio = new ArrayList<AudioInputStream>();
-        audio.add(clip1);
-        audio.add(clip2);
-        AudioInputStream res = mixAudio(audio);
-        AudioSystem.write(res, AudioFileFormat.Type.WAVE, new File("C:/wamp/www/kanail/AudioLoopOnline/sons/20121107963241352287465954/Aeffacer.wav"));
-            	
-            	private static AudioInputStream mixAudio(List<AudioInputStream> audio) throws IOException
-            	{
-            	    ArrayList<byte[]> byteArrays = new ArrayList();
-            	    long size = 0;
-            	    int pos = 0;
-            	    for(int i = 0; i < audio.size(); i++){
-            	        AudioInputStream temp = audio.get(i);
-            	        byteArrays.add(convertStream(temp));
-            	        if(size < temp.getFrameLength()){
-            	            size = temp.getFrameLength();
-            	            pos = i;
-            	        }
-            	    }
-            	    byte[] compiledStream = new byte[byteArrays.get(pos).length];
-            	    for(int i = 0; i < compiledStream.length; i++){
-            	        int byteSum = 0;
-            	        for(int j = 0; j < byteArrays.size(); j++){
-            	            try{
-            	                byteSum += byteArrays.get(j)[i];
-            	            }catch(Exception e){
-            	                byteArrays.remove(j); // bien respecter le type de j
-            	            }
-            	        }
-            	        compiledStream[i] = (byte) (byteSum / byteArrays.size());
-            	    }
-            
-            	    return new AudioInputStream(new ByteArrayInputStream(compiledStream), ((AudioInputStream)audio.get(pos)).getFormat(), ((AudioInputStream)audio.get(pos)).getFrameLength());
-            	}
-            
-            	private static byte[] convertStream(AudioInputStream stream) throws IOException
-            	{
-            	    ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-            	    byte[] buffer = new byte[1024];
-            	    int numRead;
-            
-            	    while((numRead = stream.read(buffer)) != -1){
-            	        byteStream.write(buffer, 0, numRead);
-            	    }
-            
-            	    return byteStream.toByteArray();
-            	}
-pour faire un sub audio: une partie d'un fichier audio :
-      private static AudioInputStream subAudio(AudioInputStream inputStream,int startSecond, int secondsToCopy, AudioFileFormat fileFormat) throws Exception 
-    	{
-    		
-    		  AudioFormat format = fileFormat.getFormat();
-    		  int bytesPerSecond = format.getFrameSize() * (int)format.getFrameRate();
-    		  inputStream.skip(startSecond * bytesPerSecond);
-    		  long framesOfAudioToCopy = secondsToCopy * (int)format.getFrameRate();
-    		  AudioInputStream shortenedStream = new AudioInputStream(inputStream, format, framesOfAudioToCopy);
-    		  return shortenedStream;
-    	
-dans un listener, quand on fait this on a pas accès au parent du listener: pour acceder au parent contenanant le listener, faire ca :
-    MaClasseParente.this.monObjetDansMaClasseParente.monParamDansMaClasseParente=2;
-les scopes:    
-    public : un element public est accessible de partout et sans aucune restriction. Certaines classes (comme la classe principale main) doivent obligatoirement être declarees publiques (pour pouvoir executer l'application...)
-    protected : un element protected (protege) est accessible uniquement aux classes d'un package et à ses classes filles
-    private : un element private (prive) est accessible uniquement au sein de la classe dans laquelle il est declare. Ces elements ne peuvent être manipules qu'à l'aide de methode specifiques appeles accesseur et mutateur
-    "friendly" : un element est friendly par defaut (cette appellation n'est pas officielle et est empruntee au langage C++) est accessible uniquement aux classes d'un package et à ses classes filles.
-faire un peu durer le temps: 
-        	  			 long start = System.currentTimeMillis();
-        	  			long end = System.currentTimeMillis() + (1000*2);
-        	  			  while ( System.currentTimeMillis() <= end) 
-        	  			  {
-        	  					//log.debug("wait...");
-        	  					// jattends quil se bouge le cul
-        	  			  }
-pour attendre qu'une resource se libere : 
-    int i=0;
-	    	while (!file.exists())
-	    	{
-	    		Thread.sleep(800);
-	    		i++;
-	    		if (i==4)
-	    		{
-	    			break;
-	    		}
-	    	}        	  			  
-pour imposer qu'il ya  qu'une seule instance de mon batch java qui tourne : 
+          
+batchs : batch :        	  			  
+pour imposer qu'il ya  qu'une seule instance de mon batch java qui tourne: 
               Une astuce possible est d'utiliser une ServerSocket, du package java.net. On peut lancer un tel type de socket (sur un port precis) 
               lors de l'execution du main. Si une Exception est levee, cela indique qu'une instance de l'application est dejà en train de tourner.
-              Voici un exemple : 
+              Voici un exemple: 
               private static int PORT = 12345; 
-              public static void main(String[] args) { // on peut mettre des espaces dans args : java ... com.execute.Main "un args avec des espaces" 
+              public static void main(String[] args) { // on peut mettre des espaces dans args: java ... com.execute.Main "un args avec des espaces" 
                     try { 
                        ServerSocket listener = new ServerSocket(PORT);  // THIS, ecoute sur le port numero PORT. (le programme continue) ce port est désormais reservé. Plusieurs client peuvent communiquer avec THIS et pour chaque client qui se connecte un Socket different est attribué sur ce port.
                        System.out.println("Instance du programme unique"); 
@@ -17015,6 +16285,7 @@ pour imposer qu'il ya  qu'une seule instance de mon batch java qui tourne :
 
        
 Securite :java
+PARFOIS IL FAUT DEFINIR DES LIBRAIRIES SUR LA MACHINE VIRTUELLE JAVA: dans: D:\Program Files\jdk1.2.2\jre\lib\security\java.security (par ex) il a fallu rajoutter la ligne: security.provider.2=com.sun.crypto.provider.SunJCE
 Pour recuperer le user utilisateur connecte à travers un certificat
         Object certChain = request.getAttribute("javax.servlet.request.X509Certificate");
                if (certChain != null) {
@@ -17022,7 +16293,7 @@ Pour recuperer le user utilisateur connecte à travers un certificat
                   X509Certificate cert = certs[0];
                   String n = cert.getSubjectDN().getName();
                 }
-Cryptage :
+Cryptage : crypto : 
   Pour recuperer une cle d'un certificat: 
             	byte[] key = cipher.getCurrentSecretKey(CipherBean.getX509Certificate(certificateFile.getAbsolutePath())).getBytes();
   pour verifier une signature: En utilisant le cipherbean cypherbean de Francois: ou bien com.hraccess.services.crypto.JceSecretCipher
@@ -19421,6 +18692,9 @@ pour generer java a partir de wsdl mais beurk:
                  if (reader != null) try { reader.close(); } catch (IOException logOrIgnore) {}
              }
 SSL : TLS : https :
+    pour faire un upload telecharger en https regarder code de mathieu:
+                uploadItem(httpClient, httpHost, headers, resource, fileName, annotations);
+
     pour tracer tls ssl debugger debuger je peux demarrer avec les options: -Djavax.net.debug=ssl:handshake:verbose
                                                       ou     -Djavax.net.debug=all
                                                             -Djava.security.debug=certpath
@@ -19499,6 +18773,184 @@ si j'ai l'erreur: unable to find valid certification path to requested target. P
                                          return result;
                                       }
                                     }
+ldap :
+pour se connecter à un LDAP: voir exemple projet D:\RD\LdapTestConnexion\src\main\java\TestLdapConnexion.java
+               		Hashtable<String, String> env = new Hashtable<String, String>();
+                      env.put(Context.INITIAL_CONTEXT_FACTORY, contextFactoryClassName); //INITIAL_CONTEXT_FACTORY=java.naming.factory.initial ET contextFactoryClassName="com.sun.jndi.ldap.LdapCtxFactory"
+                      env.put(Context.PROVIDER_URL, ldapUrl); // ldap(s)://blabla:port (mettre port:636 si c'est du ldaps)
+                      env.put("java.naming.ldap.version","2" ou "3");
+                      // locate keystore file  Specify SSL voir pour faire du ldaps
+                      if (url.startsWith("ldaps:")) {
+                      Methode 1: (est generique) LINKAAKJDLKIHE // locate truststore file
+                        System.setProperty("javax.net.ssl.trustStore", keyStore); //besoin si Moi client appel serveur par https. le trustore m'a ete donne par le serveur distant.
+                                                                      "C:/toto/soncertif.jks"); // ne mettre que un jks. Un .cer ça ne marche pas //besoin si Moi client appel serveur par https. le trustore m'a ete donne par le serveur distant (ou je l'ai récupéré avec le browser navigateur:un .cer encodé en base64).  Dans ce truststore qui est un jks je peux mettre autant de trusts que necessaire si je tappe plusieurs serveurs en SSL
+                        System.setProperty("javax.net.ssl.trustStorePassword", this.trustStorePassword); // est facultatif pour un truststore
+                  			System.setProperty("javax.net.ssl.trustStoreType", "jks"); //semble facultatif 
+                  			System.setProperty("com.ibm.jsse2.overrideDefaultProtocol","TLSv12"); // si erreur si j'ai erreur java.lang.ArrayIndexOutOfBoundsException: Array index out of range: 64
+                      autre methode: 
+                        Properties systemSettings = System.getProperties();// recupère prop de la jvm voir LINKù*ù
+                        systemSettings.put("javax.net.ssl.trustStore",TRUST_STORE_FILE_PATH); //ne mettre que un jks je crois. un .cer ça ne marche pas
+                        systemSettings.put("javax.net.ssl.trustStorePassword", TRUST_STORE_ROOT_PASSWORD);
+                        System.setProperties(systemSettings);
+                    Methode 2:(est chirurgical)
+             	                       env.put(Context.SECURITY_PROTOCOL, "ssl");
+                                     env.put("java.naming.ldap.factory.socket", ManagedSSLSocketFactory.class.getName());
+                                     voir LINK54636489 et mettre ici.
+                    //FIN SI LDAPS
+                      if (! StringUtils.isBlank(securityAuthentication)) {
+                          // Sets the authentification scheme to access the directory: "simple" ou none ou ??
+                          env.put(Context.SECURITY_AUTHENTICATION, securityAuthentication);
+                      }
+                      String principal = "cn=" + distinguishedName + "," + ldapSearchFilter;
+                      env.put(Context.SECURITY_PRINCIPAL, principal); // compte ldap de service ou userquelconque ex:uid=fr-kb-horoquartz-reader,ou=applicationAccounts,o=corp.leroymerlin.com
+                      if (! StringUtils.isBlank(password)) {          // permet de tester la connexion d'un utilisateur
+                          // Password is available, sets the user's credentials
+                          env.put(Context.SECURITY_CREDENTIALS, password);
+                      }
+              	        }
+            PUIS             
+                    pour gerer la pagination ldap voir projet eclipse apca-hrdossier-maj                              
+                    // AirFrance: sur le modele du ProxyLdapAuthenticate HRv5
+                      env.put(Context.REFERRAL, "ignore"); //ou follow si j'ai l'erreur javax.naming.PartialResultException: Unprocessed Continuation Reference(s); remaining name '...'???
+                      try {
+                       //faire une connexion ldap: 
+                        InitialDirContext ou DirContext initialdircontext = new InitialDirContext(env); // il se connecte avec le compte service ci desssous: si echoue peut envoyer erreurs à catcher permet de verifier que connexion compte service fonctionne
+                        //modifier les attributs update mise à jour maj .. pas encore très clair...              
+                               ModificationItem amodificationitem[] = new ModificationItem[2];
+                              amodificationitem[0] = new ModificationItem(3, new BasicAttribute("nomdelattribut", s1.getBytes("UTF-16LE")));
+                              amodificationitem[1] = new ModificationItem(1, new BasicAttribute("nomdelattribut", s2.getBytes("UTF-16LE")));          
+                              initialdircontext.modifyAttributes("CN=etc..distiguishname..", amodificationitem);
+                        //rechercher recuperer les attributs
+                                  Methode 1:
+                                      SearchControls attributsàretourner = new SearchControls();
+                                      attributsàretourner.setSearchScope(SearchControls.SUBTREE_SCOPE); // 2 ou 3
+                                      attributsàretourner.setReturningAttributes(new String[] { attribut1, attribut2... }); // les attributs qu'on veut recuperer. Mettre null pour retourner tous les attributs
+                                      String filter = "(&(objectclass=" + this.userClassName + ")(cn=" + userId + "))";
+                                      NamingEnumeration results = initialdircontext.search(this.baseDN, filter, attributsàretourner);
+                                      if (results.hasMoreElements()) 
+                                      {
+                                          SearchResult result = (SearchResult)results.nextElement();
+                                          Attributes attributes = result.getAttributes();
+                                      } 
+                                  Methode 2:
+                                        Attributes attributes = initialdircontext.getAttributes("CN=etc..distiguishname..", {"attribut1","attribut2"}); // attributs c'est un String[]
+                        // parcourir les attributs                
+                                          for (Enumeration<String> e = attributes.getIDs(); e.hasMoreElements();)
+                                          ou
+                                          for(NamingEnumeration e = attributes.getAll(); e.hasMore();) 
+                                          {
+                                          	logger.error("Debugflag9102 "+e.nextElement());
+                                          	Attribute attribute = (Attribute)e.next(); // si namingenumeration
+                                          }
+                                          // recuperer le groupe d'un user...
+                                          Attribute attribute = attributes.get("memberOf");//"memberOf" ou autre chose
+                                          NamingEnumeration enumeration = attribute.getAll(); // un attribut peut contenir une liste
+                                                                        ou attribute.get().toString();
+                                          while (enumeration.hasMoreElements()) 
+                                          {
+                                              Object value = enumeration.nextElement();
+                                          }
+                                       }
+                              Methode3:pour faire une recherche ldap recuperer le groupe d'un user et verifier que le user appartien bien à ce groupe:
+                                          NamingEnumeration results = dirContext.search(this.baseDN, filter, constraints);
+                                          LdapEdsnUser user = null;
+                                          if (results.hasMoreElements()) 
+                                          {
+                                            SearchResult result = (SearchResult)results.nextElement();
+                                            String id = getAttributeValue(result, "cn");
+                                            String firstName = getAttributeValue(result, "unattribut");
+                                            Attributes attributes = result.getAttributes();
+                                            for (Enumeration<String> e = attributes.getIDs(); e.hasMoreElements();) 
+                                            {
+                                            	logger.error("Debugflag9102 "+e.nextElement());
+                                            }
+                                            // recuperer le groupe d'un user...
+                                            Attribute attribute = attributes.get("memberOf");//"memberOf" ou autre chose
+                                            Set<String> groupDNs = new HashSet<String>();
+                                            NamingEnumeration enumeration = attribute.getAll();
+                                            while (enumeration.hasMoreElements()) 
+                                            {
+                                                Object value = enumeration.nextElement();
+                                                groupDNs.add(value.toString());
+                                            }
+                                            // verifier que le user est bien dans ce groupe
+                                           for (String groupDN: groupDNs) 
+                                           {
+                                              Attributes groupAttributes = dirContext.getAttributes(groupDN, new String[] { "cn" }); //"cn" ou autre chose
+                                              Attribute groupAttr = groupAttributes.get("cn");
+                                              String groupId = groupAttr.get().toString();
+                                              EdsnGroup group = EdsnGroupUtils.parse(groupId);
+                                              groups.add(group);
+                                           }
+                                         }
+ 
+                      	context.close();
+                      	return true;
+                      } catch (AuthenticationException e) {
+                      	if (logger.isDebugEnabled()) {
+                      		logger.debug("Authentication failed for user " + userId + ": " + e.getMessage());
+                      	}
+                      	return false;
+                      } catch (LoginException e) {
+                          logger.error(e.getMessage());
+                          return false;
+                      } 
+                      catch (NamingException e) {
+                         // Air France: affichage pour debug
+                         logger.info(distinguishedName + "," + e);
+              
+                         if (e.getMessage().startsWith("[LDAP: error code 19")) {
+                            
+                            if (e.getMessage().endsWith("suspendu]")) {
+                               throw new AuthenticationException("Erreur HABILE: compte suspendu", e);
+                            } else if (e.getMessage().endsWith("expire]")) {
+                               throw new AuthenticationException("Erreur HABILE: mot de passe expire", e);
+                            } else {
+                               throw new AuthenticationException("Erreur HABILE: mot de passe reinitialise ou compte inactif", e);
+                            }
+                       
+                         } else if (e.getMessage().startsWith("[LDAP: error code 49")) {
+                             throw new AuthenticationException("Erreur HABILE: couple login/mot de passe non valide", e);
+                         } else {
+                             //throw new AuthenticationException("Erreur d'authentification LDAP", e);
+                             throw new AuthenticationException("Erreur d'authentification HABILE", e);
+                         }
+                      } 
+              	}
+pour faire du ldaps :
+            protected void setupSsl(Hashtable env) throws LoginException {
+                    try {
+                        logger.debug("Setting up SSL");
+                        env.put(Context.SECURITY_PROTOCOL, "ssl");
+                        env.put("java.naming.ldap.factory.socket", ManagedSSLSocketFactory.class.getName());
+                        SSLSocketFactory socketFactory = (SSLSocketFactory) getSSLSocketFactory();
+            
+                        ManagedSSLSocketFactory.setSocketFactory(socketFactory);
+                        Thread.currentThread().setContextClassLoader(ManagedSSLSocketFactory.class.getClassLoader());
+                    } catch (Exception e) {
+                        throw new LoginException("Unable to setup SSL support for LDAP: " + e.getMessage());
+                    }
+                }
+            
+                public static abstract class ManagedSSLSocketFactory extends SSLSocketFactory {
+            
+                    private static final ThreadLocal<SSLSocketFactory> factories = new ThreadLocal<SSLSocketFactory>();
+            
+                    public static void setSocketFactory(SSLSocketFactory factory) {
+                        factories.set(factory);
+                    }
+            
+                    public static SSLSocketFactory getDefault() {
+                        SSLSocketFactory factory = factories.get();
+            
+                        if (factory == null) {
+                            throw new IllegalStateException("No SSLSocketFactory parameters have been set!");
+                        }
+                        return factory;
+                    }
+                }                  	
+
+
  
 java ftp :                                                                        
 recuperer un fichier par ftp: (ftpbean est une classe de francois qui herite de FTPClient de apache)
@@ -20029,12 +19481,151 @@ pour logger un prepared statement de manière d'un select:
 
 
 principes :
+pour savoir si mon java est en 32bits ou 64bits
+      path/vers/java/java -d64 -version
+
+astuces : astuce :
+    au lieu de faire un if pour les conditions d'executions, mettre Assertion.isTrue() c'est plus rapide: si c pas verifie ca renvoie erreur direct.
+astuce pour executer un truc au demarrage      
+  mettre dans methode statique static main inner class qu'on execute:
+        public class MetadataDownloader {
+            	public static void main(String[] args) {
+            		ProcessDownload process = new MetadataDownloader().getProcessDownload();
+            		process.downloadFile();
+            	}
+            	public ProcessDownload getProcessDownload(){
+            	return new ProcessDownload();
+            }
+            	public class ProcessDownload
+            	{
+    
+javaUnsupported major.minor version 51.0
+    c parce que je run en java <7 un programme compile en >=7
+      Java SE 8 = 52 (0x34 hex)
+      Java SE 7 = 51 (0x33 hex)
+      Java SE 6.0 = 50 (0x32 hex)
+      Java SE 5.0 = 49 (0x31 hex)
+immutable : objet ne pouvant pas etre modifie apres l'avoir cree: c mieux de faire un update sur des objets mutables car ca consomme moins que si on recree de nouveaux objets immutables. Mais c'est threadsafe de travailler avec des immutable donc si pas d'updates prevus: mettre final sur les proprietes de mon objet pour qu'il soit immutable
+les objets statiques sont partages par tous les objets dans la jvm à conditions que les programmes utilisent le meme classloader dans la jvm
+singleton : dès java 7, 8(je crois)
+         est threadsafe: (donc il est implicitement volatile non?)
+         public class Singleton
+          {		
+          	/** Constructeur prive */	
+          	private Singleton()
+          	{
+            initialisation unique
+            }
+             public String unChamp;
+          	/** Holder */
+          	private static class SingletonHolder
+          	{		
+          		/** Instance unique non preinitialisee */
+          		private final static Singleton instance = new Singleton();
+          	}
+           
+          	/** Point d'accès pour l'instance unique du singleton */
+          	public static Singleton getInstance()
+          	{
+          		return SingletonHolder.instance;
+          	}
+          }
+
+classloader :            
+Dynamic Dynamique classe loading classloader hotde recharger une classe: issu de http://tutorials.jenkov.com/java-reflection/dynamic-class-loading-reloading.html
+        ROOT: classloaderBootstrap>classloaderExtension(classes dans java_home/lib/ext)>classloaderApplicatif(classes dans -cp ou -classpath): MOI ->les classes moi peuvent voir celles dans le sens root mais pas l'inverse  
+          // l'unicite d'une classe est defini par son package, son nom et le classloader qui l'a charge. Un classloader ne recharge jamais une classe qu'il a dejà charge (detecte par cet id unique:package/nom/classloader)
+                                  //creer une classloader qui etend classloader parent.
+                                    public class MyClassLoader extends ClassLoader{ (// a voir utiliser URLClassLoader capable de lire dans des .jar)
+                                    
+                                        public MyClassLoader(ClassLoader parent) {
+                                            super(parent);
+                                        }
+                                        public Class loadClass(String name) throws ClassNotFoundException { //methode appellee par la jvm chaque fois qu'une classe de mon application fait un new UneClasse()
+                                            if(!"mon.package.maClasse".equals(name))
+                                            { //Toutes les autres classes que je ne veux pas reactualiser doivent être chargees par le classloader parent
+                                                    return super.loadClass(name); //invoquera findClass(String name) pour d'abord trouver la classe si elle est déja chargee 
+                                             }
+                                            try {
+                                            // on force le rechargement de la classe
+                                                String url = "file:C:/data/projects/tutorials/web/WEB-INF/classes/reflection/MaClasse.class"; // le path vers la classe que je veux reloader
+                                                URL myUrl = new URL(url);
+                                                URLConnection connection = myUrl.openConnection();
+                                                InputStream input = connection.getInputStream();
+                                                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                                                int data = input.read();
+                                    
+                                                while(data != -1){
+                                                    buffer.write(data);
+                                                    data = input.read();
+                                                }
+                                    
+                                                input.close();
+                                    
+                                                byte[] classData = buffer.toByteArray();
+                                    
+                                                return defineClass("mon.package.maClasse", classData, 0, classData.length); //defineClass transforme un array of bytes en une instance de classe.
+                                    
+                                            } catch (MalformedURLException e) {
+                                                e.printStackTrace();
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                    
+                                            return null;
+                                        }
+                                    
+                                    }
+                                    
+                          Comment utiliser ce classloader:
+                                    public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException 
+                                    {
+                                        ClassLoader parentClassLoader = MyClassLoader.class.getClassLoader();
+                                        MyClassLoader classLoader = new MyClassLoader(parentClassLoader);
+                                        Class maClasse = classLoader.loadClass("mon.package.maClasse");
+                                    
+                                        ImaClasseInterface object1 =(ImaClasseInterface) maClasse.newInstance(); // on est oblige de creer une interface ou une super-classe à l'objet que je veux reloader. Cet interface ou super classe elle ne doit pas être reloade par le classe loader. Elle doit être loade une fois par le classloader parent (comme toutes les autres classes d'ailleurs)
+                                         // deuxieme exemple avec une super classe. On peut utiliser interface ou super classe.                                    
+                                        MaClasseSuperClass object2 =(MaClasseSuperClass) maClasse.newInstance();
+                                    
+                                        //Et ci-dessous, je reload ma classe! Je la rafraichis!:
+                                        classLoader = new MyClassLoader(parentClassLoader);
+                                        maClasse = classLoader.loadClass("mon.package.MaClasse");
+                                        object1 = (ImaClasseInterface)  maClasse.newInstance();
+                                        object2 = (MaClasseSuperClass) maClasse.newInstance();
+                                    }
+                                    
+                                    Et voici ma classe qui herite MaClasseSuperClass et implemente ImaClasseInterface mais on a pas desoin de mettre deux parents comme ca: on peut juste mettre une interface ou une superclasse:
+                                    public class MaClasse extends MaClasseSuperClass implements MaClasseInterface
+                                    {
+                                        //... body of class ... override superclass methods
+                                        //    or implement interface methods
+                                    }
+
+
+            pour lire le java.library.path: 
+                System.getProperty("java.library.path");// recupère prop de la jvm voir LINKù*ù
+donnees variables numeriques: nombres :
+        Type	Signification	Taille (en octets)	Plage de valeurs acceptees
+        char	Caractère Unicode	2	'\u0000' → '\uffff' (0 à 65535)
+        byte	Entier très court	1	-128 → +127
+        short	Entier court	2	-32 768 → +32 767
+        int	Entier	4	-231≈-2,147×109 → +231-1≈2,147×109
+        long	Entier long	8	-263≈-9,223×1018 → +263-1≈9,223×1018
+        float	Nombre reel simple	4	±2-149≈1.4×10-45 → ±2128-2104≈3.4×1038
+        double	Nombre reel double	8	±2-1074≈4,9×10-324 → ±21024-2971≈1,8×10308
+        boolean	Valeur logique (booleen)	1	true (vrai), ou false (faux)
 les visibilites :
       Modifier              | Class | Package | Subclass | World
       public                |  Y    |    Y    |    Y     |   Y
       protected             |  Y    |    Y    |    Y     |   N
       no modifier (default) |  Y    |    Y    |    N     |   N
       private               |  Y    |    N    |    N     |   N
+      les scopes:    
+    public: un element public est accessible de partout et sans aucune restriction. Certaines classes (comme la classe principale main) doivent obligatoirement être declarees publiques (pour pouvoir executer l'application...)
+    protected: un element protected (protege) est accessible uniquement aux classes d'un package et à ses classes filles
+    private: un element private (prive) est accessible uniquement au sein de la classe dans laquelle il est declare. Ces elements ne peuvent être manipules qu'à l'aide de methode specifiques appeles accesseur et mutateur
+    "friendly": un element est friendly par defaut (cette appellation n'est pas officielle et est empruntee au langage C++) est accessible uniquement aux classes d'un package et à ses classes filles.
 exceptions :exception :
         pour faire mes propres exceptions: customisées customises customized checkedexception checked exception: déclarés dans le code; unchecked exception: se produisent qu'au run
           ma classe d'exception 
@@ -20550,7 +20141,40 @@ pour tester la performance : perfs : perf : performances : performences :
                                      puis aller sous http://localhost:8080/wec/monitoring       		
     problème de performances en Java? ehcache: 
           voir http://www.ehcache.org/ +  aussi s'assurer que le navigateur utilise le cache (grace au header) + la connexion ne se ferme pas chaque fois dans le cas du https sinon à chaque requette il faut refaire un shakehands
-             
+pour minuter chronometrer faire des laps lors du programme temps passe duree: utiliser mesurer performances
+      System.nanoTime après java 1.5 semble threadsafe
+      StopWatch de spring: n'est pas threadsafe // plus bas stopwatch d'apache
+      StopWatch stopwatch= new StopWatch(); ou new StopWatch(AbstractSAMLEntryPoint.class.getName()); // si je ne fais pas ça a chaque fois dans la methode il va cumuller les enregistrements meme entre plusieurs thread indépendants qui passent dans la classe
+      	if (stopwatch.isRunning()) stopwatch.stop();
+					stopwatch.start("setprovidersNomMethodeQuiEstExecutee");
+        setProviders(providers);
+        stopwatch.stop();
+        stopwatch.start("initialize");
+        initialize();
+        stopwatch.stop();
+      } finally {
+    		if (stopwatch.isRunning()) sw.stop();
+    		log.debug("AUDIT1: "+stopwatch.prettyPrint()); // encore : mieux: fait un rapport de ouf
+        ou 
+        logger.info(stopwatch.toString()); 
+      stomwatch d'apache: sais pas si c'est threadsafe
+            StopWatch stopwatch= new StopWatch(); 
+        		stopwatch.start();
+        		String[] res=new String[100];
+        				for (int i=0; i<2000; i++)
+        				{
+      	  			res = UtilitaireChaines.decouperLignePivotAvecSeparateur("a;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;ba;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;ba;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;ba;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;ba;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;ba;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;ba;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;ba;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;ba;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;ba;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;ba;;sdf;;sdfsdf;;;qsdqsd;ba;;;;;sdfsdf;;;ba;dg;;;d;;;dsf;ba;;;sdfsdf;;;sdfs;;ba;;dfs;;;dsfsf;;;ba;;;qsdqdqsd;;;;;ba;;sdfs;;;;;;ba;;;;;;;;ba;;;;;sfs;;;b", ";");
+        				}
+      	  		     System.out.println(res.length);
+                stopwatch.stop();
+                System.out.println(stopwatch.toString());
+                stopwatch.reset();
+                stopwatch.start();
+
+		}
+		
+      log(sw.getTotalTimeMillis());
+      
 modules :java 9 : java9 : java10 : java11 : depuis java9 
   besoin maven 3.5.x
   Jdk A8 devient divisé en modules xxx.jmod = 1jar = 1 ou plsrs package. un module peut dépendre de x modules et inversement.
@@ -20608,6 +20232,8 @@ creer jar :
                        jar -c -f repertoire/nouveaujar.jar --module-version x.y.z(--module-version estFacultatif) --main-class facultatif.package.et.classeMain -C chemin/ousontMesClassCompilees //-c créer une archive; -f situation et nom du jar.
                        jar -p -f repertoire/nouveaujar.jar // pour voir le détail de ce module, sa version et ses requires ses exports et ses conceals(ce qu'il n'exporte pas je crois) //-p equivalent de --module-path 
 execution : executer :
+            si j'ai erreur "java.nio.file.InvalidPathException: Trailing char < > at index 33: ImportFileForImportUnitTests.xlsx "
+                c'est peut etre parce que j'ai un espace dans le nom de mon fichier que je donne dans le programme java. Interdit.
                 java9 : java10 : java11 :
                       java --module-path /=ModulePath/chemin/vers/les/modules/dont/ici/je/depend -m nom.du.module(/facultatif.package.et.ClassMainAExecuter) // entre parentheses: obligatoire si je n'ai pas compilé avec --main-class ci dessus
                           -classpath est valide si on veut porter du code/jars java <9 sur un java9 // tout ce qui sera dans le classpath sera stocké dans un unnamedmodule mais les named modules java9 ne peuvent pas dependre de ces unnamedmodules.
@@ -20659,8 +20285,21 @@ Depuis la version 1.6 utiliser -classpath ou -cp (c pareil) et separer par des ;
 					$ java -DTOTOTI="blabli" Main
 		execution d'un .class en envoyer une propriete = à une variable d'environneent à la jvm
 					$ java -DTOTOTI=$TOTOTI Main
+                    recuperer une variable d'environnement en java:
+                            System.getenv("lavariable"); // recupere une variable d'environnement settee sur la machine (unix...windows?)voir LINK4488
 		si le chemin vers java est complique: et est loin (Program files):  ~1 pour les espaces
-					blabla/Program~1/blalba/java -cp PAE.jar:. -jar PAE.jar 
+					blabla/Program~1/blalba/java -cp PAE.jar:. -jar PAE.jar
+            pour executer un programme en 64bits: 
+                  /usr/local/java/bin/java -d64 -Dfile.encoding=ISO-8859-15 -Dlog4j.configuration=log4j.properties -jar Parser-1.0.0.jar nomProjet test0 FrenchIvona fox.txt projet@memoclap.com
+            pour ajouter une librairie dll:car erreur native manquant: ou dependency blabla
+                    ajouter les .dll sous mon C:\Program Files\Java\jdk1.7.0\jre\bin\là. ou sous: C:\Program Files\Java\jdk1.7.0\bin\là
+              si c'etait sur unix on met libjivonatts_native.so là: 
+                  /usr/lib
+              envoyer des arguments à la jvm: 
+                  java -Darg1=foo1 -Darg2=foo2  -Darg3=foo3 com.MyClass
+               ajouter les librairies en bloc qui elles se trouvent dans un repertoire: pas besoin de les noter une à une: 
+                  java -Djava.endorsed.dir=path/vers/repertoire/contenant/les/jar ... 
+ 
 		autre facon d'envoyer une variable au programme java (exemple dans un .sh): 
 		            #!/bin/bash
 								CLASSPATH=/appli01/dpfdev01/dpf/vcour/batch/dpfBatch.jar
@@ -20988,7 +20627,57 @@ ou runtime.exec(new String[] { "monappli", "un paramètre avec des espaces", "pa
 ou runtime.exec(new String[] { "C:\\Program Files\\MonAppli\\monappli.exe" } );
 Remarque: Les variables d'environnement specifiees doivent l'être selon le format nom=valeur. 
 ************************
-encodage :
+encodage : encode :
+ url :
+    LINK_URLENCODEDECODE  quand un string contient des pourcentages % a cause de l'URI
+    url encoder :
+          en java faire : user = (java.net.)URLEncoder.encode(user, "UTF-8");
+          ou bien 
+                      public static char[] encodeURL(String str) throws UnsupportedEncodingException {
+                    char[] temp = URLEncoder.encode(str, "UTF-8").toCharArray();
+                    for (int i = 0; i < temp.length; i++) {
+                        if (temp[i] == '%') {
+                            temp[i + 1] = Character.toLowerCase(temp[i + 1]);
+                            temp[i + 2] = Character.toLowerCase(temp[i + 2]);
+                        }
+                    }
+                    return temp;
+                }
+    url decoder : 
+    java.net.URLDecoder.decode(url, "UTF-8");
+  
+pour deflateandencode : 
+      import java.util.zip.Deflater;
+      import java.util.zip.DeflaterOutputStream;
+      import org.apache.commons.codec.binary.Base64; de <dependency><groupId>commons-codec</groupId><artifactId>commons-codec</artifactId><version>1.10</version></dependency>// ou org.opensaml.xml.util.Base64...
+      public static String deflateAndEncodeBase64(String samlRequest) throws IOException {
+            // Deflate the SAMLResponse value
+            ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+            Deflater deflater = new Deflater(Deflater.DEFLATED, true);
+            DeflaterOutputStream deflaterStream = new DeflaterOutputStream(
+                    bytesOut, deflater);
+            deflaterStream.write(samlRequest.getBytes());
+            deflaterStream.finish();
+
+            // Encoded the deflatedResponse in base64
+            Base64 base64encoder = new Base64();
+            String base64response = new String(base64encoder.encode(bytesOut.toByteArray()), "UTF-8");
+            return base64response;
+        }
+        // sinon: mais bof n'utilise pas de string
+       Deflater deflater = new Deflater(Deflater.DEFLATED, true);
+            DeflaterOutputStream deflaterStream = new DeflaterOutputStream(bytesOut, deflater);
+            deflaterStream.write(messageStr.getBytes());
+            deflaterStream.finish();
+        String res = Base64.encodeBytes(bytesOut.toByteArray(), Base64.DONT_BREAK_LINES);
+
+      encoder en base 64 encoder en base64 : (depuis java 1.8 utiliser java.util.Base64)
+            byte[] token = unstring.getBytes(Charset.forName("UTF-8"));
+      		  String unStringEncodeEnBase64=Base64.encodeBase64String(token));
+      Decoder de base64 
+      		      String toto = new String(Base64.decodeBase64(unStringEncodeEnBase64));
+                ou
+                String sUserPwdDecode = new String(Base64.getDecoder().decode(sUserPwdCode));  
 		En interne en Java toutes les Strings, les char et charset sont encodes en UTF-16. En Java il est abberant de vouloir changer l'encodage d'une String !
 		String str = "blah";		// c'est forcement de l'utf16
 		Cependant je peux forcer tout mon programe java à fonctionner avec un autre encodage en lancant mon programme java comme ca:
@@ -21303,7 +20992,63 @@ pour convertir un int en string
         
 ***********************************************************************
 Utils : Utils java :
+tuple :bean couple paire deux :
+        utiliser AbstractMap.SimpleEntry ou bien faire la classe
+        public class Tuple<X, Y>
+                  {
+                      private X x;
+                      private Y y;
+                      public Tuple()
+                      {
+                      }
+                      public Tuple(X x, Y y) {
+                          this.x = x;
+                          this.y = y;}
+                      public X getX()
+                      {
+                          return x;
+                      }
+                      public Y getY()
+                      {
+                          return y;
+                      }
+                      public void setX(X x)
+                      {
+                          this.x = x;
+                      }
+                      public void setY(Y y)
+                      {
+                          this.y = y;
+                      }
+                      @Override
+                      public String toString()
+                      {
+                          return (this.x==null?"":x.toString())+"->"+(this.y==null?"":y.toString());
+                      }
+                  }
+ 
 dates : date :
+pour savoir si c'est le premiers jour ouvre ouvrable ouvre du mois
+     public boolean isFirstDayofMonth(Calendar calender){
+            	Date d1 = new Date(); depuis Java8 voir LocalDateTime!!!!
+            		boolean ret = true;
+            		Calendar calendar = new GregorianCalendar();
+            		calendar.setTime(d1);
+            		if (calendar.get(Calendar.DAY_OF_MONTH)==1)
+            		{
+            			if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) 
+            			{
+            				ret=false;
+            			}
+            		}
+            		else if (!(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY && (calendar.get(Calendar.DAY_OF_MONTH)==1 || calendar.get(Calendar.DAY_OF_MONTH)==2)))
+            		{
+            			ret=false;
+            		}
+            	}
+            	return ret;
+        }
+  
 ajouter des minutes à une heure 
         public String calculateArriveTime(String s, String is) throws ParseException {
                 int i= Integer.parseInt(is);
@@ -21573,7 +21318,7 @@ nombres : nombre :
   modulo : pour savoir si un nombre est entier le reste de la division est vide, si c'est un multiple de... (utilisation de pourcentage)  
         return (nbTask % critNbTask) == 0
         Cela renvoie true si nbTask est un multiple de critNbTask et false dans le cas contraire.
-        unGrandChiffre % 4 : ca divise unGrandChiffre (par ex 101) par 4 =25.25; 25*4 =100 et il reste 1 donc resultat = 1.
+        unGrandChiffre % 4: ca divise unGrandChiffre (par ex 101) par 4 =25.25; 25*4 =100 et il reste 1 donc resultat = 1.
         si slkj%2==0 alors le nombre slkj est paire.
         pratique pour faire des boucles!!!!
         while ()
@@ -21660,7 +21405,52 @@ pour savoir si un nombre est paire ou impaire:
       else {
          System.out.println(n + " est impair.");
 chaines : strings : string : chaine :
-pour savoir si une chaine de characteres est toute en majuscule ou minuscule : 
+delta entre deux chaines de caracteres characters strings:
+         public static String[] difference(String a, String b) {
+                return diffHelper(a, b, new HashMap<>());
+            }
+            private static String[] diffHelper(String a, String b, Map<Long, String[]> lookup) {
+                return lookup.computeIfAbsent(((long) a.length()) << 32 | b.length(), k -> {
+                    if (a.isEmpty() || b.isEmpty()) {
+                        return new String[]{a, b};
+                    } else if (a.charAt(0) == b.charAt(0)) {
+                        return diffHelper(a.substring(1), b.substring(1), lookup);
+                    } else {
+                        String[] aa = diffHelper(a.substring(1), b, lookup);
+                        String[] bb = diffHelper(a, b.substring(1), lookup);
+                        if (aa[0].length() + aa[1].length() < bb[0].length() + bb[1].length()) {
+                            return new String[]{a.charAt(0) + aa[0], aa[1]};
+                        } else {
+                            return new String[]{bb[0], b.charAt(0) + bb[1]};
+                        }
+                    }
+                });
+            }
+
+pour savoir si un string chaine est vide empty, ou null:
+              org.apache.commons.lang.StringUtils.isEmpty(this.url_redirect)
+pour formater une chaine de caractères (mapper convertir fichier)
+pour faire un message avec des {0}{1}{2}...  qui sont remplace par des strings: (utilisable comme moteur de template?) 
+  Utiliser MessageFormat (pour echaper escape des accolades brackets brakets les entourer de signe quote ')
+  exemple: 
+        Object[] arguments = {new Integer(7),new Date(System.currentTimeMillis()),"a disturbance in the Force"};
+          String result = MessageFormat.format("At {0,time} on {1,date}, there was {2} on planet {0,number,integer}.", arguments);
+          // attention si notre string qui contient les marqueurs a des single quotes guillement ca ne marche pas!! il faut les remplacer par des doubles single quotes (echappement)
+          output: At 12:30 PM on Jul 3, 2053, there was a disturbance in the Force on planet 7.
+          ou
+          MessageFormat form= new MessageFormat(  "The disk \"{1}\" contains {0} file(s).");
+          String result = form.format(arguments);
+ou bien 
+   String toto = String.format("%4$-5S(PASDESPACEICI)%3$2s(PASDESPACEICI)%2$2s(PASDESPACEICI)%1$2s", "a","b","c","dd"); //%argumentNumeroCommenceParUn$-tailleMinARespecterAjouteEspaceSiPlusPetit (si l'argument est plus grand que -xS il ne le tronque pas) S ou s pour la casse
+   retourne DD     c  b  a                                                                                   |                                                                               |
+   exemple:                                                                                                 (-): les espaces sont a droite. si rien les espaces sont a gauche                x doit etre superieur à 0 mais le nombre d'espace visible sera x+1 donc je dois mettre nombreDespaceVoulu-1 
+   logger.warn("User "+String.format("%s %s %s", tPrincipal.getNom(),tPrincipal.getLogin(),tPrincipal.getEmail())+ "in webservice has no roles");
+   retourne a b bc
+        permet aussi d'afficher en millions milliards un chiffre voir LINKStringFOrmatNumb
+
+pour savoir si un char est un apostrophe:
+  if(c == '\'')...
+pour savoir si une chaine de characteres est toute en majuscule ou minuscule: 
     	public boolean isOnlyMaj(String tok)
     	{
     		boolean enMaj = true;
@@ -22046,40 +21836,10 @@ pour supprimer les doublons d'une liste: (c'est pas forcement LinkedList ca peut
             			}
             			// fin suppression doublons
             
-tableaux :
+tableaux : tableau :
+pour ajouter des elements à un tableau de type [] passer par des Arrays.
 les sous classes de collection sont:
     AbstractCollection, AbstractList, AbstractSet, ArrayList, BeanContextServicesSupport, BeanContextSupport, HashSet (ordre pourri non fiable, vire les doublons, non threadsafe) , LinkedHashSet(conserve l'ordre d'insertion), LinkedList(comme arraylist: ordonné et duplicats possibles mais il gere mieux la memoire si données dedans sont tres manipulées), TreeSet garde l'ordre?, Vector
-pour faire un minus: list A moins list B en utilisant removeall (on peut aussi utiliser retainall) avec des objets de type non primitifs dans les listes:
-retainall: LINKDLKJSDF Retains only the elements in this Vector that are contained in the specified Collection. In other words, removes from this Vector all of its elements that are not contained in the specified Collection. 
-				il faut que notre objet non primitif ait cette signature de methode pour que ca marche: 
-  	    @override  // a utilser aussi quand je veux verifier qu'un objet n'exite pas dejà dans une liste du meme objet: ajouter cette methode à l'objet
-        public boolean equals(Object a)
-					{
-						Select sa = (Select)a;
-						boolean ret=false;
-						if (sa.value.equals(this.value)) ret= true;
-						return ret;
-					}
-loop : boucles :
-    DO WHILE  bien pratique: attention dowhile et while c'est pas tout a fait pareil: dowhile do while va d'abord executer ce qu'il y a dans le do au moins une fois 
-						do
-						{
-							calendar.add(GregorianCalendar.DAY_OF_MONTH, 1);
-							
-						} while ( (calendar.get(GregorianCalendar.DAY_OF_WEEK) == GregorianCalendar.SATURDAY )|| ( calendar.get(GregorianCalendar.DAY_OF_WEEK) == GregorianCalendar.SUNDAY) );
-la commande for avec un cas de figure plus "riche":
-          for (Enumeration<String> enumCertificates = keyStore.aliases(); enumCertificates.hasMoreElements();)
-          {... }
-          C'est exactement comme for (int i=8; i<9;i++) finallement sauf que le dernier argument n'est pas necessaire puisque ca s'incremente tout seul
-pour parcourir une liste d'objets: 
-parcourir une collection c'est pareil
-				List<Transporteur> transporteurs = findActiveTransporteurs();
-				for (Transporteur t: transporteurs) {
-pour merger deux collections listes:
-		Collection.retainAll(Collection c) (c'est comme un "et") voir LINKDLKJSDF
-pour faire un "ou"
-		Collection.addAll(Collection c)
-		
 Bonne pratique d'utilisation de tableaux en Java: (et de tableaux de tableaux)
 PREFERER List à Vector et Map à Hashtable (Map est l'interface de Hashtable). On peut utiliser HashMap quand nous ne travaillons pas en multithreading sinon utiliser HashTable (car est synchronise. mais bof. preferer utiliser HashMap avec Collections.synchronizedMap()). La modification en HashMap sera plus rapide si le reste du code utilise l'interface Map. Map n'est pas trié trie
                                 |_Hashtable peut etre gourmand en ressources si trop utilisé (n'accepte pas de cle et valeurs nulles)
@@ -22114,6 +21874,88 @@ pour initialiser un autre type de map ou une linkedhashmap: (depuis java9)
         entry(0.0, "b"),
         entry(1.0, "d")
     ));
+
+pour faire un minus: list A moins list B en utilisant removeall (on peut aussi utiliser retainall) avec des objets de type non primitifs dans les listes:
+retainall: LINKDLKJSDF Retains only the elements in this Vector that are contained in the specified Collection. In other words, removes from this Vector all of its elements that are not contained in the specified Collection. 
+				il faut que notre objet non primitif ait cette signature de methode pour que ca marche: 
+  	    @override  // a utilser aussi quand je veux verifier qu'un objet n'exite pas dejà dans une liste du meme objet: ajouter cette methode à l'objet
+        public boolean equals(Object a)
+					{
+						Select sa = (Select)a;
+						boolean ret=false;
+						if (sa.value.equals(this.value)) ret= true;
+						return ret;
+					}
+loop : boucles : boucle :
+    break : sort de la boucle
+    continue : dans une boucle, passe à l'iteration suivante de la boucle sans executer la suite dans la boucle.
+    utiliser iterator si on veut supprimer les elements d'une liste dans laquelle on boucle loop avec iterator.remove. Si on a besoin de l'index parcourir a l'enver
+    DO WHILE  bien pratique: attention dowhile et while c'est pas tout a fait pareil: dowhile do while va d'abord executer ce qu'il y a dans le do au moins une fois 
+						do
+						{
+							calendar.add(GregorianCalendar.DAY_OF_MONTH, 1);
+							
+						} while ( (calendar.get(GregorianCalendar.DAY_OF_WEEK) == GregorianCalendar.SATURDAY )|| ( calendar.get(GregorianCalendar.DAY_OF_WEEK) == GregorianCalendar.SUNDAY) );
+la commande for avec un cas de figure plus "riche":
+          for (Enumeration<String> enumCertificates = keyStore.aliases(); enumCertificates.hasMoreElements();)
+          {... }
+          C'est exactement comme for (int i=8; i<9;i++) finallement sauf que le dernier argument n'est pas necessaire puisque ca s'incremente tout seul
+pour parcourir une liste d'objets: 
+parcourir une collection c'est pareil
+				List<Transporteur> transporteurs = findActiveTransporteurs();
+				for (Transporteur t: transporteurs) {
+recherche existance d'un objet dans une liste : dans l'objet redefinir equals : et je pourrais alors utiliser "contains"
+      @Override
+    public boolean equals(Object v) {
+        boolean retVal = false;
+
+        if (v instanceof Price){
+            Price ptr = (Price) v;
+            retVal = ptr.id == this.id;
+        }
+        return retVal;
+    }
+
+recherche trouver un element dans un tableau avec la recherche dichotomique : voir tribul hipsort 
+        static boolean exists(int[] ints, int k)
+    {
+        int res = rechercheDicho(ints, ints.length, k);
+        if (res==-1)
+        {
+            return false;
+        }
+        else return true;
+    }
+    private static	int rechercheDicho(int tab[], int nbVal, int val) //tableau, taille tableau, valeur cherchee
+    {
+              /* declaration des variables locales à la fonction */
+        boolean trouve;  //vaut faux tant que la valeur "val" n'aura pas ete trouvee
+        int id;  //indice de debut
+        int ifin;  //indice de fin
+        int im;  //indice de "milieu"
+                                                          
+              /* initialisation de ces variables avant la boucle de recherche */
+        trouve = false;  //la valeur n'a pas encore ete trouvee
+        id = 0;  //intervalle de recherche compris entre 0...
+        ifin = nbVal;  //...et nbVal
+
+              /* boucle de recherche */
+        while(!trouve && ((ifin - id) > 1))
+        {
+
+            im = (id + ifin)/2;  //on determine l'indice de milieu
+
+            trouve = (tab[im] == val);  //on regarde si la valeur recherchee est à cet indice
+
+            if(tab[im] > val) ifin = im;  //si la valeur qui est à la case "im" est superieure à la valeur recherchee, l'indice de fin "ifin" << devient >> l'indice de milieu, ainsi l'intervalle de recherche est restreint lors du prochain tour de boucle
+            else id = im;  //sinon l'indice de debut << devient >> l'indice de milieu et l'intervalle est de la même façon restreint
+        }
+
+              /* test conditionnant la valeur que la fonction va renvoyer */
+        if(tab[id] == val) return(id);  //si on a trouve la bonne valeur, on retourne l'indice
+        else return(-1);  //sinon on retourne -1
+
+    }
 Pour parcourir une hashmap:
 			HashMap indic = new HashMap(); etc etc.. est remplie.
 			Set cles = indic.keySet();
@@ -22166,6 +22008,55 @@ petite fonction utile:getKeyByValue d'une Hashmap:
           		}
           		return ret;
           	}
+pour merger deux collections listes:
+		Collection.retainAll(Collection c) (c'est comme un "et") voir LINKDLKJSDF
+pour faire un "ou"
+		Collection.addAll(Collection c)
+pour partitionner decouper sousliste subliste une liste en liste de liste d'objets à traiter par blocs :
+        List<IHRKey> hrKeys = new ArrayList<IHRKey>();
+        ...                         
+        List<List<IHRKey>> hrKeysPartitions = MyPartition.partition(hrKeys, 20); // 20 taille des blocs
+                                          public class MyPartition {
+                            	public static <T> List<List<T>> partition(List<T> list, int size) {
+                            		if (list == null)
+                            			throw new NullPointerException("'list' must not be null");
+                            		if (!(size > 0))
+                            			throw new IllegalArgumentException("'size' must be greater than 0");
+                            		return new Partition<T>(list, size);
+                            	}
+                            	private static class Partition<T> extends AbstractList<List<T>> { // si erreur There is no default constructor available in dans la methode je dois faire super(xxx)
+                            		final List<T> list;
+                            		final int size;
+                            		Partition(List<T> list, int size) {
+                            			this.list = list;
+                            			this.size = size;
+                            		}
+                            		@Override
+                            		public List<T> get(int index) {
+                            			int listSize = size();
+                            			if (listSize < 0)
+                            				throw new IllegalArgumentException("negative size: " + listSize);
+                            			if (index < 0)
+                            				throw new IndexOutOfBoundsException("index " + index
+                            						+ " must not be negative");
+                            			if (index >= listSize)
+                            				throw new IndexOutOfBoundsException("index " + index
+                            						+ " must be less than size " + listSize);
+                            			int start = index * size;
+                            			int end = Math.min(start + size, list.size());
+                            			return list.subList(start, end);
+                            		}
+                            		@Override
+                            		public int size() {
+                            			return (list.size() + size - 1) / size;
+                            		}
+                            		@Override
+                            		public boolean isEmpty() {
+                            			return list.isEmpty();
+                            		}
+                            	}
+                            }
+
 
 traitment sur repertoires : repertoire :
     Pour recuperer la liste de fichiers d'un directory:
@@ -22716,7 +22607,10 @@ pour creer des repertoires: create directories creer un repertoire create a dire
     }
 -----------------------
 traitement de fichiers : fichier :
-			
+pour creer un fichier temporaire de travail : 
+  nomFichierTemporaireCourant = File.createTempFile super pratique car genere lui meme le nom du fichier aleatoires
+  nomFichierTemporaireCourant.deleteOnExit(); // supprime le fichier quand la JVM a fini le process
+
 				--------------------------------
 pour zipper un fichier:
 													static final int BUFFER = 2048;
@@ -22999,6 +22893,10 @@ Pour utiliser readLine() qui permet de lire un fichier encode en utf8 et conserv
         		}
         	}
 proprietes : properties :
+    recuperer un fichier selon son path relative relatif et non pas absolu : 
+        grace à System.getProperty("user.dir") qui est toujours dispo.
+        File defaultBusinessDir = new File(System.getProperty("user.dir"), "/src/main/resources/data/business") ; 
+
 pour acceder à un fichier situe dans le classpath: 
 			this.getClass().(getClassLoader()?.)getResourceAsStream("cheminVers/monFichier.toto)); (getClass est une methode de l'objet java "Object" verifier avec System.out.println("CLASSPATH: " + System.getProperty("java.class.path")); System.out.println("ClassLoader resource path: " + SaveXMLTest.class.getClassLoader().getResource("").getPath() ou HRParameters.class.getClassLoader().getResource("hr-openhr-for-ta.properties")); System.out.println("ClassLoader resource path: " + ClassLoader.getSystemResourceAsStream("hr-openhr-for-ta.properties"));   LINKgetRes9
 pour lire charger recuperer les properties proprietes d'un fichier de configuration dans un batch java: (voir aussi ci dessous PropertyResourceBundle) 
@@ -23114,8 +23012,104 @@ blob -> Image:
             }
           }
 Audio :
+convertir mp3 en wave: 
+    utiliser 
+    tritonus-share-0.3.7-2.jar
+    mp3spi-1.9.5-1.jar
+    jorbis-0.0.17-2.jar
+    jlayer-1.0.1-1.jar
+    vorbisspi-1.0.3-1.jar
+            <dependency><groupId>com.googlecode.soundlibs</groupId><artifactId>tritonus-share</artifactId><version>0.3.7-2</version></dependency>
+        <dependency><groupId>com.googlecode.soundlibs</groupId><artifactId>jlayer</artifactId><version>1.0.1-1</version></dependency>
+        <dependency><groupId>com.googlecode.soundlibs</groupId><artifactId>mp3spi</artifactId><version>1.9.5-1</version></dependency>
+        <dependency><groupId>com.googlecode.soundlibs</groupId><artifactId>jorbis</artifactId><version>0.0.17-2</version></dependency>
+        <dependency><groupId>com.googlecode.soundlibs</groupId><artifactId>vorbisspi</artifactId><version>1.0.3-1</version></dependency>
 
-pour recuperer en secondes la duree d'un fichier wav :
+Connaitre la duree d'un son en secondes: 
+    	public static int getLenghtInSecond(AudioInputStream bOrig) 
+    	{
+    		AudioFormat format = bOrig.getFormat();
+    	  return (int) (bOrig.getFrameLength() / format.getFrameRate());
+    	}
+pour convertire un wav foireux en bon wave
+	public static void convertWav(File fi) throws Exception 
+	{
+		File temp = new File(fi.getPath()+"temp.wav");
+		AudioInputStream clip1 = AudioSystem.getAudioInputStream(fi);
+		AudioFormat sourceFormat = clip1.getFormat();
+	//	long long1 = clip1.getFrameLength();
+        AudioFormat convertFormat = new AudioFormat(AudioFormat.Encoding.PCM_FLOAT, sourceFormat.getSampleRate(), 16, sourceFormat.getChannels(), sourceFormat.getChannels()*2, sourceFormat.getFrameRate(), false);
+        AudioInputStream convert1AIS = AudioSystem.getAudioInputStream(convertFormat, clip1);
+        AudioSystem.write(convert1AIS, AudioFileFormat.Type.WAVE, temp);
+        convert1AIS.close();
+        clip1.close();
+        fi.delete();
+        temp.renameTo(fi); // pour deplacer bouger move un fichier voir LINKjgdlkqjfqdgmlk
+	}
+pour mixer deux sons ou meme plus:
+	      AudioInputStream clip1 = AudioSystem.getAudioInputStream(new File("C:/wamp/www/kanail/AudioLoopOnline/sons/20121107963241352287465954/1531352287502673=Lovely0.wav"));
+        AudioInputStream clip2 = AudioSystem.getAudioInputStream(new File("C:/wamp/www/kanail/AudioLoopOnline/sons/20121107963241352287465954/1531352287502673=Lovely1.wav"));
+        pour initialiser rapidement une arraylist: shortcut:
+              List<Price> lp =  new ArrayList<Price>(Arrays.asList(p,d,a,e)); // pour creer une liste rapidement
+        List<AudioInputStream> audio = new ArrayList<AudioInputStream>();
+        audio.add(clip1);
+        audio.add(clip2);
+        AudioInputStream res = mixAudio(audio);
+        AudioSystem.write(res, AudioFileFormat.Type.WAVE, new File("C:/wamp/www/kanail/AudioLoopOnline/sons/20121107963241352287465954/Aeffacer.wav"));
+            	
+            	private static AudioInputStream mixAudio(List<AudioInputStream> audio) throws IOException
+            	{
+            	    ArrayList<byte[]> byteArrays = new ArrayList();
+            	    long size = 0;
+            	    int pos = 0;
+            	    for(int i = 0; i < audio.size(); i++){
+            	        AudioInputStream temp = audio.get(i);
+            	        byteArrays.add(convertStream(temp));
+            	        if(size < temp.getFrameLength()){
+            	            size = temp.getFrameLength();
+            	            pos = i;
+            	        }
+            	    }
+            	    byte[] compiledStream = new byte[byteArrays.get(pos).length];
+            	    for(int i = 0; i < compiledStream.length; i++){
+            	        int byteSum = 0;
+            	        for(int j = 0; j < byteArrays.size(); j++){
+            	            try{
+            	                byteSum += byteArrays.get(j)[i];
+            	            }catch(Exception e){
+            	                byteArrays.remove(j); // bien respecter le type de j
+            	            }
+            	        }
+            	        compiledStream[i] = (byte) (byteSum / byteArrays.size());
+            	    }
+            
+            	    return new AudioInputStream(new ByteArrayInputStream(compiledStream), ((AudioInputStream)audio.get(pos)).getFormat(), ((AudioInputStream)audio.get(pos)).getFrameLength());
+            	}
+            
+            	private static byte[] convertStream(AudioInputStream stream) throws IOException
+            	{
+            	    ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+            	    byte[] buffer = new byte[1024];
+            	    int numRead;
+            
+            	    while((numRead = stream.read(buffer)) != -1){
+            	        byteStream.write(buffer, 0, numRead);
+            	    }
+            
+            	    return byteStream.toByteArray();
+            	}
+pour faire un sub audio: une partie d'un fichier audio:
+      private static AudioInputStream subAudio(AudioInputStream inputStream,int startSecond, int secondsToCopy, AudioFileFormat fileFormat) throws Exception 
+    	{
+    		
+    		  AudioFormat format = fileFormat.getFormat();
+    		  int bytesPerSecond = format.getFrameSize() * (int)format.getFrameRate();
+    		  inputStream.skip(startSecond * bytesPerSecond);
+    		  long framesOfAudioToCopy = secondsToCopy * (int)format.getFrameRate();
+    		  AudioInputStream shortenedStream = new AudioInputStream(inputStream, format, framesOfAudioToCopy);
+    		  return shortenedStream;
+
+pour recuperer en secondes la duree d'un fichier wav:
                           public void getDurationOfWavInSeconds(File file) throws Exception
                           	{   
                           	    AudioInputStream stream = null;
@@ -23144,7 +23138,7 @@ pour recuperer en secondes la duree d'un fichier wav :
                           	    }
                           	}
 
-pour concatener deux fichiers WAV :
+pour concatener deux fichiers WAV:
               private static AudioInputStream concatenate(AudioInputStream first, AudioInputStream second) throws Exception
               	{
               		AudioFormat  audioFormat = first.getFormat();
@@ -23182,7 +23176,30 @@ pour concatener deux fichiers WAV :
 itext :
 Pour generer du pdf en java utiliser l'api Itext (signature possible) (possible faire du excell aussi)
 *********************************
-poi : (la version qui marche et qui est homologuee chez Renault c'est 3.0.1)
+pdf :
+Generer un fichier pdf avec Jasper et des donnees data:
+	@Test
+	public void testJasper()
+	{
+	try { 
+			HashMap hm = new HashMap<String,String>(); 
+		String filePath="d:\\Profiles\\ndubechot\\Desktop\\Capit RenoiRH\\xml files\\NUMMAR.xml"; // donnees 
+		InputStream inputStream = new FileInputStream(new File(filePath)); //chemin absolu necessaire 
+		JRXmlDataSource ds=new JRXmlDataSource(inputStream,"/"); 
+		ds.setDatePattern(date_pattern_jasperreport);
+		ds.setLocale(new Locale("fr","FR"));
+		JasperReport jasperReport;
+		JasperPrint jasperPrint; 
+		jasperReport = JasperCompileManager.compileReport("d:\\Profiles\\ndubechot\\Desktop\\RPT013.jrxml"); // template besoin fichiers .jasper aussi au meme endroit
+		jasperPrint = JasperFillManager.fillReport(jasperReport, hmOuNull, ds); 
+		JasperExportManager.exportReportToPdfFile(jasperPrint, "d:\\Profiles\\ndubechot\\Desktop\\simple_report.pdf"); 
+		} 
+    catch (Exception e) {
+     e.printStackTrace();
+     }
+	}}
+
+poi : excell : (la version qui marche et qui est homologuee chez Renault c'est 3.0.1)
 ATTENTION POI ne compte pas les colonnes (et lignes? ) vides dans son iteration
     // si on veut renvoyer du serveur:
     		        	response.setContentType("application/vnd.ms-excel");
@@ -25792,6 +25809,11 @@ proxy :et reverse proxy :
                                       \--------->mon serveur 2 (une autre url cachee)
                                         -------->etcetc... 
        une machine peut avoir plusieurs adresses ip et hostname: une par interface reseau.
+      UnknownHostException
+          peut etre qu'il faut rajouter les parametres pour qu'il attaque le proxy (sur tomcat à mettre dans setup.sh) 
+            # Specifique AUCHAN pour SSO CAS (mettre les -D avant le -jar si j'execute un programme. Sur tomcat ceci se met dans setenv.sh)
+              JAVA_OPTS="$JAVA_OPTS"" -Dhttps.proxyHost=FRSOPSLINFV01"
+              JAVA_OPTS="$JAVA_OPTS"" -Dhttps.proxyPort=8080"
   
                        
 
@@ -29183,6 +29205,14 @@ angular : Angularjs2 : ANGULAR2 : typescript :
 
 
 crontab : 
+        crontab qui execute .sh qui execute .java .jar:
+                    crontab: 
+                    30 23 * * * /opt/hnbas/metadatadownloader/metadatadownloader.sh 
+                    sh:
+                    #!/bin/bash
+                        PATH=/usr/java/jdk1.7.0_51/bin:/usr/lib64/qt-3.3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/opt/puppetlabs/bin
+                        java -DpropertiesFullpath=/opt/hnbas/metadatadownloader/metadatadownloader.properties -jar MetadataDownloader-0.0.1.jar
+
       si la crontab ne marche pas peut etre que c parce que les scrits n'ont pas les droits d'execution x sous UNIX
       crontab -l pour afficher la liste des taches de la crontab
       crontab nomdefichier (ou nomdefichier contient les commandes crontab) pour charger directement ce fichier dans la programmation crontab
