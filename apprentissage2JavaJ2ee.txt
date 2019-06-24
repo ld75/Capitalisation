@@ -1397,7 +1397,7 @@ Ext.onReady(function() { (methode appelee quand dom charge)
     alert(myWindow.getTitle()); // alerts "Something New"
     myWindow.setTitle(null); // alerts "Error: Title must be a valid non-empty string"
     myWindow.setBottomBar({ height: 100 }); // Bottom bar's height is changed to 100
-pour logger les erreurs :
+pour logger les erreurs:
       throw new Error('['+ Ext.getDisplayName(arguments.callee) +'] Some message here'); // va faire un bon stacktrace      
 
 jetty :avec maven: 
@@ -6375,32 +6375,35 @@ Bouton submit non ajax:
    | IOC (interfaces)
    V
 Hibernate :
-si j'ai cette erreur :        Cannot convert value '0000-00-00 00:00:00' from column 5 to TIMESTAMP
+Hibernet le livre:
+exemple de fichier mapping pojo-base p10
+
+si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from column 5 to TIMESTAMP
         il faut que je modif mes valeurs ='0000-00-00 00:00:00' en date valide 
   definition bean: getter, setter independant (pas d'extension ni d'heritage) serializable
   definition pojo: idemn que bean mais peut etendre, heriter, peut ne pas être serializable
   DAO faire un dao par dm p7 gestion des sessions à ce niveau grâce au Contextual Session
       possibilite synchro schema base-DAO java
-      annotations hibernate :p5-6
+      annotations hibernate:p5-6
           Feaching
           caching (parametrer taille et temps d'expiration)
           lazy-loading
               for (Category categ: categories)
               {
-                for (Art art : categ.getArt()){system.out.print(art.getTitle());}} // FAIT N requettes! (erreur N+1)
-              Pour eviter faire :
+                for (Art art: categ.getArt()){system.out.print(art.getTitle());}} // FAIT N requettes! (erreur N+1)
+              Pour eviter faire:
                1) List cat = entityManager.createQuery("SELECT cat FROM category cat LEFT JOIN FETCH cat.art WHERE cat.id=:id").getResultList(); //overrite lazy default behaviour at runtime
                2) @ManyToMany
                   @BatchSize(size=10) recup que les 10 premps ou bien @Fetch(FetchMode.JOIN)// recup tout! inverse de lazy
                   public Set<Art> getArt(){return arts;}
               Si LazyInitializationException: c parce qu'il n'existe pas d'EntityManager                
       exceptions generiques hibernates vers spring p7
-            pour faire des requetes :
+            pour faire des requetes:
             HQL   possede criteria api
             JPQL (2.0 contient criteria) preferer criteria api
             ActiveRecordPattern (pour pouvoir faire monEntite.save())
       Hibernate peut fonctionner avec framework Lucene qui permet de faire des recherches textuelles imprecises comme google
-      Si classes java hierarchisees, meilleur option c'est faire ca : 
+      Si classes java hierarchisees, meilleur option c'est faire ca: 
             Java                                                                                    DB
           @Entity                                                                                     1 seule table
           @Id                                                                                         c'est le champ de cle primaire
@@ -6434,7 +6437,7 @@ si j'ai cette erreur :        Cannot convert value '0000-00-00 00:00:00' from co
             	   public Integer getVersion(){return version;}
               @Transient // en opposition à @Basic qui est mis par defaut
                   public String proprieteNonPersistanteCarOnAMisTransient;                            
-                  ManyToMany : 2 possibilites:
+                  ManyToMany: 2 possibilites:
                         permission.class:
                           @ManyToMany (mappedBy="nomDeLaProprieteDeLautreEntiteQuiAppelleCetteClasseLà") //mappedBy optionel
                         	@JoinTable(name="UserPermission")  // ma table de jointure. pas besoin de creer la table de cette classe.
@@ -6443,8 +6446,8 @@ si j'ai cette erreur :        Cannot convert value '0000-00-00 00:00:00' from co
                             @ManyToMany
                     	      @JoinTable(name="UserPermission")
                     	      private Set<Permission> permissions;
-                  ManyToMany jointure de trois tables : 
-                            ma table de jointure : 
+                  ManyToMany jointure de trois tables: 
+                            ma table de jointure: 
                               @Entity
                             public class UserPermission implements DomainObject, Serializable 
                             {
@@ -6466,7 +6469,7 @@ si j'ai cette erreur :        Cannot convert value '0000-00-00 00:00:00' from co
                           		return null;
                           	}
                           }    	      
-      chacune de mes tables jointes : 
+      chacune de mes tables jointes: 
         	@OneToMany(mappedBy="permission") // car je suis dans le classe Permission.class et je fais ref à UserPermission.permission
         	private Set<UserPermission> userPermission;
              Comparer des entitees entre elles si elles sont des listes comme proprietes: il faut overrider equals et hashcode: (voir page 84Spring persistance with Hibernate)
@@ -6476,13 +6479,13 @@ si j'ai cette erreur :        Cannot convert value '0000-00-00 00:00:00' from co
                   if(this==o) return true;
                   if(!(o instanceof Category)) return false;
                   Category category = (Category));
-                  if (categoryName!=null? !categoryName.equals(category.categoryName) : category.categoryName!=null)
+                  if (categoryName!=null? !categoryName.equals(category.categoryName): category.categoryName!=null)
                   {return false;
                   }else{return true;}
                 }
                 @Override
                 public int hashCode()
-                {return categoryName!=null? categoryName.hashcode() :0;}
+                {return categoryName!=null? categoryName.hashcode():0;}
                 
 JPA :
     pour faire du reverse engineering java vers base de donnee java2db
@@ -6504,14 +6507,122 @@ JPA :
       methode(fait appel à ENTITY)------------------(BO=MODEL)ENTITIES connectees à la base
     Enleve expres
 
-Hibernet le livre :
-exemple de fichier mapping pojo-base p10
+DAO : design pattern bonne pratique
+un @Repository se base sur les DAO pour faire des find, get etc sur plusieurs tables. Le DAO lui sert aux updates sur une seule table
+  Besoin que MonObjet extends BaseEntity.
+  IMonObjetDao ----------extends-------->IGenericDao (contient toutes les methodes CRUD basiques) public interface IGenericDao<T extends BaseEntity> { public T getBook(long id);}
+    |  extends IGenericDao<Codecast>{       |  
+    |                                       |   
+    |                                       |
+  class MonObjetDao ----------extends-------->class GenericDao (chaque MonObjetDao a son instance) (doit contenir toutes les methodes communes en entier.)
+        ||                              public class GenericDao<T extends BaseEntity> implements IGenericDao<T>{...}
+  public class MonObjetDao extends GenericDao<MonObjet> implements IMonObjetDao {...}   
+  ne contient que les methods specifiques                                        
+generiques : generic : pour eviter de caster et d'avoir a utiliser object  
+  pour ne pas avoir a tapper les requetes basiques les requetes de base select * from toto etc etc...
+        @RepositoryRestResource
+        interface MonObjetRepository extends JpaRepository<MonObjet, Long>{
+        }
+        tout y est!!
+        
+
+kafka : A_COMPLETER voir aussi https://github.com/akka/alpakka-kafka qui fait de reactive streaming c a d backpressure c a d si consummer sont debordes par vitesse ils disent au producer de ralentire. voir aussi du code source sur github/jamesward/koober(demo de la voiture et du gars sur le map) 
+        producer1-   kafka
+                  --\---->topic1(copié sur partition1, partition2, partition3)  // 1 partition leader et les autres partitions sont juste des replicats de securité pour eviter perte données
+        producer2  --\--->topic2                "    partition1(0,1,2,3,4...)          -->consummer1
+                  ------->topic3                "                                      -->consummerGroup(consummer2,consummer3)
+        producer3/------->topic4                "
+        logComppaction sert à convertir automatiquement les doublons-triplons... en un seul: gain de place dans le disque
+        producers ont 3modes d'ecrtutre (async: donees pas garanties reçues. commited to leader: confirmation reception par le partition leader. commited to leader & quorum: confirmation reception par leader + une autre partition)
+mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents dans le systeme de fichier que en blob dans la db. la db c'est pour les metadatas.)
+        -toujours activer l'authentification (par user/password au moins) facultatif sur local pour test.
+        -il faut désactiver l'introspection javascript par sécurité(dans fichier de config mettre javascriptEnabled:false). LinkLKJDSFA
+        -attention!!!! l'ordre des champs du json au niveau n-1 est important! au niveau n pas de probleme( par ex utiliser ordre alphabetique)
+        -si je veux utiliser limit alors toujours utiliser sort avant limit dans une requete.
+        -il faut faire un schema: installer https://studio3t.com/knowledge-base-articles/schema-explorer/
+                        resumé de ce que j'ai lu là:https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design-part-1
+                        si j'ai relation 1-N(peu nombreux): Où je n'aurais jamais besoin de recuperer ces N tout seuls sans leur parents
+                                    alors je peux faire 
+                                                  {
+                                                    name: 'Kate Monster',
+                                                    ssn: '123-456-7890',
+                                                    addresses: [
+                                                       { street: '123 Sesame St', city: 'Anytown', cc: 'USA' }, // j'en ai peu.
+                                                       { street: '123 Avenue Q', city: 'New York', cc: 'USA' }
+                                                    ]
+                                                  }
+                        si j'ai relation 
+                                1-N(une centaine) et que c'est l'application qui gère la recuperation des N pour l'element 1 . mais en fait ca a l'avantage d'etre aussi une relation N-N
+                                    alors je peux faire (un produit contient plusieurs pieces)
+                                    produit:{
+                                        name: 'MON PRODUIT 1',
+                                        pieces: [     // array of references to Part documents
+                                            ObjectID('AAAA'),    // reference vers la piece ci dessous
+                                            ObjectID('F17C'),    // reference to a different Part
+                                            ObjectID('D2AA'),
+                                            // etc
+                                        ]
+                                        }
+                                    piece:{
+                                            _id: ObjectID('AAAA'),
+                                            partno: '123-aff-456',
+                                            name: '#4 grommet',
+                                            qty: 94,
+                                            cost: 0.94,
+                                            price: 3.99
+                                        }                 
+                            si j'ai une relation 1-N où N c'est PLEIN denregistrements. Produit peut avoir plusieurs pieces mais une piece ne peut avoir qu'un seul produit.
+                                    produit:{
+                                        name: 'MON PRODUIT 1',
+                                        _id: ObjectID('AAAA')
+                                        }
+                                    piece:{
+                                            partno: '123-aff-456',
+                                            name: '#4 grommet',
+                                            qty: 94,
+                                            cost: 0.94,
+                                            price: 3.99
+                                            produit: ObjectID('AAAA') // comme dans une base relationelle 1-N
+                                        }                               
+        -il faut desactiver la casesensitive et accent sensitive pour les requetes
+        -l'ordre dans les requetes est important: d'abord filtrer puis trier puis joindre
+        -il faut enable journaling pour recuperer la base old version si devient inconsistent (configuration-> storage.journal.enabled)
+        -requetes ordonnees sortees toujours sur un ou des champs indexés. (sinon sur un-des champs non indexes risques d'overflow donc d'erreur: retourne rien)
+        -des arrays pas trop longues et indexees(ca l'est pas défaut)
+        pour tester online en ligne des requetes: https://docs.mongodb.com/manual/tutorial/query-arrays/ 
+        pour installer mongodb en local: 
+            https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
+            dezipper quelque part, mkdir c:/data/db(ou autre part...)
+        pour démarrer mongodb serveur en local: 
+            puis cmd ceci: 
+            pathVersLeBin/mongod.exe --dbpath="c:\mongodb-win32-x86_64-2008plus-ssl-4.0.9\data\db" // ca demare le serveur par defaut là: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+        pour demarrer un client mongodb pour administrer la base et pour faire des requetes de test
+            ensuite executer mongo.exe: c'est un client pour faire les requetes (c'est du javascript la dedans) LinkLKJDSFA . On peut aussi utiliser un gui qui s'appelle Robo3T à installer.
+            ou bien mongo mongodb://mongodb0.example.com:28015/testdb?ssl=true // si il est distant
+        exemples de requetes. Une collection = une table relationelle
+            var doc = db.uneCollection.findOne({ _id: 1 })// trouver par id (du coup doc est une variable) 
+            db.uneCollection.remove({ _id: 1 })  
+            db.uneCollection.insert({ _id: 1, jsFunc: function(){ print("hello") } } ) // si uneCollection n'existe pas elle est automatiquement créee
+            db.myNewCollection3.createIndex( { y: 1 } ) // ajoute un indexe dans la collection
+MCD/MPD :
+      forte faible
+    esclav    maitre  
+     jai n   j'ai un
+      X,n -> 0,1
+      0,1 -> 1,1
+      1,1 <-> 1,1 faire une seule table
+        exequo
+      X,n-><-X,n
+      
+  bonne pratique gestion des rôles droits etc...
+      voici les tables a creer:  USER    GROUPE        USER-GROUPE      USER PERMISSION   GROUPE PERMISSION     PERMISSION  
+
 JOOQ : mieus que jdo?
     facile: dans eclipse pour lancer le generateur: 
-    class main : org.jooq.util.GenerationTool
-    arguments de programme : /jooq.properties
-    ce fichier contient : 
-    jooq.properties :
+    class main: org.jooq.util.GenerationTool
+    arguments de programme: /jooq.properties
+    ce fichier contient: 
+    jooq.properties:
            #Configure the database connection here
           jdbc.Driver=com.mysql.jdbc.Driver
           jdbc.URL=jdbc:mysql://localhost:3306/lduverge
@@ -6555,23 +6666,6 @@ JOOQ : mieus que jdo?
           #generator.generate.master-data-table-literal.[master data table]=[column used for enum literals]
           #generator.generate.master-data-table-description.[master data table]=[column used for documentation]
 
-DAO : design pattern bonne pratique
-un @Repository se base sur les DAO pour faire des find, get etc sur plusieurs tables. Le DAO lui sert aux updates sur une seule table
-  Besoin que MonObjet extends BaseEntity.
-  IMonObjetDao ----------extends-------->IGenericDao (contient toutes les methodes CRUD basiques) public interface IGenericDao<T extends BaseEntity> { public T getBook(long id);}
-    |  extends IGenericDao<Codecast>{       |  
-    |                                       |   
-    |                                       |
-  class MonObjetDao ----------extends-------->class GenericDao (chaque MonObjetDao a son instance) (doit contenir toutes les methodes communes en entier.)
-        ||                              public class GenericDao<T extends BaseEntity> implements IGenericDao<T>{...}
-  public class MonObjetDao extends GenericDao<MonObjet> implements IMonObjetDao {...}   
-  ne contient que les methods specifiques                                        
-generiques : generic : pour eviter de caster et d'avoir a utiliser object  
-  pour ne pas avoir a tapper les requetes basiques les requetes de base select * from toto etc etc...
-        @RepositoryRestResource
-        interface MonObjetRepository extends JpaRepository<MonObjet, Long>{
-        }
-        tout y est!!
 JDO :
 si j'ai l'erreur 
     error: cannot access Detacheable.... retapper code pour qu'il recompile ca devrait marcher.
@@ -6612,7 +6706,7 @@ public class Eleve
 	    public Groupe groupe;
 }
 
-Si quand je fais makePersistent j'ai l'erreur : 
+Si quand je fais makePersistent j'ai l'erreur: 
                  [java] java.lang.NullPointerException
                    [java] 	at com.renault.wec.client.jdo.WEC72_M_CHMSCE_PK.hashCode(Unknown Source)
                    [java] 	at java.util.HashMap.put(HashMap.java:372)
@@ -6628,9 +6722,9 @@ Si quand je fais makePersistent j'ai l'erreur :
 			   maCopieDObjetJdo.set(cle, valeur);
 			}
       
-  pour connaitre l'etat d'un objet JDO : 
+  pour connaitre l'etat d'un objet JDO: 
           logger.debug(JDOHelper.getObjectState(wt[1]).toString()); // transient=independant; persistant= Hollow =en base et raccroche à la base; detatched = independant mais il a un ID donc peut etre retrouve en base
-          les differents etats :
+          les differents etats:
                           Transient	Any object created by the developer that do are not persisted. These don't have a JDO identity.
                           Persistent New	Any object that is newly persisted in the current transaction. A JDO identity has been assigned to these objects.
                           Persistent Dirty	Any persistent object that has been changed in the current transaction.
@@ -6651,10 +6745,10 @@ Si quand je fais makePersistent j'ai l'erreur :
           il faut mettre ca comme meta-data devant mon champ dans ma classe jdo 
                 @Column(jdbcType="VARCHAR", length=200)
                 String WEC51_DEBHTML=null;
-    fonctionnement :
+    fonctionnement:
         j'ai un PersistanceManagerFactory par database de connectee. (en faire un par application)
         BIEN FERMER le persistanceManager quand on a fini la requette et la transaction .close()
-       singleton :de persistancemanagerfactory :
+       singleton:de persistancemanagerfactory:
                                                       public class PersistanceManagerFactorySingleton 
                                                       {
                                                         private	PersistenceManagerFactory pmf;
@@ -6682,13 +6776,13 @@ Si quand je fais makePersistent j'ai l'erreur :
                                                       	return pmf;
                                                       }
                                                       }
-                                    ailleurs pour l'apeller : 
+                                    ailleurs pour l'apeller: 
                                             PersistenceManager pm = PersistanceManagerFactorySingleton.getInstance().getpmf().getPersistenceManager();
     si j'ai l'erreur java.lang.NoSuchMethodError: org.datanucleus.store.mapped.DatastoreContainerObject.addDatastoreField(Ljava/lang/String;Lorg/datanucleus/store/mapped/DatastoreIdentifier;Lorg/datanucleus/store/mapped/mapping/JavaTypeMapping;Lorg/datanucleus/metadata/ColumnMetaData;)Lorg/datanucleus/store/mapped/DatastoreField;
                      c'est parce que je n'utilise pas les bonnes version de librairies de rdbms, jdo, datanucleus
-    si j'ai l'erreur :javax.jdo.JDOFatalUserException: There is no available StoreManager of type "jdbc". Make sure that you have put the relevant DataNucleus store plugin in your CLASSPATH and if defining a connection via JNDI or DataSource you also need to provide persistence property "datanucleus.storeManagerType"
+    si j'ai l'erreur:javax.jdo.JDOFatalUserException: There is no available StoreManager of type "jdbc". Make sure that you have put the relevant DataNucleus store plugin in your CLASSPATH and if defining a connection via JNDI or DataSource you also need to provide persistence property "datanucleus.storeManagerType"
                     c'est parce que dans datanucleus.properties j'ai un mapping url=jdbc quelquechose et pour ca il a besoin du plugin rdbms qui se trouve dans une jar que je dois mettre dans mon classpath
-    si j'ai l'erreur  Class persistance.UserNucleus has MetaData yet the class cant be found : 
+    si j'ai l'erreur  Class persistance.UserNucleus has MetaData yet the class cant be found: 
                    c'est peut etre parce que <package name=" dans mon fichier jdo ne contient pas le chemin complet vers ma classe (mettre tous les packages depuis la racine)        
 	pour enhancer les classes:   (is not persistable.) utiliser log4j c'est important pour comprendre ce qui se passe ne cas d'erreur
         on peut le faire aussi avec ant: voir ci dessous:
@@ -6700,10 +6794,9 @@ Si quand je fais makePersistent j'ai l'erreur :
               ou 
               java -cp D:\workspaceGanymede\YoaniWeb\WebContent\WEB-INF\lib\asm-3.2.jar;D:\workspaceGanymede\YoaniWeb\WebContent\WEB-INF\lib\datanucleus-enhancer-3.0.0-m2.jar;D:\workspaceGanymede\YoaniWeb\WebContent\WEB-INF\lib\datanucleus-core-3.0.0-m2.jar;D:\workspaceGanymede\YoaniWeb\WebContent\WEB-INF\lib\jdo-api-3.0.jar org.datanucleus.enhancer.DataNucleusEnhancer -v D:\workspaceGanymede\YoaniWeb\src\com\application\yoani\server\servlet\persistance\persistance.jdo
           avec ant:
-    AVEC ANT EFFACE EXPRES
-    si lors de l'enhancement j'ai l'erreur bad major version...offset=6:
+      si lors de l'enhancement j'ai l'erreur bad major version...offset=6:
             modifier mes parametres du run du ant et choisir une autre jre (6.1)                  	   
-  appel a une methode JDO : 
+  appel a une methode JDO: 
       classe Applicative: 
           service.init();
         	return service.select();  ou create etc...
@@ -6727,8 +6820,8 @@ Si quand je fais makePersistent j'ai l'erreur :
           	            WEC53_D_CMPDMD e = (WEC53_D_CMPDMD) pm.getObjectById(WEC53_D_CMPDMD.class, id);
           	            ou 
            	                        CarNucleus e = pm.getObjectById(CarNucleus.class, new CarNucleus(Integer.parseInt(carid), null,null,null,null,null,null,null));
-                      	            WEC53_D_CMPDMD resCopy= pm.detachCopy(e); // important : mon objet doit etre detacheable.. voir plus bas
-          	            pour recuperer une liste d'objets : requete
+                      	            WEC53_D_CMPDMD resCopy= pm.detachCopy(e); // important: mon objet doit etre detacheable.. voir plus bas
+          	            pour recuperer une liste d'objets: requete
           	                   pour recuperer les fils child enfants d'une classe: populate jointure joins
           	                           exemple: MaClasseParente
           	                                     |_maOuMesClassesFille1
@@ -6743,13 +6836,13 @@ Si quand je fais makePersistent j'ai l'erreur :
                                   			pm.getFetchPlan().addGroup("JinventeUnNomDeGroupeDeChampsNonPrimitifARecupererAussi").addGroup("jinventeUnNomPourCeGroupe");
                                   			pm.getFetchPlan().setMaxFetchDepth(2); // je defini la profondeur: 2 il va parcourir 2 enfants donc la il va recuperer MaClasseParente.monChampJavaNonPrimitif1.sesFils si je mets -1 c'est infini
                                   			pm.getFetchPlan().setFetchSize(FetchPlan.FETCH_SIZE_GREEDY); // FetchPlan.FETCH_SIZE_OPTIMAL ou un chiffre pour recuperer un nombre limite de lignes de fils 
-                                  ensuite je peux faire ma requete :                                  			
+                                  ensuite je peux faire ma requete:                                  			
                     	            Query query = pm.newQuery(WEC51_M_TEMPLATE.class);
                     	             query.setOrdering("this.age ascending"); ou query.setOrdering(WEC52_M_CHAMPS.ORDRE+" ascending"); // pour faire un order by orderby
                     	            ou
                     	            Query query = pm.newQuery(WEC51_M_TEMPLATE.class, NomDuChampJavaClasseFilleJointe.NomDuChampJavaDeLaClasseFille+"=="+id); ou "toto=titi"); ou "this.age >= 18"
                                   Collection<WEC51_M_TEMPLATE> allProducts = (Collection<WEC51_M_TEMPLATE>)query.execute();
-                                  resCopy= pm.detachCopyAll(allProducts);     // important : mon objet doit etre detacheable.. voir plus bas
+                                  resCopy= pm.detachCopyAll(allProducts);     // important: mon objet doit etre detacheable.. voir plus bas
                                   ou 
                                   return (WEC55_D_VALCHM[]) pm.detachCopyAll(result).toArray(new WEC55_D_VALCHM[0]);
                                   ou si j'ai plusieurs conditions:
@@ -6771,7 +6864,7 @@ Si quand je fais makePersistent j'ai l'erreur :
                                                           // 3. perform query
                                                           Collection<WEC52_M_CHAMPS> fieldsOfTemplate = (Collection<WEC52_M_CHAMPS>)query.execute();
                                                           et detacher les objets pour une utilisation exterieure
-                                                          ou si c'est un count : 
+                                                          ou si c'est un count: 
                                                                   Query query = pm.newQuery("javax.jdo.query.SQL", "select max(wec52_id) from wec52_m_champs where wec52_idtemplate = " + f.getWEC52_IDTEMPLATE());
                                                                   query.setUnique(true);
 		                                                              int maxId = Integer.parseInt(query.execute().toString());
@@ -6807,7 +6900,7 @@ Si quand je fais makePersistent j'ai l'erreur :
                       }
                     	return null; ou whatever: return list.toArray(new WEC51_M_TEMPLATE[0]);// mais pas besoin de renvoyer quelquechose si c'est une EditorGrid car ses objets sont dejà affiches
                   }    	
-      Si j'ai l'erreur javax.jdo.JDOFatalUserException: Class org.datanucleus.jdo.JDOPersistenceManagerFactory was not found. : 
+      Si j'ai l'erreur javax.jdo.JDOFatalUserException: Class org.datanucleus.jdo.JDOPersistenceManagerFactory was not found.: 
               modofier la classe du  PersistenceManagerFactoryClass dans le fichier datanucleus.properties  
 
     datanucleus.properties    // situe dans la base du repertoire java (class)
@@ -6832,7 +6925,7 @@ Si quand je fais makePersistent j'ai l'erreur :
                               @Cacheable("true")
                               public class VPA01_STUDENT extends Entity 
                               {
-                              	private static final long serialVersionUID = 1L; // LINKldsgserialsdflkjegml c'est important car classe serialise----->transferee-->recuperee--->deserialisee et CASTEE avec une même classe qui doit avoir le même id de serialisation. Sinon InvalidClassException : quand on change une classe ca change automatiquement son serialVersionUID. or si j'ai serializé une version precedente de cette classe et que je veux la deserialiser alors ce sera KO si je n'ai pas mis ça. Apres si les deux serialVersionUID sont = mais que la deserialisation se passe mal j'aurais une autre erreur plus précise plus loin. 
+                              	private static final long serialVersionUID = 1L; // LINKldsgserialsdflkjegml c'est important car classe serialise----->transferee-->recuperee--->deserialisee et CASTEE avec une même classe qui doit avoir le même id de serialisation. Sinon InvalidClassException: quand on change une classe ca change automatiquement son serialVersionUID. or si j'ai serializé une version precedente de cette classe et que je veux la deserialiser alors ce sera KO si je n'ai pas mis ça. Apres si les deux serialVersionUID sont = mais que la deserialisation se passe mal j'aurais une autre erreur plus précise plus loin. 
                               		public VPA01_STUDENT() 
                               		{
                               		idFieldName="VPA01_ID";
@@ -6931,7 +7024,7 @@ Si quand je fais makePersistent j'ai l'erreur :
           <package name="ecl.entity">
               <class name="CarNucleus" identity-type="application" table="FWS_CAR">
                 <field name="carid" primary-key="true" value-strategy="native">
-                      <column name="CAR_ID" jdbc-type="INTEGER"/> types possibles : Valid JDBC Type (CHAR, VARCHAR, LONGVARCHAR, NUMERIC, DECIMAL, BIT, TINYINT, SMALLINT, INTEGER, BIGINT, REAL, FLOAT, DOUBLE, BINARY, VARBINARY, LONGVARBINARY, DATE, TIME, TIMESTAMP, BLOB, BOOLEAN, CLOB, DATALINK) 
+                      <column name="CAR_ID" jdbc-type="INTEGER"/> types possibles: Valid JDBC Type (CHAR, VARCHAR, LONGVARCHAR, NUMERIC, DECIMAL, BIT, TINYINT, SMALLINT, INTEGER, BIGINT, REAL, FLOAT, DOUBLE, BINARY, VARBINARY, LONGVARBINARY, DATE, TIME, TIMESTAMP, BLOB, BOOLEAN, CLOB, DATALINK) 
                  </field>
                  <field name="car_model">
                           <column name="CAR_MODEL" length="80" jdbc-type="VARCHAR ou DATE ou INTEGER..."/>
@@ -6940,60 +7033,113 @@ Si quand je fais makePersistent j'ai l'erreur :
           </class>
           </package>
           </jdo>    
-        
-              
+Exemple de classe jdo: a mettre cote client: 
+                                              package com.renault.wec.client.jdo;
+                                            
+                                            import ...                                            
+                                            @PersistenceCapable(identityType=IdentityType.APPLICATION, detachable="true") // on le declare detacheable comme ca meme si la transaction se ferme, meme si mon service n'est pas permanant: l'id d'un objet est conserve et quand on rappelle makepersistant: il fait un update au lieu d'un insert car cet objet existe en base C EST GENIAAAAALL!!!
+                                            public class WEC51_M_TEMPLATE implements ModelData, Serializable 
+                                            {
+                                            	public static final String NOM = "WEC51_NOM";
+                                            	public static final String ID = "WEC51_ID";
+                                            	public static final String ACTIVE = "WEC51_ACTIVE";
+                                            	@PrimaryKey
+                                            	Integer WEC51_ID; // ne pas utiliser long ou int mais Integer pour les chiffres
+                   	                         	@PrimaryKey // la cle primaire peut etre composee de deux champs! Bien le mettre si c'est le cas car sinon l'update va udpated avec une mauvaise clause
+                                              @Column(jdbcType="VARCHAR", length=3000) // si besoin
+                                            	String WEC51_NOM = null;
+                                            	String WEC51_ACTIVE = null;
+                                                
+                                            	public WEC51_M_TEMPLATE()
+                                                {
+                                                }
+                                              public WEC51_M_TEMPLATE(Integer id)
+                                                {
+                                                    this.WEC51_ID = id;
+                                                }
+                                                getters et setters...
+                                            	@Override // a partir d'ici c'est pour afficher dans un grid tableau (pour le faire rapidement sous eclipse, overrider methodes de modeldata)
+                                            	public <X> X get(String property) {
+                                            	       if (property != null)
+                                            	        {
+                                            	            // try to return value
+                                            	            if (NOM.equals(property))
+                                            	            {
+                                            	                return (X) getWEC51_NOM();
+                                            	            }
+                                            	            else if (ID.contains(property))
+                                                    		  {
+                                                    			  return (X) String.valueOf(getWEC52_ID()); // je crois donc que ca marche aussi pour les Integer (meme code)
+                                                    		  }
+                                            	            else if (ACTIVE.equals(property))
+                                            	            {
+                                            	                return (X) String.valueOf(getWEC51_ACTIVE());
+                                            	            }
+                                            	        }
+                                            	        // could not find value - just return null
+                                            	        return null;
+                                            
+                                            	}
+                                            	@Override
+                                            	public Map<String, Object> getProperties() {
+                                            		   Map<String, Object> properties = new HashMap<String, Object>();
+                                            	        for (String property: getPropertyNames())
+                                            	        {
+                                            	            properties.put(property, get(property));
+                                            	        }
+                                            	        return properties;
+                                            
+                                            	}
+                                            	@Override
+                                            	public Collection<String> getPropertyNames() {
+                                            		   Collection<String> names = new ArrayList<String>();
+                                            	        names.add(NOM);
+                                            	        names.add(ID);
+                                            	        names.add(ACTIVE);
+                                            	        return names;
+                                            	}
+                                            	@Override
+                                            	public <X> X remove(String property) {
+                                            		 return (X) set(property, null);
+                                            	}
+                                            	@Override
+                                            	public <X> X set(String property, X value) {
+                                            			 if (property != null && value !=null && !value.toString().equals("null"))
+                                        	        {
+                                                        X old = (X) get(property);
+                                                      try
+                                                      {
+                                        	            if (OBLCLIEN.contains(property))
+                                        	            {
+                                        	            	setWEC52_OBLCLIEN(((java.lang.String) value));
+                                        	            }
+                                        	           if (ID.contains(property))
+                                        	            {
+                                          	            	setWEC52_ID((Integer)value);
+                                         	            }
+                                        	         etc...
+                                        	         }
+                                        	         catch (ClassCastException e)
+                                                    {
+                                                    	if (value instanceof java.lang.String) old = (X) set(property, Integer.parseInt(value.toString()));
+                                                    	else if (value instanceof java.lang.Integer) old = (X) set(property, value.toString());
+                                                    	else throw e;
+                                                      }
+                                                	            return old;
+                                                
+                                                	        }
+                                                	        return null;
+                                                	    }
 
-mobaxterm : (si j'arrive pas a faire du sftp parce que la connexion se coupe, ca a marche avec winscp)
-  pour enregistrer des macros : 
-    repetitifs repertitive automatiser les saisies : menu macros> record new macro
-  on peut ouvrir en multi fenetre (menu view)
-  installer des packages : cliquer sur icone packages dans le menu. (il va peut etre demander d'abord de setter des variables home et root). J'ai installé mksh    
-
-putty : (mobaxterm mieux que putty)
-pour rapidement se connecter avec un racourci: 
-faire un racourci et dans cible mettre : D:\Installations\putty.exe wecapp@vm713aos.mc2.renault.fr -pw w1e2c3 
-pour avoir de belles couleurs quand on se connecte: parametrer sur la machine unix distante ceci:
-menu change settings > window>colours
-    Avant:
-          cd
-          vi .vimrc
-          tapper syn on
-          sauver et quitter.
-pour modifier rapidos les couleurs des polices de plusieurs sessions sauvegardee: 
-      il faut le faire avec regedit:
-        HKEY_CURRENT_USER\Software\SimonTatham\PuTTY
-        modifier color14 (c'est le bleu fonce il est trop fonce) 
-  pour se connecter à un service en passant par un tunnel ssh:
-      mamachine----->PROXYm'empeched'accederauservice---->service
-      mamachine----->proxymempechedaccederauservicemaispasAUnAutreServeurQUiAunPortSSHouvert--->AutreMachineServeurAvecSSHQuiDoitAccepterLesTunnels----tunnel------------------------>Service
-                                                                                                c comme si j'etais ici puis je vais -------------------------------------------------->là
-                                                                                conf Putty: menu>Session>ServeurSSH;                        menu>tunnel>"L"PortSUrMaMachineDisponible "Destination:PortDuService"
-      je demarre la connexion putty vers le serveur ssh puis je vais vers le service via localhost:PortSUrMaMachineDisponible
-
-XML :     interpretation des caractères xml html
-remplacer les & (et commercial) par &amp;
-Caractère  	Code d'echappement
-Perluète 	& 	&amp;
-Apostrophe 	' 	&apos;
-Guillemets droits 	" 	&quot;
-Superieur à 	> 	&gt;
-Inferieur à 	< 	&lt;
-
-
-MCD/MPD :
-      forte faible
-    esclav    maitre  
-     jai n   j'ai un
-      X,n -> 0,1
-      0,1 -> 1,1
-      1,1 <-> 1,1 faire une seule table
-        exequo
-      X,n-><-X,n
-      
-  bonne pratique gestion des rôles droits etc...
-      voici les tables a creer:  USER    GROUPE        USER-GROUPE      USER PERMISSION   GROUPE PERMISSION     PERMISSION  
-
-
+                                                	@Override
+                                                	public String toString() {
+                                                		return getWEC52_ID()+getWEC51_DEBHTML() + getWEC52_ORDRE();
+                                                	}
+                                                	
+                                                
+                                                	}
+  
+AFAIRE>>>>>>>>>>>>>>>>>>>>>>>> continuer vers le haut à partir de là SQL oracle mysql DB2
 DB2 :
 pour se connecter à db2: 
 							connect to IS user AW0EPRI using r9097268
@@ -7011,13 +7157,13 @@ Exemple de requete qui marche très bien avec des switch case else imbriques. On
 				) END
 				) FROM W0DCI$.FINVA FETCH FIRST 10 ROWS ONLY
 
-  autre exemple : 				
+  autre exemple: 				
 		  select * FROM W0DCI$.FINVA FETCH FIRST 10 ROWS ONLY
 si j'ai l'erreur java.lang.UnsatisfiedLinkError:
 		 db2jdbc (Not found in java.library.path) c'est parce que un jar recherche des dll et ne les trouve pas.
 			Les dll de SQLIB/bin
 			Il faut que la propriete système java.library.path de l'AS qui doit être modifiee avec le path /logiciel/db2/sqllib/bin. 
-			A rajouter deux variables d'environnement sur l'AS et dans une note de livraison :
+			A rajouter deux variables d'environnement sur l'AS et dans une note de livraison:
 			# DB2INSTANCE  = db2
 			# LD_LIBRARY_PATH  = /logiciel/db2/sqllib/lib
 			ou en local, de definir une variable websphere DB2_JDBC_DRIVER_PATH (pas sur du nom) qui pointe vers D:/workspaceRAD7/dwiWeb/WebContent/WEB-INF/lib 
@@ -7028,85 +7174,7 @@ this will show you all of the tables:
 	pour faire un select des premieres lignes seulement (rownum limit)
 			SELECT VINVA.NATURE FROM VINVA FETCH FIRST 7 ROWS ONLY
 			SELECT W0DCI$.FINVA.NATURE FROM W0DCI$.FINVA FETCH FIRST 7 ROWS ONLY
-
-kafka : A_COMPLETER voir aussi https://github.com/akka/alpakka-kafka qui fait de reactive streaming c a d backpressure c a d si consummer sont debordes par vitesse ils disent au producer de ralentire. voir aussi du code source sur github/jamesward/koober(demo de la voiture et du gars sur le map) 
-        producer1-   kafka
-                  --\---->topic1(copié sur partition1, partition2, partition3)  // 1 partition leader et les autres partitions sont juste des replicats de securité pour eviter perte données
-        producer2  --\--->topic2                "    partition1(0,1,2,3,4...)          -->consummer1
-                  ------->topic3                "                                      -->consummerGroup(consummer2,consummer3)
-        producer3/------->topic4                "
-        logComppaction sert à convertir automatiquement les doublons-triplons... en un seul: gain de place dans le disque
-        producers ont 3modes d'ecrtutre (async: donees pas garanties reçues. commited to leader: confirmation reception par le partition leader. commited to leader & quorum: confirmation reception par leader + une autre partition)
-mongodb : nosql : (il vaut mieux stocker les fichiers images documents dans le systeme de fichier que en blob dans la db. la db c'est pour les metadatas.)
-        -toujours activer l'authentification (par user/password au moins) facultatif sur local pour test.
-        -il faut désactiver l'introspection javascript par sécurité(dans fichier de config mettre javascriptEnabled:false). LinkLKJDSFA
-        -attention!!!! l'ordre des champs du json au niveau n-1 est important! au niveau n pas de probleme( par ex utiliser ordre alphabetique)
-        -si je veux utiliser limit alors toujours utiliser sort avant limit dans une requete.
-        -il faut faire un schema: installer https://studio3t.com/knowledge-base-articles/schema-explorer/
-                        resumé de ce que j'ai lu là :https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design-part-1
-                        si j'ai relation 1-N(peu nombreux): Où je n'aurais jamais besoin de recuperer ces N tout seuls sans leur parents
-                                    alors je peux faire 
-                                                  {
-                                                    name: 'Kate Monster',
-                                                    ssn: '123-456-7890',
-                                                    addresses : [
-                                                       { street: '123 Sesame St', city: 'Anytown', cc: 'USA' }, // j'en ai peu.
-                                                       { street: '123 Avenue Q', city: 'New York', cc: 'USA' }
-                                                    ]
-                                                  }
-                        si j'ai relation 
-                                1-N(une centaine) et que c'est l'application qui gère la recuperation des N pour l'element 1 . mais en fait ca a l'avantage d'etre aussi une relation N-N
-                                    alors je peux faire (un produit contient plusieurs pieces)
-                                    produit:{
-                                        name : 'MON PRODUIT 1',
-                                        pieces : [     // array of references to Part documents
-                                            ObjectID('AAAA'),    // reference vers la piece ci dessous
-                                            ObjectID('F17C'),    // reference to a different Part
-                                            ObjectID('D2AA'),
-                                            // etc
-                                        ]
-                                        }
-                                    piece:{
-                                            _id : ObjectID('AAAA'),
-                                            partno : '123-aff-456',
-                                            name : '#4 grommet',
-                                            qty: 94,
-                                            cost: 0.94,
-                                            price: 3.99
-                                        }                 
-                            si j'ai une relation 1-N où N c'est PLEIN denregistrements. Produit peut avoir plusieurs pieces mais une piece ne peut avoir qu'un seul produit.
-                                    produit:{
-                                        name : 'MON PRODUIT 1',
-                                        _id : ObjectID('AAAA')
-                                        }
-                                    piece:{
-                                            partno : '123-aff-456',
-                                            name : '#4 grommet',
-                                            qty: 94,
-                                            cost: 0.94,
-                                            price: 3.99
-                                            produit: ObjectID('AAAA') // comme dans une base relationelle 1-N
-                                        }                               
-        -il faut desactiver la casesensitive et accent sensitive pour les requetes
-        -l'ordre dans les requetes est important : d'abord filtrer puis trier puis joindre
-        -il faut enable journaling pour recuperer la base old version si devient inconsistent (configuration-> storage.journal.enabled)
-        -requetes ordonnees sortees toujours sur un ou des champs indexés. (sinon sur un-des champs non indexes risques d'overflow donc d'erreur: retourne rien)
-        -des arrays pas trop longues et indexees(ca l'est pas défaut)
-        pour tester online en ligne des requetes : https://docs.mongodb.com/manual/tutorial/query-arrays/ 
-        pour installer mongodb en local: 
-            https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
-            dezipper quelque part, mkdir c:/data/db(ou autre part...)
-        pour démarrer mongodb serveur en local : 
-            puis cmd ceci: 
-            pathVersLeBin/mongod.exe --dbpath="c:\mongodb-win32-x86_64-2008plus-ssl-4.0.9\data\db" // ca demare le serveur par defaut là : mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
-        pour demarrer un client mongodb pour administrer la base et pour faire des requetes de test
-            ensuite executer mongo.exe : c'est un client pour faire les requetes (c'est du javascript la dedans) LinkLKJDSFA . On peut aussi utiliser un gui qui s'appelle Robo3T à installer.
-            ou bien mongo mongodb://mongodb0.example.com:28015/testdb?ssl=true // si il est distant
-        exemples de requetes. Une collection = une table relationelle
-            var doc = db.uneCollection.findOne({ _id: 1 })// trouver par id (du coup doc est une variable) 
-            db.uneCollection.remove({ _id: 1 })  
-            db.uneCollection.insert({ _id: 1, jsFunc: function(){ print("hello") } } ) // si uneCollection n'existe pas elle est automatiquement créee
-            db.myNewCollection3.createIndex( { y: 1 } ) // ajoute un indexe dans la collection
+                                                                                         
 MYSQL :
    apres installation: 
         demarrer le serveur mysql:
@@ -7258,7 +7326,7 @@ si j'ai l'erreur : Every derived table must have its own alias quand je fais un 
 pour desactiver une contrainte:
 SET foreign_key_checks = 0; (on peut maintenant faire son bordel: DELETE FROM users where id > 45)
 pour reactiver une contrainte:
-SET foreign_key_checks = 1;
+SET foreign_key_checks = 1;    
 
 pour faire un delete:
   DELETE TB0001_LOT where IDAPPLICATION=?
@@ -7433,6 +7501,10 @@ fws.jar en question est dans un mail que m'a envoye JeanMichelSOULAT le 28 aout 
     si il y a un souci sur un instance oracle: bloquage d'un process, on peut faire un kill -INT ****(process appele: svrmgrl)... si marche pas... alors faire kill -9 **** qui est plus brutal.
     on peut aussi faire un kill -15 qui est un kill soft.
     par exemple le shutdown peut etre bloque: voir les logs pour s'en assurer. Dans ce cas faire un kill -9 de Oracle pmon et smon attendre un peu, faire un shutdown abort et un startup et là  c bon.
+pour desactiver une contrainte:
+			 alter table TA_TABLE disable constraint TA_CONTRAINTE;
+pour reactiver une contrainte:
+			 alter table TA_TABLE enable constraint TA_CONTRAINTE;
     
     
     si j'ai l'erreur oracle ORA-01034 Oracle not available
@@ -7569,6 +7641,11 @@ Il fait appel à  un script d'initialisation :
 Oà¹ sont definis les variables
 
 SQLPLUS : sql :
+pour ajouter une colonne
+    ALTER TABLE WECM55_STORAGE_IAO_CONTROL ADD BUDGET VARCHAR2(20) (ce sera null par defaut si table existe deja etc...)
+pour afficher le  descriptif d'une table
+    desc  WECM55_STORAGE_IAO_CONTROL 
+
 sqlplus edf/groupnet@nomfichier.sql
 on peut aussi faire
 sqlplus system/manager@nomfichier.sql (si on va supprimer le user edf par exemple)
@@ -7763,6 +7840,318 @@ ANALYZE TABLE T_USER_DIALO ESTIMATE STATISTICS SAMPLE 10 PERCENT;
 ANALYZE TABLE T_USER_LANGUE ESTIMATE STATISTICS SAMPLE 10 PERCENT;
 ANALYZE TABLE T_VIGNETTE ESTIMATE STATISTICS SAMPLE 10 PERCENT;
 
+les synonymes oracle : schemas shemas : 
+      un user dpf_r peut avoir les droits (grant) en lecture voir visible sur les tables : 
+          quand on affiche avec un client la liste des tables il peut les voir sous le fichier d'un autre user qui a les droit adm par ex.
+          Mais quand on fait une requete ca ne marchera pas sauf si on ecrit les requetees comme ca : dpf_adm.MaTable... etc...
+          dans ce cas si on ne veut pas avoir a faire ca il faut defninir les synonyme = liens vers la table de l'adm
+          CREATE or replace SYNONYM  DPF01_PAIEMENTS FOR dpf_adm.DPF01_PAIEMENTS
+pour voir tous les users schemas shemas
+  SELECT username FROM all_users ORDER BY username;
+pour voir toutes les tables invisibles :
+    describe all_tables; select table_name from all_tables;          
+tnsnames.ora se trouve sous C:/Oracle/Ora81/network/ADMIN (pour savoir ou il est tapper: env | grep tns*)
+ou : c:/donnees/Oracle... etc
+ou D:\oracle\ora92\network\ADMIN
+exemple de tnsnames : 
+        DPF_NEW_DEV.WORLD = 
+          (DESCRIPTION=
+            (ADDRESS=
+              (COMMUNITY=TCPIP.world)(PROTOCOL=TCP)(Host=hpsd1805.mc2.renault.fr )(Port=1526)
+            )(CONNECT_DATA=
+              (service_name=dpfdevo01)
+            )
+          )
+          
+        ADU_INT.WORLD = 
+          (DESCRIPTION=
+            (ADDRESS=
+              (COMMUNITY=TCPIP.world)(PROTOCOL=TCP)(Host=hpsd1805.mc2.renault.fr )(Port=1567)
+            )(CONNECT_DATA=
+              (service_name=aduinto01 )
+            )
+          )
+          
+si message ORA-12154 TNS could not resolve service name : c juste parce que peut etre il ya un espace dans le fichier TNS
+
+oracle: select * from V$instance ou select * from V$VERSION pour connaitre la version oracle et infos de la base de donnee
+
+oracle: sous instance/DB_EGN/audit/xxx.amd ce sont des fichiers de logs on peut les effacer.
+How can I determine the charactersets (charset) that I have for my version of Oracle? encodage
+			  SQL> SELECT UNIQUE VALUE FROM V$NLS_VALID_VALUES WHERE PARAMETER ='CHARACTERSET'; 
+			SQL > SELECT * FROM V$NLS_PARAMETERS 
+      ou
+       SELECT * FROM NLS_DATABASE_PARAMETERS
+Pour vider delete une table sans possibilite de rollback :
+		 plus efficace rapide etc.. suppression systeme : faire Truncate table nomdelatble; c'est comme un delete mais plus efficace et pas de commit possible. Il faut avoir des droit pour pouvoir faire ca.
+Si on a une erreur: ORA-01843: 
+			not a valid month alors que la requete d'insersion de date semble bonne:
+			Insert into CP40_DELEGA (CP40DATEDEBUT) values ('05/06/2008'); (bon normalement il faut faire un to_date...)
+			faire ca:select * from NLS_SESSION_PARAMETERS ; on voit alors une ligne avec ca: NLS_DATE_FORMAT DD-MON-RR. Faire ca: alter session set NLS_DATE_FORMAT = 'DD/MM/YYYY'; Verifier avec ca: select * from NLS_SESSION_PARAMETERS ;
+pour desactiver une contrainte:
+			 alter table TA_TABLE disable constraint TA_CONTRAINTE;
+pour reactiver une contrainte:
+			 alter table TA_TABLE enable constraint TA_CONTRAINTE;
+pour faire un export exporter de dump d'une base: 
+			aller sur dos faire: exemple:    (mettre C:\oracle\product\10.2.0\db_1\BIN\ avant maintenant car oracle 10g)
+			set ORACLE_SID=wecopeo01
+			exp wec_adm/wecprod1234@WECPRODOLD
+			exp wec_adm file=wec.dump log=wec.log consistent=yes compress=no buffer=100000
+			exp pae_adm/pae_adm_01@SIA.INT  
+			exp r08_r/r08_r_r08@GDV_PROD.WORLD
+			exp r08_adm/r08_adm_int01@GDV_INT10.WORLD
+			exp r08_adm/r08_adm@GDV_DEV.WORLD
+			exp pae_adm/pae_adm_01@PAE9INT.WORLD 
+			exp pae_adm/pae_adm_01@PAE9DEV.WORLD tables=(PAE99_LBL) ignore=y 
+			exp RC9_ADM/rc9_adm_01@RC9DEV.WORLD
+			exp RC9_ADM/rc9_adm_01@RC9INTEG.WORLD
+			exp opa_adm/opa_adm_01@OPA_DEV.WORLD
+			exp opa_adm/opa_adm_int01@OPA_INT.WORLD
+			exp opa_r/patazg3@OPA_RE7.WORLD
+			exp dwi_r/dwi_r@DWI_RE7.WORLD
+			exp dwi_adm/dwi_adm_01@DWI_DEV.WORLD
+			exp dwi_adm/dwi_adm_int01@DWI_INT.WORLD
+			exp RDV_R/g786fsdg3@RDVOPER.WORLD
+			exp dpfdev/dpfdev123@DPF_OLD_DEV.WORLD
+			exp adu_adm/adu_adm_int01@ADU_INT.WORLD
+			exp Cpi_adm/passtmp@CPI_RE7.WORLD
+			exp dpfdev/dpfdev123@DPF_DEV9.WORLD
+			exp dpf_adm/dpf_adm_01@DPF_DEV10.WORLD
+			exp mel_adm/mel_adm_01@MEL_DEV10.WORLD
+			exp pve_adm/pve_adm@PVE_DEV.WORLD
+			exp doa_adm/doa_adm_01@DOA_INT.WORLD 
+			exp pur_r/22prre7@PUR_RE7.WORLD tables=(PU01_DOCUMENT, PU01_DOCUMENT_TEST, PU02_TRACE) ignore=y
+      exp spo_adm/spo_adm_01@SPO_DEV.WORLD
+      exp wec_adm/wecprod1234@WEC_PROD.WORLD tables=(wec51_m_template,wec52_m_champs,wec55_d_valchm,wec72_m_chmsce,wec71_m_sce)
+      exp wec_adm/wec1234@WEC_DEV.WORLD tables=(wec51_m_template,wec52_m_champs,wec55_d_valchm,wec72_m_chmsce,wec71_m_sce)
+      exp wec_adm/wec1234@WEC_RE7.WORLD tables=(wec52_m_champs,wec72_m_chmsce)
+jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=hpsd1805.mc2.renault.fr)(PORT=1526)))(CONNECT_DATA=(SERVICE_NAME=meldevo01)))
+			il enregistre sous: C:\Documents and Settings\Administrator un fichier qui s'appelle par defaut EXPDAT.DMP
+
+pour faire un import:  (si ca ne marche pas, essayer sur TestScripts et un enviroennement env_10) 
+(mettre C:\oracle\product\10.2.0\db_1\BIN\ avant maintenant car oracle 10g)
+avant de pouvoir le faire peut etre faire des truncate
+      imp WEC_ADM/dsfh1u1w@WECPRODJBOSS
+			imp sia_adm/sia_adm_01@sia.INT tables=(TB0008_SAISIE, TBbalblabla)(optionnel: c'est si on veut limiter les imports à ddes tables) exemples:
+			imp pae_adm/pae_adm_01@PAE9INT.WORLD tables=(PAE99_LBL) ignore=y
+			pour importer que le data d'une table dejà existante mettre à la fin l'option ignore=y
+			imp r08_adm/r08_adm@GDV_DEV.WORLD tables=(R0801_AUTO_ROLE, R0802_ROLES, R0803_HISTORIQUE_VISITEURS, R0804_DELEGATIONS, R0805_SITES, R0806_ETABLISSEMENTS, R0807_PROFILS, R0808_BATIMENTS, R0809_POINTS_ACCUEIL, R0810_SERVICES_AUTORISES, R0811_SITES_SITES_AUTORISES, R0812_SITES_PLANS_ACCES, R0813_PREAVIS, R0814_VISITEURS_PREAVIS, R0815_ANOMALIES, R0816_ETATS_VISITEURS, R0899_GRP, R0899_IDE, R0899_LBL) ignore=y
+			imp r08_adm/r08_adm@GDV_DEV.WORLD ignore=y
+			imp r08_adm/r08_adm_int01@GDV_INT9.WORLD ignore=y
+			imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0001_INSTANCE) ignore=y
+     			INT
+            imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0001_INSTANCE) ignore=y
+            imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0014_USER) ignore=y
+            imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0002_ADMIN_INSTANCE) ignore=y
+            imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0011_THEME) ignore=y
+            imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0010_CATEGORIE) ignore=y
+            imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0007_SERIE) ignore=y
+            imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0003_STRUCT_INTERM) ignore=y
+            imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0005_SECTEUR) ignore=y
+            imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0012_VALIDE) ignore=y
+            imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0008_SAISIE) ignore=y
+            #imp cdd_adm/cdd_adm_01@CDD.INT tables=(CDD99_LBL) ignore=y
+            DEV:
+            imp cdd_adm/cdd_adm@CDD.DEV tables=(TB0001_INSTANCE) ignore=y
+            imp cdd_adm/cdd_adm@CDD.DEV tables=(TB0014_USER) ignore=y
+            imp cdd_adm/cdd_adm@CDD.DEV tables=(TB0002_ADMIN_INSTANCE) ignore=y
+            imp cdd_adm/cdd_adm@CDD.DEV tables=(TB0011_THEME) ignore=y
+            imp cdd_adm/cdd_adm@CDD.DEV tables=(TB0010_CATEGORIE) ignore=y
+            imp cdd_adm/cdd_adm@CDD.DEV tables=(TB0007_SERIE) ignore=y
+            imp cdd_adm/cdd_adm@CDD.DEV tables=(TB0003_STRUCT_INTERM) ignore=y
+            imp cdd_adm/cdd_adm@CDD.DEV tables=(TB0005_SECTEUR) ignore=y
+            imp cdd_adm/cdd_adm@CDD.DEV tables=(TB0012_VALIDE) ignore=y
+            imp cdd_adm/cdd_adm@CDD.DEV tables=(TB0008_SAISIE) ignore=y
+            #imp cdd_adm/cdd_adm@CDD.DEV tables=(CDD99_LBL) ignore=y
+			imp pae_adm/pae_adm_01@PAE9INT.WORLD tables=(TB0007_HISTOCTXT) ignore=y
+			imp opa_adm/opa_adm_01@OPA_AQL.WORLD
+			imp opa_adm/opa_adm_01@OPA_DEV.WORLD
+			imp opa_adm/opa_adm_int01@OPA_INT.WORLD
+			imp opa_adm/opa_adm_int01@OPAINT
+			imp dwi_adm/dwi_adm_01@DWI_DEV.WORLD  ignore=y
+			imp dwi_adm/dwi_adm_int01@DWI_INT.WORLD  ignore=y
+			imp rdv_adm/rdv_adm_01@RDVDEV.WORLD tables=(RDV99_LBL, RDV99_IDE, RDV99_GRP) ignore=y
+			imp dpf_adm/dpf_adm_01@DPF_DEV10.WORLD  ignore=y
+      imp adu_adm/adu_adm_01@ADU_DEV.WORLD  ignore=y
+      imp adu_adm/adu_adm_01@ADUDEV  ignore=y
+      imp pve_adm/pve_adm@PVE_DEV.WORLD  ignore=y
+      imp pve_adm/pve_adm_01@PVE_INT.WORLD  ignore=y
+      imp doa_adm/doa_adm_int01@DOA_INT10.WORLD  ignore=y
+      imp r08_adm/r08_adm@GDV_DEV10.WORLD ignore=y
+      imp r08_adm/r08_adm_01@GDV_DEV10RAJESH.WORLD ignore=y
+      imp pur_adm/pur_adm@PUR_DEV.WORLD ignore=y  tables=(PU02_TRACE, PU01_DOCUMENT, PU01_DOCUMENT_TEST)
+      imp spo_adm/spo_adm_01@SPO_DEV.WORLD ignore=y
+      imp wec_adm/wec1234@WEC_DEV.WORLD ignore=y  tables=(wec99_grp,wec99_ide,wec99_lbl)
+      
+sia.int est sur tnsnames.ora dans D:\oracle\ora92\network\ADMIN (pour savoir ou il est tapper: env | grep tns*)
+pour voir la liste des tablespaces: 
+				select * from usertable where tablespace name like ".."    
+				ou 
+				select * from user_tables where tablespace_name like '..'
+pour avoir la taille des tablespaces: 
+      mais il faut avoir les droits pour ca
+      SELECT a.tablespace_Name, A.Alloue, B.Occupe, C.Libre
+     FROM (select tablespace_name, sum(bytes)/1024/1024 AS ALLOUE from dba_data_files group by tablespace_name) a,
+     (select tablespace_name, Sum(bytes)/1024/1024 AS OCCUPE from dba_segments group by tablespace_name) b,
+     (select tablespace_name, Sum(bytes)/1024/1024 AS LIBRE from dba_free_space group by tablespace_name) c
+     WHERE a.tablespace_Name = b.tablespace_Name
+     AND c.Tablespace_Name = b.Tablespace_Name; 
+				
+si j'ai l'erreur ORA-01653:
+      ALTER DATABASE DECDEV DATAFILE 'DATA_FAITS' AUTOEXTEND ON
+      ALTER DATABASE dpfdevo01 DATAFILE 'DPF_D1' AUTOEXTEND ON
+
+AFAIRE continuer vers le haut à partir de là SQL oracle mysql DB2<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
+----------------------
+
+jobs : job :
+-- To submit a new job to the job queue, use the SUBMIT procedure in the DBMS_JOB package
+VARIABLE jobno number;
+begin
+-- DBMS_JOB.SUBMIT( job             OUT    BINARY_INTEGER,
+--                  what             IN    VARCHAR2,
+--                  next_date        IN    DATE DEFAULT SYSDATE,
+--                  interval         IN    VARCHAR2 DEFAULT 'null',
+--                  no_parse         IN    BOOLEAN DEFAULT FALSE)
+
+DBMS_JOB.SUBMIT(:jobno,
+                  'update_egn_history;',
+                  TRUNC(LAST_DAY(SYSDATE)),
+                  'TRUNC(LAST_DAY(SYSDATE))', 
+                  FALSE);
+            
+-- S'assurer que ceci est compatible avec contrat de service
+-- 'NEXT_DAY(TRUNC(LAST_DAY(SYSDATE)))', 
+-- SYSDATE+2/1440,   dans 2 min
+commit;
+end;
+/
+
+print jobno
+
+Suppression d'un job:
+begin
+dbms_job.remove(10);
+commit;
+end;
+/
+
+-- Execution d'un job
+begin
+dbms_job.run(64);
+commit;
+end;
+/
+
+-- Selection sur la table des jobs pour verification
+--SELECT job,
+--       what,
+--       last_date,
+--       last_sec,
+--       next_date,
+--       next_sec,
+--       interval
+--FROM user_jobs;
+
+SELECT job||';'||what||';'||last_date||';'||last_sec||';'||next_date||';'||next_sec||';'||interval
+FROM user_jobs;
+pour definir une queue, un job à  executer sous oracle:
+Après avoir lance les reqettes sql de creation du job et du process(voir ci dessous)
+sil faut signaler à  oracle qu'il y a une queue à  executer:
+
+su - oracle
+instance DB_EGN
+svrmgrl
+connect internal
+shutdown immediate
+
+dans une autre fenetre aller sous
+oracle/Instances/DB_EGN/dbs/
+faire vi initDB_EGN.ora ou ini.ora.. enfin celui qui nous interesse...
+rajouter tout à  la fin du fichier la ligne:
+JOB_QUEUE_PROCESS=1
+sauver et quitter vi: 
+:qw
+retourner à  la fenetre precedente et tapper
+startup pfile=/home00/oracle/Instances/DB_EGN/dbs/initDB_EGN.ora  (le chemin du fichier qu'on vient de modifier)
+
+-----------------------------
+fonctions : fonction :
+pour creer ou remplacer une fonction:
+        CREATE OR REPLACE FUNCTION LIST_DT as
+            (
+                in_atelier IN PVE_ATELIER.id%TYPE,
+                in_utilisateur IN PVE_UTILISATEUR.id%TYPE,
+                in_vh_pgm IN PVE_VEHICLE.pgm_vh%TYPE,
+                in_vh_atelier IN PVE_VEHICLE.atelier%TYPE,
+                in_vh_n_atelier IN PVE_VEHICLE.n_atelier%TYPE,
+                in_vh_n_ordre IN PVE_VEHICLE.n_ordre%TYPE,
+                in_row_begin IN NUMBER,
+                in_row_end IN NUMBER,
+                in_sort IN VARCHAR2,
+                in_order IN VARCHAR2,
+                in_type IN NUMBER,
+                in_lang IN PVE01_LBL.pve01idlng%TYPE,
+                        in_demandeurIPN IN PVE_UTILISATEUR.ipn%TYPE,
+                        in_dt_n IN PVE_DT.DT_N%TYPE,
+            in_fk_uet IN PVE_UTILISATEUR.ipn%TYPE
+         
+            )
+            RETURN RESULTSET
+        pour le corp de la fonction je ne sais pas comment on fait
+
+pour liberer de la memoire, on peut supprimer les fichiers .trc
+ps -ef | grep pmon pour voir quelles instances oracle tournent
+init: taille initiale de la base
+next: taille a a jouter a chaque depassement
+minextend: nombre de blocs initiaux (en general 1)
+maxextend: nombre de depassement autorise
+alter session set nls_length_semantics=char;
+pour passer le paramètre de base NLS_LENGTH_SEMANTICS soit positionne à char:
+    requete pour connaitre le nsl_legth_semantics: select * from NLS_DATABASE_PARAMETERS
+il faut toujours mettre ses VARCHAR2 en char parce que oracle s'adapte: si la base est en iso il va mettre byte et si elle est en  utf-8 il va mettre du char.
+sql requetes : requete :
+pour creer une sequence : sequences : 
+	CREATE SEQUENCE ma_sequence START WITH 5 INCREMENT BY 3;
+pour modifier une sequence:
+on peut faire alter sequence: 
+			alter sequence EDI03_FOURNISSEURS_SEQUENCE maxvalue 20000 cycle ou nocycle etc etc...
+			alter sequence ma_sequence increment by -41 maxvalue 100 cycle nocache;
+	on ne peut pas changer start with xxx mais solution de contournement ci dessous: (attention il faut tout jouer sinon il incrementera trop)
+			alter sequence pve_seq_profile_id increment by 4000;
+			select pve_seq_profile_id.nextval from dual;
+			alter sequence pve_seq_profile_id increment by 1;
+			
+pour connaitre les sequences: 
+			select SEQUENCE_NAME,LAST_NUMBER from user_sequences;
+			renvoit:
+			SEQUENCE_NAME                  LAST_NUMBER
+			------------------------------ -----------
+			SQ_ID_ANOMALIE_NTI_SEQ                2261
+			SQ_ID_ANOMALIE_UI_SEQ                    1
+			SQ_ID_DIFFUSION                          1
+			SQ_ID_DOMAINE_SEQ                        1
+			SQ_ID_EXPORT_SEQ                         1
+			SQ_ID_UI_SEQ                         12753
+			SQ_ID_USER_DIALO_SEQ                     1
+			SQ_LOT_SUR_BANDE_SEQ                    21
+			SQ_NTI_SEQ                               1
+			SQ_RDC_SEQ                               1
+			SQ_SPI_SEQ                              21
+
+pour avoir la valeur suivante d'une sequence: 
+			select SQ_ID_UI_SEQ.nextval from dual;
+pour avoir la valeur courrente current d'une sequence
+			select SQ_ID_UI_SEQ.currval from dual; (attention la valeur renvoyee n'est pas garantie car rien ne garantisse qu’un autre thread ne l’ait pas dejà fait evoluer.)
+			renvoit:
+			   NEXTVAL
+			----------
+			     12753
+     
+exemple d'utilisation de requete d'insertion avec les sequences: 
+				INSERT INTO PVE_UTILISATEUR (ID, IPN, FK_UET, FK_ATELIER, DELETED) VALUES (pve_seq_utilisateur_id.nextval, 'p036782',NULL,NULL,'N');
+				INSERT INTO PVE_L_PROFILE (ID, FK_PROFILE, FK_UTILISATEUR) VALUES(pve_seq_profile_id.nextval, 1, pve_seq_utilisateur_id.currval); (attention la valeur renvoyee n'est pas garantie car rien ne garantisse qu’un autre thread ne l’ait pas dejà fait evoluer.)
+
 
 sql pour la pagination (selectionner un numero limite de lignes)
     select * from ( select rownum rnum, a.* from (select N IMPORTE QUELLE REQUETE) a  where rownum <= 10) where rnum >= 5
@@ -7844,11 +8233,11 @@ requete pour faire un transpose (row ligne en colonnes) : (plusieurs techniques 
       bubu  binbin
       boubou  bibi
       boubou bobo
-  on veut ca :
-      baba : bibi, bobo, binbin
+  on veut ca:
+      baba: bibi, bobo, binbin
       bubu: bibi, binbin
       boubou: bibi, bobo
-  j'ai fait comme ca :(mais il parrait qu'avec pivot ou transpose ya mieux. voire aussi listagg)
+  j'ai fait comme ca:(mais il parrait qu'avec pivot ou transpose ya mieux. voire aussi listagg)
           select  count(wec51_nom), wec51_nom, wec51_active, wec51_class 
             , zz.wec56_nomphase
             , aa.wec56_nomphase
@@ -7881,371 +8270,7 @@ requete pour faire un transpose (row ligne en colonnes) : (plusieurs techniques 
             left join wec56_m_valphase ll on ll.wec56_idtemplate = wec51_id and ll.wec56_id=12
             left join wec56_m_valphase mm on mm.wec56_idtemplate = wec51_id and mm.wec56_id=13
             group by wec51_nom, wec51_active, wec51_class, zz.wec56_nomphase, aa.wec56_nomphase, bb.wec56_nomphase, cc.wec56_nomphase, dd.wec56_nomphase, ee.wec56_nomphase, ff.wec56_nomphase, gg.wec56_nomphase, hh.wec56_nomphase, ii.wec56_nomphase, jj.wec56_nomphase, kk.wec56_nomphase, ll.wec56_nomphase, mm.wec56_nomphase order by wec51_ACTIVE, wec51_nom
-les synonymes oracle : schemas shemas : 
-      un user dpf_r peut avoir les droits (grant) en lecture voir visible sur les tables : 
-          quand on affiche avec un client la liste des tables il peut les voir sous le fichier d'un autre user qui a les droit adm par ex.
-          Mais quand on fait une requete ca ne marchera pas sauf si on ecrit les requetees comme ca : dpf_adm.MaTable... etc...
-          dans ce cas si on ne veut pas avoir a faire ca il faut defninir les synonyme = liens vers la table de l'adm
-          CREATE or replace SYNONYM  DPF01_PAIEMENTS FOR dpf_adm.DPF01_PAIEMENTS
-pour voir tous les users schemas shemas
-  SELECT username FROM all_users ORDER BY username;
-pour voir toutes les tables invisibles :
-    describe all_tables; select table_name from all_tables;          
-tnsnames.ora se trouve sous C:/Oracle/Ora81/network/ADMIN (pour savoir ou il est tapper: env | grep tns*)
-ou : c:/donnees/Oracle... etc
-ou D:\oracle\ora92\network\ADMIN
-exemple de tnsnames : 
-        DPF_NEW_DEV.WORLD = 
-          (DESCRIPTION=
-            (ADDRESS=
-              (COMMUNITY=TCPIP.world)(PROTOCOL=TCP)(Host=hpsd1805.mc2.renault.fr )(Port=1526)
-            )(CONNECT_DATA=
-              (service_name=dpfdevo01)
-            )
-          )
-          
-        ADU_INT.WORLD = 
-          (DESCRIPTION=
-            (ADDRESS=
-              (COMMUNITY=TCPIP.world)(PROTOCOL=TCP)(Host=hpsd1805.mc2.renault.fr )(Port=1567)
-            )(CONNECT_DATA=
-              (service_name=aduinto01 )
-            )
-          )
-          
-si message ORA-12154 TNS could not resolve service name : c juste parce que peut etre il ya un espace dans le fichier TNS
-
-oracle: select * from V$instance ou select * from V$VERSION pour connaitre la version oracle et infos de la base de donnee
-
-oracle: sous instance/DB_EGN/audit/xxx.amd ce sont des fichiers de logs on peut les effacer.
-How can I determine the charactersets (charset) that I have for my version of Oracle? encodage
-			  SQL> SELECT UNIQUE VALUE FROM V$NLS_VALID_VALUES WHERE PARAMETER ='CHARACTERSET'; 
-			SQL > SELECT * FROM V$NLS_PARAMETERS 
-      ou
-       SELECT * FROM NLS_DATABASE_PARAMETERS
-Pour vider delete une table sans possibilite de rollback :
-		 plus efficace rapide etc.. suppression systeme : faire Truncate table nomdelatble; c'est comme un delete mais plus efficace et pas de commit possible. Il faut avoir des droit pour pouvoir faire ca.
-Si on a une erreur: ORA-01843: 
-			not a valid month alors que la requete d'insersion de date semble bonne:
-			Insert into CP40_DELEGA (CP40DATEDEBUT) values ('05/06/2008'); (bon normalement il faut faire un to_date...)
-			faire ca:select * from NLS_SESSION_PARAMETERS ; on voit alors une ligne avec ca: NLS_DATE_FORMAT DD-MON-RR. Faire ca: alter session set NLS_DATE_FORMAT = 'DD/MM/YYYY'; Verifier avec ca: select * from NLS_SESSION_PARAMETERS ;
-			pour desactiver une contrainte:
-			 alter table TA_TABLE disable constraint TA_CONTRAINTE;
-pour reactiver une contrainte:
-			 alter table TA_TABLE enable constraint TA_CONTRAINTE;
-pour faire un export de dump d'une base: 
-			aller sur dos faire: exemple :    (mettre C:\oracle\product\10.2.0\db_1\BIN\ avant maintenant car oracle 10g)
-			set ORACLE_SID=wecopeo01
-			exp wec_adm/wecprod1234@WECPRODOLD
-			exp wec_adm file=wec.dump log=wec.log consistent=yes compress=no buffer=100000
-			exp pae_adm/pae_adm_01@SIA.INT  
-			exp r08_r/r08_r_r08@GDV_PROD.WORLD
-			exp r08_adm/r08_adm_int01@GDV_INT10.WORLD
-			exp r08_adm/r08_adm@GDV_DEV.WORLD
-			exp pae_adm/pae_adm_01@PAE9INT.WORLD 
-			exp pae_adm/pae_adm_01@PAE9DEV.WORLD tables=(PAE99_LBL) ignore=y 
-			exp RC9_ADM/rc9_adm_01@RC9DEV.WORLD
-			exp RC9_ADM/rc9_adm_01@RC9INTEG.WORLD
-			exp opa_adm/opa_adm_01@OPA_DEV.WORLD
-			exp opa_adm/opa_adm_int01@OPA_INT.WORLD
-			exp opa_r/patazg3@OPA_RE7.WORLD
-			exp dwi_r/dwi_r@DWI_RE7.WORLD
-			exp dwi_adm/dwi_adm_01@DWI_DEV.WORLD
-			exp dwi_adm/dwi_adm_int01@DWI_INT.WORLD
-			exp RDV_R/g786fsdg3@RDVOPER.WORLD
-			exp dpfdev/dpfdev123@DPF_OLD_DEV.WORLD
-			exp adu_adm/adu_adm_int01@ADU_INT.WORLD
-			exp Cpi_adm/passtmp@CPI_RE7.WORLD
-			exp dpfdev/dpfdev123@DPF_DEV9.WORLD
-			exp dpf_adm/dpf_adm_01@DPF_DEV10.WORLD
-			exp mel_adm/mel_adm_01@MEL_DEV10.WORLD
-			exp pve_adm/pve_adm@PVE_DEV.WORLD
-			exp doa_adm/doa_adm_01@DOA_INT.WORLD 
-			exp pur_r/22prre7@PUR_RE7.WORLD tables=(PU01_DOCUMENT, PU01_DOCUMENT_TEST, PU02_TRACE) ignore=y
-      exp spo_adm/spo_adm_01@SPO_DEV.WORLD
-      exp wec_adm/wecprod1234@WEC_PROD.WORLD tables=(wec51_m_template,wec52_m_champs,wec55_d_valchm,wec72_m_chmsce,wec71_m_sce)
-      exp wec_adm/wec1234@WEC_DEV.WORLD tables=(wec51_m_template,wec52_m_champs,wec55_d_valchm,wec72_m_chmsce,wec71_m_sce)
-      exp wec_adm/wec1234@WEC_RE7.WORLD tables=(wec52_m_champs,wec72_m_chmsce)
-			
-
-
-jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=hpsd1805.mc2.renault.fr)(PORT=1526)))(CONNECT_DATA=(SERVICE_NAME=meldevo01)))
-			il enregistre sous: C:\Documents and Settings\Administrator un fichier qui s'appelle par defaut EXPDAT.DMP
-
-pour faire un import:  (si ca ne marche pas, essayer sur TestScripts et un enviroennement env_10) 
-(mettre C:\oracle\product\10.2.0\db_1\BIN\ avant maintenant car oracle 10g)
-avant de pouvoir le faire peut etre faire des truncate
-      imp WEC_ADM/dsfh1u1w@WECPRODJBOSS
-			imp sia_adm/sia_adm_01@sia.INT tables=(TB0008_SAISIE, TBbalblabla)(optionnel: c'est si on veut limiter les imports à ddes tables) exemples:
-			imp pae_adm/pae_adm_01@PAE9INT.WORLD tables=(PAE99_LBL) ignore=y
-			pour importer que le data d'une table dejà existante mettre à la fin l'option ignore=y
-			imp r08_adm/r08_adm@GDV_DEV.WORLD tables=(R0801_AUTO_ROLE, R0802_ROLES, R0803_HISTORIQUE_VISITEURS, R0804_DELEGATIONS, R0805_SITES, R0806_ETABLISSEMENTS, R0807_PROFILS, R0808_BATIMENTS, R0809_POINTS_ACCUEIL, R0810_SERVICES_AUTORISES, R0811_SITES_SITES_AUTORISES, R0812_SITES_PLANS_ACCES, R0813_PREAVIS, R0814_VISITEURS_PREAVIS, R0815_ANOMALIES, R0816_ETATS_VISITEURS, R0899_GRP, R0899_IDE, R0899_LBL) ignore=y
-			imp r08_adm/r08_adm@GDV_DEV.WORLD ignore=y
-			imp r08_adm/r08_adm_int01@GDV_INT9.WORLD ignore=y
-			imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0001_INSTANCE) ignore=y
-     			INT
-            imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0001_INSTANCE) ignore=y
-            imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0014_USER) ignore=y
-            imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0002_ADMIN_INSTANCE) ignore=y
-            imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0011_THEME) ignore=y
-            imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0010_CATEGORIE) ignore=y
-            imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0007_SERIE) ignore=y
-            imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0003_STRUCT_INTERM) ignore=y
-            imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0005_SECTEUR) ignore=y
-            imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0012_VALIDE) ignore=y
-            imp cdd_adm/cdd_adm_01@CDD.INT tables=(TB0008_SAISIE) ignore=y
-            #imp cdd_adm/cdd_adm_01@CDD.INT tables=(CDD99_LBL) ignore=y
-            DEV:
-            imp cdd_adm/cdd_adm@CDD.DEV tables=(TB0001_INSTANCE) ignore=y
-            imp cdd_adm/cdd_adm@CDD.DEV tables=(TB0014_USER) ignore=y
-            imp cdd_adm/cdd_adm@CDD.DEV tables=(TB0002_ADMIN_INSTANCE) ignore=y
-            imp cdd_adm/cdd_adm@CDD.DEV tables=(TB0011_THEME) ignore=y
-            imp cdd_adm/cdd_adm@CDD.DEV tables=(TB0010_CATEGORIE) ignore=y
-            imp cdd_adm/cdd_adm@CDD.DEV tables=(TB0007_SERIE) ignore=y
-            imp cdd_adm/cdd_adm@CDD.DEV tables=(TB0003_STRUCT_INTERM) ignore=y
-            imp cdd_adm/cdd_adm@CDD.DEV tables=(TB0005_SECTEUR) ignore=y
-            imp cdd_adm/cdd_adm@CDD.DEV tables=(TB0012_VALIDE) ignore=y
-            imp cdd_adm/cdd_adm@CDD.DEV tables=(TB0008_SAISIE) ignore=y
-            #imp cdd_adm/cdd_adm@CDD.DEV tables=(CDD99_LBL) ignore=y
-			imp pae_adm/pae_adm_01@PAE9INT.WORLD tables=(TB0007_HISTOCTXT) ignore=y
-			imp opa_adm/opa_adm_01@OPA_AQL.WORLD
-			imp opa_adm/opa_adm_01@OPA_DEV.WORLD
-			imp opa_adm/opa_adm_int01@OPA_INT.WORLD
-			imp opa_adm/opa_adm_int01@OPAINT
-			imp dwi_adm/dwi_adm_01@DWI_DEV.WORLD  ignore=y
-			imp dwi_adm/dwi_adm_int01@DWI_INT.WORLD  ignore=y
-			imp rdv_adm/rdv_adm_01@RDVDEV.WORLD tables=(RDV99_LBL, RDV99_IDE, RDV99_GRP) ignore=y
-			imp dpf_adm/dpf_adm_01@DPF_DEV10.WORLD  ignore=y
-      imp adu_adm/adu_adm_01@ADU_DEV.WORLD  ignore=y
-      imp adu_adm/adu_adm_01@ADUDEV  ignore=y
-      imp pve_adm/pve_adm@PVE_DEV.WORLD  ignore=y
-      imp pve_adm/pve_adm_01@PVE_INT.WORLD  ignore=y
-      imp doa_adm/doa_adm_int01@DOA_INT10.WORLD  ignore=y
-      imp r08_adm/r08_adm@GDV_DEV10.WORLD ignore=y
-      imp r08_adm/r08_adm_01@GDV_DEV10RAJESH.WORLD ignore=y
-      imp pur_adm/pur_adm@PUR_DEV.WORLD ignore=y  tables=(PU02_TRACE, PU01_DOCUMENT, PU01_DOCUMENT_TEST)
-      imp spo_adm/spo_adm_01@SPO_DEV.WORLD ignore=y
-      imp wec_adm/wec1234@WEC_DEV.WORLD ignore=y  tables=(wec99_grp,wec99_ide,wec99_lbl)
-      
-sia.int est sur tnsnames.ora dans D:\oracle\ora92\network\ADMIN (pour savoir ou il est tapper: env | grep tns*)
-pour creer une sequence: 
-	CREATE SEQUENCE ma_sequence START WITH 5 INCREMENT BY 3;
-pour modifier une sequence:
-on peut faire alter sequence: 
-			alter sequence EDI03_FOURNISSEURS_SEQUENCE maxvalue 20000 cycle ou nocycle etc etc...
-			alter sequence ma_sequence increment by -41 maxvalue 100 cycle nocache;
-	on ne peut pas changer start with xxx mais solution de contournement ci dessous: (attention il faut tout jouer sinon il incrementera trop)
-			alter sequence pve_seq_profile_id increment by 4000;
-			select pve_seq_profile_id.nextval from dual;
-			alter sequence pve_seq_profile_id increment by 1;
-			
-pour connaitre les sequences: 
-			select SEQUENCE_NAME,LAST_NUMBER from user_sequences;
-			renvoit:
-			SEQUENCE_NAME                  LAST_NUMBER
-			------------------------------ -----------
-			SQ_ID_ANOMALIE_NTI_SEQ                2261
-			SQ_ID_ANOMALIE_UI_SEQ                    1
-			SQ_ID_DIFFUSION                          1
-			SQ_ID_DOMAINE_SEQ                        1
-			SQ_ID_EXPORT_SEQ                         1
-			SQ_ID_UI_SEQ                         12753
-			SQ_ID_USER_DIALO_SEQ                     1
-			SQ_LOT_SUR_BANDE_SEQ                    21
-			SQ_NTI_SEQ                               1
-			SQ_RDC_SEQ                               1
-			SQ_SPI_SEQ                              21
-			
-
-pour avoir la valeur suivante d'une sequence: 
-			select SQ_ID_UI_SEQ.nextval from dual;
-pour avoir la valeur courrente current d'une sequence
-			select SQ_ID_UI_SEQ.currval from dual; (attention la valeur renvoyee n'est pas garantie car rien ne garantisse qu’un autre thread ne l’ait pas dejà fait evoluer.)
-			renvoit:
-			   NEXTVAL
-			----------
-			     12753
-     
-exemple d'utilisation de requete d'insertion avec les sequences: 
-				INSERT INTO PVE_UTILISATEUR (ID, IPN, FK_UET, FK_ATELIER, DELETED) VALUES (pve_seq_utilisateur_id.nextval, 'p036782',NULL,NULL,'N');
-				INSERT INTO PVE_L_PROFILE (ID, FK_PROFILE, FK_UTILISATEUR) VALUES(pve_seq_profile_id.nextval, 1, pve_seq_utilisateur_id.currval); (attention la valeur renvoyee n'est pas garantie car rien ne garantisse qu’un autre thread ne l’ait pas dejà fait evoluer.)
-
-
-pour voir la liste des tablespaces: 
-				select * from usertable where tablespace name like ".."    
-				ou 
-				select * from user_tables where tablespace_name like '..'
-pour avoir la taille des tablespaces : 
-      mais il faut avoir les droits pour ca
-      SELECT a.tablespace_Name, A.Alloue, B.Occupe, C.Libre
-     FROM (select tablespace_name, sum(bytes)/1024/1024 AS ALLOUE from dba_data_files group by tablespace_name) a,
-     (select tablespace_name, Sum(bytes)/1024/1024 AS OCCUPE from dba_segments group by tablespace_name) b,
-     (select tablespace_name, Sum(bytes)/1024/1024 AS LIBRE from dba_free_space group by tablespace_name) c
-     WHERE a.tablespace_Name = b.tablespace_Name
-     AND c.Tablespace_Name = b.Tablespace_Name; 
-				
-si j'ai l'erreur ORA-01653:
-      ALTER DATABASE DECDEV DATAFILE 'DATA_FAITS' AUTOEXTEND ON
-      ALTER DATABASE dpfdevo01 DATAFILE 'DPF_D1' AUTOEXTEND ON 
-pour afficher le contenu des procedures stockees procedure stockee (elles peuvent être dans des packages): exemple: (chaque ligne correspond à une ligne du texte de la proc)
-        SELECT * FROM all_source WHERE  OWNER like 'PVE_ADM' and text like '%FUNCTION%'
-        SELECT * FROM all_source WHERE  OWNER not like 'SYS' and name = 'PVE_DT_DEMANDE' and type = 'PACKAGE BODY' and TEXT like 'FUNCTION LIST_DT%'
-        SELECT * FROM all_source WHERE  OWNER not like 'SYS' and name = 'PVE_DT_DEMANDE' and type = 'PACKAGE BODY' and line > 567 and line < 609 ORDER BY line
-
-----------------------
-pour definir une queue à  executer sous oracle:
-Après avoir lance les reqettes sql de creation du job et du process(voir ci dessous)
-sil faut signaler à  oracle qu'il y a une queue à  executer:
-
-su - oracle
-instance DB_EGN
-svrmgrl
-connect internal
-shutdown immediate
-
-dans une autre fenetre aller sous
-oracle/Instances/DB_EGN/dbs/
-faire vi initDB_EGN.ora ou ini.ora.. enfin celui qui nous interesse...
-rajouter tout à  la fin du fichier la ligne:
-JOB_QUEUE_PROCESS=1
-
-sauver et quitter vi: 
-:qw
-
-retourner à  la fenetre precedente et tapper
-startup pfile=/home00/oracle/Instances/DB_EGN/dbs/initDB_EGN.ora  (le chemin du fichier qu'on vient de modifier)
-
----------------------------
--- To submit a new job to the job queue, use the SUBMIT procedure in the DBMS_JOB package
-
-VARIABLE jobno number;
-
-begin
-
--- DBMS_JOB.SUBMIT( job             OUT    BINARY_INTEGER,
---                  what             IN    VARCHAR2,
---                  next_date        IN    DATE DEFAULT SYSDATE,
---                  interval         IN    VARCHAR2 DEFAULT 'null',
---                  no_parse         IN    BOOLEAN DEFAULT FALSE)
-
-DBMS_JOB.SUBMIT(  :jobno,
-                  'update_egn_history;',
-                  TRUNC(LAST_DAY(SYSDATE)),
-                  'TRUNC(LAST_DAY(SYSDATE))', 
-                  FALSE);
-            
--- S'assurer que ceci est compatible avec contrat de service
--- 'NEXT_DAY(TRUNC(LAST_DAY(SYSDATE)))', 
--- SYSDATE+2/1440,   dans 2 min
-              
-
-commit;
-end;
-/
-
-print jobno
-
-
---------------------
--- Suppression d'un job
-begin
-dbms_job.remove(10);
-commit;
-end;
-/
-
--- Execution d'un job
-begin
-dbms_job.run(64);
-commit;
-end;
-/
-
--- Selection sur la table des jobs pour verification
---SELECT job,
---       what,
---       last_date,
---       last_sec,
---       next_date,
---       next_sec,
---       interval
---FROM user_jobs;
-
-SELECT job||';'||what||';'||last_date||';'||last_sec||';'||next_date||';'||next_sec||';'||interval
-FROM user_jobs;
-
------------------------------
-pour creer ou remplacer une fonction :
-        CREATE OR REPLACE FUNCTION LIST_DT as
-            (
-                in_atelier IN PVE_ATELIER.id%TYPE,
-                in_utilisateur IN PVE_UTILISATEUR.id%TYPE,
-                in_vh_pgm IN PVE_VEHICLE.pgm_vh%TYPE,
-                in_vh_atelier IN PVE_VEHICLE.atelier%TYPE,
-                in_vh_n_atelier IN PVE_VEHICLE.n_atelier%TYPE,
-                in_vh_n_ordre IN PVE_VEHICLE.n_ordre%TYPE,
-                in_row_begin IN NUMBER,
-                in_row_end IN NUMBER,
-                in_sort IN VARCHAR2,
-                in_order IN VARCHAR2,
-                in_type IN NUMBER,
-                in_lang IN PVE01_LBL.pve01idlng%TYPE,
-                        in_demandeurIPN IN PVE_UTILISATEUR.ipn%TYPE,
-                        in_dt_n IN PVE_DT.DT_N%TYPE,
-            in_fk_uet IN PVE_UTILISATEUR.ipn%TYPE
-         
-            )
-            RETURN RESULTSET
-        pour le corp de la fonction je ne sais pas comment on fait
-pour creer une procedure:
-
-CREATE OR REPLACE procedure update_egn_history
-is
-
-cursor stats is select METIER, SEMAINES from egn_stat where SEMAINES !=0;
-	num_ligne NUMBER(1);
-	semaine_prec NUMBER(3);
-	semaine_suiv NUMBER(3);
-	metier VARCHAR2(80);// ici ca veut dire qu'il met 200 bytes (pas 200 caracteres) si on veut 200 caracters il faut mettre VARCHAR2(200 char) sous reserve que le paramètre de base NLS_LENGTH_SEMANTICS soit positionne à  sa valeur defaut : BYTE).
-	semaines NUMBER;
-
-begin
-
-	select count(*) into num_ligne from egn_historique where rownum <2;
-	if num_ligne > 0 then
-	   	select max(semaine) into semaine_prec from egn_historique;
-	else
-	semaine_prec:= 0;
-	end if;
-	semaine_suiv:=semaine_prec+1;
-	open stats;
-	LOOP
-		fetch stats into metier, semaines;
-		exit when stats%NOTFOUND;
-			INSERT INTO egn_historique (METIER, SEMAINE, VALEUR) values (metier, semaine_suiv, semaines);
-	END LOOP;
-	close stats;
-	UPDATE egn_stat set semaines=0;
-COMMIT;
-end;
-/
-
-On ne peut pas modifier juste une fonction d'une procedure, il faut la compiler en entier
------------------------------
-pour passer le paramètre de base NLS_LENGTH_SEMANTICS soit positionne à  sa char:
-			alter session set nls_length_semantics=char;
-			requete pour connaitre le nsl_legth_semantics : select * from NLS_DATABASE_PARAMETERS
-			il faut toujours mettre ses VARCHAR2 en char parce que oracle s'adapte: si la base est en iso il va mettre byte et si elle est en  utf-8 il va mettre du char.
-	SQL*Loader sqlloader sqloader: (command sqlldr ou sqldr je crois)
-		permet de charger des fichiers textes dans la base de donnee. Voir sur internet
-pour liberer de la memoire, on peut supprimer les fichiers .trc
-ps -ef | grep pmon pour voir quelles instances oracle tournent
-ps -ef donne aussi la date de debut d'execution du process
-init: taille initiale de la base
-next: taille a a jouter a chaque depassement
-minextend: nombre de blocs initiaux (en general 1)
-maxextend: nombre de depassement autorise
-				  t_ui tui,
+				  select t_ui tui,
 				  t_ui_anomalie ano
 				    WHERE tlich.id_import = outer_query.id_import
 				    AND ano.IGNORE_ANOMALIE_UI = 1) +
@@ -8266,12 +8291,20 @@ maxextend: nombre de depassement autorise
 			  ORDER BY ID_LG
 			ASC) inner_query
 			  WHERE ROWNUM <= (20)) outer_query  WHERE outer_query.query_rownum >= (1)
-     
-PLSQL Oracle : 
-pour ajouter une colonne
-    ALTER TABLE WECM55_STORAGE_IAO_CONTROL ADD BUDGET VARCHAR2(20) (ce sera null par defaut si table existe deja etc...)
-pour afficher le  descriptif d'une table
-    desc  WECM55_STORAGE_IAO_CONTROL 
+manière plus simple: 
+update T_TITRE set N_UI=to_char(ID_UI_SEQ);        
+sql: Cast pour convertir un type en un autre:
+CAST ( expression AS data_type [ (length ) ])
+
+-----------------------------
+SQL*Loader :sqlloader :sqloader: (command sqlldr ou sqldr je crois)
+		permet de charger des fichiers textes dans la base de donnee. Voir sur internet
+PLSQL :Oracle : procedure : procedure stockee : proc :
+pour afficher le contenu des procedures stockees procedure stockee (elles peuvent être dans des packages): exemple: (chaque ligne correspond à une ligne du texte de la proc)
+        SELECT * FROM all_source WHERE  OWNER like 'PVE_ADM' and text like '%FUNCTION%'
+        SELECT * FROM all_source WHERE  OWNER not like 'SYS' and name = 'PVE_DT_DEMANDE' and type = 'PACKAGE BODY' and TEXT like 'FUNCTION LIST_DT%'
+        SELECT * FROM all_source WHERE  OWNER not like 'SYS' and name = 'PVE_DT_DEMANDE' and type = 'PACKAGE BODY' and line > 567 and line < 609 ORDER BY line
+On ne peut pas modifier juste une fonction d'une procedure, il faut la compiler en entier 
 declare  
   iduiseq t_titre.id_ui_seq%TYPE;
   cursor uiseq (iduiseq NUMBER) is select id_ui_seq from t_titre;
@@ -8310,230 +8343,41 @@ ou bien
 					       update t_titre set n_ui=iduiseq where id_ui_seq =iduiseq;
 					    END LOOP;
 					END;
+ autre exemple:
+ pour creer une procedure:
 
-manière plus simple: 
-update T_TITRE set N_UI=to_char(ID_UI_SEQ);        
+CREATE OR REPLACE procedure update_egn_history
+is
 
-sql: Cast pour convertir un type en un autre:
-CAST ( expression AS data_type [ (length ) ])
+cursor stats is select METIER, SEMAINES from egn_stat where SEMAINES !=0;
+	num_ligne NUMBER(1);
+	semaine_prec NUMBER(3);
+	semaine_suiv NUMBER(3);
+	metier VARCHAR2(80);// ici ca veut dire qu'il met 200 bytes (pas 200 caracteres) si on veut 200 caracters il faut mettre VARCHAR2(200 char) sous reserve que le paramètre de base NLS_LENGTH_SEMANTICS soit positionne à  sa valeur defaut: BYTE).
+	semaines NUMBER;
 
+begin
+
+	select count(*) into num_ligne from egn_historique where rownum <2;
+	if num_ligne > 0 then
+	   	select max(semaine) into semaine_prec from egn_historique;
+	else
+	semaine_prec:= 0;
+	end if;
+	semaine_suiv:=semaine_prec+1;
+	open stats;
+	LOOP
+		fetch stats into metier, semaines;
+		exit when stats%NOTFOUND;
+			INSERT INTO egn_historique (METIER, SEMAINE, VALEUR) values (metier, semaine_suiv, semaines);
+	END LOOP;
+	close stats;
+	UPDATE egn_stat set semaines=0;
+COMMIT;
+end;
+/
 pour faire des requetes avec procedure stockee de type *.blabla faire: where description like "'%'||?||'%'"
-
-paint :
-    pour que la selection soit transparente transparante
-        bouton selectionner> choisir transparant
-Excell : excel :
-    si sur exell il me marque toujours #VALEUR! verifier qu'il n'y a pas d'espace dans les cases que j'ai selectionne pour faire mon calcul.
-  figer les volets Affichage > figer les volets
-pour masquer le quadrillage lignes, colonnes:
-  Outils > Options> cocher quadrillage  
-Si les lignes ne s'ajustent pas automatiquement: tout ne rentre pas dans la case
-  c'est parce que j'ai ecrit en gras et en gras ca prend plus de place dans la case mais pour autant la ligne n'ajuste pas sa hauteur: solution : augmenter un peu la taille de la police
-fichier locke: apparition du nom de la personne qui locke. 
-        Pour que votre nom apparaisse en clair, au lieu de votre IPN, lors d'une tentative d'accès 9 à un fichier Office (comme dans le message ci-dessous), cliquez sur "Outils - Options - General" dans Excel (ou "Outils - Options - Utilisateur" dans Word), et saisissez votre nom dans le champ "Nom d'utilisateur".
-pour faire des mises en forme conditionnelles illimitees
-		      voir le fichier MFC rapide illimite.xls que j'ai mis dans mon repertoire Laurent.
-		      faire une feuille "MFC" et copier la macro suivante dans thisWorkbook (Outil>macro>visualBasicEditor>trouver thisWorkbook dans le panel a gauche)
-                                        		      Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
-                                            Dim i As Integer, j As Long, Mfc As FormatCondition, c As Range, Ws1 As Worksheet
-                                            On Error GoTo fin ' en cas de mauvaise manipulation, ça plante sur l'ordre suivant
-                                            Application.EnableEvents = False
-                                            Set Ws1 = Sheets("MFC")
-                                            For i = 1 To Target.FormatConditions.Count
-                                                Set Mfc = Target.FormatConditions(i)
-                                                If UCase(Left(Mfc.Formula1, 7)) = "=MA_MFC" Then
-                                                    Ws1.Range("A1").Value = Target.Value
-                                                    Set c = Nothing
-                                                    For j = 2 To Ws1.Range("A65536").End(xlUp).Row
-                                                        If Ws1.Range("A" & j) = True Then
-                                                            Set c = Ws1.Range("A" & j)
-                                                            Exit For
-                                                        End If
-                                                    Next j
-                                                    If c Is Nothing Then Set c = Ws1.Range("A1")
-                                                    c.Copy
-                                                    Target.PasteSpecial (xlPasteFormats)
-                                                    Application.CutCopyMode = False
-                                                End If
-                                            Next i
-                                            Application.EnableEvents = True
-                                        fin:
-                                            On Error GoTo 0
-                                        End Sub
-pour atteindre une cellule nommee: 
-	Ctrl +T
-pour avoir des chiffres à la place des lettres dans les colonnes
-	outils>options> onglet general > style de referentiel
-	2010: fichier > aide > options > formules >style de reference
-
-premiers caracteres substring Droite
-    STXT
-
-pour savoir si une cellule est en erreur: 
-	=esterreur(Cellule)
-pour faire un diff entre deux dates: 
-		soustraire deux dates: donner le nombre d'annees entre deux dates: (delta difference entre deux dates)
-			15/10/2008 01/09/1974
-			=ANNEE(A1) =ANNEE(B1) 
-			=SI(MOIS(A1)<MOIS(B1);ANNEE(A1)-ANNEE(B1)-1;ANNEE(A1)-ANNEE(B1))
-	en jours c'est simple : celluledate1-celluledate2
-	diff entre deux dates sans les weekend (possibilite sans les jours feries)
-	=NETWORKDAYS(O5,N5) (anglais)
-	=NB.JOURS.OUVRES(...)
-Pour ajouter des jours a une date
-	le plus simple c'est tout simplement d'avoir la valeur en chiffre de la date a laquelle on veut ajouter des jours: exemple:=DATEVAL("04/01/2010") (si on veut faire reference à une cellule qui contient une date, celle ci doit etre au format texte)
-	ensuite sur la celle suivante on met: =AD38+6 (ici je rajoute six jours). Changer le format de cette cellule en format date. Thats all.
-si j'ai des dièses #### partout dans une cellule:
-			c'est parce que mon champ texte est trop gros.
-      soit je set le format de ma cellule à standard et la ca marche, 
-      soit on ne peux rien y faire sauf soit augmenter colonne mais ne marche pas si plus de 255 caractères.
-      Sinon reduire taille du texte à 255
-si mon clavier est passe en mode qwerty:
-		 faire Maj + Alt et il repasse en mode azerty
-pour faire une macro qui recalcul tout à l'ouverture du fichier
-				Sub auto_open()
-				'
-				' Macro1 Macro
-				' Macro enregistree le 15/08/2008 par p040183
-				'
-				'
-				    Application.MaxChange = 0.001
-				    ActiveWorkbook.PrecisionAsDisplayed = True
-				    
-				    Application.CalculateFull
-				   
-				End Sub
-chiffres/lettres modifier l'ordonne:
-      outils > options > references > style de referenceL1CI
-RechercheVerticale search vertical
-    =VLOOKUP(A2;'Matcle Infos'!A:B;1;FALSE) /// attention il faut que les cellules soient au format texte des le départ
-    ou 
-    =VLOOKUP(G2*1;E1:E2321;1;TRUE) (multiplier par 1 si ca marche pas)
-    =RECHERCHEV(...) 
-
-empecher excel de creer des colonnes separateur separation
-  toujours convertir et decocher les cases
-
-
-WASCE21 :
-    repository est dans: 
-      C:\WASCE 2.1.0.1\ServerCommunityEdition_v2101\repository\default
-    pour que les jsp se rechargement plus vite sans avoir a tout recompiler:
-        copier la jsp que j'ai modifie dans le repertoire repository et aller dans catalina/web.xml et modifier les parametres: developpent et checkInterval
-        double cliquer sur mon serveur et dans le pave publish : ne pas publier automatiquement
-WASCe :
-si j'ai le message : 
-            Web application  ...  does not contain a WEB-INF/geronimo-web.xml deployment plan.  This may or may not be a problem, depending on whether you have things like resource references that need to be resolved.  You can also give the deployer a separate deployment plan file on the command line.
-            rajouter le facet community 1.1
-            et verifier que geronimo-application.xml et geronimo-web.xml n'ont pas le meme nom et sont coherants     
-pour supprimer une connection à une database : 
-    menu J2EE Connectors
- difference entre local et environnement de dev:
-			1) Dans siaWeb/WebContent/geronimo-web.xml :
-			En local :
-			<nam:resource-ref>
-			    <nam:ref-name>jdbc/Datasource</nam:ref-name>
-			    <nam:resource-link>siaDatasource</nam:resource-link>
-			  </nam:resource-ref>
-			  <security-realm-name>ARCA</security-realm-name>
-			En dev :
-			<nam:resource-ref>
-			    <nam:ref-name>jdbc/Datasource</nam:ref-name>
-			    <nam:resource-link>sia/jdbc/Datasource</nam:resource-link>
-			  </nam:resource-ref>
-			  <security-realm-name>arca</security-realm-name> 
-			2) earcontent ne doit pas être sous SVN mais META-INF oui.
-si cache was ce fait chier: 
-	regarder C:\Program Files\eclipseWASCE\servers\server1\var\config/config.xml.original et virer le projet qui marche pas
-	supprimer les fichiers temp sous C:\Documents and Settings\Administrator\Local Settings\Temp
-	renommer son appliweb et son application d'entreprise
-	ou bien radical : recreer un nouvel ear qui contient l'appli web qu'on veut
-wasadm est disponible sur http://www.intra.renault.fr/dtsi/intranet-rs3dt/Developpement/Homologation/Serveur/composantsServeur-Java.html
-Les drivers sont disponibles sur http://www.intra.renault.fr/dtsi/intranet-rs3dt/Developpement/Composants/DriversJDBC/telechmDriversJDBC.html
-les modules sont sur wasCE/server/server1/repository/renault-lib/
-pour se connecter sur la console :system/manager
-pour changer le nom de la connexion a arca: application > system module
-pour activer la securite ldap: console d'administration serveur:
-SECURITY REALM: other
-REALM NAME: ARCA
-domain name: ARCA
-login module class: org.apache.geronimo.security.realm.providers.LDAPLoginModule
-control flag: required
-server-side: server side
-Support Advanced Mapping: no
-configuration options:
-roleSearchMatching=(uniqueMember={0})
-userSearchSubtree=true
-roleName=cn
-roleBase=ou=Applications,ou=FRA,ou=Rights,o=renault
-userRoleName=objectClass
-authentication=simple
-connectionURL=ldap://anndev.mc2.renault.fr:389
-connectionUsername=uid=AWTWSAD,ou=FRA,ou=People,o=renault
-userBase=ou=People,o=renault
-roleSearchSubtree=true
-initialContextFactory=com.sun.jndi.ldap.LdapCtxFactory
-connectionPassword=AWTWSAD
-userSearchMatching=(uid={0})
-
-Si lors du deploiement vous avez cette erreur : 
-      Unable to resolve resource reference 'jdbc/Datasource' (Could not find resource 'siaDatasource'.  Perhaps it has not yet been configured, or your application does not have a dependency declared for that resource module?)
-      Assurez vous d’avoir declare vos dependances dans geronimo-web.xml ET geronimo-application.xml 
-Si une erreur avec LoginModule verifier que la case du realm est respectee dans web.xml (arca ou ARCA)
-
-ACTIVEX : (ne peut pas s'executer sur un serveur)
-Partie 1 : Objets 
-L'objet ActiveX qui permet d'utiliser les fichiers est l'objet Scripting.FileSystemObject.
-var fso=new ActiveXObject("Scripting.FileSystemObject"); 
-Partie 2 : Creer un fichier 
-La methode qui permet de creer un fichier est la methode CreateTextFile.
-fso.CreateTextFile("Nom du fichier.extension",true);
->>Le deuxième argument precise si on veut ecraser le fichier deja present sous le meme nom s'il existe. 
-Partie 3 : Utiliser un fichier 
-La methode qui permet d'ouvrir un fichier est la methode OpenTextFile.
-var otf=fso.OpenTextFile("Nom du fichier.extension",1 ,true);
->>Le deuxième argument precise le type d'ouverture : 1-Ouverture en lecture ; 2-Reecriture ; 8-Ecriture a la suite.
->>Le troisième argument precise de creer (true) ou non (false) le fichier s'il n'existe pas. 
-Partie 3.1 : Ecrire dans un fichier 
-La methode qui permet d'ecrire dans un fichier est la methode Write ou WriteLine.
-otf.Write("Texte à marquer");
-otf.WriteLine("Ligne à marquer");
->>Remarque : la methode WriteLine marque le texte entre en argument et lui rajoute un saut de ligne.
->>Remarque : le fichier doit d'abord être ouvert en reecriture ou en ecriture a la suite (2 ou 8). 
-Partie 3.2 : Lire un fichier 
-La methode qui permet de lire un fichier est la methode Read ou ReadAll.
-otf.Read(9);
-otf.ReadAll();
->>Remarque : Le fichier doit être ouvert en mode lecture.
->>Remarque : la methode Read lit le nombre de caractère entre en argument.
->>Remarque : la methode ReadAll lit tout le fichier. 
-Partie 3.3 : Fermer un fichier 
-La methode qui permet de fermer un fichier est la methode Close.
-otf.Close();
-Partie 4 : Supprimer un fichier 
-La methode qui permet de supprimer un fichier est la methode DeleteFile.
-fso.DeleteFile("Nom du fichier.extension");
-Partie: Pour executer un fichier :
-      shell=new ActiveXObject("WScript.shell"); 
-      shell.run("\"C:\\Temp\\WINWORD.EXE");
-      si j'ai une erreur dans ce script essayer sur IE: options> securitysettings>customs...>enable initialize and script ActiveX controls not marked safe... 
-Partie 5 : Exemples 
-var fso=new ActiveXObject("Scripting.FileSystemObject"); //Système de fichier.
-fso.CreateTextFile("fichier1.txt",true); //Creation du fichier "fichier1.txt" avec ecrasement.
-var otf=fso.OpenTextFile("fichier1.txt", 8 ,true); //Ouverture du fichier "fichier1.txt" en mode ecriture a la suite.
-otf.WriteLine("Bonjour."); //Ecriture de la ligne "Bonjour.".
-otf.Write("Coucou"); //Ecriture de "Coucou".
-otf.Close(); //Fermeture du fichier "fichier1.txt".
-otf=fso.OpenTextFile("fichier1.txt", 1 ,false); //Ouverture du fichier "fichier1.txt" en mode lecture.
-alert(otf.Read(7)); //Lecture des 7 premiers caractères ("Bonjour.").
-alert(otf.ReadAll()); //Lecture de tout le fichier ("Bonjour.\nCoucou").
-otf.Close(); //Fermeture du fichier "fichier1.txt".
-fso.DeleteFile("fichier1.txt"); //Suppression du fichier "fichier1.txt". 
-Pour plus d'informations allez voir le site de bultez : http://marcel-bultez.chez-alice.fr/documents/SupportsRepertoiresFichiers.htm 
-
- 
-Checkstyle : voir ma doc: Installation_Applications_FWS_Avec_RAD_7_e1.a.V1.1.doc
-
+     
 
 GWT :
 pour lancer en dev sur jetty gwt mais ca ne marche pas  sur mon pom
@@ -8551,7 +8395,7 @@ creer une application :
         tapper:
           webAppCreator -maven -junit D:\Maven\repo\junit\junit\4.10\junit-4.10.jar -out VotreProfWeb com.professeur.VotreProfApp
               dans ce cas fans eclipse faire un import de projet maven
-                je pourrais alors faire après : 
+                je pourrais alors faire après: 
                     mvn clean         # delete temporary stuff
                     mvn test          # run all the tests (gwt and junit)
                     mvn gwt:run       # run development mode
@@ -8880,7 +8724,7 @@ avec maven pour ne pas faire jouer les tests surfire : mettre :          <skipTe
                                   <pathelement location="D:/Installations/gwt-2.3.0/validation-api-1.0.0.GA.jar" />
                                   <pathelement location="D:/Installations/gwt-2.3.0/validation-api-1.0.0.GA-sources.jar" />
                                 </classpath>
-stack : stacks :                <!-- add jvmarg -Xss16M or similar if you see a StackOverflowError --> // la memoire stack est saturée. (memoire stack = methode qui appelle une methode qui... contient les vals des primitives seulmt) chaque thread a son stack et chaque stack de thread est invisible aux autres threads(threadsafe) 
+stack: stacks:                <!-- add jvmarg -Xss16M or similar if you see a StackOverflowError --> // la memoire stack est saturée.  
                                 <jvmarg value="-Xmx256M"/>
                                 <arg line="-war"/>
                                 <arg value="war"/>
@@ -9036,11 +8880,11 @@ stack : stacks :                <!-- add jvmarg -Xss16M or similar if you see a 
                           	    </target>	
                           </project>
 
-pour ajouter une class css à un widget element pannel etc : 
+pour ajouter une class css à un widget element pannel etc: 
       FlexTable layout = new FlexTable();
 	    layout.getElement().addClassName("center");
       
-si j'ai l'erreur : 
+si j'ai l'erreur: 
     [WARN] Field 'final java.lang.String id' will not be serialized because it is final
           bien s'assurer que ma servlet envoie un objet serialisable sinon le post ne marchera pas. Si par ex j'envoie une arraylist sans specifie la typologie d'un objet serialisable ca va me faire un warning et le post ne marchera pas
           donc mon service doit renvoyer ArrayList<WEC53_D_CMPDMD> (avec son interface List) ou WEC53_D_CMPDMD est une classe serialisable 
@@ -9050,7 +8894,7 @@ http://darkdown.instantiations.com/D2GWT/continuous/latest/update/3.6/
 plugin gwt
 json1-3.jar jsongrid
 
-creer une application :
+creer une application:
         se mettre sous D:\Installations\gwt-2.3.0
         tapper:  
           webAppCreator -junit D:\Installations\junit-4.8.2.jar -out WecWeb com.renault.wec.WecApp
@@ -9080,14 +8924,14 @@ pour creer une session utilisateur dans gwt:  (on peut le faire sous une classe 
       HTTPSession session = request.getSession(); 
       on peut meme y stocker des gros objets contenant eux meme une liste d'objets à condition qu'ils soient serialisables: 
         VPA01_STUDENT userConnecte  = (VPA01_STUDENT)session.getAttribute("User");
-pour Yahoo + gwt:
+pour Yahoo :+ gwt :
       (...Pour integrer la bibliothèques JavaScript Yahoo qui implemente le glissez deposez)
         mettre dans rep "public" fichiers yahoo.js, dom.js, event.js, dragdrop.js et DDPlayer.js
-        à  l'extrême fin de ces fichiers rajouter : 
+        à  l'extrême fin de ces fichiers rajouter: 
         function yahooIsOk() {
         }
         dragdropIsOk pour dragdrop.js, et ainsi de suite. 
-        dans <nom-module>.gwt.xml rajouter pour chaque .js: au sein de la balise XML racine ("module"), comme suit : *
+        dans <nom-module>.gwt.xml rajouter pour chaque .js: au sein de la balise XML racine ("module"), comme suit: *
         <module>
         ...
          <script src="yahoo.js"><![CDATA[
@@ -9116,36 +8960,8 @@ pour Yahoo + gwt:
         mais commentaire particulier GWT /*- et -*/. Contenu commentaire = javascript predede par "$wnd"
 Pour faire un drag and drop: 
       l'avatar javascript de chaque widget est l'objet element: widget.getElement().(peut être utilise dans le code JavaScript )
-Donc pour faire un drag and drop avec yahoo.js:
-        public static native void addDraggableSlot(
-        		Element e, 
-        		String affordance,
-        		int counter) 
-        	/*-{
-        		e.id = 'drag_'+counter;
-        		new $wnd.YAHOO.example.DDPlayer(e.id, affordance);
-            	}-*/;
-        // l'objet e peut maintenant etre drague
-        
-        	public static native void addTargetSlot(
-        		Element e, 
-        		String affordance, 
-        		int counter) 
-        	/*-{
-        		e.id = 'target_'+counter;
-        		new $wnd.YAHOO.util.DDTarget(e.id, affordance);
-        	}-*/;
-        // l'objet e peut maintenant etre la cible d'un autre objet drague
-        
 
-si on a une erreur gwt de type :
-      [ERROR] Unable to instantiate 'com.printflux.server.MyTreeServiceImpl'
-      java.lang.ClassNotFoundException: com.printflux.server.MyTreeServiceImpl
-                  at com.google.gwt.dev.shell.GWTShellServlet.tryGetOrLoadServlet(GWTShellServlet.java:874)
-                  at com.google.gwt.dev.shell.GWTShellServlet.service(GWTShellServlet.java:240)
-                  at javax.servlet.http.HttpServlet.service(HttpServlet.java:802)
-      c'est parce qu'il lui manque des classes sous le repertoire "bin"
-
+GWT :pour faire un nouveau projet GWT:VIEUX OLD
 How to create a WAR file from a GWT project with Eclipse: OLD VIEUX
         First Time Only: 
         Open folder {PF}\www\com.domain.{Project} 
@@ -9177,9 +8993,15 @@ How to create a WAR file from a GWT project with Eclipse: OLD VIEUX
         {GWT} = Path to the GWT folder containing build scripts (i.e. gwt-windows-1.1.10) 
         {PF} = Path where your project will exist (i.e. C:\Dev\MyProject) 
         {Project} = Project name (should differ from {PF} folder name)
+si on a une erreur gwt de type:
+      [ERROR] Unable to instantiate 'com.printflux.server.MyTreeServiceImpl'
+      java.lang.ClassNotFoundException: com.printflux.server.MyTreeServiceImpl
+                  at com.google.gwt.dev.shell.GWTShellServlet.tryGetOrLoadServlet(GWTShellServlet.java:874)
+                  at com.google.gwt.dev.shell.GWTShellServlet.service(GWTShellServlet.java:240)
+                  at javax.servlet.http.HttpServlet.service(HttpServlet.java:802)
+      c'est parce qu'il lui manque des classes sous le repertoire "bin"
 
-pour faire un nouveau projet GWT:VIEUX OLD
-        definir sytem path : %PEAR%;C:\Program Files\maven-2.0.7\bin\;%JAVA_HOME%;C:\gwt-windows-1.4.61\(attention a la version)
+        definir sytem path: %PEAR%;C:\Program Files\maven-2.0.7\bin\;%JAVA_HOME%;C:\gwt-windows-1.4.61\(attention a la version)
         mkdir DynaTable
         cd DynaTable
         projectCreator -eclipse DynaTable
@@ -9189,117 +9011,11 @@ pour faire un nouveau projet GWT:VIEUX OLD
         applicationCreator -eclipse projetGWT com.pgwt.moduleone.client.ModuleOne
         (si ca ne marche pas cause version java: rajouter en tete de ce fichier: Set Path=C:\gwt-windows-1.4.60\;C:\Program files/JavaSoft/JRE/1.5.0_08/bin)
         Pour prendre un ancien projet non eclipse et en faire un eclipse(pour notemment le debugger debuger): faire un nouveau projet en fait vierge et faire un beyond compare
-        Merde le cache : faire un refresh et il recompile tout: java html et css
+        Merde le cache: faire un refresh et il recompile tout: java html et css
         Pour supprimer le cache supprimer les fichiers sous .gwtache/bytecode
         Supprimer ce qui ya comme classes sous bin mais normalement pas necessaire: faire un refresh
         le fichier css est pris en compte si il est sous: projetGWT\src\com\pgwt\moduleone\public\ModuleOne.css
-
-Exemple de classe jdo: a mettre cote client : 
-                                              package com.renault.wec.client.jdo;
-                                            
-                                            import ...                                            
-                                            @PersistenceCapable(identityType=IdentityType.APPLICATION, detachable="true") // on le declare detacheable comme ca meme si la transaction se ferme, meme si mon service n'est pas permanant: l'id d'un objet est conserve et quand on rappelle makepersistant: il fait un update au lieu d'un insert car cet objet existe en base C EST GENIAAAAALL!!!
-                                            public class WEC51_M_TEMPLATE implements ModelData, Serializable 
-                                            {
-                                            	public static final String NOM = "WEC51_NOM";
-                                            	public static final String ID = "WEC51_ID";
-                                            	public static final String ACTIVE = "WEC51_ACTIVE";
-                                            	@PrimaryKey
-                                            	Integer WEC51_ID; // ne pas utiliser long ou int mais Integer pour les chiffres
-                   	                         	@PrimaryKey // la cle primaire peut etre composee de deux champs! Bien le mettre si c'est le cas car sinon l'update va udpated avec une mauvaise clause
-                                              @Column(jdbcType="VARCHAR", length=3000) // si besoin
-                                            	String WEC51_NOM = null;
-                                            	String WEC51_ACTIVE = null;
-                                                
-                                            	public WEC51_M_TEMPLATE()
-                                                {
-                                                }
-                                              public WEC51_M_TEMPLATE(Integer id)
-                                                {
-                                                    this.WEC51_ID = id;
-                                                }
-                                                getters et setters...
-                                            	@Override // a partir d'ici c'est pour afficher dans un grid tableau (pour le faire rapidement sous eclipse, overrider methodes de modeldata)
-                                            	public <X> X get(String property) {
-                                            	       if (property != null)
-                                            	        {
-                                            	            // try to return value
-                                            	            if (NOM.equals(property))
-                                            	            {
-                                            	                return (X) getWEC51_NOM();
-                                            	            }
-                                            	            else if (ID.contains(property))
-                                                    		  {
-                                                    			  return (X) String.valueOf(getWEC52_ID()); // je crois donc que ca marche aussi pour les Integer (meme code)
-                                                    		  }
-                                            	            else if (ACTIVE.equals(property))
-                                            	            {
-                                            	                return (X) String.valueOf(getWEC51_ACTIVE());
-                                            	            }
-                                            	        }
-                                            	        // could not find value - just return null
-                                            	        return null;
-                                            
-                                            	}
-                                            	@Override
-                                            	public Map<String, Object> getProperties() {
-                                            		   Map<String, Object> properties = new HashMap<String, Object>();
-                                            	        for (String property : getPropertyNames())
-                                            	        {
-                                            	            properties.put(property, get(property));
-                                            	        }
-                                            	        return properties;
-                                            
-                                            	}
-                                            	@Override
-                                            	public Collection<String> getPropertyNames() {
-                                            		   Collection<String> names = new ArrayList<String>();
-                                            	        names.add(NOM);
-                                            	        names.add(ID);
-                                            	        names.add(ACTIVE);
-                                            	        return names;
-                                            	}
-                                            	@Override
-                                            	public <X> X remove(String property) {
-                                            		 return (X) set(property, null);
-                                            	}
-                                            	@Override
-                                            	public <X> X set(String property, X value) {
-                                            			 if (property != null && value !=null && !value.toString().equals("null"))
-                                        	        {
-                                                        X old = (X) get(property);
-                                                      try
-                                                      {
-                                        	            if (OBLCLIEN.contains(property))
-                                        	            {
-                                        	            	setWEC52_OBLCLIEN(((java.lang.String) value));
-                                        	            }
-                                        	           if (ID.contains(property))
-                                        	            {
-                                          	            	setWEC52_ID((Integer)value);
-                                         	            }
-                                        	         etc...
-                                        	         }
-                                        	         catch (ClassCastException e)
-                                                    {
-                                                    	if (value instanceof java.lang.String) old = (X) set(property, Integer.parseInt(value.toString()));
-                                                    	else if (value instanceof java.lang.Integer) old = (X) set(property, value.toString());
-                                                    	else throw e;
-                                                      }
-                                                	            return old;
-                                                
-                                                	        }
-                                                	        return null;
-                                                	    }
-
-                                                	@Override
-                                                	public String toString() {
-                                                		return getWEC52_ID()+getWEC51_DEBHTML() + getWEC52_ORDRE();
-                                                	}
-                                                	
-                                                
-                                                	}
-      Clientbundle: meilleure methode pour definir le css comme ca je peux dev avec superdevmode : 
+      Clientbundle: meilleure methode pour definir le css comme ca je peux dev avec superdevmode: 
       classe de resources:
                   package com.application.yoani.client.resources;
                                   public interface YoaniResources extends ClientBundle {
@@ -9313,12 +9029,12 @@ Exemple de classe jdo: a mettre cote client :
                                   	  @NotStrict
                                   	  @Source("com/application/yoani/client/resources/gxt-all.css")
                                   	  public Css cssGWT();
-// ensuite dans mon module entrypoint je mettrais : 
+// ensuite dans mon module entrypoint je mettrais: 
                                         public void onModuleLoad() 
 	                                    {
                                                   Resources.INSTANCE.css().ensureInjected();
                                                   ......
-                                                  Mais si je veux pouvoir virer un css apres n'importe ou  faire ca : 
+                                                  Mais si je veux pouvoir virer un css apres n'importe ou  faire ca: 
                                                   // Equivalent to MyClass.INSTANCE.ensureInjected()
                                                   StyleElement e  = StyleInjector.injectStylesheet(MyClass.INSTANCE.css().getText());
                                                   // Remove the injected css element
@@ -9326,11 +9042,11 @@ Exemple de classe jdo: a mettre cote client :
                                                   
 
                                   	  /*
-                                  pour les datas : ?
+                                  pour les datas: ?
                                   	  @Source("test.txt")
                                   	  public DataResource test();
                                   	  
-                                  pour des fichiers de type autre : 
+                                  pour des fichiers de type autre: 
                                   	  @Source("manual.pdf")
                                   	  public DataResource ownersManual();
                                   	  
@@ -9342,14 +9058,14 @@ Exemple de classe jdo: a mettre cote client :
                                   	    1.  synchronous_fr_FR.txt
                                      		2. synchronous_fr.txt
                                      		3. synchronous.txt
-                                  		//ailleurs : :
+                                  		//ailleurs:
                                   		//		 Using a TextResource
                                   				myTextArea.setInnerText(Resources.INSTANCE.synchronous().getText());
                                   		
                                   			  @Source("b.txt")
                                   			  ExternalTextResource asynchronous();
                                   			}
-                                  		//ailleurs : Using an ExternalTextResource
+                                  		//ailleurs: Using an ExternalTextResource
                                   		Resources.INSTANCE.asynchronous().getText(new ResourceCallback<TextResource>() {
                                   		  public void onError(ResourceException e) { ... }
                                   		  public void onSuccess(TextResource r) {
@@ -9372,7 +9088,7 @@ Exemple de classe jdo: a mettre cote client :
                                                		3. Labels.txt
                                     
                             
-                            pour les images :
+                            pour les images:
                             dans 
                             public interface YoaniResources extends ClientBundle {
 	                               public static final YoaniResources INSTANCE =  GWT.create(YoaniResources.class);
@@ -9403,18 +9119,14 @@ Exemple de classe jdo: a mettre cote client :
                             				// Elsewhere
                             				ReturnType obj = Resources.INSTANCE.factory().create();
                             */
-                            
-                            
-                            
-                            }                                                	
-
+   
 GXT :
-pagination sur un grid :
+pagination sur un grid:
       RpcProxy proxy = new RpcProxy()
        {
           protected void load(Object o, AsyncCallback asyncCallback)
           {
-              serviceStorage.getServiceStorageList((PagingLoadConfig)o, asyncCallback); // dans mon bablaServiceAsync j'ai  : void getServiceStorageList(PagingLoadConfig config, AsyncCallback<PagingLoadResult<WECM53_STORAGE_CONTROL>> asyncCallback) throws IllegalArgumentException;
+              serviceStorage.getServiceStorageList((PagingLoadConfig)o, asyncCallback); // dans mon bablaServiceAsync j'ai: void getServiceStorageList(PagingLoadConfig config, AsyncCallback<PagingLoadResult<WECM53_STORAGE_CONTROL>> asyncCallback) throws IllegalArgumentException;
           }
         };
           final PagingLoader<PagingLoadResult<WECM55_STORAGE_IAO_CONTROL>> loader = new BasePagingLoader<PagingLoadResult<WECM55_STORAGE_IAO_CONTROL>>(proxy);
@@ -9454,14 +9166,14 @@ pour qu'un element soit draguable et fermable l'inclure dans un objet Dialog
 			    complex.setLayout(layout);
 	    complex.add(addForm);
 	    complex.scrollIntoView(addForm);
-Dans la classe d'un bouton qui lui meme est dans une classe parent, pour faire reference à cette classe parente mere du bouton :
+Dans la classe d'un bouton qui lui meme est dans une classe parent, pour faire reference à cette classe parente mere du bouton:
     WecM55StorageIAOControlTable.this.displayAddForm();
-Pour empecher le scroll sur une page :
+Pour empecher le scroll sur une page:
   <body style="overflow:scroll; width:100%; position: fixed;">
 pour mettre un scrollbar vertical ou horizontal: 
         tradForm.setScrollMode(Scroll.AUTOY);
 pour debugger debuger voir dans gwt:
-pour faire un message de confirmation sur l'appui d'un bouton ou autre :
+pour faire un message de confirmation sur l'appui d'un bouton ou autre:
      		Button insert = new Button("blah",   new SelectionListener<ButtonEvent>()  
      {  
 	          @Override
@@ -9576,7 +9288,7 @@ classe utility
                                             	   */ 
                                             	  public static void pageRediriger(String url)
                                             	  {
-                                            		  windowLocation(url); // plutot : Window.Location.assign("http://www.wenhuaduverge.com/shop/");
+                                            		  windowLocation(url); // plutot: Window.Location.assign("http://www.wenhuaduverge.com/shop/");
                                             	  }	 
                                             
                                             	  /**
@@ -9684,7 +9396,7 @@ pour faire un tableau
                               			    cp.add(grid);
 pour avoir la barre de defilement verticale dans un tableau: scrollbar
         cp.setSize(600, 700); le cp qui contient le tableau doit avoir un width un peu plus petit... chais pas pourquoi. Ici ci c 800 ca marche pas. Ca marche si c 600
-pour faire des drag and drop dans un meme tableau rajouter ca : 
+pour faire des drag and drop dans un meme tableau rajouter ca: 
          new GridDragSource(grid);  
          GridDropTarget target = new GridDropTarget(grid);  
          target.setAllowSelfAsSource(true);  
@@ -9693,7 +9405,7 @@ pour faire des drag and drop dans un meme tableau rajouter ca :
 pour ajouter un bouton en bas au tableau:
               contentPannel.add(grid);
               contentPannel.addButton(monbouton);
-pour faire un tableau editable (facon excell ou avec des cellules en select ou en texte saisissable) :
+pour faire un tableau editable (facon excell ou avec des cellules en select ou en texte saisissable):
           ne pas utiliser Grid mais EditorGrid et pour la colonne qu'on veut rendre editable faire: (ca executera automatiquement au changement la metode 	public <X> X set(String property, X value) { de mon model.)
           // sinon c'est nouveau on peut aussi utiliser la classe RowEditor mais j'ai pas d'exemple dessus... ca a l'air tres tres bien 
           (exemple combo box select: )
@@ -9727,7 +9439,7 @@ pour faire un tableau editable (facon excell ou avec des cellules en select ou e
                       column.setWidth(60);
                       column.setEditor(editor);
                       configs.add(column); // c'est List<ColumnConfig> configs = new ArrayList<ColumnConfig>();
-          exemple texte :
+          exemple texte:
                 TextField<String> text = new TextField<String>();  
                 text.setAllowBlank(true);  
                 column = new ColumnConfig();
@@ -9765,7 +9477,7 @@ pour faire un tableau editable (facon excell ou avec des cellules en select ou e
                             	    			}
                       			       });
                            
-        pour mettre un bouton ou n'importe quoi à chaque ligne de mon grid : 
+        pour mettre un bouton ou n'importe quoi à chaque ligne de mon grid: 
                             GridCellRenderer<WEC51_M_TEMPLATE> buttonRenderer = new GridCellRenderer<WEC51_M_TEMPLATE>() 
                           {  
                               private boolean init;  
@@ -9792,9 +9504,9 @@ pour faire un tableau editable (facon excell ou avec des cellules en select ou e
                           column.setRenderer(buttonRenderer);
                           configs.add(column);// c'est List<ColumnConfig> configs = new ArrayList<ColumnConfig>();
                                                                  
-pour faire un textarea :
+pour faire un textarea:
     TextArea field = new TextArea();
-pour faire des onglets : 
+pour faire des onglets: 
                                   TabPanel folder = new TabPanel();  
                             	    folder.setWidth(450);  
                             	    folder.setAutoHeight(true);  
@@ -9815,7 +9527,7 @@ pour faire des onglets :
                             	    services.add(null);  // ici je mets le widget que je veux
                             	    folder.add(services);
                             	    hc.add(folder, "td.centercenter");
-si j'ai l'erreur : Service implementation URL not specified ou bien l'erreur Failurecom.google.gwt.user.client.rpc.IncompatibleRemoteServiceException: This application is out of date, please click the refresh button on your browser. ( Blocked attempt to access interface 'com.renault.wec.client.services.WEC71_M_SCEService', which is not implemented by 'com.renault.wec.server.WEC51_M_TEMPLATEServiceImpl'; this is either misconfiguration or a hack attempt )
+si j'ai l'erreur: Service implementation URL not specified ou bien l'erreur Failurecom.google.gwt.user.client.rpc.IncompatibleRemoteServiceException: This application is out of date, please click the refresh button on your browser. ( Blocked attempt to access interface 'com.renault.wec.client.services.WEC71_M_SCEService', which is not implemented by 'com.renault.wec.server.WEC51_M_TEMPLATEServiceImpl'; this is either misconfiguration or a hack attempt )
         verifier mon web.xml il doit y avoir une servlet du meme nom toto que 
         ce qui ya dans ma classe de service 
         @RemoteServiceRelativePath("toto")
@@ -9846,7 +9558,7 @@ pour faire des boutons pour chaque ligne comme des checkboxes: (on est en train 
                        	 enableDisable.setData("widgetField", widgetField);
              	 widgetField.add(enableDisable);
   	  
-pour ajouter des checkboxe à chaque ligne du tableau : 
+pour ajouter des checkboxe à chaque ligne du tableau: 
         // add checkboxes
         				final CheckBoxSelectionModel<ModelData> sm = new CheckBoxSelectionModel<ModelData>();
         				sm.setSelectionMode(SelectionMode.MULTI);
@@ -9854,7 +9566,7 @@ pour ajouter des checkboxe à chaque ligne du tableau :
         						{
         					@Override
         					public void selectionChanged(SelectionChangedEvent<ModelData> se) {
-        						for (ModelData md :se.getSelection())
+        						for (ModelData md:se.getSelection())
         						{
         							Log.debug(md.get(type.getField(0).getName()).toString());
         						}
@@ -9906,17 +9618,17 @@ pour faire une infobulle de type tooltip plus perfectionnee:
                   config.setMaxWidth(415);  
                   btn.setToolTip(config);  
 pour setter un style à un element: 
-    t2.setStyleName("x-menu-text"); ou dans le css il y a ecrit :
+    t2.setStyleName("x-menu-text"); ou dans le css il y a ecrit:
               .x-menu-text {
                 ... etc...
-pour faire appel a un service :
-        il y a trois classes a faire : templateServiceAsync(sous client), templateService(sous client), templateServiceImpl(sous server)
+pour faire appel a un service:
+        il y a trois classes a faire: templateServiceAsync(sous client), templateService(sous client), templateServiceImpl(sous server)
                  templateServiceAsync = 
                                           public interface TemplateServiceAsync {
                                           void getTemplateById(String type, AsyncCallback<WEC53_D_CMPDMD> callback)   throws IllegalArgumentException;
                                           void getTemplateList(AsyncCallback<WEC51_M_TEMPLATE[]> callback)   throws IllegalArgumentException;
                  templateService = 
-                                            @RemoteServiceRelativePath("totototo") // attention important: mettre dans le fichier web.xml ce qui correspond. voir :-)
+                                            @RemoteServiceRelativePath("totototo") // attention important: mettre dans le fichier web.xml ce qui correspond. voir:-)
                                             public interface TemplateService extends RemoteService {
                                             WEC53_D_CMPDMD getTemplateById(String type) throws IllegalArgumentException;
                                             WEC51_M_TEMPLATE[] getTemplateList() throws IllegalArgumentException;(interface de )>templateServiceImpl
@@ -9924,7 +9636,7 @@ pour faire appel a un service :
                                             @SuppressWarnings("serial")
                                             public class TemplateServiceImpl extends RemoteServiceServlet implements  TemplateService  
                 pour appeler ce service du client:                                                    
-                                          au niveau des champs de classe : 
+                                          au niveau des champs de classe: 
                                                   private TemplateServiceAsync templateService = GWT.create(TemplateService.class);
                                           Dans une methode: 
                                             	    templateService.getTemplateList(new AsyncCallback<WEC51_M_TEMPLATE[]>() 
@@ -9940,7 +9652,7 @@ pour faire appel a un service :
         			                                       ....
                                               			}
                                         	           });
-            dans web.xml :-)
+            dans web.xml:-)
                                                   <servlet>
                                                     <servlet-name>templateServlet</servlet-name>
                                                     <servlet-class>com.renault.wec.server.TemplateServiceImpl</servlet-class>
@@ -9950,11 +9662,11 @@ pour faire appel a un service :
                                                     <url-pattern>/wecapp/totototo</url-pattern>
                                                   </servlet-mapping>
                                                   
-pour faire une popup avec joli message :
+pour faire une popup avec joli message:
         MessageBox.alert("Result", "blah: " + fe.getResultHtml(), null);
-      on peut aussi faire ca : mais c plus moche 
+      on peut aussi faire ca: mais c plus moche 
           Window.alert("Event Tab Was Selected");
-    on peut faire aussi une progress bar avec : .progress(...)
+    on peut faire aussi une progress bar avec: .progress(...)
 pour modifier les styles d'un element: 
     monObjetGXT
 pour faire un formulaire avec des champs:  Ne pas chercher à utiliser columnlayout (attention c'est galère de faire un formulaire sur plusieurs colonnes et meme de rajouter par exemple un widget à chaque field horizontallement: utiliser htmlContainer dans ce cas mais ca supprimer les fieldlabel ou bien en autre recourt si formulaire dynamique utiliser TableLayout) 
@@ -10020,7 +9732,7 @@ pour faire un formulaire avec des champs:  Ne pas chercher à utiliser columnlay
 		       public void componentSelected(ButtonEvent ce) 
 		       {
 		    	   List<Field<?>> fieldListOfWecField = form.getFields();
-						for (Field field :fieldListOfWecField)
+						for (Field field:fieldListOfWecField)
 						{
 							Log.debug(field.getName());
 							BaseModelData t = new BaseModelData();
@@ -10109,7 +9821,7 @@ pour faire un select combobox dans un formulaire de type standard... c'est pas t
     puis pour recuperer tous les champs de mon formulaire
               List<Field<?>> fieldListOfWecField = paramForm.getFields();
 	    			    	   Log.debug(fieldListOfWecField.toString());
-	      						for (Field field :fieldListOfWecField)
+	      						for (Field field:fieldListOfWecField)
 	      						{
       								Log.debug(field.getName()+"--"+field.getValue());
 	      							if (field.getValue()!=null && !field.getValue().equals("null"))
@@ -10193,11 +9905,11 @@ classe de resources:
                             	  public Css cssGWT();
                             
                             	  /*
-                            pour les datas : ?
+                            pour les datas: ?
                             	  @Source("test.txt")
                             	  public DataResource test();
                             	  
-                            pour des fichiers de type autre : 
+                            pour des fichiers de type autre: 
                             	  @Source("manual.pdf")
                             	  public DataResource ownersManual();
                             	  
@@ -10209,14 +9921,14 @@ classe de resources:
                             	    1.  synchronous_fr_FR.txt
                                		2. synchronous_fr.txt
                                		3. synchronous.txt
-                            		//ailleurs : :
+                            		//ailleurs:
                             		//		 Using a TextResource
                             				myTextArea.setInnerText(Resources.INSTANCE.synchronous().getText());
                             		
                             			  @Source("b.txt")
                             			  ExternalTextResource asynchronous();
                             			}
-                            		//ailleurs : Using an ExternalTextResource
+                            		//ailleurs: Using an ExternalTextResource
                             		Resources.INSTANCE.asynchronous().getText(new ResourceCallback<TextResource>() {
                             		  public void onError(ResourceException e) { ... }
                             		  public void onSuccess(TextResource r) {
@@ -10239,7 +9951,7 @@ classe de resources:
                                          		3. Labels.txt
                                     
                             
-                            pour les images :
+                            pour les images:
                             dans 
                             public interface YoaniResources extends ClientBundle {
 	                               public static final YoaniResources INSTANCE =  GWT.create(YoaniResources.class);
@@ -10275,7 +9987,7 @@ classe de resources:
                             
                             }
 
-pour builder en mode detailler mettre dans le build.xml :
+pour builder en mode detailler mettre dans le build.xml:
                   <target name="gwtc" depends="cleansfe" description="GWT compile to JavaScript (production mode)">
                   (...)
            	<arg line="-style"/>
@@ -10320,13 +10032,13 @@ pour faire un champ date
                               -->
                               <inherits name="com.allen_sauer.gwt.log.gwt-log-ERROR" />
                               <extend-property name="log_level" values="DEBUG"/>
-       dans les classes : 
+       dans les classes: 
         		Log.debug("Starting SFEGRID"); (// de com.allen_sauer.gwt.log.client.Log)
-    si j'ai l'erreur :  Deferred binding failed for 'com.allen_sauer.gwt.log.client.LogMessageFormatter
+    si j'ai l'erreur:  Deferred binding failed for 'com.allen_sauer.gwt.log.client.LogMessageFormatter
           passer a java 1.6 et rebuilder avec le ant
 
 // pour recuperer des objets javascripts de ma page html:
-          dans ma jsp j'ai :
+          dans ma jsp j'ai:
                     var parameters = {
                      jsonUrl: "/sfe/pagination",
                       toto: "/sfe/pagination"
@@ -10340,7 +10052,7 @@ pour faire un champ date
           String jsonUrl = parameters.get("jsonUrl");
         		String sqlQuery = parameters.get("sqlQuery");
         		String columns = parameters.get("columns");
-pour creer un bouton : 
+pour creer un bouton: 
 			     // add buttons  
 			     com.extjs.gxt.ui.client.widget.button.Button load = new com.extjs.gxt.ui.client.widget.button.Button("Clear State", new SelectionListener<ButtonEvent>() {  
 			          @Override
@@ -10418,7 +10130,7 @@ pour que quand on clique sur la ligne d'un tableau (row) on selectionne cette li
     			          }  
     			        );  
 
-pour changer un ordre de tri dans un tableau :
+pour changer un ordre de tri dans un tableau:
       (dir est un string)
       Map<String, Object> state = grid.getState();
       state.put("sortDir", dir.equals("ASC")?SortDir.valueOf("DESC"):SortDir.valueOf("ASC"));
@@ -10454,7 +10166,7 @@ voici l'unite a TOUJOURS utiliser pour placer comme on veut les choses:
                 		  	hc.add(l, "td.west");
                 		  	hc.add(r1, "td.east");
                 		  	hc.add(r2, "td.east");
-de la meme facon mais avec possibilite de faire des boucles sur des objets et de formater les donnees : utilisation de XTemplate:
+de la meme facon mais avec possibilite de faire des boucles sur des objets et de formater les donnees: utilisation de XTemplate:
                                   ModelData userTypeList =new UserType("a",1);
                                   	     XTemplate tpl = XTemplate.create(getUserTemplate(""));
                                   	     tpl.overwrite(someElement(du html), Util.getJsObject(userTypeList));
@@ -10516,7 +10228,7 @@ afficher une boite de dialogue popup au milieu
    				});
    		
 pour mettre une image a un bouton
-        avec les resources : (et mettre aussi du texte: a gauche et image a droite) (marche mieux que les solutions avec css plus bas)
+        avec les resources: (et mettre aussi du texte: a gauche et image a droite) (marche mieux que les solutions avec css plus bas)
                 ImageResource img = YoaniResources.INSTANCE.logo();
         			   france.setIcon(AbstractImagePrototype.create(img));
 						    	france.setIconAlign(IconAlign.RIGHT);
@@ -10544,147 +10256,8 @@ pour mettre une image a un bouton
                     	l'image se place ou elle peut a gauche d'un eventuel texte sete avec setText()
                   }
                   )
------------------
-requisite pro :
-les projets sont sur: 
-\\GEXOPE\Gestion_Exigences (nouveau!)
-ou
-\\F-Horus\shared\P-ODP\odp\RS3_Minute\REQUISITE\DOA_12760
-ou  \\Cq566aos.sax.renault.fr\gestion_exigences\RS3_MINUTE\PTL_51363 
-ou  \\Cq566aos.sax.renault.fr\gestion_exigences\I02_DOCUMENTATION_NOMENCLATURE
-Si je n'arrive pas à y acceder : essayer d'acceder à \\Cq566aos.sax.renault.fr\gestion_exigences\RS3_MINUTE\ dans explorateur
-puis essayer de connecter un nouveau lecteur reseau sur \\Cq566aos.sax.renault.fr\gestion_exigences\RS3_MINUTE\ 
-
-
-versions websphere :
-		application.xml:
-					pour rad 7 version 6:
-							<?xml version="1.0" encoding="UTF-8"?>
-							<application id="Application_ID" version="1.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_1_4.xsd">
-							<display-name>doa</display-name>
-					pour was5:
-						<?xml version="1.0" encoding="UTF-8"?>
-						<!DOCTYPE application PUBLIC "-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN" "http://java.sun.com/dtd/application_1_3.dtd">
-						<application id="Application_ID">
-						<display-name>doa</display-name>
-
-RAD7 :
-si j'ai l'erreur sql.SQLException: java.lang.IllegalAccessError: com/mysql/jdbc/ConnectionImpl.getInstance(Ljava/lang/String;ILjava/util/Properties;Ljava/lang/String;Ljava/lang/String;)Lcom/mysql/jdbc/Connection; :
-      quand je veux parametrer une base mysql: 
-        utiliser le driver mysql-connector-java-5.0.7 au lieu de mysql-connector-java-5.1.10
-les jsp compilees sont sous: 
-          C:\Program Files\IBM\SDP70\runtimes\base_v61\profiles\AppSrv06\temp\FR20095063Node01\server1\
-          ou
-          C:\Program Files\eclipseWASCE\servers\server1\repository\renault
-definir variable serveur JVM :
-    Serveurs d'applications > server1 > Definition des processus > Machine virtuelle Java >...
-    ou dans le fichier
-    C:\Program Files\IBM\SDP70\runtimes\base_v61\profiles\AppSrv06\config\cells\FR20095063Node01Cell\nodes\FR20095063Node01\servers\server1\server.xml
-pour externaliser externalisation le fichier arca-config.xml: 
-        Serveurs d'applications > server1 > Definition des processus > Machine virtuelle Java >...
-        definir la variable arca.configuration vers un repertoire externe.
-Pour externaliser les autres fichiers du classpath grace à fws: ( par exemple log4j)
-       utiliser les variable APP_PATH_CONFIG dans web.xml
-      APP_PATH_LOG c'est le repertoire ou vont etre ecrit les logs
-pour externaliser externalisation d'autres fichiers de conf: 
-      les parametrer comme variable de la jvm du serveur (arguments vm) // dans eclipse c'est dans Run >onglet environment
-          -DSYE.confpath=D:\workspaceCESVN21\syeConf\conf (mettre les -D avant le -jar)
-      puis dans le code: 
-      public class LabelManager // par exemple 
-      {
-        private Properties props = new Properties();
-        public PropertiesManager() {
-    		Properties properties = System.getProperties();// recupère prop de la jvm voir LINKù*ù
-    		confPath = properties.get("sye.confpath").toString();
-		    String propertiesFile = confPath + Constants.SEPARATOR_SLASH + fileName;
-        		    FileInputStream inputStream;
-        		try {
-        			inputStream = new FileInputStream(propertiesFile);
-        			props = new Properties();
-        			
-        			if (null == inputStream ) {
-        				logger.error("Unable to load " +propertiesFile);
-        			} else {
-        				props.load(inputStream);
-        				found = true;
-        			}
-        		} catch (FileNotFoundException e2) {
-        			logger.error(propertiesFile + " could not be found " + Utils.getStringStackTrace(e2));
-        		} catch (IOException e1) {
-        			logger.error("Error while opening " + propertiesFile + Utils.getStringStackTrace(e1));
-        		}
-        		
-	}
-si probleme: le serveur se lance mais sur le browser quand on saisi l'adresse de l'appli rien ne se passe:
-          Le problème de la page blance est resolu. C'etait du à un Listener declare dans le web.xml (pour tracer les ouvertures et fermetures de session)
-          le fait de tracer des logs (log4j) dans la methode "sessionCreated(HttpSessionEvent)" de cette classe Listener entraine la page blanche.
-si j'ai l'erreur R 93 [Thread-101] ERROR action.ActionServlet  - Parsing error processing resource path 
-    il faut modifier le fichier D:\workspaceRAD7PRojectsSVN\dwiWeb\.settings\org.eclipse.wst.common.component et remplacer
-            <wb-resource deploy-path="/WEB-INF/classes" source-path="/JavaSource"/>
-            par 
-            <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/> qui est le bon path. 
-pour forcer la publication d'une appli qui a quand meme des erreurs: 
-		aller dans le menu preferences d'eclipse
-Si j'ai l'erreur:
-Servlet InvokerServlet is currently unavailable: SRVE0203E: Le servlet [InvokerServlet] : com.ibm.servlet.engine.webapp.InvokerServlet a ?t? trouv? mais il manque une autre classe requise.
-SRVE0206E: Cette erreur implique g?n?ralement que le servlet a ?t? tout d'abord compil? avec des classes qui ne peuvent pas ?tre localis?es par le serveur.
-				C'est parce que sur was5 on utilise la classe InvokerServlet qui sur was6 est automatiquement utilisee donc on a pas besoin de la declarer dans web.xml: il faut commenter dans web.xml la declaration de la servlet InvokerServlet et le mapping de InvokerServlet
-si j'ai l'erreur: 
-		A file does not exist for module element having uri Exception thrown in RequiredModelMBean while trying to invoke operation getApplicationInfo
-		Il n'y a rien a faire sur le projet buggue: c'est impossible a corriger: le problème n'est pas dans les web.xml ni dans autres fichiers .projet ou ibm ou settings. Il faut donc refaire un nouveau projet vierge et prendre les sources du projet foutu et les mettre dans le projet vierge. Et la ca marche!!!!
-si sur was 6 j'ai ce message d'erreur: 
-			Caused by: java.lang.Exception: Attempted to use a 5.0 DataSource outside of a 2.3 servlet
-					il faut que je migre en 2.3
-			Caused by: javax.naming.NamingException: Attempted to use a 4.0 DataSource from a 2.3 (or higher) servlet. Invalid configuration.
-						C'est parce que dans la console d'administration la database est declaree comme version 4. Il faut passer en version 5 par ex.
-voir ma doc de RAD7:Z:\MyDocs\RS3minute\rapports\Installation_Applications_FWS_Avec_RAD_7_e1.a.V1.1.doc
-pour importer un projet web de subversion: svn > checkout as webprojetdynamique (le siaWeb)(selectionner java, struts etc comme modules) > checkout application d'entreprise. click droit sur projet web > profiler... Client d'application Websphere (choisir l'application d'entreprise contenant donc le projet web)
-Si on a cette erreur: ServletException in '/jsp/i18n/cm/I18NListTop.jsp': null (...)
-si le fichier struts-config.xml ne s'affiche pas bien avec l'editeur: le copier sous web-inf et essayer de l'ouvrir à  ce niveau. Si ca ne marche toujours pas il faut faire une modif soit dans les fichiers .classpath soit .??? je ne sais pas
-si erreur CREATE_LISTENER_FAILED_4 lors du demarrage du serveur: existance d'un conflit de port: arreter tous les autres serveurs
-pour creer un autre profil de serveur: fenetre> preferences>serveur>websphere > profils websphere>Creer...
-Quand on lance un serveur, si il y a le message: SRVE0238E : il manque un slash (Une barre oblique doit ?tre plac?e au d?but des chemins de ressources)
-faire ca: 			<param-value>WEB-INF/classes/struts-config.xml</param-value> ---> 			<param-value>/WEB-INF/classes/struts-config.xml</param-value>
-ou faire ca: 
-As WebSphere version 5.0 allowed URLs without leading front slashes ( / ), to preserve compatibility, a custom property needs to be set at the Web Container. The prependSlashToResource property ignores the specification and considers URLs without the leading front slash. 
-To set the custom property, use the administrative console, and go to Servers d'application > (nom de mon serveur) > WebContainer > Additional Properties >propriete personelles> New property.
-Name: prependSlashToResource
-value: true
-relancer le serveur et la ca marche 
-Si j'ai une exception lors du lancement du serveur de type : classnotfoundexception ActionServlet de struts c'est que j'ai mal defini les bibliotheques de mon projet: revoir l'ordre de chargement des bibliotheques: mettre bibliotheque d'application web en deuxieme et non pas en dernier
-  Ca peut etre aussi du au fait que dans application.xml onglet deployement je charge que les classes du module et non pas celles de l'application
-pour qu'il n'y ait pas de pb avec j_security_check: dans console d'administration decocher "Securite java2" puis choisir RegistreLDAPAUtonome > Configurer... > Nom de l'utilisateur administratif primaire : AWTWSAD > cocher Identite de serveur stockee dans un referentiel : user AWTWSAD PASS AWTWSAD > type de serveur LDAP: sunONE, hote: anndev.mc2.renault.fr , nom distinctif de base: o=renault, nom distinctif de liaison: uid=AWTWSAD,ou=FRA,ou=People, o=renault; mot de passe de liaison: AWTWSAD bien cliquer quand c'est fini sur le bouton "definir comme actif" et Sauvegarder. Activer la securite sur cette application.
-Si j'ai des erreurs de type java.io.FilePermission D:\workspaceRAD7\mapWeb\WebContent\WEB-INF\web.xml read c'est que soit il y a deja un serveur lance: arreter tout, soit les fichiers sont en Lecture seule: avec explorateur enlever cette option
-cette erreur ci dessus peut aussi entrainer : pas d'image ni de Javascript charge sur la page
-Si application.xml ne s'affiche pas correctement faire: selectionner l'application d'entreprise > propriete > xdoclet > version 1.2.3
-ou mieux(NON!): se mettre perspective web, vue explorateur de projets clic droit sur descripteur de deployement> migrer
-ou encore mieux: click droit sur projet d'application d'entreprise, > proprietes > valeur de projet > ajouter websphere application (coexistence) et websphere application (etendu)
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE application PUBLIC "-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN" "http://java.sun.com/dtd/application_1_3.dtd">
-<application id="Application_ID">
-par ca:
-<?xml version="1.0" encoding="UTF-8"?>
-<application id="Application_ID" version="1.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_1_4.xsd">
-
-
-WASCE :
-		difference entre local et environnement de dev:
-			1) Dans siaWeb/WebContent/geronimo-web.xml :
-			En local :
-			<nam:resource-ref>
-			    <nam:ref-name>jdbc/Datasource</nam:ref-name>
-			    <nam:resource-link>siaDatasource</nam:resource-link>
-			  </nam:resource-ref>
-			  <security-realm-name>ARCA</security-realm-name>
-			En dev :
-			<nam:resource-ref>
-			    <nam:ref-name>jdbc/Datasource</nam:ref-name>
-			    <nam:resource-link>sia/jdbc/Datasource</nam:resource-link>
-			  </nam:resource-ref>
-			  <security-realm-name>arca</security-realm-name> 
-			2) earcontent ne doit pas être sous SVN mais META-INF oui.
 ------------------
-scripts .bat :
+scripts bat :
     ATTENTION pour les variables 
           Generations of batch file programmers have tripped over this one. Here it goes.
           When the command processor interprets a batch file, it does it like this:
@@ -10711,7 +10284,7 @@ pause
 echo PAE INT > actuel.txt
 set /P continue=Commit pulled and tested OK ? Y N   // prompt qui dit "Commit pulled and tested OK ? Y N" et set dans la variable continue le resultat 
 if %continue%==Y (              // if commence: parenthese = accolades
-                                if avec parenthese est traite en un seul bloc sans s'interrompre donc si on veut que les varaiables soient raffraichies : faire le if sur une seule ligne if..... goto xxxx et le flag goto c'est ":xxxx    "
+                                if avec parenthese est traite en un seul bloc sans s'interrompre donc si on veut que les varaiables soient raffraichies: faire le if sur une seule ligne if..... goto xxxx et le flag goto c'est ":xxxx    "
 set /P version=Version ?
 %M3%\mvn versions:set
 echo %version%
@@ -10740,7 +10313,7 @@ ren %WEB-INF-PAE%\classes\_integr.log4j.properties.template log4j.properties.tem
 ------------------
 
 ant : avec maven: pour par exemple renommer un fichier apres coup 
-    utiliser maven avec ant :
+    utiliser maven avec ant:
         dans le pom:  
           <plugin>
                       <groupId>org.apache.maven.plugins</groupId>
@@ -10777,23 +10350,21 @@ ant : avec maven: pour par exemple renommer un fichier apres coup
           </move>
     </target>
     </project>
-doc utile sur :
+doc utile sur:
           http://ant.apache.org/manual/
-si j'ai le message : Reference xxxxxxxx classpath not found:
+si j'ai le message: Reference xxxxxxxx classpath not found:
         il faut savoir que quand j'ai classpathref=xxx ou <classpath refid="xxx
         xxx est defini en haut par: 
           <path id="project.class.path">(...)</> qui contient tout mes jars.
-Pour executer sur eclipse: la definition du classpath se fait comme ca :
+Pour executer sur eclipse: la definition du classpath se fait comme ca:
          definir le ANTHOME dans onglet Chemin d'acces aux classes: ANT_HOME
 si j'ai le message: 
 BUILD FAILED: file:C:/java/eclipse/workspace/common/build.xml:59: Cannot use classic compiler, as it is not available.  A common solution is to set the environment variable JAVA_HOME to your jdk directory.
       alors rajouter dans le ant ceci: 
 	           <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/> (en tête de fichier dans la balise <project>
-le script de francois pour generer l'ear d'une appli : 
-      \\F-horus\shared\P-odp\odp\RS3_Minute\_Partage_Transversal\Projets\ANT_Delivery_2.0.0\antDelivery210.cmd
-		      et l'executer. Si ca ne marche pas c'est peut etre parce que ANT_HOME est defini dans les variables d'environnement: supprimer ANT_HOME
+Si script ant ca ne marche pas c'est peut etre parce que ANT_HOME est defini dans les variables d'environnement: supprimer ANT_HOME
 	             Remonter les bugs antdelivery 2.0.0 sur https://collaboration.renault.com/eRoom/FAC_KORP1_10/RS3Minute/0_95231
-build.xml does not exist alors :
+build.xml does not exist alors:
         ouvrir une fenetre cmd et faire ca: 
               FAIRE:
               voir ii*ii
@@ -10804,7 +10375,7 @@ build.xml does not exist alors :
               puis lancer ant:
               cd apache-ant-1.6.5/bin
               ant -buildfile ..\build\Build210.xml
-              quand c'est fini il met l'ear sous : C:\Documents and Settings\Administrator\Local Settings\Temp\build\delivery
+              quand c'est fini il met l'ear sous: C:\Documents and Settings\Administrator\Local Settings\Temp\build\delivery
               ou C:\Documents and Settings\p036782\Local Settings\Temp\delivery
               pour deployer en DEV autant de fois qu'on veut numero de build à  mettre 0
               pour deployer pour l'Integration, la recette ou l'oper mettre build -1
@@ -12735,7 +12306,7 @@ pomme alt escape pour killer
 pomme f pour chercher
 pomme suppr pour supprimer
 emc: documentum:
-http://softwaresupport.emc.com user : duverge pass: QEUl3PHE
+http://softwaresupport.emc.com user: duverge pass: QEUl3PHE
 
 ----------------------------------
 
@@ -13133,6 +12704,33 @@ OSGI :  Karaf : 1classloader/bundle
                           </features>
        
 
+
+mobaxterm : (si j'arrive pas a faire du sftp parce que la connexion se coupe, ca a marche avec winscp)
+  pour enregistrer des macros: 
+    repetitifs repertitive automatiser les saisies: menu macros> record new macro
+  on peut ouvrir en multi fenetre (menu view)
+  installer des packages: cliquer sur icone packages dans le menu. (il va peut etre demander d'abord de setter des variables home et root). J'ai installé mksh    
+
+putty : (mobaxterm mieux que putty)
+pour rapidement se connecter avec un racourci: 
+faire un racourci et dans cible mettre: D:\Installations\putty.exe wecapp@vm713aos.mc2.renault.fr -pw w1e2c3 
+pour avoir de belles couleurs quand on se connecte: parametrer sur la machine unix distante ceci:
+menu change settings > window>colours
+    Avant:
+          cd
+          vi .vimrc
+          tapper syn on
+          sauver et quitter.
+pour modifier rapidos les couleurs des polices de plusieurs sessions sauvegardee: 
+      il faut le faire avec regedit:
+        HKEY_CURRENT_USER\Software\SimonTatham\PuTTY
+        modifier color14 (c'est le bleu fonce il est trop fonce) 
+  pour se connecter à un service en passant par un tunnel ssh:
+      mamachine----->PROXYm'empeched'accederauservice---->service
+      mamachine----->proxymempechedaccederauservicemaispasAUnAutreServeurQUiAunPortSSHouvert--->AutreMachineServeurAvecSSHQuiDoitAccepterLesTunnels----tunnel------------------------>Service
+                                                                                                c comme si j'etais ici puis je vais -------------------------------------------------->là
+                                                                                conf Putty: menu>Session>ServeurSSH;                        menu>tunnel>"L"PortSUrMaMachineDisponible "Destination:PortDuService"
+      je demarre la connexion putty vers le serveur ssh puis je vais vers le service via localhost:PortSUrMaMachineDisponible
                   
 cygwin :
   Je peux aussi sur mobaxterm faire Terminal>OpenNewTab pour avoir un cygwin encore mieux
@@ -17104,6 +16702,13 @@ decompiler :
     
  
 erreurs : messages : messages d'erreur :
+Si lors du deploiement vous avez cette erreur : 
+      Unable to resolve resource reference 'jdbc/Datasource' (Could not find resource 'siaDatasource'.  Perhaps it has not yet been configured, or your application does not have a dependency declared for that resource module?)
+      Assurez vous d’avoir declare vos dependances dans geronimo-web.xml ET geronimo-application.xml 
+Si une erreur avec LoginModule verifier que la case du realm est respectee dans web.xml (arca ou ARCA)
+si j'ai l'erreur sql.SQLException: java.lang.IllegalAccessError: com/mysql/jdbc/ConnectionImpl.getInstance(Ljava/lang/String;ILjava/util/Properties;Ljava/lang/String;Ljava/lang/String;)Lcom/mysql/jdbc/Connection; :
+      quand je veux parametrer une base mysql: 
+        utiliser le driver mysql-connector-java-5.0.7 au lieu de mysql-connector-java-5.1.10
 quand Surekha import un excell NUMERO_PROJET elle a ce warning Unknown Ptg 3d (61) qui est enleve quand on copy paste que les values dans un nouveau document
 si: No method "getIdEntite" with 0 arg(s) of matching types.: mauvais getter dans le bean
 Si erreur mapping manque un champ field essayer sans s ou avec s à  "field": dataobjetc: sans s
@@ -19162,7 +18767,8 @@ pour logger un prepared statement de manière d'un select:
                               	}
 
 
-principes :
+principes : principe :
+la memoire stack peut etre saturée. (memoire stack = methode qui appelle une methode qui... contient les vals des primitives seulmt) chaque thread a son stack et chaque stack de thread est invisible aux autres threads(threadsafe)
 pour savoir si mon java est en 32bits ou 64bits
       path/vers/java/java -d64 -version
 
@@ -22579,11 +22185,39 @@ Pour utiliser readLine() qui permet de lire un fichier encode en utf8 et conserv
         		}
         	}
 proprietes : properties :
-    recuperer un fichier selon son path relative relatif et non pas absolu : 
+    recuperer un fichier selon son path relative relatif et non pas absolu: 
         grace à System.getProperty("user.dir") qui est toujours dispo.
         System.out.println("CLASSPATH: " + System.getProperty("java.class.path"));
         File defaultBusinessDir = new File(System.getProperty("user.dir"), "/src/main/resources/data/business") ; 
-
+pour externaliser externalisation d'autres fichiers de conf: 
+      les parametrer comme variable de la jvm du serveur (arguments vm) // dans eclipse c'est dans Run >onglet environment
+          -Dsye.confpath=D:\workspaceCESVN21\syeConf\conf (mettre les -D avant le -jar)
+      puis dans le code: 
+      public class LabelManager // par exemple 
+      {
+        private Properties props = new Properties();
+        public PropertiesManager() {
+    		Properties properties = System.getProperties();// recupère prop de la jvm voir LINKù*ù
+    		confPath = properties.get("sye.confpath").toString();
+		    String propertiesFile = confPath + Constants.SEPARATOR_SLASH + fileName;
+        		    FileInputStream inputStream;
+        		try {
+        			inputStream = new FileInputStream(propertiesFile);
+        			props = new Properties();
+        			
+        			if (null == inputStream ) {
+        				logger.error("Unable to load " +propertiesFile);
+        			} else {
+        				props.load(inputStream);
+        				found = true;
+        			}
+        		} catch (FileNotFoundException e2) {
+        			logger.error(propertiesFile + " could not be found " + Utils.getStringStackTrace(e2));
+        		} catch (IOException e1) {
+        			logger.error("Error while opening " + propertiesFile + Utils.getStringStackTrace(e1));
+        		}
+        		
+	}
 pour acceder à un fichier situe dans le classpath: 
 			this.getClass().(getClassLoader()?.)getResourceAsStream("cheminVers/monFichier.toto)); (getClass est une methode de l'objet java "Object" verifier avec System.out.println("CLASSPATH: " + System.getProperty("java.class.path")); System.out.println("ClassLoader resource path: " + SaveXMLTest.class.getClassLoader().getResource("").getPath() ou HRParameters.class.getClassLoader().getResource("hr-openhr-for-ta.properties")); System.out.println("ClassLoader resource path: " + ClassLoader.getSystemResourceAsStream("hr-openhr-for-ta.properties"));   LINKgetRes9
 pour lire charger recuperer les properties proprietes d'un fichier de configuration dans un batch java: (voir aussi ci dessous PropertyResourceBundle) 
@@ -23638,7 +23272,84 @@ goto finish
 quand un fichier xml ne marche pas , essayer:
 <?xml version = "1.0" encoding = "iso8859-1"?>
 <?xml version = "1.0" encoding = "UTF-8"?>
+RAD7 :(ide basé sur eclipse)
+versions websphere :
+		application.xml:
+					pour rad 7 version 6:
+							<?xml version="1.0" encoding="UTF-8"?>
+							<application id="Application_ID" version="1.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_1_4.xsd">
+							<display-name>doa</display-name>
+les jsp compilees sont sous: 
+          C:\Program Files\IBM\SDP70\runtimes\base_v61\profiles\AppSrv06\temp\FR20095063Node01\server1\
+          ou
+          C:\Program Files\eclipseWASCE\servers\server1\repository\renault
+definir variable serveur JVM:
+    Serveurs d'applications > server1 > Definition des processus > Machine virtuelle Java >...
+    ou dans le fichier
+    C:\Program Files\IBM\SDP70\runtimes\base_v61\profiles\AppSrv06\config\cells\FR20095063Node01Cell\nodes\FR20095063Node01\servers\server1\server.xml
+pour externaliser externalisation le fichier arca-config.xml: 
+        Serveurs d'applications > server1 > Definition des processus > Machine virtuelle Java >...
+        definir la variable arca.configuration vers un repertoire externe.
+Pour externaliser les autres fichiers du classpath grace à fws: ( par exemple log4j)
+       utiliser les variable APP_PATH_CONFIG dans web.xml
+      APP_PATH_LOG c'est le repertoire ou vont etre ecrit les logs
+si probleme: le serveur se lance mais sur le browser quand on saisi l'adresse de l'appli rien ne se passe:
+          Le problème de la page blance est resolu. C'etait du à un Listener declare dans le web.xml (pour tracer les ouvertures et fermetures de session)
+          le fait de tracer des logs (log4j) dans la methode "sessionCreated(HttpSessionEvent)" de cette classe Listener entraine la page blanche.
+si j'ai l'erreur R 93 [Thread-101] ERROR action.ActionServlet  - Parsing error processing resource path 
+    il faut modifier le fichier D:\workspaceRAD7PRojectsSVN\dwiWeb\.settings\org.eclipse.wst.common.component et remplacer
+            <wb-resource deploy-path="/WEB-INF/classes" source-path="/JavaSource"/>
+            par 
+            <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/> qui est le bon path. 
+pour forcer la publication d'une appli qui a quand meme des erreurs: 
+		aller dans le menu preferences d'eclipse
+Si j'ai l'erreur:
+Servlet InvokerServlet is currently unavailable: SRVE0203E: Le servlet [InvokerServlet]: com.ibm.servlet.engine.webapp.InvokerServlet a ?t? trouv? mais il manque une autre classe requise.
+SRVE0206E: Cette erreur implique g?n?ralement que le servlet a ?t? tout d'abord compil? avec des classes qui ne peuvent pas ?tre localis?es par le serveur.
+				C'est parce que sur was5 on utilise la classe InvokerServlet qui sur was6 est automatiquement utilisee donc on a pas besoin de la declarer dans web.xml: il faut commenter dans web.xml la declaration de la servlet InvokerServlet et le mapping de InvokerServlet
+si j'ai l'erreur: 
+		A file does not exist for module element having uri Exception thrown in RequiredModelMBean while trying to invoke operation getApplicationInfo
+		Il n'y a rien a faire sur le projet buggue: c'est impossible a corriger: le problème n'est pas dans les web.xml ni dans autres fichiers .projet ou ibm ou settings. Il faut donc refaire un nouveau projet vierge et prendre les sources du projet foutu et les mettre dans le projet vierge. Et la ca marche!!!!
+si sur was 6 j'ai ce message d'erreur: 
+			Caused by: java.lang.Exception: Attempted to use a 5.0 DataSource outside of a 2.3 servlet
+					il faut que je migre en 2.3
+			Caused by: javax.naming.NamingException: Attempted to use a 4.0 DataSource from a 2.3 (or higher) servlet. Invalid configuration.
+						C'est parce que dans la console d'administration la database est declaree comme version 4. Il faut passer en version 5 par ex.
+voir ma doc de RAD7:Z:\MyDocs\RS3minute\rapports\Installation_Applications_FWS_Avec_RAD_7_e1.a.V1.1.doc
+pour importer un projet web de subversion: svn > checkout as webprojetdynamique (le siaWeb)(selectionner java, struts etc comme modules) > checkout application d'entreprise. click droit sur projet web > profiler... Client d'application Websphere (choisir l'application d'entreprise contenant donc le projet web)
+si le fichier struts-config.xml ne s'affiche pas bien avec l'editeur: le copier sous web-inf et essayer de l'ouvrir à  ce niveau. Si ca ne marche toujours pas il faut faire une modif soit dans les fichiers .classpath soit .??? je ne sais pas
+si erreur CREATE_LISTENER_FAILED_4 lors du demarrage du serveur: existance d'un conflit de port: arreter tous les autres serveurs
+pour creer un autre profil de serveur: fenetre> preferences>serveur>websphere > profils websphere>Creer...
+Quand on lance un serveur, si il y a le message: SRVE0238E: il manque un slash (Une barre oblique doit ?tre plac?e au d?but des chemins de ressources)
+faire ca: 			<param-value>WEB-INF/classes/struts-config.xml</param-value> ---> 			<param-value>/WEB-INF/classes/struts-config.xml</param-value>
+ou faire ca: 
+As WebSphere version 5.0 allowed URLs without leading front slashes ( / ), to preserve compatibility, a custom property needs to be set at the Web Container. The prependSlashToResource property ignores the specification and considers URLs without the leading front slash. 
+To set the custom property, use the administrative console, and go to Servers d'application > (nom de mon serveur) > WebContainer > Additional Properties >propriete personelles> New property.
+Name: prependSlashToResource
+value: true
+relancer le serveur et la ca marche 
+Si j'ai une exception lors du lancement du serveur de type: classnotfoundexception ActionServlet de struts c'est que j'ai mal defini les bibliotheques de mon projet: revoir l'ordre de chargement des bibliotheques: mettre bibliotheque d'application web en deuxieme et non pas en dernier
+  Ca peut etre aussi du au fait que dans application.xml onglet deployement je charge que les classes du module et non pas celles de l'application
+pour qu'il n'y ait pas de pb avec j_security_check: dans console d'administration decocher "Securite java2" puis choisir RegistreLDAPAUtonome > Configurer... > Nom de l'utilisateur administratif primaire: AWTWSAD > cocher Identite de serveur stockee dans un referentiel: user AWTWSAD PASS AWTWSAD > type de serveur LDAP: sunONE, hote: anndev.mc2.renault.fr , nom distinctif de base: o=renault, nom distinctif de liaison: uid=AWTWSAD,ou=FRA,ou=People, o=renault; mot de passe de liaison: AWTWSAD bien cliquer quand c'est fini sur le bouton "definir comme actif" et Sauvegarder. Activer la securite sur cette application.
+Si j'ai des erreurs de type java.io.FilePermission D:\workspaceRAD7\mapWeb\WebContent\WEB-INF\web.xml read c'est que soit il y a deja un serveur lance: arreter tout, soit les fichiers sont en Lecture seule: avec explorateur enlever cette option
+cette erreur ci dessus peut aussi entrainer: pas d'image ni de Javascript charge sur la page
+Si application.xml ne s'affiche pas correctement faire: selectionner l'application d'entreprise > propriete > xdoclet > version 1.2.3
+ou mieux(NON!): se mettre perspective web, vue explorateur de projets clic droit sur descripteur de deployement> migrer
+ou encore mieux: click droit sur projet d'application d'entreprise, > proprietes > valeur de projet > ajouter websphere application (coexistence) et websphere application (etendu)
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE application PUBLIC "-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN" "http://java.sun.com/dtd/application_1_3.dtd">
+<application id="Application_ID">
+par ca:
+<?xml version="1.0" encoding="UTF-8"?>
+<application id="Application_ID" version="1.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_1_4.xsd">
+
 ide wsad : (basé sur eclipse)
+application.xml:
+					pour was5:
+						<?xml version="1.0" encoding="UTF-8"?>
+						<!DOCTYPE application PUBLIC "-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN" "http://java.sun.com/dtd/application_1_3.dtd">
+						<application id="Application_ID">
+						<display-name>doa</display-name>
     si le projet n'a pas le bon jre: fenetre> preferences > JREinstalles: choisir le bon puis dans projet > propriete > ajouter une bibliotheque
     si probleme: le serveur se lance mais sur le browser quand on saisi l'adresse de l'appli rien ne se passe:
     wsad:propriete du projetweb-> changer le context root en enlevant "web" + regenerer le module appl.xml: supprimer puis re add du/des modules + redeployer l'application entreprise sur le serveur.
@@ -23652,8 +23363,82 @@ ide wsad : (basé sur eclipse)
     faire: fenetre>preferences>Internet: parametrer le proxy
     si il ca ne compile pas parce que il manque des librairies type J2SE JSE: les chercher dans les jars externes jce.jar (jre 1.4 et supperieur)
     si on a un message de typ: CWPMI0023W: Impossible d'enregistrer le module PMI à  cause d'un nom en double: /ptl/jsp/footer.jsp
+WASCE21 :
+    repository est dans: 
+      C:\WASCE 2.1.0.1\ServerCommunityEdition_v2101\repository\default
+    pour que les jsp se rechargement plus vite sans avoir a tout recompiler:
+        copier la jsp que j'ai modifie dans le repertoire repository et aller dans catalina/web.xml et modifier les parametres: developpent et checkInterval
+        double cliquer sur mon serveur et dans le pave publish: ne pas publier automatiquement
+WASCe :
+si j'ai le message: 
+            Web application  ...  does not contain a WEB-INF/geronimo-web.xml deployment plan.  This may or may not be a problem, depending on whether you have things like resource references that need to be resolved.  You can also give the deployer a separate deployment plan file on the command line.
+            rajouter le facet community 1.1
+            et verifier que geronimo-application.xml et geronimo-web.xml n'ont pas le meme nom et sont coherants     
+pour supprimer une connection à une database: 
+    menu J2EE Connectors
+ difference entre local et environnement de dev:
+			1) Dans siaWeb/WebContent/geronimo-web.xml:
+			En local:
+			<nam:resource-ref>
+			    <nam:ref-name>jdbc/Datasource</nam:ref-name>
+			    <nam:resource-link>siaDatasource</nam:resource-link>
+			  </nam:resource-ref>
+			  <security-realm-name>ARCA</security-realm-name>
+			En dev:
+			<nam:resource-ref>
+			    <nam:ref-name>jdbc/Datasource</nam:ref-name>
+			    <nam:resource-link>sia/jdbc/Datasource</nam:resource-link>
+			  </nam:resource-ref>
+			  <security-realm-name>arca</security-realm-name> 
+			2) earcontent ne doit pas être sous SVN mais META-INF oui.
+difference entre local et environnement de dev:
+			1) Dans siaWeb/WebContent/geronimo-web.xml:
+			En local:
+			<nam:resource-ref>
+			    <nam:ref-name>jdbc/Datasource</nam:ref-name>
+			    <nam:resource-link>siaDatasource</nam:resource-link>
+			  </nam:resource-ref>
+			  <security-realm-name>ARCA</security-realm-name>
+			En dev:
+			<nam:resource-ref>
+			    <nam:ref-name>jdbc/Datasource</nam:ref-name>
+			    <nam:resource-link>sia/jdbc/Datasource</nam:resource-link>
+			  </nam:resource-ref>
+			  <security-realm-name>arca</security-realm-name> 
+			2) earcontent ne doit pas être sous SVN mais META-INF oui.            
+si cache was ce fait chier: 
+	regarder C:\Program Files\eclipseWASCE\servers\server1\var\config/config.xml.original et virer le projet qui marche pas
+	supprimer les fichiers temp sous C:\Documents and Settings\Administrator\Local Settings\Temp
+	renommer son appliweb et son application d'entreprise
+	ou bien radical: recreer un nouvel ear qui contient l'appli web qu'on veut
+wasadm est disponible sur http://www.intra.renault.fr/dtsi/intranet-rs3dt/Developpement/Homologation/Serveur/composantsServeur-Java.html
+Les drivers sont disponibles sur http://www.intra.renault.fr/dtsi/intranet-rs3dt/Developpement/Composants/DriversJDBC/telechmDriversJDBC.html
+les modules sont sur wasCE/server/server1/repository/renault-lib/
+pour se connecter sur la console:system/manager
+pour changer le nom de la connexion a arca: application > system module
+pour activer la securite ldap: console d'administration serveur:
+SECURITY REALM: other
+REALM NAME: ARCA
+domain name: ARCA
+login module class: org.apache.geronimo.security.realm.providers.LDAPLoginModule
+control flag: required
+server-side: server side
+Support Advanced Mapping: no
+configuration options:
+roleSearchMatching=(uniqueMember={0})
+userSearchSubtree=true
+roleName=cn
+roleBase=ou=Applications,ou=FRA,ou=Rights,o=renault
+userRoleName=objectClass
+authentication=simple
+connectionURL=ldap://anndev.mc2.renault.fr:389
+connectionUsername=uid=AWTWSAD,ou=FRA,ou=People,o=renault
+userBase=ou=People,o=renault
+roleSearchSubtree=true
+initialContextFactory=com.sun.jndi.ldap.LdapCtxFactory
+connectionPassword=AWTWSAD
+userSearchMatching=(uid={0})
 
-  
 UNIX : linux :(unix est la plus basse couche; linux est au dessus mais il a été complettement réecrit, c le kernel=noyau; ubuntu(https://wiki.ubuntu.com/Releases) et debian sont deux distrib au dessus de linux. Sont differentes mais ubuntu est un layer par dessus debian)
 La commande utilisee pour creer les fichiers ISO sous unix est:
         mkisofs -J -r -o $FILE_OUT $FILE_IN
@@ -23974,7 +23759,7 @@ pour parametrer ce qui doit se lancer automatiquement au demarrage
   ls /etc/rc2.d dans ce repertoire on voit tout ce se lance automatiquement quand on rentre dans le runlevel 2 (etc pour 3 pareil...)
   pour mettre à jour la prog d'un demarrage d'un service lors du demarrage du serveur: update-rc.d mysql defaults (par exemple)
 pour savoir ce qui tourne:
-(ps -fu ? ou)ps -ef | grep monnomutilisateur pour voir quelles instances que j'ai lance tournent (affiche les ports)
+(ps -fu ? ou)ps -ef | grep monnomutilisateur pour voir quelles instances que j'ai lance tournent (affiche les ports) ps -ef donne aussi la date de debut d'execution du process
 on peut ensuite faire un kill -15 (soft) ou -9 (hard) sur l'id qu'on veut killer ( premiere colonne en chiffres (PID)) ferme aussi le port du service du coup
 ps -ef donne aussi la date de debut d'execution du process
 ps -ef | grep whatever pour voir si whatever tournent
@@ -25945,6 +25730,15 @@ mettre une image a un bouton image bouton
           <input type="button" onclick="setStop();" value="Rech..." class="save"/><input type="button" onclick="save();" class="save"/>
 
 HTML :
+    XML :     interpretation des caractères xml html
+    remplacer les & (et commercial) par &amp;
+    Caractère  	Code d'echappement
+    Perluète 	& 	&amp;
+    Apostrophe 	' 	&apos;
+    Guillemets droits 	" 	&quot;
+    Superieur à 	> 	&gt;
+    Inferieur à 	< 	&lt;
+
 svg :
    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" stroke-linejoin="round">
    <rect x="50" y="20" width="150" height="150" 
@@ -26000,6 +25794,27 @@ pour faire des dessins animes avec background facon sprites:
           	document.getElementById("avatar").style.backgroundPosition=table[Math.round(Math.random()*13)]+"% 10%";
 si dans une table on veut masquer les borders à l'interieur: 
       <table rules="none"
+yahoo.js :pour faire un drag and drop 
+        public static native void addDraggableSlot(
+        		Element e, 
+        		String affordance,
+        		int counter) 
+        	/*-{
+        		e.id = 'drag_'+counter;
+        		new $wnd.YAHOO.example.DDPlayer(e.id, affordance);
+            	}-*/;
+        // l'objet e peut maintenant etre drague
+        
+        	public static native void addTargetSlot(
+        		Element e, 
+        		String affordance, 
+        		int counter) 
+        	/*-{
+        		e.id = 'target_'+counter;
+        		new $wnd.YAHOO.util.DDTarget(e.id, affordance);
+        	}-*/;
+        // l'objet e peut maintenant etre la cible d'un autre objet drague
+
 ajax : // xmlhttprequest est remplacé maintenant par fetch (voir fetch.)
                         ans = canvas.toDataURL("image/png");  //Pour sauver un canvas sur le serveur en image png ou jpg il faut obligatoirement envoyer les donnees en POST sinon le fichier genere est pourri:
             	    		var formData = new FormData(document.getElementById("forText")); // forText est juste un formulaire html recuperable avec document.getElement...ATTENTION les champs de mon formulaire doivent avoir un name sinon ils ne sont pas ajoute dans les formdata 
@@ -31219,7 +31034,7 @@ pour recuperer les rôles de l'utilisateur qui s'est connecté côté IDP:
         
 windows : (commande dos :)
     commande dos pour voir les ports utilises sur mon ordi: netstat (voir netstat plus haut)
-    les alias: c a d le nom des serveurs et adresse ip sont a definir dans C:/WINNT/system32/drivers/etc/hosts : a la modif il prend en compte tout de suite. LINKàç<çç_à
+    les alias: c a d le nom des serveurs et adresse ip sont a definir dans C:/WINNT/system32/drivers/etc/hosts: a la modif il prend en compte tout de suite. LINKàç<çç_à
     si je veux me connecter en dur sur miami: aller dans panneau de configuration > Reseau > protocole > TCP/IP > propriete adresse IP: 10.68.81.253 ou 242 masque: 255.255.255.0 Valider et redemarrer l'ordinateur.
     outils:de gestion programme de mot de password:
         keepass
@@ -31406,6 +31221,152 @@ windows8 :
     on peut voir le resultat des services qui se lancent au demarrage en faisant: ctlr+alt+sup puis onglet demarrage
 les ear sont planques sur was 2 sous: 
 /srvappli/wacint20/logiciel/was/apps5/installedApps/wndint01/
+
+paint :
+    pour que la selection soit transparente transparante
+        bouton selectionner> choisir transparant
+Excell : excel :
+    si sur exell il me marque toujours #VALEUR! verifier qu'il n'y a pas d'espace dans les cases que j'ai selectionne pour faire mon calcul.
+  figer les volets Affichage > figer les volets
+pour masquer le quadrillage lignes, colonnes:
+  Outils > Options> cocher quadrillage  
+Si les lignes ne s'ajustent pas automatiquement: tout ne rentre pas dans la case
+  c'est parce que j'ai ecrit en gras et en gras ca prend plus de place dans la case mais pour autant la ligne n'ajuste pas sa hauteur: solution: augmenter un peu la taille de la police
+fichier locke: apparition du nom de la personne qui locke. 
+        Pour que votre nom apparaisse en clair, au lieu de votre IPN, lors d'une tentative d'accès 9 à un fichier Office (comme dans le message ci-dessous), cliquez sur "Outils - Options - General" dans Excel (ou "Outils - Options - Utilisateur" dans Word), et saisissez votre nom dans le champ "Nom d'utilisateur".
+pour faire des mises en forme conditionnelles illimitees
+		      voir le fichier MFC rapide illimite.xls que j'ai mis dans mon repertoire Laurent.
+		      faire une feuille "MFC" et copier la macro suivante dans thisWorkbook (Outil>macro>visualBasicEditor>trouver thisWorkbook dans le panel a gauche)
+                                        		      Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
+                                            Dim i As Integer, j As Long, Mfc As FormatCondition, c As Range, Ws1 As Worksheet
+                                            On Error GoTo fin ' en cas de mauvaise manipulation, ça plante sur l'ordre suivant
+                                            Application.EnableEvents = False
+                                            Set Ws1 = Sheets("MFC")
+                                            For i = 1 To Target.FormatConditions.Count
+                                                Set Mfc = Target.FormatConditions(i)
+                                                If UCase(Left(Mfc.Formula1, 7)) = "=MA_MFC" Then
+                                                    Ws1.Range("A1").Value = Target.Value
+                                                    Set c = Nothing
+                                                    For j = 2 To Ws1.Range("A65536").End(xlUp).Row
+                                                        If Ws1.Range("A" & j) = True Then
+                                                            Set c = Ws1.Range("A" & j)
+                                                            Exit For
+                                                        End If
+                                                    Next j
+                                                    If c Is Nothing Then Set c = Ws1.Range("A1")
+                                                    c.Copy
+                                                    Target.PasteSpecial (xlPasteFormats)
+                                                    Application.CutCopyMode = False
+                                                End If
+                                            Next i
+                                            Application.EnableEvents = True
+                                        fin:
+                                            On Error GoTo 0
+                                        End Sub
+pour atteindre une cellule nommee: 
+	Ctrl +T
+pour avoir des chiffres à la place des lettres dans les colonnes
+	outils>options> onglet general > style de referentiel
+	2010: fichier > aide > options > formules >style de reference
+
+premiers caracteres substring Droite
+    STXT
+
+pour savoir si une cellule est en erreur: 
+	=esterreur(Cellule)
+pour faire un diff entre deux dates: 
+		soustraire deux dates: donner le nombre d'annees entre deux dates: (delta difference entre deux dates)
+			15/10/2008 01/09/1974
+			=ANNEE(A1) =ANNEE(B1) 
+			=SI(MOIS(A1)<MOIS(B1);ANNEE(A1)-ANNEE(B1)-1;ANNEE(A1)-ANNEE(B1))
+	en jours c'est simple: celluledate1-celluledate2
+	diff entre deux dates sans les weekend (possibilite sans les jours feries)
+	=NETWORKDAYS(O5,N5) (anglais)
+	=NB.JOURS.OUVRES(...)
+Pour ajouter des jours a une date
+	le plus simple c'est tout simplement d'avoir la valeur en chiffre de la date a laquelle on veut ajouter des jours: exemple:=DATEVAL("04/01/2010") (si on veut faire reference à une cellule qui contient une date, celle ci doit etre au format texte)
+	ensuite sur la celle suivante on met: =AD38+6 (ici je rajoute six jours). Changer le format de cette cellule en format date. Thats all.
+si j'ai des dièses #### partout dans une cellule:
+			c'est parce que mon champ texte est trop gros.
+      soit je set le format de ma cellule à standard et la ca marche, 
+      soit on ne peux rien y faire sauf soit augmenter colonne mais ne marche pas si plus de 255 caractères.
+      Sinon reduire taille du texte à 255
+si mon clavier est passe en mode qwerty:
+		 faire Maj + Alt et il repasse en mode azerty
+pour faire une macro qui recalcul tout à l'ouverture du fichier
+				Sub auto_open()
+				'
+				' Macro1 Macro
+				' Macro enregistree le 15/08/2008 par p040183
+				'
+				'
+				    Application.MaxChange = 0.001
+				    ActiveWorkbook.PrecisionAsDisplayed = True
+				    
+				    Application.CalculateFull
+				   
+				End Sub
+chiffres/lettres modifier l'ordonne:
+      outils > options > references > style de referenceL1CI
+RechercheVerticale search vertical
+    =VLOOKUP(A2;'Matcle Infos'!A:B;1;FALSE) /// attention il faut que les cellules soient au format texte des le départ
+    ou 
+    =VLOOKUP(G2*1;E1:E2321;1;TRUE) (multiplier par 1 si ca marche pas)
+    =RECHERCHEV(...) 
+
+empecher excel de creer des colonnes separateur separation
+  toujours convertir et decocher les cases
+
+
+ACTIVEX : (ne peut pas s'executer sur un serveur)
+Partie 1: Objets 
+L'objet ActiveX qui permet d'utiliser les fichiers est l'objet Scripting.FileSystemObject.
+var fso=new ActiveXObject("Scripting.FileSystemObject"); 
+Partie 2: Creer un fichier 
+La methode qui permet de creer un fichier est la methode CreateTextFile.
+fso.CreateTextFile("Nom du fichier.extension",true);
+>>Le deuxième argument precise si on veut ecraser le fichier deja present sous le meme nom s'il existe. 
+Partie 3: Utiliser un fichier 
+La methode qui permet d'ouvrir un fichier est la methode OpenTextFile.
+var otf=fso.OpenTextFile("Nom du fichier.extension",1 ,true);
+>>Le deuxième argument precise le type d'ouverture: 1-Ouverture en lecture ; 2-Reecriture ; 8-Ecriture a la suite.
+>>Le troisième argument precise de creer (true) ou non (false) le fichier s'il n'existe pas. 
+Partie 3.1: Ecrire dans un fichier 
+La methode qui permet d'ecrire dans un fichier est la methode Write ou WriteLine.
+otf.Write("Texte à marquer");
+otf.WriteLine("Ligne à marquer");
+>>Remarque: la methode WriteLine marque le texte entre en argument et lui rajoute un saut de ligne.
+>>Remarque: le fichier doit d'abord être ouvert en reecriture ou en ecriture a la suite (2 ou 8). 
+Partie 3.2: Lire un fichier 
+La methode qui permet de lire un fichier est la methode Read ou ReadAll.
+otf.Read(9);
+otf.ReadAll();
+>>Remarque: Le fichier doit être ouvert en mode lecture.
+>>Remarque: la methode Read lit le nombre de caractère entre en argument.
+>>Remarque: la methode ReadAll lit tout le fichier. 
+Partie 3.3: Fermer un fichier 
+La methode qui permet de fermer un fichier est la methode Close.
+otf.Close();
+Partie 4: Supprimer un fichier 
+La methode qui permet de supprimer un fichier est la methode DeleteFile.
+fso.DeleteFile("Nom du fichier.extension");
+Partie: Pour executer un fichier:
+      shell=new ActiveXObject("WScript.shell"); 
+      shell.run("\"C:\\Temp\\WINWORD.EXE");
+      si j'ai une erreur dans ce script essayer sur IE: options> securitysettings>customs...>enable initialize and script ActiveX controls not marked safe... 
+Partie 5: Exemples 
+var fso=new ActiveXObject("Scripting.FileSystemObject"); //Système de fichier.
+fso.CreateTextFile("fichier1.txt",true); //Creation du fichier "fichier1.txt" avec ecrasement.
+var otf=fso.OpenTextFile("fichier1.txt", 8 ,true); //Ouverture du fichier "fichier1.txt" en mode ecriture a la suite.
+otf.WriteLine("Bonjour."); //Ecriture de la ligne "Bonjour.".
+otf.Write("Coucou"); //Ecriture de "Coucou".
+otf.Close(); //Fermeture du fichier "fichier1.txt".
+otf=fso.OpenTextFile("fichier1.txt", 1 ,false); //Ouverture du fichier "fichier1.txt" en mode lecture.
+alert(otf.Read(7)); //Lecture des 7 premiers caractères ("Bonjour.").
+alert(otf.ReadAll()); //Lecture de tout le fichier ("Bonjour.\nCoucou").
+otf.Close(); //Fermeture du fichier "fichier1.txt".
+fso.DeleteFile("fichier1.txt"); //Suppression du fichier "fichier1.txt". 
+Pour plus d'informations allez voir le site de bultez: http://marcel-bultez.chez-alice.fr/documents/SupportsRepertoiresFichiers.htm 
 
 WORD :
 pour replace remplacer c'est dans l'onglet home avec la souris 
