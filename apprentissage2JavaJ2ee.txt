@@ -1,4 +1,4 @@
-(?=.*liste)(?=.*fichier)
+(?=.*convert)(?=.*xml)
 Hashmap/HashTable 
 lock reentrant
 immutable interet car pas de pb de concurrence
@@ -762,8 +762,8 @@ github : guitub :  git : gitub : (installable sur mobaxterm :depoxer le plugin d
     branches: master; develop; etc etc... elles existent en local et sur le repo distant et sont toutes TOUTES indépendantes les unes des autres c a d : je peux avoir en local un master qui push dans le develop distant. Les branches c de la merde. DEVOPS.
         si j'ai (HEAD detached from 351dcab) c'est parce que mon HEAD est orphelin et dans aucune branche(parce que j'ai fait un git checkout sur un commit). faire git stash save "bla"; git checkout master; git merge codeDeMonHeadDetached. Ancienne methode: pour le recuperer dabord le rattacher a une branche temporaire: git branch temp puis git checkout temp. Ensuite il faut ecraser une branche par temp (voir ci dessous)
       git branch // pour voir toutes les branches.(attention ne montre pas toutes les branches en fait. pour les voir toutes je ne sais pas comment faire) et voir quelle branche est activee A8. Ou est mon HEAD. Les branches c la merde. DEVOPS
-      git branch nomdelabrancheacreer // pour creer une nouvelle branche: ca ne cre pas une branche vide: ca copie la branche actuelle dans la nouvelle branche. Les branches c la merde. DEVOPS
-                                          maintenant je peux checkouter sur cette nouvelle branche ET avant tout faire un commit dessus sinon LINK98530 puis je peux la pusher sur le repo distant: si le nom de la branche local est le meme que sur une branche du repository distant alors il va pusher dans cette branche qui a ce meme nom. Pas mal pour pusher sur une autre branche facilement.
+      git branch nomdelabrancheacreer // pour creer une nouvelle branche: ca ne cre pas une branche vide: ca copie la branche actuelle (meme ce qui n'est pas addé) dans la nouvelle branche. Les branches c la merde. DEVOPS
+                                          maintenant je peux checkouter sur cette nouvelle branche ET avant tout faire un commit dessus sinon LINK98530!!!! puis je peux la pusher sur le repo distant: si le nom de la branche local est le meme que sur une branche du repository distant alors il va pusher dans cette branche qui a ce meme nom. Pas mal pour pusher sur une autre branche facilement.
       git branch -d nombrancheasupprimerDeleter // supprimer une branche
       git branch -f nomdelabrancheAEcraser nomdelabrancheQuivaPrendreLaPlaceDeLautreEtVaLecraser
       
@@ -777,6 +777,8 @@ github : guitub :  git : gitub : (installable sur mobaxterm :depoxer le plugin d
     merger ma branche avec mon master ATTENTION TOUJOURS COMMITER AVANT DE FAIRE UN MERGE
       se positionner dans là ou je veux tirer vers moi (le master en principe)
       git merge NomDeLaBranchequejeveuxTirerVersLaBranchDansLaquelleJeSuis(en principe le master) master<----tototo ATTENTION TOUJOURS COMMITER AVANT DE FAIRE UN MERGE
+            git merge -X theirs NomDeLaBranchequejeveuxTirerQUI_EST_PRIORITAIRE_ET_ECRASE_LA_OU_JE_SUISVersLaBranchDansLaquelleJeSuis
+            git merge -s ours NomDeLaBranchequejeveuxTirerVersLaBranchDansLaquelleJeSuisQUI_EST_PRIORITAIRE_ET_PREND_LE_PAS_SUR_CE_QUI_EST_IMPORTE
                 merge manuellement <<<<<<<<<<<< HEAD
                                         mon cote
                                 ==================
@@ -789,7 +791,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm :depoxer le plugin d
       git rm -r --cached <filePath> //-r pour recursif
       git status -uno//(-uno pour ne pas voir les untracked) pour savoir quels fichiers vont etre commites ( a faire si j'ai le message Changes not staged for commit)
       git commit:  apres commit je peux faire un fetch((recupere du repo distant vers le local dans une autre localisation:pour l'instant n'a pas touché a mon espace de travail) puis pull (pour récupérer les dernières modifs des collegues et le merger avec mon espace de travail) puis ensuite un push
-                      si j'ai l'erreur "Please commit your changes or stash them before you merge." quand je fetch-pull faire: une sauvegarde a la mano de tout mon repertoire.
+                      si j'ai l'erreur "Please commit your changes or stash them before you merge." quand je fetch-pull soit je stash soit je LINKcheckoutquandmeme
       git commit -m "blablamMonCommentaire"// index->masterOuBrancheQuiALeHEAD :jusqu'a present tout est encore en local. voir git add si il ne commit pas malgres tout.
       git commit -am // -a pour ne commiter que les fichiers je crois ou bien -a pour forcer l'ajout de fichier non indexes avant de faire le commit
       apres commit je peux faire un pull puis ensuite un push
@@ -830,7 +832,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm :depoxer le plugin d
       git checkout pathfichiermodifieMaisPasAdded //annuler mes modifs 
       git checkout <nom_du_tag> pour revenir à une ancienne version// ne marche pas si je veux remplacer mon working directory modifié par le dernier commit: dans ce cas faire git chekout -- pathAvecWildcardDesFichiersQueJaiModifieDansLeWorkSpaceMaisQueJeNaiPasAdded (undo) Linkcheckout
       git checkout -f <nom_du_tag> pour ignorer le message "The following untracked working tree files would be overwritten by checkout" ATTENTION d'avoir commité avant et d'etre sur que le warning ne parle que de fichiers dont je m'en fous. LINKcheckoutquandmeme  
-      si j'ai l'erreur "Please commit your changes or stash them before you merge." quand je pull faire: une sauvegarde a la mano de tout mon repertoire.
+      si j'ai l'erreur "Please commit your changes or stash them before you merge." quand je pull : soit je stash soit je LINKcheckoutquandmeme
       git stash save "<message a ecrire>"// sauve mes repertoires dans un truc temporaire et revient à la version du dernier commit.
           puis git pull puis resolve tout (il merge ).
       git stash list : liste mes sauvegardes temporaires chaque sauvegarde a un id. 
@@ -850,10 +852,12 @@ github : guitub :  git : gitub : (installable sur mobaxterm :depoxer le plugin d
             ne pushe pas les repertoires vides: pour ça ajouter juste un fichier avec "x" dedans
             si j'ai error: failed to push some refs to // peut etre j'ai oublié de commité ou bien il faut puller avant
         git config credential.helper store // pour ne plus qu'il demande le user/pass en https
-        git pull: avant de faire ca faire git fetch
+        git pull: fait automatiquement un git fetch avant si ca na pas été deja fait
         la premiere fois faire git pull origin master
         git pull URLouPathRepositoryDistantPeutEtreLocal si il veut pas et/ou met message refusing to merge unrelated histories mettre:--allow-unrelated-histories//recupere les derniers push des autres sur mon HEAD local // si il dit "not a git repository" il faut que je me place dans le projet git
                     si il dit "....be overwritten by merge" c'est que quelqun a poste sur le repo des choses qu'il n'aurait pas du. 2 solutions: 1)faire un git clone ailleurs du projet puis git rm fichiersquinauraientpasdusetrouverdanslerepo puis commit et push 2)aller sur le repo et les supprimer
+        si j'ai l'erreur cannot stat permission denied au moment d'une manip
+                c'est a chause de windows. il ya un fichier locké par un autre programme. Tout fermer et recommencer
             
 Nativescript :
       generateur d'icones http://nsimage.brosteins.com/
@@ -2420,7 +2424,19 @@ erreurs codes http: LINKcodesHttp
 502: Probleme entre un serveur proxy intermediaire et le serveur final: probleme de protocole ou config
 
 
-J2EE :
+J2EE : jee : javaee :
+CDI2.0 pas besoin d'utiliser weld (je crois)
+CDI1.x besoin de weld
+        <dependency>
+			<groupId>org.jboss.weld.se</groupId>
+			<artifactId>weld-se-core</artifactId>
+			<version>3.0.1.Final</version>
+		</dependency>
+		
+try (SeContainer container = initializer.disableDiscovery().initialize()) { implique beans.xml
+try (SeContainer container = initializer.disableDiscovery().addPackages(App.class).initialize()) { pas besoin de beans.xml
+
+<!-- pour utiliser les @ : scan les java qui ont :@Named, @Inject
 du code java pour aller afficher une page html sans rien faire de special
   res.setContentType("text/html");
   res.setHeader("pragma", "no-cache");
@@ -2609,7 +2625,7 @@ quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.
                   */
                   @GET ou @POST 
                   @Path("/lafindelurl") // mettre {monparamdanspath} si on veut utiliser @PathParam("userlogin")String login ci dessous LINK5464  
-                  @Produces("application/xml") // possible aussi mais à traduire: produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE
+                  (javax.ws.rs.)@Produces("application/xml") // possible aussi mais à traduire: produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE
                   public Collection getFeatures( @FormParam("parametrePost") String unParametre  ) throws Exception;
                                                   ou 
                                                       @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464
@@ -5043,7 +5059,7 @@ Spring : XML STYLE
                                                       <mvc:resources mapping="/resources/**" location="/resources/" />
                                                                 <mvc:default-servlet-handler />
                                                                 <mvc:annotation-driven />
-                                    <!-- pour utiliser les @ : scan les java qui ont :@Controller, @ComponentGENERIQUEEVITERDUTILISERUtiliser@Named, @Repository, @Service(instancie mon service au demarrage) @Inject(equivalent de @Autowired mais Inject n'est pas une annotation JEE), @Named(equivalent de @Qualifier), @PostConstruct: ces annotations servent juste de remplacement de la conf du xml du spring. C pareil mais dans le code java -->
+                                    <!-- pour utiliser les @ : scan les java qui ont :@Controller, @ComponentGENERIQUEEVITERDUTILISERUtiliser@Named, @Repository, @Service(instancie mon service au demarrage) @Inject(equivalent de @Autowired mais @Autowired est une annotation Spring), @Named(equivalent de @Qualifier de Spring), @PostConstruct: ces annotations servent juste de remplacement de la conf du xml du spring. C pareil mais dans le code java -->
                                      <context:component-scan base-package="mon.path.java"> pour plusieurs packages: <context:component-scan base-package="x.y.z.service, x.y.z.controller" />           
                                             <!-- pour ignorer les @Controller dans CE ApplicationContext et du coup ne pas instancier les classes marquees par @Controller -->                   
                                                 <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
@@ -5487,7 +5503,7 @@ Spring-batch :
                                   assertEquals(cequonattendsBatchStatus.COMPLETED, jobExecution.getStatus());
                                   JobExecution jobExecution = jobLauncherTestUtils.launchStep("step1");
                                   assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
-                                          
+>>>>>>>>>>>>>>>>>>>AFAIRE : organiser ci dessous les :>>>>>>                                          
   Spring pour tester avec junit :  XML et JAVA style:
       a lire : https://dzone.com/articles/unit-and-integration-tests-in-spring-boot
                 http://stackoverflow.com/questions/12058098/spring-testing-framework-jndi-resource/12058370#12058370        
@@ -5510,7 +5526,7 @@ Spring-batch :
                                     import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
                                     import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
                                                       
-                                    @RunWith(SpringRunner.class) ou (SpringJUnit4ClassRunner.class)  ou (JMock.class)   si on veut tester non pas une seule classe mais une classe appelant une autre (qui est mockee) // grace à @RunWith(SpringJUnit4ClassRunner.class) ça initialise la classe SpringJUnit4ClassRunner avant de demarrer les tests. Cette classe permet d'injecter des beans dans cette classe //INDISPENSABLE POUR QUE @TESTPROPERTYSOURCE MARCHE
+                                    @RunWith(SpringRunner.class[plus recent]) ou c'est la meme chose (SpringJUnit4ClassRunner.class)  ou (JMock.class)   si on veut tester non pas une seule classe mais une classe appelant une autre (qui est mockee) // grace à @RunWith(SpringJUnit4ClassRunner.class) ça initialise la classe SpringJUnit4ClassRunner avant de demarrer les tests. Cette classe permet d'injecter des beans dans cette classe //INDISPENSABLE POUR QUE @TESTPROPERTYSOURCE MARCHE
                                     puis
                                     @SpringBootTest(webEnvironment=RANDOM_PORT//facultatif. Si c'est du springboot. Du coup c'est pour les tests d'integration. Pas pour les tests unitaires. On peut aussi forcer le port) si spring-boot: demarre carrement le serveur. // recherche la classe annotee @SpringBootApplication pour def ApplicationContext qui est partage entre toutes les methodes et classes de test sauf si on met @DirtiesContext
                                      ou
@@ -5761,10 +5777,10 @@ jstl :(GENIAL CE TRUC POUR SPRING)
   formater pattern dans les jsp: 
       <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
       <fmt:formatNumber value="${result.priceReduced}" type="currency"/>
-test if :
+test if:
 <c:if test="${results.size()==0}">
 <c:if test="${result.nbComments>0}">!!!!</c:if>
-egalitee de string : 
+egalitee de string: 
     <option value="${imgoption}"<c:if test="${imgoption==departure.imageName}">selected="selected"</c:if>>${imgoption}</option>      
       
 jsf2 : jsf : ---------DEBUTBEURK----------
@@ -5784,7 +5800,7 @@ faire des boucles loops  foreach:
   Arithmetic  +, -, *, / (or div), % (or mod)
   Relational    == (or eq ), != (or ne), < (or lt), > (or gt), <= (or le), >= (or ge)
   Logical && (or and), || (or or), ! (or not)
-  Conditional A ? B : C (Evaluate A to Boolean. If true, evaluates and returns B. Otherwise, evaluates and returns C.)
+  Conditional A ? B: C (Evaluate A to Boolean. If true, evaluates and returns B. Otherwise, evaluates and returns C.)
   Empty = empty A (If A is null or is an empty string, array, Map, or Collection, returns true. Otherwise returns false.)
  
           xmlns:h="http://java.sun.com/jsf/html"
@@ -5795,12 +5811,12 @@ faire des boucles loops  foreach:
               <title>A Simple JavaServer Faces Registration Application</title>
             </h:head>
             <h:body>
-    en bas de page : 
-    bonne pratique : 
+    en bas de page: 
+    bonne pratique: 
     <p><h:messages /></p> // comme ca ca affiche toute autre erreur
   
-  une action : ne peut pas être appellee par une URL comme dans struts:
-    un bouton qui envoie une request requete ajax :                                                        
+  une action: ne peut pas être appellee par une URL comme dans struts:
+    un bouton qui envoie une request requete ajax:                                                        
         <h:inputText value="#{purchases.cheapItems[0]}"/>// ici c'est un tableau ou bien <h:inputText value='#{purchases.valuableItems["low"]}'/>       
         <h:commandButton...action="#{someBean.someMethod // ici pas de get et de set dans le nom de la methode}"/>
           <f:ajax execute="@ form" render="resultId"/> // execute prend l'id d'un objet  du dom qu'on envoie au serveur!!! et de meme pour render: il prend un id du dom
@@ -5808,7 +5824,7 @@ faire des boucles loops  foreach:
         <h:outputText value="#{myBean.myProperty}" id="resultId"/>.
   pour recuperer le httprequest et ou response 
       Recuperer un param du request: toto.jsp?userId=blah
-        {#param.userId} on peut le mettre partout : dans annotations java: @ManaqedProperty(value="#{param.userid}")) 
+        {#param.userId} on peut le mettre partout: dans annotations java: @ManaqedProperty(value="#{param.userid}")) 
                                                                      ou dans jsf xhtml: <h:outputText value="#{param['userid']}" />or <h:outputText value="#{param.userid}" />
       ou
          ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
@@ -5818,18 +5834,18 @@ faire des boucles loops  foreach:
       Map<String, Object> requestMap=FacesContext.getCurrentInstance().getExternalContext().getRequestMap();
         et on peut toujours faire requestMap.put("totoMaCle","titi ma valeur");
         puis dans jsf on peut mettre #{totoMaCle}
-  CommandButton et CommandLink :Font des HTTP POST/ pour les update. Ne font pas un redirect donc pour respecter PRG besoin forcer redirect (voir face-config.xml)
+  CommandButton et CommandLink:Font des HTTP POST/ pour les update. Ne font pas un redirect donc pour respecter PRG besoin forcer redirect (voir face-config.xml)
         le commandbouton:
                   <p><h:commandButton value="Mon Libelle" action="monOutcome" /></p> (voir lifecycle)  
                                                           action="#{userBean.addConfirmedUser}" 
-                les command buttons : voir ci-dessus. Remarque si je met attribut immediate : ca interromp le lifecycle et applique l'execution de mon bouton. Utile si je veux canceller ou faire de l'ajax-like
+                les command buttons: voir ci-dessus. Remarque si je met attribut immediate: ca interromp le lifecycle et applique l'execution de mon bouton. Utile si je veux canceller ou faire de l'ajax-like
         le commandlink:
                 <h:commandLink action="monOutcome ou "#{userBean.addConfirmedUser}">
                         <h:outputText value="libelle de mon lien"/>
                 </h:commandLink>        
-  Bouton et Lien simples : Font des HTTP GET donc les formulaires ne sont pas envoyes au serveur. Pour voir une autre page (sans update). Font un redirect.                                        
+  Bouton et Lien simples: Font des HTTP GET donc les formulaires ne sont pas envoyes au serveur. Pour voir une autre page (sans update). Font un redirect.                                        
                 h:button outcome=nomdelapagexhtmlsanspointxhtml, et h:link outcome=nomdelapagexhtmlsanspointxhtml 
-  exemple lien :
+  exemple lien:
         <h:link outcome="page02" value="Link with query parameters">
             <f:param name="word1" value="hello" />
             <f:param name="word2" value="dolly" />
@@ -5837,12 +5853,12 @@ faire des boucles loops  foreach:
       genère:  http://localhost:8080/methodInvocation/faces/page02.xhtml?word1=hello&word2=dolly
   exemple UIOutput ou UIInput general:avec les backing beans (en opposition à ManagedBeans) (voir backingbeans)
       <h:inputText binding="leBackingBean.proprieteDuBackingBean" value="libelle"/> à la validation du form, il n'y aura pas de conversion ni de validation des params mis dans binding. Le Backing bean peut alors changer l'etat de mes champs (exemple: disabled, changer value...) sans reel traitement metier(sur?)          
-  exemple boolean checkbox : 
+  exemple boolean checkbox: 
       <h:selectBooleanCheckbox value="#{model.booleanValue}" />
         cote java c'est un setBoolean (c'est un boolean)
   si champ est un boolean
       cote bean java mettre soit getMonBool soit isMonBool c pareil
-  exemple select :
+  exemple select:
       <h:selectOneRadio id="sex" value="#{userBean.sex}" required="true"/>
         <f:selectItem itemLabel="Male" itemValue="male"/>
           <f:selectItem itemLabel="Female" itemValue="female"/>
@@ -5852,7 +5868,7 @@ faire des boucles loops  foreach:
     <h:selectOneMenu value="#{flash.monChoix}"> (mis dans memoire flash pour rappel pour la prochaine request seulement)
           <f:selectItems value="#{monBean.mesValeurs}"/> // mesValeurs est un objet de type Collection
     </h:selectOneMenu>
-pour renvoyer un message de mon bean : (et i18n :) 
+pour renvoyer un message de mon bean: (et i18n:) 
         doneMessage = new FacesMessage("Failed to add new user"); si "{mon.libelle.i18n"}
                       severity=INFO ou WARN ou ERROR ou FATAL
                       summary= human readable message
@@ -5863,7 +5879,7 @@ pour renvoyer un message de mon bean : (et i18n :)
         <h:outputText rendered="#{userBean.manager}" value="#{Employee.salary}"/> // rendered c la condition. si renvoie true, il affichera Employee.salary
         autre exemple: 
         <h:outputText rendered=" #{userBean.serviceLevel == 'Premium'}" value ="Felicitation tu es premium avec reduction #{Discounts.basicDiscount * 10}% discount!" />
-  autre exemple condition :
+  autre exemple condition:
       <h:panelGroup rendered="#{! empty flash.serviceLevel}"> // affiche le contenu uniquement si flash.serviceLevel est defini
         (...)
      </h:panelGroup>
@@ -5872,9 +5888,9 @@ executer une methode de mon bean java à la volee en lui envoyant des parametres
       The text after the colon comes from the invocation of
       a method via the EL: #{maClasseBean.generateSentance(param.word1,param.word2)} // maClasseBean est annotee @ManagedBean
     </p>
-composants customises :
+composants customises:
       <html ....
-        xmlns:vt="http://java.sun.com/jsf/composite/malibrairiecustomisee"> // pour faire des composants customises. voir "comosants customises" comme url start part http://java.sun.com/jsf/composite/ :traitement special: après "composite/" il doit y avoir qu'un seul mot. ici "malibrairiecustomisee"
+        xmlns:vt="http://java.sun.com/jsf/composite/malibrairiecustomisee"> // pour faire des composants customises. voir "comosants customises" comme url start part http://java.sun.com/jsf/composite/:traitement special: après "composite/" il doit y avoir qu'un seul mot. ici "malibrairiecustomisee"
         ...
         <body><h:form>
           <vt:loginPanel />
@@ -5883,14 +5899,14 @@ composants customises :
         jsf va donc chercher malibrairiecustomisee.war qui peut contenir des fichiers.xhtml et notemment loginPanel.xhtml.
         Dans un projet maven il doit se trouver sous src/main/webapp/resources/malibrairiecustomisee/loginPanel.xhtml.
         et dans le war malibrairiecustomisee.war maven le place dans resources/malibrairiecustomisee/loginPanel.xhtml
-        a faire : poursuivre au chapitre : Chapter 11 - Building Custom UI Components The Code Behind the Markup of This Simple JSF UI Component
+        a faire: poursuivre au chapitre: Chapter 11 - Building Custom UI Components The Code Behind the Markup of This Simple JSF UI Component
  
 lifecycle :                                                                                                                                                                                                                                                                                                                                                                                                
       Restore View (construit ou recupere le FacesContext.UIViewRoot = image de mon form cote serveur) 
       > Apply Request Values: set les values des comp UIViewRoot implementant ValueHolder. Pour chacun de ceux ci:
             si component a property immediate validator.validate(value du component) est execute là. Sinon voir plus bas. 
       > Process Validations = conversion: 
-                                      balises de conveters :
+                                      balises de conveters:
                                           conversions de date par ex: et autres (0ou1 par UIOuput (UIInput extends UIOuput)       
                                                     <h:inputText label="Date of Birth" id="dob" value="#{userBean.dob}" required="true"> 
                                                               <f:convertDateTime  //dans mon bean java userBean.dob doit etre de type java.util.Date
@@ -5941,7 +5957,7 @@ lifecycle :
                                       required et vide? oui: queue Exception, add requiredMessage pouvant etre overide par moi dans mon UIInput dans la queue FacesMessage , Arrete traitement pour ce UIComponent
                                       non
                                       continue: 
-                                          exemples :
+                                          exemples:
                                               meth1: permet d'associer max 1 validator/component:
                                                    côte jsf:                            
                                                            <f:validateRequired> // ** haha!!! là tous les champs entre cette balise seront nested required (ne prend pas precedence sur les balises validator inclues dans les components)
@@ -5965,14 +5981,14 @@ lifecycle :
                                                                           <f:validateRequired/> // ici ou bien même peut englober!!! voir **
                                                              </h:inputText>
                                                              autres exemples uniquement jsf: 
-                                                                  DoubleRange(f:validateDoubleRange), LongRange(f:validateLongRange) exemple :
+                                                                  DoubleRange(f:validateDoubleRange), LongRange(f:validateLongRange) exemple:
                                                                                 <h:inputText value="#..." id="zip">
                                                                                   <f:validateLongRange minimum="nombreMin" maximum="nombreMax"/>
                                                                                 </h:inputText>
                                                                                 <h:message for="zip"/> 
-                                                                  LengthValidator exemple :
+                                                                  LengthValidator exemple:
                                                                                   <f:validateLength minimum="16" maximum="16"/> //16 char exactement
-                                                                  RegularExpression(f:validateRegex RegexValidator) exemple :
+                                                                  RegularExpression(f:validateRegex RegexValidator) exemple:
                                                                                   <f:validateLength minimum="16" maximum="16"/> //16 char exactement
                                                                                   <f:validateRegex pattern=".*\p[Punct].*"/>
                                                                                   <f:validateRegex pattern=".*\d.*`\d.*"/>
@@ -6009,18 +6025,18 @@ lifecycle :
                                   .source.action=monBean.MaMethode (public et peut accepter 0 arg. Peut accepter n arg?)
                                 Cet Action Event passe en param de ActionListener(ActionEvent)
                                 -> forward = beanMethod executee->string result
-      >NavigationHandler cherche le forward :Render response
+      >NavigationHandler cherche le forward:Render response
                             si forward=null reste sur page
                             sinon
                             si forward existe dans face-config.xml->utilise. First one wins
                                                           <?xml version="1.0"?>
                                                           <faces-config … version="2.0">
                                                           <navigation-rule>
-                                                            <from-view-id>/starting-page.xhtml</from-view-id> // Est facultatif. Ici on peut utiliser les wildcard: * exemple : /register/* 
+                                                            <from-view-id>/starting-page.xhtml</from-view-id> // Est facultatif. Ici on peut utiliser les wildcard: * exemple: /register/* 
                                                               <navigation-case>
                                                                     <from-action>#{MonManagedBean.maMethode}</from-action> // optionnel: si on le met pas c parce que une xhtml appelle une xhtml directement (dans ce cas on ne passe pas par une action)
                                                                     <from-outcome>siMonBeanReturnCaOuMonUILienouBouton a cette action</from-outcome> // exemple: mapage
-                                                                                         ici on peut y mettre ca : <if>#{model.booleanValue}</if> MAIS C MOCHE DE METTRE DE LA LOGIQUE LA DEDANS JE NE LE FERAIS JAMAIS
+                                                                                         ici on peut y mettre ca: <if>#{model.booleanValue}</if> MAIS C MOCHE DE METTRE DE LA LOGIQUE LA DEDANS JE NE LE FERAIS JAMAIS
                                                                     <to-view-id>/aller-vers-ca.xhtml</to-view-id>
                                                                     <redirect> // facultatif: si on met pas, l'url du browser ne change pas car le serveur renvoit sa response dans la meme http et c plus performant. Si on met: creation d'un nouveau request/response mais au moins l'url du browser change. Mais si mon bean n'est pas sessionScoped, le request/response est perdu
                                                                                 // c'est equivalent à mettre ><h:commandButton value="HTTP POST with Redirect"action="page02?faces-redirect=true" /> // faces-redirect est le mot cle pour indiquer que cest un <redirect>
@@ -6049,8 +6065,8 @@ lifecycle :
                             sinon
                             si forward = nom de page sans le xml -> utilise et va vers forward.xhtml
                             sinon reste sur la meme page
-        validation au niveau des beans java (!=validation jsf) :
-        pour passer des validations jsf ci-dessus à directement ca : 
+        validation au niveau des beans java (!=validation jsf):
+        pour passer des validations jsf ci-dessus à directement ca: 
               <h:inputText label="sdlfkj" id="toto" value="#{monBean.maPropriete}"
               donc:
               @ManagedBean(name="monBean")
@@ -6125,7 +6141,7 @@ faire des includes en jsf:complementaire de ci-dessus P utiliser aussi.
                       <ui:include src="menubar.xml">
                         <ui:param name="user" value="#{currentUser}"/>
                        </ui:include>
-                  page menubar.xml :
+                  page menubar.xml:
                   <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core">
                   Welcome, #{user.honorific} #{user.firstName}
                   #{user.lastName}!
@@ -6136,7 +6152,7 @@ Pas bien compris: sert à forcer la definition d'UIComponents je crois...
       <ui:component id="optionalComponentId" binding="optionalValueExpression">
       <ui:fragment id="optionalComponentId" binding="optionalValueExpression">
       <ui:remove>
-Equivalent java des composants : voir photo telephone. Les UIComponents ont des renderers differents en fonction des devices qui les affichent      
+Equivalent java des composants: voir photo telephone. Les UIComponents ont des renderers differents en fonction des devices qui les affichent      
 Pour debuger ma view: 
     <ui:debug hotkey="optionalHotKey" /> // si hotkey n'est pas def alors faire Ctrl+Shift+D
     besoin mettre dans web.xml:
@@ -6157,7 +6173,7 @@ Afficher une java.util.list<String>
             <h:outputText value="#{row}"/>
           </h:column>
         </h:dataTable>
-        autre exemple après une selection : 
+        autre exemple après une selection: 
             <h:dataTable border="1" var="maLigne" value="#{monBean.donnees[flash.maSelectionMiseEnMemoireFlash]}"> // on imagine que je viens de valider un form ou je set le flash.maSele... pour afficher un tableau de donnees
               <h:column>
                   <f:facet name="header">First Name</f:facet>
@@ -6200,7 +6216,7 @@ Afficher une java.util.list<String>
                                         ...
                                       }
                                    }
-         faire du javascript avec jsf : he oui ce n'est plus aussi simple qu'avant: exemple: quand on clique sur la checkbox je veux que ca fasse apparaitre un champ texte et son libelle
+         faire du javascript avec jsf: he oui ce n'est plus aussi simple qu'avant: exemple: quand on clique sur la checkbox je veux que ca fasse apparaitre un champ texte et son libelle
               <h:selectBooleanCheckbox 
                             binding="#{zipAutoFill.moreInfoCheckbox}" 
                             immediate=true onclick="document.getElementById('autofill').click();"
@@ -6215,13 +6231,13 @@ Afficher une java.util.list<String>
                 )         
                                                                        
                                                           
-Les events et listeners:                                                    
+Les events et listeners :                                                    
     evt    evt    evt   evt   "que se passe t'il?"                          
      |  \     |    / \    |                                                 
-     |    --\  \ /    \   |                                                                     
+     |   ---\  \ /    \   |                                                                     
     Listr    Listr    Listr   "que faire alors?"
     
-    les phasesListener : sont des classes java implementant PhaseListener:**¤**
+    les phasesListener: sont des classes java implementant PhaseListener:**¤**
         public class MyPhaseListener implements PhaseListener
         {
           public MyPhaseListener(){}
@@ -6237,7 +6253,7 @@ Les events et listeners:
                 
                 // ici je rajoute à la volee un ou plusieurs validator à mon component
                 // dabord je declare ma methode validator
-                      MethodBinding mb = FaceContext.getCurrentInstance().getApplication().createMethodBinding("#{userBean.validateEmail}",null); // ou si arguments dans la methode : , new Class[]{FacesContext.class, UIComponent.class, Object.class});}
+                      MethodBinding mb = FaceContext.getCurrentInstance().getApplication().createMethodBinding("#{userBean.validateEmail}",null); // ou si arguments dans la methode: , new Class[]{FacesContext.class, UIComponent.class, Object.class});}
                 // ou bien ma classe validator
                       Validator monValidator=FaceContext.getCurrentInstance().getApplication().createValidator("MonValidator");
                 // je recupere le component a qui je veux rajouter un ou plusieurs validator
@@ -6271,21 +6287,21 @@ Les events et listeners:
               }
             }    
       Pour initier-declarer les listener:
-          utiliser les methodes : UIComponent ou Application.subscribeToEvent(Class<? extends SystemEvent> postConstructEventParExemple, SystemEventListener monListener);
+          utiliser les methodes: UIComponent ou Application.subscribeToEvent(Class<? extends SystemEvent> postConstructEventParExemple, SystemEventListener monListener);
           context.getApplication().publishEvent(context,etc...)
 
 Afficher une java.util.Map<String,String>
         <h:outputText value="#{userBean.sportsInterests}"/>// affiche toute la map                
-pour afficher un element d'une liste : 
+pour afficher un element d'une liste: 
         <h:outputText value="#{userBean.sportsInterests[0]}"/>// le premier ici
         si c un objet de type Map: <h:outputText value="#{userBean.sportsInterests['Swimming']}"/>
   donnees stochees dans flash: 
         ne sont dispo qu'a la page suivante puis detruites juste après
-        pour setter un flash dans mon bean : 
+        pour setter un flash dans mon bean: 
             Flash flash = FacesContext.getCurrentInstance().getExternalContext().getFlash();
             flash.put("monflash","ma valeur"); // sera accessible en jsf par #{flash.monflash}      
 primefaces : primeface :
-checkboxes : 
+checkboxes: 
     <h:form>  <table>
          <c:forEach items="${ideaBean.columns}" var="col"> // attention ca c du JSTL mieux vaut pas melanger avec JSF donc plutot faire comme ci- dessous
       	<tr><td>		<h:outputText value="#{col.name}" /></td><td>  <p:selectBooleanCheckbox value="#{col.value}" /></td></tr> // col.value doit etre un boolean
@@ -6297,11 +6313,11 @@ checkboxes :
 						  <h:outputText value="#{item.id}" /> .. etc pour la checkbox
 						</ui:repeat>
 
-liste de donnees : 
+liste de donnees: 
     <p:dataList value="#{ideaBean.ideas}" var="idea" itemType="disc">
     				 #{idea.title}
     			</p:dataList>*
-tableau complexe :
+tableau complexe:
     <p:dataTable var="idea" value="#{ideaBean.ideas}" rowKey="#{idea.id}" paginator="true" rows="10" selection="#{ideaBean.selectedIdea}" selectionMode="single" filteredValue="#{ideaBean.filteredIdeas}" id="ideasTable">  
         <!--  <p:ajax event="rowSelect" update=":form:display" oncomplete="carDialog.show()" /> -->  
           <f:facet name="header">  
@@ -6316,7 +6332,7 @@ tableau complexe :
         </p:column>  
     </p:dataTable>  
 
-fenetre modale :
+fenetre modale:
 				<p:commandButton id="modalDialogButton" value="Modal" onclick="dlg2.show();" type="button"/>			
 	         <!-- appendtobody=true --> si la fenetre modale couvre tout! bloque!block
         <p:dialog id="modalDialog" appendToBody="true" header="Modal Dialog" widgetVar="dlg2" modal="true" height="100">  
@@ -6361,7 +6377,7 @@ Bouton:
   <p:button value="#{ideaProperties.ListOfMyIdeas}"></p:button>
 Bouton submit non ajax:
   <p:commandButton value="Non-Ajax Submit" actionListener="#{loginBean.doLogin}" ajax="false" />
-    un bouton qui envoie une requete ajax :                                                        
+    un bouton qui envoie une requete ajax:                                                        
         <h:inputText value="#{purchases.cheapItems[0]}"/>// ici c'est un tableau ou bien <h:inputText value='#{purchases.valuableItems["low"]}'/>       
         <h:commandButton...action="#{someBean.someMethod // ici pas de get et de set dans le nom de la methode}"/>
           <f:ajax execute="@ form" render="resultId"/> // execute prend l'id d'un objet  du dom qu'on envoie au serveur!!! et de meme pour render: il prend un id du dom
@@ -7467,25 +7483,19 @@ executeBlobUpdateJDBCV3(String query, int length, Object[] parameters).
 Elle exige la longueur en octet des donnees BLOB.
 Elle fonctionne aussi bien pour des insertions que pour des 
 modifications. Je la trouve très confortable et surtout performante.
-La methode de lecture reste la même.
-Il te suffit de substituer fws.jar dans le repertoire lib.
-fws.jar en question est dans un mail que m'a envoye JeanMichelSOULAT le 28 aout 2007
     toad : pour voir les parametres oracle qui sont aussi dans ini.ora aller dans View>oracle parameters
     on peut voir la taille des tablespace sous toad pour verifier si ils ne sont pas satures.
-    Chez Renault pour avoir la taille des tablespaces 
-    		aller sur le site de la DT sur : 
-    		http://www.intra.renault.fr/dtsi/intranet-rs3dt/Industrialisation/deploiement/AppliXNet/LivraisonWAS/WAS4.x/noteLivraisonWas4Was5_en.html
-        http://dbm-ora001.tpz.renault.fr/dts-isid-sgbd/menu_carto.jsp choisir le Domaine de l'application (on le trouve sur LISA)
-    SI problemes:
-    . faire un drop user edf cascade apres s'etre connecte à  sqlplus en system/manager
-    . avec une version de TOAD Superieure, on peut modifier en direct live la Max Size de la tablespace saturee.
+    avec une version de TOAD Superieure, on peut modifier en direct live la Max Size de la tablespace saturee.
+
     se connecter sous oracle sur l'instance DB_EGN puis faire 
     sqlplus system/manager
+    faire un drop user edf cascade apres s'etre connecte à  sqlplus en system/manager
     drop user edf cascade (cascade pour une suppression dans l'ordre)
     si on a supprime le user edf, on peut toujours se connecter sous toad sous user:system password:manager
-    apresavroi supprime le user, on peut supprimer et recreer la tablespace avec la taille qui convient:
+    apres avoir supprime le user, on peut supprimer et recreer la tablespace avec la taille qui convient:
     drop tablespace... create tablespace (voir le fichier recreateTbs_4_exemple.sql ou createTbsEDF.sql pour exemple)
     remarque: les datafiles des tablespace sont dans home00/oracle/instance/DB_EGN/user: on peut y voir la taille des fichiers des tablespace
+    
     pour redemarrer la base de l'instance DB_EGN sous oracle:
     se connecter à  l'instance DB_EGN
     svrmgrl
@@ -7501,11 +7511,11 @@ fws.jar en question est dans un mail que m'a envoye JeanMichelSOULAT le 28 aout 
     si il y a un souci sur un instance oracle: bloquage d'un process, on peut faire un kill -INT ****(process appele: svrmgrl)... si marche pas... alors faire kill -9 **** qui est plus brutal.
     on peut aussi faire un kill -15 qui est un kill soft.
     par exemple le shutdown peut etre bloque: voir les logs pour s'en assurer. Dans ce cas faire un kill -9 de Oracle pmon et smon attendre un peu, faire un shutdown abort et un startup et là  c bon.
+
 pour desactiver une contrainte:
 			 alter table TA_TABLE disable constraint TA_CONTRAINTE;
 pour reactiver une contrainte:
 			 alter table TA_TABLE enable constraint TA_CONTRAINTE;
-    
     
     si j'ai l'erreur oracle ORA-01034 Oracle not available
     il faut faire 
@@ -7519,9 +7529,6 @@ pour reactiver une contrainte:
     instance DB_EGN
     puis demarrer le listener: lsnrctl start (documentation dispo sur internet)
     pour quitter l'instance : exit
-    select substr(exp_nom,1,3) from recepisse where rownum <5 pour recuperer seulement les trois premiers caracteres du champ. utilisation de substr
-    utilisation de instr et de substr:
-    select substr(U.chemin_repair, 1, instr(U.chemin_repair, '/')-1) from t_ui U
 pour me connecter en tant qu'admin dba système systeme
     sqlplus "sys as sysdba"
 si le mot de passe a expire : ORA-28001: the password has expired
@@ -8001,6 +8008,7 @@ si j'ai l'erreur ORA-01653:
       ALTER DATABASE DECDEV DATAFILE 'DATA_FAITS' AUTOEXTEND ON
       ALTER DATABASE dpfdevo01 DATAFILE 'DPF_D1' AUTOEXTEND ON
 
+
 AFAIRE continuer vers le haut à partir de là SQL oracle mysql DB2<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
 ----------------------
 
@@ -8111,6 +8119,9 @@ pour passer le paramètre de base NLS_LENGTH_SEMANTICS soit positionne à char:
     requete pour connaitre le nsl_legth_semantics: select * from NLS_DATABASE_PARAMETERS
 il faut toujours mettre ses VARCHAR2 en char parce que oracle s'adapte: si la base est en iso il va mettre byte et si elle est en  utf-8 il va mettre du char.
 sql requetes : requete :
+          select substr(exp_nom,1,3) from recepisse where rownum <5 pour recuperer seulement les trois premiers caracteres du champ. utilisation de substr
+    utilisation de instr et de substr:
+    select substr(U.chemin_repair, 1, instr(U.chemin_repair, '/')-1) from t_ui U
 pour creer une sequence : sequences : 
 	CREATE SEQUENCE ma_sequence START WITH 5 INCREMENT BY 3;
 pour modifier une sequence:
@@ -13671,7 +13682,7 @@ Cipherbean cypherbean de francois:
                                                                         			}
                                                                         		} catch (final Exception e) {
                                                                         			// TODO Bloc catch auto-genere
-                                                                        			log(Priority.ERROR, e.getClass().getCanonicalName()
+                                                                        			log(Priority.ERROR, e.getClass().getCanonicalName()// class.getCanonicalName() renvoit package+.+nomclasse
                                                                         					+ " - getX509Certificate(): " + e.getMessage());
                                                                         		}
                                                                         		return cert;
@@ -16324,6 +16335,15 @@ javafx : jfx :
 pour fermer close une fenetre window
         Stage stage = (Stage) formView.getScene().getWindow();
             stage.close();
+pour executerquelquechose/empecher que la fenetre windows se ferme close: 
+ stage.setOnCloseRequest(e ->
+                       {
+                    	   System.out.println(stage.getTitle());
+                    	   if (notInWelcomePage()) {
+                    	   backToHomePage(event);
+                    	   e.consume();
+                    	   }
+                       });
 stackpane superpose des layers les uns par dessus les autres
         StackPane glass = new StackPane();
             StackPane.setAlignment(label, Pos.BOTTOM_CENTER);
@@ -16706,7 +16726,7 @@ Si lors du deploiement vous avez cette erreur :
       Unable to resolve resource reference 'jdbc/Datasource' (Could not find resource 'siaDatasource'.  Perhaps it has not yet been configured, or your application does not have a dependency declared for that resource module?)
       Assurez vous d’avoir declare vos dependances dans geronimo-web.xml ET geronimo-application.xml 
 Si une erreur avec LoginModule verifier que la case du realm est respectee dans web.xml (arca ou ARCA)
-si j'ai l'erreur sql.SQLException: java.lang.IllegalAccessError: com/mysql/jdbc/ConnectionImpl.getInstance(Ljava/lang/String;ILjava/util/Properties;Ljava/lang/String;Ljava/lang/String;)Lcom/mysql/jdbc/Connection; :
+si j'ai l'erreur sql.SQLException: java.lang.IllegalAccessError: com/mysql/jdbc/ConnectionImpl.getInstance(Ljava/lang/String;ILjava/util/Properties;Ljava/lang/String;Ljava/lang/String;)Lcom/mysql/jdbc/Connection;
       quand je veux parametrer une base mysql: 
         utiliser le driver mysql-connector-java-5.0.7 au lieu de mysql-connector-java-5.1.10
 quand Surekha import un excell NUMERO_PROJET elle a ce warning Unknown Ptg 3d (61) qui est enleve quand on copy paste que les values dans un nouveau document
@@ -16717,7 +16737,10 @@ si j'ai erreur
       java.lang.AbstractMethodError c'est peut etre parce que j'ai mis un @override alors qu'il n'y a pas de raison.(peut etre)
 si j'ai erreur Error:java: exporting a package from system module java.instrument is not allowed with --release
     Maven: maven-compiler-plugin passer à la bonne version (8->9->10)
-  
+try with resources trywithresources
+        try(Writer writer = new FileWriter(unfichier)){ si un objet a besoin de .close() ce truc le fait automatiquement au moment ou la classe qui contient cet objet est detruite.
+            pour que ca marche il faut que FileWriter implemente AutoClosable je crois
+        } 
 		      
 logs :logguer : logger :tracer :
    LinkLogutils avec java.util.logging.* (ne semble pas marcher si librairie log4j est dans le classpath et est utilisee aussi)
@@ -16784,7 +16807,7 @@ logs :logguer : logger :tracer :
         2) LinkLogutils avec java.util.logging.* Methode avec classe de configuration: 
                     classes de configuration: 
                         public class HandlerForGeneralLogger { // je peux faire plusieurs classes comme ça. Une par fichier de log à ecrire.
-                                public static final Logger LOGGER = Logger.getLogger(HandlerForGeneralLogger.class.getName());
+                                public static final Logger LOGGER = Logger.getLogger(HandlerForGeneralLogger.class.getName()); // class.getName() renvoit package+.+nomclasse
                                 public static void init() {
                                     Handler consoleHandler = null;
                                     Handler fileHandler  = null;
@@ -17358,7 +17381,7 @@ pour convertir un string objet java en array json meme si l'array a plusieurs ni
                     UserRecherche recherche = new UserRecherche();
                     ...remplir l'objet...
                       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // attention n'est pas threadsafe. 
-                      String json = jsonMapper.writerWithDefaultPrettyPrinter().with(sdf).writeValueAsString(recherche); //rappel:Un Webservice Rest spring renvoit des objets java convertis en json, pas besoin de faire ca.
+                      String json = objectMapper.writerWithDefaultPrettyPrinter().with(sdf).writeValueAsString(recherche); //rappel:Un Webservice Rest spring renvoit des objets java convertis en json, pas besoin de faire ca.
                 convertir avec jackson String json -> Map JAVA sans controle du mapping
                               (<dependency> // pour utiliser direct les objets JSONArray etc...
                                   <groupId>com.fasterxml.jackson.datatype</groupId>
@@ -17493,13 +17516,55 @@ Serializer serialiser une classe java au format xml quon peut sauver importer ex
                   return ret;
               }
               
-              
-Convertir parser xml en objet java:
-    classe de definition:
+Convertir parser xml en objet java de maniere plus controllée:
+           <dependency> // si pas dans le container a rajouter comme dependence
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-core</artifactId>
+                <version>2.2.8-b01</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <version>2.2-promoted-b65</version>
+            </dependency>
+            OU BIEN 
+            <dependencies>
+			<dependency>
+				<groupId>com.sun.xml.bind.mvn</groupId>
+				<artifactId>jaxb-parent</artifactId>
+				<version>2.3.0</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
+			<dependency>
+				<groupId>javax.xml.bind</groupId>
+				<artifactId>jaxb-api</artifactId>
+				<version>2.3.0</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-core -->
+			<dependency>
+				<groupId>com.sun.xml.bind</groupId>
+				<artifactId>jaxb-core</artifactId>
+				<version>2.3.0.1</version>
+			</dependency>
+
+			<!-- https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-xjc -->
+			<dependency>
+				<groupId>com.sun.xml.bind</groupId>
+				<artifactId>jaxb-xjc</artifactId>
+				<version>2.2.7</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.apache.jena/jena-core -->
+			<dependency>
+				<groupId>org.apache.jena</groupId>
+				<artifactId>jena-core</artifactId>
+				<version>3.9.0</version>
+			</dependency>
+		</dependencies>
+    classe de definition: ATTENTION les getters et setters dans leur noms doivent bien correspondre aux champs sinon le xml est vide!
           import java.util.List;
             import javax.xml.bind.annotation.XmlElement;
             import javax.xml.bind.annotation.XmlRootElement;
-                  @XmlRootElement(name = "users")
+                  @XmlRootElement(name = "users") si je veux serialiser une liste d'objets je suis obligé de la mettre dans un objet root qui contient la liste
                   public class JaxbUserRepository {
                       @XmlElement(name = "user")
                       private List<JaxbUser> users;              
@@ -18768,6 +18833,7 @@ pour logger un prepared statement de manière d'un select:
 
 
 principes : principe :
+static: l'utiliser dans une superclasse sur des variables communes au filles pour performances de memoire
 la memoire stack peut etre saturée. (memoire stack = methode qui appelle une methode qui... contient les vals des primitives seulmt) chaque thread a son stack et chaque stack de thread est invisible aux autres threads(threadsafe)
 pour savoir si mon java est en 32bits ou 64bits
       path/vers/java/java -d64 -version
@@ -19256,9 +19322,9 @@ pour connaitre savoir le type d'une classe: LINKkgjhjhjhjhjhjc
     	   exemple:
           if (maclasse instanceof Command)...
     	ou bien:
-    	e.getClass().getName()
+    	e.getClass().getName()// class.getName() renvoit package+.+nomclasse
 pour recuperer le nom d'une classe: 
-	maclasseinconue.getClass().getCanonicalName();
+	maclasseinconue.getClass().getCanonicalName(); // class.getCanonicalName() renvoit package+.+nomclasse
 	.getEnclosingClass() recupere le nom de la superclasse je crois
     pour executer une interface en passant le nom d'une classe de cette interface en dur: introspection
 			IState state = (IState) Class.forName("cpi.sm." + clase).newInstance(); // peut etre c mieux d'utiliser chez Spring: ClassUtils.forName("mon.package.MaClasse", classLoader (c'est CetteClasse.class.getClassLoader());
@@ -19538,7 +19604,7 @@ execution : executer :
                       java --module-path C:/Users/Laurent/.m2/repository/log4j/log4j/1.2.14/log4j-1.2.14.jar;memoclap.utils-2.19.0.jar --module memoclap.utils/utils.Utils E:/www/kanail/AudioLoopOnline/java/MemOclapUtils/src/test/resources/d
                       java --module-path C:/Users/Laurent/.m2/repository/log4j/log4j/1.2.14/log4j-1.2.14.jar;memoclap.utils-2.19.0.jar -cp C:/Users/Laurent/.m2/repository/com/googlecode/soundlibs/tritonus-share/0.3.7-2/tritonus-share-0.3.7-2.jar;C:/Users/Laurent/.m2/repository/com/googlecode/soundlibs/mp3spi/1.9.5-1/mp3spi-1.9.5-1.jar;C:/Users/Laurent/.m2/repository/com/googlecode/soundlibs/vorbisspi/1.0.3-1/vorbisspi-1.0.3-1.jar --module memoclap.utils/utils.Utils E:/www/kanail/AudioLoopOnline/java/MemOclapUtils/src/test/resources/d
        repl: jshell:
-            tapper jshell et je peux tester des petit bouts snippets de code java sans m'inqueter des exeptions et des ";" point virgules                                                       
+            tapper jshell et je peux tester des petit bouts snippets de code java sans m'inqueter des exeptions et des ";" point virgules pointvirgule                                                       
       depuis java9 existe aussi - VarHandle pour passer rapidos de noeud en noeud d'un coup.
                                 - ProcessBuilder: executer une commande externe sortir pid unix linux autre programme process
         pour lancer executer un programme java faire ca: (ATTENTION ne marche plus depuis la version 1.6?)
@@ -21018,7 +21084,7 @@ Sinon on peut aussi faire ca sublist subtable subarr:
 	 */
 	public static String fieldToString(Object a) throws Exception
 	{
-//		System.out.println(a.getClass().getCanonicalName());
+//		System.out.println(a.getClass().getCanonicalName());// class.getCanonicalName() renvoit package+.+nomclasse
 		String b = Constants.EMPTY;
 		
 		if (a.getClass().isInstance(new String())) linkinstanceof
@@ -21029,7 +21095,7 @@ Sinon on peut aussi faire ca sublist subtable subarr:
 		{
 			b=Constants.NULL;
 		}
-		else if (a.getClass().getCanonicalName().contains("BigDecimal"))
+		else if (a.getClass().getCanonicalName().contains("BigDecimal"))// class.getCanonicalName() renvoit package+.+nomclasse
 		{
 			b = ((BigDecimal)a).toString();
 		}
@@ -23137,6 +23203,8 @@ si le repository maven n'a pas l'air de se raffraichir recharger jar
     windows> preferences> maven> update settings, Reindex, Apply, OK
 defiler sans bouger curseur: 
     Ctrl + fleches haut ou bas
+char en majuscules ou en minuscules
+    Ctrl+shift+s ou Ctrl+shift+x
 pour ajouter une librairie dll:car erreur native manquant: ou dependency blabla
   ajouter les .dll sous mon C:\Program Files\Java\jdk1.7.0\jre\bin\là.
   si c'etait sur unix on met libjivonatts_native.so là: 
@@ -23149,7 +23217,8 @@ Pour specifier ou est la javadoc:
     projet > properties > javadoc > javadoclocation
 Si il prend trois heures pour builder un projet à cause des facets: (infini) invoking faceted project validation builder
     fermer eclipse (forcer) > renommer le repertoire du projet qui merde > relancer eclipse > le projet est ferme. > renomer normalement le repertoire du projet > ouvrir le projet
-      
+selectionner par colonne columns
+    alt+shift+a      
 raccourcis shortcuts utiles: (pour les definir: WIndows>Preference>chercher "shorcut")
     rechercher partout: alt puis a puis f
     voir les todos: ctrl+shift+q; q > task > tasklist
@@ -30182,55 +30251,70 @@ JWT :
                                    \___2_______>[xRessourcesServices: chacune a une clé publique.] 
     algoritmes recommandés: ES256(cle publique pour verifier et cle privee pour signer mais plus rapide que RS256)  puis RS256(cle publique pour verifier et cle privee pour signer) puis HS256(ce n'est que un secret=chaine de caractère a garder privée. Attention danger avec ça car dans ce cas le client pourra hacker: Client    Service1JWTOuJeSuisAdmin,    Service2JWTOuJeNeSUisPasAdmin)
 OAuth : OAuth2 : (oltu : https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Client+Quickstart et https://github.com/apache/oltu)
-    USER = RessourceOwner = homme = 
+est fait pour gerer que authorization à la base. Pas pour Authentification: On a rajouté openid pour l'authentification
+    USER = RessourceOwner = homme = moi 
     EDSN = Client = l'application qui demande une autorisation pour faire une action dans le ResourceServer.
-    FID = AuthenticationServer=authorization server: accepte de donner le ticket
+    FID = AuthenticationServer=authorization server: accepte de donner le ticket (Access Tocken)
     FIDx = ResourceServer(API contenant les resources)
     En amont: 
     créer un abonnement
     FID transmet à EDSN: -id applicatif = client_id
-    FID transmet à EDSN: -client_secret = secret_key = ne doit pas passer par le frontchannel
+    FID transmet à EDSN: -client_secret = secret_key = ne doit pas passer par le frontchannel et doit rester sur le serveur du Client.
     FID transmet à EDSN: -url de la fid de dev,recette,prod
     EDSN transmet à FID: -nomapplication
     EDSN transmet à FID: -champs à récupérer
     EDSN transmet à FID: -scope // droits necessaires
-    ImplicitMode: ne passe que par le frontchanell: on bypasse la partie "ask code"-"recieve code": on obtien direct l'accessToken
+    autres modes :
+        ImplicitMode: ne passe que par le frontchanell: on bypasse la partie "ask code"-"recieve code": on obtien direct l'accessToken (pour les apps qui sont pure javascript)
+        Resource Owner password[crediential] flow : ne passe que par back (pour la compat des vieilles applis   |_client demande à l'authorizationServer un accessToken direct
+        Client credientials flow : ne passe que par back(pour les échanges entre machines uniquement)           |
     Run:
-      USER va sur EDSN
-      (facultatif)EDSN presente un bouton pour rediriger vers FID. Si clique 
+      USER va sur EDSN(Client)
+      (facultatif)EDSN presente un bouton pour rediriger vers FID(AuthenticationServer). Si clique 
       EDSN redirige vers FID(facebook par ex) ; // FID et FIDx pourraient être une seule app.
                 Requete http frontchannel:
-                .setResponseType(ResponseType.CODE.toString()) ou Token(SiJeVeuxFaireDel'ImplicitMode) ou Token_ID(SiJeVeuxFaireDeL'OpenIdConnectEnImplicitMode)
-                .setRedirectURI(oauthParams.getRedirectUri())=url de retour vers EDSN
-                .setScope(oauthParams.getScope()=cequejeveuxfaire=monprofile(espace)listecontacts x y openid(sijeveuxUtiliserOAuthPourM'authentifier)
+                .setResponseType(ResponseType.CODE.toString())(c a d demande un access code) ou AccessToken(SiJeVeuxFaireDel'ImplicitMode) ET Token_ID=JWT(SiJeVeuxFaireDeL'OpenIdConnectEnImplicitMode)
+                .setRedirectURI(oauthParams.getRedirectUri())=url de retour vers EDSN(Client)
+                .setScope(oauthParams.getScope()=cequejeveuxfaire=monprofile(espace)listecontacts x y openid(sijeveuxUtiliserOpenIdConnectPourM'authentifier)
                 .setClientId(oauthParams.getClientId())  
                 .authorizationLocation(oauthParams.getAuthzEndpoint())
-                .setState(oauthParams.getState())
+                .setState(oauthParams.getState()) // juste un texte "tatatoto"
+                // nounce=qsfqmkjg
+                // response_mode=query
                 .buildQueryMessage();
                 return new ModelAndView(new RedirectView(request.getLocationUri()));
-                                -------------------------------------frontchannel---------------------->>>>>>>FID présente le prompt d'authentification. USER s'authentifie
-                                                                                                              FID présente le consent Screen/scope. USER approuve
-                                <<<<<<<<<<<<<<<<<<<<<<---------------frontchannel-----------------------------FID retourne AuthorizationCode=code=AuthorizationGrant(Dans les en-tête http.)                
+                                -------------------------------------frontchannel---------------------->>>>>>>FID(AuthenticationServer) présente le prompt d'authentification. USER s'authentifie
+                                                                                                              FID présente le consent Screen/scope. USER approuve. SI User n'approuve pas FID retournera ?error=x&error_description=y
+                                <<<<<<<<<<<<<<<<<<<<<<---------------frontchannel-----------------------------FID retourne AuthorizationCode=code=AuthorizationGrant(Dans les en-tête http.) + renvoit le meme state qu'il a reçu ("tatatoto")                
                                                                     url = redirectURI = callback                        
     
     EDSN renvoit l’AuthorisationCode + idApplicatif + client_secret à FID--------backchannel------------>>>>>
                                      + GrantType=Authorization_code
- OU BIEN 
+                                     POST
+                                     Content-Type:application/x-www-form-urlencoded
+                                     code=l’AuthorisationCode
+                                     &client_id=1234
+                                     &client_secret=456
+                                     &grant_type=authorization_code
+ OU BIEN                             
     EDSN envoit ResponseType=Token ou =Token_ID ---------------------------------frontchannel------------>>>>>
     1ere étape!ImplicitMode                                                                                             
                                                                                                               FID vérifie que code n'est pas l'AuthorisationCode n'a pas été hacké grâce à client_secret
-                                              <<<<<<<<<<<<<<<<<<-----backchannel/frontSiImplicitMode--------- FID renvoit l’AccessToken      +           Token_ID si OpenID =JWT (AuthenticationServer doit supporter)
+                                              <<<<<<<<<<<<<<<<<<-----backchannel/frontSiImplicitMode--------- FID renvoit l’AccessToken(scopé&expirable)   +           Token_ID si OpenID =JWT (AuthenticationServer doit supporter)
                                                                                                                           expiration=xms     +TokenType=bearer
     EDSN peut utiliser Token_ID:utilisateur est authentifié.
     EDSN demande une authorisation                                                                                                              
                    --->GET                                                                                           
                    --->GET  plusieurs fois tant que expir OK.
-                   --->GET----------backchannel/frontSiImplicitMode-----renvoit l'AccessToken----------->>>>>>FIDx Vérifie que l'AccessToken est valide Puis Execute l'action ou                                                                                            
-                                                                         contient le scope                                                                                     |
-                                                                           OU renvoit                                                                                          |
-                                                                         getUserInfo si a reçu l'Token_ID                                                                      |
-                                                                                                                                                                               |
-                          <<<<<<<<<<<<<<<<<<<<---------------------info demandée(restreinte au scope) backchannel---------------------------------------------------------------------retourne------FID renvoit un RefreshToken à EDSN
+                   --->GET----------backchannel/frontSiImplicitMode-----renvoit l'AccessToken qui contient le scope----------->>>>>>FIDx(Ressource) Vérifie que l'AccessToken est valide Puis Execute l'action ou                                                                                            
+                                                  |                       GET url.FIDx/toto/endpoint                                                                            |
+                                                  |                       Authorization:Bearer blablaMonAccessTockenblabla // dans le header                                    | 
+                                                  |                         OU renvoit                                                                                          |
+                                                  |                       getUserInfo si a reçu l'Token_ID                                                                      |
+                                           s'assurer que le token ne peut pas                                                                                                   | 
+                                           être pompé hors du browser                                                                                                           |
+                                                                                                                                                                                |
+                          <<<<<<<<<<<<<<<<<<<<---------------------info demandée(restreinte au scope) backchannel---------------------------------------------------------------------retourne------FID(AuthenticationServer) renvoit un RefreshToken à EDSN(Client)
 
 Kerberos : 
     utilisation de d'apache mod_auth_kerb: 
@@ -31782,7 +31866,75 @@ Gradle : (je peux overrider et definir mes propres conventions over configuratio
   executer gradle: skip test:
     executer gradle.build et dans intellij >Run>Edit... champ script parameters > mettre <task(facultatif)> -x test (exclude test)
 
+navitia :
+https://www.navitia.io:
+doc:
+    http://doc.navitia.io/#timetables
+pour tester les urls ci dessous 
+    https://canaltp.github.io/navitia-playground/play.html?request=https%3A%2F%2Ff29788f3-a3ac-41ed-a476-5145b5d7583f%40api.navitia.io%2Fv1%2Fcoverage%2Ffr-nor LINKNavitiaPlayground
+    #using "headers"
+        $ curl 'https://api.navitia.io/v1/coverage' -H 'Authorization: f29788f3-a3ac-41ed-a476-5145b5d7583f'
+    #using "users": don't forget ":" at the end of line !
+        $ curl https://api.navitia.io/v1/coverage -u f29788f3-a3ac-41ed-a476-5145b5d7583f:
+    #using "straight URL"
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage
+      fr-nw
+      fr-ne
+      fr-se
+      fr-sw
+      fr-ne-amiens
+      fr-nw-caen
+      fr-nor
+      fr-idf
+      recup un coverage depuis une coordonnée 
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.33245;48.77469: idf
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.3749036;48.8467927: idf
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.39107;48.65775: idf
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.2922926;48.8583736: idf
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.64788;48.31951 limiteDansIdf
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/3.30139;48.21735 droiteHorsIdf
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/-0.57215;44.83792 bordeaux
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/-0.56730;44.83589 bordeaux
+      
+      recup coverage depuis la region_id
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/fr-idf
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/fr-sw
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/fr-ne
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/fr-nw
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/fr-se
+      
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/fr-ne-amiens
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/fr-nw-caen
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/fr-nor
+      
+      
+      trouve transports a cote 
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coord/2.64788;48.31951/places_nearby limiteDansIdf  10 reponse  OK
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coord/3.30139;48.21735/places_nearby droiteHorsIdf  10 reponse  OK
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coord/-0.57215;44.83792/places_nearby bordeaux  10 reponses OK
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coord/-0.56730;44.83589/places_nearby bordeaux  10 reponses OK
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coord/2.33245;48.77469/places_nearby idf 10 reponses  OK
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coord/2.3749036;48.8467927/places_nearby idf 10 reponses OK
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coord/2.39107;48.65775/places_nearby idf 10 reponses OK
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coord/2.2922926;48.8583736/places_nearby idf 10 reponses OK
+      Journee interne coverage
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/journeys?from=2.3749036;48.8467927&to=2.2922926;48.8583736 idf-idf OK
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=2.39107;48.65775 idf-idf OK
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=2.64788;48.31951 idf-limiteDansIdf OK
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=2.39107;48.65775 idf vers idf OK
+      
+      Journey cross coverage
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/journeys?from=2.33245;48.77469&to=3.30139;48.21735 idf vers droite hors idf   KO Status: Message: cannot find a region with 2.33245;48.77469 and 3.30139;48.21735 in the same time. You have requested this URI [/v1/journeys] but did you mean /v1/journeys or /v1/vehicle_journeys or /v1/routes ? (404), duration of the request: 414ms
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.64788;48.31951&to=3.30139;48.21735 limiteDansIdf vers DroiteHorsIdf KO  cannot find a region with 2.64788;48.31951 and 3.30139;48.21735 in the same time. You have requested this URI [/v1/journeys] but did you mean /v1/journeys or /v1/vehicle_journeys or /v1/routes ? (404), duration of the request: 338ms
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=-0.56730;44.83589 idf-bordeaux KO  cannot find a region with 2.33245;48.77469 and -0.56730;44.83589 in the same time. You have requested this URI [/v1/journeys] but did you mean /v1/journeys or /v1/vehicle_journeys or /v1/routes ? (404), duration of the request: 578ms
 
+api sncf :
+     https://api.sncf.com/v1 
+     pour tester les URLS : voir LINKNavitiaPlayground ca marche aussi!
+     Itinéraires entre Paris et Lyon 
+             D'aller d'un point à un autre
+             https://8af43782-3f00-41ef-bd13-57cfdd04e002@api.sncf.com/v1/coverage/sncf/journeys?from=admin:fr:75056&to=admin:fr:69123&datetime=20190702T170821 
+             https://8af43782-3f00-41ef-bd13-57cfdd04e002@api.sncf.com/v1/coverage/sncf/journeys?from=2.33245;48.77469&to=-0.56730;44.83589&datetime=20190702T170821 
 swagger : pour qu'un webservice rest(je pense) exposer ses methodes dans une page html wsdl LINKSWAGGER 
       http://localhost:8081/SpringRestEx/rest/v2/api-docs
       pour que swagger fonctionne j'ai rajoute les dependances dans pom.xml
