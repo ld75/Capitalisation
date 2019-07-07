@@ -25974,7 +25974,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir fetch.)
 
                       return false; // Prevent page from submitting.
                 	    }
-        ajax Cote php:
+        ajax Cote php: LINKphpajax
                     $idp= $_POST["idp"];
                   	$ans= $_POST["ans"];
                   	$fs= $_POST["fs"];
@@ -26954,22 +26954,8 @@ Pour sauver un canvas sur le serveur en image png ou jpg il faut obligatoirement
             	    		};
             	    		xhr.send(formData);
             	    }
-        Cote php:
-          $idp= $_POST["idp"];
-                  	$ans= $_POST["ans"];
-                  	$fs= $_POST["fs"];
-                  	$path="sons/".$idp."/ANS/".$_SESSION['uid']."/".$fs;
-                  	if (!is_dir($path))
-                  	{
-                  		mkdir($path, 0755, true);
-                  	}
-                  	// fin cree le repertoire si n'existe pas
-                  	$ans =  substr($ans,strpos($ans,",")+1);
-                  	$decodedData = base64_decode($ans);
-                  	$fp = fopen ($path."/ans.png", "w");
-                  	fwrite($fp, $decodedData);
-                	fclose ($fp);
-pour mettre une variable reference dans le settimeout
+        Cote php: voir LINKphpajax
+         pour mettre une variable reference dans le settimeout
         setTimeout(function() { 
           HideNum(someNum); 
         }, 200);
