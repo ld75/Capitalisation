@@ -1,4 +1,4 @@
-(?=.*find)(?=.*fichier)
+(?=.*code)(?=.*url)
 Hashmap/HashTable 
 lock reentrant
 immutable interet car pas de pb de concurrence
@@ -15728,7 +15728,7 @@ si j'ai erreur
       java.lang.AbstractMethodError c'est peut etre parce que j'ai mis un @override alors qu'il n'y a pas de raison.(peut etre)
 si j'ai erreur Error:java: exporting a package from system module java.instrument is not allowed with --release
     Maven: maven-compiler-plugin passer à la bonne version (8->9->10)
-  LINK_URLENCODEDECODE  quand un string contient des pourcentages % a cause de l'URI
+  LINK_URLENCODEDECODE  format quand un string contient des pourcentages % a cause de l'URI
     url encoder :
           en java faire : user = (java.net.)URLEncoder.encode(user, "UTF-8");
           ou bien 
