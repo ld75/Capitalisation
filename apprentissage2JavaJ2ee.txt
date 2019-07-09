@@ -455,7 +455,9 @@ Heroku :      https://devcenter.heroku.com/articles/getting-started-with-spring-
         DatabaseUrl.extract() method, which is made available via the heroku-jdbc dependency in the pom.xml, retrieves the DATABASE_URL environment variable, set by the database add-on, and establishes a connection.
   parametrer un domain: heroku>setting>domain  
 
-
+chocolatey :
+    choco search unpackage // chercher une version que je peux installer
+    choco install nodejs.install -- version 9.4.0 --install-directory="C:\path"// install-directory est facultatif et ne marche que si j'ai la license: pour forcer l'installation ailleurs (si pas les droits d'admins par ex)    
 
   
 nodejs : node.js : node : npm :  (https://www.npmjs.com/package tous les programmes sont là): c'est le maven du javascript. A remplacé bower. Yarn fait pareil mais s'appuye sur npm. npm etait fait pour nodejs à la base
@@ -473,6 +475,7 @@ si problemes dans npm: https://github.com/npm/npm/wiki/Troubleshooting
         va installer toutes les dependances necessaire du projet (grace a package.json) dans mon repository npm
 mettre à jour npm:// pour installer la derniere version update upgrade
       npm i npm ou npm install npm@latest -g
+il existe une commande pour passer par un proxy AFAIRE
 mettre à jour update upgrade node
   sur linux unix:
     node -v //pour voir la version
@@ -23253,6 +23256,8 @@ import/export run configuration possible
     menu file>import/export> run/debug ...
 show in package explorer:  
         Alt+shift+w
+si j 'ai l'erreur "please ensure you are using jdk... "
+        il faut utiliser une jdk au lieu d'une jre: windows>preferences>installed jre : mettre une jdk
 si j'ai eclipse edit source lookup path source not found lors du debuggage:
   peut etre ajouter -DdownloadSources=true après commande maven
   puis
@@ -31986,7 +31991,7 @@ https://www.navitia.io:
 doc:
     http://doc.navitia.io/#timetables
 pour tester les urls ci dessous 
-    https://canaltp.github.io/navitia-playground/play.html
+    https://canaltp.github.io/navitia-playground/play.html  LINKNavitiaPlayground
     #using "headers"
         $ curl 'https://api.navitia.io/v1/coverage' -H 'Authorization: f29788f3-a3ac-41ed-a476-5145b5d7583f'
     #using "users": don't forget ":" at the end of line !
@@ -32058,8 +32063,13 @@ api sncf :
              https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/fr-idf/journeys?from=stop_area%3A0%3ASA%3A8738190&to=stop_area%3A0%3ASA%3A8738249& OK
              https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/fr-idf/journeys?from=stop_area%3A0%3ASA%3A8738190&to=stop_area%3A0%3ASA%3A8731351& OK
              https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/fr-idf/journeys?from=stop_area%3A0%3ASA%3A8738190&to=stop_area%3A0%3ASA%3A8731351&datetime=20190702T170821 OK
+             https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/fr-idf/journeys?from=stop_area%3A0%3ASA%3A8738190&to=stop_area%3A0%3ASA%3A8731351&datetime=20190702T170821&datetime_represents=arrival
              https://8af43782-3f00-41ef-bd13-57cfdd04e002@api.navitia.io/v1/coverage/fr-idf/journeys?from=stop_area%3A0%3ASA%3A8738709&to=stop_area%3A0%3ASA%3A8731351 OK
              itineraire entre stop areas France (KO si regions !=)
+             gisors(idf) vers Bordeaux
+             87381244 vers 87581009
+             https://8af43782-3f00-41ef-bd13-57cfdd04e002@api.sncf.com/v1/coverage/sncf/journeys?from=stop_area:OCE:SA:87381244&to=stop_area:OCE:SA:87581009& OK
+             
              https://8af43782-3f00-41ef-bd13-57cfdd04e002@api.sncf.com/v1/coverage/sncf/journeys?from=stop_area:OCE:SA:87686006&to=stop_area:OCE:SA:87581009& 
              https://8af43782-3f00-41ef-bd13-57cfdd04e002@api.sncf.com/v1/coverage/sncf/journeys?from=stop_area:OCE:SA:87757559&to=stop_area:OCE:SA:87191403&  <ko             
              https://8af43782-3f00-41ef-bd13-57cfdd04e002@api.sncf.com/v1/coverage/sncf/journeys?from=stop_area%3AOCE%3ASA%3A87191403&to=stop_area%3AOCE%3ASA%3A87191304& OK
@@ -32094,7 +32104,8 @@ api sncf :
              limiter la recherche d'une gare dans un perimetre
              geofilter.distance=48.8520930694,2.34738897685,1000
 
-raml : pour générer depuis un webservice java une doc raml et vice versa avec un autre plugin LINKsqlkfjjjhjhjhjhjhjhj  
+raml :https://anypoint.mulesoft.com/login/signup?apintent=api_design // j'ai un compte
+     pour générer depuis un webservice java une doc raml et vice versa avec un autre plugin LINKsqlkfjjjhjhjhjhjhjhj  
                     (pas réussi à faire marcher ce plugin maven)
                 <plugin>
                 <groupId>org.raml.jaxrs</groupId>
