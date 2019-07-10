@@ -1,4 +1,4 @@
-(?=.*requet)(?=.*http)
+(?=.*wild)(?=.*fly)
 Hashmap/HashTable 
 lock reentrant
 immutable interet car pas de pb de concurrence
@@ -2118,6 +2118,7 @@ erreurs codes http: LINKcodesHttp
 403 407: interdit (login/password incorrect) authentification a échoué
 404: page non trouvee
 405: methode http inadaptee: enlever de ma servlet super.doPost(req, resp); pour que ça marche.
+406: mediatype de retour attendu ne correspond pas: exemple attend du json alors que c'est du html qui est retourné (par experience)
 408: timeout
 413 Payload Too Large
 304: le serveur dit que le browser a deja toutes les infos et pas besoin de renvoyer d'autres infos + code 200
@@ -2586,7 +2587,20 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
               	<artifactId>json</artifactId>
               	<version>20141113</version>
               </dependency>
-               
+    envoyer faire une requette http à un webservice:
+        Client client = ClientBuilder.newClient();
+        WebTarget target = client.target("http://localhost:9990/backoffice/resources/ping/echo/glk") //attention ne pas utiliser les variables mais enchainer les points comme ci dessous target().path().request().get....
+        .path("/backoffice/resources/ping/echo/glk");
+        Invocation.Builder invokationBuilder = target.request(MediaType.APPLICATION_JSON_TYPE); // ou MediaType.APPLICATION_XML.(soap)..
+        invokationBuilder.get();
+        invokationBuilder.get(MaClassePartageeParLes2WebServices.class);
+        Response response = invokationBuilder.post(Entity.entity(maclasseAPoster,MediaType.APPLICATION_JSON_TYPE);
+        ou
+        Response response = invokationBuilder.get();
+        puis 
+        response.readEntity(String.class ou UneEntity.class)
+        Assert.assertEquals(java.net.HttpURLConnection.HTTP_CREATED,response.getStatus());
+                       
 SOAP : webservice : webservices :
 a lire    https://javarevisited.blogspot.com/2017/02/difference-between-jax-rs-restlet-jersey-apache-cfx-RESTEasy.html
 http://ws.apache.org/axis/java/user-guide.html
@@ -2857,16 +2871,11 @@ quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.
             	private HttpServletRequest httpRequest; // attention on dirait que pas possible de faire httpRequest.getParameter("x") si dans la methode en bas j'utilise @FormParam
             	@Context
             	HttpServletResponse httpResponse;
-
+                  @GET ou @POST
                 @Path("/la_suite_de_lurl") ou @Path("/") // facultatif ou @Path("/{a:api/v1/realtimepath|api/v2/apps/{appNameId}/realtimepath") //si j'ai plusieurs multiples urls 
                 public interface ou une classe FeaturesRestService { /// TRES IMPORTANT: la methode doit etre public sinon il ne la voit pas
-                  /**
-                  * Returns an explicit collection of all features in XML format in response to HTTP GET requests.
-                  * @return the collection of features
-                  */
-                  @GET ou @POST 
-                  @Path("/lafindelurl") // mettre {monparamdanspath} si on veut utiliser @PathParam("userlogin")String login ci dessous LINK5464  
-                  (javax.ws.rs.)@Produces("application/xml") // possible aussi mais à traduire: produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE
+                @Path("/lafindelurl") // mettre {monparamdanspath} si on veut utiliser @PathParam("userlogin")String login ci dessous LINK5464  
+               (javax.ws.rs.)@Produces("application/xml") // possible aussi mais à traduire: produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE
                   public Collection getFeatures( @FormParam("parametrePost") String unParametre  ) throws Exception;
                                                   ou 
                                                       @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464
@@ -23257,7 +23266,7 @@ import/export run configuration possible
 show in package explorer:  
         Alt+shift+w
 si j 'ai l'erreur "please ensure you are using jdk... "
-        il faut utiliser une jdk au lieu d'une jre: windows>preferences>installed jre : mettre une jdk
+        il faut utiliser une jdk au lieu d'une jre: windows>preferences>installed jre : mettre une jdk et aussi dans run > run configuration> > jre
 si j'ai eclipse edit source lookup path source not found lors du debuggage:
   peut etre ajouter -DdownloadSources=true après commande maven
   puis
@@ -24991,7 +25000,21 @@ LES ZONES : ZONE :DNS :                                                         
       sous domaine   type                 adresse de destination
       (vide)         directe(permanante)  http://www.blalbalbi.com         // si URL = blalbabli.com alers vers www.blalbabli.com et le rank google est bon.
   En cas de modification les serveurs DNS propage l'information: ce delai de propagation peut durer 24h
-    	
+
+wildfly :
+utiliser sur maven:
+        <plugin><!-- admin2/admin appli/appli -->
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>2.0.1.Final</version>
+                <configuration>
+                    <jboss-home>C:/wildfly/wildfly-17.0.0.Final</jboss-home> // avoir installé wildfly au préalable
+                    <modules-path>C:/wildfly/wildfly-17.0.0.Final/modules</modules-path>
+                    <port>9990</port>
+                </configuration>
+            </plugin>
+            puis wildfly:start(si ne marche pas la premiere fois, reessayer en avant fait un wildfly:undeploy avant peut etre)
+            puis wildfly:deploy puis redeploy etc etc...    	
 tomcat :
 pour utiliser le plugin maven tomcat: Si ça marche:-). voir dessous: pas reussi à faire marcher avec une application avec spring security
 1)possible embeded on retrouve alors le serveur tomcat et le war deploye dans target de mon projet. Attention dans tomcat/conf besoin copier le web.xml du serveur tomcat (copier dans une conf tomcat) sinon erreur 404 sur les pages, jsp, images... Mais <!--<tomcatWebXml>pathVersUnAutreWeb.xmlDeLaConfTomcat/web.xml</tomcatWebXml>--> lui n'a pas marché
@@ -31987,6 +32010,7 @@ curl -X GET \
                 
          
 navitia :
+90 000 appels gratuits/mois
 https://www.navitia.io:
 doc:
     http://doc.navitia.io/#timetables
@@ -32042,7 +32066,7 @@ pour tester les urls ci dessous
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=2.39107;48.65775 idf-idf OK
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=2.64788;48.31951 idf-limiteDansIdf OK
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=2.39107;48.65775 idf vers idf OK
-      
+      https://8af43782-3f00-41ef-bd13-57cfdd04e002@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=2.39107;48.65775 test avec compte sncf idf vers idf 
       Journey cross coverage
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/journeys?from=2.33245;48.77469&to=3.30139;48.21735 idf vers droite hors idf   KO Status: Message: cannot find a region with 2.33245;48.77469 and 3.30139;48.21735 in the same time. You have requested this URI [/v1/journeys] but did you mean /v1/journeys or /v1/vehicle_journeys or /v1/routes ? (404), duration of the request: 414ms
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.64788;48.31951&to=3.30139;48.21735 limiteDansIdf vers DroiteHorsIdf KO  cannot find a region with 2.64788;48.31951 and 3.30139;48.21735 in the same time. You have requested this URI [/v1/journeys] but did you mean /v1/journeys or /v1/vehicle_journeys or /v1/routes ? (404), duration of the request: 338ms
