@@ -1,4 +1,4 @@
-(?=.*lire)(?=.*fichier)
+(?=.*conf)(?=.*proxyhier)
 Hashmap/HashTable 
 lock reentrant
 immutable interet car pas de pb de concurrence
@@ -469,6 +469,17 @@ si problemes dans npm: https://github.com/npm/npm/wiki/Troubleshooting
    aller sur https://nodejs.org/en/download/ (downloader npm: sur internet)
   dans un repertoire faire
   (path/vers/npm)npm init // cree package.json là ou je suis// il me pause des questions pour bien le remplir ATTENTION pas d'espace dans le nom. l'important c'est le entry-point: indiquernomfichier.js qui est le point d'entree. je peux l'executer en faisant node indiquernomfichier.js
+  voir la config:
+        npm config list
+        ou 
+        npm config ls -l
+  setter une config: pour les proxy:
+        npm config set https-proxy http://ut2sn0:lskdfjs@proxy.par.emea.cib:8080
+        npm config set http-proxy http://ut2sn0:lskdfjs@proxy.par.emea.cib:8080
+    reinitialiser une conf de proxy:
+            npm config rm proxy
+            npm config rm http-proxy
+            npm config rm https-proxy        
   afficher un module dispo sur le net:
       typings search --name react   ou typings search --name angular
  si je suis sous mon repertoire projet et je fais npm install: //-g pour installer dans le repository(globalement sur mon systeme) et non pas dans le projet; --save alors il ajoute la dependance "dependencies" dans le package.json où je suis. avec --save-dev il ajoute la dependance dans le package.json dans "devDependencies" et dans le repertoire qu'il cree node_modules ou je suis: c'est un package que j'installe qui ne sera utile que pour les tests de dev et non pas la prod 
@@ -739,7 +750,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
                  eval $(ssh-agent -s) // demarrer le ssh-agent (il se peut qu'il ne soit pas demarré c pour ca.) pour une authentification automatique
                  ssh-add /c/Users/lduverge/.ssh/id_rsa // ajouter ma paire de clé au ssh agent (je peux renommer id_rsa comme je veux: toto_rsa par ex)
           pour definir un proxy: 
-                git config --global http.proxy http://proxyUsername:proxyPassword@proxy.server.com:port
+                git config --global http.proxy http://proxyUsername:proxyPassword(echaper par urlEncode si presence de char speciaux)@proxy.server.com(SANS HTTP):port
                 pour dégager le proxy: 
                 git config --global --unset http.proxy           
   si erreur Filename too long 
@@ -4815,8 +4826,10 @@ Spring : JAVA STYLE
       utiliser dans start.spring.io SpringConfigurationProcessor et du coup dans le pom il y a: 
           <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-configuration-processor</artifactId><optional>true</optional></dependency>
   utiliser lombok permet de ne pas avoir a ecrire les constructeurs LINKLombok
+        @Data fait je crois les deux constructeurs ci dessous + les getters et setters 
       @AllArgsConstructor
       @NoArgsConstructor
+      
   charger un fichier xml de configuration
       @ImportResource({"classpath*:context.xml"})// au  dessus d'une autre classe de config
   si au demarrage j'ai un AbstractMethodError: 
@@ -12415,7 +12428,9 @@ Toutes les modifications sont faites dans le mode ECRASEMENT.  Pour inserer ou e
    site de conversion hexa<->decimal 
         http://www.statman.info/conversions/hexadecimal.html
 
-
+notepad++ :
+    accolade correspondante: Ctrl+B
+    
 PSPAD :
 backups: back: menu >parametres>parametres du programme>sauvegarde
 pour selectionner en mode colonne (sans cliquer sur l'icone qui des fois ne marche pas)
@@ -31444,6 +31459,7 @@ pour avoir la liste des taches (control alt suppr; ctrl alt suppr):
 windows8 : 
   pour modifier les services au demarrage: 
   Ctlr+R puis %AppData% mais le chemin pour y arriver c'est: C:\Users\Laurent\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
+  ou Ctlr+R puis tapper shell:startup et il me pointe dans ce meme repertoire. Dedans copier coller les racourcis qui pointent vers les programmes que je veux demarrer 
     on peut voir le resultat des services qui se lancent au demarrage en faisant: ctlr+alt+sup puis onglet demarrage
 les ear sont planques sur was 2 sous: 
 /srvappli/wacint20/logiciel/was/apps5/installedApps/wndint01/
