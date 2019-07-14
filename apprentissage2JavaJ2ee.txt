@@ -1858,93 +1858,7 @@ pour jouer un fichier audio avec mediaplayer il vaut mieux proceder comme ca:
                                     <moz:SearchForm>http://phare.intra.renault.fr/rse/servlet/phare</moz:SearchForm>
                                     </OpenSearchDescription>
                                     
-ejbs :
-  ejb 2 :
-    http://jmdoudoux.developpez.com/cours/developpons/java/chap-ejb.php#ejb
- ejb :3.0,3.1
-    on utilise les annotation et pour les besoins plus specifiques on ajoute du metadata dans ejb-jar.xml(facultatif en 3.1. Peut etre vide dans 3.0)
-    si pas d'annotations: le container utilise des valeurs par defaut
-  ------------------
-  type            annotation
-  // session bean est le seul ejb qu'on peut appeller remotely
-  SessionBean     @Stateless // n'a pas de donnees de l'interaction avec client c a d: seul un client accède à ce bean à un instant donne, il n'est pas persistent, le bean est un webservice. On peut avoir plusieurs clients qui accedent a ce bean mais c'est pour chacun une relation 1client-1bean (pooled)                                        
-                  @Statefull  // contient des donnees de l'interaction avec le client c a d: thread-safe: il cree autant d'instance indep que de client
-                        //stateless et statefull ne supportent pas d'acces concurents sur un meme bean.
-                  @Singleton // uniquement EJB 3.1: un seul ejb bean pour tout le monde.(tout les clients): cree par le container au demarrage sauf si lazy-loading
-  Message Driver  @MessageDriven // on ne peut le joindre qu'avec des messages à l'interieur du container (du serveur) par des Message Bus
-  JPA Entities    @Entity
-                  @EntityManager
-  ------------------
-  type            annotation
-  SessionBean     @Local ---> l'accès à ces beans ne peut se faire que par d'autres beans du meme EJB (même contexte, même classLoader)
-                  @LocalBean ---> >=EJB 3.1: bean sans interface necessaire.
-                  @Remote ---> Bean de l'EJB peut être accede de l'exterieur de son classLoader   
-                  @WebService
-  Message Driver  @WebService
-  JPA Entities    N/A
-  ------------------
-  type            annotation
-  Container-Managed mode    Le plus utilise: le container s'occupe des Transactions, Roles, Security, Persistence et Entities 
-  Bean-Managed mode         le developpeur doit lui même gerer le reste. Le container gere seul Transatction et Persistence
-  ------------------                                                     
-  LifeCycle des instances d'EJB:
-        N'existe pas
-              V
-        si on fait un appel jndi:lookup à l'ejb ou injection de dependance) 
-              V
-        PostConstruct (pas encore de proxy)
-              V
-        Ready: container cree automatiquement le proxy et les instances d'EJB: Client <---->proxy<---->Instances d'EJB 
-              V        
-        Pre-Removal: a lieu si on arrete le serveur ou on undeploy ou Existe erreur critique ou le client disparait(ne se connecte plus pdt untemps) dans le cas d'un StatefullBean ou si j'appelle une methode du bean qui a en tête l'annotation @Remove
-  -------------------
- import javax.ejb.Local;
- @Local ou @Remote ou @WebService...(name=blah; jndi-path=blih) //(value=pair) est facultatif
- MonBusinessInterface (logique et est accessible par le jndi)
-    //signatures methodes metiers
-        public int add(int a, int b);
-        ...
-@Stateless ou @Statefull ou @Singleton // facultatif (mappedName="monlookupnomdebean")        
- MonBusiness implements MonBusinessInterface // EJB3.1 pas besoin d'implementer: on rajoute juste au dessus de [@Stateless ou @Statefull ou @Singleton]: [@LocalBean ou @Remote ou @WebService] et le container genère l'interface à la volee
- {
-  ca doit etre la seule sous classe de cette interface depuis EJB3.0
-  ...mes methodes implementees...
- }
-//1 appel de mon bean d'ejb (qui est en fait un proxy cree par le container) par injection de dependance 
- public class Main
- {
-  @EJB ou @Ressources (c'est pareil)// injection de dep: le container trouve tout seul grace au nom de ma classe mon bean EJB en cherchant tout seul dans le jndi. // il faut avoir qu'une seul sous classe de cette interface pour que ca marche
-                      // facultatif (name="monlookupnomdebean")
-  static MonInterfaceDeBeanDEJB ejbbean;
-  public static void main(String[] args)
-  {
-     String toto = ejbbean.calcule(4,2);
-  }
-//2 appel de mon bean d'ejb (qui est en fait un proxy cree par le container) remotely avec JNDI 
- public class Main
- {
-  static MonInterfaceDeBeanDEJB ejbbean;
-  public static void main(String[] args)
-  {
-    Context c = new InitialContext();
-    ejbbean = (MonInterfaceDeBeanDEJB) c.lookup("com.path.jndi.MonInterfaceDeBeanDEJB");
-    String toto = ejbbean.calcule(4,2);
-  }
- }
-    String toto = ejbbean.calcule(4,2);
-  }
- } 
-//2 appel de mon bean d'ejb (qui est en fait un proxy cree par le container) remotely avec JNDI 
- public class Main
- {
-  static MonInterfaceDeBeanDEJB ejbbean;
-  public static void main(String[] args)
-  {
-    Context c = new InitialContext();
-    ejbbean = (MonInterfaceDeBeanDEJB) c.lookup("com.path.jndi.MonInterfaceDeBeanDEJB");
-    String toto = ejbbean.calcule(4,2);
-  }
- }
+ 
 jboss : 
 les fichiers compiles et jsp sont sous: C:\jbdevstudio4\jboss-eap\jboss-as\server\default\tmp\
 console jboss: http://localhost:8080/jmx-console/
@@ -2139,8 +2053,8 @@ erreurs codes http: LINKcodesHttp
 502: Probleme entre un serveur proxy intermediaire et le serveur final: probleme de protocole ou config
 
 
-J2EE : jee : javaee :
-cdi :CDI2.0 pas besoin d'utiliser weld (je crois) lire https://docs.jboss.org/cdi/learn/cdi_2/slides.html
+J2EE : jee : javaee : EE4J : jakartaee : https://github.com/eclipse-ee4j/jakartaee-tutorial-examples et https://github.com/eclipse-ee4j/jakartaee-tutorial
+cdi :CDI2.0 (JSR365) pas besoin d'utiliser weld (je crois) lire https://docs.jboss.org/cdi/learn/cdi_2/slides.html
 CDI1.x besoin de weld
         <dependency>
 			<groupId>org.jboss.weld.se</groupId>
@@ -2149,6 +2063,23 @@ CDI1.x besoin de weld
 		</dependency>
 		
 <!-- pour utiliser les @ : scan les java qui ont :@Named, @Inject
+Cycle de vie du bean: 
+              – @RequestScoped (par defaut)
+              – @SessionScoped
+              – @ApplicationScoped // le bean est utilise pourl es proprietes generales de l'appli: ex: listes deroulantes qu'on voit tout le temps
+                                            @Singleton // peute etre sur classe meme un webservice. attention ne fait pas partie de la spec CDI mais de EJB. Va de paire avec @Startup. utiliser plutot @ApplicationScoped je crois... mais singleton et statup marchent bien.
+                                            @Startup // a mettre sur une classe. s'execute au demarrage ne fait pas partie de la spec CDI mais de EJB
+              – @ViewScoped
+              – @CustomScoped pour que les beans soient stockees dans le FacesContext (qui a une duree de vie plus courte que RequestScope donc FC est plus rapide, bouffe moins de memoire)
+              – @NoneScoped (si c un bean qui est reference par un autre bean qui lui est scoped)
+              >> attention un bean ne peut pas referencer un autre bean si son scope est plus petit que le sien (sauf les @NoneScoped que tous peuvent referencer)
+                  @PostConstruct-->methode s'execute quand le bean est place dans son scope
+                  public void debut() { ... }
+                  @PreDestroy--->methode s'execute quand le bean est retire du scope ou le scope est detruit.
+                  public void fin() { ... }
+          
+          @ApplicationPath("nomdupremierpathUrlDeMonAppli") // sur une classe qui étend javax.ws.rs.core.Application
+          faire des servlets sans web.xml: ajouter en tete de classe qui etend HttpServlet @WebServlet et @MultipartConfig et faire request.getParmeters il parrait que ça marche
 SeContainerInitializer initializer = SeContainerInitializer.newInstance();
 try (SeContainer container = initializer.disableDiscovery().addPackages(App.class).addBeanClasses(MyService.class).initialize()) { pas besoin de beans.xml
     container.select(MyService.class);       |_on l'empeche de scanner auto
@@ -2162,27 +2093,36 @@ try (SeContainer container = initializer.disableDiscovery().initialize()) { cont
                                                                        xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
                                                                        version="1.1"bean-discovery-mode="all">
                                                                 </beans>
-securite:
+securite:(JSR375)
        AFAIRE
        https://javaee.github.io/tutorial/security-api004.html
+       https://javaee.github.io/tutorial/security-intro003.html#BNBXE->https://javaee.github.io/tutorial/security-javaee002.html#GJGDI
 
         @AutoApplySession // si je veux que quand il s'authentifie ca crée une session http
         @LoginToContinue //pour un FORM login seulement: sert à definir loginpage, loginerrorpage etc...
         @RememberMe //Comme le bouton se souvenir de moi (AFAIRE)       
-       HttpAuthenticationMechanism interface role : gère token d'authentification. Une seule classe doit exister par appli. sous classe doit être Bean. Bean automatiquement appelé par le container pour l'authent
+       HttpAuthenticationMechanism interface role: gère token d'authentification. Une seule classe doit exister par appli. sous classe doit être Bean. Bean automatiquement appelé par le container pour l'authent
        |                    |
        MaCustomClasse        BasicAuthenticationMechanismDefinition;FormAuthenticationMechanismDefinition ;CustomFormAuthenticationMechanismDefinition 
-       METHODE Imporatnte : validateRequest() que je dois implémenter Les 2 autres c facultatif
+       METHODE Imporante: validateRequest() que je dois implémenter Les 2 autres c facultatif
                               Fait appel à->IdentityStoreHandler(Je peux le reecrire moi même)->fait appel à tous les->
                             
                                    IdentityStore interface ->interagit avec ldap ou database pour authent l'utilisateur. sous classe doit être Bean.
                                    |            |
-                             MaCustomClasse     @LdapIdentityStoreDefinition;@DatabaseIdentityStoreDefinition (besoin implementer PasswordHash affublé en dependent-scoped bean // role: hasher le password pour comparer ce hash au pwd dans la DB) mais autant utiliser l'implement Pbkdf2PasswordHash  qui nous est proposé; RememberMeIdentityStore : renvoi un token longue durée au client. QUand client revient, valide le token(on dirait que ca peut etre utilisé pour oauth)
+                             MaCustomClasse     @LdapIdentityStoreDefinition;@DatabaseIdentityStoreDefinition (besoin implementer PasswordHash affublé en dependent-scoped bean // role: hasher le password pour comparer ce hash au pwd dans la DB) mais autant utiliser l'implement Pbkdf2PasswordHash  qui nous est proposé; RememberMeIdentityStore: renvoi un token longue durée au client. QUand client revient, valide le token(on dirait que ca peut etre utilisé pour oauth)
                             METHODES: CredentialValidationResult**<-validate(Credential);                                           METHODES:initialize(parametres)// est appelé automatiquement avec les parametres défnis dans @DatabaseIdentityStoreDefinition qui sont les hasheurs possibles 
                                         automatiquement appelera                                                                              verify() et generate() pour valider un password ou pour en créer un autre ??
-                                     GroupesDeCettePersonne<-getCallerGroup(CredentialValidationResult**) // peut fonctionner sans la validation ci-dessus pour recuperer les groupes d'un user meme non authentifié à condition que ce user ait : IdentityStorePermission("getGroups") sécurité à implémenter moi meme si j'utilise ma propre custom classe IdentityStore
+                                     GroupesDeCettePersonne<-getCallerGroup(CredentialValidationResult**) // peut fonctionner sans la validation ci-dessus pour recuperer les groupes d'un user meme non authentifié à condition que ce user ait: IdentityStorePermission("getGroups") sécurité à implémenter moi meme si j'utilise ma propre custom classe IdentityStore
                                      Set<VALIDATE et/ou PROVIDE_GROUPS><-validationTypes() // sert à determiner quelle genre de validation fait cet IdentityStore
-                                     priority() // retourne un integer : plus il est petit plus il est prioritaire pour IdentityStoreHandler      
+                                     priority() // retourne un integer: plus il est petit plus il est prioritaire pour IdentityStoreHandler
+       
+       pour securiser une servlet: 
+            @WebServlet("/servlet")
+            @DeclareRoles({ "role1", "role2bar", "kaz" }) //roles renvoyés par la database. peut etre mis sur classe ou methode(override classe alors)
+            @ServletSecurity(@HttpConstraint(rolesAllowed = "foo") ou @HttpMethodConstraint)
+            public class Servlet extends HttpServlet {
+                              
+                
        
 backend 
 du code java pour aller afficher une page html sans rien faire de special
@@ -2194,6 +2134,101 @@ du code java pour aller afficher une page html sans rien faire de special
   getPage("html.docIntrouvable").print(context);
   out.close();
 Pour afficher du html en sortie de servlet ou du texte en sortie de servlet ou n'importe quoi d'autre
+ejbs : ejb :
+ ejb :3.0,3.1
+    on utilise les annotation et pour les besoins plus specifiques on ajoute du metadata dans ejb-jar.xml(facultatif en 3.1. Peut etre vide dans 3.0)
+    si pas d'annotations: le container utilise des valeurs par defaut
+  ------------------
+  type            annotation
+  // session bean est le seul ejb qu'on peut appeller remotely
+  SessionBean     @Stateless // n'a pas de donnees de l'interaction avec client c a d: seul un client accède à ce bean pour une seule tache, il n'est pas persistent, le bean est un webservice. On peut avoir plusieurs clients qui accedent a ce bean mais c'est pour chacun une relation 1client-1bean (pooled)                                        
+appelable par     @Statefull  // contient des donnees de l'interaction avec le client c a d: thread-safe: il cree autant d'instance indep que de client (c'est comme une session)
+un client               //stateless et statefull ne supportent pas d'acces concurents sur un meme bean.
+en local          @Singleton // uniquement EJB 3.1: un seul ejb bean pour tout le monde.(tout les clients): cree par le container au demarrage sauf si lazy-loading
+ou remote         @Local ---> l'accès à ces beans ne peut se faire que par d'autres beans du meme EJB (même contexte, même classLoader)
+                  @LocalBean ---> >=EJB 3.1: bean sans interface necessaire.
+                  @Remote ---> Bean de l'EJB peut être accede de l'exterieur de son classLoader   
+                  @WebService
+  
+  Message Driver  @MessageDriven // on ne peut le joindre qu'avec des messages JMS à l'interieur du container (du serveur) par des Message Bus
+  Message Driver  @WebService
+  JPA Entities    @Entity
+                  @EntityManager
+  JPA Entities    N/A
+  Container-Managed mode    Le plus utilise: le container s'occupe des Transactions, Roles, Security, Persistence et Entities 
+  Bean-Managed mode         le developpeur doit lui même gerer le reste. Le container gere seul Transatction et Persistence
+  ------------------                                                     
+  LifeCycle des instances d'EJB:
+        N'existe pas
+              V
+        si on fait un appel jndi:lookup à l'ejb ou injection de dependance) 
+              V
+        PostConstruct (pas encore de proxy)
+              V
+        Ready: container cree automatiquement le proxy et les instances d'EJB: Client <---->proxy<---->Instances d'EJB 
+              V        
+        Pre-Removal: a lieu si on arrete le serveur ou on undeploy ou Existe erreur critique ou le client disparait(ne se connecte plus pdt untemps) dans le cas d'un StatefullBean ou si j'appelle une methode du bean qui a en tête l'annotation @Remove
+  -------------------
+ import javax.ejb.Local;
+ @Local ou @Remote ou @WebService...(name=blah; jndi-path=blih) //(value=pair) est facultatif
+ MonBusinessInterface (logique et est accessible par le jndi)
+    //signatures methodes metiers
+        public int add(int a, int b);
+        ...
+@Stateless ou @Statefull ou @Singleton // facultatif (mappedName="monlookupnomdebean")        
+ MonBusiness implements MonBusinessInterface // EJB3.1 pas besoin d'implementer: on rajoute juste au dessus de [@Stateless ou @Statefull ou @Singleton]: [@LocalBean ou @Remote ou @WebService] et le container genère l'interface à la volee
+ {
+  ca doit etre la seule sous classe de cette interface depuis EJB3.0
+  ...mes methodes implementees...
+ }
+//1 appel de mon bean d'ejb (qui est en fait un proxy cree par le container) par injection de dependance 
+ public class Main
+ {
+  @EJB ou @Ressources (c'est pareil)// injection de dep: le container trouve tout seul grace au nom de ma classe mon bean EJB en cherchant tout seul dans le jndi. // il faut avoir qu'une seul sous classe de cette interface pour que ca marche
+                      // facultatif (name="monlookupnomdebean")
+  static MonInterfaceDeBeanDEJB ejbbean;
+  public static void main(String[] args)
+  {
+     String toto = ejbbean.calcule(4,2);
+  }
+//2 appel de mon bean d'ejb (qui est en fait un proxy cree par le container) remotely avec JNDI 
+ public class Main
+ {
+  static MonInterfaceDeBeanDEJB ejbbean;
+  public static void main(String[] args)
+  {
+    Context c = new InitialContext();
+    ejbbean = (MonInterfaceDeBeanDEJB) c.lookup("com.path.jndi.MonInterfaceDeBeanDEJB");
+    String toto = ejbbean.calcule(4,2);
+  }
+ }
+    String toto = ejbbean.calcule(4,2);
+  }
+ } 
+//2 appel de mon bean d'ejb (qui est en fait un proxy cree par le container) remotely avec JNDI 
+ public class Main
+ {
+  static MonInterfaceDeBeanDEJB ejbbean;
+  public static void main(String[] args)
+  {
+    Context c = new InitialContext();
+    ejbbean = (MonInterfaceDeBeanDEJB) c.lookup("com.path.jndi.MonInterfaceDeBeanDEJB");
+    String toto = ejbbean.calcule(4,2);
+  }
+ }
+ 
+utilisation:
+CustomerHome home =// Get a reference to the CustomerHome object 
+Customer customer = home.create(new Integer(33));
+Name name = new Name("Richard","Wayne", "Monson-Haefel");
+customer.setName(name);
+Enumeration enumOfCustomers =home.findByZip(55410);
+Customer customer2 =home.findByPrimaryKey(new Integer(33));
+Name name2 = customer2.getName();
+System.out.println(name);// output is "Richard Wayne Monson-Haefel"
+
+ 
+
 freemaker :
       <html>
           <head>
@@ -2849,10 +2884,35 @@ pour recuperer une variable d'environnement qui est declaree dans web.xml:
 microservices :
     bonnes pratiques
         dans le cadre de microservices il faut qu'il y ait qun seul entrypoint point de départ de l'histoire et les liens renvoyés par les webservices respectant la norme HATEOAS permettent de savoir quelles autres urls je peux appeler.
-webservice : webservices : voir LINKSWAGGER 
+webservice : webservices : voir LINKSWAGGER
+          PRG :
+                    GET: ne modifie jamais l'état du systeme sauf des trucs comme le logs, ne fait que renvoyer data comme un select. always load pages using GET
+                    PUT: ne fait que modifier update un data du système
+                    POST: Fait tout ce que PUT ne fait pas: CREATION. never show pages in response to POST
+                    DELETE: ne fait que supprimer un data du système. Peut etre async. voir LINKcodesHttp 20x 
+                    Navigate from POST to GET using REDIRECT LINKredirwebservice998 //on peut faire comme ca dans un webservice qui a une methode post
+                                  URI go = new URI("https://"+httpRequest.getServerName()+"/app/foryou/denied.html?samlDenied");
+                                  javax.ws.rs.core.Response response = javax.ws.rs.core.Response.seeOther(go).build(); //LINKRedirectwebservice
+                                  return response;
+ 
     UDDI est un annuaire des webservices sur internet
 REST : webservice : webservices : client accède à un service à partir d'un URL et recoit en reponse json ou jpg ou plain text ou meme xml etc (meta-data dedans indique quoi) n'est pas forcement du http. Ca peut etre un websocket
 voir exemple de webservice rest sans framework ici: d:\Profiles\lduverge\Desktop\Apprentissage\webservicedemo(attention pour l'entite j'ai pas respecte unclebob)
+                      No dependencies, no migrations.
+                      import javax.ws.rs.GET;
+                      import javax.ws.rs.Path;
+                      import javax.ws.rs.Produces;
+                      import javax.ws.rs.core.MediaType;
+                      @Path("/hello")
+                      public class HelloResource {
+                          @GET
+                          @Produces(MediaType.APPLICATION_JSON)
+                          public Hello hello() {
+                              return new Hello("hello, component");
+                          }
+                      } can be easily accessed from a vanilla WebComponent
+                           
+
 si erreur java.lang.AbstractMethodError: javax.ws.rs.core.UriBuilder.uri(Ljava/lang/String;)Ljavax/ws/rs/core/UriBuilder
       c parce que j'utilise pas les bonnes versions de librairies jersey/tomcat je crois. upgrader
   webservice renvoit une erreur policy? regarder au niveau "Autorisation"
@@ -3120,6 +3180,25 @@ Pour faire un serveur serveur de chat etc... fonctionnement des sockets
 
 eventsource :sse(server-sent-event) autre alternative aux websocket mais ca ne fonctionne que dans un sens : serveur->client: rafraichit en live la page dans une seule requete
     voir https://github.com/mdn/dom-examples/blob/master/server-sent-events/sse.php
+        @Singleton
+        @Path("battements")
+        public class BroadcastsResource{
+          private SseBroadcaster broadcaster;
+          private Sse sse;
+        }
+        @GET
+        @Produces(MediaType.SERVER_SENT_EVENTS)
+        public void register (@Context Sse sse, @Context SseEventSink eventSink){
+            this.sse=sse;
+            if (broadcaster == null){
+              this.broadcaster = sse.newBroadcaster();}
+            }
+             this.broadcaster.register(eventSink);
+        }
+        @Schedule(second = "*/2",minute = "*", hour="*") LINKTimersdkjsq
+        public void beat(){
+          this.broadcaster.broadcast(this.sse.newEvent("time:"+localTime.low(à.toString()))
+        }
     et voir coté javascript sur MDN: EventSource 
 jwebsocket : (Web Socket) faire un chat : 
   declarer  JWEBSOCKET_HOME vers D:\LocalData\p036782\jWebSocket-1.0
@@ -3172,7 +3251,7 @@ quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.
                 @Path("/la_suite_de_lurl") ou @Path("/") // facultatif ou @Path("/{a:api/v1/realtimepath|api/v2/apps/{appNameId}/realtimepath") //si j'ai plusieurs multiples urls 
                 public interface ou une classe FeaturesRestService { /// TRES IMPORTANT: la methode doit etre public sinon il ne la voit pas
                 @Path("/lafindelurl") // mettre {monparamdanspath} si on veut utiliser @PathParam("userlogin")String login ci dessous LINK5464  
-               (javax.ws.rs.)@Produces("application/xml") // possible aussi mais à traduire: produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE
+               (javax.ws.rs.)@Produces("application/xml") // possible aussi mais à traduire: produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE ou MediaType.SERVER_SENT_EVENTS
                   public Collection getFeatures( @FormParam("parametrePost") String unParametre  ) throws Exception;
                                                   ou 
                                                       @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464
@@ -3450,16 +3529,7 @@ Pour convertir un input stream en output stream voir afficher
 	    }
 
 
-    PRG :
-          GET: ne modifie jamais l'état du systeme sauf des trucs comme le logs, ne fait que renvoyer data comme un select. always load pages using GET
-          PUT: ne fait que modifier update un data du système
-          POST: Fait tout ce que PUT ne fait pas: CREATION. never show pages in response to POST
-          DELETE: ne fait que supprimer un data du système. Peut etre async. voir LINKcodesHttp 20x 
-          Navigate from POST to GET using REDIRECT LINKredirwebservice998 //on peut faire comme ca dans un webservice qui a une methode post
-                        URI go = new URI("https://"+httpRequest.getServerName()+"/app/foryou/denied.html?samlDenied");
-                        javax.ws.rs.core.Response response = javax.ws.rs.core.Response.seeOther(go).build(); //LINKRedirectwebservice
-                        return response;
-
+    
 exemple de generation de graphique avec jcharts: c'est une jsp: 
                   <%@ page language="java" contentType="text/html; charset=ISO-8859-1" errorPage="/error_pages/redirect_error.jsp"%>
                   <%@ page import="es.renault.util.i18n.struts.services.I18NService, es.renault.util.i18n.I18NManager"%>
@@ -5467,19 +5537,6 @@ Spring : XML STYLE
                 <constructor-arg ref="openhr.session.configuration" /> // Attention ça c pas un argument de la classe HRSessionImpl mais c l'argument de la methode createSession du factory openhr.session.factory
                 </bean>
 
-          Cycle de vie du bean : 
-              – @RequestScoped (par defaut)
-              – @SessionScoped
-              – @ApplicationScoped // le bean est utilise pourl es proprietes generales de l'appli: ex: listes deroulantes qu'on voit tout le temps
-              – @ViewScoped
-              – @CustomScoped pour que les beans soient stockees dans le FacesContext (qui a une duree de vie plus courte que RequestScope donc FC est plus rapide, bouffe moins de memoire)
-              – @NoneScoped (si c un bean qui est reference par un autre bean qui lui est scoped)
-              >> attention un bean ne peut pas referencer un autre bean si son scope est plus petit que le sien (sauf les @NoneScoped que tous peuvent referencer)
-                  @PostConstruct-->Le bean est place dans son scope
-                  public void debut() { ... }
-                  @PreDestroy--->bean est retire du scope ou le scope est detruit.
-                  public void fin() { ... }
-          
       BOF.......Ca c pour JSF :
               FacesContext context = FacesContext.getCurrentInstance();
               Application application = context.getApplication();
@@ -25493,35 +25550,6 @@ proxy :et reverse proxy :
               JAVA_OPTS="$JAVA_OPTS"" -Dhttps.proxyPort=8080"
               JAVA_OPTS="$JAVA_OPTS"" -Dhttps.nonProxy(ou un truc comme ça)=url1|url2.... quand j'appelle ces URL alors je ne passe pas par le proxy.
   
-                       
-
-
-
-ejb :
-exemple de code general qui utilise les bean, les home et remote interface:
-CustomerHome home = 
-// Get a reference to the 
-//CustomerHome object 
-
-Customer customer = 
-  home.create(new Integer(33));
-
-Name name = new Name("Richard", 
-       "Wayne", "Monson-Haefel");
-customer.setName(name);
-
-Enumeration enumOfCustomers = 
-          home.findByZip(55410);
-
-Customer customer2 = 
-     home.findByPrimaryKey(
-               new Integer(33));
-
-Name name2 = customer2.getName();
-
-// output is "Richard Wayne 
-//Monson-Haefel"
-System.out.println(name);
 
 cft :
     MonScriptShell.csh = 
@@ -26043,8 +26071,14 @@ yahoo.js :pour faire un drag and drop
         		new $wnd.YAHOO.util.DDTarget(e.id, affordance);
         	}-*/;
         // l'objet e peut maintenant etre la cible d'un autre objet drague
-
-ajax : // xmlhttprequest est remplacé maintenant par fetch (voir fetch.)
+fetch : LINKsljqffetch
+                        async mamethode() { 
+                              const response = await fetch("/hello");
+                              const { greeting } = await response.json();
+                              this.innerHTML = `
+                                  <h2>${greeting}</h2>
+                              `;
+ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch)
                         ans = canvas.toDataURL("image/png");  //Pour sauver un canvas sur le serveur en image png ou jpg il faut obligatoirement envoyer les donnees en POST sinon le fichier genere est pourri:
             	    		var formData = new FormData(); ou new FormData(document.getElementById("forText")); // forText est juste un formulaire html recuperable avec document.getElement...ATTENTION les champs de mon formulaire doivent avoir un name sinon ils ne sont pas ajoute dans les formdata 
                             formData.append('ans', ans); // Append extra data before send.
