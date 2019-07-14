@@ -743,7 +743,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
           git config --local credential.helper store //store pour lui dire de stocker en clair dans un fichier mon user/password  MAIS AU FINAL MARCHE PAS: voir ci dessous
           git config --globaloubien--local credential.helper store --file .gitidentifiants //MARCHE PAS store pour lui dire de stocker en clair dans un fichier mon user/password
           git config --system --unset credential.helper puis/ou git config --global --unset credential.helper puis/ou git credential-manager clear (l'aide s'affiche si on fait git credential-manager) // pour virer le cache du credential si il ne me  prompte plus pour saisir l'authentif user password
-          pour pusher en ssh connecter avec une cle: 
+          pour pusher en ssh connecter avec une cle: mais je peux aussi choisir le mode https pour ne pas avoir besoin de ssh 
                  ssh-keygen -t rsa -b 4096 -C "kanailaurent@gmail.com" // generer une paire de clé dans gitbash
                  clip < /c/Users/lduverge/.ssh/id_rsa.pub // copier dans le ... ma cle publique.. et ensuite le copier dans github
                  ssh-add /c/Users/lduverge/.ssh/id_rsa // ajouter (je peux renommer id_rsa comme je veux: toto_rsa par ex) 
@@ -860,7 +860,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       binder avec un repository distant: LINKenvoiyer
         git remote -v // etre dans mon projet. Sert à savoir à quel repo distant le projet est lie pour les pushpull renvoit le nom du bind (nom=origin)
         git remote rm origin(distant) // pour debinder mon projet avec le repository "origin" distant
-        git remote add origin git@github.com:monusername/UnAutreRepository.git // (git@github.com facultatif) pour lier mon projet avec un repository. Je pourrais pusher et puller dessus (la premiere fois il faudra d'abord créer ce repository au meme nom sur github)
+        git remote add origin(si c le repo source) ou upstream (si c'est un repo forké d'un repo source je crois) git@github.com:monusername/UnAutreRepository.git // (git@github.com facultatif) pour lier mon projet avec un repository. Je pourrais pusher et puller dessus (la premiere fois il faudra d'abord créer ce repository au meme nom sur github)
       transferer le code par le reseau: (par defaut en https: il demande le user/pass)        
         git push origin masterOudevelopOuBrancheLocale //HEAD(origin)->ServeurDistantOuRepertoireQQpart(master ou develop) envoi sur le serveurOuRepertoireRepoQQpart pour merger avec le master: ça fetche+merge+commit là bas.
             ne pushe pas les repertoires vides: pour ça ajouter juste un fichier avec "x" dedans
@@ -2140,7 +2140,7 @@ erreurs codes http: LINKcodesHttp
 
 
 J2EE : jee : javaee :
-CDI2.0 pas besoin d'utiliser weld (je crois) lire https://docs.jboss.org/cdi/learn/cdi_2/slides.html
+cdi :CDI2.0 pas besoin d'utiliser weld (je crois) lire https://docs.jboss.org/cdi/learn/cdi_2/slides.html
 CDI1.x besoin de weld
         <dependency>
 			<groupId>org.jboss.weld.se</groupId>
@@ -2165,8 +2165,26 @@ try (SeContainer container = initializer.disableDiscovery().initialize()) { cont
 securite:
        AFAIRE
        https://javaee.github.io/tutorial/security-api004.html
-       ...
-backend:
+
+        @AutoApplySession // si je veux que quand il s'authentifie ca crée une session http
+        @LoginToContinue //pour un FORM login seulement: sert à definir loginpage, loginerrorpage etc...
+        @RememberMe //Comme le bouton se souvenir de moi (AFAIRE)       
+       HttpAuthenticationMechanism interface role : gère token d'authentification. Une seule classe doit exister par appli. sous classe doit être Bean. Bean automatiquement appelé par le container pour l'authent
+       |                    |
+       MaCustomClasse        BasicAuthenticationMechanismDefinition;FormAuthenticationMechanismDefinition ;CustomFormAuthenticationMechanismDefinition 
+       METHODE Imporatnte : validateRequest() que je dois implémenter Les 2 autres c facultatif
+                              Fait appel à->IdentityStoreHandler(Je peux le reecrire moi même)->fait appel à tous les->
+                            
+                                   IdentityStore interface ->interagit avec ldap ou database pour authent l'utilisateur. sous classe doit être Bean.
+                                   |            |
+                             MaCustomClasse     @LdapIdentityStoreDefinition;@DatabaseIdentityStoreDefinition (besoin implementer PasswordHash affublé en dependent-scoped bean // role: hasher le password pour comparer ce hash au pwd dans la DB) mais autant utiliser l'implement Pbkdf2PasswordHash  qui nous est proposé; RememberMeIdentityStore : renvoi un token longue durée au client. QUand client revient, valide le token(on dirait que ca peut etre utilisé pour oauth)
+                            METHODES: CredentialValidationResult**<-validate(Credential);                                           METHODES:initialize(parametres)// est appelé automatiquement avec les parametres défnis dans @DatabaseIdentityStoreDefinition qui sont les hasheurs possibles 
+                                        automatiquement appelera                                                                              verify() et generate() pour valider un password ou pour en créer un autre ??
+                                     GroupesDeCettePersonne<-getCallerGroup(CredentialValidationResult**) // peut fonctionner sans la validation ci-dessus pour recuperer les groupes d'un user meme non authentifié à condition que ce user ait : IdentityStorePermission("getGroups") sécurité à implémenter moi meme si j'utilise ma propre custom classe IdentityStore
+                                     Set<VALIDATE et/ou PROVIDE_GROUPS><-validationTypes() // sert à determiner quelle genre de validation fait cet IdentityStore
+                                     priority() // retourne un integer : plus il est petit plus il est prioritaire pour IdentityStoreHandler      
+       
+backend 
 du code java pour aller afficher une page html sans rien faire de special
   res.setContentType("text/html");
   res.setHeader("pragma", "no-cache");
@@ -26208,6 +26226,7 @@ tester le javascript avec Jasmine : et testem : (sinon utiliser https://jsfiddle
         pour executer ce test: 
           >testem ci --launch PhantomJS
 ES6 :modules: une page peut importer une page qui importe aussi: le browser gère les doublons si yen a // pas implemente dans firefox et safari?
+    pour les tester il faut aubligatoirement un serveur: peux pas jouer en local
         Top pour faire du singleResponsabilityPrinciple
         pour que ca marche ne plus mettre 
             <script type="text/javascript" src="... 
@@ -26216,7 +26235,7 @@ ES6 :modules: une page peut importer une page qui importe aussi: le browser gèr
         dans main.js: 
               import {toto,
                       blabla
-                     } from "./path/xxx";
+                     } from "./path/xxx.js"; // autant mettre le ".js" c'est normalement supporté partout
         dans path/xxx.js:  
             export var toto =.... 
             export function() blabla(arg){...}
