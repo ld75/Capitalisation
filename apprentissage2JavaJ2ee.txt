@@ -521,7 +521,7 @@ faire rapidos un serveur http:
       npm run build
   pour tester
       npm test // a faire dans mon projet ou bien C:\Users\lduverge\Desktop\node-v8.12.0-win-x64\npm test --scripts-prepend-node-path // si npm n'est pas defini dans le path windows Linktestjest
-  package.json :
+  package.f
       {
   "name": "wenhuaduverge",
   "version": "1.0.0",
@@ -747,8 +747,8 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
                  ssh-keygen -t rsa -b 4096 -C "kanailaurent@gmail.com" // generer une paire de clé dans gitbash
                  clip < /c/Users/lduverge/.ssh/id_rsa.pub // copier dans le ... ma cle publique.. et ensuite le copier dans github
                  ssh-add /c/Users/lduverge/.ssh/id_rsa // ajouter (je peux renommer id_rsa comme je veux: toto_rsa par ex) 
-                 eval $(ssh-agent -s) // demarrer le ssh-agent (il se peut qu'il ne soit pas demarré c pour ca.) pour une authentification automatique
-                 ssh-add /c/Users/lduverge/.ssh/id_rsa // ajouter ma paire de clé au ssh agent (je peux renommer id_rsa comme je veux: toto_rsa par ex)
+                 eval $(ssh-agent -s) // utiliser ca si ma cle n'est pas sous .ssh: demarrer le ssh-agent (il se peut qu'il ne soit pas demarré c pour ca.) sert aussi pour une authentification automatique
+                 ssh-add /c/path/vers/ma/cle/prive/toto_rsa // ajouter ma paire de clé au ssh agent (je peux renommer id_rsa comme je veux: toto ou toto_rsa par ex)
           pour definir un proxy: 
                 git config --global http.proxy http://proxyUsername:proxyPassword(echaper par urlEncode si presence de char speciaux)@proxy.server.com(SANS HTTP):port
                 pour dégager le proxy: 
@@ -5535,7 +5535,7 @@ Spring : XML STYLE
                                 @RequestMapping(value="/monpath.html" ou "/welcome",method=RequestMethod.POST ou .GET ou method={ RequestMethod.GET, RequestMethod.POST }) //est GET par defaut. ou ("/welcome") ou ("/welcome/{parametre1}/{parametre2}") // url: /welcome/toto/titi. consumes = "multipart/form-data" ou consumes={"toto","titi",MediaType.APPLICATION_JSON_VALUE})
                                 ou 
                                 @GetMapping("/mon/path/{param1}") // c'est comme @RequestMapping avec methode get. param1 se retrouve dans @PathVariable
-                                public ModelAndView helloworld(@ModelAttribute("student1") Student student1, BindingResult sierrorlorsdubiding //bind les parametres de mon formulaire id="student1" avec les champs ayant un name:"toto" avec mon objet Student qui a une methode getsetToto. @Valid//pourPrendreEnCompteLesAnnotAuDessusDesGettersEtSettersDeMesBeansPojo(voir @Size) ou @RequestBody Object[]  request ou ObjetJavaAvecAnnotations ou LinkedMultiValueMap<String, Object>//pour recuperer du JSON ou du XML. request ou @RequestPart Map request ou @PathVariable("parametre1") String monparam1, @PathVariable("parametre2") String monparam2, @PathVariable Map<String,String> rePathVar)// @PathVariable c pour l'URL ex:x/y/z. ou @RequestParam(value="parametre1",defaultValue="siParametre1EstNullVide", required=true) String monparam1, @RequestParam("parametre2") int monparam2) @RequestParam c pour la request ex:?filter=x: pour un post ca se met comme ca dans le body du post: paramname+"="+paramvalue; @RequestParam Map<String,String> reqPar) // du coup j'ai reqPar.get("monParametre1"); reqPar.get("monParametre1");)
+                                public ModelAndView helloworld(@ModelAttribute("student1") Student student1, BindingResult sierrorlorsdubiding //bind les parametres de mon formulaire id="student1" avec les champs ayant un name:"toto" avec mon objet Student qui a une methode getsetToto. @Valid//pourPrendreEnCompteLesAnnotAuDessusDesGettersEtSettersDeMesBeansPojo(voir @Size) ou @RequestBody Object[]  request ou ObjetJavaAvecAnnotations ou LinkedMultiValueMap<String, Object>//pour recuperer du JSON ou du XML. request ou @RequestPart Map request ou @PathVariable("parametre1") String monparam1, @PathVariable("parametre2") String monparam2, @PathVariable Map<String,String> rePathVar)// @PathVariable c pour l'URL ex:x/y/z. ou @RequestParam(value="parametre1",defaultValue="siParametre1EstNullVide", required=true) String monparam1, @RequestParam("parametre2") int monparam2) @RequestParam c pour la request ex:?monparam2=x: pour un post ca se met comme ca dans le body du post: paramname+"="+paramvalue; @RequestParam Map<String,String> reqPar) // du coup j'ai reqPar.get("monParametre1"); reqPar.get("monParametre1");)
                                                                                                               Bind avec n'importe quel type de var: date, arraylist etc...Meme les objets sous-jacents
                                                                                                               si je veux personaliser mon binding il faut utiliser une methode annotee avec @InitBinder (voir LINKInitBinder)
                                 ou
@@ -5790,6 +5790,8 @@ Spring-batch :
                                     @SpringBootTest(webEnvironment=RANDOM_PORT//facultatif. Si c'est du springboot. Du coup c'est pour les tests d'integration. Pas pour les tests unitaires. On peut aussi forcer le port) si spring-boot: demarre carrement le serveur. // recherche la classe annotee @SpringBootApplication pour def ApplicationContext qui est partage entre toutes les methodes et classes de test sauf si on met @DirtiesContext
                                      ou
                                     @WebMvcTest(MaClasseControllerAvecAnnotationArobaseController_QueJeVeuxTester.class)// facultatif. que pour springboot. Si je ne met pas ca il wire tout. Là il wire Tout aussi mais que le @Controller spécifié. A l'inverse de @SpringBootTest ne demarre pas SpringBoot. Nous permet d'utiliser LINKmockmvc dans cette classe de test
+									ou
+									@WebAppConfiguration // dispo a partir de spring3.2:charge tous les urls des Controllers (pour spring mvc) doit être utilise avec @ContextConfiguration. Utilise pour indiquer que l'ApplicationContext doit être un WebApplicationContext. Il a besoin d'une librairie de serveur tel tomcat dans le pom en scope test
                                     puis
                                     @ContextHierarchy({ // facultatif. permet de definir une hierarchie de contexts: d'abord parent puis fils
                                     @ContextConfiguration(locations={"pathVersFichierXml/spring-dsTest-anot.xml","classpath:...","classpath:..."}) ou (classes={uneClasseAnnoteeConfigurationOuAutre.class}) Si on ne met rien il va chercher dans "classpath:/pathVersResources/NomClasseDeTest-context.xml// U que pour tests.// POUR CHARGER UNE CONF DANS LES TESTS. fonctionne de paire avec @TESTPROPERTYSOURCE. Apparemment inutile de mettre cette anotation si j'ai mis @WebMvcTest qui wire tout par défaut donc charge toutes les @Configuration
@@ -5798,7 +5800,6 @@ Spring-batch :
                                                           loader=AnnotationConfigContextLoader.class // Indispensable? si dans notre classe de test on a une classe statique de configuration à l'interieur.
                                                           initializers={ClasseInitializerFacultativeQuiSertAJeNeSaisPasQuoi.class}
                                ,@ContextConfiguration("fils.xml")}) // fin contextHierarchy . SI a l'initialisation spring des tests il ne trouve pas mon fichier xml: c parce qu'il est pas compile dans le classpath test-classpath: voir proprietes projet>java buildpath > s'assurer que les resources des tests sont compilees en sortie dans le path test-classes                         
-                                    @WebAppConfiguration // dispo a partir de spring3.2:charge tous les urls des Controllers doit être utilise avec @ContextConfiguration. Utilise pour indiquer que l'ApplicationContext doit être un WebApplicationContext. Il a besoin d'une librairie de serveur tel tomcat dans le pom en scope test
                                       public class MaClassDeTest {
                                           @Configuration
                                           static class MaConfig{  
@@ -5838,7 +5839,7 @@ Spring-batch :
                                       @Autowired ou @Inject
                                       IPermissionDao permissiondao;
                                       
-                                      @Autowired
+                                      @Autowired // inutile si MockMvcBuilder ci-dessous
 >>>                                   private MockMvc mockMvc; //LINKmockmvc
                                       @MockBean
 	                                  private MongoDBRepository mongodbRepo; ou une ClasseService maclasseService; LINKavecMockito
@@ -5896,14 +5897,14 @@ Spring-batch :
                                                                                                .param("jsonobj","{\"destination\":\"yaounde\",\"departure\":\"douala\",\"timedeparture\":\"3\",\"daydeparture\":\"01/01/2016\"}")
                                                                                                .content(request)) // requete envoyee si c'est du POST(je crois) ne s'applique pas pour du GET
                                                                                              )***    
-                                  			  .andExpect(status().isOk()) // necessite import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+                                  			  ).andExpect(status().isOk()) // necessite import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
                                   			  .andExpect(content().contentType("application/json" ou "application/json;charset=UTF-8"))
                                   			  .andExpect(jsonPath("$.name").value("Lee"));
                                               .andExpect(jsonPath("nom").value("toto")); // pour verifier que le contenu renvoyé contient ce json. De org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
                                               ou
                                               .andExpect(status().isForbidden());                
                                               .andDo(print())
-                                              .andReturn();  
+                                              .andReturn());  
                                                 String content = result.getResponse() //ou getRequest() ou getModelAndView()
                                                     .getContentAsString();
                                                 org.junit.Assert.assertNotNull(content);
