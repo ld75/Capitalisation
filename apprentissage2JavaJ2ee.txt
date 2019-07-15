@@ -1070,7 +1070,7 @@ gradle: pour tout builder:
       ca build sous \projet\build\libs\springboot-deployment-1.0.0-SNAPSHOT.jar 
 taille des logs dans la console: settings>console>overrideconsolebuffersize
 pom voir arbre des dependances hierarchie > dans la vue maven: clique droit sur projet > show effective pom ATTENTION A RAFRAICHIR refresh dans vue maven sinon la hierarchie est obsolete
-        encore mieux: charger https://plugins.jetbrains.com/plugin/7179-maven-helper et installer le plugin
+        encore mieux: charger https://plugins.jetbrains.com/plugin/7179-maven-helper et installer le plugin: installe le directement depuis settings>plugins>il est là
         permet aussi d'afficher menu contextuel maven run debug dans projets projectst (si inactif  appuyer sur "+" a droite pannel maven)
         dans onglet dependency analyser à gauche on y voit les artifactID:version
 si le pom.xml maven est en erreur: rafraichir refresh dans la vue maven +  faire une mvn:compilation pour le forcer à charger les dependances et montrer les vraies erreurs
@@ -2041,10 +2041,11 @@ erreurs codes http: LINKcodesHttp
 302: redirection temporaire. Google n'aimepas
 400: erreur de synthaxe:protocole http non respecte
 401: non authorise (manque login/password): n'a pas encore été authentifé et le navigateur doit maintenant chercher à s'authentifier. Contient dans le header WWW-Authenticate
-403 407: interdit (login/password incorrect) authentification a échoué
+403 : interdit (login/password incorrect) authentification a échoué
 404: page non trouvee
 405: methode http inadaptee: enlever de ma servlet super.doPost(req, resp); pour que ça marche.
 406: mediatype de retour attendu ne correspond pas: exemple attend du json alors que c'est du html qui est retourné (par experience)
+407 : probleme de proxy
 408: timeout
 413 Payload Too Large
 304: le serveur dit que le browser a deja toutes les infos et pas besoin de renvoyer d'autres infos + code 200
@@ -7528,6 +7529,11 @@ this will show you all of the tables:
                                                                                          
 MYSQL :
    apres installation: 
+          cd C:\Program Files\MySQL\MySQL Server 5.6\bin\
+          mysqld.exe --initialize si besoin pour la première fois apres installation. cree  le repertoire data.
+          ou mysqld.exe --initialize --user=mysql puis
+          C:\Program Files\MySQL\MySQL Server 5.6\bin\mysqld --console --skip-grant-table(pour que je puisse me connecter en root sans mot de passe) (demarre le serveur mysql)
+                apres je pourrais refaire sans le --skip-grant-table quand j'aurais defini un mot de passe a mon user(ci dessous)
         demarrer le serveur mysql:
           pour arreter redemarrer mysql voir LINKmysql9938 
           cd C:\Program Files\MySQL\MySQL Server 5.6\bin\
@@ -7559,13 +7565,7 @@ MYSQL :
                    key c'est les index
                    auto_increment equivalent de la sequence sur oracle. Commence à compter à partir de.
          
-surwindows:
-          cd C:\Program Files\MySQL\MySQL Server 5.6\bin\
-          mysqld.exe --initialize si besoin pour la première fois apres installation. cree  le repertoire data.
-          ou mysqld.exe --initialize --user=mysql puis
-          C:\Program Files\MySQL\MySQL Server 5.6\bin\mysqld --console --skip-grant-table(pour que je puisse me connecter en root sans mot de passe) (demarre le serveur mysql)
-                apres je pourrais refaire sans le --skip-grant-table quand j'aurais defini un mot de passe a mon user(ci dessous)
-        se connecter :
+        se connecter:
             C:\Program Files\MySQL\MySQL Server 5.6\bin\mysql -uroot -p
             use mysql // change de base de database; UPDATE user SET Password=PASSWORD('my_password') where USER='root'; (deprecie depuis v5.7.6)
                                           ou 
@@ -7606,6 +7606,20 @@ se connecter :
       USE `ple_db_01`;
 afficher la liste des bases : 
   show databases;
+si j'ai erreur 
+	Caused by: java.sql.SQLException: The server time zone value 'Paris, Madrid (heure d??t?)' is unrecognized or represents more than one time zone.
+		j'ai eu beau avoir fait ça ca n'a pas marché: 
+					SET time_zone = '+00:00';
+					SET @@global.time_zone = '+00:00';
+					SET @@global.time_zone = 'Europe/Helsinki';
+					SELECT @@global.time_zone;
+					SELECT @@session.time_zone LIMIT 0, 1000
+				j'ai du faire 
+				jdbc.url=jdbc:mysql://localhost:3306/mycampus?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC\
+				au lieu de 
+				jdbc.url=jdbc:mysql://localhost:3306/mycampus
+				et ca a marché
+
 si il fait une erreur de group by a cause du sql_mode mal defini : 
     SELECT @@sql_mode 
         il affiche 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'
@@ -7618,7 +7632,7 @@ pour exporter la base de donnee via la console:
 Si un programme java n'arrive pas à se connecter à mysql 
       peut etre que le parametre d'encodage envoye à javarun n'est pas bon
 les donnees sont dans var/lib/mysql on peut le voir aussi en faisant select @@datadir;
-la conf de mysql est sur /etc/mysql/mysql.cnf ou /etc/mysql/mysql.conf.d/mysqld.cnf // dedans il defini dans quelle repertoire est la base de donnee 
+la config de mysql est sur /etc/mysql/mysql.cnf ou /etc/mysql/mysql.conf.d/mysqld.cnf // dedans il defini dans quelle repertoire est la base de donnee 
 pour voir les users et leur droits :
       SHOW GRANTS
 pour creer un user qui puisse se connecter à distance : (si j'ai l'erreur 1130) 
@@ -10615,9 +10629,6 @@ scripts bat :
           And here comes the catch: When you use parenthesis in your code then everything within the parenthesis counts as one single line 
 exemple de script .bat LINKDevopslksjqgfvmlka
 @echo off
-@echo off
-Set M3="C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2018.2.3\plugins\maven\lib\maven3\bin"
-Set "JAVA_HOME=C:\Program Files\Java\jdk1.8.0_181\jre"
   set /P version=Version ?
   echo %version%
 rem ljsdflsdkjf// commentaire
@@ -25545,11 +25556,21 @@ proxy :et reverse proxy :
                                         -------->etcetc... 
        une machine peut avoir plusieurs adresses ip et hostname: une par interface reseau.
       UnknownHostException
-          peut etre qu'il faut rajouter les parametres pour qu'il attaque le proxy (sur tomcat à mettre dans setup.sh) 
-            # Specifique AUCHAN pour SSO CAS (mettre les -D avant le -jar si j'execute un programme. Sur tomcat ceci se met dans setenv.sh)
+          
+            # Specifique AUCHAN pour SSO CAS (mettre les -D avant le -jar si j'execute un programme.)peut etre qu'il faut rajouter les parametres pour qu'il attaque le proxy (sur tomcat à mettre dans setup.sh ou plutot dans bin/setenv.bat  setenv.sh) 
+			sur unix:
               JAVA_OPTS="$JAVA_OPTS"" -Dhttps.proxyHost=FRSOPSLINFV01"
               JAVA_OPTS="$JAVA_OPTS"" -Dhttps.proxyPort=8080"
               JAVA_OPTS="$JAVA_OPTS"" -Dhttps.nonProxy(ou un truc comme ça)=url1|url2.... quand j'appelle ces URL alors je ne passe pas par le proxy.
+			  JAVA_OPTS="$JAVA_OPTS"" -Dhttp.proxyUser=username" 
+			  JAVA_OPTS="$JAVA_OPTS"" -Dhttp.proxyPassword=password"
+			  surwindows:
+				set "JAVA_OPTS=%JAVA_OPTS% -Dhttps.proxyHost=proxy.par.emea.cib"
+				set "JAVA_OPTS=%JAVA_OPTS% -Dhttps.proxyPort=8080"
+				set "JAVA_OPTS=%JAVA_OPTS% -Dhttp.proxyUser=ut2sn0"
+				set "JAVA_OPTS=%JAVA_OPTS% -Dhttp.proxyPassword=Federas123Federas"
+				set "JAVA_OPTS=%JAVA_OPTS% -Dhttps.nonProxy=localhost"
+
   
 
 cft :
@@ -30510,14 +30531,14 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
     =1ere étape si ImplicitMode                                                                                             
                                                                                                               FID vérifie que code n'est pas l'AuthorisationCode n'a pas été hacké grâce à client_secret
                                               <<<<<<<<<<<<<<<<<<-----backchannel/frontSiImplicitMode--------- FID renvoit l’AccessToken(scopé&expirable)   +           Token_ID si OpenID =JWTSigné=JWS (AuthenticationServer doit supporter)
-                                                                                                                          expiration=xms     +TokenType=bearer                                 Signature avec SecretKey 
+                                                                                                                          expiration=xms     +TokenType=bearer								 Signature avec SecretKey 
     EDSN peut utiliser Token_ID:utilisateur est authentifié.                                                                                                                                   ou
     EDSN demande une authorisation                                                                                                                                                             Signature avec paire de clé assymetriquesj,n (donc clé privée)
                    --->GET                                                                                           
                    --->GET  plusieurs fois tant que expir OK.
                    --->GET----------backchannel/frontSiImplicitMode-----renvoit l'AccessToken qui contient le scope----------->>>>>>FIDx(Ressource) Vérifie que l'AccessToken est valide Puis Execute l'action ou                                                                                            
                                                   |                       GET url.FIDx/toto/endpoint                                                                            |
-                                                  |                       Authorization:Bearer blablaMonAccessTockenblabla // dans le header                                    | 
+                                                  |                       Authorization:Bearer blablaMonAccessTockenblabla // dans le header(bearer pour dire que c du oauth2.0)| 
                                                   |                         OU renvoit                                                                                          |
                                                   |                       getUserInfo si a reçu l'Token_ID                                                                      |
                                            s'assurer que le token ne peut pas                                                                                                   | 
@@ -32157,6 +32178,9 @@ pour tester les urls ci dessous
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=2.64788;48.31951 idf-limiteDansIdf OK
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=2.39107;48.65775 idf vers idf OK
       https://8af43782-3f00-41ef-bd13-57cfdd04e002@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=2.39107;48.65775 test avec compte sncf idf vers idf 
+	  
+												 https://api.navitia.io/v1/journeys?from=2.33245;48.77469&to=2.39107;48.65775&datetime=20190702T170821&datetime_represents=arrival
+	  
       Journey cross coverage
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/journeys?from=2.33245;48.77469&to=3.30139;48.21735 idf vers droite hors idf   KO Status: Message: cannot find a region with 2.33245;48.77469 and 3.30139;48.21735 in the same time. You have requested this URI [/v1/journeys] but did you mean /v1/journeys or /v1/vehicle_journeys or /v1/routes ? (404), duration of the request: 414ms
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.64788;48.31951&to=3.30139;48.21735 limiteDansIdf vers DroiteHorsIdf KO  cannot find a region with 2.64788;48.31951 and 3.30139;48.21735 in the same time. You have requested this URI [/v1/journeys] but did you mean /v1/journeys or /v1/vehicle_journeys or /v1/routes ? (404), duration of the request: 338ms
