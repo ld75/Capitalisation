@@ -2907,7 +2907,13 @@ pour recuperer une variable d'environnement qui est declaree dans web.xml:
 
 microservices :
     bonnes pratiques
-        dans le cadre de microservices il faut qu'il y ait qun seul entrypoint point de départ de l'histoire et les liens renvoyés par les webservices respectant la norme HATEOAS permettent de savoir quelles autres urls je peux appeler.
+        -versionning: V.X.Y : Y changements minaures sur le meme webservice. X:si changement majeur faire un autre webservice et ne pas toucher à l'ancien. ceux qui appellent le webservice peuvent basculer en X+1 quand ils veulent. Comme la regle ne pas modifier mais etendre.
+                A___          A___V1.0     A________V1.0
+                    \_V.1.0   B   
+                B_--'             V2.0     B.V2.0---V2.0
+        -mettre DNS clusturisé des webservice: les URL ne sont pas en dur dans les webservices mais dans ce DNS
+        -gérer l'overload par un buffer type kafka:queue qui appani les pics de charges.
+        -dans le cadre de microservices il faut qu'il y ait qun seul entrypoint point de départ de l'histoire et les liens renvoyés par les webservices respectant la norme HATEOAS permettent de savoir quelles autres urls je peux appeler.
 webservice : webservices : voir LINKSWAGGER
           PRG :
                     GET: ne modifie jamais l'état du systeme sauf des trucs comme le logs, ne fait que renvoyer data comme un select. always load pages using GET
