@@ -1,3 +1,6 @@
+AFAIRE : 
+pas etendu spring form ; capitaliser get spring
+lire : C:\Users\ut2sn0\My_IT_Applications\apprentissage\20190716_Kubernetes_Live_Demo_in_SQY.pdf
 (?=.*conf)(?=.*proxyhier)
 Hashmap/HashTable 
 lock reentrant
@@ -872,7 +875,25 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
                     si il dit "....be overwritten by merge" c'est que quelqun a poste sur le repo des choses qu'il n'aurait pas du. 2 solutions: 1)faire un git clone ailleurs du projet puis git rm fichiersquinauraientpasdusetrouverdanslerepo puis commit et push 2)aller sur le repo et les supprimer
         si j'ai l'erreur cannot stat permission denied au moment d'une manip
                 c'est a chause de windows. il ya un fichier locké par un autre programme. Tout fermer et recommencer
-            
+		pour faire du mirroring automatiquement par un petit script:
+			unrepogitdistant---->monpc---->unautrerepogitdistant 
+					eval $(ssh-agent -s)
+					ssh-add /c/Users/ut2sn0/My_IT_Applications/configs/clepriveegitlabCacib
+					for project in mynews-pwa.git mynews-backend.git mynews-api.git mynews-solution.git mynews-connecteur-60s.git mynews-connecteur-intranet.git mynews-connecteur-twitter.git mynews-connecteur-api.git mynews-connecteur-biographie.git mynews-authentication.git
+					do
+							if [ ! -r ${project} ]
+							then
+									echo "clone $project "
+									git clone --mirror https://gitlab.com/ca-digiteam/mynews/$project # cree un clone de type bare repository en local a partir de ce gitlab
+							fi
+							cd $project
+							echo "mirroring $project from gitlab to gitlabcacib"
+							git remote set-url --push origin svcsvnpr@gitlab.ca.cib:CCI/CIT/DIGITEAM/MyNews/$project # redefini le remote pour les push seulement vers un autre repository
+							git fetch -p origin # fait un fetch de l'origin
+							git push --mirror # push vers la destination mirroire qui est l'autre repository
+							cd ..
+					done
+
 Nativescript :
       generateur d'icones http://nsimage.brosteins.com/
       guide commandes: https://github.com/NativeScript/nativescript-cli#the-commands
@@ -2094,6 +2115,8 @@ try (SeContainer container = initializer.disableDiscovery().initialize()) { cont
                                                                        xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
                                                                        version="1.1"bean-discovery-mode="all">
                                                                 </beans>
+		@Pattern(expressionreguliere) // sur un champ d'un bean: pour valider que ce champ quand il est rempli match bien à la regexp.
+		
 securite:(JSR375)
        AFAIRE
        https://javaee.github.io/tutorial/security-api004.html
@@ -5607,13 +5630,13 @@ Spring : XML STYLE
                             @Scope("request") (par exemp<le) ou @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)                             
                             public class MaClasseMonController // NE PAS l'appeler Controller tout court
                             {
-                                @ResponseBody // en tete de methode ou de classe pour qu'il soit cap de renvoyer que du json même si je retourne un objet java(webservice mais inutile si j'ai mis @RestController en tête de classe)
+                                @ResponseBody // en tete de methode ou de classe pour qu'il soit cap de renvoyer que du json même si je retourne un objet java(webservice mais inutile si j'ai mis @RestController en tête de classe) marche aussi avec les methodes get.
                                 @RequestMapping(value="/monpath.html" ou "/welcome",method=RequestMethod.POST ou .GET ou method={ RequestMethod.GET, RequestMethod.POST }) //est GET par defaut. ou ("/welcome") ou ("/welcome/{parametre1}/{parametre2}") // url: /welcome/toto/titi. consumes = "multipart/form-data" ou consumes={"toto","titi",MediaType.APPLICATION_JSON_VALUE})
                                 ou 
                                 @GetMapping("/mon/path/{param1}") // c'est comme @RequestMapping avec methode get. param1 se retrouve dans @PathVariable
-                                public ModelAndView helloworld(@ModelAttribute("student1") Student student1, BindingResult sierrorlorsdubiding //bind les parametres de mon formulaire id="student1" avec les champs ayant un name:"toto" avec mon objet Student qui a une methode getsetToto. @Valid//pourPrendreEnCompteLesAnnotAuDessusDesGettersEtSettersDeMesBeansPojo(voir @Size) ou @RequestBody Object[]  request ou ObjetJavaAvecAnnotations ou LinkedMultiValueMap<String, Object>//pour recuperer du JSON ou du XML. request ou @RequestPart Map request ou @PathVariable("parametre1") String monparam1, @PathVariable("parametre2") String monparam2, @PathVariable Map<String,String> rePathVar)// @PathVariable c pour l'URL ex:x/y/z. ou @RequestParam(value="parametre1",defaultValue="siParametre1EstNullVide", required=true) String monparam1, @RequestParam("parametre2") int monparam2) @RequestParam c pour la request ex:?monparam2=x: pour un post ca se met comme ca dans le body du post: paramname+"="+paramvalue; @RequestParam Map<String,String> reqPar) // du coup j'ai reqPar.get("monParametre1"); reqPar.get("monParametre1");)
-                                                                                                              Bind avec n'importe quel type de var: date, arraylist etc...Meme les objets sous-jacents
-                                                                                                              si je veux personaliser mon binding il faut utiliser une methode annotee avec @InitBinder (voir LINKInitBinder)
+                                public ModelAndView helloworld(@ModelAttribute("student1") Student student1, Error ou BindingResult sierrorlorsdubiding //bind les parametres de mon formulaire id="student1" avec les champs ayant un name:"toto" avec mon objet Student qui a une methode getsetToto. @Valid//pourPrendreEnCompteLesAnnotAuDessusDesGettersEtSettersDeMesBeansPojo(voir @Size) ou @RequestBody Object[]  request ou ObjetJavaAvecAnnotations ou LinkedMultiValueMap<String, Object>//pour recuperer du JSON ou du XML. request ou @RequestPart Map request ou @PathVariable("parametre1") String monparam1, @PathVariable("parametre2") String monparam2, @PathVariable Map<String,String> rePathVar)// @PathVariable c pour l'URL ex:x/y/z. ou @RequestParam(value="parametre1",defaultValue="siParametre1EstNullVide", required=true) String monparam1, @RequestParam("parametre2") int monparam2) @RequestParam c pour la request ex:?monparam2=x: pour un post ca se met comme ca dans le body du post: paramname+"="+paramvalue; @RequestParam Map<String,String> reqPar) // du coup j'ai reqPar.get("monParametre1"); reqPar.get("monParametre1");)
+                                                               ou                                               Bind avec n'importe quel type de var: date, arraylist etc...Meme les objets sous-jacents
+                                                               @Valid Student                                   si je veux personaliser mon binding il faut utiliser une methode annotee avec @InitBinder (voir LINKInitBinder)
                                 ou
                                 public String postCommentAgency(MultipartHttpServletRequest request, HttpServletResponse response){...
                                 {
@@ -5666,6 +5689,8 @@ Spring : XML STYLE
                                 @Size(min=2, max=30, message="titit{min} ljksdflo {max} sdlksd")
                                 @Size(min=2, max=30) // vient de la librairie de Hibernate. message d'erreur par defaut
                                 @Past // doit être une date dans le futur
+								@NotBlank // ne doit pas etre ni null ni ""
+								@NotNull // peut etre "" mais pas null
                                 monSetter(String toto) 
                                 
                               leNomDeMaJsp.jsp
@@ -7530,8 +7555,8 @@ this will show you all of the tables:
 MYSQL :
    apres installation: 
           cd C:\Program Files\MySQL\MySQL Server 5.6\bin\
-          mysqld.exe --initialize si besoin pour la première fois apres installation. cree  le repertoire data.
-          ou mysqld.exe --initialize --user=mysql puis
+          mysqld.exe --initialize ou mysqld.exe --initialize --user=mysql si besoin pour la première fois apres installation. cree  le repertoire data.
+           puis
           C:\Program Files\MySQL\MySQL Server 5.6\bin\mysqld --console --skip-grant-table(pour que je puisse me connecter en root sans mot de passe) (demarre le serveur mysql)
                 apres je pourrais refaire sans le --skip-grant-table quand j'aurais defini un mot de passe a mon user(ci dessous)
         demarrer le serveur mysql:
@@ -13081,7 +13106,7 @@ mobaxterm : (si j'arrive pas a faire du sftp parce que la connexion se coupe, ca
   pour enregistrer des macros: 
     repetitifs repertitive automatiser les saisies: menu macros> record new macro
   on peut ouvrir en multi fenetre (menu view)
-  installer des packages: cliquer sur icone packages dans le menu. (il va peut etre demander d'abord de setter des variables home et root). J'ai installé mksh    
+  installer des plugin extensions pluggins packages: cliquer sur icone packages dans le menu. (il va peut etre demander d'abord de setter des variables home et root). J'ai installé mksh    
 
 putty : (mobaxterm mieux que putty)
 pour rapidement se connecter avec un racourci: 
@@ -16046,8 +16071,8 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
     FilterConfig filterConfig = mock(FilterConfig.class);
     ServletContext context = mock(ServletContext.class);
     when(filterConfig.getServletContext(
-                                        anyString()//tout string
-                                        , eq(Http.GET)// si je peux pas faire "any" je fais ça
+    ou                                   anyString()//tout string
+    given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça
                                         ,anyObject(UneClasse.class)
                                         ).thenReturn(context);
     ResultDao rd =mock(ResultDao.class);
@@ -24518,6 +24543,12 @@ Remplacement de chaine1 (toutes les occurrences de chaine1) ,par chaine2 depuis 
 pour transformer la case: MAJ -> MIN ou l'inverse: altGR + ~
 
 bash :KSH :
+		pour faire une boucle loop
+			for projet in blabla blibli bloblo
+					do
+					  echo "mirror $projet "
+					done
+
       pour faire une pause dans un script ksh:
             read -p "Press [Enter] key to start backup..."
       pour faire un prompt dans un script ksh:
@@ -24544,7 +24575,9 @@ bash :KSH :
       pour faire un include importer d'un autre ksh dans un ksh
           . $path_vers_mon_autre_ksh/DDD_ExportPHX_environnement.ksh
       pour faire un substring: 
-          NOM_FICH_PAYS=$DATE_ENTREE`echo $ligneLu | cut -d":" -f 2`
+				echo ${stringvariable:2:4} // sauter 2 chars et prendre les 4 suivants
+				ou bien:
+				NOM_FICH_PAYS=$DATE_ENTREE`echo $ligneLu | cut -d":" -f 2`
           qui signifie:
           ma_variable =$uneautrevariableConcateneeAvec`echo $uneVariableQuiVaEtreSubstringuee | cut -d"monDelimiteur" -f NombreDeCharApresDelimiteur`
 bon exemplde ksh de lancement de batch: 
@@ -24655,7 +24688,10 @@ bon exemplde ksh de lancement de batch:
                                   if [ ${RET} -eq 0 ]
                                   then
 
-                      Script KSH pour remplacer tous les codeCIble"" par codeCible"0"
+                      Script KSH pour remplacer replace
+							repertoire=${project/".git"/"")} // remplace dans projet ".git" par rien du tout et met le resultat dans la variable repertoire.
+					  remplacer tous les codeCIble"" par codeCible"0"
+					  
                                 fusage()
                                 {
                                     echo " Parametre manquant: Ex: mpf_Renvoi.ksh Operation_Renvoi.xml"
@@ -24674,7 +24710,7 @@ bon exemplde ksh de lancement de batch:
                                   sed -e "s/codeCible=\"\"/codeCible=\"0\"/g" $1 > $HOME/tfi/$1.tmp // pour le faire le remplacement directement sur le même fichier sed -i.bak -e "s/remplacemoi(/parca(/g" nomdemonfichier // ça cree par ailleurs un fichier .bak qu'il faudra supprimer apres
                                           ^               ^               ^
                                     // "/s"=remplacer. remplace ce qui ya après s/ (codeCible="") par (/) codeCible="0" /g: cad partout. $1= parametre: on ecrit le resultat dans $HOME/tfi/$1.tmp
-                                    // du coup pour trouver certains fichiers et remplacer dans ceux trouver une chaine par une autre faire: 
+                                    // du coup pour trouver certains fichiers et remplacer dans ceux trouvés une chaine par une autre faire: 
                                             find . -type f -not -name '*.mp3' -not -name '*.bak'(important!) | xargs sed -i.bak -e "s/remplacemoi(/parca(/g"
                                 ret=$?  // on defini ret etant le retour du sed ci dessus: peut etre =1 ou 0
                                 if [ $ret -ne 0 ] // si ca ne renvoie pas 0 (0=erreur 1=OK)
