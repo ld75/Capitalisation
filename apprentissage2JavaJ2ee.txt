@@ -30557,7 +30557,7 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
                 return new ModelAndView(new RedirectView(request.getLocationUri()));
                                 -------------------------------------frontchannel---------------------->>>>>>>FID(AuthenticationServer) présente le prompt d'authentification. USER s'authentifie
                                                                                                               FID présente le consent Screen/scope. USER approuve. SI User n'approuve pas FID retournera ?error=x&error_description=y
-                                <<<<<<<<<<<<<<<<<<<<<<---------------frontchannel-----------------------------FID retourne AuthorizationCode=code=AuthorizationGrant(Dans les en-tête http.)+Token_ID si ImpriciteMode + renvoit le meme state qu'il a reçu ("tatatoto")                
+                                <<<<<<<<<<<<<<<<<<<<<<---------------frontchannel-----------------------------FID retourne AuthorizationCode=code=AuthorizationGrant(Dans les en-tête http.)+Token_ID si ImpliciteMode + renvoit le meme state qu'il a reçu ("tatatoto")                
                                                                     url = redirectURI = callback                        
     
     EDSN renvoit l’AuthorisationCode + idApplicatif + client_secret à FID--------backchannel------------>>>>>
