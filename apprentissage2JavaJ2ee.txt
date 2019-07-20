@@ -1,4 +1,4 @@
-(?=.*conf)(?=.*proxyhier)
+(?=.*disque)(?=.*espace)
 Hashmap/HashTable 
 lock reentrant
 immutable interet car pas de pb de concurrence
@@ -2431,8 +2431,6 @@ pour recuperer le nom de l'utilisateur connecte:
     request.getUserPrincipal()
          
  fichier :
-
-
 pour renvoyer un fichier de la servlet (download): astuce, on peut aussi le zipper en java et envoyer le zip comme ca il n'y a pas de pb d'encodage
 	 String header = "attachement;filename="+fileName.substring(0,fileName.lastIndexOf("."));
 				response.addHeader("content-disposition", header);
@@ -2849,6 +2847,40 @@ pour recuperer une variable d'environnement qui est declaree dans web.xml:
 microservices :
     bonnes pratiques
         dans le cadre de microservices il faut qu'il y ait qun seul entrypoint point de départ de l'histoire et les liens renvoyés par les webservices respectant la norme HATEOAS permettent de savoir quelles autres urls je peux appeler.
+quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.io/guides/cdi-reference.html. quarkus-reasteasy:c'est jaxRS
+        creer un nouveau projet from scrash de n'importe où: 
+        mvn io.quarkus:quarkus-maven-plugin:0.16.1:create -DclassName="org.acme.quickstart.MaClasseWebServiceResource" -Dpath="/urlDeCeWebServiceHelloWorld" 
+                dans le pom, io.rest-assured c'est pour les tests voir LINKtestetresrtest. ATTENTION remplacer la dependance <artifactId>quarkus-resteasy</artifactId> par <artifactId>quarkus-resteasy-jsonb</artifactId> si je veux faire du rest json 
+  mvnw compile quarkus:dev -Ddebug(si je veux debugger)// execute en dev (demarre un serveur http). quarkus:dev c'est pour que le serveur ecoute les changements et s'auto-refresh. Comment? Reponse:Refreshing the browser triggers a scan of the workspace, and if any changes are detected, the Java files are recompiled and the application is redeployed; your request is then serviced by the redeployed application. If there are any issues with compilation or deployment an error page will let you know.
+  mvnw package // recompile et package 2jars. Un executable -runner.jar (executable par "java -jar target/getting-started-1.0-SNAPSHOT-runner.jar") qui demarre le serveur jboss attention les librairies utilisées sont externes dans target/lib voir son MANIFEST.MF. Un autre qui ne contient pas l'embedded serveur 
+  mvnw package -Pnative // recompile et package un binaire executable dans target environnement dépendant donc attention:executable sans besoin de jvm mais fonctionne que sur mon type d'environnement actuel
+    du coup rajouter:-Dnative-image.docker-build=true // je crois qui cree un executable metable dans un container docker (voir le dockerfile  genere par quarkus)
+  docker build -f src/main/docker/Dockerfile.native -t quarkus-quickstart/quickstart // creer l'image docker
+  docker run -i --rm -p 8080:8080 quarkus-quickstart/quickstart // executer dans docker ou kubernetes
+       quarkus :tests:
+            @QuarkusTest // le serveur jboss demarre sur port 8081(modifiable par quarkus.http.test-port dans application.properties) et rest-assured utilise ce port. Toutes les injections se font.
+            public class GreetingResourceTest {
+                @Test
+                public void testHelloEndpoint() {
+                    given() // de rest-assured. SI je veux forcer moi meme l'url alors faire  @TestHTTPResource("/monPath") URL ou String monUrl dans ma classe de test
+                      .when().get("/hello")
+                      .then()
+                         .statusCode(200)
+                         .body(is("hello"));
+                }
+                @Test
+                public void testGreetingEndpoint() {
+                    String uuid = UUID.randomUUID().toString();
+                    given()
+                            .pathParam("name", uuid)  // rempli le {name} ci dessous
+                            .when().get("/hello/hello/{name}")
+                            .then()
+                            .statusCode(200)
+                            .body(is("hello " + uuid + "\n"));
+                            .body("utilisateur.nom", equalTo("jean"),"lotto.winners.winnerId", hasItems(23, 54));//marche meme si c'est du json. permet de valider le json sans avoir à convertir en objet java LINKtestetresrtest
+                }
+            si dans un service rest j'ai l'erreur can not access a member of class c'est parce que je ne peux pas convertir en json une classe qui est inner d'une autre classe.       
+
 webservice : webservices : voir LINKSWAGGER 
     UDDI est un annuaire des webservices sur internet
 REST : webservice : webservices : client accède à un service à partir d'un URL et recoit en reponse json ou jpg ou plain text ou meme xml etc (meta-data dedans indique quoi) n'est pas forcement du http. Ca peut etre un websocket
@@ -2897,6 +2929,38 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
         puis 
         response.readEntity(String.class ou UneEntity.class)
         Assert.assertEquals(java.net.HttpURLConnection.HTTP_CREATED,response.getStatus());
+    une classe webservice :(karaf par ex)
+      LINK93029
+            	@Context                   // request et response comme ça sont automatiquement injectes
+            	private HttpServletRequest httpRequest; // attention on dirait que pas possible de faire httpRequest.getParameter("x") si dans la methode en bas j'utilise @FormParam
+            	@Context
+            	HttpServletResponse httpResponse;
+                  @GET ou @POST
+                @Path("/la_suite_de_lurl") ou @Path("/") // facultatif ou @Path("/{a:api/v1/realtimepath|api/v2/apps/{appNameId}/realtimepath") //si j'ai plusieurs multiples urls 
+                public interface ou une classe FeaturesRestService { /// TRES IMPORTANT: la methode doit etre public sinon il ne la voit pas
+                @Path("/lafindelurl") // mettre {monparamdanspath} si on veut utiliser @PathParam("userlogin")String login ci dessous LINK5464  
+               (javax.ws.rs.)@Produces("application/xml") // possible aussi mais à traduire: produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE
+                  public Collection getFeatures( @FormParam("parametrePost") String unParametre  ) throws Exception;
+                                                  ou 
+                                                      @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464
+                                                      et si besoin
+                                                      @QueryParam("unChampApres?ou&DanslUrl") 
+                    // ci dessous: pour recuperer un bundle complettement ailleurs dans le meme karaf en java(l'autre façon c'est d'injecter dans blueprint)
+                  		BundleContext bundleContext = FrameworkUtil.getBundle(UnServiceDeCeBundleLa.class).getBundleContext();
+                  		@SuppressWarnings("rawtypes")
+                  		ServiceReference serviceReference = bundleContext.getServiceReference(une.classe.qui.est.un.service.dans.un.autre.bundle.AutreClasse.class.getCanonicalName());
+                  		return (String) serviceReference.getProperty("UNEPROPRIETTEESETTEE_DANS_LE_BLUEPRINT_DE_CET_AUTRE_BUNDLE");
+                  
+                } 
+                et la sous classe si c'est une interface mais bof autant faire une classe direct sans interface:
+                contient juste la methode                         
+                  public Collection getFeatures(@FormParam("SAMLResponse") String samlReponse) throws Exception {...} sans les annotations
+               Pour fair une servlet karaf LINKkarafservlet
+                   public class MetadataDisplayServlet extends HttpServlet
+                  { contient les methodes post et get habituelles
+
+        filter filtre pour les webservices jaxrs
+                       
                        
 SOAP : webservice : webservices :
 a lire    https://javarevisited.blogspot.com/2017/02/difference-between-jax-rs-restlet-jersey-apache-cfx-RESTEasy.html
@@ -3129,69 +3193,6 @@ jwebsocket : (Web Socket) faire un chat :
    ou 
    java -jar jWebSocketServer-1.0.jar
 
-quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.io/guides/cdi-reference.html. quarkus-reasteasy:c'est jaxRS
-        creer un nouveau projet from scrash de n'importe où: 
-        mvn io.quarkus:quarkus-maven-plugin:0.16.1:create -DclassName="org.acme.quickstart.MaClasseWebServiceResource" -Dpath="/urlDeCeWebServiceHelloWorld" 
-                dans le pom, io.rest-assured c'est pour les tests voir LINKtestetresrtest. ATTENTION remplacer la dependance <artifactId>quarkus-resteasy</artifactId> par <artifactId>quarkus-resteasy-jsonb</artifactId> si je veux faire du rest json 
-  mvnw compile quarkus:dev -Ddebug(si je veux debugger)// execute en dev (demarre un serveur http). quarkus:dev c'est pour que le serveur ecoute les changements et s'auto-refresh. Comment? Reponse:Refreshing the browser triggers a scan of the workspace, and if any changes are detected, the Java files are recompiled and the application is redeployed; your request is then serviced by the redeployed application. If there are any issues with compilation or deployment an error page will let you know.
-  mvnw package // recompile et package 2jars. Un executable -runner.jar (executable par "java -jar target/getting-started-1.0-SNAPSHOT-runner.jar") qui demarre le serveur jboss attention les librairies utilisées sont externes dans target/lib voir son MANIFEST.MF. Un autre qui ne contient pas l'embedded serveur 
-  mvnw package -Pnative // recompile et package un binaire executable dans target environnement dépendant donc attention:executable sans besoin de jvm mais fonctionne que sur mon type d'environnement actuel
-    du coup rajouter:-Dnative-image.docker-build=true // je crois qui cree un executable metable dans un container docker (voir le dockerfile  genere par quarkus)
-  docker build -f src/main/docker/Dockerfile.native -t quarkus-quickstart/quickstart // creer l'image docker
-  docker run -i --rm -p 8080:8080 quarkus-quickstart/quickstart // executer dans docker ou kubernetes
-       quarkus :tests:
-            @QuarkusTest // le serveur jboss demarre sur port 8081(modifiable par quarkus.http.test-port dans application.properties) et rest-assured utilise ce port. Toutes les injections se font.
-            public class GreetingResourceTest {
-                @Test
-                public void testHelloEndpoint() {
-                    given() // de rest-assured. SI je veux forcer moi meme l'url alors faire  @TestHTTPResource("/monPath") URL ou String monUrl dans ma classe de test
-                      .when().get("/hello")
-                      .then()
-                         .statusCode(200)
-                         .body(is("hello"));
-                }
-                @Test
-                public void testGreetingEndpoint() {
-                    String uuid = UUID.randomUUID().toString();
-                    given()
-                            .pathParam("name", uuid)  // rempli le {name} ci dessous
-                            .when().get("/hello/hello/{name}")
-                            .then()
-                            .statusCode(200)
-                            .body(is("hello " + uuid + "\n"));
-                            .body("utilisateur.nom", equalTo("jean"),"lotto.winners.winnerId", hasItems(23, 54));//marche meme si c'est du json. permet de valider le json sans avoir à convertir en objet java LINKtestetresrtest
-                }
-            si dans un service rest j'ai l'erreur can not access a member of class c'est parce que je ne peux pas convertir en json une classe qui est inner d'une autre classe.       
-    une classe webservice :(karaf par ex)
-      LINK93029
-            	@Context                   // request et response comme ça sont automatiquement injectes
-            	private HttpServletRequest httpRequest; // attention on dirait que pas possible de faire httpRequest.getParameter("x") si dans la methode en bas j'utilise @FormParam
-            	@Context
-            	HttpServletResponse httpResponse;
-                  @GET ou @POST
-                @Path("/la_suite_de_lurl") ou @Path("/") // facultatif ou @Path("/{a:api/v1/realtimepath|api/v2/apps/{appNameId}/realtimepath") //si j'ai plusieurs multiples urls 
-                public interface ou une classe FeaturesRestService { /// TRES IMPORTANT: la methode doit etre public sinon il ne la voit pas
-                @Path("/lafindelurl") // mettre {monparamdanspath} si on veut utiliser @PathParam("userlogin")String login ci dessous LINK5464  
-               (javax.ws.rs.)@Produces("application/xml") // possible aussi mais à traduire: produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE
-                  public Collection getFeatures( @FormParam("parametrePost") String unParametre  ) throws Exception;
-                                                  ou 
-                                                      @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464
-                                                      et si besoin
-                                                      @QueryParam("unChampApres?ou&DanslUrl") 
-                    // ci dessous: pour recuperer un bundle complettement ailleurs dans le meme karaf en java(l'autre façon c'est d'injecter dans blueprint)
-                  		BundleContext bundleContext = FrameworkUtil.getBundle(UnServiceDeCeBundleLa.class).getBundleContext();
-                  		@SuppressWarnings("rawtypes")
-                  		ServiceReference serviceReference = bundleContext.getServiceReference(une.classe.qui.est.un.service.dans.un.autre.bundle.AutreClasse.class.getCanonicalName());
-                  		return (String) serviceReference.getProperty("UNEPROPRIETTEESETTEE_DANS_LE_BLUEPRINT_DE_CET_AUTRE_BUNDLE");
-                  
-                } 
-                et la sous classe si c'est une interface mais bof autant faire une classe direct sans interface:
-                contient juste la methode                         
-                  public Collection getFeatures(@FormParam("SAMLResponse") String samlReponse) throws Exception {...} sans les annotations
-               Pour fair une servlet karaf LINKkarafservlet
-                   public class MetadataDisplayServlet extends HttpServlet
-                  { contient les methodes post et get habituelles
-   
 
 JAAS :
     javax.security.auth.login.LoginContext(nomDuLoginModuleAUtiliser,callbackhanderUserInteragitAvecPourS'authentifier. Se retrouve dans classe LoginModule)
@@ -3237,7 +3238,8 @@ web.xml : webxml :
                                             servletContext = config.getServletContext();
                                             this.tgcCache = ((UnObjet)servletContext .getAttribute("tata"));
                                              
-            filter Definit une classe de filtre qui sera aplliquee avant la servlet. (voir http://manu.e3b.org/Java/Tutoriels/J2EE/Descripteur.htm ou http://74.125.39.104/search?q=cache:_3YFpOityV4J:manu.e3b.org/Java/Tutoriels/J2EE/Descripteur.htm+description+web.xml+descripteur+de+deploiement+%3Cfilter%3E&hl=fr&ct=clnk&cd=1&gl=fr)
+            filter: pour les servlet
+                    filter Definit une classe de filtre qui sera aplliquee avant la servlet. (voir http://manu.e3b.org/Java/Tutoriels/J2EE/Descripteur.htm ou http://74.125.39.104/search?q=cache:_3YFpOityV4J:manu.e3b.org/Java/Tutoriels/J2EE/Descripteur.htm+description+web.xml+descripteur+de+deploiement+%3Cfilter%3E&hl=fr&ct=clnk&cd=1&gl=fr)
             			exemple: 
             			<filter>
             		<filter-name>SessionCountFilter</filter-name>
@@ -13046,13 +13048,16 @@ cygwin :
   
 Curl : voir aussi wget : pour faire une requette request http
     sur cygwin (installer dans cygwin. voir cygwin) (sous categorie Net)
-    get telecharger:
-      curl -O https://index.taskcluster.net/v1/task/project.deepspeech.deepspeech.native_client.master.cpu/artifacts/public/deepspeech-0.1.0-cp35-cp35m-manylinux1_x86_64.whl
-    post json:
+    get telecharger: (option -O ou -o maj min importent pas.) // ordre option importe peu et existe -V (version courte) equivalent à -vlakjdf : version longue
+            -v ou -V ou --verbose// verbose a utiliser quand ça ne marche pas.
+      curl -O https://index.taskcluster/artifacts/public/deepspeech-0.1.0nux1_x86_64.whl
+    post json: // mettre des guillemets autour des valeurs des options si il y a des espaces dans ces valeurs. Si c'est du json mettre single quotes
     curl -H "Content-Type: application/json" -X POST -d '{"nudoss":"8714"}' http://localhost:8081/SpringRestEx/rest/badge/inputbadge
+            -d pour data; -X pour methode
     curl -H "Content-type: application/json" -X POST -d '{"numbadge":"A120000002"}' http://hrd2.orleanssrv.domsma:9881/smabtp-rest/rest/badge/inputbadge
     curl  -X GET https://cas.auchan.com/cas/login //si reponse vide c que ça marche
     curl -k -X GET https://localhost:8444/system/console // -k pour ignorer l'insecurité certificat ssl non trusted
+    
 certificats : certificat : formats: types
                               Échange d’informations personnelles (PKCS #12)  (.pfx ou .p12)
                                     Le format d’échange d’informations personnelles (PFX, également appelé P12) prend en charge le stockage sécurisé des certificats, des clés privées et de tous les certificats d’un chemin d’accès de certification.
@@ -17207,7 +17212,7 @@ logback : (mieux que LinkLogutils)
       import org.slf4j.LoggerFactory;
       import org.slf4j.Logger;
       public class UpdatePasswordFilter implements Filter {
-            static final Logger LOG = LoggerFactory.getLogger(UpdatePasswordFilter.class);
+            static final Logger log = LoggerFactory.getLogger(UpdatePasswordFilter.class);
  
 log4j : (vieux voir LinkLogutils)
 si j'ai l'erreur:
@@ -19169,26 +19174,22 @@ les enums : enum :
       si j'ai syntax error on token enum interface expected: 
                 eclipse java compiler: choisir avant java 1.7
       creation de l'enum
-                      public enum Sens {
-                      	ENTREE,
-                      	SORTIE
-                      }
-                      public enum ActionTypeEnum 
-                      {
-                       	save(0,"ACTTYPE_SAVE"),restore(1,"ACTTYPE_RESTORE"); // ici j'ai defini deux elements de liste de l'enum. (ca appelle le constructeur ci dessous)
-                      	private int typeId;
-                      	private String labelId;
-                      	private String translation;
-          
-                  	private ActionTypeEnum(int typeId, String labelId){
-                  		this.typeId = typeId;
-                  		this.labelId = labelId;
-                  	}
-                  	@JsonValue // je peux metre ca si avec jackson je veut renvoyer du json
-                    getLabelId()
-                    {return this.labelId:}	
-                  	// methode standard pour les enums
-               		public static ActionTypeEnum getEnum(String type) // trouver un enum par sa cle. Mais si besoin trouver par un de ses champs faire: res = Arrays.stream(UnitiesForNumericParameters.values()).filter(e->e.value.equals("MO/S")).findFirst().get();
+                  public enum ProfileEnum implements Serializable, IsSerializable 
+                                        {
+                                         	eleve(0,"ELEVE"),admin(1,"ADMIN"); // ici j'ai defini deux elements de liste de l'enum. (ca appelle le constructeur ci dessous)
+                                            ou 
+                                            eleve,admin;
+                                            
+                                         	public int typeId;
+                                        	public String label;
+                                        	private String translation;
+                             
+                                    	private ProfileEnum(int typeId, String labelId){
+                                    		this.typeId = typeId;
+                                    		this.label = labelId;
+                                    	}	
+                                      	// methode standard pour les enums (pas la peine. si je fais ProfileEnum.valueOf("eleve") ca me renvoit le bon enum 
+               		                   public static ProfileEnum getEnum(String type) // trouver un enum par sa cle. Mais si besoin trouver par un de ses champs faire: res = Arrays.stream(UnitiesForNumericParameters.values()).filter(e->e.value.equals("MO/S")).findFirst().get();
                    {
                 		return (ActionTypeEnum)ActionTypeEnum.valueOf(ActionTypeEnum.class, type);
           	      }
@@ -19204,6 +19205,7 @@ les enums : enum :
                       		}
                   getters setters....
     Utilisation de l'enum
+            
         	/**
         	 * translate the label of EnumList
         	 * @param request
@@ -19666,7 +19668,7 @@ modules :java 9 : java9 : java10 : java11 : depuis java9
                                               monapplimodule2/src/paquage.numero.un/...etc...
                                   module-info.java: // si absent, java9 maet tout en unnamed et ça marche qd meme
                                                                       automatic module: export tout requires tout (jar n'ayant pas de module-info.class: du coup son nom de module c'est le nom du jar et si j'ai IllegalArgumentException FindException Invalid module name c'est parce que le nom du jar a un chiffre et c'est interdit pour un module)
-                                                                      unamed module: exporte rien requires tout
+                                                                      unnamed module: exporte rien requires tout
                                                                       Si deux modules(automatic ou non) qui export le meme package -> interdit: ne pas migrer vers java9
                                     module mon.nom.du.module{ //a un nom (doit être unique dans un repertoire) par forcement le même que le nom des packages dedans (recommandé:= nom package a l'envers) ni le meme nom que le .jar qui le contient(intellij met par defaut le nom du module intellij)
                                         requires autre.module; // liste des modules qu'il importe car il en a besoin (mais ne peut lire que les packages exportés par cet autre module. Si j'utilise la classe sans la déclarer ici: j'ai une erreur à la compile et au runtime)
@@ -19725,8 +19727,8 @@ execution : executer :
                       // en fait il crée un repertoire avec /bin dedans avec mon propre java dedans. je peux faire voir LINKjavalistmod sur ce java là.
                       mon programme est executable via l'appelle à ./mon.module.qui.est.sous.bin                       
                   voir le diagramme des dependances
-                      "C:\Program Files\Java\jdk-10.0.2\bin\jdeps" -v -R --module-path path/vers/jars/.jarsModulairesOuAutomatiques_wildcardInterdit_allerjusqu'auxjars;/separe/par/pointvirgule/xx.jar -cp path/vers/repertoires/contenant/.jarsUnamed/* vers/mon/jarAAnalyser.jarOuUn.class? // -v pour verbose -R pour recursive
-                      jdeps -genmoduleinfo un/repertoire/ou/ecrire/le/resultat *.jar // voir les dependances de tous les jars. dispo depuis java8  
+                      "C:\Program Files\Java\jdk-10.0.2\bin\jdeps" -v -R --module-path path/vers/jars/.jarsModulairesOuAutomatiques_wildcardInterdit_allerjusqu'auxjars;/separe/par/pointvirgule/xx.jar -cp path/vers/repertoires/contenant/.jarsUnnamed/* vers/mon/jarAAnalyser.jarOuUn.class? // -v pour verbose -R pour recursive
+                      jdeps -generate-module-info un/repertoire/ou/ecrire/le/resultat *.jar // voir les dependances de tous les jars. dispo depuis java8  
                       java -listmods // renvoit les modules dont mon java jvm dépend LINKjavalistmod
                   execution
                       java --module-path ./path/repertoire/contenant/tous/les/jars --module nom.de.mon.module/package.et.nom.DeMaClasseMain
@@ -30414,6 +30416,12 @@ attention si nouveau compte première fois logguer bien d'abord supprimer tous l
      
 
 JWT :  
+        <dependency>
+                    <groupId>io.jsonwebtoken</groupId>
+                    <artifactId>jjwt</artifactId>
+                    <version>0.6.0</version>
+                </dependency>
+                
     voir https://jwt.io/ a gauche c'est juste ce qu'il ya a droite en base64. Je peux m'amuser a changer le secret ça change la signature
     le tooken n'est pas sensé etre stocké dans les cookies ou dans le localstorage du browser.
     stateless: pas besoin de session ni de base de donnée avec l'utilisateur dedans. Le token suffit a valider que je suis Laurent !=cookie de session ou le serveur conserve une table des sessions.
