@@ -4,15 +4,6 @@ AFAIRE :
  Envoyer à dorothé le script de synchro gitlab vers gitcacib
 capitaliser get spring
 lire : C:\Users\ut2sn0\My_IT_Applications\apprentissage\20190716_Kubernetes_Live_Demo_in_SQY.pdf
-
-Hashmap/HashTable 
-lock reentrant
-immutable interet car pas de pb de concurrence
-comment eviter transitive
-
-AFAIRE : 
-capitaliser get spring
-lire : C:\Users\ut2sn0\My_IT_Applications\apprentissage\20190716_Kubernetes_Live_Demo_in_SQY.pdf
 comment eviter transitive pb maven
 
 prototype Array
@@ -808,11 +799,11 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git merge NomDeLaBranchequejeveuxTirerVersLaBranchDansLaquelleJeSuis(en principe le master) master<----tototo ATTENTION TOUJOURS COMMITER AVANT DE FAIRE UN MERGE
             git merge -X theirs NomDeLaBranchequejeveuxTirerQUI_EST_PRIORITAIRE_ET_ECRASE_LA_OU_JE_SUISVersLaBranchDansLaquelleJeSuis
             git merge -s ours NomDeLaBranchequejeveuxTirerVersLaBranchDansLaquelleJeSuisQUI_EST_PRIORITAIRE_ET_PREND_LE_PAS_SUR_CE_QUI_EST_IMPORTE
-                merge manuellement <<<<<<<<<<<< HEAD
+                merge manuellement <<<<<<< HEAD
                                         mon cote
-                                ==================
+                                        =======
                                         son cote
-                                >>>>>>>>>>>>>>> blablabla
+                                        >>>>>>> blablabla
     preparer un commit:(on peut le faire plusieurs fois avant de commiter) 
       git add -v(verbose) * ou /xx/* ou . ou NomFichier ou '**/pom.xml' (si c'est dans un long path sous-repertoire) // repertoirelocal->index est indexe:Pour rajouter QUE LES NOUVEAUX/UPDATED FICHIERS dès lors toutes les modifs faites AVANT add seulement vont etre commitees quand je ferais git commit... si je modif d'autres fichiers Apres et je commit direct, ils ne sont pas envoyes. A utiliser si j'ai erreur "needs merge you need to resolve your current index first" car il desindexe les fichiers qui n'ont pas bien mergé
       si j'ai le message hint: You've added another git repository inside your current repository embedded.... et que je veux conserver le sous module git faire: d'abord "git rm -f --cached phpExtLib/PHPMailer" pour revenir en arriere puis "git submodule add https://github.com/PHPMailer/PHPMailer.git phpExtLib/PHPMailer". Il faudra alors pusher .gitmodules pour les autres developpeurs. Les autres developpeurs devront faire "git submodule init" puis "git submodule update"
@@ -2098,9 +2089,9 @@ CDI1.x besoin de weld
 		
 <!-- pour utiliser les @ : scan les java qui ont :@Named, @Inject
 Cycle de vie du bean: 
-              – @RequestScoped (par defaut)
+              – @RequestScoped // a mettre absolument sur un webservice utilisant jwt car les claims jwt sont naturelement request-scopeds. LINKkgkgkgklkjsdfljqi
               – @SessionScoped
-              – @ApplicationScoped // le bean est utilise pourl es proprietes generales de l'appli: ex: listes deroulantes qu'on voit tout le temps
+              – @ApplicationScoped // (par defaut) sur la classe. le bean est utilise pourl es proprietes generales de l'appli: ex: listes deroulantes qu'on voit tout le temps
                                             @Singleton // peute etre sur classe meme un webservice. attention ne fait pas partie de la spec CDI mais de EJB. Va de paire avec @Startup. utiliser plutot @ApplicationScoped je crois... mais singleton et statup marchent bien.
                                             @Startup // a mettre sur une classe. s'execute au demarrage ne fait pas partie de la spec CDI mais de EJB
               – @ViewScoped
@@ -2922,7 +2913,7 @@ microservices :
 quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.io/guides/cdi-reference.html. quarkus-reasteasy:c'est jaxRS
         creer un nouveau projet from scrash de n'importe où: 
         mvn io.quarkus:quarkus-maven-plugin:0.16.1:create -DclassName="org.acme.quickstart.MaClasseWebServiceResource" -Dpath="/urlDeCeWebServiceHelloWorld" 
-                dans le pom, io.rest-assured c'est pour les tests voir LINKtestetresrtest. ATTENTION remplacer la dependance <artifactId>quarkus-resteasy</artifactId> par <artifactId>quarkus-resteasy-jsonb</artifactId> si je veux faire du rest json 
+                dans le pom, io.rest-assured c'est pour les tests voir LINKtestetresrtest. ATTENTION remplacer la dependance <artifactId>quarkus-resteasy</artifactId> par <artifactId>quarkus-resteasy-jsonb</artifactId> si je veux faire du rest json sinon j'ai l'erreur NoMessageBodyWriterFoundFailure 
   mvnw compile quarkus:dev -Ddebug(si je veux debugger)// execute en dev (demarre un serveur http). quarkus:dev c'est pour que le serveur ecoute les changements et s'auto-refresh. Comment? Reponse:Refreshing the browser triggers a scan of the workspace, and if any changes are detected, the Java files are recompiled and the application is redeployed; your request is then serviced by the redeployed application. If there are any issues with compilation or deployment an error page will let you know.
   mvnw package // recompile et package 2jars. Un executable -runner.jar (executable par "java -jar target/getting-started-1.0-SNAPSHOT-runner.jar") qui demarre le serveur jboss attention les librairies utilisées sont externes dans target/lib voir son MANIFEST.MF. Un autre qui ne contient pas l'embedded serveur 
   mvnw package -Pnative // recompile et package un binaire executable dans target environnement dépendant donc attention:executable sans besoin de jvm mais fonctionne que sur mon type d'environnement actuel
@@ -2935,6 +2926,8 @@ quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.
                 @Test
                 public void testHelloEndpoint() {
                     given() // de rest-assured. SI je veux forcer moi meme l'url alors faire  @TestHTTPResource("/monPath") URL ou String monUrl dans ma classe de test
+                        .header("X-TOKEN","montoken")
+                        .header("MonAutreHeader","valeurDeMonAutreHeader")                    
                       .when().get("/hello")
                       .then()
                          .statusCode(200)
@@ -2977,7 +2970,9 @@ webservice : webservices : voir LINKSWAGGER
     UDDI est un annuaire des webservices sur internet
 REST : webservice : webservices : client accède à un service à partir d'un URL et recoit en reponse json ou jpg ou plain text ou meme xml etc (meta-data dedans indique quoi) n'est pas forcement du http. Ca peut etre un websocket
 voir exemple de webservice rest sans framework ici: d:\Profiles\lduverge\Desktop\Apprentissage\webservicedemo(attention pour l'entite j'ai pas respecte unclebob)
-                      No dependencies, no migrations.
+tutoriel Pour faire des serveurs de webservice: http://www.tutorialspoint.com/restful/restful_first_application.htm
+webservices: http://users.skynet.be/pascalbotte/
+                      No dependencies, no migrations. jaxrs est l'api (specification) et jersey ou cxf implementent cet api.
                       import javax.ws.rs.GET;
                       import javax.ws.rs.Path;
                       import javax.ws.rs.Produces;
@@ -2995,8 +2990,7 @@ voir exemple de webservice rest sans framework ici: d:\Profiles\lduverge\Desktop
 si erreur java.lang.AbstractMethodError: javax.ws.rs.core.UriBuilder.uri(Ljava/lang/String;)Ljavax/ws/rs/core/UriBuilder
       c parce que j'utilise pas les bonnes versions de librairies jersey/tomcat je crois. upgrader
   webservice renvoit une erreur policy? regarder au niveau "Autorisation"
-tutoriel Pour faire des serveurs de webservice: http://www.tutorialspoint.com/restful/restful_first_application.htm
-        webservices: http://users.skynet.be/pascalbotte/
+
 pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facile. ) 
           <dependency>
               	<groupId>com.sun.jersey</groupId>
@@ -3036,12 +3030,13 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
         puis 
         response.readEntity(String.class ou UneEntity.class)
         Assert.assertEquals(java.net.HttpURLConnection.HTTP_CREATED,response.getStatus());
-    une classe webservice :(karaf par ex)
+    une classe webservice :(karaf par ex) rest
       LINK93029
-            	@Context                   // request et response comme ça sont automatiquement injectes
-            	private HttpServletRequest httpRequest; // attention on dirait que pas possible de faire httpRequest.getParameter("x") si dans la methode en bas j'utilise @FormParam
-            	@Context
-            	HttpServletResponse httpResponse;
+      @Path("/xxxxx")
+      @xxxxScoped // attention voir LINKkgkgkgklkjsdfljqi
+        public class MaClasse{
+            	@Context// permet d'injecter tout ce qui est dans le contexte d'une requete http: HttpHeaders;UriInfo;SecurityContext;ResourceContext;Request;Application;Configuration;Providers;HttpServletRequest;HttpServletResponse;ServletConfig;ServletContext
+                private HttpServletRequest httpRequest; // attention on dirait que pas possible de faire httpRequest.getParameter("x") si dans la methode en bas j'utilise @FormParam
                   @GET ou @POST
                 @Path("/la_suite_de_lurl") ou @Path("/") // facultatif ou @Path("/{a:api/v1/realtimepath|api/v2/apps/{appNameId}/realtimepath") //si j'ai plusieurs multiples urls 
                 public interface ou une classe FeaturesRestService { /// TRES IMPORTANT: la methode doit etre public sinon il ne la voit pas
@@ -3067,7 +3062,24 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
                   { contient les methodes post et get habituelles
 
         filter filtre pour les webservices jaxrs
-                       
+                    @Provider // pour que jaxrs le prenne en compte automatiquement au runtime (!=???) du coup je pense qu'il faut absolument le mettre
+                    @Priority(Priorities.AUTHENTICATION ou AUTHORIZATION ou HEADER_DECORATOR etc...)// determine position dans ordre du filtre par priorité plus chiffre petit, plus ca passe avant.
+                    public class AuthenticationFilter implements ContainerRequestFilter { // mon filtre doit implementer ContainerRequestFilter qui contient la methode filter 
+                    
+                        @Inject
+                        JwtHelper jwtHelper;
+                    
+                        @Override
+                        public void filter(ContainerRequestContext containerRequestContext) throws IOException {
+                            SecurityContext originalContext = containerRequestContext.getSecurityContext(); // specifique jaxrs securitycontext est quelquepart dans la requete
+                            (...)
+                            containerRequestContext.setSecurityContext(new Authorizer(claims, originalContext.isSecure())); //du coup on pourra faire LINKoooooooog
+                          } catch (Exception e) {
+                                requestContext.abortWith(
+                                    Response.status(Response.Status.UNAUTHORIZED).build());
+                            }
+                        } 
+                                           
                        
 SOAP : webservice : webservices :
 a lire    https://javarevisited.blogspot.com/2017/02/difference-between-jax-rs-restlet-jersey-apache-cfx-RESTEasy.html
@@ -3359,12 +3371,15 @@ quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.
             	private HttpServletRequest httpRequest; // attention on dirait que pas possible de faire httpRequest.getParameter("x") si dans la methode en bas j'utilise @FormParam
             	@Context
             	HttpServletResponse httpResponse;
+                @RolesAllowed({"Echoer", "Subscriber"}) // pour securiser l'acces à la classe. Peut etre mis au niveau de la methode (authorizations)
+                ou
+                @PermitAll
                   @GET ou @POST
                 @Path("/la_suite_de_lurl") ou @Path("/") // facultatif ou @Path("/{a:api/v1/realtimepath|api/v2/apps/{appNameId}/realtimepath") //si j'ai plusieurs multiples urls 
                 public interface ou une classe FeaturesRestService { /// TRES IMPORTANT: la methode doit etre public sinon il ne la voit pas
                 @Path("/lafindelurl") // mettre {monparamdanspath} si on veut utiliser @PathParam("userlogin")String login ci dessous LINK5464  
                (javax.ws.rs.)@Produces("application/xml") // possible aussi mais à traduire: produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE ou MediaType.SERVER_SENT_EVENTS
-                  public Collection getFeatures( @FormParam("parametrePost") String unParametre  ) throws Exception;
+                  public Collection getFeatures(@Context SecurityContext securityContext LINKoooooooog @FormParam("parametrePost") String unParametre  ) throws Exception;
                                                   ou 
                                                       @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464
                                                       et si besoin
@@ -13265,7 +13280,7 @@ certificats : certificat : formats: types
                               _     prend en charge le stockage des certificats et de tous les certificats du chemin d’accès de certification. (keytool utilise ce format) 
                              | DER X.509 (.cer ou .der) (PKCS #8) La version binaire(!=bas64) de PEM. Tout le monde peut devenir un DER. Ne contiennent "BEGIN CERTIFICATE / END CERTIFICATE"
                              |       Le format DER (Distinguished Encoding Rules) prend en charge le stockage d’un seul certificat. Ce format ne prend pas en charge le stockage de la clé privée ou du chemin d’accès de certification.
-  un.cer .crt peut etre soit | PEM (.pem) version Base64 de DER Chiffré en Base64 X.509 (commence par ----BEGIN fini par END---) pour en crée une avec mobaxterm faire Conversion>ExportSSH key
+  un.cer .crt peut etre soit | PEM (.pem) format texte. version Base64 de DER Chiffré en Base64 X.509 (commence par ----BEGIN fini par END---) pour en crée une avec mobaxterm faire Conversion>ExportSSH key
   importable dans browser    |       Le format Base64 ASCII prend en charge le stockage d’un seul certificat. Peut etre un csr.
                              |_      Possible y stocker la chaine de certifs et possible la cle privee.
                              KEY (.key) est un PEM ne contenant que la cle privee
@@ -13519,7 +13534,15 @@ Pour recuperer le user utilisateur connecte à travers un certificat
                   X509Certificate cert = certs[0];
                   String n = cert.getSubjectDN().getName();
                 }
-Cryptage : crypto : en java 
+Cryptage : crypto : en java
+        algos : algorithmes : 
+                RSA = asymetrique paire de cles
+                    RSA-SHA256 = RS256
+                ECDSA = asymetrique
+                    ECDSA-SHA512 = ES512 
+                HMAC =  symetrique. signature et verification de la signature avec la meme cle
+                    HMAC-SHA256 = HS256
+                    HMAC-SHA512 = HS512 
   Pour recuperer une cle d'un certificat: 
             	byte[] key = cipher.getCurrentSecretKey(CipherBean.getX509Certificate(certificateFile.getAbsolutePath())).getBytes();
   pour verifier une signature: En utilisant le cipherbean cypherbean de Francois: ou bien com.hraccess.services.crypto.JceSecretCipher
@@ -13537,7 +13560,7 @@ Cryptage : crypto : en java
 //   Load the private key from a keystore
             KeyStore keystore = KeyStore.getInstance("JKS"); ou "PKCS12"
             keystore.load( new FileInputStream( certFilePath), MotDePasseAccesCertif.toCharArray());
-            PrivateKey privateKey = (PrivateKey) keystore.getKey("awcsb01alias", "awcsb01".toCharArray());
+            PrivateKey privateKey = (PrivateKey) keystore.getKey("awcsb01alias", "motDePasseDuKeyStore".toCharArray());
             //On va signer avec la cle privee 
             java.security.Signature signer = java.security.Signature.getInstance("SHA256withRSA" ou "SHA1withRSA"); // les cles les plus longues: conseille d'utiliser celles-ci
             signer.initSign(privateKey);
@@ -13585,7 +13608,8 @@ Cryptage : crypto : en java
               ne marche pas, aller dans C:\Program Files\IBM\SDP70\runtimes\base_v61\java\jre\lib\security
               Il faut que local_policy.jar contienne la meme chose que ce qu'il y a dans US_export_policy.jar. le JCE contenant les deux jar est à mettre sous jre.x.x.x/ (voir README)
                       pour cripter decripter de gros fichiers:
-              				 //-----------------Cipher (c'est un criptage super car on cripte de gros fichiers avec une cle symetrique RSA. Cette cle est ensuite criptee par une cle publiqueAsymetrique DES)
+              				 //-----------------Cipher (c'est un criptage super car on cripte de gros fichiers avec une cle symetrique RSA. Cette cle est ensuite criptee par une cle publique
+                               que DES)
               				 CipherBean cipher = CipherFactory.getCipherBean(CipherFactory.CIPHER_TYPE.DESede);
               				FileInputStream fileTest = new FileInputStream(tmpRecvFolder+File.separator+"texte.txt");//chemin absolu necessaire
               				FileOutputStream criptedFileTest = new FileOutputStream(tmpRecvFolder+File.separator+"texteCRIPTE.txt"); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
@@ -24004,7 +24028,7 @@ pour voir la liste des alias, tapper alias (permet de voir les raccourcis de com
 pour voir le detail d'un alias: alias nomalias
 pour faire des alias persistants: 
   vi ~/.bash_alias (ce dernier est charge par ~/.bashrc qui contient) LINKç'(ç')
-      alias gototemplate='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/'
+      alias gototemplate='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/' // pour echapper les espaces : alias gotoapprentissage="cd \"/c/Users/Mes documents/apprendre\""
       alias gotocss='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/css'
       alias gotomodule='cd /var/www/www.wenhuaduverge.com/shop/module'
   puis vi ~/.bashrc
@@ -30738,8 +30762,8 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
                    --->GET  plusieurs fois tant que expir OK.
                    --->GET----------backchannel/frontSiImplicitMode-----renvoit l'AccessToken qui contient le scope----------->>>>>>FIDx(Ressource) Vérifie que l'AccessToken est valide Puis Execute l'action ou                                                                                            
                                                   |                       GET url.FIDx/toto/endpoint                                                                            |
-                                                  |                  Authorization:Bearer ou Mac blaMonAccessTockenblabla // dans le header(bearer pour dire que c du oauth2.0) | 
-                                                  |                         OU renvoit                                                                                          |
+                                                  |                  Authorization:Bearer ou Mac blaMonAccessTockenblabla // dans le cookies httponly de preference sinon       | 
+                                                  |                         OU renvoit                                     dans le header(bearer pour dire que c du oauth2.0)   |
                                                   |                       getUserInfo si a reçu l'Token_ID                                                                      |
                                            s'assurer que le token ne peut pas                                                                                                   | 
                                            être pompé hors du browser                                                                                                           |
