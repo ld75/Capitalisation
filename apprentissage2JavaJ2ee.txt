@@ -15320,7 +15320,7 @@ cookies :
                                       		final String cookieDomain = getCookieDomain();
                                       		Cookie cookie = new Cookie(name, value); //exemple: ("bla,"bli");
                                       		cookie.setPath(cookiePath);
-                                      		//cookie.setSecure(httpRequest.isSecure()); //.isSecure() renvoit true si on est en https 
+                                      		//cookie.setSecure(httpRequest.isSecure()); //.isSecure() renvoit true si on est en https. setsecure n'envoie le cookie a travers le reseau que si on est en https 
                                       		cookie.setSecure(true); //setSecure: le cookie n'est transmis sur le reseau que si on est en https LINKlizifoizf
                                       		cookie.setHttpOnly(httpOnly);
 letsencrypt :
