@@ -1,4 +1,4 @@
-(?=.*war)(?=.*url)
+(?=.*allow)(?=.*origin)
 AFAIRE :
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
  Envoyer à dorothé le script de synchro gitlab vers gitcacib
@@ -13535,7 +13535,8 @@ Pour recuperer le user utilisateur connecte à travers un certificat
                   String n = cert.getSubjectDN().getName();
                 }
 Cryptage : crypto : en java
-        algos : algorithmes : 
+        algos : algorithmes :
+                MD5 et SHA1: obsoletes 
                 RSA = asymetrique paire de cles
                     RSA-SHA256 = RS256
                 ECDSA = asymetrique
@@ -15282,10 +15283,11 @@ hacking : haking : hack :
         xss//crosssitescripting // ma servlet vulnerable fait executer au navigateur du javascript passé en parametre de ma requete. ce javascript pourrait lire mes cookies (de session!): LINKcooklskjhh et le pirate de se connecter à ma place
         pathtraversal// une servlet renvoit n'importe quel fichier ! ex: monsite/maservlet?vachercher=/unpath/unfichierANeSurtoutPasMontrer !affiche le fichier!    
         redirectionexterne // une servlet redirige vers un autre site! http://monsite?maservletTresConne?forward=http://un_autre_site
-        CSRF :(CrossSiteRequestForgery :) LINKc.s.r.f (Cross-site scripting appartient à csrf)
-          inciter quelqu'un qui est connecté avec sa session sur le site X à lui faire executer une requette HTTP (genre rm -r*) par javascript caché (dans une image par ex)           
+        CSRF :(CrossSiteRequestForgery :) LINKc.s.r.f (Cross-site scripting appartient à csrf) 
+          inciter quelqu'un qui est connecté avec sa session sur le site X à lui faire executer une requette HTTP (genre rm -r*) par javascript caché (dans une image par ex) depuis un autre site web sur le meme navigateur.           
               la parrade est: 
-                      - Utiliser des jetons de validité dans les formulaires: faire en sorte qu'un formulaire posté ne soit accepté que s'il a été produit quelques minutes auparavant: le jeton de validité en sera la preuve. Le jeton de validité doit être transmis en paramètre et vérifié côté serveur.
+                      - limiter Access-Control-Allow-Origin : ainsi le serveur fait une preflight request method=OPTION qui verifie si cette requete provient de source sure avant de faire la vraie requete.
+                      - la meilleure soluce: Utiliser des jetons de validité dans les formulaires: faire en sorte qu'un formulaire posté ne soit accepté que s'il a été produit quelques minutes auparavant: le jeton de validité en sera la preuve. Le jeton de validité doit être transmis en paramètre et vérifié côté serveur.
                       - Effectuer une vérification du référent dans les pages sensibles: connaître la provenance du client permet de sécuriser ce genre d'attaques. Ceci consiste à bloquer la requête du client si la valeur de son référent est différente de la page d'où il doit théoriquement provenir.
         Session hijacking: si pas en https: hacker peut sniffer sur le reseau mon jsessionid ou autre. Pour eviter faire LINKlizifoizf                      
     metasploitable:
@@ -15316,7 +15318,7 @@ cookies :
                                       		cookie.setPath(cookiePath);
                                       		//cookie.setSecure(httpRequest.isSecure()); //.isSecure() renvoit true si on est en https 
                                       		cookie.setSecure(true); //setSecure: le cookie n'est transmis sur le reseau que si on est en https LINKlizifoizf
-                                      		cookie.setHttpOnly(httpOnly);
+                                      		cookie.setHttpOnly(httpOnly); //javascript n'a pas acces au cookies
 letsencrypt :
       les logs sont sous /var/log/letsencrypt/letsencrypt.log
       les confs de renew sont sous /etc/letsencrypt/renewal
@@ -17894,7 +17896,7 @@ pour convertir un string objet java en array json meme si l'array a plusieurs ni
                                 <artifactId>jackson-databind</artifactId>
                                 <version>2.9.4</version>
                             </dependency>)
-                          ObjectMapper mapper = new ObjectMapper();
+                          ObjectMapper mapper = new ObjectMapper(); AFAIRE: voir comment se proteger des !ENTITY des xml si j'utilise ObjectMapper pour parser du xml
                           String json = "{\"name\":\"mkyong\", \"age\":29}";
                           Map<String, String> map = new HashMap<String, String>();
                           // convert JSON string to Map
@@ -17906,12 +17908,12 @@ pour convertir un string objet java en array json meme si l'array a plusieurs ni
                           Object tti = map.get("age");
                           System.out.println(map);
                 convertir avec jackson Objet->Stringjson: sans controle du mapping
-                     ObjectMapper mapper = new ObjectMapper();
+                     ObjectMapper mapper = new ObjectMapper(); AFAIRE: voir comment se proteger des !ENTITY des xml si j'utilise ObjectMapper pour parser du xml
                       json = mapper.writeValueAsString(this);
                   jsonsring->Object Class Java 
                               //JSON from String to Object
                               Staff obj = mapper.readValue("objetoutablejson", Staff.class);
-                              ObjectMapper mapper = new ObjectMapper();
+                              ObjectMapper mapper = new ObjectMapper(); AFAIRE: voir comment se proteger des !ENTITY des xml si j'utilise ObjectMapper pour parser du xml
                               String jsonInString = "{'name': 'mkyong'}";
                               //JSON from file to Object
                               Staff obj = mapper.readValue(new File("c:\\file.json"), Staff.class);
@@ -18086,7 +18088,7 @@ Convertir parser xml en objet java de maniere plus controllée:
             final JAXBContext jc = JAXBContext.newInstance(JaxbUserRepository.class);
             final Unmarshaller u = jc.createUnmarshaller();
             final JaxbUserRepository jaxbUserRepository =
-                    (JaxbUserRepository)u.unmarshal( new File( userFilePath ) );
+                    (JaxbUserRepository)u.unmarshal( new File( userFilePath ) ); AFAIRE: attention:desactiver le !ENTITY qui permet à un hacker d'injecter un "escape" mode dans le xml
 
             final List<JaxbUser> jaxbUsers = jaxbUserRepository.getUsers();
 Creer depuis xsd une grappe d'objets classes java pour la conversion convertir en deux sens xml et java
@@ -25539,7 +25541,7 @@ htaccess :
 Autoriser le cross-domain: si par exemple le canvas fait une erreur tainted canvas etc...
     dans .htaccess
     <IfModule mod_headers.c>
-       Header set Access-Control-Allow-Origin * // on peut utiliser les wild card  wildcard ici comme par ex *.memoclap.com
+       Header set Access-Control-Allow-Origin * // on peut utiliser les wild card  wildcard ici comme par ex *.memoclap.com en utilisant au max une regexp  pour limiter le hack
         Header set Access-Control-Allow-Credentials true
     </IfModule>
     il est prioritaire sur ce qu'on peut mettre dans une page php comme par exemple 
@@ -25969,7 +25971,7 @@ pour manipuler le css directement:
           var sheetParent = sheetToBeRemoved.parentNode;
           sheetParent.removeChild(sheetToBeRemoved);
                 
-pour faire des frames sans utiliser le iframe:
+pour faire des frames sans utiliser le iframe i-frame:
         <object data="fichier.html" type="text/html" />
 pour faire un .ico icone 
       faire un .bmp et le renommer en .ico
@@ -28618,7 +28620,7 @@ pour recharger la fenetre à partir d'une iframe
      document.location.reload(true)	
      ou 
       window.top.location='/{!Lead.id}'; //une adresse (la ca marche sur salesforce)
-pour appeller une methode du frame parent: self.parentWindow.mamethode();  ou document.parentWindow.mamethode();  si message unsafe javascript.crosssitecross-site.. essayer ave <iframe src="..." sandbox="allow-top-navigation ou alllow-forms ou allow-scripts ou allow-same-origin (ne pas mettre ces deux derniers ensemble) ou allow-popups ou allow-pointer-lock"
+pour appeller une methode du frame parent: self.parentWindow.mamethode();  ou document.parentWindow.mamethode();  si message unsafe javascript.crosssitecross-site.. essayer avec <iframe src="..." sandbox="allow-top-navigation ou alllow-forms ou allow-scripts ou allow-same-origin (ne pas mettre ces deux derniers ensemble) ou allow-popups ou allow-pointer-lock" en utilisant au max une regexp  pour limiter le hack
 pour appeller une methode de la fenetre parente: window.opener.monFormulaire 
 ou window.opener.maFonctionJavascript ...(pas sur)
 			autre exemple: opener.document.getElementById('mask').style.display='inline';// inline si c du texte, block si c'est un div( avec une image par exemple)
