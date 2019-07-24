@@ -1,4 +1,5 @@
 (?=.*allow)(?=.*origin)
+
 AFAIRE :
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
  Envoyer à dorothé le script de synchro gitlab vers gitcacib
@@ -2076,7 +2077,12 @@ erreurs codes http: LINKcodesHttp
 500: erreur interne du serveur
 503: Service unavailable
 502: Probleme entre un serveur proxy intermediaire et le serveur final: probleme de protocole ou config
-
+PRG :
+                    GET: ne modifie jamais l'état du systeme sauf des trucs comme le logs, ne fait que renvoyer data comme un select. always load pages using GET
+                    PUT: ne fait que modifier update un data du système
+                    POST: Fait tout ce que PUT ne fait pas: CREATION. never show pages in response to POST
+                    DELETE: ne fait que supprimer un data du système. Peut etre async. voir LINKcodesHttp 20x 
+          
 
 J2EE : jee : javaee : EE4J : jakartaee : https://github.com/eclipse-ee4j/jakartaee-tutorial-examples et https://github.com/eclipse-ee4j/jakartaee-tutorial
 cdi :CDI2.0 (JSR365) pas besoin d'utiliser weld (je crois) lire https://docs.jboss.org/cdi/learn/cdi_2/slides.html
@@ -2955,13 +2961,8 @@ webservice : webservices : voir LINKSWAGGER
         -mettre DNS clusturisé des webservice: les URL ne sont pas en dur dans les webservices mais dans ce DNS
         -gérer l'overload par un buffer type kafka:queue qui appani les pics de charges.
         -dans le cadre de microservices il faut qu'il y ait qun seul entrypoint point de départ de l'histoire et les liens renvoyés par les webservices respectant la norme HATEOAS permettent de savoir quelles autres urls je peux appeler.
-webservice : webservices : voir LINKSWAGGER
-          PRG :
-                    GET: ne modifie jamais l'état du systeme sauf des trucs comme le logs, ne fait que renvoyer data comme un select. always load pages using GET
-                    PUT: ne fait que modifier update un data du système
-                    POST: Fait tout ce que PUT ne fait pas: CREATION. never show pages in response to POST
-                    DELETE: ne fait que supprimer un data du système. Peut etre async. voir LINKcodesHttp 20x 
-                    Navigate from POST to GET using REDIRECT LINKredirwebservice998 //on peut faire comme ca dans un webservice qui a une methode post
+
+          Navigate from POST to GET using REDIRECT LINKredirwebservice998 //on peut faire comme ca dans un webservice qui a une methode post
                                   URI go = new URI("https://"+httpRequest.getServerName()+"/app/foryou/denied.html?samlDenied");
                                   javax.ws.rs.core.Response response = javax.ws.rs.core.Response.seeOther(go).build(); //LINKRedirectwebservice
                                   return response;
@@ -4909,7 +4910,7 @@ maven:
             classe main
     @SpringBootApplication // trouve les composants annotes par rapport au package de cette classe (dedans et en dessous) +  cette classe devient une classe de configuration où on declare ses beans singletons... //Pas besoin de web.xml. C'est @Configuration (cette classe est une classe de config)+@EnableAutoconfiguration (scan les beans du meme package et enfants + recup les proprietes+ scan les jars poses par mapresents dans classpath) + @Enablemvc (Existe si mvn dependance "spring-web-mvc") + @ComponentScan(basePackages={"..."}) scan les composants.
      @EnableWebMvc // a mettre aussi dans springboot a cote de ci-dessus si je fais des webservices                                                                                                                                                               =@ComponentGENERIQUE_EVITER_D_UTILISERUtiliser@Named+@Config+@Value (cherche proprietes sous classpath) voir LINKPropsspring 
-    @EnableResourceServer // active la securite JWT : ce micro service n'est accessible que si on lui envoie un JWToken ( De plus de manière plus fine on peut proteger alors des methodes avec au dessus @PreAuthorize("#oauth2.hasScope('un.scope.defini.dans.le.JWToken.entrant')") Mais besoin alors d'ajouter dans src/main/resources/application.yml où est la cle publique:jwt.keyUri:$xxxx/ma_cle
+    @EnableResourceServer // active la securite JWT : ce micro service n'est accessible que si on lui envoie un JWToken ( De plus de manière plus fine on peut proteger alors des methodes avec au dessus @PreAuthorize("#oauth2.hasScope('un.scope.role.defini.dans.le.JWToken.entrant')" ou "hasAuthority('ADM')") Mais besoin alors d'ajouter dans src/main/resources/application.yml où est la cle publique:jwt.keyUri:$xxxx/ma_cle
                 public class Application { // l'executer demarre tomcat                                                                                         
                                                                                                                                                                 
                     public static void main(String[] args) {                                                                                                     
@@ -15265,7 +15266,7 @@ hacking : haking : hack :
                 affiche une liste de modules puis use un_des_modules_affiche puis "show options" pour afficher les options du modules puis les definir exemple: "set SOURCE <ADDR_IP> puis "run". Manuel: "show info". Si besoin voir cle: "show keys". Si besoin definir cle: "key add facebook_api<CLE_API>". revenir au menu precedent "back"
       nikto -h adresse_ipOu_url // pour voir les vulnerabilites d'un site web
             OSVDB-xxx est un identifiant(nonmaintenuA8) pour trouver plus d'info sur internet
-     owasp zap: outil pour trouver les failles d'un site web:sur kalilinux LINKfkjOwasplkjsg
+     owasp zap: outil pour trouver les failles d'un site web:sur kalilinux LINKfkjOwasplkjsg . Owasp=organisation d'evangelisation de hack a but non lucratif
           sur maven faire: 
                 <plugin>
 				<groupId>org.owasp</groupId>
@@ -15278,9 +15279,16 @@ hacking : haking : hack :
 						</goals>
 					</execution>
 				</executions>
-			</plugin> puis mvn check ou verify: créé un fichier dependency-check-report.html dans target  
+			</plugin> puis mvn check ou verify: créé un fichier dependency-check-report.html dans target
+      checklist:
+        toujours securiser les PUT, POST, DELETE par roles qui a le droit: "access control layer."
+        dans le log access mettre le userId (pas le username car RGPD) pour savoir qui a envoyer les requetes LINKslf4jMcd
+        MD5 et SHA1 et SHA2 sont obsoletes. parade: hasher 4 fois de suite. BcryptPasswordEncoder de spring le fait pour nous pour hasher des passwords par exemple
+        ne pas loguer les users passwords  
+			  injection sql : ne jamais faire de requete sql par concatenation mais toujours pas procedure stockée. Un hacker sinon peut metre un bout de sql dans un champ texte. idemn sur mongodb
         x-frame-options header not set // en-tête de response permettant d'eviter qu'un site s'affiche dans un autre site (iframe i-frame object).(clickjacking: quand je clique ça clique sur un autre bouton invisible)
-        xss//crosssitescripting // ma servlet vulnerable fait executer au navigateur du javascript passé en parametre de ma requete. ce javascript pourrait lire mes cookies (de session!): LINKcooklskjhh et le pirate de se connecter à ma place
+        xss//crosssitescripting // ma servlet vulnerable fait executer au navigateur du javascript passé en parametre de ma requete. ce javascript pourrait lire mes cookies (de session!): LINKcooklskjhh LINKc.s.r.f  et le pirate de se connecter à ma place
+                    pour s'en premunire faire du @safeHTML sur les champs pour que du javascript ne puisse pas etre injecté dedans. aussi empecher le javascript d'acceder aux cookies.
         pathtraversal// une servlet renvoit n'importe quel fichier ! ex: monsite/maservlet?vachercher=/unpath/unfichierANeSurtoutPasMontrer !affiche le fichier!    
         redirectionexterne // une servlet redirige vers un autre site! http://monsite?maservletTresConne?forward=http://un_autre_site
         CSRF :(CrossSiteRequestForgery :) LINKc.s.r.f (Cross-site scripting appartient à csrf) 
@@ -17436,7 +17444,7 @@ logback : (mieux que LinkLogutils)
               <appender name="FILE" class="ch.qos.logback.core.FileAppender">
               <file>MyLog.log</file>
                   <layout class="ch.qos.logback.classic.PatternLayout">
-                    <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+                    <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern> ajouter %X{first} et %X{last} pour LINKslf4jMcd 
                   </layout>
                </appender>
               <root level="debug">
@@ -17452,7 +17460,8 @@ logback : (mieux que LinkLogutils)
       import org.slf4j.Logger;
       public class UpdatePasswordFilter implements Filter {
             static final Logger log = LoggerFactory.getLogger(UpdatePasswordFilter.class);
- 
+            MDC.put("first", "Richard");pour tracer le userid LINKslf4jMcd
+            logger.info("I am not a crook.");
 log4j : (vieux voir LinkLogutils)
 si j'ai l'erreur:
         Attempted to append to closed appender named
