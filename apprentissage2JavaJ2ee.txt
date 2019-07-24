@@ -1,10 +1,7 @@
-(?=.*path)(?=.*espace)
-Hashmap/HashTable 
-lock reentrant
-immutable interet car pas de pb de concurrence
-comment eviter transitive
-
-AFAIRE : 
+(?=.*war)(?=.*url)
+AFAIRE :
+ authweb :AFAIRE_ACONVERTIR_EN_CURL.png
+ Envoyer à dorothé le script de synchro gitlab vers gitcacib
 capitaliser get spring
 lire : C:\Users\ut2sn0\My_IT_Applications\apprentissage\20190716_Kubernetes_Live_Demo_in_SQY.pdf
 comment eviter transitive pb maven
@@ -276,7 +273,10 @@ scrum : management :
       Simple Design: designer que quand necessaire.
       Refactorer pour avoir du clean code.
       TDD: OBLIGATOIRE 
-videos : 
+	  
+logiciel de copie d'ecran capture :
+	greenshot
+videos : video : 
   lightworks :
     couper: placer le in et le out puis le bouton juste a cote "delete the marked section"
     pour enregistrer exporter une vidéo: 
@@ -799,11 +799,11 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git merge NomDeLaBranchequejeveuxTirerVersLaBranchDansLaquelleJeSuis(en principe le master) master<----tototo ATTENTION TOUJOURS COMMITER AVANT DE FAIRE UN MERGE
             git merge -X theirs NomDeLaBranchequejeveuxTirerQUI_EST_PRIORITAIRE_ET_ECRASE_LA_OU_JE_SUISVersLaBranchDansLaquelleJeSuis
             git merge -s ours NomDeLaBranchequejeveuxTirerVersLaBranchDansLaquelleJeSuisQUI_EST_PRIORITAIRE_ET_PREND_LE_PAS_SUR_CE_QUI_EST_IMPORTE
-                merge manuellement <<<<<<<<<<<< HEAD
+                merge manuellement <<<<<<< HEAD
                                         mon cote
-                                ==================
+                                        =======
                                         son cote
-                                >>>>>>>>>>>>>>> blablabla
+                                        >>>>>>> blablabla
     preparer un commit:(on peut le faire plusieurs fois avant de commiter) 
       git add -v(verbose) * ou /xx/* ou . ou NomFichier ou '**/pom.xml' (si c'est dans un long path sous-repertoire) // repertoirelocal->index est indexe:Pour rajouter QUE LES NOUVEAUX/UPDATED FICHIERS dès lors toutes les modifs faites AVANT add seulement vont etre commitees quand je ferais git commit... si je modif d'autres fichiers Apres et je commit direct, ils ne sont pas envoyes. A utiliser si j'ai erreur "needs merge you need to resolve your current index first" car il desindexe les fichiers qui n'ont pas bien mergé
       si j'ai le message hint: You've added another git repository inside your current repository embedded.... et que je veux conserver le sous module git faire: d'abord "git rm -f --cached phpExtLib/PHPMailer" pour revenir en arriere puis "git submodule add https://github.com/PHPMailer/PHPMailer.git phpExtLib/PHPMailer". Il faudra alors pusher .gitmodules pour les autres developpeurs. Les autres developpeurs devront faire "git submodule init" puis "git submodule update"
@@ -6026,7 +6026,7 @@ Spring-batch :
                                     {
                                     pour acceder au contexte dans le test:
                                       @Autowired ou @Inject ou @Resource
->>>                                   WebApplicationContext wac;   // attention c le top mais pour l'utiliser dans ma classe je dois charger la configuration avec @ContextConfiguration le fichier xml qui est : chercher "WEB-INF/applicationcontext.xml (fichier spring) (c'est le front controller)" et je dois aussi utiliser @WebAppConfiguration  sinon j'aurais je crois si j'ai No qualifying bean of type [org.springframework.web.context.WebApplicationContext] 
+>>>                                   WebApplicationContext wac;   // attention c le top mais pour l'utiliser dans ma classe je dois charger la configuration avec @ContextConfiguration le fichier xml qui est: chercher "WEB-INF/applicationcontext.xml (fichier spring) (c'est le front controller)" et je dois aussi utiliser @WebAppConfiguration  sinon j'aurais je crois si j'ai No qualifying bean of type [org.springframework.web.context.WebApplicationContext] 
                                       ou 
                                       @Autowired ou @Inject
                                       ApplicationContext context; 
@@ -6052,7 +6052,7 @@ Spring-batch :
 >>>                                   private MockMvc mockMvc; //LINKmockmvc
                                       @MockBean
 	                                  private MongoDBRepository mongodbRepo; ou une ClasseService maclasseService; LINKavecMockito
-                                        Avant :
+                                        Avant:
                                         Mockery context = new JUnit4Mockery(); // pour utiliser Jmock voir LINKJmock  
                                       
                                       //spring-batch-tester
@@ -6069,6 +6069,7 @@ Spring-batch :
                                       public void setup()
                                       {
                                             MockitoAnnotations.initMocks(this);
+											this.mockMvc= MockMvcBuilders.standaloneSetup(realTimePathCoverageController).build(); LINKpourquecamarcheFairemokito
 >>>                                         this.mockMvc=MockMvcBuilders.webApplicationContextSetupOuwebAppContextSetup(this.wac).addFilter(this.springSecurityFilterChain).build();
                                             ou
                                             this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build(); // inutile si LINKmockmvc ?
@@ -6076,7 +6077,7 @@ Spring-batch :
 >>>                                         this.mockMvc= MockMvcBuilders.standaloneSetup(wac ou context ou new MonControllerAtester())
                                             .addFilter(this.unFiltreSpring)// je peux ajouter des filtres spring (pas ceux du web.xml mais que ceux de spring)
                                             .build();
-                                            expect(mockMvc.uneMethode()).andReturn(retourQuelleDevraEnvoyer).anyTimes(); // je prepare mon mockito : qu'est ce que ses methodes devront renvoyer qd on les appelle
+                                            expect(mockMvc.uneMethode()).andReturn(retourQuelleDevraEnvoyer).anyTimes(); // je prepare mon mockito: qu'est ce que ses methodes devront renvoyer qd on les appelle
                                             
                                   
                                             session = (IHRSession) wac.getBean("openhr.session"); // recuperer la session 
@@ -6088,13 +6089,13 @@ Spring-batch :
                                       public void searchSendRequest()
                                       {
                                       
-                                      //si dans mes controlleurs j'ai besoin que l'utilisateur soit authentifie : simuler qu'il est authentifie:
+                                      //si dans mes controlleurs j'ai besoin que l'utilisateur soit authentifie: simuler qu'il est authentifie:
                                           		  GrantedAuthority role = new SimpleGrantedAuthority("AUTH");
                                           		  List<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
                                           		  UserDetails userDetail = new User("nom", "password", roles);
                                           		  UsernamePasswordAuthenticationToken authenticationQuiEstUnPrincipal = new UsernamePasswordAuthenticationToken(userDetail,userDetail.getPassword(),userDetail.getAuthorities());
                                           		  SecurityContextHolder.getContext().setAuthentication(authenticationQuiEstUnPrincipal); 
-                                      //FIN si dans mes controlleurs j'ai besoin que l'utilisateur soit authentifie : simuler qu'il est authentifie:
+                                      //FIN si dans mes controlleurs j'ai besoin que l'utilisateur soit authentifie: simuler qu'il est authentifie:
                                       pour recuperer un fichier des resources sous src\test\resources\json\request.json properties                                      
                                       String request = new Scanner(new ClassPathResource("json/request.json").getFile()).useDelimiter("\\Z").next(); //voir regexp LINKçeeçeeçregexpçeeçeeç
                                       executer un controlleur : LINKmockmvc pour test unitaire
@@ -7666,7 +7667,7 @@ MYSQL :
           mysqld.exe --initialize ou mysqld.exe --initialize --user=mysql si besoin pour la première fois apres installation. cree  le repertoire data.
            puis
           C:\Program Files\MySQL\MySQL Server 5.6\bin\mysqld --console --skip-grant-table(pour que je puisse me connecter en root sans mot de passe) (demarre le serveur mysql)
-                apres je pourrais refaire sans le --skip-grant-table quand j'aurais defini un mot de passe a mon user(ci dessous)
+                apres je pourrais refaire sans le --skip-grant-table quand j'aurais defini un mot de passe a mon user utilisateur(ci dessous)
         demarrer le serveur mysql:
           pour arreter redemarrer mysql voir LINKmysql9938 
           cd C:\Program Files\MySQL\MySQL Server 5.6\bin\
@@ -7686,9 +7687,8 @@ MYSQL :
     source chemain_fichieretnomfichier.sql
     
     pour creer un user mysql et puis une base (javadude sera le mot de passe du user):
-       
-     mysql> GRANT ALL PRIVILEGES ON *.* TO javauser@localhost 
-        ->   IDENTIFIED BY 'javadude' WITH GRANT OPTION;
+     CREATE USER 'javauser'@'localhost' IDENTIFIED BY 'javadude';                                                     
+     GRANT ALL PRIVILEGES ON *.* TO javauser@localhost;
     mysql> create database javatest;
     mysql> use javatest;
     mysql> create table testdata (
@@ -11283,7 +11283,9 @@ utilisation du plugin assembly pour créer un zip:
                                     <outputDirectory>/system</ouputDirectory> // facultatif: pour mettre le fichier source dans le repertoire monZip/data/
                                 </file>
                             </files>
-                        </assembly>                                  
+                        </assembly>
+            pour executer l'assembly: mvn assembly:single 
+                                                          
 pour connaitre les profiles: 
   %M3%/mvn help:active-profiles (et si c sur eclipse mettre de quel profile il s'agit quand on run: profile=env_dev ou mettre direct env_dev si le champ s'appelle profile (valeur de <id>))
       *attention faire settings.xml > eclipse projet>preference>maven>profiles et penser à activer les profiles ici > Run configuration d'eclipse et definir un profile profile:env-test(id du profile) 
@@ -13248,16 +13250,27 @@ cygwin :
   
 Curl : voir aussi wget : pour faire une requette request http
     sur cygwin (installer dans cygwin. voir cygwin) (sous categorie Net)
+
     get telecharger: (option -O ou -o maj min importent pas.) // ordre option importe peu et existe -V (version courte) equivalent à -vlakjdf : version longue
             -v ou -V ou --verbose// verbose a utiliser quand ça ne marche pas.
+   	A faire sur une seule ligne et pas sur plusieurs car marche pas. et echapper les caractères spéciaux & ; par \
       curl -O https://index.taskcluster/artifacts/public/deepspeech-0.1.0nux1_x86_64.whl
     post json: // mettre des guillemets autour des valeurs des options si il y a des espaces dans ces valeurs. Si c'est du json mettre single quotes
-    curl -H "Content-Type: application/json" -X POST -d '{"nudoss":"8714"}' http://localhost:8081/SpringRestEx/rest/badge/inputbadge
+	curl -v -X POST http://localhost:8080/web/api/login --header "Content-Type: application/json" -d '{"anonymousUser":"true","uuid":"uid","appAccessKey":"mycampusapikey"}'
+    pour passer par un proxy rajouter:
+            -x http://le.proxy:port -U user:pwd
+    post json avec headers
+    curl -v -X POST -H "Content-Type: application/json" -d '{"nudoss":"8714"}' http://localhost:8081/SpringRestEx/rest/badge/inputbadge
             -d pour data; -X pour methode
-    curl -H "Content-type: application/json" -X POST -d '{"numbadge":"A120000002"}' http://hrd2.orleanssrv.domsma:9881/smabtp-rest/rest/badge/inputbadge
-    curl  -X GET https://cas.auchan.com/cas/login //si reponse vide c que ça marche
-    curl -k -X GET https://localhost:8444/system/console // -k pour ignorer l'insecurité certificat ssl non trusted
-    
+    curl -v -X POST -H "Content-type: application/json" -d '{"numbadge":"A120000002"}' http://hrd2.orleanssrv.domsma:9881/smabtp-rest/rest/badge/inputbadge
+	gets:
+    curl -v -X GET https://cas.auchan.com/cas/login //si reponse vide c que ça marche
+	curl -v -X GET https://api.airfranceklm.com/opendata/offers/reference-data
+    curl -v -k -X GET https://localhost:8444/system/console // -k pour ignorer l'insecurité certificat tls ssl non trusted
+	gets avec headers:
+	curl -v -X GET https://api.airfranceklm.com/opendata/offers/reference-data -H "accept: application/hal+json" -H "accept-language: en-US" -H "afkl-travel-country: NL" -H "afkl-travel-host: KL" -H "api-key: testapikey"
+	curl -v -X GET http://localhost:8080/web/api/v2/apps/mycampuscode/realtimepath/navitia/paths?physicalModes=bus\&coverage=fr-idf\&from=2.33245\;48.77469\&to=2.33245\;48.77469\&datetime=20190720T1004\&datetimeRepresents=arrival --header "X-AUTH-TOKEN:eyJpZCI6bnVsbCwidXVpZCI6InVpZCIsImFub255bW91c1VzZXIiOnRydWUsInVzZXJMb2dpbiI6IkFub255bW91c1VzZXIiLCJ1c2VyRW1haWwiOm51bGwsImV4cGlyZXMiOjE1NjQwMzk0MDY1OTAsImFwcENvZGUiOiJteWNhbXB1c2NvZGUiLCJhcHBBY2Nlc3NLZXkiOm51bGwsInZlbG9Vc2VyIjpmYWxzZSwibXdhVXNlciI6ZmFsc2UsInJvbGVzIjpbIlJPTEVfQVBQIl19.KVUcP3cOD3aLJzNJeua+BZR3MNQBdUktyRUag7V5/dg="
+
 certificats : certificat : formats: types
                               Échange d’informations personnelles (PKCS #12)  (.pfx ou .p12)
                                     Le format d’échange d’informations personnelles (PFX, également appelé P12) prend en charge le stockage sécurisé des certificats, des clés privées et de tous les certificats d’un chemin d’accès de certification.
@@ -13554,14 +13567,14 @@ Cryptage : crypto : en java
             signer.update(unString.getBytes("UTF-8"));
             String signedPayload = org.apache.commons.codec.binary.Base64.encodeBase64URLSafeString(signer.sign());
             signedPayload est la signature!
-				deuxième methode pour signer un string:
+	       deuxième methode pour signer un string:
             Mac sha512_HMAC;
-           	byte[] secretkeyBytes = Base64.decodeBase64(secretKey); // secreatKey est un string
+           	byte[] secretkeyBytes = Base64.decodeBase64(secretKey); // secretKey est un string = mot de passe secret.
           	try {
           	  sha512_HMAC = Mac.getInstance("HmacSHA512");      
           	  SecretKeySpec secretkey = new SecretKeySpec(secretkeyBytes, "HmacSHA512");
-          	  sha512_HMAC.init(secretkey);
-          	  byte[] mac_data = sha512_HMAC.doFinal(stringToSign.getBytes("UTF-8"));        
+          	  sha512_HMAC.init(secretkey); // mon mac est pret à hasher une chaine de caractère en s'appuyant sur le secretkey
+          	  byte[] mac_data = sha512_HMAC.doFinal(stringToSign.getBytes("UTF-8")); // il hash stringToSign et ca donne mac_data. verifier la signature consite à refaire la meme chose avec la secretkey et s'assurer que le macdata est pareil.        
           	  result = org.apache.commons.codec.binary.Base64.encodeBase64String(mac_data);
     pour crypter cripter decripter decrypter des donnees en java
                   public void crypterDecrypter() throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, UnrecoverableKeyException, KeyStoreException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, CertificateException {
@@ -15583,7 +15596,7 @@ openldap :
                   > ldappasswd -H ldap://sac-as02:10390/ -x -D "cn=Manager,o=onp" -w $(sudo /exploit/scripts/pwd_lib_srv.ksh ldapself) -a AncienPwdToto -s 'NouveauPwdToto123#azer' "uid=FPEDU1000000004,ou=people,o=onp"
                   -a ancien mot de passe   (non obligatoire si on utilise un Manager)
                   -s nouveau mot de passe
-ldap java :
+java ldap :
 pour se connecter à un LDAP: voir exemple projet D:\RD\LdapTestConnexion\src\main\java\TestLdapConnexion.java
                		Hashtable<String, String> env = new Hashtable<String, String>();
                       env.put(Context.INITIAL_CONTEXT_FACTORY, contextFactoryClassName); //INITIAL_CONTEXT_FACTORY=java.naming.factory.initial ET contextFactoryClassName="com.sun.jndi.ldap.LdapCtxFactory"
@@ -15791,7 +15804,7 @@ SELENIUM :(mettre les -D avant le -jar) (pour les tests d'integration: utilisati
 cmd=open&1=http://su423ads.mc2.renault.fr:12051/doa/index.jsp/webhp&sessionId=691579
 cmd=testComplete&sessionId=936055 Pour arreter
 cmd=open&1=http://www.google.com/webhp&sessionId=162675
- Driver: possible utiliser headless browser qui n'ouvrent pas de fenetre: plus rapide. Such as PhantomJS, HtmlUnitDriver
+ Driver: possible utiliser headless browser qui n'ouvrent pas de fenetre: plus rapide. Such as PhantomJS(obsolete), HtmlUnitDriver
  Pas possible de lancer test selenium en java sur une fenettre deja ouverte
           package tests;
               import org.openqa.selenium.By;
@@ -15803,7 +15816,7 @@ cmd=open&1=http://www.google.com/webhp&sessionId=162675
                   @org.junit.Test
                   public void doit() {
                       System.setProperty("webdriver.chrome.driver", "E:/Mesdocuments/Installations/chromedriver.exe");
-                      driver = new ChromeDriver();// ne pas utiliser phantomjs car chrome et firefox peuvent faire pareil
+                      driver = new ChromeDriver();// ne pas utiliser phantomjs(obsolete) car chrome et firefox peuvent faire pareil
                       driver.get("https://app.mailjet.com/signin");
                       //WebDriver driver = new FirefoxDriver();
                       WebElement elementdom = driver.findElement(By.id("login"));
@@ -16122,7 +16135,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
                               @Tested private UneClasseATesterPasUneInterface; // Obligatoire pour que je reste fonctionne. c la classe qui est testee et dedans j'ai plein de dependances soit injectees soit instanciees et je dois les mocker
                               Injecter et mocked le moins possible: mieux vaut réecrire les classes dans la classe de test. sinon jmockit bug avec l'ordre des expectations.
                               @Injectable private JMockitTest.Collaborator collaborator="valeurFacultative"; // Mieux vaut mettre ca en param de methode de test. je mock les objets dans ma classe testee: ca va remplacer les autowired dans ma classe testee par une seule instance mockee . ATTENTION le nom de la variable est important je crois
-                              @Injectable private IReportManager reportManager; // seulement Un champ, celui ci, de ma classe testee va être moqué pour toute la classe. Eviter:plutot mettre dans meth.
+                              @Injectable private IReportManager reportManager; // seulement Un champ, celui ci, de ma classe testee va être moqué pour toute la classe. Eviter:plutot mettre dans meth. Peut etre classe ou interface.
                               @Mocked HttpServletRequest httpServletRequest; // ca ca remplace carrement tous les objets de ce type dans ma classe testee meme si c pas des autowired mais des instanciees en dur (heu sur? parce que pour une methode de test il n'a pas été injecté)
                               
                                MAIS mettre tous ces fields plutot en parametre de ma méthode de test comme ci-dessous sinon risque d'objet mocké null (pour les statics) et pour que le scope soit limité à un test
@@ -16130,7 +16143,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
                               public void testThePerformMethod(@Mocked final JMockitTest.Model model, @Mocked final SsoContext request) { // si j'ai erreur "should have no parameters" c parce que j'ai oublié de mettre  @RunWith(JMockit.class)
                                   try {
                                       new Expectations() {{   // possible en faire plusieurs pour un test.(si par ex le test s'appuye sur une autre methode qui en contient)
-                                         reportManager.onPeutMettreUneMethIntermediaire().createReport((String)any,(String)any,(Map<String,Object>)any); result="renvera ca la premiere fois","renverra ci la deuxieme fois",...); minTimes=0 //l'ordre est important la premiere fois seulement avec ça. // il accepte tous les parametres possibles et renverra toujours la meme chose
+                                         reportManager.onPeutMettreUneMethIntermediaire().createReport((String)any,(String)any,(Map<String,Object>)any); result="renvera ca la premiere fois","renverra ci la deuxieme fois",...); minTimes=0 //l'ordre est important la premiere fois seulement avec ça. // il accepte tous les parametres possibles et renverra toujours la meme chose. Ca s'appelle "stub"
                                          request.getRequest(); result=httpServletRequest; // ici le result est un autre objet mocké lui aussi: renvera que ça une fois.
                                          Ne marche plus:Deencapsulation.invoke(IOUtils.class ou uneInstance , "writeFile", anyString, anyString, withAny(InputStream.class)); returns(null); times=8; //Renverra null 8 fois. simuler le comportement dune classe statique. Pour tester une methode privee private
                                          httpServletRequest.getRequestURL(); result="aaaaaaa"; si time=1; L'ORDRE EST IMPORTANT! (sinon mettre minTimes=0) c'est l'ordre d'execution du programme testé. si erreur UnexpectedInvocation modifier l'ordre
@@ -16188,20 +16201,28 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
           <version>1.10.19</version>
           <scope>test</scope>
       </dependency>
-
-    FilterConfig filterConfig = mock(FilterConfig.class);
-    ServletContext context = mock(ServletContext.class);
-    when(filterConfig.getServletContext(
-    ou                                   anyString()//tout string
-    given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça
-                                        ,anyObject(UneClasse.class)
-                                        ).thenReturn(context);
-    ResultDao rd =mock(ResultDao.class);
-    Result toto = new Result();
-    Mockito.doReturn(toto).when(rd).getLaMethodeResult("1"); // retourner toto quand on execute resultdao.getResult("1");
-    WelcomeController wc = new WelcomeController(rd);
-    wc.getDisplayResult("1", "1","10:00", "10/10/2016");
-
+		@InjectMocks
+		private RealTimePathCoverageController realTimePathCoverageController = new RealTimePathCoverageController(); // equivalent de @Tested dans jmockit : c'est une classe a tester dans laquelle je peux injecter des mocs LINKpourquecamarcheFairemokito
+		@Mock private RestTemplate restTemplate; // (peut etre une classe ou une interface) mock qui sera injectée dans RealTimePathCoverageController.
+			@Before
+				public void setup()
+				{
+					MockitoAnnotations.initMocks(this); // ca active les anotations @InjectMocks et @Mocks
+				}
+				FilterConfig filterConfig = mock(FilterConfig.class); // c'est soit je fais comme ca, soit j'utilise les anotations ci dessus. les deux font la meme chos
+				ServletContext context = mock(ServletContext.class);
+				when(filterConfig.getServletContext( // ca s'appelle faire du "stub"
+				ou                                   anyString()//tout string
+				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça
+													,anyObject(UneClasse.class)
+													).thenReturn(context);
+				ResultDao rd =mock(ResultDao.class);
+				Result toto = new Result();
+				Mockito.doReturn(toto).when(rd).getLaMethodeResult("1"); // retourner toto quand on execute resultdao.getResult("1");
+				WelcomeController wc = new WelcomeController(rd);
+				wc.getDisplayResult("1", "1","10:00", "10/10/2016");
+                verifier qu'un mock a été appelé par une methode x fois:
+                        verify(userDetailDAOMock, times(2)).laMathodeDuMock(any(UserDetailsEntity.class));
 cucumber : il fait ce que fait junit mais permet à des non techniciens de comprendre les tests.LINKcucumberldfj 
       Feature: action globale
         Scenario: User case label
@@ -17212,6 +17233,12 @@ http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-j
 JAVA :
 java10 : java 10 :
         var: bof eviter
+generer la javadoc :
+        package-info.java intervient dedans mais je ne sais pas encore commment.
+                    exemple un package-info.java
+                            @javax.xml.bind.annotation.XmlSchema(namespace = "http://search.service.core.rciw.sa.ca.fr/")
+                            package fr.ca.sa.rciw.core.service.search;
+        
 decompiler :
       meilleur decompilateur:decode_java (java decompiler); Sinon utiliser Intellij qui peut aussi comparer des repertoires 
       fernflower pour decompiler tout un jar et exporter les sources dans un jar avec des .java à la place des .class (mettre ~1 pour les espaces)
@@ -19197,7 +19224,7 @@ astuce pour executer un truc au demarrage
             	{
     
 javaUnsupported major.minor version 51.0
-    c parce que je run en java <7 un programme compile en >=7
+    c parce que je run en java <7 un programme compile en >=7 ou contenant une librairie compilee en >=7
       Java SE 8 = 52 (0x34 hex)
       Java SE 7 = 51 (0x33 hex)
       Java SE 6.0 = 50 (0x32 hex)
@@ -19384,22 +19411,26 @@ les enums : enum :
       si j'ai syntax error on token enum interface expected: 
                 eclipse java compiler: choisir avant java 1.7
       creation de l'enum
-                  public enum ProfileEnum implements Serializable, IsSerializable 
+                      public enum Sens {
+                      	ENTREE,
+                      	SORTIE
+                      }
+                      public enum ActionTypeEnum 
                                         {
                                          	eleve(0,"ELEVE"),admin(1,"ADMIN"); // ici j'ai defini deux elements de liste de l'enum. (ca appelle le constructeur ci dessous)
                                             ou 
                                             eleve,admin;
                                             
-                                         	public int typeId;
-                                        	public String label;
+                      	private int typeId;
+                      	private String labelId;
                                         	private String translation;
                              
-                                    	private ProfileEnum(int typeId, String labelId){
-                                    		this.typeId = typeId;
-                                    		this.label = labelId;
+                  	private ActionTypeEnum(int typeId, String labelId){
+                  		this.typeId = typeId;
+                  		this.labelId = labelId;
                                     	}	
                                       	// methode standard pour les enums (pas la peine. si je fais ProfileEnum.valueOf("eleve") ca me renvoit le bon enum 
-               		                   public static ProfileEnum getEnum(String type) // trouver un enum par sa cle. Mais si besoin trouver par un de ses champs faire: res = Arrays.stream(UnitiesForNumericParameters.values()).filter(e->e.value.equals("MO/S")).findFirst().get();
+               		public static ActionTypeEnum getEnum(String type) // trouver un enum par sa cle. Mais si besoin trouver par un de ses champs faire: res = Arrays.stream(UnitiesForNumericParameters.values()).filter(e->e.value.equals("MO/S")).findFirst().get();
                    {
                 		return (ActionTypeEnum)ActionTypeEnum.valueOf(ActionTypeEnum.class, type);
           	      }
@@ -21241,30 +21272,31 @@ pour faire un tri (trier ordonner ordre) une ArrayList qui contient des objets: 
         personList.sort((p1, p2) -> p1.firstName.compareTo(p2.firstName));
         les dates les chiffres: 
         hour.sort((p1, p2) -> p1.before(p2)?-1:1); // tri du plus petit au plus grand
-	ArrayList<SyntheseObj> synthese = new ArrayList<SyntheseObj>(indic.size()); // liste à trier
-	Collections.sort(synthese, new ComparSynthese());
+    ou
+      	ArrayList<SyntheseObj> synthese = new ArrayList<SyntheseObj>(indic.size()); // liste à trier
+      	Collections.sort(synthese, new ComparSynthese());
 	mais c'est mieux de faire pour les acces concurents:
     malistnontriee=uneliste... 
-    Set<T> unSetTrie = new ConcurrentSkipListSet<Employee>();
-    unSetTrie= new ConcurrentSkipListSet<Element>(new ComparSynthese());
-    unSetTrie.addAll(malistnontriee); // le tri se fait là. 
-	public class ComparSynthese implements Comparator
-	{
-		public int compare(Object o1, Object o2) {
-			SyntheseObj s1= (SyntheseObj)o1;
-			SyntheseObj s2= (SyntheseObj)o2;
-			// si c'est des chiffres:
-										if (Integer.parseInt(s1.val2)>Integer.parseInt(s2.val2)) return 1;
-										else if (Integer.parseInt(s1.val2)<Integer.parseInt(s2.val2)) return -1;
-										else return 0; // meme niveau
-			// si c'est caracteres (string)  
-										int i = 0;
-										if (s1.getLabel().compareTo(s2.getLabel())>0) i=1;
-										else if (s1.getLabel().compareTo(s2.getLabel())<0) i=-1;
-										else i=0;
-										return i;
-		}
-	}
+            Set<T> unSetTrie = new ConcurrentSkipListSet<Employee>();
+            unSetTrie= new ConcurrentSkipListSet<Element>(new ComparSynthese());
+            unSetTrie.addAll(malistnontriee); // le tri se fait là. 
+        	public class ComparSynthese implements Comparator
+        	{
+        		public int compare(Object o1, Object o2) {
+        			SyntheseObj s1= (SyntheseObj)o1;
+        			SyntheseObj s2= (SyntheseObj)o2;
+        			// si c'est des chiffres:
+        										if (Integer.parseInt(s1.val2)>Integer.parseInt(s2.val2)) return 1;
+        										else if (Integer.parseInt(s1.val2)<Integer.parseInt(s2.val2)) return -1;
+        										else return 0; // meme niveau
+        			// si c'est caracteres (string)  
+        										int i = 0;
+        										if (s1.getLabel().compareTo(s2.getLabel())>0) i=1;
+        										else if (s1.getLabel().compareTo(s2.getLabel())<0) i=-1;
+        										else i=0;
+        										return i;
+        		}
+        	}
 pour faire un tri on peut aussi utiliser l'objet java.util.TreeSet();
 inverser changer l'order ordre d'une arraylist  A MIEUX DOCUMENTER voir aussi LINKordrelkjglfkdjss
              List<IProcessor> decorateds = Arrays.asList(decorated); //convertir en liste si c'est un tableau
@@ -23301,12 +23333,15 @@ pour merger des cellules avec xspreadsheet: (f1j11swing.jar)
 					book.setSelection(1, 3, 2, 4);
 					book.setCellFormat(cf);
 					// Merges range D2:E3 (horizontal & vertical)
+
 pour lire un fichier csv utiliser la librairie opncsv-4.6.jar avec la class CSVReader qui possede une methode "readNext" lire doc:http://opencsv.sourceforge.net/#core_concepts
                                                   <dependency>
                                                     <groupId>com.opencsv</groupId>
                                                     <artifactId>opencsv</artifactId>
                                                     <version>4.6</version>
                                                   </dependency>
+              CsvToBeanBuilder en utilisant des beans annotés exemple: List<UserCSV> beans = new CsvToBeanBuilder(reader).withType(UserCSV.class).withSeparator(';').build().parse();
+        avant:
 			private CSVReader csvReadingFile(FileInputStream fileInputStream) {
 			CSVReader csvReader = null;
 			NON!!! il faut utiliser les BufferedInputStream et output stream parce que buffered reader encode!
@@ -25301,22 +25336,34 @@ pour utiliser le plugin maven tomcat: Si ça marche:-). voir dessous: pas reussi
    <plugin>
         <groupId>org.apache.tomcat.maven</groupId>
         <artifactId>tomcat7-maven-plugin</artifactId>
-        <version>2.1</version>
+        <version>2.2</version>
         <configuration>
           <systemProperties>
             <example.value.1>alpha</example.value.1>
             <example.value.2>beta</example.value.2>
+                <JAVA_OPTS>-Xms256m -Xmx512m -XX:MaxPermSize=256m -Djavax.net.ssl.trustStore="${basedir}/src/main/config/dev/truststore.jks" -Djavax.net.ssl.trustStorePassword=truststore  -Dhttp.proxyHost=10.245.1.47 -Dhttp.proxyPort=8080 -Dhttps.proxyHost=10.245.1.47 -Dhttps.proxyPort=8080 -Dhttp.nonProxyHosts=localhost</JAVA_OPTS>
           </systemProperties>
-          <url>http://localhost/</url> // Si embarqué: l'url sera http://localhost(:8080)/nom_apres_http:lePortCiDessous/manager ou si externe c'est l'URL console-admin du tomcat externe
-          <server>my-tomcat</server> // sert d'identifiant qu'on retrouve dans settings.xml pour definir le user/password de l'admin/manager du serveur tomcat si on utilise un serveur non embedded. dans settings.xml: <settings>...<servers>...<server><id>myserver</id><username>myusername</username><password>mypassword</password></server>...</servers>
+          <url>http://localhost/</url> // facultatif. ce sera http://localhost par defaut. Si je le met comme ca l'url sera http://localhost(:8080)/nom_apres_http:lePortCiDessous/manager ou si externe c'est l'URL console-admin du tomcat externe
+          <server>my-tomcat</server> // facultatif sert d'identifiant qu'on retrouve dans settings.xml pour definir le user/password de l'admin/manager du serveur tomcat si on utilise un serveur non embedded. dans settings.xml: <settings>...<servers>...<server><id>myserver</id><username>myusername</username><password>mypassword</password></server>...</servers>
           <path>/nom_apres_http://xxx:port/LA_en_incluant_le_dernier_slash</path> c'est le contextpath mais bof.. plutôt aller sur console-admin)
           <port>8081</port>
           <contextFile>${basedir}/src/test/resources/maven-tomcat-plugin/context.xml</contextFile> // facultatif: pour ajouter une connexion à un jndi par ex... voir context.xml
           <tomcatUsers>D:/Dev/apache-tomcat-7.0.61/conf/tomcat-users.xml</tomcatUsers> // facultatif
+          <additionalClasspathDirs> // pour ajouter des fichiers de conf lus par mon application dans le classpath comme si elles etaient dans le resources ressources
+						<additionalClasspathDir>${basedir}/src/main/config/dev/appConf</additionalClasspathDir>
+						<additionalClasspathDir>${basedir}/src/main/config/wording</additionalClasspathDir>
+		  </additionalClasspathDirs>
         </configuration>
+        <dependencies>         // si mon tomcat a besoin d'un driver ou d'une autre librairie dependance dependence
+					<dependency>
+						<groupId>mysql</groupId>
+						<artifactId>mysql-connector-java</artifactId>
+						<version>8.0.16</version>
+					</dependency>
+				</dependencies>
       </plugin>      
     et                      
-    mvn tomcat7:run-war ça marche: Ca c'est quand le tomcat est cree qqpart dans mon editeur ecplipse (dans target je crois)
+    mvn tomcat7:run (plus rapide) ou  mvn tomcat7:run-war(refait le war) ça marche: Ca c'est quand le tomcat est cree qqpart dans mon editeur ecplipse (dans target je crois)
     mvn tomcat7:deploy  Pas sur:ca c'est quand un serveur tomcat tourne qqpart dejà (sur mon poste par ex) ca deploie direct dessus (bien specif le bon port dans conf pom)
     ca ca ne marche pas: mvn tomcat7:war
     sur tomcat pour retrouver son pass admin et login admin: tomcat-user.xml qui contient le mdp, le login de l'admin.  
@@ -26424,7 +26471,7 @@ tester le javascript avec Jasmine : et testem : (sinon utiliser https://jsfiddle
                                     "src_files_ignore": ["js/toxic/*.js"] // fichiers à ne pas tester
                                   }
           testem --help
-          npm install phantomjs-prebuilt
+          npm install phantomjs-prebuilt // est obsolete
           testem -ci // execute mes tests sur tous les browsers (facultatif: --launch PhantomJS(choix d'un browser)
           testem launchers //pour savoir quels browsers peuvent seront utilisés pour mes tests:  
       nomMonFichierJavascript-test.js
@@ -26441,7 +26488,7 @@ tester le javascript avec Jasmine : et testem : (sinon utiliser https://jsfiddle
                     unobjetdom.click(); // je simule le click sur un node
                     expect(unobjetdom.text()).toEqual("blabli");
         pour executer ce test: 
-          >testem ci --launch PhantomJS
+          >testem ci --launch PhantomJS(obsolete)
 ES6 :modules: une page peut importer une page qui importe aussi: le browser gère les doublons si yen a // pas implemente dans firefox et safari?
     pour les tester il faut aubligatoirement un serveur: peux pas jouer en local
         Top pour faire du singleResponsabilityPrinciple
