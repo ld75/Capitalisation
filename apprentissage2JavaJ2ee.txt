@@ -26280,6 +26280,9 @@ u accent:
 euros:
     &#128; ou Alt+0128(windows-1252 sinon &#8364 Unicode) (1252: francais. 1250: tcheque)
 Javascript :
+enfant child childrens d'un element: 
+    this.children (que les enfants de type elements)
+    this.childNodes (tous les enfants meme les textes intercallés)
 pour faire des dessins animes avec background facon sprites: 
     changer background-position et width (on peut centrer le tout avec margin-left)
         changer dynamiqument background-position: 
@@ -27644,7 +27647,7 @@ ou
                                             
 pour supprimer tous all les eventlisnter LINKrmvEvntListner
     l'idée est de clonner l'element que je veux nettoyer et que le clone remplace celui qui contient les eventlisnter. Tout est dupliqué sauf les eventlistners:
-            elementANettoyer.parentNode.replaceChild(elementANettoyer.cloneNode(false), elementANettoyer); 
+            elementANettoyer.parentNode.replaceChild(elementANettoyer.cloneNode(false), elementANettoyer); // elementquiremplace,elementaremplacer 
 
                                                      
 dessiner un cercle dans un canvas:
@@ -27861,12 +27864,12 @@ nouvelle facon de definir les classes et l'heritage: mais en javascript on peut 
         avant:                                  
               function codeSuper()
                   {
-                      this.class_codeSuper=[]; //ses methodes et proprietes sont accessibles par les enfants
+                      this.class_codeSuper=[]; //ses methodes et proprietes sont accessibles par les enfants child childrens
                       this.init=function(unparam)  // une methode
                       {
                         this.idparent=unparam;
                       }
-                      this.class_codeSuper.init=this.init; //que je rends accessible a ses enfants (super peut etre appelle)
+                      this.class_codeSuper.init=this.init; //que je rends accessible a ses enfants child childrens(super peut etre appelle)
                       this.test=function() // pareil que ci dessus...
                       {
                           alert("B");
