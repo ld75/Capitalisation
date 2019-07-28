@@ -758,7 +758,9 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
           pour definir un proxy: 
                 git config --global http.proxy http://proxyUsername:proxyPassword(echaper par urlEncode si presence de char speciaux)@proxy.server.com(SANS HTTP):port
                 pour dégager le proxy: 
-                git config --global --unset http.proxy           
+                git config --global --unset http.proxy
+      si errreur 
+        Segmentation fault verifier que mon horloge est à la bonne heure           
   si erreur Filename too long 
       git config --system core.longpaths true
   si erreur
