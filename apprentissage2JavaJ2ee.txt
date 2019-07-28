@@ -5530,11 +5530,17 @@ Spring : XML STYLE
                                                                           @Qualifier("userRepositoryLdap")
                                                                           public class UserRepositoryLdapImpl implements UserRepository
               injection conditionnelle:
-                        <bean id="iddubean" class="com.MaClasse1ParDefaut" />
+              <beans>
+                (...)
+                    <beans>
+                        <bean profile="default" id="iddubean" class="com.MaClasse1ParDefaut" />
+                        
+                    </beans>
                         <beans profile="unProfile"> ou profile="unprofile,default" (mettre defaut si quand le profile n'est pas defini par spring.profiles.active ca choisisse ce bean). Cette balise beans est à mettre tout à la fin du fichier xml juste avant le dernier </beans>
                             <!-- Override `le precedent bean si unProfile Est actif -->
                             <bean id="iddubean" class="com.MaClasse2" />
-                        </beans> 
+                        </beans>
+                </beans> 
              et placer WEB-INF/applicationcontext.xml (fichier spring) (c'est le front controller)
                    <beans xmlns=".......>
 <!-- Spring MVC : springmvc : -->
@@ -7688,7 +7694,7 @@ MYSQL :
     mysql -u mantis -p
     password:mantis
     use mantisDSII
-    pour executer un fichier:
+    pour executer un fichier script sql:
     source chemain_fichieretnomfichier.sql
     
     pour creer un user mysql et puis une base (javadude sera le mot de passe du user):
