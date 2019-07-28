@@ -1,4 +1,4 @@
-(?=.*allow)(?=.*origin)
+(?=.*faire)(?=.*requete)(?=.*http)
 
 AFAIRE :
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -2065,12 +2065,12 @@ erreurs codes http: LINKcodesHttp
 301: redirection permanante et definitive
 302: redirection temporaire. Google n'aimepas
 400: erreur de synthaxe:protocole http non respecte
-401: non authorise (manque login/password): n'a pas encore été authentifé et le navigateur doit maintenant chercher à s'authentifier. Contient dans le header WWW-Authenticate
-403 : interdit (login/password incorrect) authentification a échoué
+401: non authorise (manque login/password): n'a pas encore été authentifé et le navigateur doit maintenant chercher à s'authentifier. En récupérent dans la résponse envoyée par le serveur le header  WWW-Authenticate et son( ou ses séparés par des virgules) challenge associé et doit renvoyer une requete avec en général le header WWW-Authenticate rempli mais ça peut etre autrechose.
+403 : interdit (login/password incorrect) authentification a bien été comprise mais elle est fausse
 404: page non trouvee
 405: methode http inadaptee: enlever de ma servlet super.doPost(req, resp); pour que ça marche.
 406: mediatype de retour attendu ne correspond pas: exemple attend du json alors que c'est du html qui est retourné (par experience)
-407 : probleme de proxy
+407 : probleme de proxy ou plutot le proxy demande une authentification. le proxy a du renvoyer dans le header Proxy-Authenticate contenant comme valeur le challenge demandé. cela veut dire qu'il reclame le header Proxy-Authorization ou autre-chose
 408: timeout
 413 Payload Too Large
 304: le serveur dit que le browser a deja toutes les infos et pas besoin de renvoyer d'autres infos + code 200
@@ -2110,7 +2110,11 @@ Cycle de vie du bean:
                   public void fin() { ... }
           
           @ApplicationPath("nomdupremierpathUrlDeMonAppli") // sur une classe qui étend javax.ws.rs.core.Application
-          faire des servlets sans web.xml: ajouter en tete de classe qui etend HttpServlet @WebServlet et @MultipartConfig et faire request.getParmeters il parrait que ça marche
+          faire des servlets sans web.xml: 
+                ajouter en tete de classe qui etend HttpServlet @WebServlet("/un/path) et @MultipartConfig et faire request.getParmeters. 
+                du coup ma classe n'est plus un webservice et ne pas utiliser @Produce et @Path avec. 
+                juste 
+                public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {response.getWriter().println("Hello");
 SeContainerInitializer initializer = SeContainerInitializer.newInstance();
 try (SeContainer container = initializer.disableDiscovery().addPackages(App.class).addBeanClasses(MyService.class).initialize()) { pas besoin de beans.xml
     container.select(MyService.class);       |_on l'empeche de scanner auto
@@ -2575,7 +2579,7 @@ Pour recuperer telecharger downloader un fichier java à partir d'une url faire 
 	        }
 	    }
                                    
-  pour uploader un fichier audio du mobile vers le serveur: faire une requete http. voir LINKrequ939302 plus bas      
+  pour uploader un fichier audio du mobile vers le serveur: faire envoyer une requette requete http. voir LINKrequ939302 plus bas      
                   cote mobile: 
                   package pack.coderzheaven;
                                     public boolean localFileToUrlFile(String urlString, File toSend, String targetFileName, Map<String,String> params, String callback ) throws Exception {
@@ -2718,7 +2722,7 @@ httpURLConnection.addRequestProperty((String) header.getKey(), (String) header.g
                                           			System.out.println("GET request not worked");
                                           		}
                                AUTRE Methode 1 (meme principe meme classe) http request post
-                                  NOUVELLE METHODE LINKrequ939302: pour faire un http post // c'est mieux que apache.http
+                                  NOUVELLE METHODE LINKrequ939302: pour faire un une requete requette http post // c'est mieux que apache.http
                          //surl = "http://95.142.162.203:8085/transport/ws/login/true/toto";
                                         URL url = new URL(surl);
                                         HttpURLConnection conn= (HttpURLConnection) url.openConnection();
@@ -3018,7 +3022,7 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
               	<artifactId>json</artifactId>
               	<version>20141113</version>
               </dependency>
-    envoyer faire une requette http à un webservice:
+    envoyer faire une requette http à un webservice SEULEMENT. ne marche pas pour les servlets: utile pour les tests d'integration:
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target("http://localhost:9990/backoffice/resources/ping/echo/glk") //attention ne pas utiliser les variables mais enchainer les points comme ci dessous target().path().request().get....
         .path("/backoffice/resources/ping/echo/glk");
