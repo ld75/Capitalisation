@@ -1,4 +1,4 @@
-(?=.*faire)(?=.*requete)(?=.*http)
+(?=.*debug)(?=.*tomcat)
 
 AFAIRE :
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -1050,8 +1050,8 @@ fermer fichier en cours Ctrl+F4
 fermer tous les fichiers sauf l'actuel close: close all closeall
         windows > editortab >close... 
 debugger debuger tomcat avec intellij: 
-    intellij>run>>editConfiguration>remote>+>debug start (copier la ligne en tête et la mettre dans les parametres de demarrage de tomcat:(-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005) demarrer le tomcat puis demarrer ce remotedebug (quand je veux c de la balle!)
-nettoyer netoyer clean supprimer les methodes inutilisees non utilisees unused d'une classe ou de tout le projet
+    intellij>run>>editConfiguration>remote>+>debug start (copier la ligne en tête et la mettre dans les parametres de demarrage de tomcat:(-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005) demarrer le tomcat puis demarrer ce remotedebug (quand je veux c de la balle!) LINKoizeurzotie
+nettoyer netoyer clean supprimer les methodes inutilisees non utilisees unused d'une classe ou de tout le projet                                                                                |_n pour ne pas qu'il poireaute pour que le listner s'accroche. IL continue de démarrer.
   menu analyze> inspectCode      
 curseur multiple: 
   selectionner le truc qui se repeter puis ctrl+shift+alt+j (choisir vraiment le truc distingué pour ne pas avoir a désélectionner certain avec la souris)
@@ -2579,12 +2579,12 @@ Pour recuperer telecharger downloader un fichier java à partir d'une url faire 
 	        }
 	    }
                                    
-  pour uploader un fichier audio du mobile vers le serveur: faire envoyer une requette requete http. voir LINKrequ939302 plus bas      
-                  cote mobile: 
+  pour uploader un fichier audio du mobile vers le serveur: faire envoyer une requette requete POST http. voir LINKrequ939302 plus bas      
+                     cote mobile: 
                   package pack.coderzheaven;
                                     public boolean localFileToUrlFile(String urlString, File toSend, String targetFileName, Map<String,String> params, String callback ) throws Exception {
                                     try {
-                                        HttpURLConnection conn = null;
+                                        HttpURLConnection conn = null; ou HttpsURLConnection conn = null;
                                         DataOutputStream dos = null;
                                         DataInputStream inStream = null;
                                         String lineEnd = "\r\n";
@@ -2601,22 +2601,32 @@ Pour recuperer telecharger downloader un fichier java à partir d'une url faire 
                         Methode1: faire envoyer une requette request requete get ou post LINKrequ939302
                                         URL url = new URL(urlString);
                                         // Open a HTTP connection to the URL
-                                        conn = (HttpURLConnection) url.openConnection();
-                                        // Allow Inputs
-                                        conn.setDoInput(true);
-                                        // Allow Outputs
-                                        conn.setDoOutput(true);
-                                        // Don't use a cached copy.
-                                        conn.setUseCaches(false);
-                                        // Use a post method.
-                                        conn.setRequestMethod("POST");
+                                        conn = (HttpURLConnection) url.openConnection(); ou conn = (HttpsURLConnection) url.openConnection();
+                                        conn.setDoInput(true); // Allow Inputs
+                                        conn.setDoOutput(true); // Allow Outputs
+                                        conn.setUseCaches(false); // Don't use a cached copy.
+                                        conn.setRequestMethod("POST");  ou con.setRequestMethod("GET"); // Use a post method. or get method
+					conn.setConnectTimeout(5000);  // pour limiter le test de connection à 5 secondes. renverra une SocketTimeoutException 
+					conn.setRequestProperty("User-Agent", USER_AGENT);
                                         conn.setRequestProperty("Connection", "Keep-Alive"); // ca ca ajoute un header a la requette http post: 1er argument= clé 2e=value(peut etre au format "x:y" ou "x;y"...)
+			// a partir de là c'est que pour du post
+				String data="xxxx=yyyy&" +
+                                                          "zzzzzz=wwwwww&" +
+                                                          "cl_login=EVAL_VAAS&" +
+                                                          "cl_app=EVAL_7647339&" +
+                                                          "req_voice=sharon22k&" +
+                                                          "req_text=Bonjour&" +
+                                                          "req_asw_type=SOUND";
+					  conn.setFixedLengthStreamingMode(data.getBytes().length);
+					  //conn.setChunkedStreamingMode(0); si on ne connait pas la taille de l'envoi
                                         conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-                                        String basicAuth = "Basic " + new String(new Base64().encode("unuser:unpassword".getBytes()));
+                                        String basicAuth = "Basic " + new String(new Base64().encode("unuser:unpassword".getBytes())); // si on rajoute de l'authentification
                                         conn.setRequestProperty("Authorization",basicAuth); 
-httpURLConnection.addRequestProperty((String) header.getKey(), (String) header.getValue());
-                                        dos = new DataOutputStream(conn.getOutputStream());                             
-                            // fichier
+                                        dos = new DataOutputStream(conn.getOutputStream());    //si dos=DataOutputStream                         
+					ou 
+  				       dos=new BufferedOutputStream(conn.getOutputStream()); // si dos=OutputStream  
+
+                            // contenu du fichier
                                         dos.writeBytes(twoHyphens + boundary + lineEnd);
                                         dos.writeBytes("Content-Disposition: form-data; name=mfile ;filename=ans"+lineEnd); // alors $_FILES['mfile']['name'] = ans
                                         dos.writeBytes(lineEnd);
@@ -2634,10 +2644,13 @@ httpURLConnection.addRequestProperty((String) header.getKey(), (String) header.g
                                             bytesRead = fileStream.read(buffer, 0, bufferSize);
                                         }
                                         dos.writeBytes(lineEnd + twoHyphens + boundary + lineEnd);
-                            
-                            // params           (POST)
+                                        fileInputStream.close(); // pas besoin si je fais try(Writer writer = new FileWriter(unfichier)){
+                           // fin contenu du fichier 
+			   // params (POST) en parametres:
+	 				   dos.write(data.getBytes());
+                            // params           (POST) payload je crois 
                                         String stringForLength = new String();
-                                        Iterator<String> it = params.keySet().iterator();
+                                        Iterator<String> it = params.keySet().iterator(); //où params= Map<String,String> 
                                         while (it.hasNext()) {
                                             String key = it.next();
                                             String value = params.get(key);
@@ -2646,132 +2659,36 @@ httpURLConnection.addRequestProperty((String) header.getKey(), (String) header.g
                                             stringForLength += value;
                                             stringForLength += lineEnd + twoHyphens + boundary + lineEnd;
                                         }
-                                        dos.writeBytes(stringForLength);
-                            
-                                        fileInputStream.close(); // pas besoin si je fais try(Writer writer = new FileWriter(unfichier)){
-                            
+                                       dos.writeBytes(stringForLength);
+
+					
                                         dos.flush();
                                         dos.close();
+                            //fin params fin de la partie que pour POST
                                         //------------------ read the SERVER RESPONSE
-                            
+                             		int responseCode = conn.getResponseCode(); if (responseCode == HttpURLConnection.HTTP_OK) alors success
                                         inStream = new DataInputStream(conn.getInputStream());
+					ou
+                                       InputStream in = new BufferedInputStream(conn.getInputStream());
+				       BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+					ou
+					BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                                         String str;
                                         int res=0;
-                                        res = inStream.readInt();
-                                        if (res==0)
-                                        {
-                                            wv.post(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    wv.loadUrl("javascript:sendMessage('messageJava', 'Envoi impossible pas de reseau');");
-                                                }
-                                            });
-                                        }
-                                        else
-                                        {
-                                            wv.post(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    wv.loadUrl("javascript:sendMessage('messageJava', 'OK');");
-                                                }
-                                            });
-                                        }
-                            
-                                        inStream.close();
-                            /*                    wv.post(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        wv.loadUrl("javascript:"+callback+"');");
-                                                    }
-                                                });
-                            */
-                                        return true;
-                            
-                                    } catch (Exception e) {
-                                        System.out.println(e);
-                                        return false;
-                            
-                                    }
-                                    
-                                    
-                              // params (GET)
-                                              private static final String USER_AGENT = "Mozilla/5.0";
-                                              URL obj = new URL(GET_URL);
-                                          		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-                                          		ou 
-                                          		HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
-                                          		con.setRequestMethod("GET");
-                                          		con.setConnectTimeout(5000);  // pour limiter le test de connection à 5 secondes. renverra une SocketTimeoutException 
-                                          		con.setRequestProperty("User-Agent", USER_AGENT);
-                                          		int responseCode = con.getResponseCode();
-                                          		System.out.println("GET Response Code:: " + responseCode);
-                                          		if (responseCode == HttpURLConnection.HTTP_OK) { // success
-                                          			BufferedReader in = new BufferedReader(new InputStreamReader(
-                                          					con.getInputStream()));
-                                          			String inputLine;
-                                          			StringBuffer response = new StringBuffer();
-                                          
-                                          			while ((inputLine = in.readLine()) != null) {
-                                          				response.append(inputLine);
-                                          			}
-                                          			in.close();
-                                          
-                                          			// print result
-                                          			System.out.println(response.toString());
-                                          		} else {
-                                          			System.out.println("GET request not worked");
-                                          		}
-                               AUTRE Methode 1 (meme principe meme classe) http request post
-                                  NOUVELLE METHODE LINKrequ939302: pour faire un une requete requette http post // c'est mieux que apache.http
-                         //surl = "http://95.142.162.203:8085/transport/ws/login/true/toto";
-                                        URL url = new URL(surl);
-                                        HttpURLConnection conn= (HttpURLConnection) url.openConnection();
-                                
-                                        try {
-                                            String data =  paramname+"="+paramvalue;            pour un post ca se met comme ca dans le body du post: paramname+"="+paramvalue;
-                                            String data="cl_pwd=pc4jrmt4&" +
-                                                          "prot_vers=2&" +
-                                                          "cl_login=EVAL_VAAS&" +
-                                                          "cl_app=EVAL_7647339&" +
-                                                          "req_voice=sharon22k&" +
-                                                          "req_text=Bonjour&" +
-                                                          "req_asw_type=SOUND";
-                                            conn.setRequestMethod("POST");
-                                      conn.setRequestProperty(“Key”,”Value”);
-                                            conn.setDoInput(true);
-                                            conn.setDoOutput(true);
-                                            conn.setFixedLengthStreamingMode(data.getBytes().length);
-                                //            conn.setChunkedStreamingMode(0); si on ne connait pas la taille de l'envoi
-                                            OutputStream dos=new BufferedOutputStream(conn.getOutputStream());
-                                            ou 
-                                            DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
-                                      writeStream(outputPost);// voir ci-dessous
-                                            dos.write(data.getBytes());
-                                            dos.flush();
-                                      dos.close();
-                                            InputStream in = new BufferedInputStream(conn.getInputStream());
-                                            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                                            StringBuilder result = new StringBuilder(); //= StringBuffer mais StringBuilder n'est pas threadsafe et est immutable
+                                        res = inStream.readInt(); ou while ((inputLine = in.readLine()) != null) { response.append(inputLine); // où StringBuffer response = new StringBuffer();
+                                        if (res==0) // rien recu
+                            		ou 
+					 StringBuilder result = new StringBuilder(); //= StringBuffer mais StringBuilder n'est pas threadsafe et est immutable
                                             String line;
                                             while ((line = reader.readLine()) != null) {
                                                 result.append(line);
                                             }
                                             return result.toString();
-                                        }
-                                            catch(MalformedURLException error) {
-                                                    //Handles an incorrectly entered URL
-                                            }
-                                            catch(SocketTimeoutException error) {
-                                            //Handles URL access timeout.
-                                            }
-                                            catch (IOException error) {
-                                            //Handles input and output errors
-                                            }
-                                        finally {
+                                        inStream.close(); ou in.close();
+				        finally {
                                       if(conn != null) // Make sure the connection is not null.
                                       conn.disconnect();
                                         }
-
                                 Methode 2: faire une requete post post request avec apache.http qui est c plus vieux et moins bien que HttpURLConnection.:  LINKrequ939302
                                                  voir les exemples:https://hc.apache.org/httpcomponents-client-ga/examples.html
                                                 HttpClient httpClient = new HttpClient(); // attention peut etre qu'il ne gère pas les prop système proxy que je parametre
@@ -25346,9 +25263,12 @@ utiliser sur maven:
                     <jboss-home>C:/wildfly/wildfly-17.0.0.Final</jboss-home> // avoir installé wildfly au préalable
                     <modules-path>C:/wildfly/wildfly-17.0.0.Final/modules</modules-path>
                     <port>9990</port>
+                    <javaOpts>  // pour pouvoir débugger rajouter ça et voir LINKoizeurzotie
+                        <javaOpt>-agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n</javaOpt>
+                    </javaOpts>
                 </configuration>
             </plugin>
-            puis wildfly:start(si ne marche pas la premiere fois, reessayer en avant fait un wildfly:undeploy avant peut etre)
+            puis wildfly:start(si ne marche pas la premiere fois, reessayer en avant fait un wildfly:shutdown ou wildfly:undeploy avant peut etre)
             puis wildfly:deploy puis redeploy etc etc...    	
 tomcat :
 pour utiliser le plugin maven tomcat: Si ça marche:-). voir dessous: pas reussi à faire marcher avec une application avec spring security
