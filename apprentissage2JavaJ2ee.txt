@@ -1,4 +1,4 @@
-(?=.*allow)(?=.*origin)
+(?=.*debug)(?=.*tomcat)
 
 AFAIRE :
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -863,7 +863,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git stash apply <idretourné> par la commande ci dessus: stash@(2) par exemple // applique à ma branche ce stash en le mergant avec ma branche mais ne le supprime pas de la liste
       git stash clear // supprime tous mes stash! attention.
     envoyer/recuperer des projets entre mon local et le github:
-      fork: fait une copie de tout un projet (branches incluses) dans mon github. Je peux ensuite travailler dessus dans github ou en local(cloner) et à la fin je soumet mes modifs: pull request. si accepte: ça fetch+merge+commit tout mon fork(je crois)
+      fork: fait une copie de tout un projet (branches incluses) dans mon github. Je peux ensuite travailler dessus dans github ou en local(cloner) et à la fin je soumet mes modifs: pull request= merge request. si accepte: ça fetch+merge+commit tout mon fork(je crois)
       binder avec un repository distant: LINKenvoiyer
         git remote -v // etre dans mon projet. Sert à savoir à quel repo distant le projet est lie pour les pushpull renvoit le nom du bind (nom=origin)
         git remote rm origin(distant) // pour debinder mon projet avec le repository "origin" distant
@@ -5022,7 +5022,7 @@ spring security : spring-security : springsecurity :
               	<!--  pour securiser par aspectj A remettre en disabled pour que les junit fonctionnent sans pb de securite-->
                   <global-method-security pre-post-annotations="enabled"/>
       si message probleme csrf mettre dans mes formulaires: voir LINKc.s.r.f 
-                <form class="form-horizontal" id="search-form" action="${pageContext.request.contextPath}/getresults?${_csrf.parameterName}=${_csrf.token}" method="POST">
+                <form class="form-horizontal" id="search-form" action="${pageContext.request.contextPath}/getresults?${_csrf.parameterName}=${_csrf.token}" method="POST"> (CsrfFilter de spring ne gère que ça si c'est un POST avec multipart à priori. le con. je peux dans un POST faire ça.)
                 ou 
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
       
@@ -5409,7 +5409,7 @@ Spring : XML STYLE
                                                                                         <mvc:annotation-driven /> // Enables the Spring MVC @Controller programming model
                                                                                         <mvc:resources mapping="/resources/**" location="/, classpath:/META-INF/web-resources/" /> //Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory
                                                                                         <mvc:resources mapping="/images/**" location="/images/" /> 
-                                                                                            <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"> //Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory
+                                                                                            <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"> //Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory LINKvrvvrvrvr
                                                                                             <property name="prefix" value="/WEB-INF/jsp/"/>
                                                                                             <property name="suffix" value=".jsp"/>
                                                                                         </bean>
@@ -5553,7 +5553,7 @@ Spring : XML STYLE
                                   
                                                  <!--bof si on @--><bean id="HandlerMapping" class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping (le plus basique)"/> <!-- scanneur d'url dit au front controleur  que tous les /welcome.html doivent diriger vers le controlleur MaclasseMonCOntrolleur -->
                                                   <!--bof si on @--><bean name="/welcome.html" class="com.monrpojet.MaclasseMonCOntrolleur (voir plus bas l'implementation)"/>        <!-- Inutile de faire ce mapping ici si j'utilise l'annotation @RequestMapping("/welcome") dans mon controlleur -->
-                                                  <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver" (le plus basique)><!-- dit quelle type de vue utiliser (prefix suffix. Voir plus bas viewResolver) -->
+                                                  <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver" (le plus basique)><!-- dit quelle type de vue utiliser (prefix suffix. Voir plus bas viewResolver) --> LINKvrvvrvrvr
                                                           <property name="prefix">
                                                             <value>/WEB-INF/</value>
                                                           </property>
@@ -5562,7 +5562,7 @@ Spring : XML STYLE
                                                           </property>
                                                   </bean>
                                                   OU BIEN si je veux faire des views qui renvoient autre chose: pdf, xls etc... je rajoute ça: 
-                                                   <bean id="viewResolver2" class="org.springframework.web.servlet.view.XmlViewResolver">
+                                                   <bean id="viewResolver2" class="org.springframework.web.servlet.view.XmlViewResolver"> voir aussi LINKvrvvrvrvr
                                                       <property name="order" value="1"/>
                                                       <property name="location" value="/WEB-INF/views.xml"/> ----> spring va lire ce fichier qui est: 
                                                   </bean>
@@ -5730,7 +5730,8 @@ Spring : XML STYLE
                           poincut = intersection de notre code avec le programme aspect
                           voir P34: on prog 1 aspect puis @aspect (aspecj)
                                       utile pour transactions
-                                                            mettre @Transactional devant classe ou methode // rend ma methode dans une transaction
+                                                            mettre @Transactional devant classe ou methode // rend ma methode dans une transaction LINKtranslsdfjai
+                                                                    @Transactional(rollbackFor = Exception.class, noRollbackFor = AuthWebBusinessWSException.class) // si je throw  une exception dans mon programme ca fait un rollback si c'est une autre exception de type Authmachin ca ne fait pas de rollback 
                                                             AF pourquoi mettre transactional pour readonly requettes?
                                                   loging
                                       utile pour la securite decouplee du code
@@ -5757,11 +5758,11 @@ Spring : XML STYLE
                                 {
                                   if (sierrorlorsdubiding==true) // si erreurs lors du biding 
                                   {
-                                             ModelAndView modv = new ModelAndView("leNomDeMaJsp");  grace au viewResolver (voir config spring au dessus)
+                                             ModelAndView modv = new ModelAndView("leNomDeMaJsp");  grace au viewResolver (voir config spring au dessus LINKvrvvrvrvr)
                                            return modv;
                                     }
                                   else{
-                                    ModelAndView modv = new ModelAndView("leNomDeMaJspDeMaViewEnFait");  grace au viewResolver (voir config spring au dessus)
+                                    ModelAndView modv = new ModelAndView("leNomDeMaJspDeMaViewEnFait");  grace au viewResolver (voir config spring au dessus LINKvrvvrvrvr)
                                      INUTILE GRACE A @ModelAttribute-> //modv.addObject("student",student); <- inutile.
                                                                         modv.addObject("monMessage","tataaaaa"+monparam1);
                                                                         modv.addObject("monMessage",unObjetAvecDesGetters);
@@ -5773,7 +5774,7 @@ Spring : XML STYLE
                             {
                               handleRequestInternal(Http... request , Htt... respons)
                               {
-                                ModelAndView modv = new ModelAndView("leNomDeMaJspDeMaViewEnFait");  grace au viewResolver (voir config spring au dessus)
+                                ModelAndView modv = new ModelAndView("leNomDeMaJspDeMaViewEnFait");  grace au viewResolver (voir config spring au dessus LINKvrvvrvrvr)
                                 modv.addObject("monMessage","tataaaaa");
                                 return modv; // avec le viewResolver ca va afficher du coup: META-INF/leNomDeMaJsp.jsp
                               }
@@ -6870,7 +6871,9 @@ Bouton submit non ajax:
 Hibernate :
 Hibernet le livre:
 exemple de fichier mapping pojo-base p10
-
+si erreur:
+        (don't flush the Session after an exception occurs) 
+            c'est parce qu'il y aune exception dans une transation et que cette exception n'est pas trowée et que du coup derriere je refais une autre requete dans cette transaction. IL faut gérer la transaction. avec LINKtranslsdfjai 
 si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from column 5 to TIMESTAMP
         il faut que je modif mes valeurs ='0000-00-00 00:00:00' en date valide 
   definition bean: getter, setter independant (pas d'extension ni d'heritage) serializable
@@ -16217,7 +16220,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
           <version>1.10.19</version>
           <scope>test</scope>
       </dependency>
-		@InjectMocks
+		@InjectMocks // facultatif Mock peut marcher sans.
 		private RealTimePathCoverageController realTimePathCoverageController = new RealTimePathCoverageController(); // equivalent de @Tested dans jmockit : c'est une classe a tester dans laquelle je peux injecter des mocs LINKpourquecamarcheFairemokito
 		@Mock private RestTemplate restTemplate; // (peut etre une classe ou une interface) mock qui sera injectée dans RealTimePathCoverageController.
 			@Before
@@ -16237,7 +16240,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
 				Mockito.doReturn(toto).when(rd).getLaMethodeResult("1"); // retourner toto quand on execute resultdao.getResult("1");
 				WelcomeController wc = new WelcomeController(rd);
 				wc.getDisplayResult("1", "1","10:00", "10/10/2016");
-                verifier qu'un mock a été appelé par une methode x fois:
+                validation verifier qu'un mock a été appelé par une methode x fois:
                         verify(userDetailDAOMock, times(2)).laMathodeDuMock(any(UserDetailsEntity.class));
 cucumber : il fait ce que fait junit mais permet à des non techniciens de comprendre les tests.LINKcucumberldfj 
       Feature: action globale
@@ -20647,6 +20650,10 @@ private boolean contientCommentStart(String ligne) {
                             (?<=X) 	X, via zero-width positive lookbehind
                             (?<!X) 	X, via zero-width negative lookbehind
                             (?>X) 	X, as an independent, non-capturing group
+                pour valider un format de mail par regexp:
+                    public boolean checkEmailFormat(String email) {
+                        if (email.matches(".+@.+\\..+")) return true;
+                return false;
 conversions : convertir : conversion :
 pour convertir un set en arraylist
       List<Criteria> mainList = new ArrayList<Criteria>();
@@ -23358,6 +23365,7 @@ pour lire un fichier csv utiliser la librairie opncsv-4.6.jar avec la class CSVR
                                                     <version>4.6</version>
                                                   </dependency>
               CsvToBeanBuilder en utilisant des beans annotés exemple: List<UserCSV> beans = new CsvToBeanBuilder(reader).withType(UserCSV.class).withSeparator(';').build().parse();
+                            avec au dessus des champs de la classe: @CsvBindByName
         avant:
 			private CSVReader csvReadingFile(FileInputStream fileInputStream) {
 			CSVReader csvReader = null;
@@ -27163,6 +27171,11 @@ pour acceder au filesystem:
          opt_errorCallback(errorHandler est la methode appellee)
       );
       voir cet article:http://www.html5rocks.com/en/tutorials/file/filesystem/
+pour faire un bouton boutton buton button de facon plus efficace:
+        				<button type="button ou reset ou submit" id="importCSVBtn" onclick="csvFileBrowse()" class="btn btn-primary" >
+        					<i class="fa fa-file-excel-o fa-fw"></i>
+        					CSV
+        				</button>
 pour enregistrer avec le micro: (NON pas encore comme ci dessous! utiliser recorder.js)
             <input type="button" value="R" onclick="record()">Demarrer l'enregistrement audio</input>
             <input type="button" value="S" onclick="stoprecord()">Stope l'enregistrement audio</input>
@@ -27767,8 +27780,10 @@ pour setter le name l'attribut la propriete d'un element tag html:
 generer une image à la volee:
         var img=new Image();
        img.src="clearmute.png";
-pour faire un onchange en javascript: upload de fichier: 
+pour faire un onchange en javascript: upload de fichier: bouton parcourir: 
         <input name="files" class="modifier" id="files" onchange="createProject.handleFileSelect(this)" onclick="this.value=null;" type="file" accept="*/*" /> //onclick="this.value=null" c'est pour permettre de rechoisir le meme fichier à uploader
+                    accept= peut etre:
+                                .jpg,.pdf,.doc,audio/*,video/*,image/*,.csv ou */* pour tout type.
         ou
         elSel.onchange=function(){setSilencesInverseToActorDelimited(actor, this.value, document.getElementById("startFlag").value, document.getElementById("stopFlag").value );};
         ou 
@@ -31786,6 +31801,7 @@ paint :
     pour que la selection soit transparente transparante
         bouton selectionner> choisir transparant
 Excell : excel :
+    inserrer la date: ctrl+;
     si sur exell il me marque toujours #VALEUR! verifier qu'il n'y a pas d'espace dans les cases que j'ai selectionne pour faire mon calcul.
   figer les volets Affichage > figer les volets
 pour masquer le quadrillage lignes, colonnes:
