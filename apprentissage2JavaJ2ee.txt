@@ -1,4 +1,4 @@
-(?=.*debug)(?=.*tomcat)
+(?=.*requete)(?=.*http)
 
 AFAIRE :
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -2113,7 +2113,8 @@ Cycle de vie du bean:
           
           @ApplicationPath("nomdupremierpathUrlDeMonAppli") // sur une classe qui étend javax.ws.rs.core.Application
           faire des servlets sans web.xml: 
-                ajouter en tete de classe qui etend HttpServlet @WebServlet("/un/path) et @MultipartConfig et faire request.getParmeters. 
+                ajouter en tete de classe qui etend HttpServlet @WebServlet("/un/path) .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters.
+                 et @MultipartConfig // si je veux je crois que ma servlet gere l'upload de fichier (pas encore sur). recup les params avec request.getParmeters   
                 du coup ma classe n'est plus un webservice et ne pas utiliser @Produce et @Path avec. 
                 juste 
                 public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {response.getWriter().println("Hello");
@@ -2600,7 +2601,7 @@ Pour recuperer telecharger downloader un fichier java à partir d'une url faire 
                                         FileInputStream fileInputStream = new FileInputStream(toSend);
                                         // open a URL connection to the Servlet
                       
-                        Methode1: faire envoyer une requette request requete get ou post LINKrequ939302
+                        Methode1: faire envoyer faire une requette request requete get ou post http LINKrequ939302
                                         URL url = new URL(urlString);
                                         // Open a HTTP connection to the URL
                                         conn = (HttpURLConnection) url.openConnection(); ou conn = (HttpsURLConnection) url.openConnection();
@@ -2609,8 +2610,8 @@ Pour recuperer telecharger downloader un fichier java à partir d'une url faire 
                                         conn.setUseCaches(false); // Don't use a cached copy.
                                         conn.setRequestMethod("POST");  ou con.setRequestMethod("GET"); // Use a post method. or get method
 					conn.setConnectTimeout(5000);  // pour limiter le test de connection à 5 secondes. renverra une SocketTimeoutException 
-					conn.setRequestProperty("User-Agent", USER_AGENT);
-                                        conn.setRequestProperty("Connection", "Keep-Alive"); // ca ca ajoute un header a la requette http post: 1er argument= clé 2e=value(peut etre au format "x:y" ou "x;y"...)
+					conn.setRequestProperty("User-Agent", USER_AGENT);   // ca ca ajoute un header a la requette http post: 1er argument= clé 2e=value(peut etre au format "x:y" ou "x;y"...)
+                    conn.setRequestProperty("Connection", "Keep-Alive"); 
 			// a partir de là c'est que pour du post
 				String data="xxxx=yyyy&" +
                                                           "zzzzzz=wwwwww&" +
@@ -2691,7 +2692,7 @@ Pour recuperer telecharger downloader un fichier java à partir d'une url faire 
                                       if(conn != null) // Make sure the connection is not null.
                                       conn.disconnect();
                                         }
-                                Methode 2: faire une requete post post request avec apache.http qui est c plus vieux et moins bien que HttpURLConnection.:  LINKrequ939302
+                                Methode 2: faire une requete post request avec apache.http qui est c plus vieux et moins bien que HttpURLConnection.:  LINKrequ939302
                                                  voir les exemples:https://hc.apache.org/httpcomponents-client-ga/examples.html
                                                 HttpClient httpClient = new HttpClient(); // attention peut etre qu'il ne gère pas les prop système proxy que je parametre
                                               		PostMethod postMethod = new PostMethod(this.location_UneURL);
@@ -8805,12 +8806,12 @@ pour faire des requetes avec procedure stockee de type *.blabla faire: where des
 GWT :
 pour lancer en dev sur jetty gwt mais ca ne marche pas  sur mon pom
       %M3%/mvn gwt:run -Denv=dev -DrunTarget=WecApp.html
-pour recuperer URL et plein d'autres parametres utiliser : 
-    String toto = Window.Location.get... l'URL complette c'est : Window.Location.getHref();
-quest ce qu'un module : c'est une autre application independante en principe mais ce module peut heriter de toutes les classes d'un autre module en mettant : <module rename-to="com.foo.MyModule"><inherits name="com.foo.MyModule" /></module> et alors plus besoin de lui mettre une entry-point class (il peut utiliser celui du module herite)
+pour recuperer URL et plein d'autres parametres utiliser: 
+    String toto = Window.Location.get... l'URL complette c'est: Window.Location.getHref();
+quest ce qu'un module: c'est une autre application independante en principe mais ce module peut heriter de toutes les classes d'un autre module en mettant: <module rename-to="com.foo.MyModule"><inherits name="com.foo.MyModule" /></module> et alors plus besoin de lui mettre une entry-point class (il peut utiliser celui du module herite)
     il est defni dans un xxxxxx.gwt.xml qui doit être sous src/main/java/mon/package/Xxxx.gwt.xml il aura par defaut pour nom mon.package.Xxxx mais on peut le renomme dedans en mettant <module rename-to='yyyyy'> et pour l'appeler, dans le html on met: <script type="text/javascript" language="javascript" src="????/yyyy.nocache.js"></script>
  si j'ai l'erreur Could not open/create prefs root node Software\JavaSoft\Prefs
-          essayer ca : open regedit.exe ( really hate Microsoft and their regedit.reg).
+          essayer ca: open regedit.exe ( really hate Microsoft and their regedit.reg).
           change the permission of key: HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft.....Right click the icon, then change the permission to full operation.
           On 64-bit systems you need to create a key HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\JavaSoft\Prefs.
 creer une application :
@@ -8873,7 +8874,7 @@ faire un formulaire de upload telechargement  d'image:
                             @Override
                             protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
                                 try {
-                                    ServletFileUpload upload = new ServletFileUpload();  //LINKee"(çà)" Une requete request ajax arrive. pour charger une image en servlet <3.0 (// pour la version >=3.0 ajouter en tete de classe @WebServlet et @MultipartConfig et faire request.getParmeters il parrait que ça marche
+                                    ServletFileUpload upload = new ServletFileUpload();  //LINKee"(çà)" Une requete request ajax arrive. pour charger une image en servlet <3.0 sinon voir @WebServlet plus haut
                         //            response.setContentType("image/x-png");
                                     FileItemIterator iterator = upload.getItemIterator(req);
                                     while (iterator.hasNext()) { // mettre un name a mon champ fileUpload sinon passera pas par ici
