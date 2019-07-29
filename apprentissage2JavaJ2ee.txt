@@ -2111,7 +2111,6 @@ Cycle de vie du bean:
                   @PreDestroy--->methode s'execute quand le bean est retire du scope ou le scope est detruit.
                   public void fin() { ... }
           
-          @ApplicationPath("nomdupremierpathUrlDeMonAppli") // sur une classe qui étend javax.ws.rs.core.Application
           faire des servlets sans web.xml: 
                 ajouter en tete de classe qui etend HttpServlet @WebServlet("/un/path) .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters.
                  et @MultipartConfig // si je veux je crois que ma servlet gere l'upload de fichier (pas encore sur). recup les params avec request.getParmeters   
@@ -2897,6 +2896,11 @@ REST : webservice : webservices : client accède à un service à partir d'un UR
 voir exemple de webservice rest sans framework ici: d:\Profiles\lduverge\Desktop\Apprentissage\webservicedemo(attention pour l'entite j'ai pas respecte unclebob)
 tutoriel Pour faire des serveurs de webservice: http://www.tutorialspoint.com/restful/restful_first_application.htm
 webservices: http://users.skynet.be/pascalbotte/
+                @ApplicationPath("nomdupremierpathUrlDeMonAppli") // sur une classe qui étend javax.ws.rs.core.Application // seuls les url des webservices rest du coup vont avoir ce path en amont. N'affecte pas les servlets ou les webservices soap
+                public class RESTConfiguration extends Application {
+                rien.
+                }
+
                       No dependencies, no migrations. jaxrs est l'api (specification) et jersey ou cxf implementent cet api.
                       import javax.ws.rs.GET;
                       import javax.ws.rs.Path;
@@ -2944,7 +2948,7 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
               </dependency>
     envoyer faire une requette http à un webservice SEULEMENT. ne marche pas pour les servlets: utile pour les tests d'integration:
         Client client = ClientBuilder.newClient();
-        WebTarget target = client.target("http://localhost:9990/backoffice/resources/ping/echo/glk") //attention ne pas utiliser les variables mais enchainer les points comme ci dessous target().path().request().get....
+        WebTarget target = client.target("http://localhost:9990") //FINURLENLEVEEXPRES attention ne pas utiliser les variables mais enchainer les points comme ci dessous target().path().request().get....
         .path("/backoffice/resources/ping/echo/glk");
         Invocation.Builder invokationBuilder = target.request(MediaType.APPLICATION_JSON_TYPE); // ou MediaType.APPLICATION_XML.(soap)..
         invokationBuilder.get();
