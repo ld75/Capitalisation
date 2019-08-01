@@ -1,4 +1,4 @@
-(?=.*maven)(?=.*proxy)
+(?=.*requete)(?=.*http)
 
 AFAIRE :
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -759,7 +759,9 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
           pour definir un proxy: 
                 git config --global http.proxy http://proxyUsername:proxyPassword(echaper par urlEncode si presence de char speciaux)@proxy.server.com(SANS HTTP):port
                 pour dégager le proxy: 
-                git config --global --unset http.proxy           
+                git config --global --unset http.proxy
+      si errreur 
+        Segmentation fault verifier que mon horloge est à la bonne heure           
   si erreur Filename too long 
       git config --system core.longpaths true
   si erreur
@@ -1050,8 +1052,8 @@ fermer fichier en cours Ctrl+F4
 fermer tous les fichiers sauf l'actuel close: close all closeall
         windows > editortab >close... 
 debugger debuger tomcat avec intellij: 
-    intellij>run>>editConfiguration>remote>+>debug start (copier la ligne en tête et la mettre dans les parametres de demarrage de tomcat:(-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005) demarrer le tomcat puis demarrer ce remotedebug (quand je veux c de la balle!)
-nettoyer netoyer clean supprimer les methodes inutilisees non utilisees unused d'une classe ou de tout le projet
+    intellij>run>>editConfiguration>remote>+>debug start (copier la ligne en tête et la mettre dans les parametres de demarrage de tomcat:(-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005) demarrer le tomcat puis demarrer ce remotedebug (quand je veux c de la balle!) LINKoizeurzotie
+nettoyer netoyer clean supprimer les methodes inutilisees non utilisees unused d'une classe ou de tout le projet                                                                                |_n pour ne pas qu'il poireaute pour que le listner s'accroche. IL continue de démarrer.
   menu analyze> inspectCode      
 curseur multiple: 
   selectionner le truc qui se repeter puis ctrl+shift+alt+j (choisir vraiment le truc distingué pour ne pas avoir a désélectionner certain avec la souris)
@@ -2069,12 +2071,12 @@ erreurs codes http: LINKcodesHttp
 301: redirection permanante et definitive
 302: redirection temporaire. Google n'aimepas
 400: erreur de synthaxe:protocole http non respecte
-401: non authorise (manque login/password): n'a pas encore été authentifé et le navigateur doit maintenant chercher à s'authentifier. Contient dans le header WWW-Authenticate
-403 : interdit (login/password incorrect) authentification a échoué
+401: non authorise (manque login/password): n'a pas encore été authentifé et le navigateur doit maintenant chercher à s'authentifier. En récupérent dans la résponse envoyée par le serveur le header  WWW-Authenticate et son( ou ses séparés par des virgules) challenge associé et doit renvoyer une requete avec en général le header WWW-Authenticate rempli mais ça peut etre autrechose.
+403 : interdit (login/password incorrect) authentification a bien été comprise mais elle est fausse
 404: page non trouvee
 405: methode http inadaptee: enlever de ma servlet super.doPost(req, resp); pour que ça marche.
 406: mediatype de retour attendu ne correspond pas: exemple attend du json alors que c'est du html qui est retourné (par experience)
-407 : probleme de proxy
+407 : probleme de proxy ou plutot le proxy demande une authentification. le proxy a du renvoyer dans le header Proxy-Authenticate contenant comme valeur le challenge demandé. cela veut dire qu'il reclame le header Proxy-Authorization ou autre-chose
 408: timeout
 413 Payload Too Large
 304: le serveur dit que le browser a deja toutes les infos et pas besoin de renvoyer d'autres infos + code 200
@@ -2113,8 +2115,12 @@ Cycle de vie du bean:
                   @PreDestroy--->methode s'execute quand le bean est retire du scope ou le scope est detruit.
                   public void fin() { ... }
           
-          @ApplicationPath("nomdupremierpathUrlDeMonAppli") // sur une classe qui étend javax.ws.rs.core.Application
-          faire des servlets sans web.xml: ajouter en tete de classe qui etend HttpServlet @WebServlet et @MultipartConfig et faire request.getParmeters il parrait que ça marche
+          faire des servlets sans web.xml: 
+                ajouter en tete de classe qui etend HttpServlet @WebServlet("/un/path) .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters.
+                 et @MultipartConfig // si je veux je crois que ma servlet gere l'upload de fichier (pas encore sur). recup les params avec request.getParmeters   
+                du coup ma classe n'est plus un webservice et ne pas utiliser @Produce et @Path avec. 
+                juste 
+                public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {response.getWriter().println("Hello");
 SeContainerInitializer initializer = SeContainerInitializer.newInstance();
 try (SeContainer container = initializer.disableDiscovery().addPackages(App.class).addBeanClasses(MyService.class).initialize()) { pas besoin de beans.xml
     container.select(MyService.class);       |_on l'empeche de scanner auto
@@ -2579,12 +2585,12 @@ Pour recuperer telecharger downloader un fichier java à partir d'une url faire 
 	        }
 	    }
                                    
-  pour uploader un fichier audio du mobile vers le serveur: faire une requete http. voir LINKrequ939302 plus bas      
-                  cote mobile: 
+  pour uploader un fichier audio du mobile vers le serveur: faire envoyer une requette requete POST http. voir LINKrequ939302 plus bas      
+                     cote mobile: 
                   package pack.coderzheaven;
                                     public boolean localFileToUrlFile(String urlString, File toSend, String targetFileName, Map<String,String> params, String callback ) throws Exception {
                                     try {
-                                        HttpURLConnection conn = null;
+                                        HttpURLConnection conn = null; ou HttpsURLConnection conn = null;
                                         DataOutputStream dos = null;
                                         DataInputStream inStream = null;
                                         String lineEnd = "\r\n";
@@ -2598,25 +2604,35 @@ Pour recuperer telecharger downloader un fichier java à partir d'une url faire 
                                         FileInputStream fileInputStream = new FileInputStream(toSend);
                                         // open a URL connection to the Servlet
                       
-                        Methode1: faire envoyer une requette request requete get ou post LINKrequ939302
+                        Methode1: faire envoyer faire une requette request requete get ou post http LINKrequ939302
                                         URL url = new URL(urlString);
                                         // Open a HTTP connection to the URL
-                                        conn = (HttpURLConnection) url.openConnection();
-                                        // Allow Inputs
-                                        conn.setDoInput(true);
-                                        // Allow Outputs
-                                        conn.setDoOutput(true);
-                                        // Don't use a cached copy.
-                                        conn.setUseCaches(false);
-                                        // Use a post method.
-                                        conn.setRequestMethod("POST");
-                                        conn.setRequestProperty("Connection", "Keep-Alive"); // ca ca ajoute un header a la requette http post: 1er argument= clé 2e=value(peut etre au format "x:y" ou "x;y"...)
+                                        conn = (HttpURLConnection) url.openConnection(); ou conn = (HttpsURLConnection) url.openConnection();
+                                        conn.setDoInput(true); // Allow Inputs
+                                        conn.setDoOutput(true); // Allow Outputs
+                                        conn.setUseCaches(false); // Don't use a cached copy.
+                                        conn.setRequestMethod("POST");  ou con.setRequestMethod("GET"); // Use a post method. or get method
+					conn.setConnectTimeout(5000);  // pour limiter le test de connection à 5 secondes. renverra une SocketTimeoutException 
+					conn.setRequestProperty("User-Agent", USER_AGENT);   // ca ca ajoute un header a la requette http post: 1er argument= clé 2e=value(peut etre au format "x:y" ou "x;y"...)
+                    conn.setRequestProperty("Connection", "Keep-Alive"); 
+			// a partir de là c'est que pour du post
+				String data="xxxx=yyyy&" +
+                                                          "zzzzzz=wwwwww&" +
+                                                          "cl_login=EVAL_VAAS&" +
+                                                          "cl_app=EVAL_7647339&" +
+                                                          "req_voice=sharon22k&" +
+                                                          "req_text=Bonjour&" +
+                                                          "req_asw_type=SOUND";
+					  conn.setFixedLengthStreamingMode(data.getBytes().length);
+					  //conn.setChunkedStreamingMode(0); si on ne connait pas la taille de l'envoi
                                         conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-                                        String basicAuth = "Basic " + new String(new Base64().encode("unuser:unpassword".getBytes()));
+                                        String basicAuth = "Basic " + new String(new Base64().encode("unuser:unpassword".getBytes())); // si on rajoute de l'authentification
                                         conn.setRequestProperty("Authorization",basicAuth); 
-httpURLConnection.addRequestProperty((String) header.getKey(), (String) header.getValue());
-                                        dos = new DataOutputStream(conn.getOutputStream());                             
-                            // fichier
+                                        dos = new DataOutputStream(conn.getOutputStream());    //si dos=DataOutputStream                         
+					ou 
+  				       dos=new BufferedOutputStream(conn.getOutputStream()); // si dos=OutputStream  
+
+                            // contenu du fichier
                                         dos.writeBytes(twoHyphens + boundary + lineEnd);
                                         dos.writeBytes("Content-Disposition: form-data; name=mfile ;filename=ans"+lineEnd); // alors $_FILES['mfile']['name'] = ans
                                         dos.writeBytes(lineEnd);
@@ -2634,10 +2650,13 @@ httpURLConnection.addRequestProperty((String) header.getKey(), (String) header.g
                                             bytesRead = fileStream.read(buffer, 0, bufferSize);
                                         }
                                         dos.writeBytes(lineEnd + twoHyphens + boundary + lineEnd);
-                            
-                            // params           (POST)
+                                        fileInputStream.close(); // pas besoin si je fais try(Writer writer = new FileWriter(unfichier)){
+                           // fin contenu du fichier 
+			   // params (POST) en parametres:
+	 				   dos.write(data.getBytes());
+                            // params           (POST) payload je crois 
                                         String stringForLength = new String();
-                                        Iterator<String> it = params.keySet().iterator();
+                                        Iterator<String> it = params.keySet().iterator(); //où params= Map<String,String> 
                                         while (it.hasNext()) {
                                             String key = it.next();
                                             String value = params.get(key);
@@ -2646,133 +2665,37 @@ httpURLConnection.addRequestProperty((String) header.getKey(), (String) header.g
                                             stringForLength += value;
                                             stringForLength += lineEnd + twoHyphens + boundary + lineEnd;
                                         }
-                                        dos.writeBytes(stringForLength);
-                            
-                                        fileInputStream.close(); // pas besoin si je fais try(Writer writer = new FileWriter(unfichier)){
-                            
+                                       dos.writeBytes(stringForLength);
+
+					
                                         dos.flush();
                                         dos.close();
+                            //fin params fin de la partie que pour POST
                                         //------------------ read the SERVER RESPONSE
-                            
+                             		int responseCode = conn.getResponseCode(); if (responseCode == HttpURLConnection.HTTP_OK) alors success
                                         inStream = new DataInputStream(conn.getInputStream());
+					ou
+                                       InputStream in = new BufferedInputStream(conn.getInputStream());
+				       BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+					ou
+					BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                                         String str;
                                         int res=0;
-                                        res = inStream.readInt();
-                                        if (res==0)
-                                        {
-                                            wv.post(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    wv.loadUrl("javascript:sendMessage('messageJava', 'Envoi impossible pas de reseau');");
-                                                }
-                                            });
-                                        }
-                                        else
-                                        {
-                                            wv.post(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    wv.loadUrl("javascript:sendMessage('messageJava', 'OK');");
-                                                }
-                                            });
-                                        }
-                            
-                                        inStream.close();
-                            /*                    wv.post(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        wv.loadUrl("javascript:"+callback+"');");
-                                                    }
-                                                });
-                            */
-                                        return true;
-                            
-                                    } catch (Exception e) {
-                                        System.out.println(e);
-                                        return false;
-                            
-                                    }
-                                    
-                                    
-                              // params (GET)
-                                              private static final String USER_AGENT = "Mozilla/5.0";
-                                              URL obj = new URL(GET_URL);
-                                          		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-                                          		ou 
-                                          		HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
-                                          		con.setRequestMethod("GET");
-                                          		con.setConnectTimeout(5000);  // pour limiter le test de connection à 5 secondes. renverra une SocketTimeoutException 
-                                          		con.setRequestProperty("User-Agent", USER_AGENT);
-                                          		int responseCode = con.getResponseCode();
-                                          		System.out.println("GET Response Code:: " + responseCode);
-                                          		if (responseCode == HttpURLConnection.HTTP_OK) { // success
-                                          			BufferedReader in = new BufferedReader(new InputStreamReader(
-                                          					con.getInputStream()));
-                                          			String inputLine;
-                                          			StringBuffer response = new StringBuffer();
-                                          
-                                          			while ((inputLine = in.readLine()) != null) {
-                                          				response.append(inputLine);
-                                          			}
-                                          			in.close();
-                                          
-                                          			// print result
-                                          			System.out.println(response.toString());
-                                          		} else {
-                                          			System.out.println("GET request not worked");
-                                          		}
-                               AUTRE Methode 1 (meme principe meme classe) http request post
-                                  NOUVELLE METHODE LINKrequ939302: pour faire un http post // c'est mieux que apache.http
-                         //surl = "http://95.142.162.203:8085/transport/ws/login/true/toto";
-                                        URL url = new URL(surl);
-                                        HttpURLConnection conn= (HttpURLConnection) url.openConnection();
-                                
-                                        try {
-                                            String data =  paramname+"="+paramvalue;            pour un post ca se met comme ca dans le body du post: paramname+"="+paramvalue;
-                                            String data="cl_pwd=pc4jrmt4&" +
-                                                          "prot_vers=2&" +
-                                                          "cl_login=EVAL_VAAS&" +
-                                                          "cl_app=EVAL_7647339&" +
-                                                          "req_voice=sharon22k&" +
-                                                          "req_text=Bonjour&" +
-                                                          "req_asw_type=SOUND";
-                                            conn.setRequestMethod("POST");
-                                      conn.setRequestProperty(“Key”,”Value”);
-                                            conn.setDoInput(true);
-                                            conn.setDoOutput(true);
-                                            conn.setFixedLengthStreamingMode(data.getBytes().length);
-                                //            conn.setChunkedStreamingMode(0); si on ne connait pas la taille de l'envoi
-                                            OutputStream dos=new BufferedOutputStream(conn.getOutputStream());
-                                            ou 
-                                            DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
-                                      writeStream(outputPost);// voir ci-dessous
-                                            dos.write(data.getBytes());
-                                            dos.flush();
-                                      dos.close();
-                                            InputStream in = new BufferedInputStream(conn.getInputStream());
-                                            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                                            StringBuilder result = new StringBuilder(); //= StringBuffer mais StringBuilder n'est pas threadsafe et est immutable
+                                        res = inStream.readInt(); ou while ((inputLine = in.readLine()) != null) { response.append(inputLine); // où StringBuffer response = new StringBuffer();
+                                        if (res==0) // rien recu
+                            		ou 
+					 StringBuilder result = new StringBuilder(); //= StringBuffer mais StringBuilder n'est pas threadsafe et est immutable
                                             String line;
                                             while ((line = reader.readLine()) != null) {
                                                 result.append(line);
                                             }
                                             return result.toString();
-                                        }
-                                            catch(MalformedURLException error) {
-                                                    //Handles an incorrectly entered URL
-                                            }
-                                            catch(SocketTimeoutException error) {
-                                            //Handles URL access timeout.
-                                            }
-                                            catch (IOException error) {
-                                            //Handles input and output errors
-                                            }
-                                        finally {
+                                        inStream.close(); ou in.close();
+				        finally {
                                       if(conn != null) // Make sure the connection is not null.
                                       conn.disconnect();
                                         }
-
-                                Methode 2: faire une requete post post request avec apache.http qui est c plus vieux et moins bien que HttpURLConnection.:  LINKrequ939302
+                                Methode 2: faire une requete post request avec apache.http qui est c plus vieux et moins bien que HttpURLConnection.:  LINKrequ939302
                                                  voir les exemples:https://hc.apache.org/httpcomponents-client-ga/examples.html
                                                 HttpClient httpClient = new HttpClient(); // attention peut etre qu'il ne gère pas les prop système proxy que je parametre
                                               		PostMethod postMethod = new PostMethod(this.location_UneURL);
@@ -2977,6 +2900,11 @@ REST : webservice : webservices : client accède à un service à partir d'un UR
 voir exemple de webservice rest sans framework ici: d:\Profiles\lduverge\Desktop\Apprentissage\webservicedemo(attention pour l'entite j'ai pas respecte unclebob)
 tutoriel Pour faire des serveurs de webservice: http://www.tutorialspoint.com/restful/restful_first_application.htm
 webservices: http://users.skynet.be/pascalbotte/
+                @ApplicationPath("nomdupremierpathUrlDeMonAppli") // sur une classe qui étend javax.ws.rs.core.Application // seuls les url des webservices rest du coup vont avoir ce path en amont. N'affecte pas les servlets ou les webservices soap
+                public class RESTConfiguration extends Application {
+                rien.
+                }
+
                       No dependencies, no migrations. jaxrs est l'api (specification) et jersey ou cxf implementent cet api.
                       import javax.ws.rs.GET;
                       import javax.ws.rs.Path;
@@ -3022,9 +2950,9 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
               	<artifactId>json</artifactId>
               	<version>20141113</version>
               </dependency>
-    envoyer faire une requette http à un webservice:
+    envoyer faire une requette http à un webservice SEULEMENT. ne marche pas pour les servlets: utile pour les tests d'integration:
         Client client = ClientBuilder.newClient();
-        WebTarget target = client.target("http://localhost:9990/backoffice/resources/ping/echo/glk") //attention ne pas utiliser les variables mais enchainer les points comme ci dessous target().path().request().get....
+        WebTarget target = client.target("http://localhost:9990") //FINURLENLEVEEXPRES attention ne pas utiliser les variables mais enchainer les points comme ci dessous target().path().request().get....
         .path("/backoffice/resources/ping/echo/glk");
         Invocation.Builder invokationBuilder = target.request(MediaType.APPLICATION_JSON_TYPE); // ou MediaType.APPLICATION_XML.(soap)..
         invokationBuilder.get();
@@ -8889,12 +8817,12 @@ pour faire des requetes avec procedure stockee de type *.blabla faire: where des
 GWT :
 pour lancer en dev sur jetty gwt mais ca ne marche pas  sur mon pom
       %M3%/mvn gwt:run -Denv=dev -DrunTarget=WecApp.html
-pour recuperer URL et plein d'autres parametres utiliser : 
-    String toto = Window.Location.get... l'URL complette c'est : Window.Location.getHref();
-quest ce qu'un module : c'est une autre application independante en principe mais ce module peut heriter de toutes les classes d'un autre module en mettant : <module rename-to="com.foo.MyModule"><inherits name="com.foo.MyModule" /></module> et alors plus besoin de lui mettre une entry-point class (il peut utiliser celui du module herite)
+pour recuperer URL et plein d'autres parametres utiliser: 
+    String toto = Window.Location.get... l'URL complette c'est: Window.Location.getHref();
+quest ce qu'un module: c'est une autre application independante en principe mais ce module peut heriter de toutes les classes d'un autre module en mettant: <module rename-to="com.foo.MyModule"><inherits name="com.foo.MyModule" /></module> et alors plus besoin de lui mettre une entry-point class (il peut utiliser celui du module herite)
     il est defni dans un xxxxxx.gwt.xml qui doit être sous src/main/java/mon/package/Xxxx.gwt.xml il aura par defaut pour nom mon.package.Xxxx mais on peut le renomme dedans en mettant <module rename-to='yyyyy'> et pour l'appeler, dans le html on met: <script type="text/javascript" language="javascript" src="????/yyyy.nocache.js"></script>
  si j'ai l'erreur Could not open/create prefs root node Software\JavaSoft\Prefs
-          essayer ca : open regedit.exe ( really hate Microsoft and their regedit.reg).
+          essayer ca: open regedit.exe ( really hate Microsoft and their regedit.reg).
           change the permission of key: HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft.....Right click the icon, then change the permission to full operation.
           On 64-bit systems you need to create a key HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\JavaSoft\Prefs.
 creer une application :
@@ -8957,7 +8885,7 @@ faire un formulaire de upload telechargement  d'image:
                             @Override
                             protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
                                 try {
-                                    ServletFileUpload upload = new ServletFileUpload();  //LINKee"(çà)" Une requete request ajax arrive. pour charger une image en servlet <3.0 (// pour la version >=3.0 ajouter en tete de classe @WebServlet et @MultipartConfig et faire request.getParmeters il parrait que ça marche
+                                    ServletFileUpload upload = new ServletFileUpload();  //LINKee"(çà)" Une requete request ajax arrive. pour charger une image en servlet <3.0 sinon voir @WebServlet plus haut
                         //            response.setContentType("image/x-png");
                                     FileItemIterator iterator = upload.getItemIterator(req);
                                     while (iterator.hasNext()) { // mettre un name a mon champ fileUpload sinon passera pas par ici
@@ -15337,7 +15265,7 @@ cookies :
                                       		final String cookieDomain = getCookieDomain();
                                       		Cookie cookie = new Cookie(name, value); //exemple: ("bla,"bli");
                                       		cookie.setPath(cookiePath);
-                                      		//cookie.setSecure(httpRequest.isSecure()); //.isSecure() renvoit true si on est en https 
+                                      		//cookie.setSecure(httpRequest.isSecure()); //.isSecure() renvoit true si on est en https. setsecure n'envoie le cookie a travers le reseau que si on est en https 
                                       		cookie.setSecure(true); //setSecure: le cookie n'est transmis sur le reseau que si on est en https LINKlizifoizf
                                       		cookie.setHttpOnly(httpOnly); //javascript n'a pas acces au cookies
 letsencrypt :
@@ -25355,9 +25283,12 @@ utiliser sur maven:
                     <jboss-home>C:/wildfly/wildfly-17.0.0.Final</jboss-home> // avoir installé wildfly au préalable
                     <modules-path>C:/wildfly/wildfly-17.0.0.Final/modules</modules-path>
                     <port>9990</port>
+                    <javaOpts>  // pour pouvoir débugger rajouter ça et voir LINKoizeurzotie
+                        <javaOpt>-agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n</javaOpt>
+                    </javaOpts>
                 </configuration>
             </plugin>
-            puis wildfly:start(si ne marche pas la premiere fois, reessayer en avant fait un wildfly:undeploy avant peut etre)
+            puis wildfly:start(si ne marche pas la premiere fois, reessayer en avant fait un wildfly:shutdown ou wildfly:undeploy avant peut etre)
             puis wildfly:deploy puis redeploy etc etc...    	
 tomcat :
 pour utiliser le plugin maven tomcat: Si ça marche:-). voir dessous: pas reussi à faire marcher avec une application avec spring security
@@ -25999,7 +25930,7 @@ pour manipuler le css directement:
           var sheetParent = sheetToBeRemoved.parentNode;
           sheetParent.removeChild(sheetToBeRemoved);
                 
-pour faire des frames sans utiliser le iframe i-frame:
+pour faire des frames sans utiliser le iframe:
         <object data="fichier.html" type="text/html" />
 pour faire un .ico icone 
       faire un .bmp et le renommer en .ico
@@ -26303,6 +26234,9 @@ u accent:
 euros:
     &#128; ou Alt+0128(windows-1252 sinon &#8364 Unicode) (1252: francais. 1250: tcheque)
 Javascript :
+enfant child childrens d'un element: 
+    this.children (que les enfants de type elements)
+    this.childNodes (tous les enfants meme les textes intercallés)
 pour faire des dessins animes avec background facon sprites: 
     changer background-position et width (on peut centrer le tout avec margin-left)
         changer dynamiqument background-position: 
@@ -27672,7 +27606,7 @@ ou
                                             
 pour supprimer tous all les eventlisnter LINKrmvEvntListner
     l'idée est de clonner l'element que je veux nettoyer et que le clone remplace celui qui contient les eventlisnter. Tout est dupliqué sauf les eventlistners:
-            elementANettoyer.parentNode.replaceChild(elementANettoyer.cloneNode(false), elementANettoyer); 
+            elementANettoyer.parentNode.replaceChild(elementANettoyer.cloneNode(false), elementANettoyer); // elementquiremplace,elementaremplacer 
 
                                                      
 dessiner un cercle dans un canvas:
@@ -27891,12 +27825,12 @@ nouvelle facon de definir les classes et l'heritage: mais en javascript on peut 
         avant:                                  
               function codeSuper()
                   {
-                      this.class_codeSuper=[]; //ses methodes et proprietes sont accessibles par les enfants
+                      this.class_codeSuper=[]; //ses methodes et proprietes sont accessibles par les enfants child childrens
                       this.init=function(unparam)  // une methode
                       {
                         this.idparent=unparam;
                       }
-                      this.class_codeSuper.init=this.init; //que je rends accessible a ses enfants (super peut etre appelle)
+                      this.class_codeSuper.init=this.init; //que je rends accessible a ses enfants child childrens(super peut etre appelle)
                       this.test=function() // pareil que ci dessus...
                       {
                           alert("B");
