@@ -1,4 +1,4 @@
-(?=.*debug)(?=.*tomcat)
+(?=.*maven)(?=.*proxy)
 
 AFAIRE :
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -1076,9 +1076,13 @@ position des accolades a la ligne code format
 pour faire un jar directement sans passer par maven: 
   file>projectStructure>Artifacts>ajouter jar (ne pas choisir "empty") et parametrer. Pour le builder: Build> BuildArtifact
 voir les logs git vcs: alt+9
+changer de compte user svn deconnecter: 
+            File>Settings>Subversion>Clear Auth Cache
 svn disconnect: installer le plugin pour ça.
-      menu VCS>SvnDisconnect
+      menu VCS>SvnDisconnect // attention en fait lui il deconnecte carrement mon appli du svn.
       GIT est pourri sur intellij. Utiliser tortoise LINKtortoiseGItsdflk
+    svn taguer tag tager: creer une branche, copier le trunk dans un tag ou dans une branche
+            VCS>Subersion>Branch or Tag... copie de mon env de local ou d'une URL du repository au choix >>>vers un tag ou une branche
 git pull tous les projets/modules en une seule fois VCS>Update projects... // il ne fait que fetch. Penser à cliquer ensuite dans l'onglet VCS du bas pour voir ce qui se passe sinon suis aveugle. Il faudra faire pull après!(voir les fichiers D://git/pull.xls et D://git/pull.bat). 
 si j'ai erreur source release 1.7 requires target release 1.7
           mettre pareil dans settings>build,execution,depl>compiler>javacompiler; projectstructure>project; projectstructure>modules>sources; dans le pom maven;
@@ -11270,7 +11274,7 @@ utilisation du plugin assembly pour créer un zip:
                                     ${project.basedir}/assembly.xml // va analyser ce fichier
                                 </descriptor>
                             </descriptors>
-                                <finalName>${zip.name}</finalName> // nom de mon zip au final (paramétré au début du fichier pom)
+                                <finalName>${zip.name}</finalName> // nom de mon zip au final (paramétré au début du fichier pom) ou defini par -Dzip.name=toto
                                 <appendAssemblyId>false</appendAssemblyId> // pour ne pas qu'il rajoute un id à la con Linksljfggg dans le nom de mon fichier zippé
                         </configuration>
                     </execution>
@@ -11511,7 +11515,7 @@ Les goals:(appartiennent à phases) sin on veut executer mvn un_goal alors ecrir
       %M3%/mvn clean jboss:hard-undeploy -Denv=dev
 pour voir les dependances des jars, rajouter à la fin des commandes ci-dessus: dependency:tree
       exemple: %M3%/mvn clean package dependency:tree      
-pour incrementer mon projet d'une version: changer la version versionning versioning: 
+pour incrementer mon projet d'une version: changer la version versionning versioning: versionset version:set set:version 
       %M3%/mvn versions:set
       sur eclipse faire Run MavenBuild... goal=versions:set ajouter parameter newVersion=x.x.x 
             il va changer ca:
@@ -15412,7 +15416,8 @@ condidentialite/authenticite/non-repudiation=integrite(non modifie sur reseau) H
               cryptage: (voir aussi openssl)
                   cryptage AES avec generation de cle etc etc...
                       voir article http://java.sun.com/developer/technicalArticles/Security/AES/AES_v1.html                                                            
-si j'ai l'erreur: unable to find valid certification path to requested target. Pour bypasser ignorer le trust handshake ssl:
+si j'ai l'erreur: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target et ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: 
+            Pour bypasser ignorer le trust handshake ssl: ou bien installer le certificat dans le truststore
             	String accesspoint = "https://ipam.intra.renault.fr/interfaces/ws.php";
              // Les lignes suivantes permettent d'ignorer un certificat SSL errone.(ou pas voir ci dessous). SI je m'en fous de la securite:
               TrustManager[] tms = new TrustManager[0];
@@ -17552,7 +17557,7 @@ extenaliser la config log4j:
       web.xml:
           <context-param>
             <param-name>log4jConfigLocation</param-name>
-            <param-value>file:D:/RD/conf/log4j.properties</param-value>
+            <param-value>file:D:/RD/conf/log4j.properties</param-value> ou <param-value>classpath:appConf/front_log4j.xml</param-value> et ajouter le classpath avec -D
         </context-param>
         <context-param>
             <param-name>log4jRefreshInterval</param-name>
@@ -22583,7 +22588,7 @@ Pour ecrire des lignes dans un fichier:
 // AVANT: mais pb encodage ci-dessous
 //creation ou ajout dans le fichier texte
 		try {
-		// attention fileWriter et FileReader utilisent l'encodage du systeme!!! donc pas bon!
+		// attention fileWriter et FileReader utilisent l'encodage du systeme!!! donc pas bon! à la place faire : new InputStreamReader(new FileInputStream(monFile), Charset.forName("UTF-8"))
 			FileWriter fw = new FileWriter (fichier);
 			BufferedWriter bw = new BufferedWriter (fw);
 			PrintWriter fichierSortie = new PrintWriter (bw); 
@@ -25366,7 +25371,7 @@ pour utiliser le plugin maven tomcat: Si ça marche:-). voir dessous: pas reussi
           <systemProperties>
             <example.value.1>alpha</example.value.1>
             <example.value.2>beta</example.value.2>
-                <JAVA_OPTS>-Xms256m -Xmx512m -XX:MaxPermSize=256m -Djavax.net.ssl.trustStore="${basedir}/src/main/config/dev/truststore.jks" -Djavax.net.ssl.trustStorePassword=truststore  -Dhttp.proxyHost=10.245.1.47 -Dhttp.proxyPort=8080 -Dhttps.proxyHost=10.245.1.47 -Dhttps.proxyPort=8080 -Dhttp.nonProxyHosts=localhost</JAVA_OPTS>
+                <JAVA_OPTS>-Xms256m -Xmx512m -XX:MaxPermSize=256m -Djavax.net.ssl.trustStore="${basedir}/src/main/config/dev/truststore.jks" -Djavax.net.ssl.trustStorePassword=truststore  -Dhttp.proxyHost=10.245.1.47 -Dhttp.proxyPort=8080 -Dhttps.proxyHost=10.245.1.47 -Dhttps.proxyPort=8080 -Dhttp.nonProxyHosts=localhost</JAVA_OPTS> Si la conf proxy ne marche pas là je peux mettre les "-D" dans l'execution de la commande maven ca marche
           </systemProperties>
           <url>http://localhost/</url> // facultatif. ce sera http://localhost par defaut. Si je le met comme ca l'url sera http://localhost(:8080)/nom_apres_http:lePortCiDessous/manager ou si externe c'est l'URL console-admin du tomcat externe
           <server>my-tomcat</server> // facultatif sert d'identifiant qu'on retrouve dans settings.xml pour definir le user/password de l'admin/manager du serveur tomcat si on utilise un serveur non embedded. dans settings.xml: <settings>...<servers>...<server><id>myserver</id><username>myusername</username><password>mypassword</password></server>...</servers>
