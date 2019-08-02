@@ -1,5 +1,4 @@
-(?=.*requete)(?=.*http)
-
+(?=.*debug)(?=.*tomcat)
 AFAIRE :
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
  Envoyer à dorothé le script de synchro gitlab vers gitcacib
@@ -5005,7 +5004,7 @@ Conf java
           @Import(UneAutreClassDeConfig.class)
           @ComponentScan(basePackages = {"my.package.service"}) // PasPourLesTests. cherches les annot sous ce package pour creer les beans Scan specific packages for components (voir equiv en xml)
             proprietes:
-          @PropertySource("classpath:/my.properties") // Mettre au dessus classe de conf.@Configuration() Pour toutes les autres classes qui utilisent LINKPropsspring: @Value("${keyDansFichierPropriete:valeurParDefautFacultatif}") String toto il va chercher la valeur des {$toto.toto} dans ce fichier de propriete sous resources ou dans *.properties si PropertySource ne specifie pas.  
+          @PropertySource("classpath:/my.properties") // Mettre au dessus classe de conf.@Configuration() Pour toutes les autres classes qui utilisent LINKPropsspring: @Value("${keyDansFichierPropriete:valeurParDefautFacultatif}totoatatarestepareil") String toto il va chercher la valeur des {$toto.toto} dans ce fichier de propriete sous resources ou dans *.properties si PropertySource ne specifie pas.  
                           "file:/C:/..."                                                                                                                       exemples Spring el SPEL: 
                                                                                                                                                                               @Value("#{'${ws.authorized.remoteIp}'.split(',')}") converti un string en listeSpring SPEL expressions
                                                                                                                                                                               @Value("#{systemProperties['os.arch'].equals('x86') ? winDataSource: unixDataSource}")
@@ -13190,15 +13189,17 @@ cygwin :
               cygwin lors de l'installation check off OpenSSH and OpenSSL. sur unix installer openssl voir https://geeksww.com/tutorials/libraries/openssl/installation/installing_openssl_on_ubuntu_linux.php
                   generer creer paire de cle sur cygwin ou sur unix voir LINK94949494
   
-Curl : voir aussi wget : pour faire une requette request http
+Curl : voir aussi wget : pour faire une requette request http doc:https://ec.haxx.se/usingcurl-writeout.html
     sur cygwin (installer dans cygwin. voir cygwin) (sous categorie Net)
 
-    get telecharger: (option -O ou -o maj min importent pas.) // ordre option importe peu et existe -V (version courte) equivalent à -vlakjdf : version longue
-            -v ou -V ou --verbose// verbose a utiliser quand ça ne marche pas.
+    get telecharger: (option -A ou -a maj min importent pas. sauf cas exceptionel comme -o et -O, -X et -x) // ordre option importe peu et existe -V (version courte) equivalent à -vlakjdf : version longue
+            -v ou -V ou --verbose// verbose a utiliser quand ça ne marche pas. attention! 
    	A faire sur une seule ligne et pas sur plusieurs car marche pas. et echapper les caractères spéciaux & ; par \
-      curl -O https://index.taskcluster/artifacts/public/deepspeech-0.1.0nux1_x86_64.whl
+    curl -O https://index.taskcluster/artifacts/public/deepspeech-0.1.0nux1_x86_64.whl // -O ne marche qu'avec des url qui renvoient un fichier dowload. ne pas mettre de param avec, il telecharge le contenu de la reponse et le depose la ou je suis direct. si -o unNomDeFichier url il recupère la reponse et la met dans unNomDeFichier 
     post json: // mettre des guillemets autour des valeurs des options si il y a des espaces dans ces valeurs. Si c'est du json mettre single quotes
-	curl -v -X POST http://localhost:8080/web/api/login --header "Content-Type: application/json" -d '{"anonymousUser":"true","uuid":"uid","appAccessKey":"mycampusapikey"}'
+	curl -v -X POST http://localhost:8080/web/api/login --header "Content-Type: application/json" -d '{"anonymousUser":"true","uuid":"uid","appAccessKey":"mycampusapikey"}' > fichieroul'outputjsonsecritdedans
+    post sans bodypayload comme un get
+    curl -v -X POST http://localhost:8080/web/api/login --header "Content-Type: application/x-www-form-urlencoded" -d 'grant_type=password&username=toto&password=titi' -H "Authorization: Basic $(echo -n codetestlaurent:hihi | base64)" // je peux appeler du bash ici et encoder/decoder en base64 (-n pour que le echo ne mette pas les retour chariot)
     pour passer par un proxy rajouter:
             -x http://le.proxy:port -U user:pwd
     post json avec headers
@@ -13212,7 +13213,9 @@ Curl : voir aussi wget : pour faire une requette request http
 	gets avec headers:
 	curl -v -X GET https://api.airfranceklm.com/opendata/offers/reference-data -H "accept: application/hal+json" -H "accept-language: en-US" -H "afkl-travel-country: NL" -H "afkl-travel-host: KL" -H "api-key: testapikey"
 	curl -v -X GET http://localhost:8080/web/api/v2/apps/mycampuscode/realtimepath/navitia/paths?physicalModes=bus\&coverage=fr-idf\&from=2.33245\;48.77469\&to=2.33245\;48.77469\&datetime=20190720T1004\&datetimeRepresents=arrival --header "X-AUTH-TOKEN:eyJpZCI6bnVsbCwidXVpZCI6InVpZCIsImFub255bW91c1VzZXIiOnRydWUsInVzZXJMb2dpbiI6IkFub255bW91c1VzZXIiLCJ1c2VyRW1haWwiOm51bGwsImV4cGlyZXMiOjE1NjQwMzk0MDY1OTAsImFwcENvZGUiOiJteWNhbXB1c2NvZGUiLCJhcHBBY2Nlc3NLZXkiOm51bGwsInZlbG9Vc2VyIjpmYWxzZSwibXdhVXNlciI6ZmFsc2UsInJvbGVzIjpbIlJPTEVfQVBQIl19.KVUcP3cOD3aLJzNJeua+BZR3MNQBdUktyRUag7V5/dg="
-
+     -L pour que si le serveur renvoit une redirection il la suivre direct
+     -c pour ecrire les cookies -d ou b ? pour les stocker... ATERMINER
+     -w "totocequejeveux %{unevariablequim'estrenvoyéeparleserveur (voir la doc pour la liste des variables)}" > jepeuxecrireleresultatdansunfichier.txt        
 certificats : certificat : formats: types
                               Échange d’informations personnelles (PKCS #12)  (.pfx ou .p12)
                                     Le format d’échange d’informations personnelles (PFX, également appelé P12) prend en charge le stockage sécurisé des certificats, des clés privées et de tous les certificats d’un chemin d’accès de certification.
@@ -23876,8 +23879,6 @@ La commande utilisee pour creer les fichiers ISO sous unix est:
   apres avoir fait "dmt &" faire vmstat 2 pour garder la session (2 pour rafficher toutes les deux secondes)
   vmstat: la consomation cpu se lit sous cpu et sous us + sy
   & le et commercial sert à  lancer la thread en tache de fond sous unix
-  les alias sous unix: exemple: alias ll = 'ls -l' ou bien alias ll="ls -l"
-  supprimer l'alias: faire unalias nomdel'alias
   quelle est ma version type de linux:
       cat /etc/*-release
       et/ou
@@ -23977,20 +23978,21 @@ pour seter setter les variable d'environnement sur unix linux
               if [ -f ~/.bash_aliases ]; then
                 . ~/.bash_aliases
               fi
-
+les alias sous unix: exemple: alias ll = 'ls -l' ou bien alias ll="ls -l"
+  supprimer l'alias: faire unalias nomdel'alias
+    pour voir la liste des alias, tapper alias (permet de voir les raccourcis de commandes)
+    pour voir le detail d'un alias: alias nomalias
+    pour faire des alias persistants: 
+      vi ~/.bash_alias (ce dernier est charge par ~/.bashrc qui contient) LINKç'(ç')
+          alias gototemplate='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/' // pour echapper les espaces : alias gotoapprentissage="cd \"/c/Users/Mes documents/apprendre\""
+          alias gotocss='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/css'
+          alias gotomodule='cd /var/www/www.wenhuaduverge.com/shop/module'
+      puis vi ~/.bashrc
+          if [ -f ~/.bash_aliases ]; then
+            . ~/.bash_aliases
+          fi
     
 dans /usr/bin noramlement (on peut retrouver dans les variables d'environnement) on voit tous les programmes que le user peut utiliser (.exe) (les commandes)
-pour voir la liste des alias, tapper alias (permet de voir les raccourcis de commandes)
-pour voir le detail d'un alias: alias nomalias
-pour faire des alias persistants: 
-  vi ~/.bash_alias (ce dernier est charge par ~/.bashrc qui contient) LINKç'(ç')
-      alias gototemplate='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/' // pour echapper les espaces : alias gotoapprentissage="cd \"/c/Users/Mes documents/apprendre\""
-      alias gotocss='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/css'
-      alias gotomodule='cd /var/www/www.wenhuaduverge.com/shop/module'
-  puis vi ~/.bashrc
-      if [ -f ~/.bash_aliases ]; then
-        . ~/.bash_aliases
-      fi
 pour recharger un environnement faire cd . (la il y a des fichiers environnement(faire ls -tral pour voir tout) dont le nom est par ex: .env_machin) puis . .env_machin ou . ./.env_machin
 pour verifier que "truc" est bien dans l'environnement faire: env | grep truc
 compter le nombre de lignes dans un fichier:
@@ -24659,6 +24661,11 @@ Remplacement de chaine1 (toutes les occurrences de chaine1) ,par chaine2 depuis 
 pour transformer la case: MAJ -> MIN ou l'inverse: altGR + ~
 
 bash :KSH :
+encoder en base64
+    echo -n blablablba | base64 // -n pour ne pas que echo retourne un retour chario a la fin
+parser du json avec unix: installer jq
+        puis 
+            jq .unparamettre unfichiercontenantdujson.json   // si dans mon fichier j'ai {"unparametre":"toto"} va retourner toto
 		pour faire une boucle loop
 			for projet in blabla blibli bloblo
 					do
@@ -25283,8 +25290,8 @@ utiliser sur maven:
                     <jboss-home>C:/wildfly/wildfly-17.0.0.Final</jboss-home> // avoir installé wildfly au préalable
                     <modules-path>C:/wildfly/wildfly-17.0.0.Final/modules</modules-path>
                     <port>9990</port>
-                    <javaOpts>  // pour pouvoir débugger rajouter ça et voir LINKoizeurzotie
-                        <javaOpt>-agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n</javaOpt>
+                    <javaOpts>  
+                        <javaOpt>-agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n</javaOpt> // pour pouvoir débugger rajouter ça et voir LINKoizeurzotie 
                     </javaOpts>
                 </configuration>
             </plugin>
@@ -25312,7 +25319,7 @@ pour utiliser le plugin maven tomcat: Si ça marche:-). voir dessous: pas reussi
           <tomcatUsers>D:/Dev/apache-tomcat-7.0.61/conf/tomcat-users.xml</tomcatUsers> // facultatif
           <additionalClasspathDirs> // pour ajouter des fichiers de conf lus par mon application dans le classpath comme si elles etaient dans le resources ressources
 						<additionalClasspathDir>${basedir}/src/main/config/dev/appConf</additionalClasspathDir>
-						<additionalClasspathDir>${basedir}/src/main/config/wording</additionalClasspathDir>
+						<additionalClasspathDir>${basedir}/src/main/config/wording</additionalClasspathDir> LINKoizeurzotie // pour debugger avec tomcat et intellij il suffit juste d'executer le maven à droite en mode debug et ça marche.
 		  </additionalClasspathDirs>
         </configuration>
         <dependencies>         // si mon tomcat a besoin d'un driver ou d'une autre librairie dependance dependence
@@ -26283,7 +26290,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                       /*      xhr.onreadystatechange = onStateChange; 
                               xhr.setRequestHeader("Content-Type", "multipart/form-data"); 
                               ou
-                              xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); Si on ne veut pas que notre formulaire puisse envoyer des fichiers: on recupere que les parametres string. 
+                              xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); Si on ne veut pas que notre formulaire puisse envoyer des fichiers: on recupere que les parametres string. x-www-form-urlencoded c'est un post qui envoie les paramtres à la façon d'un get 
                               et
                               xhr.setRequestHeader("X-File-Name", file.fileName);
                               xhr.setRequestHeader("X-File-Size", file.fileSize);
@@ -31553,7 +31560,7 @@ renommer un repertoire en un autre :
         keepass
     logiciel analyseur de sons audio detail infos: 
         gspot       
-raccourci creer un nouveau dossier: ctrl+shift+n
+raccourci creer un nouveau dossier repertoire: ctrl+shift+n
 window+x ouvre des options de luminosité
 impression ecran: 
         alt+impressionecran copie que la fenetre active. Sinon on peut utiliser Greenshot
@@ -32636,3 +32643,4 @@ seo :
 virtualbox : virtuabox :virtual box : virtual machine
     les .iso sont sur les sites ubuntu,debian... etc...
   lancer vbox> nouveau> creer un disque dur virtuel now > creer > config > stockage > ide > choisir un fichier .iso super important de faire ca avant pour toute installation de vm sinon la vm n'a pas de reseau      
+
