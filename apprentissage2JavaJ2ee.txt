@@ -1,4 +1,4 @@
-(?=.*debug)(?=.*tomcat)
+(?=.*hibernate)(?=.*test)
 AFAIRE :
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
  Envoyer à dorothé le script de synchro gitlab vers gitcacib
@@ -1063,7 +1063,7 @@ si j'ai message
     c'est parce que j'ai des dependances cycliques dans mon pom: deux modules dépendant l'un de l'autre. Ou bien un module dépend de lui meme?
 formatter forme affichier le xml: 
     code->reformat
-pour paster un ancien paste du clipboard clip board collé: 
+pour paster un ancien paste du clipboard clip board collé: coller copier 
         Ctrl+Shift+Insert
 tapper saisir abrege abregé racourci shortcut pour ecrire methode main: psvm
 Si intellij ne demarre plus a cause d'une erreur initializ initialis fatal xdebug supprimer son cache: reset marche plus. Ou si intellij me cache des fichiers meme si dans projet>rouecrantee je coche quil doit tout afficher 
@@ -1170,7 +1170,7 @@ stop interrompre arrater Ctrl+F2 (on peut y aller meme si ya plusieurs tabs il v
 show in package explorer: Alt+F1
 show loggcat android alt+6
 show console alt+4
-show/unshow console terminal alt+F12 (c'est plus rapide que de faire ctrl+tab)
+show/unshow console terminal alt+F12 ou EchapEscape(c'est plus rapide que de faire ctrl+tab)
 corriger quick fix: alt+enter
 voir la console du run: alt+4
 pour modifier un type de fichier source: en faire un source, un repertoire de tests etc... Ctrl+Shift+Alt+s, choisir à gauche le projet, à droite le repertoire et clique droit dessus 
@@ -6913,7 +6913,9 @@ si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from col
                 @Override
                 public int hashCode()
                 {return categoryName!=null? categoryName.hashcode():0;}
-                
+hsqldb :
+        base de donnée pour les tests
+        si erreur data exception: string data, right truncation c'est parce que j'ai voulu inserer une colonne trop longue                
 JPA :
     pour faire du reverse engineering java vers base de donnee java2db
     monProjet>Properties>Ajouter Facelets JPA; 
@@ -16171,7 +16173,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
 				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça
 													,anyObject(UneClasse.class)
 													).thenReturn(context);
-				ResultDao rd =mock(ResultDao.class);
+				ResultDao rd =mock ou spy(ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
 				Result toto = new Result();
 				Mockito.doReturn(toto).when(rd).getLaMethodeResult("1"); // retourner toto quand on execute resultdao.getResult("1");
 				WelcomeController wc = new WelcomeController(rd);
