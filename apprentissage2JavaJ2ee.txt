@@ -5,6 +5,8 @@ AFAIRE :
 capitaliser get spring
 lire : C:\Users\ut2sn0\My_IT_Applications\apprentissage\20190716_Kubernetes_Live_Demo_in_SQY.pdf
 comment eviter transitive pb maven
+svn tortoise: merger depuis 2.11 sur trunk en modifiant trunk:
+        chekouter trunk>merge choisir option2 > choisir 2.11 >merge> ca ne merge que mon trunk en local. reste plus qu'à commiter ça.
 
 prototype Array
 select innerjoin
@@ -2135,7 +2137,7 @@ try (SeContainer container = initializer.disableDiscovery().initialize()) { cont
                                                                 </beans>
 		@Pattern(expressionreguliere) // sur un champ d'un bean: pour valider que ce champ quand il est rempli match bien à la regexp.
 		
-securite:(JSR375)
+securite :(JSR375) plus besoin d'utiliser web.xml: les annotations font pareil.
        AFAIRE
        https://javaee.github.io/tutorial/security-api004.html
        https://javaee.github.io/tutorial/security-intro003.html#BNBXE->https://javaee.github.io/tutorial/security-javaee002.html#GJGDI
@@ -2145,7 +2147,7 @@ securite:(JSR375)
         @RememberMe //Comme le bouton se souvenir de moi (AFAIRE)       
        HttpAuthenticationMechanism interface role: gère token d'authentification. Une seule classe doit exister par appli. sous classe doit être Bean. Bean automatiquement appelé par le container pour l'authent
        |                    |
-       MaCustomClasse        BasicAuthenticationMechanismDefinition;FormAuthenticationMechanismDefinition ;CustomFormAuthenticationMechanismDefinition 
+       MaCustomClasse   ou   @BasicAuthenticationMechanismDefinition ou @FormAuthenticationMechanismDefinition ou @CustomFormAuthenticationMechanismDefinition a mettre en chapeau sur la classe.
        METHODE Importante: validateRequest() que je dois implémenter Les 2 autres c facultatif
                               Fait appel à->IdentityStoreHandler(Je peux le reecrire moi même)->fait appel à tous les->
                             
@@ -2158,11 +2160,24 @@ securite:(JSR375)
                                      Set<VALIDATE et/ou PROVIDE_GROUPS><-validationTypes() // sert à determiner quelle genre de validation fait cet IdentityStore
                                      priority() // retourne un integer: plus il est petit plus il est prioritaire pour IdentityStoreHandler
        
-       pour securiser une servlet: 
+       pour securiser une servlet: ACONFIRMER:c'est grace a ca que ça declanche mon HttpAuthenticationMecanism 
             @WebServlet("/servlet")
-            @DeclareRoles({ "role1", "role2bar", "kaz" }) //roles renvoyés par la database. peut etre mis sur classe ou methode(override classe alors)
-            @ServletSecurity(@HttpConstraint(rolesAllowed = "foo") ou @HttpMethodConstraint)
+            @ServletSecurity(
+                                value= @HttpConstraint(rolesAllowed = "foo"),
+                                httpMethodConstraints={
+                                        @HttpMethodConstraint(
+                                            value = "GET",rolesAllowed = {"user_role"}),
+                                       @HttpMethodConstraint(
+                                            value = "POST",rolesAllowed = {"admin_role"})                                
+                                                        }
+                            )
+            @DeclareRoles({ "role1", "role2bar", "kaz" }) //roles renvoyés par la database. peut etre mis sur classe ou methode(override classe alors) //PASCLAIR
             public class Servlet extends HttpServlet {
+            
+            
+            
+            
+            
                               
                 
        
@@ -2194,7 +2209,7 @@ ou remote         @Local ---> l'accès à ces beans ne peut se faire que par d'a
   
   Message Driver  @MessageDriven // on ne peut le joindre qu'avec des messages JMS à l'interieur du container (du serveur) par des Message Bus
   Message Driver  @WebService
-  JPA Entities    @Entity
+  JPA Entities    @Entity à mettre sur des classes pour l'ORM. ces classes DOIVENT avoir un constructeur vide voir LINKcstrctr 
                   @EntityManager
   JPA Entities    N/A
   Container-Managed mode    Le plus utilise: le container s'occupe des Transactions, Roles, Security, Persistence et Entities 
@@ -3349,8 +3364,14 @@ AppConfigurationEntry localAppConfigurationEntry = localConfiguration.getAppConf
                                               ((xxx)Callback[i]).credentialsaisi                                                                                                                                  parametre2=valeur2; //finir par";" ces parametres seront envoyés dans methode "initialize" du LoginModule:-)
                                               si ok return true;                                                                                                                                                };
                                              }                                                                                                                                                                    
-                           Principal<-Subject.getPrincipals()                                                                                                                                                                                        
-                                                                                                                                                                                                                  
+                           Principal<-Subject.getPrincipals() // subjet est une personne. Principal est de ce qui l'identifie. Plusieurs sousclasses existent. exemple com.sun.security.auth.UserPrincipal                                                                                                                                                                                        
+                                    exemple pour construire un subject: (de moi.)
+                                            final String claim = (String) claims.get("role");
+                                              Role role = Role.valueOf(claim.toLowerCase());
+                                              UserPrincipal up = new UserPrincipal((String) claims.get("sub"));
+                                              Subject subject = new Subject();
+                                              subject.getPrincipals().add(up);
+                                              subject.getPublicCredentials().add(role);                                                                                                                                                                                       
                                                                                                                                                                                                                 
 web.xml : webxml :
 <web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" version="4.0" metadata-complete="true">
@@ -6799,7 +6820,7 @@ Bouton submit non ajax:
    ^ 
    | IOC (interfaces)
    V
-Hibernate :
+Hibernate : implemente jpa
 Hibernet le livre:
 exemple de fichier mapping pojo-base p10
 si erreur:
@@ -6854,6 +6875,8 @@ si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from col
               @ManyToOne //1ici a n labas(passur?)
               @Column(name="NonDeLaColonneEnBDSIDifferenteQueNomProprieteJava") // optionnel
               @Cache peut etre aussi mis au niveau d'une propriete
+              @NotNull // si je veux valider que le champ ne soit pas null
+               @Pattern(regexp = "^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$",message = "{invalid.phonenumber}") // si je veux valider que le champ respecte un pattern regexp
             	   private Idea idea;
             	@OneToMany (orphanRemoval=true//pour les deletes en cascade, cascade={javax.persistence.CascadeType.ALL}//pour les update en cascades)
             	               ,mappedBy="permission") // car je suis dans le classe Permission.class et je fais ref à UserPermission.permission
@@ -17190,6 +17213,7 @@ http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-j
 JAVA :
 java10 : java 10 :
         var: bof eviter
+constructeur: si je ne met aucun constructeur, une classe à  un constructeur vide transparent mais dès que je met un constructeur avec arguments, si je veux avoir aussi un constructeur vide je dois l'ecrire LINKcstrctr
 generer la javadoc :
         package-info.java intervient dedans mais je ne sais pas encore commment.
                     exemple un package-info.java
@@ -17950,8 +17974,8 @@ pour convertir un resultset en jsonarray ou jsonobject
 parser xml : serialisation xml :
 serialiser un objet java en xml :
 Serializer serialiser une classe java au format xml quon peut sauver importer exporter convertir java xml (pas besoin d'implementer Externalizable).
-        pour que ca marche il faut un constructeur vide et les getters et setteurs publics!
-            attention pour que ça marche les classes que je serialise doivent avoir:  (sinon pour une serialisation binaire voir LINKlksdflqgllglglg et pour un meilleur controle seulement: implements Externalizable et il faut overrider les methodes de cette interface comme ci-dessous ) MAIS surtout ne pas oublier de mettre un constructeur vide et les getters et setters
+        pour que ca marche il faut un constructeur vide voir LINKcstrctr et les getters et setteurs publics!
+            attention pour que ça marche les classes que je serialise doivent avoir:  (sinon pour une serialisation binaire voir LINKlksdflqgllglglg et pour un meilleur controle seulement: implements Externalizable et il faut overrider les methodes de cette interface comme ci-dessous )ENLEVEEXPRES 
             attention aussi les champs observables doivent etre declarés comme ca
                                             private final ListProperty<PartInstance> referencielPartInstances =new SimpleListProperty<>(FXCollections.observableArrayList(new ArrayList<>())) ;
                                             ET PAS COMME CA: private final ListProperty<FeatureGeneric> featureRoot = new SimpleListProperty<>(FXCollections.observableArrayList()); 
@@ -26221,9 +26245,10 @@ svg :
     </svg>
 
 pour empecher le cache :
-      <meta http-equiv="cache-control" content="max-age=0" /> est moins bien que expires ci dessous.
-      <meta http-equiv="cache-control" content="no-cache" /> est moins bien que expires ci dessous.
-      <meta http-equiv="expires" content="0" />
+      <meta http-equiv="cache-control" content="max-age=0" /> max-age est une durée de secondes. request et response utilisent cache-control voir developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control 
+      <meta http-equiv="cache-control" content="no-cache" /> no-store=0 cache; no-cache=existe un cache mais a chaque requete client demande au serveur si le cache est toujours valable
+      <meta http-equiv="expires" content="0" />content doit etre une date. Si on met 0 ca veut dire que c'est passé
+      ou
       <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
       <meta http-equiv="pragma" content="no-cache" />
       autre methode radicale: renommer ses fichiers et changer ses liens ex: memoclap20131901.js 
