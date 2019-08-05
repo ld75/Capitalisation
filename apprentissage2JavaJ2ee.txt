@@ -1,5 +1,4 @@
-(?=.*optimis)(?=.*image)
-
+(?=.*debug)(?=.*tomcat)
 AFAIRE :
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
  Envoyer à dorothé le script de synchro gitlab vers gitcacib
@@ -867,7 +866,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git stash apply <idretourné> par la commande ci dessus: stash@(2) par exemple // applique à ma branche ce stash en le mergant avec ma branche mais ne le supprime pas de la liste
       git stash clear // supprime tous mes stash! attention.
     envoyer/recuperer des projets entre mon local et le github:
-      fork: fait une copie de tout un projet (branches incluses) dans mon github. Je peux ensuite travailler dessus dans github ou en local(cloner) et à la fin je soumet mes modifs: pull request. si accepte: ça fetch+merge+commit tout mon fork(je crois)
+      fork: fait une copie de tout un projet (branches incluses) dans mon github. Je peux ensuite travailler dessus dans github ou en local(cloner) et à la fin je soumet mes modifs: pull request= merge request. si accepte: ça fetch+merge+commit tout mon fork(je crois)
       binder avec un repository distant: LINKenvoiyer
         git remote -v // etre dans mon projet. Sert à savoir à quel repo distant le projet est lie pour les pushpull renvoit le nom du bind (nom=origin)
         git remote rm origin(distant) // pour debinder mon projet avec le repository "origin" distant
@@ -1080,9 +1079,13 @@ position des accolades a la ligne code format
 pour faire un jar directement sans passer par maven: 
   file>projectStructure>Artifacts>ajouter jar (ne pas choisir "empty") et parametrer. Pour le builder: Build> BuildArtifact
 voir les logs git vcs: alt+9
+changer de compte user svn deconnecter: 
+            File>Settings>Subversion>Clear Auth Cache
 svn disconnect: installer le plugin pour ça.
-      menu VCS>SvnDisconnect
+      menu VCS>SvnDisconnect // attention en fait lui il deconnecte carrement mon appli du svn.
       GIT est pourri sur intellij. Utiliser tortoise LINKtortoiseGItsdflk
+    svn taguer tag tager: creer une branche, copier le trunk dans un tag ou dans une branche
+            VCS>Subersion>Branch or Tag... copie de mon env de local ou d'une URL du repository au choix >>>vers un tag ou une branche
 git pull tous les projets/modules en une seule fois VCS>Update projects... // il ne fait que fetch. Penser à cliquer ensuite dans l'onglet VCS du bas pour voir ce qui se passe sinon suis aveugle. Il faudra faire pull après!(voir les fichiers D://git/pull.xls et D://git/pull.bat). 
 si j'ai erreur source release 1.7 requires target release 1.7
           mettre pareil dans settings>build,execution,depl>compiler>javacompiler; projectstructure>project; projectstructure>modules>sources; dans le pom maven;
@@ -4971,7 +4974,7 @@ spring security : spring-security : springsecurity :
               	<!--  pour securiser par aspectj A remettre en disabled pour que les junit fonctionnent sans pb de securite-->
                   <global-method-security pre-post-annotations="enabled"/>
       si message probleme csrf mettre dans mes formulaires: voir LINKc.s.r.f 
-                <form class="form-horizontal" id="search-form" action="${pageContext.request.contextPath}/getresults?${_csrf.parameterName}=${_csrf.token}" method="POST">
+                <form class="form-horizontal" id="search-form" action="${pageContext.request.contextPath}/getresults?${_csrf.parameterName}=${_csrf.token}" method="POST"> (CsrfFilter de spring ne gère que ça si c'est un POST avec multipart à priori. le con. je peux dans un POST faire ça.)
                 ou 
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
       
@@ -5022,7 +5025,7 @@ Conf java
           @Import(UneAutreClassDeConfig.class)
           @ComponentScan(basePackages = {"my.package.service"}) // PasPourLesTests. cherches les annot sous ce package pour creer les beans Scan specific packages for components (voir equiv en xml)
             proprietes:
-          @PropertySource("classpath:/my.properties") // Mettre au dessus classe de conf.@Configuration() Pour toutes les autres classes qui utilisent LINKPropsspring: @Value("${keyDansFichierPropriete:valeurParDefautFacultatif}") String toto il va chercher la valeur des {$toto.toto} dans ce fichier de propriete sous resources ou dans *.properties si PropertySource ne specifie pas.  
+          @PropertySource("classpath:/my.properties") // Mettre au dessus classe de conf.@Configuration() Pour toutes les autres classes qui utilisent LINKPropsspring: @Value("${keyDansFichierPropriete:valeurParDefautFacultatif}totoatatarestepareil") String toto il va chercher la valeur des {$toto.toto} dans ce fichier de propriete sous resources ou dans *.properties si PropertySource ne specifie pas.  
                           "file:/C:/..."                                                                                                                       exemples Spring el SPEL: 
                                                                                                                                                                               @Value("#{'${ws.authorized.remoteIp}'.split(',')}") converti un string en listeSpring SPEL expressions
                                                                                                                                                                               @Value("#{systemProperties['os.arch'].equals('x86') ? winDataSource: unixDataSource}")
@@ -5358,7 +5361,7 @@ Spring : XML STYLE
                                                                                         <mvc:annotation-driven /> // Enables the Spring MVC @Controller programming model
                                                                                         <mvc:resources mapping="/resources/**" location="/, classpath:/META-INF/web-resources/" /> //Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory
                                                                                         <mvc:resources mapping="/images/**" location="/images/" /> 
-                                                                                            <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"> //Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory
+                                                                                            <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"> //Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory LINKvrvvrvrvr
                                                                                             <property name="prefix" value="/WEB-INF/jsp/"/>
                                                                                             <property name="suffix" value=".jsp"/>
                                                                                         </bean>
@@ -5502,7 +5505,7 @@ Spring : XML STYLE
                                   
                                                  <!--bof si on @--><bean id="HandlerMapping" class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping (le plus basique)"/> <!-- scanneur d'url dit au front controleur  que tous les /welcome.html doivent diriger vers le controlleur MaclasseMonCOntrolleur -->
                                                   <!--bof si on @--><bean name="/welcome.html" class="com.monrpojet.MaclasseMonCOntrolleur (voir plus bas l'implementation)"/>        <!-- Inutile de faire ce mapping ici si j'utilise l'annotation @RequestMapping("/welcome") dans mon controlleur -->
-                                                  <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver" (le plus basique)><!-- dit quelle type de vue utiliser (prefix suffix. Voir plus bas viewResolver) -->
+                                                  <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver" (le plus basique)><!-- dit quelle type de vue utiliser (prefix suffix. Voir plus bas viewResolver) --> LINKvrvvrvrvr
                                                           <property name="prefix">
                                                             <value>/WEB-INF/</value>
                                                           </property>
@@ -5511,7 +5514,7 @@ Spring : XML STYLE
                                                           </property>
                                                   </bean>
                                                   OU BIEN si je veux faire des views qui renvoient autre chose: pdf, xls etc... je rajoute ça: 
-                                                   <bean id="viewResolver2" class="org.springframework.web.servlet.view.XmlViewResolver">
+                                                   <bean id="viewResolver2" class="org.springframework.web.servlet.view.XmlViewResolver"> voir aussi LINKvrvvrvrvr
                                                       <property name="order" value="1"/>
                                                       <property name="location" value="/WEB-INF/views.xml"/> ----> spring va lire ce fichier qui est: 
                                                   </bean>
@@ -5679,7 +5682,8 @@ Spring : XML STYLE
                           poincut = intersection de notre code avec le programme aspect
                           voir P34: on prog 1 aspect puis @aspect (aspecj)
                                       utile pour transactions
-                                                            mettre @Transactional devant classe ou methode // rend ma methode dans une transaction
+                                                            mettre @Transactional devant classe ou methode // rend ma methode dans une transaction LINKtranslsdfjai
+                                                                    @Transactional(rollbackFor = Exception.class, noRollbackFor = AuthWebBusinessWSException.class) // si je throw  une exception dans mon programme ca fait un rollback si c'est une autre exception de type Authmachin ca ne fait pas de rollback 
                                                             AF pourquoi mettre transactional pour readonly requettes?
                                                   loging
                                       utile pour la securite decouplee du code
@@ -5706,11 +5710,11 @@ Spring : XML STYLE
                                 {
                                   if (sierrorlorsdubiding==true) // si erreurs lors du biding 
                                   {
-                                             ModelAndView modv = new ModelAndView("leNomDeMaJsp");  grace au viewResolver (voir config spring au dessus)
+                                             ModelAndView modv = new ModelAndView("leNomDeMaJsp");  grace au viewResolver (voir config spring au dessus LINKvrvvrvrvr)
                                            return modv;
                                     }
                                   else{
-                                    ModelAndView modv = new ModelAndView("leNomDeMaJspDeMaViewEnFait");  grace au viewResolver (voir config spring au dessus)
+                                    ModelAndView modv = new ModelAndView("leNomDeMaJspDeMaViewEnFait");  grace au viewResolver (voir config spring au dessus LINKvrvvrvrvr)
                                      INUTILE GRACE A @ModelAttribute-> //modv.addObject("student",student); <- inutile.
                                                                         modv.addObject("monMessage","tataaaaa"+monparam1);
                                                                         modv.addObject("monMessage",unObjetAvecDesGetters);
@@ -5722,7 +5726,7 @@ Spring : XML STYLE
                             {
                               handleRequestInternal(Http... request , Htt... respons)
                               {
-                                ModelAndView modv = new ModelAndView("leNomDeMaJspDeMaViewEnFait");  grace au viewResolver (voir config spring au dessus)
+                                ModelAndView modv = new ModelAndView("leNomDeMaJspDeMaViewEnFait");  grace au viewResolver (voir config spring au dessus LINKvrvvrvrvr)
                                 modv.addObject("monMessage","tataaaaa");
                                 return modv; // avec le viewResolver ca va afficher du coup: META-INF/leNomDeMaJsp.jsp
                               }
@@ -6819,7 +6823,9 @@ Bouton submit non ajax:
 Hibernate : implemente jpa
 Hibernet le livre:
 exemple de fichier mapping pojo-base p10
-
+si erreur:
+        (don't flush the Session after an exception occurs) 
+            c'est parce qu'il y aune exception dans une transation et que cette exception n'est pas trowée et que du coup derriere je refais une autre requete dans cette transaction. IL faut gérer la transaction. avec LINKtranslsdfjai 
 si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from column 5 to TIMESTAMP
         il faut que je modif mes valeurs ='0000-00-00 00:00:00' en date valide 
   definition bean: getter, setter independant (pas d'extension ni d'heritage) serializable
@@ -11218,7 +11224,7 @@ utilisation du plugin assembly pour créer un zip:
                                     ${project.basedir}/assembly.xml // va analyser ce fichier
                                 </descriptor>
                             </descriptors>
-                                <finalName>${zip.name}</finalName> // nom de mon zip au final (paramétré au début du fichier pom)
+                                <finalName>${zip.name}</finalName> // nom de mon zip au final (paramétré au début du fichier pom) ou defini par -Dzip.name=toto
                                 <appendAssemblyId>false</appendAssemblyId> // pour ne pas qu'il rajoute un id à la con Linksljfggg dans le nom de mon fichier zippé
                         </configuration>
                     </execution>
@@ -11459,7 +11465,7 @@ Les goals:(appartiennent à phases) sin on veut executer mvn un_goal alors ecrir
       %M3%/mvn clean jboss:hard-undeploy -Denv=dev
 pour voir les dependances des jars, rajouter à la fin des commandes ci-dessus: dependency:tree
       exemple: %M3%/mvn clean package dependency:tree      
-pour incrementer mon projet d'une version: changer la version versionning versioning: 
+pour incrementer mon projet d'une version: changer la version versionning versioning: versionset version:set set:version 
       %M3%/mvn versions:set
       sur eclipse faire Run MavenBuild... goal=versions:set ajouter parameter newVersion=x.x.x 
             il va changer ca:
@@ -13206,15 +13212,17 @@ cygwin :
               cygwin lors de l'installation check off OpenSSH and OpenSSL. sur unix installer openssl voir https://geeksww.com/tutorials/libraries/openssl/installation/installing_openssl_on_ubuntu_linux.php
                   generer creer paire de cle sur cygwin ou sur unix voir LINK94949494
   
-Curl : voir aussi wget : pour faire une requette request http
+Curl : voir aussi wget : pour faire une requette request http doc:https://ec.haxx.se/usingcurl-writeout.html
     sur cygwin (installer dans cygwin. voir cygwin) (sous categorie Net)
 
-    get telecharger: (option -O ou -o maj min importent pas.) // ordre option importe peu et existe -V (version courte) equivalent à -vlakjdf : version longue
-            -v ou -V ou --verbose// verbose a utiliser quand ça ne marche pas.
+    get telecharger: (option -A ou -a maj min importent pas. sauf cas exceptionel comme -o et -O, -X et -x) // ordre option importe peu et existe -V (version courte) equivalent à -vlakjdf : version longue
+            -v ou -V ou --verbose// verbose a utiliser quand ça ne marche pas. attention! 
    	A faire sur une seule ligne et pas sur plusieurs car marche pas. et echapper les caractères spéciaux & ; par \
-      curl -O https://index.taskcluster/artifacts/public/deepspeech-0.1.0nux1_x86_64.whl
+    curl -O https://index.taskcluster/artifacts/public/deepspeech-0.1.0nux1_x86_64.whl // -O ne marche qu'avec des url qui renvoient un fichier dowload. ne pas mettre de param avec, il telecharge le contenu de la reponse et le depose la ou je suis direct. si -o unNomDeFichier url il recupère la reponse et la met dans unNomDeFichier 
     post json: // mettre des guillemets autour des valeurs des options si il y a des espaces dans ces valeurs. Si c'est du json mettre single quotes
-	curl -v -X POST http://localhost:8080/web/api/login --header "Content-Type: application/json" -d '{"anonymousUser":"true","uuid":"uid","appAccessKey":"mycampusapikey"}'
+	curl -v -X POST http://localhost:8080/web/api/login --header "Content-Type: application/json" -d '{"anonymousUser":"true","uuid":"uid","appAccessKey":"mycampusapikey"}' > fichieroul'outputjsonsecritdedans
+    post sans bodypayload comme un get
+    curl -v -X POST http://localhost:8080/web/api/login --header "Content-Type: application/x-www-form-urlencoded" -d 'grant_type=password&username=toto&password=titi' -H "Authorization: Basic $(echo -n codetestlaurent:hihi | base64)" // je peux appeler du bash ici et encoder/decoder en base64 (-n pour que le echo ne mette pas les retour chariot)
     pour passer par un proxy rajouter:
             -x http://le.proxy:port -U user:pwd
     post json avec headers
@@ -13228,7 +13236,9 @@ Curl : voir aussi wget : pour faire une requette request http
 	gets avec headers:
 	curl -v -X GET https://api.airfranceklm.com/opendata/offers/reference-data -H "accept: application/hal+json" -H "accept-language: en-US" -H "afkl-travel-country: NL" -H "afkl-travel-host: KL" -H "api-key: testapikey"
 	curl -v -X GET http://localhost:8080/web/api/v2/apps/mycampuscode/realtimepath/navitia/paths?physicalModes=bus\&coverage=fr-idf\&from=2.33245\;48.77469\&to=2.33245\;48.77469\&datetime=20190720T1004\&datetimeRepresents=arrival --header "X-AUTH-TOKEN:eyJpZCI6bnVsbCwidXVpZCI6InVpZCIsImFub255bW91c1VzZXIiOnRydWUsInVzZXJMb2dpbiI6IkFub255bW91c1VzZXIiLCJ1c2VyRW1haWwiOm51bGwsImV4cGlyZXMiOjE1NjQwMzk0MDY1OTAsImFwcENvZGUiOiJteWNhbXB1c2NvZGUiLCJhcHBBY2Nlc3NLZXkiOm51bGwsInZlbG9Vc2VyIjpmYWxzZSwibXdhVXNlciI6ZmFsc2UsInJvbGVzIjpbIlJPTEVfQVBQIl19.KVUcP3cOD3aLJzNJeua+BZR3MNQBdUktyRUag7V5/dg="
-
+     -L pour que si le serveur renvoit une redirection il la suivre direct
+     -c pour ecrire les cookies -d ou b ? pour les stocker... ATERMINER
+     -w "totocequejeveux %{unevariablequim'estrenvoyéeparleserveur (voir la doc pour la liste des variables)}" > jepeuxecrireleresultatdansunfichier.txt        
 certificats : certificat : formats: types
                               Échange d’informations personnelles (PKCS #12)  (.pfx ou .p12)
                                     Le format d’échange d’informations personnelles (PFX, également appelé P12) prend en charge le stockage sécurisé des certificats, des clés privées et de tous les certificats d’un chemin d’accès de certification.
@@ -15281,7 +15291,7 @@ cookies :
                                       		final String cookieDomain = getCookieDomain();
                                       		Cookie cookie = new Cookie(name, value); //exemple: ("bla,"bli");
                                       		cookie.setPath(cookiePath);
-                                      		//cookie.setSecure(httpRequest.isSecure()); //.isSecure() renvoit true si on est en https 
+                                      		//cookie.setSecure(httpRequest.isSecure()); //.isSecure() renvoit true si on est en https. setsecure n'envoie le cookie a travers le reseau que si on est en https 
                                       		cookie.setSecure(true); //setSecure: le cookie n'est transmis sur le reseau que si on est en https LINKlizifoizf
                                       		cookie.setHttpOnly(httpOnly); //javascript n'a pas acces au cookies
 letsencrypt :
@@ -15360,7 +15370,8 @@ condidentialite/authenticite/non-repudiation=integrite(non modifie sur reseau) H
               cryptage: (voir aussi openssl)
                   cryptage AES avec generation de cle etc etc...
                       voir article http://java.sun.com/developer/technicalArticles/Security/AES/AES_v1.html                                                            
-si j'ai l'erreur: unable to find valid certification path to requested target. Pour bypasser ignorer le trust handshake ssl:
+si j'ai l'erreur: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target et ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: 
+            Pour bypasser ignorer le trust handshake ssl: ou bien installer le certificat dans le truststore
             	String accesspoint = "https://ipam.intra.renault.fr/interfaces/ws.php";
              // Les lignes suivantes permettent d'ignorer un certificat SSL errone.(ou pas voir ci dessous). SI je m'en fous de la securite:
               TrustManager[] tms = new TrustManager[0];
@@ -16168,7 +16179,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
           <version>1.10.19</version>
           <scope>test</scope>
       </dependency>
-		@InjectMocks
+		@InjectMocks // facultatif Mock peut marcher sans.
 		private RealTimePathCoverageController realTimePathCoverageController = new RealTimePathCoverageController(); // equivalent de @Tested dans jmockit : c'est une classe a tester dans laquelle je peux injecter des mocs LINKpourquecamarcheFairemokito
 		@Mock private RestTemplate restTemplate; // (peut etre une classe ou une interface) mock qui sera injectée dans RealTimePathCoverageController.
 			@Before
@@ -16188,7 +16199,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
 				Mockito.doReturn(toto).when(rd).getLaMethodeResult("1"); // retourner toto quand on execute resultdao.getResult("1");
 				WelcomeController wc = new WelcomeController(rd);
 				wc.getDisplayResult("1", "1","10:00", "10/10/2016");
-                verifier qu'un mock a été appelé par une methode x fois:
+                validation verifier qu'un mock a été appelé par une methode x fois:
                         verify(userDetailDAOMock, times(2)).laMathodeDuMock(any(UserDetailsEntity.class));
 cucumber : il fait ce que fait junit mais permet à des non techniciens de comprendre les tests.LINKcucumberldfj 
       Feature: action globale
@@ -17501,7 +17512,7 @@ extenaliser la config log4j:
       web.xml:
           <context-param>
             <param-name>log4jConfigLocation</param-name>
-            <param-value>file:D:/RD/conf/log4j.properties</param-value>
+            <param-value>file:D:/RD/conf/log4j.properties</param-value> ou <param-value>classpath:appConf/front_log4j.xml</param-value> et ajouter le classpath avec -D
         </context-param>
         <context-param>
             <param-name>log4jRefreshInterval</param-name>
@@ -20599,6 +20610,10 @@ private boolean contientCommentStart(String ligne) {
                             (?<=X) 	X, via zero-width positive lookbehind
                             (?<!X) 	X, via zero-width negative lookbehind
                             (?>X) 	X, as an independent, non-capturing group
+                pour valider un format de mail par regexp:
+                    public boolean checkEmailFormat(String email) {
+                        if (email.matches(".+@.+\\..+")) return true;
+                return false;
 conversions : convertir : conversion :
 pour convertir un set en arraylist
       List<Criteria> mainList = new ArrayList<Criteria>();
@@ -22528,7 +22543,7 @@ Pour ecrire des lignes dans un fichier:
 // AVANT: mais pb encodage ci-dessous
 //creation ou ajout dans le fichier texte
 		try {
-		// attention fileWriter et FileReader utilisent l'encodage du systeme!!! donc pas bon!
+		// attention fileWriter et FileReader utilisent l'encodage du systeme!!! donc pas bon! à la place faire : new InputStreamReader(new FileInputStream(monFile), Charset.forName("UTF-8"))
 			FileWriter fw = new FileWriter (fichier);
 			BufferedWriter bw = new BufferedWriter (fw);
 			PrintWriter fichierSortie = new PrintWriter (bw); 
@@ -23310,6 +23325,7 @@ pour lire un fichier csv utiliser la librairie opncsv-4.6.jar avec la class CSVR
                                                     <version>4.6</version>
                                                   </dependency>
               CsvToBeanBuilder en utilisant des beans annotés exemple: List<UserCSV> beans = new CsvToBeanBuilder(reader).withType(UserCSV.class).withSeparator(';').build().parse();
+                            avec au dessus des champs de la classe: @CsvBindByName
         avant:
 			private CSVReader csvReadingFile(FileInputStream fileInputStream) {
 			CSVReader csvReader = null;
@@ -23887,8 +23903,6 @@ La commande utilisee pour creer les fichiers ISO sous unix est:
   apres avoir fait "dmt &" faire vmstat 2 pour garder la session (2 pour rafficher toutes les deux secondes)
   vmstat: la consomation cpu se lit sous cpu et sous us + sy
   & le et commercial sert à  lancer la thread en tache de fond sous unix
-  les alias sous unix: exemple: alias ll = 'ls -l' ou bien alias ll="ls -l"
-  supprimer l'alias: faire unalias nomdel'alias
   quelle est ma version type de linux:
       cat /etc/*-release
       et/ou
@@ -23988,20 +24002,21 @@ pour seter setter les variable d'environnement sur unix linux
               if [ -f ~/.bash_aliases ]; then
                 . ~/.bash_aliases
               fi
-
+les alias sous unix: exemple: alias ll = 'ls -l' ou bien alias ll="ls -l"
+  supprimer l'alias: faire unalias nomdel'alias
+    pour voir la liste des alias, tapper alias (permet de voir les raccourcis de commandes)
+    pour voir le detail d'un alias: alias nomalias
+    pour faire des alias persistants: 
+      vi ~/.bash_alias (ce dernier est charge par ~/.bashrc qui contient) LINKç'(ç')
+          alias gototemplate='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/' // pour echapper les espaces : alias gotoapprentissage="cd \"/c/Users/Mes documents/apprendre\""
+          alias gotocss='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/css'
+          alias gotomodule='cd /var/www/www.wenhuaduverge.com/shop/module'
+      puis vi ~/.bashrc
+          if [ -f ~/.bash_aliases ]; then
+            . ~/.bash_aliases
+          fi
     
 dans /usr/bin noramlement (on peut retrouver dans les variables d'environnement) on voit tous les programmes que le user peut utiliser (.exe) (les commandes)
-pour voir la liste des alias, tapper alias (permet de voir les raccourcis de commandes)
-pour voir le detail d'un alias: alias nomalias
-pour faire des alias persistants: 
-  vi ~/.bash_alias (ce dernier est charge par ~/.bashrc qui contient) LINKç'(ç')
-      alias gototemplate='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/' // pour echapper les espaces : alias gotoapprentissage="cd \"/c/Users/Mes documents/apprendre\""
-      alias gotocss='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/css'
-      alias gotomodule='cd /var/www/www.wenhuaduverge.com/shop/module'
-  puis vi ~/.bashrc
-      if [ -f ~/.bash_aliases ]; then
-        . ~/.bash_aliases
-      fi
 pour recharger un environnement faire cd . (la il y a des fichiers environnement(faire ls -tral pour voir tout) dont le nom est par ex: .env_machin) puis . .env_machin ou . ./.env_machin
 pour verifier que "truc" est bien dans l'environnement faire: env | grep truc
 compter le nombre de lignes dans un fichier:
@@ -24670,6 +24685,11 @@ Remplacement de chaine1 (toutes les occurrences de chaine1) ,par chaine2 depuis 
 pour transformer la case: MAJ -> MIN ou l'inverse: altGR + ~
 
 bash :KSH :
+encoder en base64
+    echo -n blablablba | base64 // -n pour ne pas que echo retourne un retour chario a la fin
+parser du json avec unix: installer jq
+        puis 
+            jq .unparamettre unfichiercontenantdujson.json   // si dans mon fichier j'ai {"unparametre":"toto"} va retourner toto
 		pour faire une boucle loop
 			for projet in blabla blibli bloblo
 					do
@@ -25294,8 +25314,8 @@ utiliser sur maven:
                     <jboss-home>C:/wildfly/wildfly-17.0.0.Final</jboss-home> // avoir installé wildfly au préalable
                     <modules-path>C:/wildfly/wildfly-17.0.0.Final/modules</modules-path>
                     <port>9990</port>
-                    <javaOpts>  // pour pouvoir débugger rajouter ça et voir LINKoizeurzotie
-                        <javaOpt>-agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n</javaOpt>
+                    <javaOpts>  
+                        <javaOpt>-agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n</javaOpt> // pour pouvoir débugger rajouter ça et voir LINKoizeurzotie 
                     </javaOpts>
                 </configuration>
             </plugin>
@@ -25313,7 +25333,7 @@ pour utiliser le plugin maven tomcat: Si ça marche:-). voir dessous: pas reussi
           <systemProperties>
             <example.value.1>alpha</example.value.1>
             <example.value.2>beta</example.value.2>
-                <JAVA_OPTS>-Xms256m -Xmx512m -XX:MaxPermSize=256m -Djavax.net.ssl.trustStore="${basedir}/src/main/config/dev/truststore.jks" -Djavax.net.ssl.trustStorePassword=truststore  -Dhttp.proxyHost=10.245.1.47 -Dhttp.proxyPort=8080 -Dhttps.proxyHost=10.245.1.47 -Dhttps.proxyPort=8080 -Dhttp.nonProxyHosts=localhost</JAVA_OPTS>
+                <JAVA_OPTS>-Xms256m -Xmx512m -XX:MaxPermSize=256m -Djavax.net.ssl.trustStore="${basedir}/src/main/config/dev/truststore.jks" -Djavax.net.ssl.trustStorePassword=truststore  -Dhttp.proxyHost=10.245.1.47 -Dhttp.proxyPort=8080 -Dhttps.proxyHost=10.245.1.47 -Dhttps.proxyPort=8080 -Dhttp.nonProxyHosts=localhost</JAVA_OPTS> Si la conf proxy ne marche pas là je peux mettre les "-D" dans l'execution de la commande maven ca marche
           </systemProperties>
           <url>http://localhost/</url> // facultatif. ce sera http://localhost par defaut. Si je le met comme ca l'url sera http://localhost(:8080)/nom_apres_http:lePortCiDessous/manager ou si externe c'est l'URL console-admin du tomcat externe
           <server>my-tomcat</server> // facultatif sert d'identifiant qu'on retrouve dans settings.xml pour definir le user/password de l'admin/manager du serveur tomcat si on utilise un serveur non embedded. dans settings.xml: <settings>...<servers>...<server><id>myserver</id><username>myusername</username><password>mypassword</password></server>...</servers>
@@ -25323,7 +25343,7 @@ pour utiliser le plugin maven tomcat: Si ça marche:-). voir dessous: pas reussi
           <tomcatUsers>D:/Dev/apache-tomcat-7.0.61/conf/tomcat-users.xml</tomcatUsers> // facultatif
           <additionalClasspathDirs> // pour ajouter des fichiers de conf lus par mon application dans le classpath comme si elles etaient dans le resources ressources
 						<additionalClasspathDir>${basedir}/src/main/config/dev/appConf</additionalClasspathDir>
-						<additionalClasspathDir>${basedir}/src/main/config/wording</additionalClasspathDir>
+						<additionalClasspathDir>${basedir}/src/main/config/wording</additionalClasspathDir> LINKoizeurzotie // pour debugger avec tomcat et intellij il suffit juste d'executer le maven à droite en mode debug et ça marche.
 		  </additionalClasspathDirs>
         </configuration>
         <dependencies>         // si mon tomcat a besoin d'un driver ou d'une autre librairie dependance dependence
@@ -26295,7 +26315,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                       /*      xhr.onreadystatechange = onStateChange; 
                               xhr.setRequestHeader("Content-Type", "multipart/form-data"); 
                               ou
-                              xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); Si on ne veut pas que notre formulaire puisse envoyer des fichiers: on recupere que les parametres string. 
+                              xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); Si on ne veut pas que notre formulaire puisse envoyer des fichiers: on recupere que les parametres string. x-www-form-urlencoded c'est un post qui envoie les paramtres à la façon d'un get 
                               et
                               xhr.setRequestHeader("X-File-Name", file.fileName);
                               xhr.setRequestHeader("X-File-Size", file.fileSize);
@@ -27122,6 +27142,11 @@ pour acceder au filesystem:
          opt_errorCallback(errorHandler est la methode appellee)
       );
       voir cet article:http://www.html5rocks.com/en/tutorials/file/filesystem/
+pour faire un bouton boutton buton button de facon plus efficace:
+        				<button type="button ou reset ou submit" id="importCSVBtn" onclick="csvFileBrowse()" class="btn btn-primary" >
+        					<i class="fa fa-file-excel-o fa-fw"></i>
+        					CSV
+        				</button>
 pour enregistrer avec le micro: (NON pas encore comme ci dessous! utiliser recorder.js)
             <input type="button" value="R" onclick="record()">Demarrer l'enregistrement audio</input>
             <input type="button" value="S" onclick="stoprecord()">Stope l'enregistrement audio</input>
@@ -27726,8 +27751,10 @@ pour setter le name l'attribut la propriete d'un element tag html:
 generer une image à la volee:
         var img=new Image();
        img.src="clearmute.png";
-pour faire un onchange en javascript: upload de fichier: 
+pour faire un onchange en javascript: upload de fichier: bouton parcourir: 
         <input name="files" class="modifier" id="files" onchange="createProject.handleFileSelect(this)" onclick="this.value=null;" type="file" accept="*/*" /> //onclick="this.value=null" c'est pour permettre de rechoisir le meme fichier à uploader
+                    accept= peut etre:
+                                .jpg,.pdf,.doc,audio/*,video/*,image/*,.csv ou */* pour tout type.
         ou
         elSel.onchange=function(){setSilencesInverseToActorDelimited(actor, this.value, document.getElementById("startFlag").value, document.getElementById("stopFlag").value );};
         ou 
@@ -31558,7 +31585,7 @@ renommer un repertoire en un autre :
         keepass
     logiciel analyseur de sons audio detail infos: 
         gspot       
-raccourci creer un nouveau dossier: ctrl+shift+n
+raccourci creer un nouveau dossier repertoire: ctrl+shift+n
 window+x ouvre des options de luminosité
 impression ecran: 
         alt+impressionecran copie que la fenetre active. Sinon on peut utiliser Greenshot
@@ -31745,6 +31772,7 @@ paint :
     pour que la selection soit transparente transparante
         bouton selectionner> choisir transparant
 Excell : excel :
+    inserrer la date: ctrl+;
     si sur exell il me marque toujours #VALEUR! verifier qu'il n'y a pas d'espace dans les cases que j'ai selectionne pour faire mon calcul.
   figer les volets Affichage > figer les volets
 pour masquer le quadrillage lignes, colonnes:
@@ -32640,3 +32668,4 @@ seo :
 virtualbox : virtuabox :virtual box : virtual machine
     les .iso sont sur les sites ubuntu,debian... etc...
   lancer vbox> nouveau> creer un disque dur virtuel now > creer > config > stockage > ide > choisir un fichier .iso super important de faire ca avant pour toute installation de vm sinon la vm n'a pas de reseau      
+
