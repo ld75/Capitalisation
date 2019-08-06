@@ -2105,7 +2105,7 @@ Cycle de vie du bean:
               – @RequestScoped // a mettre absolument sur un webservice utilisant jwt car les claims jwt sont naturelement request-scopeds. LINKkgkgkgklkjsdfljqi
               – @SessionScoped
               – @ApplicationScoped // (par defaut) sur la classe. le bean est utilise pourl es proprietes generales de l'appli: ex: listes deroulantes qu'on voit tout le temps
-                                            @Singleton // peute etre sur classe meme un webservice. attention ne fait pas partie de la spec CDI mais de EJB. Va de paire avec @Startup. utiliser plutot @ApplicationScoped je crois... mais singleton et statup marchent bien.
+                                            @Singleton // peute etre sur classe meme un webservice. attention ne fait pas partie de la spec CDI mais de EJB. Va de paire avec @Startup. utiliser plutot @ApplicationScoped je crois... mais singleton et statup marchent bien. LINKsngletn
                                             @Startup // a mettre sur une classe. s'execute au demarrage ne fait pas partie de la spec CDI mais de EJB
               – @ViewScoped
               – @CustomScoped pour que les beans soient stockees dans le FacesContext (qui a une duree de vie plus courte que RequestScope donc FC est plus rapide, bouffe moins de memoire)
@@ -2172,7 +2172,7 @@ securite :(JSR375) plus besoin d'utiliser web.xml: les annotations font pareil.
                                                         }
                             )
             @DeclareRoles({ "role1", "role2bar", "kaz" }) //roles renvoyés par la database. peut etre mis sur classe ou methode(override classe alors) //PASCLAIR
-            public class Servlet extends HttpServlet {
+            public class MaServlet extends HttpServlet {
             
             
             
@@ -2966,17 +2966,33 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
               </dependency>
     envoyer faire une requette http à un webservice SEULEMENT. ne marche pas pour les servlets: utile pour les tests d'integration:
         Client client = ClientBuilder.newClient();
-        WebTarget target = client.target("http://localhost:9990") //FINURLENLEVEEXPRES attention ne pas utiliser les variables mais enchainer les points comme ci dessous target().path().request().get....
-        .path("/backoffice/resources/ping/echo/glk");
-        Invocation.Builder invokationBuilder = target.request(MediaType.APPLICATION_JSON_TYPE); // ou MediaType.APPLICATION_XML.(soap)..
-        invokationBuilder.get();
-        invokationBuilder.get(MaClassePartageeParLes2WebServices.class);
-        Response response = invokationBuilder.post(Entity.entity(maclasseAPoster,MediaType.APPLICATION_JSON_TYPE);
-        ou
-        Response response = invokationBuilder.get();
-        puis 
-        response.readEntity(String.class ou UneEntity.class)
-        Assert.assertEquals(java.net.HttpURLConnection.HTTP_CREATED,response.getStatus());
+        en mode synchrone:
+              WebTarget target = client.target("http://localhost:9990") //FINURLENLEVEEXPRES attention ne pas utiliser les variables mais enchainer les points comme ci dessous target().path().request().get....
+              .queryParam("bli","blah")
+              .path("/backoffice/resources/ping/echo/glk")
+              .request()
+              .accept("application/json")
+              .header("foo","bar")
+              .get(...) ca ou bien ci dessous
+              Invocation.Builder invokationBuilder = target.request(MediaType.APPLICATION_JSON_TYPE); // ou MediaType.APPLICATION_XML.(soap)..
+              invokationBuilder.get();
+              invokationBuilder.get(MaClassePartageeParLes2WebServices.class);
+              Response response = invokationBuilder.post(Entity.entity(maclasseAPoster,MediaType.APPLICATION_JSON_TYPE);
+              ou
+              Response response = invokationBuilder.get();
+              puis 
+              response.readEntity(String.class ou UneEntity.class)
+              Assert.assertEquals(java.net.HttpURLConnection.HTTP_CREATED,response.getStatus());
+        en mode asynchrone:
+              WebTarget target = client.target("http://localhost:9990/url/en/entier");
+              Future<MachinTruc> = target.request(MediaType.TEXT_PLAIN)
+              .async().get(new InvocationCallback(MachinTruc machintruc)
+                              {
+                                @Override
+                                public void completed(MachinTruc machintruc){...}
+                                @Override
+                                public void failed(Throwable th){...}
+                              }     
     une classe webservice :(karaf par ex) rest
       LINK93029
       @Path("/xxxxx")
@@ -3018,7 +3034,7 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
                     
                         @Override
                         public void filter(ContainerRequestContext containerRequestContext) throws IOException {
-                            SecurityContext originalContext = containerRequestContext.getSecurityContext(); // specifique jaxrs securitycontext est quelquepart dans la requete
+                            javax.ws.rs.core.SecurityContext originalContext = containerRequestContext.getSecurityContext(); // specifique jaxrs securitycontext est quelquepart dans la requete. ne s'applique pas pour les servlets
                             (...)
                             containerRequestContext.setSecurityContext(new Authorizer(claims, originalContext.isSecure())); //du coup on pourra faire LINKoooooooog
                           } catch (Exception e) {
@@ -3259,6 +3275,7 @@ eventsource :sse(server-sent-event) autre alternative aux websocket mais ca ne f
         @GET
         @Produces(MediaType.SERVER_SENT_EVENTS)
         public void register (@Context Sse sse, @Context SseEventSink eventSink){
+        methode 1:
             this.sse=sse;
             if (broadcaster == null){
               this.broadcaster = sse.newBroadcaster();}
@@ -3269,6 +3286,10 @@ eventsource :sse(server-sent-event) autre alternative aux websocket mais ca ne f
         public void beat(){
           this.broadcaster.broadcast(this.sse.newEvent("time:"+localTime.low(à.toString()))
         }
+        methode2:
+            eventSink.send(sse.newEvent("blabla"));
+            eventSink.send(sse.newEvent("blibli"));
+            eventSink.close();
     et voir coté javascript sur MDN: EventSource 
 jwebsocket : (Web Socket) faire un chat : 
   declarer  JWEBSOCKET_HOME vers D:\LocalData\p036782\jWebSocket-1.0
@@ -19213,7 +19234,7 @@ javaUnsupported major.minor version 51.0
       Java SE 5.0 = 49 (0x31 hex)
 immutable : objet ne pouvant pas etre modifie apres l'avoir cree: c mieux de faire un update sur des objets mutables car ca consomme moins que si on recree de nouveaux objets immutables. Mais c'est threadsafe de travailler avec des immutable donc si pas d'updates prevus: mettre final sur les proprietes de mon objet pour qu'il soit immutable
 les objets statiques sont partages par tous les objets dans la jvm à conditions que les programmes utilisent le meme classloader dans la jvm
-singleton : dès java 7, 8(je crois)
+singleton : dès java 7, 8(je crois) voir surtout LINKsngletn
          est threadsafe: (donc il est implicitement volatile non?)
          public class Singleton
           {		
