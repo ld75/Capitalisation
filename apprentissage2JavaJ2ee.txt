@@ -1043,6 +1043,7 @@ ajouter une dependence un pluggin dans le pom: alt+insert
 pour voir les stats (nombre de lignes de code etc...) charger le plugin de statistiques https://plugins.jetbrains.com/plugin/4509-statistic: on voit tout en bas une nouvelle icone pour les afficher   
 creer un bookmark flag tag ctrl+f11. Acceder à ce bookmark trouver: ctrl+chiffredubookmark. Ensuite editer la note du bookmark:shift+f11 puis Ctrl+entree sur le bookmark  
 supprimer les bookmarks: shift+f11 (j'ai le choix)
+si erreur  Error:java: invalid target release: 10 : file>settings...>build>java compiler>choisir la bonne version
 si erreur Error connecting to 127.0.0.1:51924; reason: Error:failed to create a child event loop
     redémarrer pc
 Piege: pour ajouter des jars dans le classpath: il ne faut pas ajouter les repertoires directories directorys contenant les jars mais directement les jars
@@ -2091,7 +2092,7 @@ PRG :
                     DELETE: ne fait que supprimer un data du système. Peut etre async. voir LINKcodesHttp 20x 
           
 
-J2EE : jee : javaee : EE4J : jakartaee : https://github.com/eclipse-ee4j/jakartaee-tutorial-examples et https://github.com/eclipse-ee4j/jakartaee-tutorial
+J2EE : jee : jee8 :javaee : EE4J : jakartaee : https://github.com/eclipse-ee4j/jakartaee-tutorial-examples et https://github.com/eclipse-ee4j/jakartaee-tutorial
 cdi :CDI2.0 (JSR365) pas besoin d'utiliser weld (je crois) lire https://docs.jboss.org/cdi/learn/cdi_2/slides.html
 CDI1.x besoin de weld
         <dependency>
@@ -2145,9 +2146,11 @@ securite :(JSR375) plus besoin d'utiliser web.xml: les annotations font pareil.
         @AutoApplySession // si je veux que quand il s'authentifie ca crée une session http
         @LoginToContinue //pour un FORM login seulement: sert à definir loginpage, loginerrorpage etc...
         @RememberMe //Comme le bouton se souvenir de moi (AFAIRE)       
-       HttpAuthenticationMechanism interface role: gère token d'authentification. Une seule classe doit exister par appli. sous classe doit être Bean. Bean automatiquement appelé par le container pour l'authent
-       |                    |
-       MaCustomClasse   ou   @BasicAuthenticationMechanismDefinition ou @FormAuthenticationMechanismDefinition ou @CustomFormAuthenticationMechanismDefinition a mettre en chapeau sur la classe.
+       HttpAuthenticationMechanism interface role: gère token d'authentification. Une seule classe doit exister par appli donc l'annoter @ApplicationScoped. sous classe doit être Bean. Bean automatiquement appelé par le container pour l'authent
+       |                    
+       |tout customiser----__ou bien utiliser les annotations
+       |                     \________________________________________________________________________________________________
+       MaCustomClasse                                                                                                         @BasicAuthenticationMechanismDefinition;@FormAuthenticationMechanismDefinition;@CustomFormAuthenticationMechanismDefinition
        METHODE Importante: validateRequest() que je dois implémenter Les 2 autres c facultatif
                               Fait appel à->IdentityStoreHandler(Je peux le reecrire moi même)->fait appel à tous les->
                             
@@ -2184,7 +2187,7 @@ securite :(JSR375) plus besoin d'utiliser web.xml: les annotations font pareil.
 backend 
 du code java pour aller afficher une page html sans rien faire de special
   res.setContentType("text/html");
-  res.setHeader("pragma", "no-cache");
+  res.setHeader("pragma", "no-cache"); LINKcachehttp
   ServletOutputStream out = res.getOutputStream();
   TemplateContext context = new ProxyBundle();
   context.setOutputStream(out);
@@ -4045,7 +4048,7 @@ compatibilite:
         }
         
 selecteur: LINKcsslkhkhkhkhkh
-  !important // signifie qu'il est prioritire il prend la precedence override tout
+  !important // signifie qu'il est prioritire il prend la precedence override tout exemple: display:none !important;
   espacement des caractères
        letter-spacing: 6px;
    espacement des lignes
@@ -4431,7 +4434,7 @@ pour centrer direct:
   flexboxes : flex :flex-boxes :   // genial car peut etre complettement independant de la source html!
   .parent
   {
-    display: flex; // si les fils sont des images, TOUJOURS les mettre dans des divs chacune
+    display:flex; // si les fils sont des images, TOUJOURS les mettre dans des divs chacune
     justify-content: center; ou flex-start ou flex-end (gauche ou droite) ou space-between (equidistants)  ou space-around (espace au bord)
     align-content: center; ou flex-start ou flex-end (bas ou haut) ou stretch (fils prend toute la hauteur)
     align-items:center ou...// pour l'alignement du contenu verticallement
@@ -12641,6 +12644,8 @@ notepad++ :
     accolade correspondante: Ctrl+B
     
 PSPAD :
+indenter automatiquement autoindent 
+    si c'est du html: html>reformater code html 
 backups: back: menu >parametres>parametres du programme>sauvegarde
 pour selectionner en mode colonne (sans cliquer sur l'icone qui des fois ne marche pas)
     alt + selection avec souris. refaire une selection sans alt revient à l'état normal de selection
@@ -23575,7 +23580,7 @@ import/export run configuration possible
 show in package explorer:  
         Alt+shift+w
 si j 'ai l'erreur "please ensure you are using jdk... "
-        il faut utiliser une jdk au lieu d'une jre: windows>preferences>installed jre : mettre une jdk et aussi dans run > run configuration> > jre
+        il faut utiliser une jdk au lieu d'une jre: windows>preferences>installed jre: mettre une jdk et aussi dans run > run configuration> > jre
 si j'ai eclipse edit source lookup path source not found lors du debuggage:
   peut etre ajouter -DdownloadSources=true après commande maven
   puis
@@ -24977,9 +24982,9 @@ rsync :
                       rsync -vru --exclude 'target' --exclude 'Test' --exclude '.metadata' --exclude '.settings' --exclude 'sons' --exclude 'temp' --exclude '*.log*' --exclude 'gen' --exclude 'bin' --exclude '*.jar' --exclude 'mmcl' --exclude '*.mp4' --exclude '*.ogv' --exclude '*.webm' --exclude 'Mbrola' /cygdrive/c/wamp/www/ /cygdrive/f/www
                       rsync -vru  /cygdrive/c/Users/Laurent/AndroidStudioProjects /cygdrive/f/AndroidStudio4
                       rsync -vru --exclude '.metadata' --exclude 'target' /cygdrive/c/Users/Laurent/Documents/workspaceJava8/ /cygdrive/f/workspaceJava8
-                  Du server (tout vers F)
->CELUI LA A FAIRE>>>serve03      rsync -avur --exclude proc --exclude tmp --exclude sys --exclude www.wenhuaduverge.comOLD --exclude www.wenhuaduverge.comORIGIN --exclude .git root@www.wenhuaduverge.com:/ /cygdrive/f/BackupServer03_20171126
->CELUI LA A FAIRE>>>serve03      rsync -avurn --exclude .git root@www.wenhuaduverge.com:/srv/datadisk03/www/www.wenhuaduverge.com /cygdrive/f/BackupServer03_20171126/srv/datadisk03/www
+                  Du server (tout vers E)
+>CELUI LA A FAIRE>>>serve03      rsync -avur --exclude proc --exclude tmp --exclude sys --exclude www.wenhuaduverge.comOLD --exclude www.wenhuaduverge.comORIGIN --exclude .git root@www.wenhuaduverge.com:/ /cygdrive/e/BackupServer03_20190805
+>CELUI LA A FAIRE>>>serve03      rsync -avurn --exclude .git root@www.wenhuaduverge.com:/srv/datadisk03/www/www.wenhuaduverge.com /cygdrive/e/BackupServer03_20171126/srv/datadisk03/www
 >CELUI LA A FAIRE>>>demeter      rsync -vru root@95.142.162.203:/var/www/www.memoclap.com /cygdrive/d/backupsDemeterMemOclap
 >CELUI LA A FAIRE>>>demeter      rsync -vru --exclude 'sons' --exclude 'www.wenhuaduverge.com' --exclude 'var/tmp/php' --exclude '*jar' root@95.142.142.203:/ /cygdrive/f/backupsDemeter/BackupServeurGandiDemeter20171229
                     demetersuite rsync -vru --exclude 'sons' --exclude 'www.wenhuaduverge.com' --exclude 'var/tmp/php' --exclude '*jar' root@95.142.142.203:/srv/data/var/www /cygdrive/f/backupsDemeter/BackupServeurGandiDemeter20171229/srv/data/var/www
@@ -25456,7 +25461,7 @@ definir le contexte pour les images avec maven: LINKlrroqlkjqdflmh
             par
             <init-param>
               <param-name>cacheControl</param-name>
-              <param-value>no-store,no-cache,must-revalidate</param-value>
+              <param-value>no-store,no-cache,must-revalidate</param-value> LINKcachehttp
             </init-param>
   cd /opt/jetty
   (les webapps sont sous /opt/jetty/webapps)
@@ -26271,7 +26276,7 @@ pour empecher le cache :
       <meta http-equiv="expires" content="0" />content doit etre une date. Si on met 0 ca veut dire que c'est passé
       ou
       <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
-      <meta http-equiv="pragma" content="no-cache" />
+      <meta http-equiv="pragma" content="no-cache" /> 
       autre methode radicale: renommer ses fichiers et changer ses liens ex: memoclap20131901.js 
   pour interpreter le html 
     le mettre entre les balises <pre></pre>
@@ -28788,7 +28793,7 @@ METHODE CLASS: THEBEST? classes es6
                                                                 LINKrmvEvntListner: this.shadowRoot.querySelector("slot").addEventListener('slotchange', this.changeHtml.bind(this),false);
                                                             }//fin de constructor.
                                                                   et  LINKrmvEvntListner suite: changeHtml(e)
-                                                                    {
+                                                                    {                   peut etre necessaire de differer l'execution ci-dessous avec un timer si les childs sont aussi des customs elements car dans ce cas this.innerHTML ="...rien..." pendant un court instant
                                                                         this.shadowRoot.querySelector("slot").parentNode.replaceChild(this.shadowRoot.querySelector("slot").cloneNode(false), this.shadowRoot.querySelector("slot"));
                                                                         this.contenu =this.innerHTML;
                                                                         this.innerHTML=this.contenu.substring(0,10)+"<a href='console.log(\"haha\");'>Suite...</a>"; // l'eventlistner n'existant plus on a plus une loop infernale
@@ -28888,6 +28893,10 @@ METHODE CLASS: THEBEST? classes es6
     })(window, document);
     </script>
 PWA : progressive webapps :
+        debugger sur chrome avec devtool>network>slow 2G 
+                  bypass for network : ignore complettement le serviceworker
+                  no throttleling ca veut dire ne frene pas le reseau pour simuler.
+                  la roue denté c'est une requete serviceworker -> serveur
         pour que mon appli web puisse devenir appli mobile:
         index.html:
         <head>
@@ -32220,73 +32229,7 @@ prestashop :
                                                                                                             -- and ps_product.reference like 'AW15YP6'
                                                                                                                           group by ps_product_attribute.id_product_attribute
                                                                                                             order by ps_product.reference, ps_product_attribute.id_product,ps_product_attribute.id_product_attribute
-
-
-
-        
-
-pourwenhuanewsletter :
-    copie ancien texte ancien mail dans nouveau mail 
-    placer images powerpoint sur serveur
-    inserer>image decocher case joindre image au mail
-
-                  <div align="center"><a href="http://www.lescuriositesdaurel.com/wenhua-duverge-rencontre-avec-une-styliste-ecolo-chic/">
-                        <img alt="WENHUA DUVERGe - La styliste ecolo-chic !! - Les Curiosites d'Aurel" title="WENHUA DUVERGe - La styliste ecolo-chic !! - Les Curiosites d'Aurel" src="http://www.wenhuaduverge.com/shop/img/NewsLetter/BlogCuriositeDAurel3.jpg"  moz-do-not-send="true" width="100%">
-                        </a></div>
-                        
-                        <div align="center"> <big>-15% suppl dès 3 articles achetes ce weekend!<br>
-                          <br>
-                        </big><a href="http://www.wenhuaduverge.com"><img alt="newsletter-soldes! -15% suppl des 3 articles achetes
-                          ce weekend!" title="newsletter-soldes! -15% suppl des 3 articles
-                          achetes ce weekend!"
-                          src="http://www.wenhuaduverge.com/shop/img/NewsLetter/Solde15.jpg"
-                          moz-do-not-send="true"></a></div>
-                          
-                          
-                      <div align="center"> <big><a style="color:black"
-                      href="http://www.lescuriositesdaurel.com/wenhua-duverge-rencontre-avec-une-styliste-ecolo-chic/" title="Blog Les Curiosites d'Aurel - Wenhua Duverge la styliste ecolo-chic">Suivez
-                            les Curiosites d'Aurel - decouvrez le monde de Wenhua Duverge la
-                            styliste ecolo-chic.</a><br>
-                          <br>
-                        </big><a href="http://www.wenhuaduverge.com"><img alt="Soldes ecochic,
-                            Nouvelle demarque !" title="Soldes ecochic, Nouvelle demarque !"
-                            src="http://www.wenhuaduverge.com/shop/img/NewsLetter/soldeecochics.jpg"
-                            moz-do-not-send="true"></a></div>
-                          
-                              <div align="center"> <big><a style="color:black"
-                              href="http://www.lescuriositesdaurel.com/wenhua-duverge-rencontre-avec-une-styliste-ecolo-chic/"
-                                    title="Blog Les Curiosites d'Aurel - Wenhua Duverge la styliste
-                                    ecolo-chic">Suivez les Curiosites d'Aurel - decouvrez le monde de
-                                    Wenhua Duverge la styliste ecolo-chic.</a><br>
-                                  <br>
-                                </big> <a href="http://www.wenhuaduverge.com"><img alt="3e demarque !
-                                    Jusqu'à -60%. N'attendez plus !" title="3e demarque ! Jusqu'à
-                                    -60%. N'attendez plus !"
-                              src="http://www.wenhuaduverge.com/shop/img/NewsLetter/soldeecochics3.jpg"
-                                    moz-do-not-send="true"></a></div>
-
-                                <div align="center"> <a href="http://www.wenhuaduverge.com/shop/zh"><img
-                                src="http://www.wenhuaduverge.com/shop/img/NewsLetter/soldeEshop.jpg"
-                                      moz-do-not-send="true"></a></div>
-
-
-                                      avec Mailjet :
-                                              <body>
-                                                  <div align="center">
-                                                  <big><a align="center" style="color:black;margin: 0 auto;" href="http://www.lescuriositesdaurel.com/wenhua-duverge-rencontre-avec-une-styliste-ecolo-chic/" title="Blog Les Curiosites d'Aurel - Wenhua Duverge la styliste ecolo-chic">Suivez les Curiosites d'Aurel - decouvrez le monde de Wenhua Duverge la styliste ecolo-chic.</a><br>
-                                                  <br></big>
-                                                  <a href="http://www.lescuriositesdaurel.com/wenhua-duverge-rencontre-avec-une-styliste-ecolo-chic/"><img alt="Nouvel an Chinois !" title="Nouvel an Chinois !" src="http://www.wenhuaduverge.com/shop/img/NewsLetter/solde-nouvel an chinois.jpg" moz-do-not-send="true" style="margin: 0 auto; width: 100%;"></a>
-                                                <br>
-                                                    <a href="http://www.wenhuaduverge.com/shop/">
-                                                  <img src="http://www.wenhuaduverge.com/shop/img/NewsLetter/address.jpg" moz-do-not-send="true" style="margin: 0 auto; width: 100%;"></a>
-                                                  </div>
-                                                  <p><small><a style="color:black" href="[[UNSUB_LINK_FR]]">cliquez ici pour vous desabonner</a>.</small></p>
-                                                </body>
-
-                          
-                          S ENVOYER A SOI MEME AVANT, RESPONSABLE
-
-
+ENLEVE EXPRES
                         clients prestashop en chine:
                                                 select iso_code, ps_country.id_country, email from ps_customer 
                                 inner join ps_address on ps_customer.id_customer = ps_address.id_customer
@@ -32547,7 +32490,7 @@ seo :
         <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
       <meta http-equiv="cache-control" content="max-age=0" /> est moins bien que expires ci dessous.
-      <meta http-equiv="cache-control" content="no-cache" />   est moins bien que expires ci dessous.
+      <meta http-equiv="cache-control" content="no-cache" />   est moins bien que expires ci dessous.: no-cache signifie qu'il garde en cache mais avant de l'utiliser demande au serveur s'il faut rafraichir ou pas. no-store est vraiment sans cache par contre LINKcachehttp
       <meta http-equiv="expires" content="0" />
       <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
       <meta http-equiv="pragma" content="no-cache" />
