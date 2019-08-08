@@ -2158,7 +2158,13 @@ securite :(JSR375) plus besoin d'utiliser web.xml: les annotations font pareil.
        |                    
        |tout customiser----__ou bien utiliser les annotations
        |                     \________________________________________________________________________________________________
-       MaCustomClasse                                                                                                         @BasicAuthenticationMechanismDefinition;@FormAuthenticationMechanismDefinition;@CustomFormAuthenticationMechanismDefinition
+       |                                                                                                                       @BasicAuthenticationMechanismDefinition;@FormAuthenticationMechanismDefinition;@CustomFormAuthenticationMechanismDefinition
+       |                                                                                                                                                                                                                         (
+       |                                                                                                                                                                                                                           loginToContinue = @LoginToContinue(
+       |                                                                                                                                                                                                                            loginPage = "/login.html", 
+       |                                                                                                                                                                                                                            errorPage = "/login-error.html"),
+       |                                                                                                                                                                                                                            useForwardToLogin=false // facultatif: pour faire un redirect a la place d'un forward  
+       MaCustomClasse                                                                                                                                                                                                             ))
        METHODE Importante: validateRequest() que je dois implémenter Les 2 autres c facultatif
                               Fait appel à->IdentityStoreHandler(Je peux le reecrire moi même)->fait appel à tous les->
                             
