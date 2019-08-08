@@ -1,5 +1,6 @@
 (?=.*hibernate)(?=.*test)
 AFAIRE :
+    base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
  Envoyer à dorothé le script de synchro gitlab vers gitcacib
 capitaliser get spring
@@ -2093,6 +2094,13 @@ PRG :
           
 
 J2EE : jee : jee8 :javaee : EE4J : jakartaee : https://github.com/eclipse-ee4j/jakartaee-tutorial-examples et https://github.com/eclipse-ee4j/jakartaee-tutorial
+        <dependency> necessite
+               <groupId>javax</groupId>
+               <artifactId>javaee-web-api</artifactId> ou? <artifactId>javaee-api</artifactId>  
+               <version>8.0</version>
+               <scope>provided</scope>
+        </dependency>
+        necessite LINKbensoncle
 cdi :CDI2.0 (JSR365) pas besoin d'utiliser weld (je crois) lire https://docs.jboss.org/cdi/learn/cdi_2/slides.html
 CDI1.x besoin de weld
         <dependency>
@@ -2130,7 +2138,7 @@ try (SeContainer container = initializer.disableDiscovery().addPackages(App.clas
 
 try (SeContainer container = initializer.disableDiscovery().initialize()) { container.select(MyService.class);}
             implique beans.xml
-                                                    resources/META-INF/beans.xml
+                                                    resources/META-INF/beans.xml LINKbensoncle
                                                     <beans xmlns="http://xmlns.jcp.org/xml/ns/javaee"
                                                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                                                        xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
@@ -2162,7 +2170,8 @@ securite :(JSR375) plus besoin d'utiliser web.xml: les annotations font pareil.
                                      GroupesDeCettePersonne<-getCallerGroup(CredentialValidationResult**) // peut fonctionner sans la validation ci-dessus pour recuperer les groupes d'un user meme non authentifié à condition que ce user ait: IdentityStorePermission("getGroups") sécurité à implémenter moi meme si j'utilise ma propre custom classe IdentityStore
                                      Set<VALIDATE et/ou PROVIDE_GROUPS><-validationTypes() // sert à determiner quelle genre de validation fait cet IdentityStore
                                      priority() // retourne un integer: plus il est petit plus il est prioritaire pour IdentityStoreHandler
-       
+       **CredentialValidationResult contient le principal et ces roles
+        necessaire de parametrer web.xml voir LINKlkjsqgeegege:<security-constraint> et <security-role>       
        pour securiser une servlet: ACONFIRMER:c'est grace a ca que ça declanche mon HttpAuthenticationMecanism 
             @WebServlet("/servlet")
             @ServletSecurity(
@@ -3534,7 +3543,7 @@ web.xml : webxml :
 					or Index.html contient 
 								<HTML><HEAD><META HTTP-EQUIV='Refresh' CONTENT='0;URL=index.jsp'></HEAD></HTML>
 					index.jsp a un frameset qui dirige vers auth/home.do qui est une action struts. C'est la methode executeAction() de cette classe qui est appelee (or cette methode est definie dans la classe mere de la classe)  
-            security-constraint Decrit les rôles des utilisateurs ou groupes d'utilisateurs pouvant acceder à l'application Web.  mapping entre security-role ci-dessous et des url-patterns			
+            security-constraint Decrit les rôles des utilisateurs ou groupes d'utilisateurs pouvant acceder à l'application Web.  mapping entre security-role ci-dessous et des url-patterns LINKlkjsqgeegege			
             			<security-constraint>      //s'appuye sur <login-config> LINKp^g^g^g
                             <display-name>Security for Your Enterprise</display-name> // du blabla
                             <web-resource-collection> // je peux en mettre plusieurs. Chacun a un nom: ci dessous et une url ci dessous
@@ -3549,7 +3558,7 @@ web.xml : webxml :
                                 			<description>Protection should be CONFIDENTIAL</description> // pour que toute requete soit redirigée automatiquement de http vers https LINKjgjgjgjndndnd
                                 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
                                 		</user-data-constraint>
-                                		ou 
+                                		et/ou 
                                 		 <auth-constraint>
                                 	      <role-name>supervisor</role-name> // les roles définies et retournes par le realm qui ont le droit.  
                                 	      <role-name>user</role-name>
