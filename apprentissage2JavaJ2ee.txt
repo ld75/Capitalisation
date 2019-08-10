@@ -2114,7 +2114,7 @@ Cycle de vie du bean:
               – @RequestScoped // a mettre absolument sur un webservice utilisant jwt car les claims jwt sont naturelement request-scopeds. LINKkgkgkgklkjsdfljqi
               – @SessionScoped
               – @ApplicationScoped // (par defaut) sur la classe. le bean est utilise pourl es proprietes generales de l'appli: ex: listes deroulantes qu'on voit tout le temps
-                                            @Singleton // peute etre sur classe meme un webservice. attention ne fait pas partie de la spec CDI mais de EJB. Va de paire avec @Startup. utiliser plutot @ApplicationScoped je crois... mais singleton et statup marchent bien. LINKsngletn
+                                            @Singleton // peute etre sur classe meme un webservice. attention ne fait pas partie de la spec CDI mais de EJB. Va de paire avec @Startup. utiliser plutot @ApplicationScoped mais singleton et statup marchent bien. LINKsngletn
                                             @Startup // a mettre sur une classe. s'execute au demarrage ne fait pas partie de la spec CDI mais de EJB
               – @ViewScoped
               – @CustomScoped pour que les beans soient stockees dans le FacesContext (qui a une duree de vie plus courte que RequestScope donc FC est plus rapide, bouffe moins de memoire)
@@ -2146,7 +2146,7 @@ try (SeContainer container = initializer.disableDiscovery().initialize()) { cont
                                                                 </beans>
 		@Pattern(expressionreguliere) // sur un champ d'un bean: pour valider que ce champ quand il est rempli match bien à la regexp.
 		
-securite :(JSR375) plus besoin d'utiliser web.xml: les annotations font pareil.
+securite :(JSR375) plus besoin d'utiliser web.xml (sur?): les annotations font pareil.
        AFAIRE
        https://javaee.github.io/tutorial/security-api004.html
        https://javaee.github.io/tutorial/security-intro003.html#BNBXE->https://javaee.github.io/tutorial/security-javaee002.html#GJGDI
@@ -2181,12 +2181,12 @@ securite :(JSR375) plus besoin d'utiliser web.xml: les annotations font pareil.
        pour securiser une servlet: ACONFIRMER:c'est grace a ca que ça declanche mon HttpAuthenticationMecanism 
             @WebServlet("/servlet")
             @ServletSecurity(
-                                value= @HttpConstraint(rolesAllowed = "foo"),
+                                value= @HttpConstraint(rolesAllowed = {"foo","supervisor"}),
                                 httpMethodConstraints={
                                         @HttpMethodConstraint(
-                                            value = "GET",rolesAllowed = {"user_role"}),
+                                            value = "GET",rolesAllowed = {"foo"}),
                                        @HttpMethodConstraint(
-                                            value = "POST",rolesAllowed = {"admin_role"})                                
+                                            value = "POST",rolesAllowed = {"supervisor"})
                                                         }
                             )
             @DeclareRoles({ "role1", "role2bar", "kaz" }) //roles renvoyés par la database. peut etre mis sur classe ou methode(override classe alors) //PASCLAIR
@@ -25360,6 +25360,7 @@ utiliser sur maven:
                     <javaOpts>  
                         <javaOpt>-agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n</javaOpt> // pour pouvoir débugger rajouter ça et voir LINKoizeurzotie 
                     </javaOpts>
+                    <timeout>3000</timeout> // pour que au demmarage il ne plante pas avec did not start within 60 seconds quand ca prend trop de temps
                 </configuration>
             </plugin>
             puis wildfly:start(si ne marche pas la premiere fois, reessayer en avant fait un wildfly:shutdown ou wildfly:undeploy avant peut etre)
