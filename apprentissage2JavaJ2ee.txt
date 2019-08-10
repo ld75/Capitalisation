@@ -1132,6 +1132,7 @@ bouger extraire extract une variable en variable declaree plus haut move deplace
 bouger une classe dans un autre package: dans package explorer faire ctrl+x puis ctrl+v(couper-coller)
 bouger un bloc: selectionner puis ctrl+shift+fleches
 supprimer ligne: Shift+suppr ou Ctrl+y
+wrap ligne line j'ai ajouté le raccourci Ctrl+w
 editer raccourcis shortcuts: key file>settings>keymap>Default> Editor Actions
 si les shortcuts ne marchent plus faire peut etre controle + alt + fleches pave numerique peut etre que ça debloque (j'ai reussi une fois mais sais pas trop comment)
 column colonne editing: plusieurs lignes multiples en meme temps:  alt+maj+insert
@@ -1234,6 +1235,26 @@ glassfish :
     C:\glassfish3\glassfish\bin>asadmin stop-domain
   localhost:8080 puis localhost:4848
   http://localhost:2097/common/index.jsf
+    glassfish maven plugin pluggin demarer avec mvn embedded-glassfish:run 
+                <plugin>
+                    <groupId>org.glassfish</groupId>
+                    <artifactId>maven-embedded-glassfish-plugin</artifactId>
+                    <version>3.0</version>
+                    <configuration>
+                        <goalPrefix>glassfish</goalPrefix>
+                     <app>target/authentication.war</app>
+                        <port>8080</port>
+                        <!--<contextRoot>test</contextRoot-->
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>deploy</phase>
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
   
 
 extjs :
@@ -2140,12 +2161,15 @@ try (SeContainer container = initializer.disableDiscovery().addPackages(App.clas
 
 try (SeContainer container = initializer.disableDiscovery().initialize()) { container.select(MyService.class);}
             implique beans.xml
-                                                    resources/META-INF/beans.xml LINKbensoncle
-                                                    <beans xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-                                                                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                                                                       xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
-                                                                       version="1.1"bean-discovery-mode="all">
-                                                                </beans>
+                                                    WEB-INF/beans.xml LINKbensoncle
+                                                     <?xml version="1.0" encoding="UTF-8"?>
+                                                      <beans xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+                                                             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
+                                                             bean-discovery-mode="all">
+                                                      </beans>
+           
+                                                                
 		@Pattern(expressionreguliere) // sur un champ d'un bean: pour valider que ce champ quand il est rempli match bien à la regexp.
 		
 securite :(JSR375) plus besoin d'utiliser web.xml (sur?): les annotations font pareil.
@@ -3268,7 +3292,7 @@ swagger : pour qu'un webservice rest(je pense) exposer ses methodes dans une pag
                     </execution>
                 </executions>
             </plugin>
-            executer le puggin maven et c'est bonnard.            
+            executer le puggin maven et c'est bonnard genere le rapport sous target\jaxrs-analyzer3\swagger.json            
 
 faire un chat : websocket :
 Pour faire un serveur serveur de chat etc... fonctionnement des sockets
@@ -5299,46 +5323,6 @@ AILLEURS: injecter mes beans par constructeur
             $CATALINE_HOME/bin/digest.sh -a HASH_TYPE PASSWORD
             Replace the password for the user in question in the $CATALINA_HOME/conf/tomcat_users.xml file
             Restart Tomcat                                                                                          
-    h2 : embedded database:
-                    dans la config xml:
-                          <jdbc:embedded-database id="dataSourceRepository" type="H2">
-                            <jdbc:script location="${ws.schema.script}" /> 
-                            <jdbc:script location="${ws.data.source.init}" />
-                          </jdbc:embedded-database>
-                          dans le fichier pointe par ${ws.schema.script} pour que to_date existe mettre:
-                                            -- TO_DATE
-                                            drop ALIAS if exists TO_DATE;
-                                            CREATE ALIAS TO_DATE as '
-                                            import java.text.*;
-                                            @CODE
-                                            java.util.Date toDate(String dateTime, String dateFormat) throws Exception {
-                                                if (dateFormat.contains("MON")) {
-                                                    dateFormat = dateFormat.replace("MON", "MMM");
-                                                }
-                                                if (dateFormat.contains("Y")) {
-                                                    dateFormat = dateFormat.replaceAll("Y", "y");
-                                                }
-                                                if (dateFormat.contains("D")) {
-                                                    dateFormat = dateFormat.replaceAll("D", "d");
-                                                }
-                                                if (dateFormat.contains("HH")) {
-                                                    dateFormat = dateFormat.replaceAll("HH", "hh");
-                                                }
-                                                if (dateFormat.contains("hh24")) {
-                                                    dateFormat = dateFormat.replaceAll("hh24", "hh");
-                                                }
-                                                if (dateFormat.contains("MI") || dateFormat.contains("mi")) {
-                                                    dateFormat = dateFormat.replaceAll("MI", "mi").replaceAll("mi", "mm");
-                                                }
-                                                if (dateFormat.contains("SS")) {
-                                                    dateFormat = dateFormat.replaceAll("SS", "ss");
-                                                }
-                                                return new SimpleDateFormat(dateFormat).parse(dateTime);
-                                            }
-                                            ';
-
-                          
-                        
           
                              
 Spring : XML STYLE                                                                      
@@ -7936,6 +7920,43 @@ indexof :   INSTR:
         -> 4
 H2 :
 client H2: http://www.h2database.com/html/main.html
+h2 : embedded database:
+                    dans la config.xml du serveur:
+                          <jdbc:embedded-database id="dataSourceRepository" type="H2">
+                            <jdbc:script location="${ws.schema.script}" /> 
+                            <jdbc:script location="${ws.data.source.init}" />
+                          </jdbc:embedded-database>
+                          dans le fichier pointe par ${ws.schema.script} pour que to_date existe mettre:
+                                            -- TO_DATE
+                                            drop ALIAS if exists TO_DATE;
+                                            CREATE ALIAS TO_DATE as '
+                                            import java.text.*;
+                                            @CODE
+                                            java.util.Date toDate(String dateTime, String dateFormat) throws Exception {
+                                                if (dateFormat.contains("MON")) {
+                                                    dateFormat = dateFormat.replace("MON", "MMM");
+                                                }
+                                                if (dateFormat.contains("Y")) {
+                                                    dateFormat = dateFormat.replaceAll("Y", "y");
+                                                }
+                                                if (dateFormat.contains("D")) {
+                                                    dateFormat = dateFormat.replaceAll("D", "d");
+                                                }
+                                                if (dateFormat.contains("HH")) {
+                                                    dateFormat = dateFormat.replaceAll("HH", "hh");
+                                                }
+                                                if (dateFormat.contains("hh24")) {
+                                                    dateFormat = dateFormat.replaceAll("hh24", "hh");
+                                                }
+                                                if (dateFormat.contains("MI") || dateFormat.contains("mi")) {
+                                                    dateFormat = dateFormat.replaceAll("MI", "mi").replaceAll("mi", "mm");
+                                                }
+                                                if (dateFormat.contains("SS")) {
+                                                    dateFormat = dateFormat.replaceAll("SS", "ss");
+                                                }
+                                                return new SimpleDateFormat(dateFormat).parse(dateTime);
+                                            }
+                                            ';
  requeter une base de donnée h2 en java
     pour voir les tables de h2 afficher : SELECT * FROM INFORMATION_SCHEMA.TABLES
       Class.forName ("org.h2.Driver");
@@ -11485,7 +11506,7 @@ Les phases: se jouent de manière sequencielle du haut vers le bas:
             install - install the package into the local repository, for use as a dependency in other projects locally
             deploy - done in an integration or release environment, copies the final package to the remote repository for sharing with other developers and projects.
             si je fais mvn deploy tout est execute. Si je fais mvn clean deploy il fait d'abord un clean avant de tout executer 	
-Les goals:(appartiennent à phases) sin on veut executer mvn un_goal alors ecrire mvn maven-nomplugin-plugin:goal mais enlever maven- et -plugin
+Les goals:(appartiennent à phases) si on veut executer mvn un_goal alors ecrire mvn maven-nomplugin-plugin:goal mais enlever maven- et -plugin
     un goal appartient à 0 à n phases. et une phase peut avoir 0 à n goals. Une phase sans goal n'est pas executee
     Moreover, if a goal is bound to one or more build phases, that goal will be called in all those phases.
     si une phase contient plusieurs goals et qu'on execute cette phase: tous les goals sont executes dans l'ordre de declaration des goals dans le pom
@@ -25363,11 +25384,11 @@ utiliser sur maven:
                     <javaOpts>  
                         <javaOpt>-agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n</javaOpt> // pour pouvoir débugger rajouter ça et voir LINKoizeurzotie 
                     </javaOpts>
-                    <timeout>3000</timeout> // pour que au demmarage il ne plante pas avec did not start within 60 seconds quand ca prend trop de temps
+                    <timeout>3000</timeout> // pour que au demmarage il ne plante pas avec did not start within 60 seconds quand ca prend trop de temps ou si tjrs ko rajouter dans les <properties><wildfly.timeout>300</wildfly.timeout>
                 </configuration>
             </plugin>
-            puis wildfly:start(si ne marche pas la premiere fois, reessayer en avant fait un wildfly:shutdown ou wildfly:undeploy avant peut etre)
-            puis wildfly:deploy puis redeploy etc etc...    	
+            puis mvn wildfly:start(si ne marche pas la premiere fois, reessayer en avant fait un wildfly:shutdown ou wildfly:undeploy avant peut etre)
+            puis mvn wildfly:deploy puis redeploy etc etc...    	
 tomcat :
 pour utiliser le plugin maven tomcat: Si ça marche:-). voir dessous: pas reussi à faire marcher avec une application avec spring security
 1)possible embeded on retrouve alors le serveur tomcat et le war deploye dans target de mon projet. Attention dans tomcat/conf besoin copier le web.xml du serveur tomcat (copier dans une conf tomcat) sinon erreur 404 sur les pages, jsp, images... Mais <!--<tomcatWebXml>pathVersUnAutreWeb.xmlDeLaConfTomcat/web.xml</tomcatWebXml>--> lui n'a pas marché
