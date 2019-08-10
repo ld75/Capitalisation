@@ -1,5 +1,5 @@
-(?=.*hibernate)(?=.*test)
-AFAIRE :
+(?=.*tomcat)(?=.*certif)
+AFAIRE : naty_coe@yahoo.fr https://www.salon-zen.fr/
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
  Envoyer à dorothé le script de synchro gitlab vers gitcacib
@@ -1088,6 +1088,8 @@ svn disconnect: installer le plugin pour ça.
       GIT est pourri sur intellij. Utiliser tortoise LINKtortoiseGItsdflk
     svn taguer tag tager: creer une branche, copier le trunk dans un tag ou dans une branche
             VCS>Subersion>Branch or Tag... copie de mon env de local ou d'une URL du repository au choix >>>vers un tag ou une branche
+            si en local j'ai un tag ou une branche, lors du commit ca commit dans le tag ou la branche pas dans le trunk
+    svn rempalcer trunk par une branche ou un tag. J'ai pas reussi avec intellij: utilisé tortoise: trunck--move-->oldTrunk puis tag/1.2.1---copy-->trunk
 git pull tous les projets/modules en une seule fois VCS>Update projects... // il ne fait que fetch. Penser à cliquer ensuite dans l'onglet VCS du bas pour voir ce qui se passe sinon suis aveugle. Il faudra faire pull après!(voir les fichiers D://git/pull.xls et D://git/pull.bat). 
 si j'ai erreur source release 1.7 requires target release 1.7
           mettre pareil dans settings>build,execution,depl>compiler>javacompiler; projectstructure>project; projectstructure>modules>sources; dans le pom maven;
@@ -4901,7 +4903,7 @@ maven:
             classe main
     @SpringBootApplication // trouve les composants annotes par rapport au package de cette classe (dedans et en dessous) +  cette classe devient une classe de configuration où on declare ses beans singletons... //Pas besoin de web.xml. C'est @Configuration (cette classe est une classe de config)+@EnableAutoconfiguration (scan les beans du meme package et enfants + recup les proprietes+ scan les jars poses par mapresents dans classpath) + @Enablemvc (Existe si mvn dependance "spring-web-mvc") + @ComponentScan(basePackages={"..."}) scan les composants.
      @EnableWebMvc // a mettre aussi dans springboot a cote de ci-dessus si je fais des webservices                                                                                                                                                               =@ComponentGENERIQUE_EVITER_D_UTILISERUtiliser@Named+@Config+@Value (cherche proprietes sous classpath) voir LINKPropsspring 
-    @EnableResourceServer // active la securite JWT : ce micro service n'est accessible que si on lui envoie un JWToken ( De plus de manière plus fine on peut proteger alors des methodes avec au dessus @PreAuthorize("#oauth2.hasScope('un.scope.role.defini.dans.le.JWToken.entrant')" ou "hasAuthority('ADM')") Mais besoin alors d'ajouter dans src/main/resources/application.yml où est la cle publique:jwt.keyUri:$xxxx/ma_cle
+    @EnableResourceServer // active la securite JWT: ce micro service n'est accessible que si on lui envoie un JWToken ( De plus de manière plus fine on peut proteger alors des methodes avec au dessus @PreAuthorize("#oauth2.hasScope('un.scope.role.defini.dans.le.JWToken.entrant')" ou "hasAuthority('ADM')") Mais besoin alors d'ajouter dans src/main/resources/application.yml où est la cle publique:jwt.keyUri:$xxxx/ma_cle
                 public class Application { // l'executer demarre tomcat                                                                                         
                                                                                                                                                                 
                     public static void main(String[] args) {                                                                                                     
@@ -11562,81 +11564,81 @@ http://su320ads.mc2.renault.fr:9092/svn/svn50839/
 ou
 http://baselinesvn.mc2.renault.fr:9090/svn/svn50839/
 SmartSVN :
-pour copier un trunck vers branche par ex: Les branches c la merde. DEVOPS 
-    Modify>CopyWithinRepository
-dans repository >Manage...>
-dans onglet profile >add>tapper url
-saisir mdp et user 
-NE PAS cocher "store password on disk"
-next > definir un nom explicite (
-Dans directories > click droit > Files from subdirectories pour afficher en flat ou en arbo.
-regarder l'aide: table of content>directory tree
-pour associer des fichiers à  un programm: (java avec wsad par ex): Modify>Preferences>Externaltools. Faire attention à  l'ordre dans la liste.
-ouvri auto last proj:
-Menu Edit > preferences OnStartup >openLastProject
-pour eviter de commiter des types de fichiers definis: Global ignore (Menu Project > Settings > Working Copy >Global ignore)
-Historique de ce qui s'est passe: Configuration de Tmate: MenuProject > QSettings > Tmate > Display
-Dans Tmate possible classer par autoeur, par date etc... 
-Quand on cree un fichie ou un dossier localement ne pas oublier de faire ADD!!!
-Remove supprime tout (dans file sys et dans conf) Delete Physically supprime seulement localement et pas de la GCL (repository)
-QUand on ajoute un nouveau fichier ou repertoire et qu'on fait add: il y a (0) ca signifie: il est pas encore dans GCL
-Toujours faire un update avant de faire un commit
-Ce numero prendra ensuite la valeur de la revision: penser à  faire un update general pour mettre ajour les meta donnees de revisions.
-On peut faire un update sur revision ulterieure
-On peut faire un update sur un repertoire seulement
-REVERT = undo en local seulement.
-COMPARE SHOW CHANGE comparle le local et le repository
-ADD possible ajouter fichier hors Smartsvn puis faire ADD pour ajouter sous controle gconf.(0) car pas encore commite
-DELETE, UPDATE, RENAME, MOVE a faire QUE dans SmartSVN
-UPDATE(checkout) en mixant les revisions: epicerie: en local on a tout un melange de revisions.
-LIVRAISON D UNE VERSION: MODIFY>COPTY TO REPOSITORY (si mon workingCopy est un mix epicerie il va copier ca dans le tag sinon il va faire une copie repository vers repository)
-CREER UNE BRANCHE: pareil que pour LIVRAISON D UNE VERSION. Les branches c la merde. DEVOPS
-Revert pour annuler ses modifs
-Definition de Revision: Chaque fois qu'on touche à  n'importe quoi dans le repository il incoremente le numero de revision de tout le repository. pour mettre à  jour dans l'ecran faire: Selectionner ce qu'on veut mettre à  jour Modify > Update
-Pour avoir un suivi de modif sur un fichier:  click droit sur un article > Annotate... ou Log... pour avoir un suivit des modifs.
-http://baselinesvn.mc2.renault.fr:8082/svn/svn50839/
-ou
-http://su320ads.mc2.renault.fr:9092/svn/svn50839/
-ou
-http://baselinesvn.mc2.renault.fr:9090/svn/svn50839/
-Pour tagger une version:
-Choisir son repertoire puis > Modify > Copy URL to URL
-En local on travaille sur Trunk et quand on tag on tag sur Tags: Tags ne sert qu'a contenir les differentes versions du projet (ne pas faire de modifs dans tags)
-pour tager: le tag ne dois pas exister: si il existe le supprimer , se mettre sur trunck (sur rad7 le faire pour chaque sous repertoire du trunk): create branch/tag et choisir le chemin de son nouveau tag
-pour creer un fichier qui synthetise le delta entre deux versions/revision: query > create patch between URL > choisir sa version
-Pour livrer c a d recuperer le projet localement sans le voir dans SmartSVN: Project>Checkout > Export
-Pour faire une version qui est un mixte de revisions differentes: trunk doit contenir ce mixte. Selectionner le trunk >Modify > Copy WC - URL
-A la fin de chaque activite: utiliser le project manager pour liberer de l'espace sur le workspace local
-Les branches servent à  developper un lot independememnt du trunk mais il faut vite ramener la branche dans le trunck si existe corrections effectuees dans trunk Les branches c la merde. DEVOPS
-Pour creer une branche: Copy URL-URL > au lieu de choisir tags il faut choisir branches > definir nom + ajouter commentaire.. etc..
-Lire de bas en haut:
-code
-----
-|	
-HEAD (trunk)
-0v1.3
-|
-|<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-|                            |
-HEAD                         |
-branche0v1.2(corrections) Qd fini MERGE (on utilise branches que si ya du dev en paralelle.. tag c'est pour chaque version livree). Les branches c la merde. DEVOPS
-|                        /
-|       HEAD            /
-|	 branche0v1.1+Lot1---
-|     /
-tag 0v1.1
-|
-tag 0v1.0  ---> les tags sont en realite des pointeurs vers des revisions de fichier. Pas les fichiers en soit
-
-trouver chercher lister tout ce que j'ai dans un repository svn 
-      sur cygwin ou unix je peux lister trouver chercher tous les documents dans un repository svn en ligne de commande sans client: 
-      svn list -R https://svn.ptx.fr.sopra/svnhrasvc/hrasvc > todelete.txt
-         
-  pour commiter un nouveau projet premiere fois: share project... (voir intellij)
-si j'ai le message: is already under version control quand je commit
-		supprimer le .svn qui se trouve dans le repertoire que je n'arrive pas à commiter
-		si ca ne marche toujours pas faire une copie de mon repertoire KO ailleurs sans aucun .svn dedans. 
-		    puis sur eclipse effacer carrement tout le repertoire. Refaire un commit, rappatrier mon repertoire copie, faire un refresh eclipse et recommiter
+    pour copier un trunck vers branche par ex: Les branches c la merde. DEVOPS 
+        Modify>CopyWithinRepository
+    dans repository >Manage...>
+    dans onglet profile >add>tapper url
+    saisir mdp et user 
+    NE PAS cocher "store password on disk"
+    next > definir un nom explicite (
+    Dans directories > click droit > Files from subdirectories pour afficher en flat ou en arbo.
+    regarder l'aide: table of content>directory tree
+    pour associer des fichiers à  un programm: (java avec wsad par ex): Modify>Preferences>Externaltools. Faire attention à  l'ordre dans la liste.
+    ouvri auto last proj:
+    Menu Edit > preferences OnStartup >openLastProject
+    pour eviter de commiter des types de fichiers definis: Global ignore (Menu Project > Settings > Working Copy >Global ignore)
+    Historique de ce qui s'est passe: Configuration de Tmate: MenuProject > QSettings > Tmate > Display
+    Dans Tmate possible classer par autoeur, par date etc... 
+    Quand on cree un fichie ou un dossier localement ne pas oublier de faire ADD!!!
+    Remove supprime tout (dans file sys et dans conf) Delete Physically supprime seulement localement et pas de la GCL (repository)
+    QUand on ajoute un nouveau fichier ou repertoire et qu'on fait add: il y a (0) ca signifie: il est pas encore dans GCL
+    Toujours faire un update avant de faire un commit
+    Ce numero prendra ensuite la valeur de la revision: penser à  faire un update general pour mettre ajour les meta donnees de revisions.
+    On peut faire un update sur revision ulterieure
+    On peut faire un update sur un repertoire seulement
+    REVERT = undo en local seulement.
+    COMPARE SHOW CHANGE comparle le local et le repository
+    ADD possible ajouter fichier hors Smartsvn puis faire ADD pour ajouter sous controle gconf.(0) car pas encore commite
+    DELETE, UPDATE, RENAME, MOVE a faire QUE dans SmartSVN
+    UPDATE(checkout) en mixant les revisions: epicerie: en local on a tout un melange de revisions.
+    LIVRAISON D UNE VERSION: MODIFY>COPTY TO REPOSITORY (si mon workingCopy est un mix epicerie il va copier ca dans le tag sinon il va faire une copie repository vers repository)
+    CREER UNE BRANCHE: pareil que pour LIVRAISON D UNE VERSION. Les branches c la merde. DEVOPS
+    Revert pour annuler ses modifs
+    Definition de Revision: Chaque fois qu'on touche à  n'importe quoi dans le repository il incoremente le numero de revision de tout le repository. pour mettre à  jour dans l'ecran faire: Selectionner ce qu'on veut mettre à  jour Modify > Update
+    Pour avoir un suivi de modif sur un fichier:  click droit sur un article > Annotate... ou Log... pour avoir un suivit des modifs.
+    http://baselinesvn.mc2.renault.fr:8082/svn/svn50839/
+    ou
+    http://su320ads.mc2.renault.fr:9092/svn/svn50839/
+    ou
+    http://baselinesvn.mc2.renault.fr:9090/svn/svn50839/
+    Pour tagger une version:
+    Choisir son repertoire puis > Modify > Copy URL to URL
+    En local on travaille sur Trunk et quand on tag on tag sur Tags: Tags ne sert qu'a contenir les differentes versions du projet (ne pas faire de modifs dans tags)
+    pour tager: le tag ne dois pas exister: si il existe le supprimer , se mettre sur trunck (sur rad7 le faire pour chaque sous repertoire du trunk): create branch/tag et choisir le chemin de son nouveau tag
+    pour creer un fichier qui synthetise le delta entre deux versions/revision: query > create patch between URL > choisir sa version
+    Pour livrer c a d recuperer le projet localement sans le voir dans SmartSVN: Project>Checkout > Export
+    Pour faire une version qui est un mixte de revisions differentes: trunk doit contenir ce mixte. Selectionner le trunk >Modify > Copy WC - URL
+    A la fin de chaque activite: utiliser le project manager pour liberer de l'espace sur le workspace local
+    Les branches servent à  developper un lot independememnt du trunk mais il faut vite ramener la branche dans le trunck si existe corrections effectuees dans trunk Les branches c la merde. DEVOPS
+    Pour creer une branche: Copy URL-URL > au lieu de choisir tags il faut choisir branches > definir nom + ajouter commentaire.. etc..
+    Lire de bas en haut:
+    code
+    ----
+    |	
+    HEAD (trunk)
+    0v1.3
+    |
+    |<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    |                            |
+    HEAD                         |
+    branche0v1.2(corrections) Qd fini MERGE (on utilise branches que si ya du dev en paralelle.. tag c'est pour chaque version livree). Les branches c la merde. DEVOPS
+    |                        /
+    |       HEAD            /
+    |	 branche0v1.1+Lot1---
+    |     /
+    tag 0v1.1
+    |
+    tag 0v1.0  ---> les tags sont en realite des pointeurs vers des revisions de fichier. Pas les fichiers en soit
+    
+    trouver chercher lister tout ce que j'ai dans un repository svn 
+          sur cygwin ou unix je peux lister trouver chercher tous les documents dans un repository svn en ligne de commande sans client: 
+          svn list -R https://svn.ptx.fr.sopra/svnhrasvc/hrasvc > todelete.txt
+             
+      pour commiter un nouveau projet premiere fois: share project... (voir intellij)
+    si j'ai le message: is already under version control quand je commit
+    		supprimer le .svn qui se trouve dans le repertoire que je n'arrive pas à commiter
+    		si ca ne marche toujours pas faire une copie de mon repertoire KO ailleurs sans aucun .svn dedans. 
+    		    puis sur eclipse effacer carrement tout le repertoire. Refaire un commit, rappatrier mon repertoire copie, faire un refresh eclipse et recommiter
 
 Struts :STRUTS SURVIVAL GUIDE:
 Pour parametrer le forward: par exemple rester sur la meme page et reenvoyer des parametres au request en fin d'action:
@@ -14251,7 +14253,7 @@ Cipherbean cypherbean de francois:
                                                                         	}
                                                                         
                                                                         	/**
-                                                                        	 * Gets the m d5 digest.
+                                                                        	 * Gets the md5 digest.
                                                                         	 *
                                                                         	 * @param bytes the bytes
                                                                         	 * @return the m d5 digest
@@ -15996,7 +15998,7 @@ junit4 : junit 4 : Version 1.4:
                     public class UtilityTest 
                     {
                     @Rule public TestName name = new TestName(); // sert à savoir quel test est lancé voir (pas sur que ce soit ca sur junit5) LINKjgjgjgiiiii            
-                    Tester qu'il y a une exception particulière (a mettre dans la methode de test en amont de l'execution)
+                    Tester qu'il y a une exception particulière (a mettre dans la methode de test en amont de l'execution) ou bien voir LINKldlghjg
                               @Rule
                               public ExpectedException expectedEx = ExpectedException.none(); // a mettre dans la classe de test. peut servir a toutes ses methodes.
                               expectedEx.expect(SAMLException.class);   // a mettre dans la methode de test avant execution du test
@@ -16025,7 +16027,7 @@ junit4 : junit 4 : Version 1.4:
                     	@Before public void setUp(){ de1 = new Object();} // s'execute avant chaque test de la classe (comme @After si je veux faire before et after uniquement sur une methode de test jouer avec try et finally)
                     	  //testunitaires: ATTENTION sur JUNIT4 , si le nom de notre methode commence par "test" il va executer systematiquement cette methode
                           System.out.println("=========================="+name.getMethodName()); // LINKjgjgjgiiiii
-                    	/*@Test(expected=NoDatabaseException.class)
+                    	/*@Test(expected=NoDatabaseException.class) 
                     	 *		public void siJaiCetEtat_AlorsJeMattendsACa() throws NoDatabaseException
                     			{
                     				
@@ -16033,7 +16035,7 @@ junit4 : junit 4 : Version 1.4:
                             assertEquals("0,001.00",Utility.replaceDotByCommaForNumbers("0,001.00"));
                     			} 
                     	 */
-                    	 @Test(expected = IllegalBalanceException.class) // verifier qu'un test retourne une exception
+                    	 @Test(expected = IllegalBalanceException.class) // verifier qu'un test retourne une exception LINKldlghjg
                           public void siJaiCetEtat_AlorsJeMattendsACa() throws IllegalBalanceException {
                               AccountRule accountRule= new CustomerAccountRule();
                               customerAccount.withdrawAndReportBalance(50.0,accountRule);
@@ -16228,18 +16230,19 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
 			@Before
 				public void setup()
 				{
-					MockitoAnnotations.initMocks(this); // ca active les anotations @InjectMocks et @Mocks
+					MockitoAnnotations.initMocks(this); // ca active les anotations @InjectMocks et @Mocks et @Spy
 				}
 				FilterConfig filterConfig = mock(FilterConfig.class); // c'est soit je fais comme ca, soit j'utilise les anotations ci dessus. les deux font la meme chos
 				ServletContext context = mock(ServletContext.class);
 				when(filterConfig.getServletContext( // ca s'appelle faire du "stub"
 				ou                                   anyString()//tout string
 				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça
+                                                    ,anyList() // ne pas utiliser anyObject si j'ai une liste
 													,anyObject(UneClasse.class)
 													).thenReturn(context);
-				ResultDao rd =mock ou spy(ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
+				ResultDao rd =mock ou spy(unObjetNONANNOTE ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
 				Result toto = new Result();
-				Mockito.doReturn(toto).when(rd).getLaMethodeResult("1"); // retourner toto quand on execute resultdao.getResult("1");
+				Mockito.doReturn(toto).when(rd).getLaMethodeResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy
 				WelcomeController wc = new WelcomeController(rd);
 				wc.getDisplayResult("1", "1","10:00", "10/10/2016");
                 validation verifier qu'un mock a été appelé par une methode x fois:
@@ -25385,7 +25388,7 @@ pour utiliser le plugin maven tomcat: Si ça marche:-). voir dessous: pas reussi
           <port>8081</port>
           <contextFile>${basedir}/src/test/resources/maven-tomcat-plugin/context.xml</contextFile> // facultatif: pour ajouter une connexion à un jndi par ex... voir context.xml
           <tomcatUsers>D:/Dev/apache-tomcat-7.0.61/conf/tomcat-users.xml</tomcatUsers> // facultatif
-          <additionalClasspathDirs> // pour ajouter des fichiers de conf lus par mon application dans le classpath comme si elles etaient dans le resources ressources
+          <additionalClasspathDirs> // pour ajouter des fichiers de conf lus par mon application dans le classpath comme si elles etaient dans le resources ressources ATTENTION ne marche que avec mvn tomcat7:run et non pas run-war! LINKkknv
 						<additionalClasspathDir>${basedir}/src/main/config/dev/appConf</additionalClasspathDir>
 						<additionalClasspathDir>${basedir}/src/main/config/wording</additionalClasspathDir> LINKoizeurzotie // pour debugger avec tomcat et intellij il suffit juste d'executer le maven à droite en mode debug et ça marche.
 		  </additionalClasspathDirs>
@@ -25399,7 +25402,7 @@ pour utiliser le plugin maven tomcat: Si ça marche:-). voir dessous: pas reussi
 				</dependencies>
       </plugin>      
     et                      
-    mvn tomcat7:run (plus rapide) ou  mvn tomcat7:run-war(refait le war) ça marche: Ca c'est quand le tomcat est cree qqpart dans mon editeur ecplipse (dans target je crois)
+    mvn tomcat7:run (plus rapide) ou  mvn tomcat7:run-war(refait le war) voir LINKkknv ça marche: Ca c'est quand le tomcat est cree qqpart dans mon editeur ecplipse (dans target je crois)
     mvn tomcat7:deploy  Pas sur:ca c'est quand un serveur tomcat tourne qqpart dejà (sur mon poste par ex) ca deploie direct dessus (bien specif le bon port dans conf pom)
     ca ca ne marche pas: mvn tomcat7:war
     sur tomcat pour retrouver son pass admin et login admin: tomcat-user.xml qui contient le mdp, le login de l'admin.  
@@ -30746,7 +30749,7 @@ JWT :
                                    \___2_______>[xRessourcesServices: chacune a une clé publique.] 
     algoritmes recommandés: ES256(cle publique pour verifier et cle privee pour signer mais plus rapide que RS256)  puis RS256(cle publique pour verifier et cle privee pour signer) puis HS256(ce n'est que un secret=chaine de caractère a garder privée. Attention danger avec ça car dans ce cas le client pourra hacker: Client    Service1JWTOuJeSuisAdmin,    Service2JWTOuJeNeSUisPasAdmin)
 OAuth : OAuth2 : (oltu : https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Client+Quickstart et https://github.com/apache/oltu)
-est fait pour gerer que authorization à la base. Pas pour Authentification: On a rajouté openid pour l'authentification
+est fait pour gerer que authorization à la base. Pas pour Authentification: On a rajouté openidConnect : pour l'authentification (https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata)
     USER = RessourceOwner = homme = moi 
     EDSN = Client = l'application qui demande une autorisation pour faire une action dans le ResourceServer.
     FID = AuthenticationServer=authorization server: accepte de donner le ticket (Access Tocken)
@@ -30761,8 +30764,8 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
     EDSN transmet à FID: -scope // droits necessaires
     autres modes :
         ImplicitMode: ne passe que par le frontchanell: on bypasse la partie "ask code"-"recieve code": on obtien direct l'accessToken (pour les apps qui sont pure javascript)
-        Resource Owner password[crediential] flow : ne passe que par back (pour la compat des vieilles applis et de confiance   |
-                                              homme envoit user/password au client EDSN(prd la place du client_secret je crois) |_client demande à l'authorizationServer un accessToken direct
+        Resource Owner password[credential] flow : ne passe que par back (pour la compat des vieilles applis et de confiance    |
+                                              homme envoit user/password au client EDSN(prd la place du client_secret je crois) |_client demande à l'authorizationServer un accessToken direct+ recommandé:un refreshtoken
         Client credientials flow : ne passe que par back(pour les échanges entre machines uniquement)                           |
                                                    
     Run:
