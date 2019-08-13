@@ -1,4 +1,4 @@
-(?=.*import)(?=.*certif)
+(?=.*string)(?=.*format)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -5085,7 +5085,7 @@ Conf java
                                                                                                                                                                               @Value("#{systemProperties['os.arch'].equals('x86') ? winDataSource: unixDataSource}")
                                                                                                                                                                               private List<String> authorizedIp;
                                                                                                                                                               Autre methode pour que les .properties se trouve dans une classe. @ConfigurationProperties(prefix="connection" ou "connection" tout court) Cette annot peut etre sur une classe Tatato avec getter et setter qui selon nom des champs, les remplis à partir de *.properties (si contient connexion.tata): Tatato a comme getter: tata se rempli tout seul pour que ca marche besoin que ma classe config ait: @EnableConfigurationProperties(Tatato.class)@ConfigurationProperties peut aussi accompagner un @Bean au dessus d'une methode
-                                                                                                                                                              attention Tatato doit contenue le constructeur sans argument et les constructeurs avec tous les arguments. Pour ça utiliser lombok (voir LINKLombok )                        
+                                                                                                                                                              attention Tatato doit contenir le constructeur sans argument et les constructeurs avec tous les arguments. Pour ça utiliser lombok (voir LINKLombok )                        
                    recuperer des proprietes:                          
               mais attention besoin creer been dans la conf comme ci dessous pour que ça marche: 
               @Bean
@@ -15329,7 +15329,7 @@ hacking : haking : hack :
             >show exploits ou auxiliary ou payloads (en fait c le chemin /exploit ou /auxi...) // pour afficher tous les programmes par type exploit ou aux...
             >info /chemin/prog/exploit ou auxiliary/pour/pirater/fichier.rbSans.rbALaFin (utiliser tab) // pour avoir plus d'info sur le programme 
             >use /chemin/prog/exploit ou auxiliary/pour/pirater/fichier.rb //utilise le prog de piratage "fichier.rb"; puis faire show options pour voir les options de ce prog; puis set les_options pour def les options; puis enfin >exploit ou >run pour executer le prog.
-                    tab possible.
+                    tab possible.                                                                                                                                                                                                        
             >use exploit/multi/handler // pour utiliser la "charge utile" qui sert à ecouter listener l'ouverture de faille; Puis >exploit; dès que le listener capte l'entree dans la faille: meterpreter (c un payload) est prêt. >help pour voir les commandes dispo
 cookies :                                  
   cookies httponly et secure  LINKcooklskjhh 
@@ -16248,7 +16248,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
 				ou                                   anyString()//tout string
 				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça
                                                     ,anyList() // ne pas utiliser anyObject si j'ai une liste
-													,anyObject(UneClasse.class)
+													,Matchers.any(UneClasse.class) avant : anyObject(UneClasse.class)
 													).thenReturn(context);
 				ResultDao rd =mock ou spy(unObjetNONANNOTE ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
 				Result toto = new Result();
