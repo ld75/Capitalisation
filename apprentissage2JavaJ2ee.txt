@@ -1,5 +1,6 @@
-(?=.*tomcat)(?=.*certif)
-AFAIRE : naty_coe@yahoo.fr https://www.salon-zen.fr/
+(?=.*import)(?=.*certif)
+AFAIRE : 
+    capitaliser:on peut prendre le parent si on veut rajouter un certificat dans le truststore
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
  Envoyer à dorothé le script de synchro gitlab vers gitcacib
@@ -1089,7 +1090,7 @@ svn disconnect: installer le plugin pour ça.
     svn taguer tag tager: creer une branche, copier le trunk dans un tag ou dans une branche
             VCS>Subersion>Branch or Tag... copie de mon env de local ou d'une URL du repository au choix >>>vers un tag ou une branche
             si en local j'ai un tag ou une branche, lors du commit ca commit dans le tag ou la branche pas dans le trunk
-    svn rempalcer trunk par une branche ou un tag. J'ai pas reussi avec intellij: utilisé tortoise: trunck--move-->oldTrunk puis tag/1.2.1---copy-->trunk
+    svn rempalcer trunk par une branche ou un tag. repository browser puis choisir le trunck--move-->oldTrunk puis tag/1.2.1---copy-->trunk ou commiter vers le path que je veux et je choisis trunk
 git pull tous les projets/modules en une seule fois VCS>Update projects... // il ne fait que fetch. Penser à cliquer ensuite dans l'onglet VCS du bas pour voir ce qui se passe sinon suis aveugle. Il faudra faire pull après!(voir les fichiers D://git/pull.xls et D://git/pull.bat). 
 si j'ai erreur source release 1.7 requires target release 1.7
           mettre pareil dans settings>build,execution,depl>compiler>javacompiler; projectstructure>project; projectstructure>modules>sources; dans le pom maven;
@@ -13494,7 +13495,7 @@ fin c ca que j'ai fait qui marche PAS jusqu'au bout.
                                   Quel est le code pays Ó deux lettres pour cette unitÚ ?
                                     [Unknown]:  FR
                     // curl -u user:password -k https://127.0.0.1:9000/greeting
-                    // convertir un .P12 en JKS (en fait j'importe un certif .p12 dans un keystore jks je crois) (un .p12 peut contenir ou pas une cle privée dedans)
+                    // convertir un .P12 en JKS (en fait j'importe ajouter un certif .p12 dans un keystore jks je crois) (un .p12 peut contenir ou pas une cle privée dedans)
                             keytool -importkeystore -srckeystore key.p12 -srcstoretype PKCS12 -srcstorepass password -alias some-alias -destkeystore samlKeystore.jks -destalias some-alias	-destkeypass changeit (si erreur "java.util.IllegalFormatConversionException: d != java.lang.String" rajouter -J-Duser.language=en: ca se produit pour java>7)
                     // convertir un JKS en .P12 (en fait importkeystore va recup un alias d'un keystore B pour le copier dans un keystoreA mais on peut se passer du keystoreB si j'ai bien compris)
                              keytool -importkeystore -srckeystore file.jks -destkeystore file.p12 -srcstoretype JKS -deststoretype PKCS12 -deststorepass motdepasse -srcalias aliasdansjks -destalias aliasdest (si erreur "java.util.IllegalFormatConversionException: d != java.lang.String" rajouter -J-Duser.language=en: ca se produit pour java>7)
@@ -13516,8 +13517,8 @@ fin c ca que j'ai fait qui marche PAS jusqu'au bout.
                       cree le fichier mycertreq.csr à transmettre mais je peux l'auto-certifier moi meme avec openssl.
                           D:\Java\jdk1.7.0_03-32b\bin\keytool -certreq -alias "aliasDunDesCertificatDansMonTrousseau" -file mycertreqEnSortie.csr -keystore mon.keystore.jks ou .p12
                           ce fichier .csr c'est du texte à transmettre a une Certificate Authority
-                      L'Autorite me renvoie tototo.crt (oubien certif.cer?) C'est un certificat. Pour l'importer dans mon trousseau truststore je fais:
-                          D:\Java\jdk1.7.0_03-32b\bin\keytool -import -alias "aliasDuCertifAImporterDansMonTrousseau" -file tototo.crt -keystore mon.keystore.jks (ou java/jre/lib/security/cacerts si je veux le mettre dans le trousseau de Java) (si erreur "java.util.IllegalFormatConversionException: d != java.lang.String" rajouter -J-Duser.language=en: ca se produit pour java>7)
+                      L'Autorite me renvoie tototo.crt (oubien certif.cer?) (on peut prendre le parent d'un certif ca marche aussi) C'est un certificat. Pour l'importer ajouter dans mon trousseau truststore je fais:
+                          D:\Java\jdk1.7.0_03-32b\bin\keytool -import -alias "aliasDuCertifAImporterDansMonTrousseau" -file tototo.crt -keystore mon.keystore.jks (ou java/jre/lib/security/cacerts si je veux le mettre dans le trousseau de Java) -storetype JKS (facultatif) (si erreur "java.util.IllegalFormatConversionException: d != java.lang.String" rajouter -J-Duser.language=en: ca se produit pour java>7)
                       Importer mon certif prive en tant que certif public publique dans un keystore (si le certif existe deja, même avec un autre alias il le detecte et refuse l'import mais on peut forcer )
                           D:\Java\jdk1.7.0_03-32b\bin\keytool -import(ou -importcert c pareil apparemment) -alias "nouvelAliasDuCertifQuonVeutDefinirDansMonTrousseau" -file tototo.crtOU.p7bMAISCANAPASLAIRDEMARCHERERRURX509 -keystore mon.keystore.jks (si erreur "java.util.IllegalFormatConversionException: d != java.lang.String" rajouter -J-Duser.language=en: ca se produit pour java>7)
                       Supprimer un certificat du keystore:
@@ -26312,6 +26313,7 @@ u accent:
 euros:
     &#128; ou Alt+0128(windows-1252 sinon &#8364 Unicode) (1252: francais. 1250: tcheque)
 Javascript :
+    quand on appelle une fonction, le dernier argument c'est toujours l'event
 enfant child childrens d'un element: 
     this.children (que les enfants de type elements)
     this.childNodes (tous les enfants meme les textes intercallés)
@@ -26352,30 +26354,28 @@ fetch : LINKsljqffetch
                               `;
 ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch)
                         ans = canvas.toDataURL("image/png");  //Pour sauver un canvas sur le serveur en image png ou jpg il faut obligatoirement envoyer les donnees en POST sinon le fichier genere est pourri:
-            	    		var formData = new FormData(); ou new FormData(document.getElementById("forText")); // forText est juste un formulaire html recuperable avec document.getElement...ATTENTION les champs de mon formulaire doivent avoir un name sinon ils ne sont pas ajoute dans les formdata 
+            	    		var formData = new FormData(); ou new FormData(document.getElementById("forText")); // forText est juste un   html recuperable avec document.getElement...ATTENTION les champs de mon formulaire doivent avoir un name sinon ils ne sont pas ajoute dans les formdata 
                             formData.append('ans', ans); // Append extra data before send.
                             formData.append('idp', idprojetEnCours); // Append extra data before send.
                             formData.append('fs', askValidator.fs); // Append extra data before send.
                       var xhr = new XMLHttpRequest();
-                     // ne pas mettre ces lignes ci dessous sinon ca ne marche pas... ??....pq?
-                      /*      xhr.onreadystatechange = onStateChange; 
                               xhr.setRequestHeader("Content-Type", "multipart/form-data"); 
                               ou
-                              xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); Si on ne veut pas que notre formulaire puisse envoyer des fichiers: on recupere que les parametres string. x-www-form-urlencoded c'est un post qui envoie les paramtres à la façon d'un get 
-                              et
+                              xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); Attention dans ce cas c'est dans l'URL que sont les parametres comme un GET. Si on ne veut pas que notre formulaire puisse envoyer des fichiers
+                        // ne pas mettre ces lignes ci dessous sinon ca ne marche pas... ??....pq? 
+                     /*         et
                               xhr.setRequestHeader("X-File-Name", file.fileName);
                               xhr.setRequestHeader("X-File-Size", file.fileSize);
-                              xhr.setRequestHeader("X-File-Type", file.type);
-                        */
-
-            	    		xhr.open('POST', "AudioLoopOnlinePushAnsDRW.php ou url", true); ou xhr.open('POST', form.action, true); // alors remplir le payload LINK564894
+                              xhr.setRequestHeader("X-File-Type", file.type);*/
+             	    		  
+                      xhr.open('POST', "AudioLoopOnlinePushAnsDRW.php ou url", true); ou xhr.open('POST', form.action, true); // alors remplir le payload LINK564894 sauf si x-www-form-urlencoded
                       ou
                       xhr.open("POST", "/musclesWeb/strongPassword?action="+JSON.stringify(jsontable), true); //alors mettre au dessus: xhr.setRequestHeader("Content-Type", "application/json"); recuperable dans servlet java: httpServletRequest.getParameter("action"); voir convert conversion champs formulaire en json LINKç'ç'ç"_() 
                       ou
                       xhr.open("GET", "AudioLoopOnlineDownloadText.php?target=sons/"+idprojetEnCours+"/"+numfichierEnCours+"_"+cursec+".txt", true);
                       si probleme d'encodage lors de l'envoi si j'ai une page en ISOetc etc... ma base aussi mais il faut que lors de l'envoie je specifie bien l'encodage:
                       xhr.overrideMimeType("text/html; charset=ISO-8859-15"); (sinon en base il enregistre de la m...) si je veux envoyer du javascript, le mime c'est "application/javascript"
-                      xhr.responseType = 'text';
+                      xhr.responseType = 'text';  ou 'blob' si c'est pour un upload de fichier
                       
                     $.ajax({url:"xxx",success:qdcfini}) // jamais teste... marche pas car $ inconnu
                     qdcfini=(res)=>{alert(res)} // jamais teste
@@ -26431,7 +26431,17 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                               progressBar.value = (e.loaded / e.total) * 100;
                               progressBar.textContent = progressBar.value; // Fallback for unsupported browsers.
                             }
-                                              	    		
+                        xhr.onreadystatechange = function() { // pour faire un upload de fichier en ajax
+                                    if (this.readyState == 4 && this.status == 200) {
+                                        var downloadUrl = URL.createObjectURL(xhr.response);
+                                        var a = document.createElement("a");
+                                        document.body.appendChild(a);
+                                        a.style = "display: none";
+                                        a.href = downloadUrl;
+                                        a.download = "";
+                                        a.click();
+                                    }
+                                    };                                              	    		
                       xhr.send(file); // marche pas.. plutot envoyer le formulaire comme ci-dessous            	    		
             	    		xhr.send(formData); // on utilise ça que pour du multipart: envoi de fichier ou canvas voir côte servlet là:LINKee"(çà)"
             	    		xhr.send(txt); // ou txt = "file=" + url +  "&content=" + content; // on utilise ça en Post. pour Get voir plus haut. Alors request.getParameter marche (je crois)
@@ -26439,8 +26449,8 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
    		      	    		xhr.send(json); // ou json = JSON.stringify(jsonobject) du coup mon json est dans le payload. Pour le recuperer cote serveur:LINK564894. voir comment je construit ce json avec un formulaire html:LINKç'ç'ç"_() 
                       ou 
 2                      xhr.send(null); xhr.send(); // si c'est du GET voir plus haut
-
-                      return false; // Prevent page from submitting.
+                        event.preventDefault(); // Prevent page from submitting. 
+                        return false;           // Prevent page from submitting.   
                 	    }
         ajax Cote php: LINKphpajax
                     $idp= $_POST["idp"];
@@ -26458,7 +26468,31 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                   	fwrite($fp, $decodedData);
                 	fclose ($fp);
                 }
-
+jouer un fichier audio sans objet audio
+        var request = new XMLHttpRequest();
+        				  request.open('GET', url, true);
+        				  request.responseType = 'arraybuffer';
+        				  // Decode asynchronously
+        				  var req=arguments.callee;
+        				  request.onload = function() 
+        				  {
+        					  printStacktrace(req.name);
+        				    context.decodeAudioData(request.response, function(buffer) 
+        				   	{
+        				   	printStacktrace();
+        				      soundBuffer = buffer;
+        				      playSound(soundBuffer);
+    function playSound(buffer) 
+      {
+      printStacktrace();
+        source = context.createBufferSource(); // creates a sound source
+        source.buffer = buffer;                    // tell the source which sound to play
+        //source.connect(filter);       
+        //filter.connect(context.destination);       // connect the source to the context's destination (the speakers)
+        source.connect(context.destination);
+        sendMessageDisappear("messageAudio", "OK");
+        source.noteOn(0);                          // play the source now
+      }
     possible de mettre a jour le texte du css avec du javascript mais tout d'un coup pas possible (pas trouvé) de façon chirurgicale
         document.getElementById("identifiantDeMaBaliseStyle").innerHTML
   pour savoir si une variable est un chiffre: 
@@ -26679,7 +26713,7 @@ fenetre modale en javascript:
     }
     function stoppropagation() // si je clique dans un bouton, il va propager l'event à ses parents jusqu'en haut.
     {
-        this.event.stopPropagation();
+        this.event.stopPropagation(); // rompre la propagation
     }
     <div id="frontwin" style="display:none; position: absolute; background-color: rgba(0,0,0,0.4); height: 100%; margin-top: 0%; margin-left: 0%; text-align: center; z-index: 2; width: 100%;" onclick="closefrontwin();">
     <div style="display: table; position: absolute; background-color: white; height: 50%; margin-top: 9%; margin-left: 25%; text-align: center; width: 50%;" onclick="stoppropagation()">
@@ -27124,31 +27158,7 @@ pour detecter si navigateur peut lire vorbid audio mp3:
                   	}
                   // end-Utils
 
-jouer un fichier audio sans objet audio
-        var request = new XMLHttpRequest();
-        				  request.open('GET', url, true);
-        				  request.responseType = 'arraybuffer';
-        				  // Decode asynchronously
-        				  var req=arguments.callee;
-        				  request.onload = function() 
-        				  {
-        					  printStacktrace(req.name);
-        				    context.decodeAudioData(request.response, function(buffer) 
-        				   	{
-        				   	printStacktrace();
-        				      soundBuffer = buffer;
-        				      playSound(soundBuffer);
-    function playSound(buffer) 
-      {
-      printStacktrace();
-        source = context.createBufferSource(); // creates a sound source
-        source.buffer = buffer;                    // tell the source which sound to play
-        //source.connect(filter);       
-        //filter.connect(context.destination);       // connect the source to the context's destination (the speakers)
-        source.connect(context.destination);
-        sendMessageDisappear("messageAudio", "OK");
-        source.noteOn(0);                          // play the source now
-      }
+
 pour faire du crossdoomain: jsonp:
         var s = document.createElement('script'); 
         s.src = "http://memoclap.com/AudioLoopLoadPrivateProjectsByPassword.php?pwd="+value;
@@ -32355,7 +32365,7 @@ pour tester les urls ci dessous
       fr-nw-caen
       fr-nor
       fr-idf
-      recup un coverage depuis une coordonnée 
+      recup un coverage depuis une coordonnée gps 
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.33245;48.77469: idf
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.3749036;48.8467927: idf
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.39107;48.65775: idf
