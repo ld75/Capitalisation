@@ -1,6 +1,5 @@
 (?=.*import)(?=.*certif)
 AFAIRE : 
-    capitaliser:on peut prendre le parent si on veut rajouter un certificat dans le truststore
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
  Envoyer à dorothé le script de synchro gitlab vers gitcacib
@@ -1133,6 +1132,7 @@ bouger extraire extract une variable en variable declaree plus haut move deplace
 bouger une classe dans un autre package: dans package explorer faire ctrl+x puis ctrl+v(couper-coller)
 bouger un bloc: selectionner puis ctrl+shift+fleches
 supprimer ligne: Shift+suppr ou Ctrl+y
+wrap ligne line j'ai ajouté le raccourci Ctrl+w
 editer raccourcis shortcuts: key file>settings>keymap>Default> Editor Actions
 si les shortcuts ne marchent plus faire peut etre controle + alt + fleches pave numerique peut etre que ça debloque (j'ai reussi une fois mais sais pas trop comment)
 column colonne editing: plusieurs lignes multiples en meme temps:  alt+maj+insert
@@ -1235,6 +1235,26 @@ glassfish :
     C:\glassfish3\glassfish\bin>asadmin stop-domain
   localhost:8080 puis localhost:4848
   http://localhost:2097/common/index.jsf
+    glassfish maven plugin pluggin demarer avec mvn embedded-glassfish:run 
+                <plugin>
+                    <groupId>org.glassfish</groupId>
+                    <artifactId>maven-embedded-glassfish-plugin</artifactId>
+                    <version>3.0</version>
+                    <configuration>
+                        <goalPrefix>glassfish</goalPrefix>
+                     <app>target/authentication.war</app> // attention a adapter ce nom
+                        <port>8080</port>
+                        <!--<contextRoot>test</contextRoot-->
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>deploy</phase>
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
   
 
 extjs :
@@ -2117,7 +2137,7 @@ Cycle de vie du bean:
               – @RequestScoped // a mettre absolument sur un webservice utilisant jwt car les claims jwt sont naturelement request-scopeds. LINKkgkgkgklkjsdfljqi
               – @SessionScoped
               – @ApplicationScoped // (par defaut) sur la classe. le bean est utilise pourl es proprietes generales de l'appli: ex: listes deroulantes qu'on voit tout le temps
-                                            @Singleton // peute etre sur classe meme un webservice. attention ne fait pas partie de la spec CDI mais de EJB. Va de paire avec @Startup. utiliser plutot @ApplicationScoped je crois... mais singleton et statup marchent bien. LINKsngletn
+                                            @Singleton // peute etre sur classe meme un webservice. attention ne fait pas partie de la spec CDI mais de EJB. Va de paire avec @Startup. utiliser plutot @ApplicationScoped mais singleton et statup marchent bien. LINKsngletn
                                             @Startup // a mettre sur une classe. s'execute au demarrage ne fait pas partie de la spec CDI mais de EJB
               – @ViewScoped
               – @CustomScoped pour que les beans soient stockees dans le FacesContext (qui a une duree de vie plus courte que RequestScope donc FC est plus rapide, bouffe moins de memoire)
@@ -2134,6 +2154,7 @@ Cycle de vie du bean:
                 du coup ma classe n'est plus un webservice et ne pas utiliser @Produce et @Path avec. 
                 juste 
                 public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {response.getWriter().println("Hello");
+                on peut y injecter @Inject SecurityContext securityContext; à condition qu'il y ait au moins un IdentityStore sinon j'ai l'erreur "Unsatisfied dependencies for type SecurityContext"
 SeContainerInitializer initializer = SeContainerInitializer.newInstance();
 try (SeContainer container = initializer.disableDiscovery().addPackages(App.class).addBeanClasses(MyService.class).initialize()) { pas besoin de beans.xml
     container.select(MyService.class);       |_on l'empeche de scanner auto
@@ -2141,15 +2162,18 @@ try (SeContainer container = initializer.disableDiscovery().addPackages(App.clas
 
 try (SeContainer container = initializer.disableDiscovery().initialize()) { container.select(MyService.class);}
             implique beans.xml
-                                                    resources/META-INF/beans.xml LINKbensoncle
-                                                    <beans xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-                                                                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                                                                       xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
-                                                                       version="1.1"bean-discovery-mode="all">
-                                                                </beans>
+                                                    WEB-INF/beans.xml LINKbensoncle
+                                                     <?xml version="1.0" encoding="UTF-8"?>
+                                                      <beans xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+                                                             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
+                                                             bean-discovery-mode="all">
+                                                      </beans>
+           
+                                                                
 		@Pattern(expressionreguliere) // sur un champ d'un bean: pour valider que ce champ quand il est rempli match bien à la regexp.
 		
-securite :(JSR375) plus besoin d'utiliser web.xml: les annotations font pareil.
+securite :(JSR375) plus besoin d'utiliser web.xml (sur?): les annotations font pareil.
        AFAIRE
        https://javaee.github.io/tutorial/security-api004.html
        https://javaee.github.io/tutorial/security-intro003.html#BNBXE->https://javaee.github.io/tutorial/security-javaee002.html#GJGDI
@@ -2167,9 +2191,12 @@ securite :(JSR375) plus besoin d'utiliser web.xml: les annotations font pareil.
        |                                                                                                                                                                                                                            loginPage = "/login.html", 
        |                                                                                                                                                                                                                            errorPage = "/login-error.html"),
        |                                                                                                                                                                                                                            useForwardToLogin=false // facultatif: pour faire un redirect a la place d'un forward  
-       MaCustomClasse                                                                                                                                                                                                             ))
+       |                                                                                                                                                                                                                             ))
+       MaCustomClasse implements HttpAuthenticationMechanism                                                                                                                                                                                                             
+              @Inject 
+              private IdentityStoreHandler identityStoreHandler; // doit avoir ca
        METHODE Importante: validateRequest() que je dois implémenter Les 2 autres c facultatif
-                              Fait appel à->IdentityStoreHandler(Je peux le reecrire moi même)->fait appel à tous les->
+                              Fait appel à->IdentityStoreHandler(Je peux le reecrire moi même)->qui lors de identityStoreHandler.validate(credential) fait appel à tous les->
                             
                                    IdentityStore interface ->interagit avec ldap ou database pour authent l'utilisateur. sous classe doit être Bean.
                                    |            |
@@ -2184,12 +2211,12 @@ securite :(JSR375) plus besoin d'utiliser web.xml: les annotations font pareil.
        pour securiser une servlet: ACONFIRMER:c'est grace a ca que ça declanche mon HttpAuthenticationMecanism 
             @WebServlet("/servlet")
             @ServletSecurity(
-                                value= @HttpConstraint(rolesAllowed = "foo"),
+                                value= @HttpConstraint(rolesAllowed = {"foo","supervisor"}),
                                 httpMethodConstraints={
                                         @HttpMethodConstraint(
-                                            value = "GET",rolesAllowed = {"user_role"}),
+                                            value = "GET",rolesAllowed = {"foo"}),
                                        @HttpMethodConstraint(
-                                            value = "POST",rolesAllowed = {"admin_role"})                                
+                                            value = "POST",rolesAllowed = {"supervisor"})
                                                         }
                             )
             @DeclareRoles({ "role1", "role2bar", "kaz" }) //roles renvoyés par la database. peut etre mis sur classe ou methode(override classe alors) //PASCLAIR
@@ -2305,8 +2332,13 @@ Customer customer2 =home.findByPrimaryKey(new Integer(33));
 Name name2 = customer2.getName();
 System.out.println(name);// output is "Richard Wayne Monson-Haefel"
 
- 
-
+mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de csrf) 
+    krazo (projet eclipse). Pour les utliser sur differents serveurs voir https://www.mvc-spec.org/krazo/docs/install-javaee.html 
+                        <dependency>
+                          <groupId>javax.mvc</groupId>
+                          <artifactId>javax.mvc-api</artifactId>
+                          <version>1.0-pfd</version>
+                      </dependency>
 freemaker :
       <html>
           <head>
@@ -2888,6 +2920,16 @@ quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.
     du coup rajouter:-Dnative-image.docker-build=true // je crois qui cree un executable metable dans un container docker (voir le dockerfile  genere par quarkus)
   docker build -f src/main/docker/Dockerfile.native -t quarkus-quickstart/quickstart // creer l'image docker
   docker run -i --rm -p 8080:8080 quarkus-quickstart/quickstart // executer dans docker ou kubernetes
+quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.io/guides/cdi-reference.html. quarkus-reasteasy:c'est jaxRS
+        creer un nouveau projet from scrash de n'importe où: 
+        mvn io.quarkus:quarkus-maven-plugin:0.16.1:create -DclassName="org.acme.quickstart.MaClasseWebServiceResource" -Dpath="/urlDeCeWebServiceHelloWorld" 
+                dans le pom, io.rest-assured c'est pour les tests voir LINKtestetresrtest. ATTENTION remplacer la dependance <artifactId>quarkus-resteasy</artifactId> par <artifactId>quarkus-resteasy-jsonb</artifactId> si je veux faire du rest json 
+  mvnw compile quarkus:dev -Ddebug(si je veux debugger)// execute en dev (demarre un serveur http). quarkus:dev c'est pour que le serveur ecoute les changements et s'auto-refresh. Comment? Reponse:Refreshing the browser triggers a scan of the workspace, and if any changes are detected, the Java files are recompiled and the application is redeployed; your request is then serviced by the redeployed application. If there are any issues with compilation or deployment an error page will let you know.
+  mvnw package // recompile et package 2jars. Un executable -runner.jar (executable par "java -jar target/getting-started-1.0-SNAPSHOT-runner.jar") qui demarre le serveur jboss attention les librairies utilisées sont externes dans target/lib voir son MANIFEST.MF. Un autre qui ne contient pas l'embedded serveur 
+  mvnw package -Pnative // recompile et package un binaire executable dans target environnement dépendant donc attention:executable sans besoin de jvm mais fonctionne que sur mon type d'environnement actuel
+    du coup rajouter:-Dnative-image.docker-build=true // je crois qui cree un executable metable dans un container docker (voir le dockerfile  genere par quarkus)
+  docker build -f src/main/docker/Dockerfile.native -t quarkus-quickstart/quickstart // creer l'image docker
+  docker run -i --rm -p 8080:8080 quarkus-quickstart/quickstart // executer dans docker ou kubernetes
        quarkus :tests:
             @QuarkusTest // le serveur jboss demarre sur port 8081(modifiable par quarkus.http.test-port dans application.properties) et rest-assured utilise ce port. Toutes les injections se font.
             public class GreetingResourceTest {
@@ -2913,10 +2955,43 @@ quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.
                             .body("utilisateur.nom", equalTo("jean"),"lotto.winners.winnerId", hasItems(23, 54));//marche meme si c'est du json. permet de valider le json sans avoir à convertir en objet java LINKtestetresrtest
                 }
             si dans un service rest j'ai l'erreur can not access a member of class c'est parce que je ne peux pas convertir en json une classe qui est inner d'une autre classe.       
+    une classe webservice :(karaf par ex)
+      LINK93029
+            	@Context                   // request et response comme ça sont automatiquement injectes
+            	private HttpServletRequest httpRequest; // attention on dirait que pas possible de faire httpRequest.getParameter("x") si dans la methode en bas j'utilise @FormParam
+            	@Context
+            	HttpServletResponse httpResponse;
+                @RolesAllowed({"Echoer", "Subscriber"}) // pour securiser l'acces à la classe. Peut etre mis au niveau de la methode (authorizations)
+                ou
+                @PermitAll
+                  @GET ou @POST
+                @Path("/la_suite_de_lurl") ou @Path("/") // facultatif ou @Path("/{a:api/v1/realtimepath|api/v2/apps/{appNameId}/realtimepath") //si j'ai plusieurs multiples urls 
+                public interface ou une classe FeaturesRestService { /// TRES IMPORTANT: la methode doit etre public sinon il ne la voit pas
+                @Path("/lafindelurl") // mettre {monparamdanspath} si on veut utiliser @PathParam("userlogin")String login ci dessous LINK5464  
+               (javax.ws.rs.)@Produces("application/xml") // possible aussi mais à traduire: produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE ou MediaType.SERVER_SENT_EVENTS
+                  public Collection getFeatures(@Context SecurityContext securityContext LINKoooooooog @FormParam("parametrePost") String unParametre  ) throws Exception;
+                                                  ou 
+                                                      @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464
+                                                      et si besoin
+                                                      @QueryParam("unChampApres?ou&DanslUrl") 
+                    // ci dessous: pour recuperer un bundle complettement ailleurs dans le meme karaf en java(l'autre façon c'est d'injecter dans blueprint)
+                  		BundleContext bundleContext = FrameworkUtil.getBundle(UnServiceDeCeBundleLa.class).getBundleContext();
+                  		@SuppressWarnings("rawtypes")
+                  		ServiceReference serviceReference = bundleContext.getServiceReference(une.classe.qui.est.un.service.dans.un.autre.bundle.AutreClasse.class.getCanonicalName());
+                  		return (String) serviceReference.getProperty("UNEPROPRIETTEESETTEE_DANS_LE_BLUEPRINT_DE_CET_AUTRE_BUNDLE");
+                  
+                } 
+                et la sous classe si c'est une interface mais bof autant faire une classe direct sans interface:
+                contient juste la methode                         
+                  public Collection getFeatures(@FormParam("SAMLResponse") String samlReponse) throws Exception {...} sans les annotations
+               Pour fair une servlet karaf LINKkarafservlet
+                   public class MetadataDisplayServlet extends HttpServlet
+                  { contient les methodes post et get habituelles
+   
 
 webservice : webservices : voir LINKSWAGGER 
 
-        -versionning: V.X.Y : Y changements minaures sur le meme webservice. X:si changement majeur faire un autre webservice et ne pas toucher à l'ancien. ceux qui appellent le webservice peuvent basculer en X+1 quand ils veulent. Comme la regle ne pas modifier mais etendre.
+        -versionning: V.X.Y : Y changements mineurs sur le meme webservice. X:si changement majeur faire un autre webservice et ne pas toucher à l'ancien. ceux qui appellent le webservice peuvent basculer en X+1 quand ils veulent. Comme la regle ne pas modifier mais etendre.
                 A___          A___V1.0     A________V1.0
                     \_V.1.0   B   
                 B_--'             V2.0     B.V2.0---V2.0
@@ -2935,6 +3010,10 @@ REST : webservice : webservices : client accède à un service à partir d'un UR
 voir exemple de webservice rest sans framework ici: d:\Profiles\lduverge\Desktop\Apprentissage\webservicedemo(attention pour l'entite j'ai pas respecte unclebob)
 tutoriel Pour faire des serveurs de webservice: http://www.tutorialspoint.com/restful/restful_first_application.htm
 webservices: http://users.skynet.be/pascalbotte/
+             https://javarevisited.blogspot.com/2017/02/difference-between-jax-rs-restlet-jersey-apache-cfx-RESTEasy.html
+             jax-rs est la spec(JSR311 & JSR339)
+             implémentée par au choix Restlet, Jersey(inclu dans glassfish), resteasy(inclu dans wildfly et thormtail), cxf (inclu dans tomee) 
+
                 @ApplicationPath("nomdupremierpathUrlDeMonAppli") // sur une classe qui étend javax.ws.rs.core.Application // seuls les url des webservices rest du coup vont avoir ce path en amont. N'affecte pas les servlets ou les webservices soap
                 public class RESTConfiguration extends Application {
                 rien.
@@ -3066,7 +3145,6 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
                                            
                        
 SOAP : webservice : webservices :
-a lire    https://javarevisited.blogspot.com/2017/02/difference-between-jax-rs-restlet-jersey-apache-cfx-RESTEasy.html
 http://ws.apache.org/axis/java/user-guide.html
 voir l'outil Soap Ui soapui bien pratique (dans installations)
 utilise WSDL (le serveur donne au client un wsdl pour qu'il puisse appeller ses methodes) Pour voir les details d'un webservice avec wsdl: http://172.18.68.129:10512/hr-ws/services?wsdl (?wsdl à la fin) existe aussi Spring-WS
@@ -3269,7 +3347,7 @@ swagger : pour qu'un webservice rest(je pense) exposer ses methodes dans une pag
                     </execution>
                 </executions>
             </plugin>
-            executer le puggin maven et c'est bonnard.            
+            executer le puggin maven et c'est bonnard genere le rapport sous target\jaxrs-analyzer3\swagger.json            
 
 faire un chat : websocket :
 Pour faire un serveur serveur de chat etc... fonctionnement des sockets
@@ -3321,72 +3399,6 @@ jwebsocket : (Web Socket) faire un chat :
    java -jar jWebSocketServer-1.0.jar
 
 
-quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.io/guides/cdi-reference.html. quarkus-reasteasy:c'est jaxRS
-        creer un nouveau projet from scrash de n'importe où: 
-        mvn io.quarkus:quarkus-maven-plugin:0.16.1:create -DclassName="org.acme.quickstart.MaClasseWebServiceResource" -Dpath="/urlDeCeWebServiceHelloWorld" 
-                dans le pom, io.rest-assured c'est pour les tests voir LINKtestetresrtest. ATTENTION remplacer la dependance <artifactId>quarkus-resteasy</artifactId> par <artifactId>quarkus-resteasy-jsonb</artifactId> si je veux faire du rest json 
-  mvnw compile quarkus:dev -Ddebug(si je veux debugger)// execute en dev (demarre un serveur http). quarkus:dev c'est pour que le serveur ecoute les changements et s'auto-refresh. Comment? Reponse:Refreshing the browser triggers a scan of the workspace, and if any changes are detected, the Java files are recompiled and the application is redeployed; your request is then serviced by the redeployed application. If there are any issues with compilation or deployment an error page will let you know.
-  mvnw package // recompile et package 2jars. Un executable -runner.jar (executable par "java -jar target/getting-started-1.0-SNAPSHOT-runner.jar") qui demarre le serveur jboss attention les librairies utilisées sont externes dans target/lib voir son MANIFEST.MF. Un autre qui ne contient pas l'embedded serveur 
-  mvnw package -Pnative // recompile et package un binaire executable dans target environnement dépendant donc attention:executable sans besoin de jvm mais fonctionne que sur mon type d'environnement actuel
-    du coup rajouter:-Dnative-image.docker-build=true // je crois qui cree un executable metable dans un container docker (voir le dockerfile  genere par quarkus)
-  docker build -f src/main/docker/Dockerfile.native -t quarkus-quickstart/quickstart // creer l'image docker
-  docker run -i --rm -p 8080:8080 quarkus-quickstart/quickstart // executer dans docker ou kubernetes
-       quarkus :tests:
-            @QuarkusTest // le serveur jboss demarre sur port 8081(modifiable par quarkus.http.test-port dans application.properties) et rest-assured utilise ce port. Toutes les injections se font.
-            public class GreetingResourceTest {
-                @Test
-                public void testHelloEndpoint() {
-                    given() // de rest-assured. SI je veux forcer moi meme l'url alors faire  @TestHTTPResource("/monPath") URL ou String monUrl dans ma classe de test
-                      .when().get("/hello")
-                      .then()
-                         .statusCode(200)
-                         .body(is("hello"));
-                }
-                @Test
-                public void testGreetingEndpoint() {
-                    String uuid = UUID.randomUUID().toString();
-                    given()
-                            .pathParam("name", uuid)  // rempli le {name} ci dessous
-                            .when().get("/hello/hello/{name}")
-                            .then()
-                            .statusCode(200)
-                            .body(is("hello " + uuid + "\n"));
-                            .body("utilisateur.nom", equalTo("jean"),"lotto.winners.winnerId", hasItems(23, 54));//marche meme si c'est du json. permet de valider le json sans avoir à convertir en objet java LINKtestetresrtest
-                }
-            si dans un service rest j'ai l'erreur can not access a member of class c'est parce que je ne peux pas convertir en json une classe qui est inner d'une autre classe.       
-    une classe webservice :(karaf par ex)
-      LINK93029
-            	@Context                   // request et response comme ça sont automatiquement injectes
-            	private HttpServletRequest httpRequest; // attention on dirait que pas possible de faire httpRequest.getParameter("x") si dans la methode en bas j'utilise @FormParam
-            	@Context
-            	HttpServletResponse httpResponse;
-                @RolesAllowed({"Echoer", "Subscriber"}) // pour securiser l'acces à la classe. Peut etre mis au niveau de la methode (authorizations)
-                ou
-                @PermitAll
-                  @GET ou @POST
-                @Path("/la_suite_de_lurl") ou @Path("/") // facultatif ou @Path("/{a:api/v1/realtimepath|api/v2/apps/{appNameId}/realtimepath") //si j'ai plusieurs multiples urls 
-                public interface ou une classe FeaturesRestService { /// TRES IMPORTANT: la methode doit etre public sinon il ne la voit pas
-                @Path("/lafindelurl") // mettre {monparamdanspath} si on veut utiliser @PathParam("userlogin")String login ci dessous LINK5464  
-               (javax.ws.rs.)@Produces("application/xml") // possible aussi mais à traduire: produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE ou MediaType.SERVER_SENT_EVENTS
-                  public Collection getFeatures(@Context SecurityContext securityContext LINKoooooooog @FormParam("parametrePost") String unParametre  ) throws Exception;
-                                                  ou 
-                                                      @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464
-                                                      et si besoin
-                                                      @QueryParam("unChampApres?ou&DanslUrl") 
-                    // ci dessous: pour recuperer un bundle complettement ailleurs dans le meme karaf en java(l'autre façon c'est d'injecter dans blueprint)
-                  		BundleContext bundleContext = FrameworkUtil.getBundle(UnServiceDeCeBundleLa.class).getBundleContext();
-                  		@SuppressWarnings("rawtypes")
-                  		ServiceReference serviceReference = bundleContext.getServiceReference(une.classe.qui.est.un.service.dans.un.autre.bundle.AutreClasse.class.getCanonicalName());
-                  		return (String) serviceReference.getProperty("UNEPROPRIETTEESETTEE_DANS_LE_BLUEPRINT_DE_CET_AUTRE_BUNDLE");
-                  
-                } 
-                et la sous classe si c'est une interface mais bof autant faire une classe direct sans interface:
-                contient juste la methode                         
-                  public Collection getFeatures(@FormParam("SAMLResponse") String samlReponse) throws Exception {...} sans les annotations
-               Pour fair une servlet karaf LINKkarafservlet
-                   public class MetadataDisplayServlet extends HttpServlet
-                  { contient les methodes post et get habituelles
-   
 
 
 JAAS :
@@ -5300,46 +5312,6 @@ AILLEURS: injecter mes beans par constructeur
             $CATALINE_HOME/bin/digest.sh -a HASH_TYPE PASSWORD
             Replace the password for the user in question in the $CATALINA_HOME/conf/tomcat_users.xml file
             Restart Tomcat                                                                                          
-    h2 : embedded database:
-                    dans la config xml:
-                          <jdbc:embedded-database id="dataSourceRepository" type="H2">
-                            <jdbc:script location="${ws.schema.script}" /> 
-                            <jdbc:script location="${ws.data.source.init}" />
-                          </jdbc:embedded-database>
-                          dans le fichier pointe par ${ws.schema.script} pour que to_date existe mettre:
-                                            -- TO_DATE
-                                            drop ALIAS if exists TO_DATE;
-                                            CREATE ALIAS TO_DATE as '
-                                            import java.text.*;
-                                            @CODE
-                                            java.util.Date toDate(String dateTime, String dateFormat) throws Exception {
-                                                if (dateFormat.contains("MON")) {
-                                                    dateFormat = dateFormat.replace("MON", "MMM");
-                                                }
-                                                if (dateFormat.contains("Y")) {
-                                                    dateFormat = dateFormat.replaceAll("Y", "y");
-                                                }
-                                                if (dateFormat.contains("D")) {
-                                                    dateFormat = dateFormat.replaceAll("D", "d");
-                                                }
-                                                if (dateFormat.contains("HH")) {
-                                                    dateFormat = dateFormat.replaceAll("HH", "hh");
-                                                }
-                                                if (dateFormat.contains("hh24")) {
-                                                    dateFormat = dateFormat.replaceAll("hh24", "hh");
-                                                }
-                                                if (dateFormat.contains("MI") || dateFormat.contains("mi")) {
-                                                    dateFormat = dateFormat.replaceAll("MI", "mi").replaceAll("mi", "mm");
-                                                }
-                                                if (dateFormat.contains("SS")) {
-                                                    dateFormat = dateFormat.replaceAll("SS", "ss");
-                                                }
-                                                return new SimpleDateFormat(dateFormat).parse(dateTime);
-                                            }
-                                            ';
-
-                          
-                        
           
                              
 Spring : XML STYLE                                                                      
@@ -7937,6 +7909,43 @@ indexof :   INSTR:
         -> 4
 H2 :
 client H2: http://www.h2database.com/html/main.html
+h2 : embedded database:
+                    dans la config.xml du serveur:
+                          <jdbc:embedded-database id="dataSourceRepository" type="H2">
+                            <jdbc:script location="${ws.schema.script}" /> 
+                            <jdbc:script location="${ws.data.source.init}" />
+                          </jdbc:embedded-database>
+                          dans le fichier pointe par ${ws.schema.script} pour que to_date existe mettre:
+                                            -- TO_DATE
+                                            drop ALIAS if exists TO_DATE;
+                                            CREATE ALIAS TO_DATE as '
+                                            import java.text.*;
+                                            @CODE
+                                            java.util.Date toDate(String dateTime, String dateFormat) throws Exception {
+                                                if (dateFormat.contains("MON")) {
+                                                    dateFormat = dateFormat.replace("MON", "MMM");
+                                                }
+                                                if (dateFormat.contains("Y")) {
+                                                    dateFormat = dateFormat.replaceAll("Y", "y");
+                                                }
+                                                if (dateFormat.contains("D")) {
+                                                    dateFormat = dateFormat.replaceAll("D", "d");
+                                                }
+                                                if (dateFormat.contains("HH")) {
+                                                    dateFormat = dateFormat.replaceAll("HH", "hh");
+                                                }
+                                                if (dateFormat.contains("hh24")) {
+                                                    dateFormat = dateFormat.replaceAll("hh24", "hh");
+                                                }
+                                                if (dateFormat.contains("MI") || dateFormat.contains("mi")) {
+                                                    dateFormat = dateFormat.replaceAll("MI", "mi").replaceAll("mi", "mm");
+                                                }
+                                                if (dateFormat.contains("SS")) {
+                                                    dateFormat = dateFormat.replaceAll("SS", "ss");
+                                                }
+                                                return new SimpleDateFormat(dateFormat).parse(dateTime);
+                                            }
+                                            ';
  requeter une base de donnée h2 en java
     pour voir les tables de h2 afficher : SELECT * FROM INFORMATION_SCHEMA.TABLES
       Class.forName ("org.h2.Driver");
@@ -11486,7 +11495,7 @@ Les phases: se jouent de manière sequencielle du haut vers le bas:
             install - install the package into the local repository, for use as a dependency in other projects locally
             deploy - done in an integration or release environment, copies the final package to the remote repository for sharing with other developers and projects.
             si je fais mvn deploy tout est execute. Si je fais mvn clean deploy il fait d'abord un clean avant de tout executer 	
-Les goals:(appartiennent à phases) sin on veut executer mvn un_goal alors ecrire mvn maven-nomplugin-plugin:goal mais enlever maven- et -plugin
+Les goals:(appartiennent à phases) si on veut executer mvn un_goal alors ecrire mvn maven-nomplugin-plugin:goal mais enlever maven- et -plugin
     un goal appartient à 0 à n phases. et une phase peut avoir 0 à n goals. Une phase sans goal n'est pas executee
     Moreover, if a goal is bound to one or more build phases, that goal will be called in all those phases.
     si une phase contient plusieurs goals et qu'on execute cette phase: tous les goals sont executes dans l'ordre de declaration des goals dans le pom
@@ -25364,10 +25373,11 @@ utiliser sur maven:
                     <javaOpts>  
                         <javaOpt>-agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n</javaOpt> // pour pouvoir débugger rajouter ça et voir LINKoizeurzotie 
                     </javaOpts>
+                    <timeout>3000</timeout> // pour que au demmarage il ne plante pas avec did not start within 60 seconds quand ca prend trop de temps ou si tjrs ko rajouter dans les <properties><wildfly.timeout>300</wildfly.timeout>
                 </configuration>
             </plugin>
-            puis wildfly:start(si ne marche pas la premiere fois, reessayer en avant fait un wildfly:shutdown ou wildfly:undeploy avant peut etre)
-            puis wildfly:deploy puis redeploy etc etc...    	
+            puis mvn wildfly:run (pour voir les logs sur la console car en foreground) ou start(pour un demarrage en background)(si ne marche pas la premiere fois, reessayer en avant fait un wildfly:shutdown ou wildfly:undeploy avant peut etre)
+            puis mvn wildfly:deploy puis redeploy etc etc...    	
 tomcat :
 pour utiliser le plugin maven tomcat: Si ça marche:-). voir dessous: pas reussi à faire marcher avec une application avec spring security
 1)possible embeded on retrouve alors le serveur tomcat et le war deploye dans target de mon projet. Attention dans tomcat/conf besoin copier le web.xml du serveur tomcat (copier dans une conf tomcat) sinon erreur 404 sur les pages, jsp, images... Mais <!--<tomcatWebXml>pathVersUnAutreWeb.xmlDeLaConfTomcat/web.xml</tomcatWebXml>--> lui n'a pas marché
@@ -25388,7 +25398,7 @@ pour utiliser le plugin maven tomcat: Si ça marche:-). voir dessous: pas reussi
           <port>8081</port>
           <contextFile>${basedir}/src/test/resources/maven-tomcat-plugin/context.xml</contextFile> // facultatif: pour ajouter une connexion à un jndi par ex... voir context.xml
           <tomcatUsers>D:/Dev/apache-tomcat-7.0.61/conf/tomcat-users.xml</tomcatUsers> // facultatif
-          <additionalClasspathDirs> // pour ajouter des fichiers de conf lus par mon application dans le classpath comme si elles etaient dans le resources ressources ATTENTION ne marche que avec mvn tomcat7:run et non pas run-war! LINKkknv
+          <additionalClasspathDirs> // pour ajouter des fichiers de conf lus par mon application dans le classpath comme si elles etaient dans le resources ressources ATTENTION ne marche que avec mvn tomcat7:run(execute en premier plan avec la console qui ecrit les logs !=tomcat7:start) et non pas run-war! LINKkknv
 						<additionalClasspathDir>${basedir}/src/main/config/dev/appConf</additionalClasspathDir>
 						<additionalClasspathDir>${basedir}/src/main/config/wording</additionalClasspathDir> LINKoizeurzotie // pour debugger avec tomcat et intellij il suffit juste d'executer le maven à droite en mode debug et ça marche.
 		  </additionalClasspathDirs>
