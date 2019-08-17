@@ -1,5 +1,5 @@
-(?=.*start)(?=.*run)
-AFAIRE : naty_coe@yahoo.fr https://www.salon-zen.fr/
+(?=.*echo)(?=.*JAVA_HOME)
+AFAIRE : https://www.salon-zen.fr/
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
  Envoyer à dorothé le script de synchro gitlab vers gitcacib
@@ -1229,13 +1229,52 @@ OCR : image to texte :
   http://www.onlineocr.net/support/AboutOnlineOCR.aspx
   il accepte les gros jpeg 12qualite <4.1Mo
 
-
+payara :payaramicro : // executeur direct d'un microservice.
+    java -jar payara-micro.jar                      // créé un payara serveur
+        --rootdir repertoire/de/travail/cree/auto/si/existepas 
+        --deploy /home/user/example.war ou le repertoire root du war exploaded(dans target)// mettre un .reload sous la racine de mon war exploded et le modifier/toucher recharge le war exploded automatiquement
+        
+    payara maven plugin
+    <plugin>
+                <groupId>fish.payara.maven.plugins</groupId>
+                <artifactId>payara-micro-maven-plugin</artifactId>
+                <version>1.0.2</version>
+                <executions>
+                    <execution>
+                        <id>bundle</id>
+                        <goals>
+                            <goal>bundle</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>start</id>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <useUberJar>true</useUberJar>
+                    <daemon>false</daemon> // si true c'est executé en background et je ne vois pas les logs dans la console
+                    <deployWar>true</deployWar>
+                    <javaCommandLineOptions>
+                        <option>
+                            <value>-Xdebug</value>
+                        </option>
+                        <option>
+                            <key>-Xrunjdwp:transport</key>
+                            <value>dt_socket,server=y,suspend=n,address=5005</value>
+                        </option>
+                    </javaCommandLineOptions>
+                </configuration>
+            </plugin>
+    
 glassfish :
     C:\glassfish3\glassfish\bin>asadmin start-domain
     C:\glassfish3\glassfish\bin>asadmin stop-domain
   localhost:8080 puis localhost:4848
   http://localhost:2097/common/index.jsf
-    glassfish maven plugin pluggin demarer avec mvn embedded-glassfish:run 
+    glassfish maven plugin pluggin demarer avec mvn embedded-glassfish:run PAS REUSSI A FAIRE MARCHER 
                 <plugin>
                     <groupId>org.glassfish</groupId>
                     <artifactId>maven-embedded-glassfish-plugin</artifactId>
@@ -2135,6 +2174,7 @@ CDI1.x besoin de weld
 <!-- pour utiliser les @ : scan les java qui ont :@Named, @Inject
 Cycle de vie du bean: 
               – @RequestScoped // a mettre absolument sur un webservice utilisant jwt car les claims jwt sont naturelement request-scopeds. LINKkgkgkgklkjsdfljqi
+              – @RedirectScoped // fait partie de mvc: utile si apres un post on fait un redirect et qu'on a besoin de l'info du post.
               – @SessionScoped
               – @ApplicationScoped // (par defaut) sur la classe. le bean est utilise pourl es proprietes generales de l'appli: ex: listes deroulantes qu'on voit tout le temps
                                             @Singleton // peute etre sur classe meme un webservice. attention ne fait pas partie de la spec CDI mais de EJB. Va de paire avec @Startup. utiliser plutot @ApplicationScoped mais singleton et statup marchent bien. LINKsngletn
@@ -2147,6 +2187,12 @@ Cycle de vie du bean:
                   public void debut() { ... }
                   @PreDestroy--->methode s'execute quand le bean est retire du scope ou le scope est detruit.
                   public void fin() { ... }
+          
+          utilisation d'un champ injecté:                       définition de la classe de l'autre coté:
+          @Inject                                                @ApplicationScoped
+          @Named("simpleIs")                                     @Named("simpleIs")
+          private IdentityStore simpleIdentityStore;             public class SimpleIdentityStore implements IdentityStore {
+
           
           faire des servlets sans web.xml: 
                 ajouter en tete de classe qui etend HttpServlet @WebServlet("/un/path) .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters.
@@ -2177,7 +2223,7 @@ securite :(JSR375) plus besoin d'utiliser web.xml (sur?): les annotations font p
        AFAIRE
        https://javaee.github.io/tutorial/security-api004.html
        https://javaee.github.io/tutorial/security-intro003.html#BNBXE->https://javaee.github.io/tutorial/security-javaee002.html#GJGDI
-
+       voir LINKsecurlsjfg def roles, groupes, users, permission
         @AutoApplySession // si je veux que quand il s'authentifie ca crée une session http
         @LoginToContinue //pour un FORM login seulement: sert à definir loginpage, loginerrorpage etc...
         @RememberMe //Comme le bouton se souvenir de moi (AFAIRE)       
@@ -2206,12 +2252,14 @@ securite :(JSR375) plus besoin d'utiliser web.xml (sur?): les annotations font p
                                      GroupesDeCettePersonne<-getCallerGroup(CredentialValidationResult**) // peut fonctionner sans la validation ci-dessus pour recuperer les groupes d'un user meme non authentifié à condition que ce user ait: IdentityStorePermission("getGroups") sécurité à implémenter moi meme si j'utilise ma propre custom classe IdentityStore
                                      Set<VALIDATE et/ou PROVIDE_GROUPS><-validationTypes() // sert à determiner quelle genre de validation fait cet IdentityStore
                                      priority() // retourne un integer: plus il est petit plus il est prioritaire pour IdentityStoreHandler
-       **CredentialValidationResult contient le principal et ces roles
+       **CredentialValidationResult contient le principal et ces roles: return new CredentialValidationResult("Duke",new HashSet<>(asList("foo", "bar")));
         necessaire de parametrer web.xml voir LINKlkjsqgeegege:<security-constraint> et <security-role>       
        pour securiser une servlet: ACONFIRMER:c'est grace a ca que ça declanche mon HttpAuthenticationMecanism 
             @WebServlet("/servlet")
             @ServletSecurity(
-                                value= @HttpConstraint(rolesAllowed = {"foo","supervisor"}),
+                            value= @HttpConstraint(
+                                rolesAllowed = {"foo","supervisor"}), //limite cet acces aux utilisateurs qui ont ces roles.
+                                transportGuarantee= TransportGuarantee.CONFIDENTIAL, // facultatif: bloque l'accès ici si on est pas en https equivaut à LINKglkdlkflglglg                                
                                 httpMethodConstraints={
                                         @HttpMethodConstraint(
                                             value = "GET",rolesAllowed = {"foo"}),
@@ -2219,7 +2267,7 @@ securite :(JSR375) plus besoin d'utiliser web.xml (sur?): les annotations font p
                                             value = "POST",rolesAllowed = {"supervisor"})
                                                         }
                             )
-            @DeclareRoles({ "role1", "role2bar", "kaz" }) //roles renvoyés par la database. peut etre mis sur classe ou methode(override classe alors) //PASCLAIR
+            @DeclareRoles({ "role1", "role2bar", "kaz","foo","supervisor" }) //declare juste les roles que je vais utiliser dans cette classe. peut etre mis sur classe ou methode(override classe alors)  possible utilisser aussi avec:voir LINKdeclarereor
             public class MaServlet extends HttpServlet {
             
             
@@ -2339,6 +2387,45 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                           <artifactId>javax.mvc-api</artifactId>
                           <version>1.0-pfd</version>
                       </dependency>
+                      et 
+                       <dependency>
+                            <groupId>org.mvc-spec.ozark</groupId>
+                            <artifactId>ozark-core</artifactId>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.mvc-spec.ozark</groupId>
+                            <artifactId>ozark-jersey</artifactId>
+                        </dependency>
+                    ou
+                      <dependency>
+                         <groupId>org.glassfish.ozark</groupId>
+                         <artifactId>ozark</artifactId>
+                         <version>1.0.0-m03-SNAPSHOT</version>
+                         <scope>runtime</scope>
+                      </dependency>
+                      fonctionne que sur des webservices.
+                      @Path("hello")
+                      @View("private.jsp") mais c'est mieux de faire LINKvuejslskjf car ici meme si user n'a pas le rôle il va afficher la jsp
+                      public class HelloController {
+                            @Inject 
+                            private BindingResult validateurDeBinding; // pour valider le BeanParam
+                            @Inject
+                            private MvcContext mvc; // pour i18n: internationalisation internationalization. du coup on peut faire Locale locale = mvc.getLocale(); 
+                          @Context
+                          private SecurityContext securityContext;
+                          @GET ou @POST
+                          @CsrfValid // necessite dans la jsp: <input type="hidden" name="${mvc.csrf.name}" value="${mvc.csrf.token}"/>
+                          @Controller
+                          public String hello(@QueryParam("unChampApres?ou&DanslUrl") String name ETOU @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464 OU @FormParam("parametrePost") String unParametre OU @Valid @BeanParam FormDataBean f) {
+                              if (validateurDeBinding.isFailed()) {
+                                return Response.status(BAD_REQUEST)
+                                               .entity(“error.jsp”).build(); LINKvuejslskjf
+                              }
+                              return Response.status(OK).entity(“data.jsp”).build(); LINKvuejslskjf
+                           }
+                              return "hello.jsp"; LINKvuejslskjf
+                          }
+                      }
 freemaker :
       <html>
           <head>
@@ -2955,39 +3042,6 @@ quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.
                             .body("utilisateur.nom", equalTo("jean"),"lotto.winners.winnerId", hasItems(23, 54));//marche meme si c'est du json. permet de valider le json sans avoir à convertir en objet java LINKtestetresrtest
                 }
             si dans un service rest j'ai l'erreur can not access a member of class c'est parce que je ne peux pas convertir en json une classe qui est inner d'une autre classe.       
-    une classe webservice :(karaf par ex)
-      LINK93029
-            	@Context                   // request et response comme ça sont automatiquement injectes
-            	private HttpServletRequest httpRequest; // attention on dirait que pas possible de faire httpRequest.getParameter("x") si dans la methode en bas j'utilise @FormParam
-            	@Context
-            	HttpServletResponse httpResponse;
-                @RolesAllowed({"Echoer", "Subscriber"}) // pour securiser l'acces à la classe. Peut etre mis au niveau de la methode (authorizations)
-                ou
-                @PermitAll
-                  @GET ou @POST
-                @Path("/la_suite_de_lurl") ou @Path("/") // facultatif ou @Path("/{a:api/v1/realtimepath|api/v2/apps/{appNameId}/realtimepath") //si j'ai plusieurs multiples urls 
-                public interface ou une classe FeaturesRestService { /// TRES IMPORTANT: la methode doit etre public sinon il ne la voit pas
-                @Path("/lafindelurl") // mettre {monparamdanspath} si on veut utiliser @PathParam("userlogin")String login ci dessous LINK5464  
-               (javax.ws.rs.)@Produces("application/xml") // possible aussi mais à traduire: produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE ou MediaType.SERVER_SENT_EVENTS
-                  public Collection getFeatures(@Context SecurityContext securityContext LINKoooooooog @FormParam("parametrePost") String unParametre  ) throws Exception;
-                                                  ou 
-                                                      @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464
-                                                      et si besoin
-                                                      @QueryParam("unChampApres?ou&DanslUrl") 
-                    // ci dessous: pour recuperer un bundle complettement ailleurs dans le meme karaf en java(l'autre façon c'est d'injecter dans blueprint)
-                  		BundleContext bundleContext = FrameworkUtil.getBundle(UnServiceDeCeBundleLa.class).getBundleContext();
-                  		@SuppressWarnings("rawtypes")
-                  		ServiceReference serviceReference = bundleContext.getServiceReference(une.classe.qui.est.un.service.dans.un.autre.bundle.AutreClasse.class.getCanonicalName());
-                  		return (String) serviceReference.getProperty("UNEPROPRIETTEESETTEE_DANS_LE_BLUEPRINT_DE_CET_AUTRE_BUNDLE");
-                  
-                } 
-                et la sous classe si c'est une interface mais bof autant faire une classe direct sans interface:
-                contient juste la methode                         
-                  public Collection getFeatures(@FormParam("SAMLResponse") String samlReponse) throws Exception {...} sans les annotations
-               Pour fair une servlet karaf LINKkarafservlet
-                   public class MetadataDisplayServlet extends HttpServlet
-                  { contient les methodes post et get habituelles
-   
 
 webservice : webservices : voir LINKSWAGGER 
 
@@ -3017,6 +3071,15 @@ webservices: http://users.skynet.be/pascalbotte/
                 @ApplicationPath("nomdupremierpathUrlDeMonAppli") // sur une classe qui étend javax.ws.rs.core.Application // seuls les url des webservices rest du coup vont avoir ce path en amont. N'affecte pas les servlets ou les webservices soap
                 public class RESTConfiguration extends Application {
                 rien.
+                ou 
+                @Override //si je veux seulement exposer certains controlleurs/entrypoints
+                public Set<Class<?>> getClasses() {
+                    Set<Class<?>> classes = new HashSet<>();
+                    classes.add(HelloController.class);
+                    classes.add(LoginController.class);
+                    return classes;
+                }
+
                 }
 
                       No dependencies, no migrations. jaxrs est l'api (specification) et jersey ou cxf implementent cet api.
@@ -3093,19 +3156,19 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
                                 @Override
                                 public void failed(Throwable th){...}
                               }     
-    une classe webservice :(karaf par ex) rest
-      LINK93029
-      @Path("/xxxxx")
-      @xxxxScoped // attention voir LINKkgkgkgklkjsdfljqi
-        public class MaClasse{
-            	@Context// permet d'injecter tout ce qui est dans le contexte d'une requete http: HttpHeaders;UriInfo;SecurityContext;ResourceContext;Request;Application;Configuration;Providers;HttpServletRequest;HttpServletResponse;ServletConfig;ServletContext
+            	@Context// request et response comme ça sont automatiquement injectes. permet d'injecter tout ce qui est dans le contexte d'une requete http: HttpHeaders;UriInfo;SecurityContext;ResourceContext;Request;Application;Configuration;Providers;HttpServletRequest;HttpServletResponse;ServletConfig;ServletContext
                 private HttpServletRequest httpRequest; // attention on dirait que pas possible de faire httpRequest.getParameter("x") si dans la methode en bas j'utilise @FormParam
+	            @Context
+            	HttpServletResponse httpResponse;
+                @RolesAllowed({"Echoer", "Subscriber"}) // pour securiser l'acces à la classe. Peut etre mis au niveau de la methode (authorizations) Besoin de déclarer tous les roles qu'on va utiliser en tete de la classe avec @DeclareRoles({"x","y"}) LINKdeclarereor
+                ou
+                @PermitAll
                   @GET ou @POST
                 @Path("/la_suite_de_lurl") ou @Path("/") // facultatif ou @Path("/{a:api/v1/realtimepath|api/v2/apps/{appNameId}/realtimepath") //si j'ai plusieurs multiples urls 
                 public interface ou une classe FeaturesRestService { /// TRES IMPORTANT: la methode doit etre public sinon il ne la voit pas
                 @Path("/lafindelurl") // mettre {monparamdanspath} si on veut utiliser @PathParam("userlogin")String login ci dessous LINK5464  
-               (javax.ws.rs.)@Produces("application/xml") // possible aussi mais à traduire: produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE
-                  public Collection getFeatures( @FormParam("parametrePost") String unParametre  ) throws Exception;
+               (javax.ws.rs.)@Produces("application/xml") // possible aussi mais à traduire: produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE ou MediaType.SERVER_SENT_EVENTS
+                  public Collection getFeatures( @Context SecurityContext securityContext LINKoooooooog @FormParam("parametrePost") String unParametre  ) throws Exception;
                                                   ou 
                                                       @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464
                                                       et si besoin
@@ -3123,6 +3186,7 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
                Pour fair une servlet karaf LINKkarafservlet
                    public class MetadataDisplayServlet extends HttpServlet
                   { contient les methodes post et get habituelles
+
 
         filter filtre pour les webservices jaxrs
                     @Provider // pour que jaxrs le prenne en compte automatiquement au runtime (!=???) du coup je pense qu'il faut absolument le mettre
@@ -3418,7 +3482,7 @@ AppConfigurationEntry localAppConfigurationEntry = localConfiguration.getAppConf
                                               ((xxx)Callback[i]).credentialsaisi                                                                                                                                  parametre2=valeur2; //finir par";" ces parametres seront envoyés dans methode "initialize" du LoginModule:-)
                                               si ok return true;                                                                                                                                                };
                                              }                                                                                                                                                                    
-                           Principal<-Subject.getPrincipals() // subjet est une personne. Principal est de ce qui l'identifie. Plusieurs sousclasses existent. exemple com.sun.security.auth.UserPrincipal                                                                                                                                                                                        
+ SecurityAttributes<--a_plusieurs--Principal<-Subject.getPrincipals() // subjet est une personne. Principal est de ce qui l'identifie. Plusieurs sousclasses existent. exemple com.sun.security.auth.UserPrincipal                                                                                                                                                                                        
                                     exemple pour construire un subject: (de moi.)
                                             final String claim = (String) claims.get("role");
                                               Role role = Role.valueOf(claim.toLowerCase());
@@ -3577,7 +3641,7 @@ web.xml : webxml :
                                 		
                                     <user-data-constraint>
                                 			<description>Protection should be CONFIDENTIAL</description> // pour que toute requete soit redirigée automatiquement de http vers https LINKjgjgjgjndndnd
-                                			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+                                			<transport-guarantee>CONFIDENTIAL</transport-guarantee> LINKglkdlkflglglg
                                 		</user-data-constraint>
                                 		et/ou 
                                 		 <auth-constraint>
@@ -3585,7 +3649,7 @@ web.xml : webxml :
                                 	      <role-name>user</role-name>
                                 	  </auth-constraint>
                           </security-constraint>
-            <security-role> Definit un rôle de securite pour l'application: interne à l'appli.
+            <security-role> Definit un rôle de securite pour l'application: interne à l'appli. est remplacé en annotation par @DeclareRoles
                 	      <role-name>user</role-name> // on retrouve les memes que ceux definis dans <auth-constraint>                 
                 	      <role-name>supervisor</role-name>
             </security-role>
@@ -5511,7 +5575,7 @@ Spring : XML STYLE
                                                       <mvc:resources mapping="/resources/**" location="/resources/" />
                                                                 <mvc:default-servlet-handler />
                                                                 <mvc:annotation-driven />
-                                    <!-- pour utiliser les @ : scan les java qui ont:@Controller, @ComponentGENERIQUEEVITERDUTILISERUtiliser@Named, @Repository, @Service(instancie mon service au demarrage) @Inject(equivalent de @Autowired mais @Autowired est une annotation Spring), @Named(equivalent de @Qualifier de Spring), @PostConstruct: ces annotations servent juste de remplacement de la conf du xml du spring. C pareil mais dans le code java -->
+                                    <!-- pour utiliser les @ : scan les java qui ont:@Controller, @ComponentGENERIQUEEVITERDUTILISERUtiliser@Named, @Repository, @Service(instancie mon service au demarrage) @Inject(equivalent de @Autowired mais @Autowired est une annotation Spring), @Named(ne pas utiliser a la place utiliser @Qualifier de Spring), @PostConstruct: ces annotations servent juste de remplacement de la conf du xml du spring. C pareil mais dans le code java -->
                                      <context:component-scan base-package="mon.path.java"> pour plusieurs packages: <context:component-scan base-package="x.y.z.service, x.y.z.controller" />           
                                             <!-- pour ignorer les @Controller dans CE ApplicationContext et du coup ne pas instancier les classes marquees par @Controller -->                   
                                                 <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
@@ -7080,9 +7144,11 @@ MCD/MPD :
         exequo
       X,n-><-X,n
       
-  bonne pratique gestion des rôles droits etc...
-      voici les tables a creer:  USER    GROUPE        USER-GROUPE      USER PERMISSION   GROUPE PERMISSION     PERMISSION  
-
+  bonne pratique gestion des rôles droits etc... LINKsecurlsjfg
+      voici les tables a creer:  USER    GROUPE                              PERMISSION(role)     USER-GROUPE      USER-PERMISSION(role)   GROUPE-PERMISSION(role)     
+                                  |       |                                         |              |                         |
+                               sont def ds le realm(genre login-config.xml)         |             ce mapping se defini au niveau du serveur (genre dans glassfish-web.xml)
+                                                                                se retrouvent dans web.xml>security-role
 JOOQ : mieus que jdo?
     facile: dans eclipse pour lancer le generateur: 
     class main: org.jooq.util.GenerationTool
@@ -11502,7 +11568,7 @@ Les goals:(appartiennent à phases) si on veut executer mvn un_goal alors ecrire
     exemple de goal: dependency:copy-dependencies            
   maven:pour installer ajouter installation une librairie jar dans mon repository local (on peut executer ça direct sur eclipse)
       %M3%/mvn install:install-file -Dfile=C:/jbdevstudio4/jboss-eap/jboss-as/common/lib/jsp-api.jar -DgroupId=renault-app.rits.wec -DartifactId=jsp-api -Dversion=14 -Dpackaging=jar
-      %M3%/mvn install:install-file -Dfile=C:/jbdevstudio4/jboss-eap/jboss-as/common/lib/jsp-api.jar -DgroupId=renault-app.rits.wec -DartifactId=jsp-api -Dversion=1 -Dpackaging=jar
+      %M3%/mvn install:install-file -Dfile="C:/jbdevstudio4/jboss-eap/jboss-as/common/lib/jsp-api.jar" -DgroupId=renault-app.rits.wec -DartifactId=jsp-api -Dversion=1 -Dpackaging=jar
       %M3%/mvn install:install-file -DgroupId=com.documentum -DartifactId=dfc -Dpackaging=jar -Dversion=5.3.0.621 -Dfile=dfc.jar -DgeneratePom=true
       %M3%/mvn install:install-file -Dfile=C:/apache-maven-3.1.1/repo/mysql/mysql-connector-java/5.1.6/mysql-connector-java-5.1.6.jar -DgroupId=web.audioloop -DartifactId=mysql-connector-java-5.1.6 -Dversion=1 -Dpackaging=jar
       %M3%/mvn install:install-file -Dfile=D:/Maven/repo/renault-app/rits/wec/xml4j/1/xml4j-1.jar -DgroupId=private.wec -DartifactId=xml4j -Dversion=1 -Dpackaging=jar
@@ -29222,7 +29288,7 @@ angular : Angularjs2 : ANGULAR2 : typescript :
          COMPONENT: est une Directive avec en plus un template. Ne doit contenir que la logique de sa view.   
           import {Component, View} from 'angular2/angular2';
           import {unAutreComposant} from './pathtRelatif/vers/unAutreComposant'  (sans .ts a la fin)
-          @ComponentGENERIQUEEVITERDUTILISERUtiliser@Named({ // P utiliser car import ci dessus 
+          @Component({ // P utiliser car import ci dessus 
             selector: 'my-app' // c'est un selector xml <my-app>  tout mon composant sera dedans
           })
           @View({
