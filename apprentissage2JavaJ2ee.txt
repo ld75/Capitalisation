@@ -198,6 +198,7 @@ plannification :planning :conseils Erwin:
     GELER DES JOURS ET MY TENIR (+LE JOUR DE CAPIT)
     CAPITALISER SUR LE WIKI LES VENDREDIS
 
+Design patterns : Gof est mort remplacé par CDI: A FAIRE voir @Specializes, @Decorator, @Interceptor. Pattern Command est remplacé par MessageDrivenBeans et CDI Events
 cleancoding : clean coding :LA SEULE FACON D ALLER VITE C EST D ALLER CLEAN ignorance is no excuse. No divided devs(frontetback = meme pers) expose your ignorance to learn. (its not weakness) 
 0: 20 minutes de tomate tomatoes*18-20/jours(4pauses2m,1pause10m). https://tomato-timer.com/ pour partager: https://www.marinaratimer.com  Sous pression, se coller à la discipline ne pas être tenté de la bypasser
 1. I will not produce harmful code
@@ -1232,8 +1233,16 @@ OCR : image to texte :
 payara :payaramicro : // executeur direct d'un microservice.
     java -jar payara-micro.jar                      // créé un payara serveur
         --rootdir repertoire/de/travail/cree/auto/si/existepas 
-        --deploy /home/user/example.war ou le repertoire root du war exploaded(dans target)// mettre un .reload sous la racine de mon war exploded et le modifier/toucher recharge le war exploded automatiquement
-        
+        --deploy /home/user/example.war ou le repertoire root du war exploaded(dans target)// mettre un .reload sous la racine de mon war exploded et le modifier/toucher recharge le war exploded automatiquement (faire mvn package)(sauf si le war ne s'est pas déployé la fois précédente)
+                 possible faire plusieurs --deploy dans une meme commande seront sur le meme port
+        --contextroot contextrootquiremplacelenomdemonwarcommecontextroot //ou faire --deploy /x/y:contextroot
+        --name nomdemoninstancequejedeploie
+            ssl: au déploiement automatiquement importe dans mon microprofile les keystores et password defini par les proprietes systèmes javax.net.ssl.xxxx
+            clustering: deux instances indentiques déployées sur des ports differents sont automatiquement clusterisees (partagent les memes sessions users)
+        --autobindhttp // determine le port automatiquement. 
+        --startPort 888// fonctionne avec autobindhttp. 888: port à partir duquel commencer à incrementer numero de port
+        --mcAdress // facultatif sert à placer mon instance dans un multicast en particulier   
+        --mcPort // facultatif sert à forcer le port de mon multicast (???) 
     payara maven plugin
     <plugin>
                 <groupId>fish.payara.maven.plugins</groupId>
@@ -2183,8 +2192,8 @@ Cycle de vie du bean:
               – @CustomScoped pour que les beans soient stockees dans le FacesContext (qui a une duree de vie plus courte que RequestScope donc FC est plus rapide, bouffe moins de memoire)
               – @NoneScoped (si c un bean qui est reference par un autre bean qui lui est scoped)
               >> attention un bean ne peut pas referencer un autre bean si son scope est plus petit que le sien (sauf les @NoneScoped que tous peuvent referencer)
-                  @PostConstruct-->methode s'execute quand le bean est place dans son scope
-                  public void debut() { ... }
+                  @PostConstruct-->methode s'execute quand le bean est place dans son scope utile pour initialiser
+                  public void debut() { ... }//ne doit pas thrower une exception
                   @PreDestroy--->methode s'execute quand le bean est retire du scope ou le scope est detruit.
                   public void fin() { ... }
           
@@ -2224,9 +2233,10 @@ securite :(JSR375) plus besoin d'utiliser web.xml (sur?): les annotations font p
        https://javaee.github.io/tutorial/security-api004.html
        https://javaee.github.io/tutorial/security-intro003.html#BNBXE->https://javaee.github.io/tutorial/security-javaee002.html#GJGDI
        voir LINKsecurlsjfg def roles, groupes, users, permission
-        @AutoApplySession // si je veux que quand il s'authentifie ca crée une session http
+        @AutoApplySession // si je veux que quand il s'authentifie ca crée une session http (a mettre)
         @LoginToContinue //pour un FORM login seulement: sert à definir loginpage, loginerrorpage etc...
         @RememberMe //Comme le bouton se souvenir de moi (AFAIRE)       
+        @RequestScoped(a mettre)
        HttpAuthenticationMechanism interface role: gère token d'authentification. Une seule classe doit exister par appli donc l'annoter @ApplicationScoped. sous classe doit être Bean. Bean automatiquement appelé par le container pour l'authent
        |                    
        |tout customiser----__ou bien utiliser les annotations
@@ -2241,7 +2251,7 @@ securite :(JSR375) plus besoin d'utiliser web.xml (sur?): les annotations font p
        MaCustomClasse implements HttpAuthenticationMechanism                                                                                                                                                                                                             
               @Inject 
               private IdentityStoreHandler identityStoreHandler; // doit avoir ca
-       METHODE Importante: validateRequest() que je dois implémenter Les 2 autres c facultatif
+       METHODE Importante: validateRequest() que je dois implémenter Les 2 autres c facultatif. S'execute à chaque requete avant les filters si user n'a pas de session
                               Fait appel à->IdentityStoreHandler(Je peux le reecrire moi même)->qui lors de identityStoreHandler.validate(credential) fait appel à tous les->
                             
                                    IdentityStore interface ->interagit avec ldap ou database pour authent l'utilisateur. sous classe doit être Bean.
@@ -5755,7 +5765,7 @@ Spring : XML STYLE
                     
                   service layer : exemple loginUser(){.. ou transferMoney(){... appelle plusieurs DM
                         contient AOP aspectOrientedProgramming grace à Interceptors(Before/after) sont parametres grâce à Pointcuts Ou design pattern proxy (qui remplace ma classe implementee et du coup contient son code) 
-                          aspect : AOP :
+                          aspect : AOP :obsolète remplacé par @decorator et @interceptor
                           reutiliser des petits programmes ou on veut par parametrage spring
                           poincut = intersection de notre code avec le programme aspect
                           voir P34: on prog 1 aspect puis @aspect (aspecj)
@@ -7001,7 +7011,7 @@ si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from col
         	@OneToMany(mappedBy="permission") // car je suis dans le classe Permission.class et je fais ref à UserPermission.permission
         	private Set<UserPermission> userPermission;
              Comparer des entitees entre elles si elles sont des listes comme proprietes: il faut overrider equals et hashcode: (voir page 84Spring persistance with Hibernate)
-                @Override    (A FAIRE: GENERALISER AVEC LE DESIGN PATTERN DES DAO)
+                @Override    (A FAIRE: GENERALISER AVEC LE DESIGN PATTERN DES DAO: dao sont morts remplacés par entitymanager)
                 public boolean equals(Object o)
                 {
                   if(this==o) return true;
@@ -7024,20 +7034,20 @@ JPA :
     ouvrir console Hibernate et configurer une connection à une base
     Clic droit sur mon projet > JAP > faire le reverseEngeniring
 
-  FORMS ----> envoie des DTO----------equivalent-----------
+  FORMS ----> envoie des DTO---ne plus les utiliser et passer direct par les entities sauf si ils ont pas la meme structure que les Entities
                            |                               |
                            vers                            |
                     CMD     |                              |
                       update(monDTO)                       |
                       {                                    |
                         converti DTO->BO                   |
-                        et appelle DAO                     |
+                        et appelle EntityManager(avant:DAO)|
                       }                                    |
-  DAO = methodes crud                                      |
+  EntityManager remplaceDAO = methodes crud                |
       methode(fait appel à ENTITY)------------------(BO=MODEL)ENTITIES connectees à la base
     Enleve expres
 
-DAO : design pattern bonne pratique
+DAO : design pattern bonne pratique est mort remplacé par entitymanager
 un @Repository se base sur les DAO pour faire des find, get etc sur plusieurs tables. Le DAO lui sert aux updates sur une seule table
   Besoin que MonObjet extends BaseEntity.
   IMonObjetDao ----------extends-------->IGenericDao (contient toutes les methodes CRUD basiques) public interface IGenericDao<T extends BaseEntity> { public T getBook(long id);}
@@ -12713,11 +12723,7 @@ Creer une signature avec texte et image:
     reparmetrer la nouvelle signature cette fois non pas avec image mais avec fichier html et prendre le fichier html cree
 
 											
-design patterns :
-    command :  
-        InputStream is = MaClasse.class.getClassLoader().getResourceAsStream ("nom de mon fichier command.xml");
-		CommandApplication application = new CommandApplication(); // appartien a fws.jar
-		application.load(is);
+EFFACE EXPRES
            
 ultraedit :
 recherche en avant: F3 recherche arriere: Ctrl+F3
@@ -17331,6 +17337,11 @@ http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-j
 java7 :
 http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase7-521261.html  
 JAVA :
+        proprietes systèmes definies par -D:
+              javax.net.ssl.trustStore
+              javax.net.ssl.keyStore
+              javax.net.ssl.trustStorePassword
+              javax.net.ssl.keyStorePassword
 java10 : java 10 :
         var: bof eviter
 constructeur: si je ne met aucun constructeur, une classe à  un constructeur vide transparent mais dès que je met un constructeur avec arguments, si je veux avoir aussi un constructeur vide je dois l'ecrire LINKcstrctr
@@ -17552,7 +17563,7 @@ logback : (mieux que LinkLogutils)
       public class UpdatePasswordFilter implements Filter {
             static final Logger log = LoggerFactory.getLogger(UpdatePasswordFilter.class);
             MDC.put("first", "Richard");pour tracer le userid LINKslf4jMcd
-            logger.info("I am not a crook.");
+            log.info("I am not a crook.");
 log4j : (vieux voir LinkLogutils)
 si j'ai l'erreur:
         Attempted to append to closed appender named
