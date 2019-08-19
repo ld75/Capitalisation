@@ -13338,7 +13338,7 @@ cygwin :
 Curl : voir aussi wget : pour faire une requette request http doc:https://ec.haxx.se/usingcurl-writeout.html
     sur cygwin (installer dans cygwin. voir cygwin) (sous categorie Net)
 
-    get telecharger: (option -A ou -a maj min importent pas. sauf cas exceptionel comme -o et -O, -X et -x) // ordre option importe peu et existe -V (version courte) equivalent à -vlakjdf : version longue
+    get telecharger: (option -A ou -a maj min importent pas. sauf cas exceptionel comme -o et -O, -X et -x) // ordre option importe peu et existe -A (version courte) equivalent à -ablabla : version longue
             -v ou -V ou --verbose// verbose a utiliser quand ça ne marche pas. attention! 
    	A faire sur une seule ligne et pas sur plusieurs car marche pas. et echapper les caractères spéciaux & ; par \
     curl -O https://index.taskcluster/artifacts/public/deepspeech-0.1.0nux1_x86_64.whl // -O ne marche qu'avec des url qui renvoient un fichier dowload. ne pas mettre de param avec, il telecharge le contenu de la reponse et le depose la ou je suis direct. si -o unNomDeFichier url il recupère la reponse et la met dans unNomDeFichier 
@@ -24138,7 +24138,7 @@ les alias sous unix: exemple: alias ll = 'ls -l' ou bien alias ll="ls -l"
     pour voir le detail d'un alias: alias nomalias
     pour faire des alias persistants: 
       vi ~/.bash_alias (ce dernier est charge par ~/.bashrc qui contient) LINKç'(ç')
-          alias gototemplate='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/' // pour echapper les espaces : alias gotoapprentissage="cd \"/c/Users/Mes documents/apprendre\""
+          alias gototemplate='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/' // pour echapper les espaces: alias gotoapprentissage="cd \"/c/Users/Mes documents/apprendre\""
           alias gotocss='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/css'
           alias gotomodule='cd /var/www/www.wenhuaduverge.com/shop/module'
       puis vi ~/.bashrc
@@ -24410,7 +24410,7 @@ pour reexecuter rerun une commande saisie:
 Si quand on veut lancer un ksh: ./TOTO.ksh il fait: ksh not found ou no such file aucun fichier ou dossier de ce type 
       essayer de le lancer comme ca: . ./TOTO.ksh ou bien c'est la version unix qui ne supporte pas cet executable: upgrader version unix
       voir aussi LINKf9t8p2
-awk: pour definir des tooken dans un string: on peut travailler dans des fichiers.
+awk : pour definir des tooken dans un string: on peut travailler dans des fichiers.
       $TOTO= `echo $ligne | awk -F'mon_separateur' '{ print $2 }'` ## prendre element apres deuxieme separateur
 mkdir pour creer un repertoire. 
     Possibilitee de creer plusieurs repertoires recursivement en un coup: mkdir -p toto/titi/tata
@@ -24851,7 +24851,9 @@ parser du json avec unix: installer jq
             }
       pour faire un include importer d'un autre ksh dans un ksh
           . $path_vers_mon_autre_ksh/DDD_ExportPHX_environnement.ksh
-      pour faire un substring: 
+      pour faire un substring:
+                test=($chose) // ou chose est =blabla blibli bloblo. Automatiquement le fait de mettre entre parentheses fait un split sur les espaces du coup on a echo ${test[0]} retourne blabla et ${test[1]} retourne blibli 
+                ou bien: 
 				echo ${stringvariable:2:4} // sauter 2 chars et prendre les 4 suivants
 				ou bien:
 				NOM_FICH_PAYS=$DATE_ENTREE`echo $ligneLu | cut -d":" -f 2`
