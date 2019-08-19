@@ -13,7 +13,7 @@ prototype Array
 select innerjoin
 classloader
 
-
+Renault :
 Rule à faire : 
     refaire crossing-covariant mais cette fois les tags * et + et 0/* sont sur les instances! > difficile
 Canvas :
@@ -25,7 +25,6 @@ arbre :
 sku p-aw15tp4-89
 948194935 
 
-AFAIRE:
 a lire : https://stackoverflow.com/questions/3216780/problem-reloading-a-jar-using-urlclassloader
 <script>
 function facebookpixelRegister(){
@@ -52,18 +51,8 @@ Negociation salaire :
   penser en quoi mon patron est gagnant. gagnant gagnant. j'aime cette entreprise. Veut y rester.
   En dernier recours si marche pas: voir si ca peut etre autre-chose que de l'argent? 
   Si KO ne pas montrer ma deception. Pensez-y on en reparlera plus tard. 
-Servlet filters are an important component of web application and it can be used in different scenarios, e.g.: 
-1) Authenticating requests (ServletRequest) before delegating them to your actual business class (Servlet/Controller). 
-2) Formatting request (ServletRequest) and response data (ServletResponse) 
-3) Global/Application level Error handling 
-There are many more uses cases where we can use Servlet filters. 
-A traditional web application is composed of couple of Business classes & data (model), JSP (views), controllers/servlets and few other resources like css, images etc. All these components are packaged as a WAR file and we deploy it on a web/application server. To add/configure a servlet filter in traditional web application we user web.xml configuration file and tag as: 
-  springSecurityFilterChain
-  org.springframework.web.filter.DelegatingFilterProxy
-     springSecurityFilterChain
-     /*
-     REQUEST
-     ERROR
+ 
+
 An OSGi web application is different as compared to traditional web applications. Below are few major differences: 
 1) Traditional web applications are deployed on web/application server and run under a servlet container whereas OSGi web application are deployed in an OSGi container that has servlet container as an OSGi HTTP service. 
 2) In traditional web application required libraries/jars are part of WAR file whereas in OSGi web application jar files are installed as OSGi bundles in OSGi container. 
@@ -2185,7 +2174,7 @@ Cycle de vie du bean:
               – @RequestScoped // a mettre absolument sur un webservice utilisant jwt car les claims jwt sont naturelement request-scopeds. LINKkgkgkgklkjsdfljqi
               – @RedirectScoped // fait partie de mvc: utile si apres un post on fait un redirect et qu'on a besoin de l'info du post.
               – @SessionScoped
-              – @ApplicationScoped // (par defaut) sur la classe. le bean est utilise pourl es proprietes generales de l'appli: ex: listes deroulantes qu'on voit tout le temps
+              – @ApplicationScoped // (par defaut) sur la classe. le bean est utilise pourl les proprietes generales de l'appli: ex: listes deroulantes qu'on voit tout le temps
                                             @Singleton // peute etre sur classe meme un webservice. attention ne fait pas partie de la spec CDI mais de EJB. Va de paire avec @Startup. utiliser plutot @ApplicationScoped mais singleton et statup marchent bien. LINKsngletn
                                             @Startup // a mettre sur une classe. s'execute au demarrage ne fait pas partie de la spec CDI mais de EJB
               – @ViewScoped
@@ -3198,7 +3187,7 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
                   { contient les methodes post et get habituelles
 
 
-        filter filtre pour les webservices jaxrs
+        filter : filtre : filters : filtres : pour les webservices jaxrs
                     @Provider // pour que jaxrs le prenne en compte automatiquement au runtime (!=???) du coup je pense qu'il faut absolument le mettre
                     @Priority(Priorities.AUTHENTICATION ou AUTHORIZATION ou HEADER_DECORATOR etc...)// determine position dans ordre du filtre par priorité plus chiffre petit, plus ca passe avant.
                     public class AuthenticationFilter implements ContainerRequestFilter { // mon filtre doit implementer ContainerRequestFilter qui contient la methode filter 
@@ -3525,7 +3514,13 @@ web.xml : webxml :
                                             servletContext = config.getServletContext();
                                             this.tgcCache = ((UnObjet)servletContext .getAttribute("tata"));
                                              
-            filter: pour les servlet
+            filter : filtres : filters : filtre : pour les servlet
+                            Servlet filters are an important component of web application and it can be used in different scenarios, e.g.: 
+                            1) Authenticating requests (ServletRequest) before delegating them to your actual business class (Servlet/Controller). 
+                            2) Formatting request (ServletRequest) and response data (ServletResponse) 
+                            3) Global/Application level Error handling 
+                            There are many more uses cases where we can use Servlet filters. 
+                                A traditional web application is composed of couple of Business classes & data (model), JSP (views), controllers/servlets and few other resources like css, images etc. All these components are packaged as a WAR file and we deploy it on a web/application server. To add/configure a servlet filter in traditional web application we user web.xml configuration file and tag as:
                     filter Definit une classe de filtre qui sera aplliquee avant la servlet. (voir http://manu.e3b.org/Java/Tutoriels/J2EE/Descripteur.htm ou http://74.125.39.104/search?q=cache:_3YFpOityV4J:manu.e3b.org/Java/Tutoriels/J2EE/Descripteur.htm+description+web.xml+descripteur+de+deploiement+%3Cfilter%3E&hl=fr&ct=clnk&cd=1&gl=fr)
             			exemple: 
             			<filter>
@@ -5717,6 +5712,7 @@ Spring : XML STYLE
                 </bean>
 
       BOF.......Ca c pour JSF :
+      difference entre diese et dollar: #{}: evaluation pouvant etre différé ${}: evaluation instantanéé
               FacesContext context = FacesContext.getCurrentInstance();
               Application application = context.getApplication();
               String userid = (String)application.evaluateValueExpressionGet(context,"#{userBean.userid}", String.class);
@@ -11734,7 +11730,7 @@ Pour parametrer le forward: par exemple rester sur la meme page et reenvoyer des
 				newForward.setRedirect(true);
 				return newForward;
  si j'ai l'erreur:parseModuleConfigFile    ... null pointer exception
-      il ne trouve pas strus-config.xml file
+      il ne trouve pas struts-config.xml file
 Si j'ai l'erreur: does not define a handler property
 				DispatchMapping[/LotAction] does not define a handler property
 				il faut mettre parameter="reqCode" dans struts-config.xml: 
