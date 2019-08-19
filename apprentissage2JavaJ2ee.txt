@@ -19853,6 +19853,7 @@ fonctionnement des annotations :
               }
               ailleurs
               @NameBinding // AFAIRE.. c'est quoi?
+              @NonBinding // AFAIRE.. c'est quoi?
               @Inherited //facultatif. SI je met ça alors les sous classes de la classe annotée se comporteront comme leur classe parente annotée
               @Constraint (validatedBy=ClasseContenantLeCodeDeMonValidateurBean.class) //facultatif. Mais si on l'utilise voir LINKannotconstraintvalidator
               @Target ({ElementType.METHOD, ElementType.FIELD...}) //obligatoire.  ElementType.ENTITY (c'est pour une anotation d'une classe); ElementType.TYPE pour les interfaces ou les classes ; ElementType.CONSTRUCTOR: se metra donc seulement au dessus du constructeur d'une classe
