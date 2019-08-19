@@ -1,5 +1,6 @@
-(?=.*hibernate)(?=.*test)
-AFAIRE :
+(?=.*string)(?=.*format)
+AFAIRE : 
+    base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
  Envoyer à dorothé le script de synchro gitlab vers gitcacib
 capitaliser get spring
@@ -197,6 +198,7 @@ plannification :planning :conseils Erwin:
     GELER DES JOURS ET MY TENIR (+LE JOUR DE CAPIT)
     CAPITALISER SUR LE WIKI LES VENDREDIS
 
+Design patterns : Gof est mort remplacé par CDI: A FAIRE voir @Specializes, @Decorator, @Interceptor. Pattern Command est remplacé par MessageDrivenBeans et CDI Events
 cleancoding : clean coding :LA SEULE FACON D ALLER VITE C EST D ALLER CLEAN ignorance is no excuse. No divided devs(frontetback = meme pers) expose your ignorance to learn. (its not weakness) 
 0: 20 minutes de tomate tomatoes*18-20/jours(4pauses2m,1pause10m). https://tomato-timer.com/ pour partager: https://www.marinaratimer.com  Sous pression, se coller à la discipline ne pas être tenté de la bypasser
 1. I will not produce harmful code
@@ -1087,6 +1089,8 @@ svn disconnect: installer le plugin pour ça.
       GIT est pourri sur intellij. Utiliser tortoise LINKtortoiseGItsdflk
     svn taguer tag tager: creer une branche, copier le trunk dans un tag ou dans une branche
             VCS>Subersion>Branch or Tag... copie de mon env de local ou d'une URL du repository au choix >>>vers un tag ou une branche
+            si en local j'ai un tag ou une branche, lors du commit ca commit dans le tag ou la branche pas dans le trunk
+    svn rempalcer trunk par une branche ou un tag. repository browser puis choisir le trunck--move-->oldTrunk puis tag/1.2.1---copy-->trunk ou commiter vers le path que je veux et je choisis trunk
 git pull tous les projets/modules en une seule fois VCS>Update projects... // il ne fait que fetch. Penser à cliquer ensuite dans l'onglet VCS du bas pour voir ce qui se passe sinon suis aveugle. Il faudra faire pull après!(voir les fichiers D://git/pull.xls et D://git/pull.bat). 
 si j'ai erreur source release 1.7 requires target release 1.7
           mettre pareil dans settings>build,execution,depl>compiler>javacompiler; projectstructure>project; projectstructure>modules>sources; dans le pom maven;
@@ -1129,6 +1133,7 @@ bouger extraire extract une variable en variable declaree plus haut move deplace
 bouger une classe dans un autre package: dans package explorer faire ctrl+x puis ctrl+v(couper-coller)
 bouger un bloc: selectionner puis ctrl+shift+fleches
 supprimer ligne: Shift+suppr ou Ctrl+y
+wrap ligne line j'ai ajouté le raccourci Ctrl+w
 editer raccourcis shortcuts: key file>settings>keymap>Default> Editor Actions
 si les shortcuts ne marchent plus faire peut etre controle + alt + fleches pave numerique peut etre que ça debloque (j'ai reussi une fois mais sais pas trop comment)
 column colonne editing: plusieurs lignes multiples en meme temps:  alt+maj+insert
@@ -1225,12 +1230,79 @@ OCR : image to texte :
   http://www.onlineocr.net/support/AboutOnlineOCR.aspx
   il accepte les gros jpeg 12qualite <4.1Mo
 
-
+payara :payaramicro : // executeur direct d'un microservice.
+    java -jar payara-micro.jar                      // créé un payara serveur
+        --rootdir repertoire/de/travail/cree/auto/si/existepas 
+        --deploy /home/user/example.war ou le repertoire root du war exploaded(dans target)// mettre un .reload sous la racine de mon war exploded et le modifier/toucher recharge le war exploded automatiquement (faire mvn package)(sauf si le war ne s'est pas déployé la fois précédente)
+                 possible faire plusieurs --deploy dans une meme commande seront sur le meme port
+        --contextroot contextrootquiremplacelenomdemonwarcommecontextroot //ou faire --deploy /x/y:contextroot
+        --name nomdemoninstancequejedeploie
+            ssl: au déploiement automatiquement importe dans mon microprofile les keystores et password defini par les proprietes systèmes javax.net.ssl.xxxx
+            clustering: deux instances indentiques déployées sur des ports differents sont automatiquement clusterisees (partagent les memes sessions users)
+        --autobindhttp // determine le port automatiquement. 
+        --startPort 888// fonctionne avec autobindhttp. 888: port à partir duquel commencer à incrementer numero de port
+        --mcAdress // facultatif sert à placer mon instance dans un multicast en particulier   
+        --mcPort // facultatif sert à forcer le port de mon multicast (???) 
+    payara maven plugin
+    <plugin>
+                <groupId>fish.payara.maven.plugins</groupId>
+                <artifactId>payara-micro-maven-plugin</artifactId>
+                <version>1.0.2</version>
+                <executions>
+                    <execution>
+                        <id>bundle</id>
+                        <goals>
+                            <goal>bundle</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>start</id>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <useUberJar>true</useUberJar>
+                    <daemon>false</daemon> // si true c'est executé en background et je ne vois pas les logs dans la console
+                    <deployWar>true</deployWar>
+                    <javaCommandLineOptions>
+                        <option>
+                            <value>-Xdebug</value>
+                        </option>
+                        <option>
+                            <key>-Xrunjdwp:transport</key>
+                            <value>dt_socket,server=y,suspend=n,address=5005</value>
+                        </option>
+                    </javaCommandLineOptions>
+                </configuration>
+            </plugin>
+    
 glassfish :
     C:\glassfish3\glassfish\bin>asadmin start-domain
     C:\glassfish3\glassfish\bin>asadmin stop-domain
   localhost:8080 puis localhost:4848
   http://localhost:2097/common/index.jsf
+    glassfish maven plugin pluggin demarer avec mvn embedded-glassfish:run PAS REUSSI A FAIRE MARCHER 
+                <plugin>
+                    <groupId>org.glassfish</groupId>
+                    <artifactId>maven-embedded-glassfish-plugin</artifactId>
+                    <version>3.0</version>
+                    <configuration>
+                        <goalPrefix>glassfish</goalPrefix>
+                     <app>target/authentication.war</app> // attention a adapter ce nom
+                        <port>8080</port>
+                        <!--<contextRoot>test</contextRoot-->
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>deploy</phase>
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
   
 
 extjs :
@@ -2093,6 +2165,13 @@ PRG :
           
 
 J2EE : jee : jee8 :javaee : EE4J : jakartaee : https://github.com/eclipse-ee4j/jakartaee-tutorial-examples et https://github.com/eclipse-ee4j/jakartaee-tutorial
+        <dependency> necessite
+               <groupId>javax</groupId>
+               <artifactId>javaee-web-api</artifactId> ou? <artifactId>javaee-api</artifactId>  
+               <version>8.0</version>
+               <scope>provided</scope>
+        </dependency>
+        necessite LINKbensoncle
 cdi :CDI2.0 (JSR365) pas besoin d'utiliser weld (je crois) lire https://docs.jboss.org/cdi/learn/cdi_2/slides.html
 CDI1.x besoin de weld
         <dependency>
@@ -2104,18 +2183,25 @@ CDI1.x besoin de weld
 <!-- pour utiliser les @ : scan les java qui ont :@Named, @Inject
 Cycle de vie du bean: 
               – @RequestScoped // a mettre absolument sur un webservice utilisant jwt car les claims jwt sont naturelement request-scopeds. LINKkgkgkgklkjsdfljqi
+              – @RedirectScoped // fait partie de mvc: utile si apres un post on fait un redirect et qu'on a besoin de l'info du post.
               – @SessionScoped
               – @ApplicationScoped // (par defaut) sur la classe. le bean est utilise pourl es proprietes generales de l'appli: ex: listes deroulantes qu'on voit tout le temps
-                                            @Singleton // peute etre sur classe meme un webservice. attention ne fait pas partie de la spec CDI mais de EJB. Va de paire avec @Startup. utiliser plutot @ApplicationScoped je crois... mais singleton et statup marchent bien.
+                                            @Singleton // peute etre sur classe meme un webservice. attention ne fait pas partie de la spec CDI mais de EJB. Va de paire avec @Startup. utiliser plutot @ApplicationScoped mais singleton et statup marchent bien. LINKsngletn
                                             @Startup // a mettre sur une classe. s'execute au demarrage ne fait pas partie de la spec CDI mais de EJB
               – @ViewScoped
               – @CustomScoped pour que les beans soient stockees dans le FacesContext (qui a une duree de vie plus courte que RequestScope donc FC est plus rapide, bouffe moins de memoire)
               – @NoneScoped (si c un bean qui est reference par un autre bean qui lui est scoped)
               >> attention un bean ne peut pas referencer un autre bean si son scope est plus petit que le sien (sauf les @NoneScoped que tous peuvent referencer)
-                  @PostConstruct-->methode s'execute quand le bean est place dans son scope
-                  public void debut() { ... }
+                  @PostConstruct-->methode s'execute quand le bean est place dans son scope utile pour initialiser
+                  public void debut() { ... }//ne doit pas thrower une exception
                   @PreDestroy--->methode s'execute quand le bean est retire du scope ou le scope est detruit.
                   public void fin() { ... }
+          
+          utilisation d'un champ injecté:                       définition de la classe de l'autre coté:
+          @Inject                                                @ApplicationScoped
+          @Named("simpleIs")                                     @Named("simpleIs")
+          private IdentityStore simpleIdentityStore;             public class SimpleIdentityStore implements IdentityStore {
+
           
           faire des servlets sans web.xml: 
                 ajouter en tete de classe qui etend HttpServlet @WebServlet("/un/path) .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters.
@@ -2123,6 +2209,7 @@ Cycle de vie du bean:
                 du coup ma classe n'est plus un webservice et ne pas utiliser @Produce et @Path avec. 
                 juste 
                 public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {response.getWriter().println("Hello");
+                on peut y injecter @Inject SecurityContext securityContext; à condition qu'il y ait au moins un IdentityStore sinon j'ai l'erreur "Unsatisfied dependencies for type SecurityContext"
 SeContainerInitializer initializer = SeContainerInitializer.newInstance();
 try (SeContainer container = initializer.disableDiscovery().addPackages(App.class).addBeanClasses(MyService.class).initialize()) { pas besoin de beans.xml
     container.select(MyService.class);       |_on l'empeche de scanner auto
@@ -2130,29 +2217,42 @@ try (SeContainer container = initializer.disableDiscovery().addPackages(App.clas
 
 try (SeContainer container = initializer.disableDiscovery().initialize()) { container.select(MyService.class);}
             implique beans.xml
-                                                    resources/META-INF/beans.xml
-                                                    <beans xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-                                                                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                                                                       xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
-                                                                       version="1.1"bean-discovery-mode="all">
-                                                                </beans>
+                                                    WEB-INF/beans.xml LINKbensoncle
+                                                     <?xml version="1.0" encoding="UTF-8"?>
+                                                      <beans xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+                                                             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
+                                                             bean-discovery-mode="all">
+                                                      </beans>
+           
+                                                                
 		@Pattern(expressionreguliere) // sur un champ d'un bean: pour valider que ce champ quand il est rempli match bien à la regexp.
 		
-securite :(JSR375) plus besoin d'utiliser web.xml: les annotations font pareil.
+securite :(JSR375) plus besoin d'utiliser web.xml (sur?): les annotations font pareil.
        AFAIRE
        https://javaee.github.io/tutorial/security-api004.html
        https://javaee.github.io/tutorial/security-intro003.html#BNBXE->https://javaee.github.io/tutorial/security-javaee002.html#GJGDI
-
-        @AutoApplySession // si je veux que quand il s'authentifie ca crée une session http
+       voir LINKsecurlsjfg def roles, groupes, users, permission
+        @AutoApplySession // si je veux que quand il s'authentifie ca crée une session http (a mettre)
         @LoginToContinue //pour un FORM login seulement: sert à definir loginpage, loginerrorpage etc...
         @RememberMe //Comme le bouton se souvenir de moi (AFAIRE)       
+        @RequestScoped(a mettre)
        HttpAuthenticationMechanism interface role: gère token d'authentification. Une seule classe doit exister par appli donc l'annoter @ApplicationScoped. sous classe doit être Bean. Bean automatiquement appelé par le container pour l'authent
        |                    
        |tout customiser----__ou bien utiliser les annotations
        |                     \________________________________________________________________________________________________
-       MaCustomClasse                                                                                                         @BasicAuthenticationMechanismDefinition;@FormAuthenticationMechanismDefinition;@CustomFormAuthenticationMechanismDefinition
-       METHODE Importante: validateRequest() que je dois implémenter Les 2 autres c facultatif
-                              Fait appel à->IdentityStoreHandler(Je peux le reecrire moi même)->fait appel à tous les->
+       |                                                                                                                       @BasicAuthenticationMechanismDefinition;@FormAuthenticationMechanismDefinition;@CustomFormAuthenticationMechanismDefinition
+       |                                                                                                                                                                                                                         (
+       |                                                                                                                                                                                                                           loginToContinue = @LoginToContinue(
+       |                                                                                                                                                                                                                            loginPage = "/login.html", 
+       |                                                                                                                                                                                                                            errorPage = "/login-error.html"),
+       |                                                                                                                                                                                                                            useForwardToLogin=false // facultatif: pour faire un redirect a la place d'un forward  
+       |                                                                                                                                                                                                                             ))
+       MaCustomClasse implements HttpAuthenticationMechanism                                                                                                                                                                                                             
+              @Inject 
+              private IdentityStoreHandler identityStoreHandler; // doit avoir ca
+       METHODE Importante: validateRequest() que je dois implémenter Les 2 autres c facultatif. S'execute à chaque requete avant les filters si user n'a pas de session
+                              Fait appel à->IdentityStoreHandler(Je peux le reecrire moi même)->qui lors de identityStoreHandler.validate(credential) fait appel à tous les->
                             
                                    IdentityStore interface ->interagit avec ldap ou database pour authent l'utilisateur. sous classe doit être Bean.
                                    |            |
@@ -2162,20 +2262,23 @@ securite :(JSR375) plus besoin d'utiliser web.xml: les annotations font pareil.
                                      GroupesDeCettePersonne<-getCallerGroup(CredentialValidationResult**) // peut fonctionner sans la validation ci-dessus pour recuperer les groupes d'un user meme non authentifié à condition que ce user ait: IdentityStorePermission("getGroups") sécurité à implémenter moi meme si j'utilise ma propre custom classe IdentityStore
                                      Set<VALIDATE et/ou PROVIDE_GROUPS><-validationTypes() // sert à determiner quelle genre de validation fait cet IdentityStore
                                      priority() // retourne un integer: plus il est petit plus il est prioritaire pour IdentityStoreHandler
-       
+       **CredentialValidationResult contient le principal et ces roles: return new CredentialValidationResult("Duke",new HashSet<>(asList("foo", "bar")));
+        necessaire de parametrer web.xml voir LINKlkjsqgeegege:<security-constraint> et <security-role>       
        pour securiser une servlet: ACONFIRMER:c'est grace a ca que ça declanche mon HttpAuthenticationMecanism 
             @WebServlet("/servlet")
             @ServletSecurity(
-                                value= @HttpConstraint(rolesAllowed = "foo"),
+                            value= @HttpConstraint(
+                                rolesAllowed = {"foo","supervisor"}), //limite cet acces aux utilisateurs qui ont ces roles.
+                                transportGuarantee= TransportGuarantee.CONFIDENTIAL, // facultatif: bloque l'accès ici si on est pas en https equivaut à LINKglkdlkflglglg                                
                                 httpMethodConstraints={
                                         @HttpMethodConstraint(
-                                            value = "GET",rolesAllowed = {"user_role"}),
+                                            value = "GET",rolesAllowed = {"foo"}),
                                        @HttpMethodConstraint(
-                                            value = "POST",rolesAllowed = {"admin_role"})                                
+                                            value = "POST",rolesAllowed = {"supervisor"})
                                                         }
                             )
-            @DeclareRoles({ "role1", "role2bar", "kaz" }) //roles renvoyés par la database. peut etre mis sur classe ou methode(override classe alors) //PASCLAIR
-            public class Servlet extends HttpServlet {
+            @DeclareRoles({ "role1", "role2bar", "kaz","foo","supervisor" }) //declare juste les roles que je vais utiliser dans cette classe. peut etre mis sur classe ou methode(override classe alors)  possible utilisser aussi avec:voir LINKdeclarereor
+            public class MaServlet extends HttpServlet {
             
             
             
@@ -2287,8 +2390,52 @@ Customer customer2 =home.findByPrimaryKey(new Integer(33));
 Name name2 = customer2.getName();
 System.out.println(name);// output is "Richard Wayne Monson-Haefel"
 
- 
-
+mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de csrf) 
+    krazo (projet eclipse). Pour les utliser sur differents serveurs voir https://www.mvc-spec.org/krazo/docs/install-javaee.html 
+                        <dependency>
+                          <groupId>javax.mvc</groupId>
+                          <artifactId>javax.mvc-api</artifactId>
+                          <version>1.0-pfd</version>
+                      </dependency>
+                      et 
+                       <dependency>
+                            <groupId>org.mvc-spec.ozark</groupId>
+                            <artifactId>ozark-core</artifactId>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.mvc-spec.ozark</groupId>
+                            <artifactId>ozark-jersey</artifactId>
+                        </dependency>
+                    ou
+                      <dependency>
+                         <groupId>org.glassfish.ozark</groupId>
+                         <artifactId>ozark</artifactId>
+                         <version>1.0.0-m03-SNAPSHOT</version>
+                         <scope>runtime</scope>
+                      </dependency>
+                      fonctionne que sur des webservices.
+                      @Path("hello")
+                      @View("private.jsp") mais c'est mieux de faire LINKvuejslskjf car ici meme si user n'a pas le rôle il va afficher la jsp
+                      public class HelloController {
+                            @Inject 
+                            private BindingResult validateurDeBinding; // pour valider le BeanParam
+                            @Inject
+                            private MvcContext mvc; // pour i18n: internationalisation internationalization. du coup on peut faire Locale locale = mvc.getLocale(); 
+                          @Context
+                          private SecurityContext securityContext;
+                          @GET ou @POST
+                          @CsrfValid // necessite dans la jsp: <input type="hidden" name="${mvc.csrf.name}" value="${mvc.csrf.token}"/>
+                          @Controller
+                          public String hello(@QueryParam("unChampApres?ou&DanslUrl") String name ETOU @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464 OU @FormParam("parametrePost") String unParametre OU @Valid @BeanParam FormDataBean f) {
+                              if (validateurDeBinding.isFailed()) {
+                                return Response.status(BAD_REQUEST)
+                                               .entity(“error.jsp”).build(); LINKvuejslskjf
+                              }
+                              return Response.status(OK).entity(“data.jsp”).build(); LINKvuejslskjf
+                           }
+                              return "hello.jsp"; LINKvuejslskjf
+                          }
+                      }
 freemaker :
       <html>
           <head>
@@ -2870,6 +3017,16 @@ quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.
     du coup rajouter:-Dnative-image.docker-build=true // je crois qui cree un executable metable dans un container docker (voir le dockerfile  genere par quarkus)
   docker build -f src/main/docker/Dockerfile.native -t quarkus-quickstart/quickstart // creer l'image docker
   docker run -i --rm -p 8080:8080 quarkus-quickstart/quickstart // executer dans docker ou kubernetes
+quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.io/guides/cdi-reference.html. quarkus-reasteasy:c'est jaxRS
+        creer un nouveau projet from scrash de n'importe où: 
+        mvn io.quarkus:quarkus-maven-plugin:0.16.1:create -DclassName="org.acme.quickstart.MaClasseWebServiceResource" -Dpath="/urlDeCeWebServiceHelloWorld" 
+                dans le pom, io.rest-assured c'est pour les tests voir LINKtestetresrtest. ATTENTION remplacer la dependance <artifactId>quarkus-resteasy</artifactId> par <artifactId>quarkus-resteasy-jsonb</artifactId> si je veux faire du rest json 
+  mvnw compile quarkus:dev -Ddebug(si je veux debugger)// execute en dev (demarre un serveur http). quarkus:dev c'est pour que le serveur ecoute les changements et s'auto-refresh. Comment? Reponse:Refreshing the browser triggers a scan of the workspace, and if any changes are detected, the Java files are recompiled and the application is redeployed; your request is then serviced by the redeployed application. If there are any issues with compilation or deployment an error page will let you know.
+  mvnw package // recompile et package 2jars. Un executable -runner.jar (executable par "java -jar target/getting-started-1.0-SNAPSHOT-runner.jar") qui demarre le serveur jboss attention les librairies utilisées sont externes dans target/lib voir son MANIFEST.MF. Un autre qui ne contient pas l'embedded serveur 
+  mvnw package -Pnative // recompile et package un binaire executable dans target environnement dépendant donc attention:executable sans besoin de jvm mais fonctionne que sur mon type d'environnement actuel
+    du coup rajouter:-Dnative-image.docker-build=true // je crois qui cree un executable metable dans un container docker (voir le dockerfile  genere par quarkus)
+  docker build -f src/main/docker/Dockerfile.native -t quarkus-quickstart/quickstart // creer l'image docker
+  docker run -i --rm -p 8080:8080 quarkus-quickstart/quickstart // executer dans docker ou kubernetes
        quarkus :tests:
             @QuarkusTest // le serveur jboss demarre sur port 8081(modifiable par quarkus.http.test-port dans application.properties) et rest-assured utilise ce port. Toutes les injections se font.
             public class GreetingResourceTest {
@@ -2898,7 +3055,7 @@ quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.
 
 webservice : webservices : voir LINKSWAGGER 
 
-        -versionning: V.X.Y : Y changements minaures sur le meme webservice. X:si changement majeur faire un autre webservice et ne pas toucher à l'ancien. ceux qui appellent le webservice peuvent basculer en X+1 quand ils veulent. Comme la regle ne pas modifier mais etendre.
+        -versionning: V.X.Y : Y changements mineurs sur le meme webservice. X:si changement majeur faire un autre webservice et ne pas toucher à l'ancien. ceux qui appellent le webservice peuvent basculer en X+1 quand ils veulent. Comme la regle ne pas modifier mais etendre.
                 A___          A___V1.0     A________V1.0
                     \_V.1.0   B   
                 B_--'             V2.0     B.V2.0---V2.0
@@ -2917,9 +3074,22 @@ REST : webservice : webservices : client accède à un service à partir d'un UR
 voir exemple de webservice rest sans framework ici: d:\Profiles\lduverge\Desktop\Apprentissage\webservicedemo(attention pour l'entite j'ai pas respecte unclebob)
 tutoriel Pour faire des serveurs de webservice: http://www.tutorialspoint.com/restful/restful_first_application.htm
 webservices: http://users.skynet.be/pascalbotte/
+             https://javarevisited.blogspot.com/2017/02/difference-between-jax-rs-restlet-jersey-apache-cfx-RESTEasy.html
+             jax-rs est la spec(JSR311 & JSR339)
+             implémentée par au choix Restlet, Jersey(inclu dans glassfish), resteasy(inclu dans wildfly et thormtail), cxf (inclu dans tomee) 
+
                 @ApplicationPath("nomdupremierpathUrlDeMonAppli") // sur une classe qui étend javax.ws.rs.core.Application // seuls les url des webservices rest du coup vont avoir ce path en amont. N'affecte pas les servlets ou les webservices soap
                 public class RESTConfiguration extends Application {
                 rien.
+                ou 
+                @Override //si je veux seulement exposer certains controlleurs/entrypoints
+                public Set<Class<?>> getClasses() {
+                    Set<Class<?>> classes = new HashSet<>();
+                    classes.add(HelloController.class);
+                    classes.add(LoginController.class);
+                    return classes;
+                }
+
                 }
 
                       No dependencies, no migrations. jaxrs est l'api (specification) et jersey ou cxf implementent cet api.
@@ -2969,30 +3139,46 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
               </dependency>
     envoyer faire une requette http à un webservice SEULEMENT. ne marche pas pour les servlets: utile pour les tests d'integration:
         Client client = ClientBuilder.newClient();
-        WebTarget target = client.target("http://localhost:9990") //FINURLENLEVEEXPRES attention ne pas utiliser les variables mais enchainer les points comme ci dessous target().path().request().get....
-        .path("/backoffice/resources/ping/echo/glk");
-        Invocation.Builder invokationBuilder = target.request(MediaType.APPLICATION_JSON_TYPE); // ou MediaType.APPLICATION_XML.(soap)..
-        invokationBuilder.get();
-        invokationBuilder.get(MaClassePartageeParLes2WebServices.class);
-        Response response = invokationBuilder.post(Entity.entity(maclasseAPoster,MediaType.APPLICATION_JSON_TYPE);
-        ou
-        Response response = invokationBuilder.get();
-        puis 
-        response.readEntity(String.class ou UneEntity.class)
-        Assert.assertEquals(java.net.HttpURLConnection.HTTP_CREATED,response.getStatus());
-    une classe webservice :(karaf par ex) rest
-      LINK93029
-      @Path("/xxxxx")
-      @xxxxScoped // attention voir LINKkgkgkgklkjsdfljqi
-        public class MaClasse{
-            	@Context// permet d'injecter tout ce qui est dans le contexte d'une requete http: HttpHeaders;UriInfo;SecurityContext;ResourceContext;Request;Application;Configuration;Providers;HttpServletRequest;HttpServletResponse;ServletConfig;ServletContext
+        en mode synchrone:
+              WebTarget target = client.target("http://localhost:9990") //FINURLENLEVEEXPRES attention ne pas utiliser les variables mais enchainer les points comme ci dessous target().path().request().get....
+              .queryParam("bli","blah")
+              .path("/backoffice/resources/ping/echo/glk")
+              .request()
+              .accept("application/json")
+              .header("foo","bar")
+              .get(...) ca ou bien ci dessous
+              Invocation.Builder invokationBuilder = target.request(MediaType.APPLICATION_JSON_TYPE); // ou MediaType.APPLICATION_XML.(soap)..
+              invokationBuilder.get();
+              invokationBuilder.get(MaClassePartageeParLes2WebServices.class);
+              Response response = invokationBuilder.post(Entity.entity(maclasseAPoster,MediaType.APPLICATION_JSON_TYPE);
+              ou
+              Response response = invokationBuilder.get();
+              puis 
+              response.readEntity(String.class ou UneEntity.class)
+              Assert.assertEquals(java.net.HttpURLConnection.HTTP_CREATED,response.getStatus());
+        en mode asynchrone:
+              WebTarget target = client.target("http://localhost:9990/url/en/entier");
+              Future<MachinTruc> = target.request(MediaType.TEXT_PLAIN)
+              .async().get(new InvocationCallback(MachinTruc machintruc)
+                              {
+                                @Override
+                                public void completed(MachinTruc machintruc){...}
+                                @Override
+                                public void failed(Throwable th){...}
+                              }     
+            	@Context// request et response comme ça sont automatiquement injectes. permet d'injecter tout ce qui est dans le contexte d'une requete http: HttpHeaders;UriInfo;SecurityContext;ResourceContext;Request;Application;Configuration;Providers;HttpServletRequest;HttpServletResponse;ServletConfig;ServletContext
                 private HttpServletRequest httpRequest; // attention on dirait que pas possible de faire httpRequest.getParameter("x") si dans la methode en bas j'utilise @FormParam
+	            @Context
+            	HttpServletResponse httpResponse;
+                @RolesAllowed({"Echoer", "Subscriber"}) // pour securiser l'acces à la classe. Peut etre mis au niveau de la methode (authorizations) Besoin de déclarer tous les roles qu'on va utiliser en tete de la classe avec @DeclareRoles({"x","y"}) LINKdeclarereor
+                ou
+                @PermitAll
                   @GET ou @POST
                 @Path("/la_suite_de_lurl") ou @Path("/") // facultatif ou @Path("/{a:api/v1/realtimepath|api/v2/apps/{appNameId}/realtimepath") //si j'ai plusieurs multiples urls 
                 public interface ou une classe FeaturesRestService { /// TRES IMPORTANT: la methode doit etre public sinon il ne la voit pas
                 @Path("/lafindelurl") // mettre {monparamdanspath} si on veut utiliser @PathParam("userlogin")String login ci dessous LINK5464  
-               (javax.ws.rs.)@Produces("application/xml") // possible aussi mais à traduire: produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE
-                  public Collection getFeatures( @FormParam("parametrePost") String unParametre  ) throws Exception;
+               (javax.ws.rs.)@Produces("application/xml") // possible aussi mais à traduire: produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE ou MediaType.SERVER_SENT_EVENTS
+                  public Collection getFeatures( @Context SecurityContext securityContext LINKoooooooog @FormParam("parametrePost") String unParametre  ) throws Exception;
                                                   ou 
                                                       @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464
                                                       et si besoin
@@ -3011,6 +3197,7 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
                    public class MetadataDisplayServlet extends HttpServlet
                   { contient les methodes post et get habituelles
 
+
         filter filtre pour les webservices jaxrs
                     @Provider // pour que jaxrs le prenne en compte automatiquement au runtime (!=???) du coup je pense qu'il faut absolument le mettre
                     @Priority(Priorities.AUTHENTICATION ou AUTHORIZATION ou HEADER_DECORATOR etc...)// determine position dans ordre du filtre par priorité plus chiffre petit, plus ca passe avant.
@@ -3021,7 +3208,7 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
                     
                         @Override
                         public void filter(ContainerRequestContext containerRequestContext) throws IOException {
-                            SecurityContext originalContext = containerRequestContext.getSecurityContext(); // specifique jaxrs securitycontext est quelquepart dans la requete
+                            javax.ws.rs.core.SecurityContext originalContext = containerRequestContext.getSecurityContext(); // specifique jaxrs securitycontext est quelquepart dans la requete. ne s'applique pas pour les servlets
                             (...)
                             containerRequestContext.setSecurityContext(new Authorizer(claims, originalContext.isSecure())); //du coup on pourra faire LINKoooooooog
                           } catch (Exception e) {
@@ -3032,7 +3219,6 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
                                            
                        
 SOAP : webservice : webservices :
-a lire    https://javarevisited.blogspot.com/2017/02/difference-between-jax-rs-restlet-jersey-apache-cfx-RESTEasy.html
 http://ws.apache.org/axis/java/user-guide.html
 voir l'outil Soap Ui soapui bien pratique (dans installations)
 utilise WSDL (le serveur donne au client un wsdl pour qu'il puisse appeller ses methodes) Pour voir les details d'un webservice avec wsdl: http://172.18.68.129:10512/hr-ws/services?wsdl (?wsdl à la fin) existe aussi Spring-WS
@@ -3235,7 +3421,7 @@ swagger : pour qu'un webservice rest(je pense) exposer ses methodes dans une pag
                     </execution>
                 </executions>
             </plugin>
-            executer le puggin maven et c'est bonnard.            
+            executer le puggin maven et c'est bonnard genere le rapport sous target\jaxrs-analyzer3\swagger.json            
 
 faire un chat : websocket :
 Pour faire un serveur serveur de chat etc... fonctionnement des sockets
@@ -3262,6 +3448,7 @@ eventsource :sse(server-sent-event) autre alternative aux websocket mais ca ne f
         @GET
         @Produces(MediaType.SERVER_SENT_EVENTS)
         public void register (@Context Sse sse, @Context SseEventSink eventSink){
+        methode 1:
             this.sse=sse;
             if (broadcaster == null){
               this.broadcaster = sse.newBroadcaster();}
@@ -3272,6 +3459,10 @@ eventsource :sse(server-sent-event) autre alternative aux websocket mais ca ne f
         public void beat(){
           this.broadcaster.broadcast(this.sse.newEvent("time:"+localTime.low(à.toString()))
         }
+        methode2:
+            eventSink.send(sse.newEvent("blabla"));
+            eventSink.send(sse.newEvent("blibli"));
+            eventSink.close();
     et voir coté javascript sur MDN: EventSource 
 jwebsocket : (Web Socket) faire un chat : 
   declarer  JWEBSOCKET_HOME vers D:\LocalData\p036782\jWebSocket-1.0
@@ -3282,72 +3473,6 @@ jwebsocket : (Web Socket) faire un chat :
    java -jar jWebSocketServer-1.0.jar
 
 
-quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.io/guides/cdi-reference.html. quarkus-reasteasy:c'est jaxRS
-        creer un nouveau projet from scrash de n'importe où: 
-        mvn io.quarkus:quarkus-maven-plugin:0.16.1:create -DclassName="org.acme.quickstart.MaClasseWebServiceResource" -Dpath="/urlDeCeWebServiceHelloWorld" 
-                dans le pom, io.rest-assured c'est pour les tests voir LINKtestetresrtest. ATTENTION remplacer la dependance <artifactId>quarkus-resteasy</artifactId> par <artifactId>quarkus-resteasy-jsonb</artifactId> si je veux faire du rest json 
-  mvnw compile quarkus:dev -Ddebug(si je veux debugger)// execute en dev (demarre un serveur http). quarkus:dev c'est pour que le serveur ecoute les changements et s'auto-refresh. Comment? Reponse:Refreshing the browser triggers a scan of the workspace, and if any changes are detected, the Java files are recompiled and the application is redeployed; your request is then serviced by the redeployed application. If there are any issues with compilation or deployment an error page will let you know.
-  mvnw package // recompile et package 2jars. Un executable -runner.jar (executable par "java -jar target/getting-started-1.0-SNAPSHOT-runner.jar") qui demarre le serveur jboss attention les librairies utilisées sont externes dans target/lib voir son MANIFEST.MF. Un autre qui ne contient pas l'embedded serveur 
-  mvnw package -Pnative // recompile et package un binaire executable dans target environnement dépendant donc attention:executable sans besoin de jvm mais fonctionne que sur mon type d'environnement actuel
-    du coup rajouter:-Dnative-image.docker-build=true // je crois qui cree un executable metable dans un container docker (voir le dockerfile  genere par quarkus)
-  docker build -f src/main/docker/Dockerfile.native -t quarkus-quickstart/quickstart // creer l'image docker
-  docker run -i --rm -p 8080:8080 quarkus-quickstart/quickstart // executer dans docker ou kubernetes
-       quarkus :tests:
-            @QuarkusTest // le serveur jboss demarre sur port 8081(modifiable par quarkus.http.test-port dans application.properties) et rest-assured utilise ce port. Toutes les injections se font.
-            public class GreetingResourceTest {
-                @Test
-                public void testHelloEndpoint() {
-                    given() // de rest-assured. SI je veux forcer moi meme l'url alors faire  @TestHTTPResource("/monPath") URL ou String monUrl dans ma classe de test
-                      .when().get("/hello")
-                      .then()
-                         .statusCode(200)
-                         .body(is("hello"));
-                }
-                @Test
-                public void testGreetingEndpoint() {
-                    String uuid = UUID.randomUUID().toString();
-                    given()
-                            .pathParam("name", uuid)  // rempli le {name} ci dessous
-                            .when().get("/hello/hello/{name}")
-                            .then()
-                            .statusCode(200)
-                            .body(is("hello " + uuid + "\n"));
-                            .body("utilisateur.nom", equalTo("jean"),"lotto.winners.winnerId", hasItems(23, 54));//marche meme si c'est du json. permet de valider le json sans avoir à convertir en objet java LINKtestetresrtest
-                }
-            si dans un service rest j'ai l'erreur can not access a member of class c'est parce que je ne peux pas convertir en json une classe qui est inner d'une autre classe.       
-    une classe webservice :(karaf par ex)
-      LINK93029
-            	@Context                   // request et response comme ça sont automatiquement injectes
-            	private HttpServletRequest httpRequest; // attention on dirait que pas possible de faire httpRequest.getParameter("x") si dans la methode en bas j'utilise @FormParam
-            	@Context
-            	HttpServletResponse httpResponse;
-                @RolesAllowed({"Echoer", "Subscriber"}) // pour securiser l'acces à la classe. Peut etre mis au niveau de la methode (authorizations)
-                ou
-                @PermitAll
-                  @GET ou @POST
-                @Path("/la_suite_de_lurl") ou @Path("/") // facultatif ou @Path("/{a:api/v1/realtimepath|api/v2/apps/{appNameId}/realtimepath") //si j'ai plusieurs multiples urls 
-                public interface ou une classe FeaturesRestService { /// TRES IMPORTANT: la methode doit etre public sinon il ne la voit pas
-                @Path("/lafindelurl") // mettre {monparamdanspath} si on veut utiliser @PathParam("userlogin")String login ci dessous LINK5464  
-               (javax.ws.rs.)@Produces("application/xml") // possible aussi mais à traduire: produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE ou MediaType.SERVER_SENT_EVENTS
-                  public Collection getFeatures(@Context SecurityContext securityContext LINKoooooooog @FormParam("parametrePost") String unParametre  ) throws Exception;
-                                                  ou 
-                                                      @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464
-                                                      et si besoin
-                                                      @QueryParam("unChampApres?ou&DanslUrl") 
-                    // ci dessous: pour recuperer un bundle complettement ailleurs dans le meme karaf en java(l'autre façon c'est d'injecter dans blueprint)
-                  		BundleContext bundleContext = FrameworkUtil.getBundle(UnServiceDeCeBundleLa.class).getBundleContext();
-                  		@SuppressWarnings("rawtypes")
-                  		ServiceReference serviceReference = bundleContext.getServiceReference(une.classe.qui.est.un.service.dans.un.autre.bundle.AutreClasse.class.getCanonicalName());
-                  		return (String) serviceReference.getProperty("UNEPROPRIETTEESETTEE_DANS_LE_BLUEPRINT_DE_CET_AUTRE_BUNDLE");
-                  
-                } 
-                et la sous classe si c'est une interface mais bof autant faire une classe direct sans interface:
-                contient juste la methode                         
-                  public Collection getFeatures(@FormParam("SAMLResponse") String samlReponse) throws Exception {...} sans les annotations
-               Pour fair une servlet karaf LINKkarafservlet
-                   public class MetadataDisplayServlet extends HttpServlet
-                  { contient les methodes post et get habituelles
-   
 
 
 JAAS :
@@ -3367,7 +3492,7 @@ AppConfigurationEntry localAppConfigurationEntry = localConfiguration.getAppConf
                                               ((xxx)Callback[i]).credentialsaisi                                                                                                                                  parametre2=valeur2; //finir par";" ces parametres seront envoyés dans methode "initialize" du LoginModule:-)
                                               si ok return true;                                                                                                                                                };
                                              }                                                                                                                                                                    
-                           Principal<-Subject.getPrincipals() // subjet est une personne. Principal est de ce qui l'identifie. Plusieurs sousclasses existent. exemple com.sun.security.auth.UserPrincipal                                                                                                                                                                                        
+ SecurityAttributes<--a_plusieurs--Principal<-Subject.getPrincipals() // subjet est une personne. Principal est de ce qui l'identifie. Plusieurs sousclasses existent. exemple com.sun.security.auth.UserPrincipal                                                                                                                                                                                        
                                     exemple pour construire un subject: (de moi.)
                                             final String claim = (String) claims.get("role");
                                               Role role = Role.valueOf(claim.toLowerCase());
@@ -3513,7 +3638,7 @@ web.xml : webxml :
 					or Index.html contient 
 								<HTML><HEAD><META HTTP-EQUIV='Refresh' CONTENT='0;URL=index.jsp'></HEAD></HTML>
 					index.jsp a un frameset qui dirige vers auth/home.do qui est une action struts. C'est la methode executeAction() de cette classe qui est appelee (or cette methode est definie dans la classe mere de la classe)  
-            security-constraint Decrit les rôles des utilisateurs ou groupes d'utilisateurs pouvant acceder à l'application Web.  mapping entre security-role ci-dessous et des url-patterns			
+            security-constraint Decrit les rôles des utilisateurs ou groupes d'utilisateurs pouvant acceder à l'application Web.  mapping entre security-role ci-dessous et des url-patterns LINKlkjsqgeegege			
             			<security-constraint>      //s'appuye sur <login-config> LINKp^g^g^g
                             <display-name>Security for Your Enterprise</display-name> // du blabla
                             <web-resource-collection> // je peux en mettre plusieurs. Chacun a un nom: ci dessous et une url ci dessous
@@ -3526,15 +3651,15 @@ web.xml : webxml :
                                 		
                                     <user-data-constraint>
                                 			<description>Protection should be CONFIDENTIAL</description> // pour que toute requete soit redirigée automatiquement de http vers https LINKjgjgjgjndndnd
-                                			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+                                			<transport-guarantee>CONFIDENTIAL</transport-guarantee> LINKglkdlkflglglg
                                 		</user-data-constraint>
-                                		ou 
+                                		et/ou 
                                 		 <auth-constraint>
                                 	      <role-name>supervisor</role-name> // les roles définies et retournes par le realm qui ont le droit.  
                                 	      <role-name>user</role-name>
                                 	  </auth-constraint>
                           </security-constraint>
-            <security-role> Definit un rôle de securite pour l'application: interne à l'appli.
+            <security-role> Definit un rôle de securite pour l'application: interne à l'appli. est remplacé en annotation par @DeclareRoles
                 	      <role-name>user</role-name> // on retrouve les memes que ceux definis dans <auth-constraint>                 
                 	      <role-name>supervisor</role-name>
             </security-role>
@@ -4865,7 +4990,7 @@ maven:
             classe main
     @SpringBootApplication // trouve les composants annotes par rapport au package de cette classe (dedans et en dessous) +  cette classe devient une classe de configuration où on declare ses beans singletons... //Pas besoin de web.xml. C'est @Configuration (cette classe est une classe de config)+@EnableAutoconfiguration (scan les beans du meme package et enfants + recup les proprietes+ scan les jars poses par mapresents dans classpath) + @Enablemvc (Existe si mvn dependance "spring-web-mvc") + @ComponentScan(basePackages={"..."}) scan les composants.
      @EnableWebMvc // a mettre aussi dans springboot a cote de ci-dessus si je fais des webservices                                                                                                                                                               =@ComponentGENERIQUE_EVITER_D_UTILISERUtiliser@Named+@Config+@Value (cherche proprietes sous classpath) voir LINKPropsspring 
-    @EnableResourceServer // active la securite JWT : ce micro service n'est accessible que si on lui envoie un JWToken ( De plus de manière plus fine on peut proteger alors des methodes avec au dessus @PreAuthorize("#oauth2.hasScope('un.scope.role.defini.dans.le.JWToken.entrant')" ou "hasAuthority('ADM')") Mais besoin alors d'ajouter dans src/main/resources/application.yml où est la cle publique:jwt.keyUri:$xxxx/ma_cle
+    @EnableResourceServer // active la securite JWT: ce micro service n'est accessible que si on lui envoie un JWToken ( De plus de manière plus fine on peut proteger alors des methodes avec au dessus @PreAuthorize("#oauth2.hasScope('un.scope.role.defini.dans.le.JWToken.entrant')" ou "hasAuthority('ADM')") Mais besoin alors d'ajouter dans src/main/resources/application.yml où est la cle publique:jwt.keyUri:$xxxx/ma_cle
                 public class Application { // l'executer demarre tomcat                                                                                         
                                                                                                                                                                 
                     public static void main(String[] args) {                                                                                                     
@@ -5034,7 +5159,7 @@ Conf java
                                                                                                                                                                               @Value("#{systemProperties['os.arch'].equals('x86') ? winDataSource: unixDataSource}")
                                                                                                                                                                               private List<String> authorizedIp;
                                                                                                                                                               Autre methode pour que les .properties se trouve dans une classe. @ConfigurationProperties(prefix="connection" ou "connection" tout court) Cette annot peut etre sur une classe Tatato avec getter et setter qui selon nom des champs, les remplis à partir de *.properties (si contient connexion.tata): Tatato a comme getter: tata se rempli tout seul pour que ca marche besoin que ma classe config ait: @EnableConfigurationProperties(Tatato.class)@ConfigurationProperties peut aussi accompagner un @Bean au dessus d'une methode
-                                                                                                                                                              attention Tatato doit contenue le constructeur sans argument et les constructeurs avec tous les arguments. Pour ça utiliser lombok (voir LINKLombok )                        
+                                                                                                                                                              attention Tatato doit contenir le constructeur sans argument et les constructeurs avec tous les arguments. Pour ça utiliser lombok (voir LINKLombok )                        
                    recuperer des proprietes:                          
               mais attention besoin creer been dans la conf comme ci dessous pour que ça marche: 
               @Bean
@@ -5261,46 +5386,6 @@ AILLEURS: injecter mes beans par constructeur
             $CATALINE_HOME/bin/digest.sh -a HASH_TYPE PASSWORD
             Replace the password for the user in question in the $CATALINA_HOME/conf/tomcat_users.xml file
             Restart Tomcat                                                                                          
-    h2 : embedded database:
-                    dans la config xml:
-                          <jdbc:embedded-database id="dataSourceRepository" type="H2">
-                            <jdbc:script location="${ws.schema.script}" /> 
-                            <jdbc:script location="${ws.data.source.init}" />
-                          </jdbc:embedded-database>
-                          dans le fichier pointe par ${ws.schema.script} pour que to_date existe mettre:
-                                            -- TO_DATE
-                                            drop ALIAS if exists TO_DATE;
-                                            CREATE ALIAS TO_DATE as '
-                                            import java.text.*;
-                                            @CODE
-                                            java.util.Date toDate(String dateTime, String dateFormat) throws Exception {
-                                                if (dateFormat.contains("MON")) {
-                                                    dateFormat = dateFormat.replace("MON", "MMM");
-                                                }
-                                                if (dateFormat.contains("Y")) {
-                                                    dateFormat = dateFormat.replaceAll("Y", "y");
-                                                }
-                                                if (dateFormat.contains("D")) {
-                                                    dateFormat = dateFormat.replaceAll("D", "d");
-                                                }
-                                                if (dateFormat.contains("HH")) {
-                                                    dateFormat = dateFormat.replaceAll("HH", "hh");
-                                                }
-                                                if (dateFormat.contains("hh24")) {
-                                                    dateFormat = dateFormat.replaceAll("hh24", "hh");
-                                                }
-                                                if (dateFormat.contains("MI") || dateFormat.contains("mi")) {
-                                                    dateFormat = dateFormat.replaceAll("MI", "mi").replaceAll("mi", "mm");
-                                                }
-                                                if (dateFormat.contains("SS")) {
-                                                    dateFormat = dateFormat.replaceAll("SS", "ss");
-                                                }
-                                                return new SimpleDateFormat(dateFormat).parse(dateTime);
-                                            }
-                                            ';
-
-                          
-                        
           
                              
 Spring : XML STYLE                                                                      
@@ -5500,7 +5585,7 @@ Spring : XML STYLE
                                                       <mvc:resources mapping="/resources/**" location="/resources/" />
                                                                 <mvc:default-servlet-handler />
                                                                 <mvc:annotation-driven />
-                                    <!-- pour utiliser les @ : scan les java qui ont:@Controller, @ComponentGENERIQUEEVITERDUTILISERUtiliser@Named, @Repository, @Service(instancie mon service au demarrage) @Inject(equivalent de @Autowired mais @Autowired est une annotation Spring), @Named(equivalent de @Qualifier de Spring), @PostConstruct: ces annotations servent juste de remplacement de la conf du xml du spring. C pareil mais dans le code java -->
+                                    <!-- pour utiliser les @ : scan les java qui ont:@Controller, @ComponentGENERIQUEEVITERDUTILISERUtiliser@Named, @Repository, @Service(instancie mon service au demarrage) @Inject(equivalent de @Autowired mais @Autowired est une annotation Spring), @Named(ne pas utiliser a la place utiliser @Qualifier de Spring), @PostConstruct: ces annotations servent juste de remplacement de la conf du xml du spring. C pareil mais dans le code java -->
                                      <context:component-scan base-package="mon.path.java"> pour plusieurs packages: <context:component-scan base-package="x.y.z.service, x.y.z.controller" />           
                                             <!-- pour ignorer les @Controller dans CE ApplicationContext et du coup ne pas instancier les classes marquees par @Controller -->                   
                                                 <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
@@ -5680,7 +5765,7 @@ Spring : XML STYLE
                     
                   service layer : exemple loginUser(){.. ou transferMoney(){... appelle plusieurs DM
                         contient AOP aspectOrientedProgramming grace à Interceptors(Before/after) sont parametres grâce à Pointcuts Ou design pattern proxy (qui remplace ma classe implementee et du coup contient son code) 
-                          aspect : AOP :
+                          aspect : AOP :obsolète remplacé par @decorator et @interceptor
                           reutiliser des petits programmes ou on veut par parametrage spring
                           poincut = intersection de notre code avec le programme aspect
                           voir P34: on prog 1 aspect puis @aspect (aspecj)
@@ -6926,7 +7011,7 @@ si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from col
         	@OneToMany(mappedBy="permission") // car je suis dans le classe Permission.class et je fais ref à UserPermission.permission
         	private Set<UserPermission> userPermission;
              Comparer des entitees entre elles si elles sont des listes comme proprietes: il faut overrider equals et hashcode: (voir page 84Spring persistance with Hibernate)
-                @Override    (A FAIRE: GENERALISER AVEC LE DESIGN PATTERN DES DAO)
+                @Override    (A FAIRE: GENERALISER AVEC LE DESIGN PATTERN DES DAO: dao sont morts remplacés par entitymanager)
                 public boolean equals(Object o)
                 {
                   if(this==o) return true;
@@ -6949,20 +7034,20 @@ JPA :
     ouvrir console Hibernate et configurer une connection à une base
     Clic droit sur mon projet > JAP > faire le reverseEngeniring
 
-  FORMS ----> envoie des DTO----------equivalent-----------
+  FORMS ----> envoie des DTO---ne plus les utiliser et passer direct par les entities sauf si ils ont pas la meme structure que les Entities
                            |                               |
                            vers                            |
                     CMD     |                              |
                       update(monDTO)                       |
                       {                                    |
                         converti DTO->BO                   |
-                        et appelle DAO                     |
+                        et appelle EntityManager(avant:DAO)|
                       }                                    |
-  DAO = methodes crud                                      |
+  EntityManager remplaceDAO = methodes crud                |
       methode(fait appel à ENTITY)------------------(BO=MODEL)ENTITIES connectees à la base
     Enleve expres
 
-DAO : design pattern bonne pratique
+DAO : design pattern bonne pratique est mort remplacé par entitymanager
 un @Repository se base sur les DAO pour faire des find, get etc sur plusieurs tables. Le DAO lui sert aux updates sur une seule table
   Besoin que MonObjet extends BaseEntity.
   IMonObjetDao ----------extends-------->IGenericDao (contient toutes les methodes CRUD basiques) public interface IGenericDao<T extends BaseEntity> { public T getBook(long id);}
@@ -7069,9 +7154,11 @@ MCD/MPD :
         exequo
       X,n-><-X,n
       
-  bonne pratique gestion des rôles droits etc...
-      voici les tables a creer:  USER    GROUPE        USER-GROUPE      USER PERMISSION   GROUPE PERMISSION     PERMISSION  
-
+  bonne pratique gestion des rôles droits etc... LINKsecurlsjfg
+      voici les tables a creer:  USER    GROUPE                              PERMISSION(role)     USER-GROUPE      USER-PERMISSION(role)   GROUPE-PERMISSION(role)     
+                                  |       |                                         |              |                         |
+                               sont def ds le realm(genre login-config.xml)         |             ce mapping se defini au niveau du serveur (genre dans glassfish-web.xml)
+                                                                                se retrouvent dans web.xml>security-role
 JOOQ : mieus que jdo?
     facile: dans eclipse pour lancer le generateur: 
     class main: org.jooq.util.GenerationTool
@@ -7898,6 +7985,43 @@ indexof :   INSTR:
         -> 4
 H2 :
 client H2: http://www.h2database.com/html/main.html
+h2 : embedded database:
+                    dans la config.xml du serveur:
+                          <jdbc:embedded-database id="dataSourceRepository" type="H2">
+                            <jdbc:script location="${ws.schema.script}" /> 
+                            <jdbc:script location="${ws.data.source.init}" />
+                          </jdbc:embedded-database>
+                          dans le fichier pointe par ${ws.schema.script} pour que to_date existe mettre:
+                                            -- TO_DATE
+                                            drop ALIAS if exists TO_DATE;
+                                            CREATE ALIAS TO_DATE as '
+                                            import java.text.*;
+                                            @CODE
+                                            java.util.Date toDate(String dateTime, String dateFormat) throws Exception {
+                                                if (dateFormat.contains("MON")) {
+                                                    dateFormat = dateFormat.replace("MON", "MMM");
+                                                }
+                                                if (dateFormat.contains("Y")) {
+                                                    dateFormat = dateFormat.replaceAll("Y", "y");
+                                                }
+                                                if (dateFormat.contains("D")) {
+                                                    dateFormat = dateFormat.replaceAll("D", "d");
+                                                }
+                                                if (dateFormat.contains("HH")) {
+                                                    dateFormat = dateFormat.replaceAll("HH", "hh");
+                                                }
+                                                if (dateFormat.contains("hh24")) {
+                                                    dateFormat = dateFormat.replaceAll("hh24", "hh");
+                                                }
+                                                if (dateFormat.contains("MI") || dateFormat.contains("mi")) {
+                                                    dateFormat = dateFormat.replaceAll("MI", "mi").replaceAll("mi", "mm");
+                                                }
+                                                if (dateFormat.contains("SS")) {
+                                                    dateFormat = dateFormat.replaceAll("SS", "ss");
+                                                }
+                                                return new SimpleDateFormat(dateFormat).parse(dateTime);
+                                            }
+                                            ';
  requeter une base de donnée h2 en java
     pour voir les tables de h2 afficher : SELECT * FROM INFORMATION_SCHEMA.TABLES
       Class.forName ("org.h2.Driver");
@@ -11447,14 +11571,14 @@ Les phases: se jouent de manière sequencielle du haut vers le bas:
             install - install the package into the local repository, for use as a dependency in other projects locally
             deploy - done in an integration or release environment, copies the final package to the remote repository for sharing with other developers and projects.
             si je fais mvn deploy tout est execute. Si je fais mvn clean deploy il fait d'abord un clean avant de tout executer 	
-Les goals:(appartiennent à phases) sin on veut executer mvn un_goal alors ecrire mvn maven-nomplugin-plugin:goal mais enlever maven- et -plugin
+Les goals:(appartiennent à phases) si on veut executer mvn un_goal alors ecrire mvn maven-nomplugin-plugin:goal mais enlever maven- et -plugin
     un goal appartient à 0 à n phases. et une phase peut avoir 0 à n goals. Une phase sans goal n'est pas executee
     Moreover, if a goal is bound to one or more build phases, that goal will be called in all those phases.
     si une phase contient plusieurs goals et qu'on execute cette phase: tous les goals sont executes dans l'ordre de declaration des goals dans le pom
     exemple de goal: dependency:copy-dependencies            
   maven:pour installer ajouter installation une librairie jar dans mon repository local (on peut executer ça direct sur eclipse)
       %M3%/mvn install:install-file -Dfile=C:/jbdevstudio4/jboss-eap/jboss-as/common/lib/jsp-api.jar -DgroupId=renault-app.rits.wec -DartifactId=jsp-api -Dversion=14 -Dpackaging=jar
-      %M3%/mvn install:install-file -Dfile=C:/jbdevstudio4/jboss-eap/jboss-as/common/lib/jsp-api.jar -DgroupId=renault-app.rits.wec -DartifactId=jsp-api -Dversion=1 -Dpackaging=jar
+      %M3%/mvn install:install-file -Dfile="C:/jbdevstudio4/jboss-eap/jboss-as/common/lib/jsp-api.jar" -DgroupId=renault-app.rits.wec -DartifactId=jsp-api -Dversion=1 -Dpackaging=jar
       %M3%/mvn install:install-file -DgroupId=com.documentum -DartifactId=dfc -Dpackaging=jar -Dversion=5.3.0.621 -Dfile=dfc.jar -DgeneratePom=true
       %M3%/mvn install:install-file -Dfile=C:/apache-maven-3.1.1/repo/mysql/mysql-connector-java/5.1.6/mysql-connector-java-5.1.6.jar -DgroupId=web.audioloop -DartifactId=mysql-connector-java-5.1.6 -Dversion=1 -Dpackaging=jar
       %M3%/mvn install:install-file -Dfile=D:/Maven/repo/renault-app/rits/wec/xml4j/1/xml4j-1.jar -DgroupId=private.wec -DartifactId=xml4j -Dversion=1 -Dpackaging=jar
@@ -11526,81 +11650,81 @@ http://su320ads.mc2.renault.fr:9092/svn/svn50839/
 ou
 http://baselinesvn.mc2.renault.fr:9090/svn/svn50839/
 SmartSVN :
-pour copier un trunck vers branche par ex: Les branches c la merde. DEVOPS 
-    Modify>CopyWithinRepository
-dans repository >Manage...>
-dans onglet profile >add>tapper url
-saisir mdp et user 
-NE PAS cocher "store password on disk"
-next > definir un nom explicite (
-Dans directories > click droit > Files from subdirectories pour afficher en flat ou en arbo.
-regarder l'aide: table of content>directory tree
-pour associer des fichiers à  un programm: (java avec wsad par ex): Modify>Preferences>Externaltools. Faire attention à  l'ordre dans la liste.
-ouvri auto last proj:
-Menu Edit > preferences OnStartup >openLastProject
-pour eviter de commiter des types de fichiers definis: Global ignore (Menu Project > Settings > Working Copy >Global ignore)
-Historique de ce qui s'est passe: Configuration de Tmate: MenuProject > QSettings > Tmate > Display
-Dans Tmate possible classer par autoeur, par date etc... 
-Quand on cree un fichie ou un dossier localement ne pas oublier de faire ADD!!!
-Remove supprime tout (dans file sys et dans conf) Delete Physically supprime seulement localement et pas de la GCL (repository)
-QUand on ajoute un nouveau fichier ou repertoire et qu'on fait add: il y a (0) ca signifie: il est pas encore dans GCL
-Toujours faire un update avant de faire un commit
-Ce numero prendra ensuite la valeur de la revision: penser à  faire un update general pour mettre ajour les meta donnees de revisions.
-On peut faire un update sur revision ulterieure
-On peut faire un update sur un repertoire seulement
-REVERT = undo en local seulement.
-COMPARE SHOW CHANGE comparle le local et le repository
-ADD possible ajouter fichier hors Smartsvn puis faire ADD pour ajouter sous controle gconf.(0) car pas encore commite
-DELETE, UPDATE, RENAME, MOVE a faire QUE dans SmartSVN
-UPDATE(checkout) en mixant les revisions: epicerie: en local on a tout un melange de revisions.
-LIVRAISON D UNE VERSION: MODIFY>COPTY TO REPOSITORY (si mon workingCopy est un mix epicerie il va copier ca dans le tag sinon il va faire une copie repository vers repository)
-CREER UNE BRANCHE: pareil que pour LIVRAISON D UNE VERSION. Les branches c la merde. DEVOPS
-Revert pour annuler ses modifs
-Definition de Revision: Chaque fois qu'on touche à  n'importe quoi dans le repository il incoremente le numero de revision de tout le repository. pour mettre à  jour dans l'ecran faire: Selectionner ce qu'on veut mettre à  jour Modify > Update
-Pour avoir un suivi de modif sur un fichier:  click droit sur un article > Annotate... ou Log... pour avoir un suivit des modifs.
-http://baselinesvn.mc2.renault.fr:8082/svn/svn50839/
-ou
-http://su320ads.mc2.renault.fr:9092/svn/svn50839/
-ou
-http://baselinesvn.mc2.renault.fr:9090/svn/svn50839/
-Pour tagger une version:
-Choisir son repertoire puis > Modify > Copy URL to URL
-En local on travaille sur Trunk et quand on tag on tag sur Tags: Tags ne sert qu'a contenir les differentes versions du projet (ne pas faire de modifs dans tags)
-pour tager: le tag ne dois pas exister: si il existe le supprimer , se mettre sur trunck (sur rad7 le faire pour chaque sous repertoire du trunk): create branch/tag et choisir le chemin de son nouveau tag
-pour creer un fichier qui synthetise le delta entre deux versions/revision: query > create patch between URL > choisir sa version
-Pour livrer c a d recuperer le projet localement sans le voir dans SmartSVN: Project>Checkout > Export
-Pour faire une version qui est un mixte de revisions differentes: trunk doit contenir ce mixte. Selectionner le trunk >Modify > Copy WC - URL
-A la fin de chaque activite: utiliser le project manager pour liberer de l'espace sur le workspace local
-Les branches servent à  developper un lot independememnt du trunk mais il faut vite ramener la branche dans le trunck si existe corrections effectuees dans trunk Les branches c la merde. DEVOPS
-Pour creer une branche: Copy URL-URL > au lieu de choisir tags il faut choisir branches > definir nom + ajouter commentaire.. etc..
-Lire de bas en haut:
-code
-----
-|	
-HEAD (trunk)
-0v1.3
-|
-|<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-|                            |
-HEAD                         |
-branche0v1.2(corrections) Qd fini MERGE (on utilise branches que si ya du dev en paralelle.. tag c'est pour chaque version livree). Les branches c la merde. DEVOPS
-|                        /
-|       HEAD            /
-|	 branche0v1.1+Lot1---
-|     /
-tag 0v1.1
-|
-tag 0v1.0  ---> les tags sont en realite des pointeurs vers des revisions de fichier. Pas les fichiers en soit
-
-trouver chercher lister tout ce que j'ai dans un repository svn 
-      sur cygwin ou unix je peux lister trouver chercher tous les documents dans un repository svn en ligne de commande sans client: 
-      svn list -R https://svn.ptx.fr.sopra/svnhrasvc/hrasvc > todelete.txt
-         
-  pour commiter un nouveau projet premiere fois: share project... (voir intellij)
-si j'ai le message: is already under version control quand je commit
-		supprimer le .svn qui se trouve dans le repertoire que je n'arrive pas à commiter
-		si ca ne marche toujours pas faire une copie de mon repertoire KO ailleurs sans aucun .svn dedans. 
-		    puis sur eclipse effacer carrement tout le repertoire. Refaire un commit, rappatrier mon repertoire copie, faire un refresh eclipse et recommiter
+    pour copier un trunck vers branche par ex: Les branches c la merde. DEVOPS 
+        Modify>CopyWithinRepository
+    dans repository >Manage...>
+    dans onglet profile >add>tapper url
+    saisir mdp et user 
+    NE PAS cocher "store password on disk"
+    next > definir un nom explicite (
+    Dans directories > click droit > Files from subdirectories pour afficher en flat ou en arbo.
+    regarder l'aide: table of content>directory tree
+    pour associer des fichiers à  un programm: (java avec wsad par ex): Modify>Preferences>Externaltools. Faire attention à  l'ordre dans la liste.
+    ouvri auto last proj:
+    Menu Edit > preferences OnStartup >openLastProject
+    pour eviter de commiter des types de fichiers definis: Global ignore (Menu Project > Settings > Working Copy >Global ignore)
+    Historique de ce qui s'est passe: Configuration de Tmate: MenuProject > QSettings > Tmate > Display
+    Dans Tmate possible classer par autoeur, par date etc... 
+    Quand on cree un fichie ou un dossier localement ne pas oublier de faire ADD!!!
+    Remove supprime tout (dans file sys et dans conf) Delete Physically supprime seulement localement et pas de la GCL (repository)
+    QUand on ajoute un nouveau fichier ou repertoire et qu'on fait add: il y a (0) ca signifie: il est pas encore dans GCL
+    Toujours faire un update avant de faire un commit
+    Ce numero prendra ensuite la valeur de la revision: penser à  faire un update general pour mettre ajour les meta donnees de revisions.
+    On peut faire un update sur revision ulterieure
+    On peut faire un update sur un repertoire seulement
+    REVERT = undo en local seulement.
+    COMPARE SHOW CHANGE comparle le local et le repository
+    ADD possible ajouter fichier hors Smartsvn puis faire ADD pour ajouter sous controle gconf.(0) car pas encore commite
+    DELETE, UPDATE, RENAME, MOVE a faire QUE dans SmartSVN
+    UPDATE(checkout) en mixant les revisions: epicerie: en local on a tout un melange de revisions.
+    LIVRAISON D UNE VERSION: MODIFY>COPTY TO REPOSITORY (si mon workingCopy est un mix epicerie il va copier ca dans le tag sinon il va faire une copie repository vers repository)
+    CREER UNE BRANCHE: pareil que pour LIVRAISON D UNE VERSION. Les branches c la merde. DEVOPS
+    Revert pour annuler ses modifs
+    Definition de Revision: Chaque fois qu'on touche à  n'importe quoi dans le repository il incoremente le numero de revision de tout le repository. pour mettre à  jour dans l'ecran faire: Selectionner ce qu'on veut mettre à  jour Modify > Update
+    Pour avoir un suivi de modif sur un fichier:  click droit sur un article > Annotate... ou Log... pour avoir un suivit des modifs.
+    http://baselinesvn.mc2.renault.fr:8082/svn/svn50839/
+    ou
+    http://su320ads.mc2.renault.fr:9092/svn/svn50839/
+    ou
+    http://baselinesvn.mc2.renault.fr:9090/svn/svn50839/
+    Pour tagger une version:
+    Choisir son repertoire puis > Modify > Copy URL to URL
+    En local on travaille sur Trunk et quand on tag on tag sur Tags: Tags ne sert qu'a contenir les differentes versions du projet (ne pas faire de modifs dans tags)
+    pour tager: le tag ne dois pas exister: si il existe le supprimer , se mettre sur trunck (sur rad7 le faire pour chaque sous repertoire du trunk): create branch/tag et choisir le chemin de son nouveau tag
+    pour creer un fichier qui synthetise le delta entre deux versions/revision: query > create patch between URL > choisir sa version
+    Pour livrer c a d recuperer le projet localement sans le voir dans SmartSVN: Project>Checkout > Export
+    Pour faire une version qui est un mixte de revisions differentes: trunk doit contenir ce mixte. Selectionner le trunk >Modify > Copy WC - URL
+    A la fin de chaque activite: utiliser le project manager pour liberer de l'espace sur le workspace local
+    Les branches servent à  developper un lot independememnt du trunk mais il faut vite ramener la branche dans le trunck si existe corrections effectuees dans trunk Les branches c la merde. DEVOPS
+    Pour creer une branche: Copy URL-URL > au lieu de choisir tags il faut choisir branches > definir nom + ajouter commentaire.. etc..
+    Lire de bas en haut:
+    code
+    ----
+    |	
+    HEAD (trunk)
+    0v1.3
+    |
+    |<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    |                            |
+    HEAD                         |
+    branche0v1.2(corrections) Qd fini MERGE (on utilise branches que si ya du dev en paralelle.. tag c'est pour chaque version livree). Les branches c la merde. DEVOPS
+    |                        /
+    |       HEAD            /
+    |	 branche0v1.1+Lot1---
+    |     /
+    tag 0v1.1
+    |
+    tag 0v1.0  ---> les tags sont en realite des pointeurs vers des revisions de fichier. Pas les fichiers en soit
+    
+    trouver chercher lister tout ce que j'ai dans un repository svn 
+          sur cygwin ou unix je peux lister trouver chercher tous les documents dans un repository svn en ligne de commande sans client: 
+          svn list -R https://svn.ptx.fr.sopra/svnhrasvc/hrasvc > todelete.txt
+             
+      pour commiter un nouveau projet premiere fois: share project... (voir intellij)
+    si j'ai le message: is already under version control quand je commit
+    		supprimer le .svn qui se trouve dans le repertoire que je n'arrive pas à commiter
+    		si ca ne marche toujours pas faire une copie de mon repertoire KO ailleurs sans aucun .svn dedans. 
+    		    puis sur eclipse effacer carrement tout le repertoire. Refaire un commit, rappatrier mon repertoire copie, faire un refresh eclipse et recommiter
 
 Struts :STRUTS SURVIVAL GUIDE:
 Pour parametrer le forward: par exemple rester sur la meme page et reenvoyer des parametres au request en fin d'action:
@@ -12599,11 +12723,7 @@ Creer une signature avec texte et image:
     reparmetrer la nouvelle signature cette fois non pas avec image mais avec fichier html et prendre le fichier html cree
 
 											
-design patterns :
-    command :  
-        InputStream is = MaClasse.class.getClassLoader().getResourceAsStream ("nom de mon fichier command.xml");
-		CommandApplication application = new CommandApplication(); // appartien a fws.jar
-		application.load(is);
+EFFACE EXPRES
            
 ultraedit :
 recherche en avant: F3 recherche arriere: Ctrl+F3
@@ -13456,7 +13576,7 @@ fin c ca que j'ai fait qui marche PAS jusqu'au bout.
                                   Quel est le code pays Ó deux lettres pour cette unitÚ ?
                                     [Unknown]:  FR
                     // curl -u user:password -k https://127.0.0.1:9000/greeting
-                    // convertir un .P12 en JKS (en fait j'importe un certif .p12 dans un keystore jks je crois) (un .p12 peut contenir ou pas une cle privée dedans)
+                    // convertir un .P12 en JKS (en fait j'importe ajouter un certif .p12 dans un keystore jks je crois) (un .p12 peut contenir ou pas une cle privée dedans)
                             keytool -importkeystore -srckeystore key.p12 -srcstoretype PKCS12 -srcstorepass password -alias some-alias -destkeystore samlKeystore.jks -destalias some-alias	-destkeypass changeit (si erreur "java.util.IllegalFormatConversionException: d != java.lang.String" rajouter -J-Duser.language=en: ca se produit pour java>7)
                     // convertir un JKS en .P12 (en fait importkeystore va recup un alias d'un keystore B pour le copier dans un keystoreA mais on peut se passer du keystoreB si j'ai bien compris)
                              keytool -importkeystore -srckeystore file.jks -destkeystore file.p12 -srcstoretype JKS -deststoretype PKCS12 -deststorepass motdepasse -srcalias aliasdansjks -destalias aliasdest (si erreur "java.util.IllegalFormatConversionException: d != java.lang.String" rajouter -J-Duser.language=en: ca se produit pour java>7)
@@ -13478,8 +13598,8 @@ fin c ca que j'ai fait qui marche PAS jusqu'au bout.
                       cree le fichier mycertreq.csr à transmettre mais je peux l'auto-certifier moi meme avec openssl.
                           D:\Java\jdk1.7.0_03-32b\bin\keytool -certreq -alias "aliasDunDesCertificatDansMonTrousseau" -file mycertreqEnSortie.csr -keystore mon.keystore.jks ou .p12
                           ce fichier .csr c'est du texte à transmettre a une Certificate Authority
-                      L'Autorite me renvoie tototo.crt (oubien certif.cer?) C'est un certificat. Pour l'importer dans mon trousseau truststore je fais:
-                          D:\Java\jdk1.7.0_03-32b\bin\keytool -import -alias "aliasDuCertifAImporterDansMonTrousseau" -file tototo.crt -keystore mon.keystore.jks (ou java/jre/lib/security/cacerts si je veux le mettre dans le trousseau de Java) (si erreur "java.util.IllegalFormatConversionException: d != java.lang.String" rajouter -J-Duser.language=en: ca se produit pour java>7)
+                      L'Autorite me renvoie tototo.crt (oubien certif.cer?) (on peut prendre le parent d'un certif ca marche aussi) C'est un certificat. Pour l'importer ajouter dans mon trousseau truststore je fais:
+                          D:\Java\jdk1.7.0_03-32b\bin\keytool -import -alias "aliasDuCertifAImporterDansMonTrousseau" -file tototo.crt -keystore mon.keystore.jks (ou java/jre/lib/security/cacerts si je veux le mettre dans le trousseau de Java) -storetype JKS (facultatif) (si erreur "java.util.IllegalFormatConversionException: d != java.lang.String" rajouter -J-Duser.language=en: ca se produit pour java>7)
                       Importer mon certif prive en tant que certif public publique dans un keystore (si le certif existe deja, même avec un autre alias il le detecte et refuse l'import mais on peut forcer )
                           D:\Java\jdk1.7.0_03-32b\bin\keytool -import(ou -importcert c pareil apparemment) -alias "nouvelAliasDuCertifQuonVeutDefinirDansMonTrousseau" -file tototo.crtOU.p7bMAISCANAPASLAIRDEMARCHERERRURX509 -keystore mon.keystore.jks (si erreur "java.util.IllegalFormatConversionException: d != java.lang.String" rajouter -J-Duser.language=en: ca se produit pour java>7)
                       Supprimer un certificat du keystore:
@@ -14215,7 +14335,7 @@ Cipherbean cypherbean de francois:
                                                                         	}
                                                                         
                                                                         	/**
-                                                                        	 * Gets the m d5 digest.
+                                                                        	 * Gets the md5 digest.
                                                                         	 *
                                                                         	 * @param bytes the bytes
                                                                         	 * @return the m d5 digest
@@ -15281,7 +15401,7 @@ hacking : haking : hack :
             >show exploits ou auxiliary ou payloads (en fait c le chemin /exploit ou /auxi...) // pour afficher tous les programmes par type exploit ou aux...
             >info /chemin/prog/exploit ou auxiliary/pour/pirater/fichier.rbSans.rbALaFin (utiliser tab) // pour avoir plus d'info sur le programme 
             >use /chemin/prog/exploit ou auxiliary/pour/pirater/fichier.rb //utilise le prog de piratage "fichier.rb"; puis faire show options pour voir les options de ce prog; puis set les_options pour def les options; puis enfin >exploit ou >run pour executer le prog.
-                    tab possible.
+                    tab possible.                                                                                                                                                                                                        
             >use exploit/multi/handler // pour utiliser la "charge utile" qui sert à ecouter listener l'ouverture de faille; Puis >exploit; dès que le listener capte l'entree dans la faille: meterpreter (c un payload) est prêt. >help pour voir les commandes dispo
 cookies :                                  
   cookies httponly et secure  LINKcooklskjhh 
@@ -15960,7 +16080,7 @@ junit4 : junit 4 : Version 1.4:
                     public class UtilityTest 
                     {
                     @Rule public TestName name = new TestName(); // sert à savoir quel test est lancé voir (pas sur que ce soit ca sur junit5) LINKjgjgjgiiiii            
-                    Tester qu'il y a une exception particulière (a mettre dans la methode de test en amont de l'execution)
+                    Tester qu'il y a une exception particulière (a mettre dans la methode de test en amont de l'execution) ou bien voir LINKldlghjg
                               @Rule
                               public ExpectedException expectedEx = ExpectedException.none(); // a mettre dans la classe de test. peut servir a toutes ses methodes.
                               expectedEx.expect(SAMLException.class);   // a mettre dans la methode de test avant execution du test
@@ -15989,7 +16109,7 @@ junit4 : junit 4 : Version 1.4:
                     	@Before public void setUp(){ de1 = new Object();} // s'execute avant chaque test de la classe (comme @After si je veux faire before et after uniquement sur une methode de test jouer avec try et finally)
                     	  //testunitaires: ATTENTION sur JUNIT4 , si le nom de notre methode commence par "test" il va executer systematiquement cette methode
                           System.out.println("=========================="+name.getMethodName()); // LINKjgjgjgiiiii
-                    	/*@Test(expected=NoDatabaseException.class)
+                    	/*@Test(expected=NoDatabaseException.class) 
                     	 *		public void siJaiCetEtat_AlorsJeMattendsACa() throws NoDatabaseException
                     			{
                     				
@@ -15997,7 +16117,7 @@ junit4 : junit 4 : Version 1.4:
                             assertEquals("0,001.00",Utility.replaceDotByCommaForNumbers("0,001.00"));
                     			} 
                     	 */
-                    	 @Test(expected = IllegalBalanceException.class) // verifier qu'un test retourne une exception
+                    	 @Test(expected = IllegalBalanceException.class) // verifier qu'un test retourne une exception LINKldlghjg
                           public void siJaiCetEtat_AlorsJeMattendsACa() throws IllegalBalanceException {
                               AccountRule accountRule= new CustomerAccountRule();
                               customerAccount.withdrawAndReportBalance(50.0,accountRule);
@@ -16192,18 +16312,19 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
 			@Before
 				public void setup()
 				{
-					MockitoAnnotations.initMocks(this); // ca active les anotations @InjectMocks et @Mocks
+					MockitoAnnotations.initMocks(this); // ca active les anotations @InjectMocks et @Mocks et @Spy
 				}
 				FilterConfig filterConfig = mock(FilterConfig.class); // c'est soit je fais comme ca, soit j'utilise les anotations ci dessus. les deux font la meme chos
 				ServletContext context = mock(ServletContext.class);
 				when(filterConfig.getServletContext( // ca s'appelle faire du "stub"
 				ou                                   anyString()//tout string
 				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça
-													,anyObject(UneClasse.class)
+                                                    ,anyList() // ne pas utiliser anyObject si j'ai une liste
+													,Matchers.any(UneClasse.class) avant : anyObject(UneClasse.class)
 													).thenReturn(context);
-				ResultDao rd =mock ou spy(ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
+				ResultDao rd =mock ou spy(unObjetNONANNOTE ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
 				Result toto = new Result();
-				Mockito.doReturn(toto).when(rd).getLaMethodeResult("1"); // retourner toto quand on execute resultdao.getResult("1");
+				Mockito.doReturn(toto).when(rd).getLaMethodeResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy
 				WelcomeController wc = new WelcomeController(rd);
 				wc.getDisplayResult("1", "1","10:00", "10/10/2016");
                 validation verifier qu'un mock a été appelé par une methode x fois:
@@ -17216,6 +17337,11 @@ http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-j
 java7 :
 http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase7-521261.html  
 JAVA :
+        proprietes systèmes definies par -D:
+              javax.net.ssl.trustStore
+              javax.net.ssl.keyStore
+              javax.net.ssl.trustStorePassword
+              javax.net.ssl.keyStorePassword
 java10 : java 10 :
         var: bof eviter
 constructeur: si je ne met aucun constructeur, une classe à  un constructeur vide transparent mais dès que je met un constructeur avec arguments, si je veux avoir aussi un constructeur vide je dois l'ecrire LINKcstrctr
@@ -17437,7 +17563,7 @@ logback : (mieux que LinkLogutils)
       public class UpdatePasswordFilter implements Filter {
             static final Logger log = LoggerFactory.getLogger(UpdatePasswordFilter.class);
             MDC.put("first", "Richard");pour tracer le userid LINKslf4jMcd
-            logger.info("I am not a crook.");
+            log.info("I am not a crook.");
 log4j : (vieux voir LinkLogutils)
 si j'ai l'erreur:
         Attempted to append to closed appender named
@@ -19218,7 +19344,7 @@ javaUnsupported major.minor version 51.0
       Java SE 5.0 = 49 (0x31 hex)
 immutable : objet ne pouvant pas etre modifie apres l'avoir cree: c mieux de faire un update sur des objets mutables car ca consomme moins que si on recree de nouveaux objets immutables. Mais c'est threadsafe de travailler avec des immutable donc si pas d'updates prevus: mettre final sur les proprietes de mon objet pour qu'il soit immutable
 les objets statiques sont partages par tous les objets dans la jvm à conditions que les programmes utilisent le meme classloader dans la jvm
-singleton : dès java 7, 8(je crois)
+singleton : dès java 7, 8(je crois) voir surtout LINKsngletn
          est threadsafe: (donc il est implicitement volatile non?)
          public class Singleton
           {		
@@ -25324,10 +25450,11 @@ utiliser sur maven:
                     <javaOpts>  
                         <javaOpt>-agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n</javaOpt> // pour pouvoir débugger rajouter ça et voir LINKoizeurzotie 
                     </javaOpts>
+                    <timeout>3000</timeout> // pour que au demmarage il ne plante pas avec did not start within 60 seconds quand ca prend trop de temps ou si tjrs ko rajouter dans les <properties><wildfly.timeout>300</wildfly.timeout>
                 </configuration>
             </plugin>
-            puis wildfly:start(si ne marche pas la premiere fois, reessayer en avant fait un wildfly:shutdown ou wildfly:undeploy avant peut etre)
-            puis wildfly:deploy puis redeploy etc etc...    	
+            puis mvn wildfly:run (pour voir les logs sur la console car en foreground) ou start(pour un demarrage en background)(si ne marche pas la premiere fois, reessayer en avant fait un wildfly:shutdown ou wildfly:undeploy avant peut etre)
+            puis mvn wildfly:deploy puis redeploy etc etc...    	
 tomcat :
 pour utiliser le plugin maven tomcat: Si ça marche:-). voir dessous: pas reussi à faire marcher avec une application avec spring security
 1)possible embeded on retrouve alors le serveur tomcat et le war deploye dans target de mon projet. Attention dans tomcat/conf besoin copier le web.xml du serveur tomcat (copier dans une conf tomcat) sinon erreur 404 sur les pages, jsp, images... Mais <!--<tomcatWebXml>pathVersUnAutreWeb.xmlDeLaConfTomcat/web.xml</tomcatWebXml>--> lui n'a pas marché
@@ -25348,7 +25475,7 @@ pour utiliser le plugin maven tomcat: Si ça marche:-). voir dessous: pas reussi
           <port>8081</port>
           <contextFile>${basedir}/src/test/resources/maven-tomcat-plugin/context.xml</contextFile> // facultatif: pour ajouter une connexion à un jndi par ex... voir context.xml
           <tomcatUsers>D:/Dev/apache-tomcat-7.0.61/conf/tomcat-users.xml</tomcatUsers> // facultatif
-          <additionalClasspathDirs> // pour ajouter des fichiers de conf lus par mon application dans le classpath comme si elles etaient dans le resources ressources
+          <additionalClasspathDirs> // pour ajouter des fichiers de conf lus par mon application dans le classpath comme si elles etaient dans le resources ressources ATTENTION ne marche que avec mvn tomcat7:run(execute en premier plan avec la console qui ecrit les logs !=tomcat7:start) et non pas run-war! LINKkknv
 						<additionalClasspathDir>${basedir}/src/main/config/dev/appConf</additionalClasspathDir>
 						<additionalClasspathDir>${basedir}/src/main/config/wording</additionalClasspathDir> LINKoizeurzotie // pour debugger avec tomcat et intellij il suffit juste d'executer le maven à droite en mode debug et ça marche.
 		  </additionalClasspathDirs>
@@ -25362,7 +25489,7 @@ pour utiliser le plugin maven tomcat: Si ça marche:-). voir dessous: pas reussi
 				</dependencies>
       </plugin>      
     et                      
-    mvn tomcat7:run (plus rapide) ou  mvn tomcat7:run-war(refait le war) ça marche: Ca c'est quand le tomcat est cree qqpart dans mon editeur ecplipse (dans target je crois)
+    mvn tomcat7:run (plus rapide) ou  mvn tomcat7:run-war(refait le war) voir LINKkknv ça marche: Ca c'est quand le tomcat est cree qqpart dans mon editeur ecplipse (dans target je crois)
     mvn tomcat7:deploy  Pas sur:ca c'est quand un serveur tomcat tourne qqpart dejà (sur mon poste par ex) ca deploie direct dessus (bien specif le bon port dans conf pom)
     ca ca ne marche pas: mvn tomcat7:war
     sur tomcat pour retrouver son pass admin et login admin: tomcat-user.xml qui contient le mdp, le login de l'admin.  
@@ -26274,6 +26401,7 @@ u accent:
 euros:
     &#128; ou Alt+0128(windows-1252 sinon &#8364 Unicode) (1252: francais. 1250: tcheque)
 Javascript :
+    quand on appelle une fonction, le dernier argument c'est toujours l'event
 enfant child childrens d'un element: 
     this.children (que les enfants de type elements)
     this.childNodes (tous les enfants meme les textes intercallés)
@@ -26314,30 +26442,28 @@ fetch : LINKsljqffetch
                               `;
 ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch)
                         ans = canvas.toDataURL("image/png");  //Pour sauver un canvas sur le serveur en image png ou jpg il faut obligatoirement envoyer les donnees en POST sinon le fichier genere est pourri:
-            	    		var formData = new FormData(); ou new FormData(document.getElementById("forText")); // forText est juste un formulaire html recuperable avec document.getElement...ATTENTION les champs de mon formulaire doivent avoir un name sinon ils ne sont pas ajoute dans les formdata 
+            	    		var formData = new FormData(); ou new FormData(document.getElementById("forText")); // forText est juste un   html recuperable avec document.getElement...ATTENTION les champs de mon formulaire doivent avoir un name sinon ils ne sont pas ajoute dans les formdata 
                             formData.append('ans', ans); // Append extra data before send.
                             formData.append('idp', idprojetEnCours); // Append extra data before send.
                             formData.append('fs', askValidator.fs); // Append extra data before send.
                       var xhr = new XMLHttpRequest();
-                     // ne pas mettre ces lignes ci dessous sinon ca ne marche pas... ??....pq?
-                      /*      xhr.onreadystatechange = onStateChange; 
                               xhr.setRequestHeader("Content-Type", "multipart/form-data"); 
                               ou
-                              xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); Si on ne veut pas que notre formulaire puisse envoyer des fichiers: on recupere que les parametres string. x-www-form-urlencoded c'est un post qui envoie les paramtres à la façon d'un get 
-                              et
+                              xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); Attention dans ce cas c'est dans l'URL que sont les parametres comme un GET. Si on ne veut pas que notre formulaire puisse envoyer des fichiers
+                        // ne pas mettre ces lignes ci dessous sinon ca ne marche pas... ??....pq? 
+                     /*         et
                               xhr.setRequestHeader("X-File-Name", file.fileName);
                               xhr.setRequestHeader("X-File-Size", file.fileSize);
-                              xhr.setRequestHeader("X-File-Type", file.type);
-                        */
-
-            	    		xhr.open('POST', "AudioLoopOnlinePushAnsDRW.php ou url", true); ou xhr.open('POST', form.action, true); // alors remplir le payload LINK564894
+                              xhr.setRequestHeader("X-File-Type", file.type);*/
+             	    		  
+                      xhr.open('POST', "AudioLoopOnlinePushAnsDRW.php ou url", true); ou xhr.open('POST', form.action, true); // alors remplir le payload LINK564894 sauf si x-www-form-urlencoded
                       ou
                       xhr.open("POST", "/musclesWeb/strongPassword?action="+JSON.stringify(jsontable), true); //alors mettre au dessus: xhr.setRequestHeader("Content-Type", "application/json"); recuperable dans servlet java: httpServletRequest.getParameter("action"); voir convert conversion champs formulaire en json LINKç'ç'ç"_() 
                       ou
                       xhr.open("GET", "AudioLoopOnlineDownloadText.php?target=sons/"+idprojetEnCours+"/"+numfichierEnCours+"_"+cursec+".txt", true);
                       si probleme d'encodage lors de l'envoi si j'ai une page en ISOetc etc... ma base aussi mais il faut que lors de l'envoie je specifie bien l'encodage:
                       xhr.overrideMimeType("text/html; charset=ISO-8859-15"); (sinon en base il enregistre de la m...) si je veux envoyer du javascript, le mime c'est "application/javascript"
-                      xhr.responseType = 'text';
+                      xhr.responseType = 'text';  ou 'blob' si c'est pour un upload de fichier
                       
                     $.ajax({url:"xxx",success:qdcfini}) // jamais teste... marche pas car $ inconnu
                     qdcfini=(res)=>{alert(res)} // jamais teste
@@ -26393,7 +26519,17 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                               progressBar.value = (e.loaded / e.total) * 100;
                               progressBar.textContent = progressBar.value; // Fallback for unsupported browsers.
                             }
-                                              	    		
+                        xhr.onreadystatechange = function() { // pour faire un upload de fichier en ajax
+                                    if (this.readyState == 4 && this.status == 200) {
+                                        var downloadUrl = URL.createObjectURL(xhr.response);
+                                        var a = document.createElement("a");
+                                        document.body.appendChild(a);
+                                        a.style = "display: none";
+                                        a.href = downloadUrl;
+                                        a.download = "";
+                                        a.click();
+                                    }
+                                    };                                              	    		
                       xhr.send(file); // marche pas.. plutot envoyer le formulaire comme ci-dessous            	    		
             	    		xhr.send(formData); // on utilise ça que pour du multipart: envoi de fichier ou canvas voir côte servlet là:LINKee"(çà)"
             	    		xhr.send(txt); // ou txt = "file=" + url +  "&content=" + content; // on utilise ça en Post. pour Get voir plus haut. Alors request.getParameter marche (je crois)
@@ -26401,8 +26537,8 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
    		      	    		xhr.send(json); // ou json = JSON.stringify(jsonobject) du coup mon json est dans le payload. Pour le recuperer cote serveur:LINK564894. voir comment je construit ce json avec un formulaire html:LINKç'ç'ç"_() 
                       ou 
 2                      xhr.send(null); xhr.send(); // si c'est du GET voir plus haut
-
-                      return false; // Prevent page from submitting.
+                        event.preventDefault(); // Prevent page from submitting. 
+                        return false;           // Prevent page from submitting.   
                 	    }
         ajax Cote php: LINKphpajax
                     $idp= $_POST["idp"];
@@ -26420,7 +26556,31 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                   	fwrite($fp, $decodedData);
                 	fclose ($fp);
                 }
-
+jouer un fichier audio sans objet audio
+        var request = new XMLHttpRequest();
+        				  request.open('GET', url, true);
+        				  request.responseType = 'arraybuffer';
+        				  // Decode asynchronously
+        				  var req=arguments.callee;
+        				  request.onload = function() 
+        				  {
+        					  printStacktrace(req.name);
+        				    context.decodeAudioData(request.response, function(buffer) 
+        				   	{
+        				   	printStacktrace();
+        				      soundBuffer = buffer;
+        				      playSound(soundBuffer);
+    function playSound(buffer) 
+      {
+      printStacktrace();
+        source = context.createBufferSource(); // creates a sound source
+        source.buffer = buffer;                    // tell the source which sound to play
+        //source.connect(filter);       
+        //filter.connect(context.destination);       // connect the source to the context's destination (the speakers)
+        source.connect(context.destination);
+        sendMessageDisappear("messageAudio", "OK");
+        source.noteOn(0);                          // play the source now
+      }
     possible de mettre a jour le texte du css avec du javascript mais tout d'un coup pas possible (pas trouvé) de façon chirurgicale
         document.getElementById("identifiantDeMaBaliseStyle").innerHTML
   pour savoir si une variable est un chiffre: 
@@ -26641,7 +26801,7 @@ fenetre modale en javascript:
     }
     function stoppropagation() // si je clique dans un bouton, il va propager l'event à ses parents jusqu'en haut.
     {
-        this.event.stopPropagation();
+        this.event.stopPropagation(); // rompre la propagation
     }
     <div id="frontwin" style="display:none; position: absolute; background-color: rgba(0,0,0,0.4); height: 100%; margin-top: 0%; margin-left: 0%; text-align: center; z-index: 2; width: 100%;" onclick="closefrontwin();">
     <div style="display: table; position: absolute; background-color: white; height: 50%; margin-top: 9%; margin-left: 25%; text-align: center; width: 50%;" onclick="stoppropagation()">
@@ -27086,31 +27246,7 @@ pour detecter si navigateur peut lire vorbid audio mp3:
                   	}
                   // end-Utils
 
-jouer un fichier audio sans objet audio
-        var request = new XMLHttpRequest();
-        				  request.open('GET', url, true);
-        				  request.responseType = 'arraybuffer';
-        				  // Decode asynchronously
-        				  var req=arguments.callee;
-        				  request.onload = function() 
-        				  {
-        					  printStacktrace(req.name);
-        				    context.decodeAudioData(request.response, function(buffer) 
-        				   	{
-        				   	printStacktrace();
-        				      soundBuffer = buffer;
-        				      playSound(soundBuffer);
-    function playSound(buffer) 
-      {
-      printStacktrace();
-        source = context.createBufferSource(); // creates a sound source
-        source.buffer = buffer;                    // tell the source which sound to play
-        //source.connect(filter);       
-        //filter.connect(context.destination);       // connect the source to the context's destination (the speakers)
-        source.connect(context.destination);
-        sendMessageDisappear("messageAudio", "OK");
-        source.noteOn(0);                          // play the source now
-      }
+
 pour faire du crossdoomain: jsonp:
         var s = document.createElement('script'); 
         s.src = "http://memoclap.com/AudioLoopLoadPrivateProjectsByPassword.php?pwd="+value;
@@ -29173,7 +29309,7 @@ angular : Angularjs2 : ANGULAR2 : typescript :
          COMPONENT: est une Directive avec en plus un template. Ne doit contenir que la logique de sa view.   
           import {Component, View} from 'angular2/angular2';
           import {unAutreComposant} from './pathtRelatif/vers/unAutreComposant'  (sans .ts a la fin)
-          @ComponentGENERIQUEEVITERDUTILISERUtiliser@Named({ // P utiliser car import ci dessus 
+          @Component({ // P utiliser car import ci dessus 
             selector: 'my-app' // c'est un selector xml <my-app>  tout mon composant sera dedans
           })
           @View({
@@ -30710,7 +30846,7 @@ JWT :
                                    \___2_______>[xRessourcesServices: chacune a une clé publique.] 
     algoritmes recommandés: ES256(cle publique pour verifier et cle privee pour signer mais plus rapide que RS256)  puis RS256(cle publique pour verifier et cle privee pour signer) puis HS256(ce n'est que un secret=chaine de caractère a garder privée. Attention danger avec ça car dans ce cas le client pourra hacker: Client    Service1JWTOuJeSuisAdmin,    Service2JWTOuJeNeSUisPasAdmin)
 OAuth : OAuth2 : (oltu : https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Client+Quickstart et https://github.com/apache/oltu)
-est fait pour gerer que authorization à la base. Pas pour Authentification: On a rajouté openid pour l'authentification
+est fait pour gerer que authorization à la base. Pas pour Authentification: On a rajouté openidConnect : pour l'authentification (https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata)
     USER = RessourceOwner = homme = moi 
     EDSN = Client = l'application qui demande une autorisation pour faire une action dans le ResourceServer.
     FID = AuthenticationServer=authorization server: accepte de donner le ticket (Access Tocken)
@@ -30725,8 +30861,8 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
     EDSN transmet à FID: -scope // droits necessaires
     autres modes :
         ImplicitMode: ne passe que par le frontchanell: on bypasse la partie "ask code"-"recieve code": on obtien direct l'accessToken (pour les apps qui sont pure javascript)
-        Resource Owner password[crediential] flow : ne passe que par back (pour la compat des vieilles applis et de confiance   |
-                                              homme envoit user/password au client EDSN(prd la place du client_secret je crois) |_client demande à l'authorizationServer un accessToken direct
+        Resource Owner password[credential] flow : ne passe que par back (pour la compat des vieilles applis et de confiance    |
+                                              homme envoit user/password au client EDSN(prd la place du client_secret je crois) |_client demande à l'authorizationServer un accessToken direct+ recommandé:un refreshtoken
         Client credientials flow : ne passe que par back(pour les échanges entre machines uniquement)                           |
                                                    
     Run:
@@ -32317,7 +32453,7 @@ pour tester les urls ci dessous
       fr-nw-caen
       fr-nor
       fr-idf
-      recup un coverage depuis une coordonnée 
+      recup un coverage depuis une coordonnée gps 
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.33245;48.77469: idf
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.3749036;48.8467927: idf
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.39107;48.65775: idf
