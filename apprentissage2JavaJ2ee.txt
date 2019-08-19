@@ -19849,6 +19849,7 @@ fonctionnement des annotations :
               }
               ailleurs
               @NameBinding // AFAIRE.. c'est quoi?
+              @NonBinding // AFAIRE.. c'est quoi?
               @Inherited //facultatif. SI je met ça alors les sous classes de la classe annotée se comporteront comme leur classe parente annotée
               @Constraint (validatedBy=ClasseContenantLeCodeDeMonValidateurBean.class) //facultatif. Mais si on l'utilise voir LINKannotconstraintvalidator
               @Target ({ElementType.METHOD, ElementType.FIELD...}) //obligatoire.  ElementType.ENTITY (c'est pour une anotation d'une classe); ElementType.TYPE pour les interfaces ou les classes ; ElementType.CONSTRUCTOR: se metra donc seulement au dessus du constructeur d'une classe
@@ -25657,7 +25658,7 @@ pour redemarrer apache sur ubuntu:
       service apache2 restart // arrete et redemarre (je crois) // poossible mettre aussi start stop restart reload...
       ou bien invoke-rc.d apache2 start(/etc/init.d) ou stop ou reload
 
-htaccess :  
+htaccess :   super outil de test:https://htaccess.madewithlove.be/
 Autoriser le cross-domain: si par exemple le canvas fait une erreur tainted canvas etc...
     dans .htaccess
     <IfModule mod_headers.c>
@@ -25669,7 +25670,7 @@ Autoriser le cross-domain: si par exemple le canvas fait une erreur tainted canv
 pour enlever les extentions .php .html: 
       RewriteEngine On                 LINKrewri99
       RewriteCond %{REQUEST_FILENAME} !-f
-      RewriteRule ^([^\.]+)$ $1.php [NC,L]  //enleve .php
+      RewriteRule ^([^\.]+)$ $1.php [NC,L]  //enleve .php [L] c'est pour lui dire d'arreter tout de suite d'aller plus loin en parcourant les rewriterule. 
       RewriteRule ^([^\.]+)$ $1.html [NC,L] //enleve .html
 pour autoriser/interdir à notre apache d'afficher les dossiers
   Options All Indexes // (avec s ou sans?) autorise apache à afficher les contenu de tous les dossiers. Du coup avec google si je cherche "Index Of" je peux naviger avec mon navigateur.:-O
@@ -25807,10 +25808,11 @@ load balancing : loadbalancing : clustering :
 pour faire des liens url plus petits shortened links : 
        https://bitly.com/
 
-facebook :
+facebook : linkedin : linked in :
     facebook  bouton share partage
-    opengraph
-      si pas de thumbnail: https://developers.facebook.com/tools/debug/sharing/ > debugger > recollecter (scrape again) > debugger
+    opengraph (sur prestashop le module psograph est buggé j'ai modifié son code)
+      facebook:si pas de thumbnail: https://developers.facebook.com/tools/debug/sharing/ > debugger > recollecter (scrape again) > debugger
+      linkedin:https://www.linkedin.com/post-inspector/inspect/
     faire un appel vers https://www.facebook.com/sharer.php?u=https://unepagedunsitewebcontenant dansSonHeader:
     il faut que dans le header il y ait: 
     <meta property="og:title" content="letitre">
