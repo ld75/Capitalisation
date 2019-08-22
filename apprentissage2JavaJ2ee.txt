@@ -1,4 +1,4 @@
-(?=.*string)(?=.*format)
+(?=.*detect)(?=.*encod)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -735,7 +735,8 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
     git --version // voir la version installee de git.
     pour installer la derniere version faire: git update-git-for-windows
     Première chose: parametrer mon git:
-          --local > --global > --system
+          gitconfig est sur 3 scopes: --local(par defaut) > --global(scope user) > --system(scope systeme windows)
+                                    repertoireprojet/config  ~/.gitconfig               /etc/gitconfig
           git config --global user.name mon_nom
           git config --global user.email mon_mail
           git config --list // voir lire mes variables de configuration: d'abord ecrit les sytems puis global puis local qui override les autres
@@ -810,6 +811,14 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git commit -m "blablamMonCommentaire"// index->masterOuBrancheQuiALeHEAD:jusqu'a present tout est encore en local. voir git add si il ne commit pas malgres tout.
       git commit -am // -a pour ne commiter que les fichiers je crois ou bien -a pour forcer l'ajout de fichier non indexes avant de faire le commit
       apres commit je peux faire un pull puis ensuite un push
+        
+      git diff pour parametrer avec un meilleur visibilité: external tool:        
+          installer C:\Program Files\KDiff3
+          git config --global --add diff.guitool kdiff3
+          git config --global --add difftool.kdiff3.path "C:\Users\ut2sn0\My_IT_Applications\programmes\kdiff\KDiff3/kdiff3.exe"
+          git config --global --add difftool.kdiff3.trustExitCode false
+          et executer avec 
+          git difftool plutot qu'avec git diff
       git diff-tree --no-commit-id --name-only -r <numero de commit> // voir la liste des fichiers commités  d'un commit 
       git reset HEAD .OuNomFichier ou *.extensionfichier // opposé inverse de add pour retirer ce fichier de l'index added(voir LINKresetgit et Linkcheckout) annuler undo un delete MAIS: si j'ai déjà pushé alors faire:LINKrmgit 
       git reset HEAD~ annule/undo le dernier commit. Ne pas le faire après que mon dernier commit ait ete pushe et merge avec l'origin car cela desynchronise mon local du distant. SI je veux quand même le faire par necessite alors faire git reverT: ça recommiT un snap d'avant le commit pourri.
@@ -857,11 +866,12 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git stash apply <idretourné> par la commande ci dessus: stash@(2) par exemple // applique à ma branche ce stash en le mergant avec ma branche mais ne le supprime pas de la liste
       git stash clear // supprime tous mes stash! attention.
     envoyer/recuperer des projets entre mon local et le github:
-      fork: fait une copie de tout un projet (branches incluses) dans mon github. Je peux ensuite travailler dessus dans github ou en local(cloner) et à la fin je soumet mes modifs: pull request= merge request. si accepte: ça fetch+merge+commit tout mon fork(je crois)
+      fork: fait une copie de tout un projet (branches incluses) dans mon github. Je peux ensuite travailler dessus dans github ou en local(cloner) et à la fin je soumet mes modifs: pull request= merge request mergerequest. si accepte: ça fetch+merge+commit tout mon fork(je crois). SI il y en a plusieurs qui se suivent et que je dois accepter, ne prendre que le dernier et ignorer les precednets (je pense) car le dernier mergerequest resume tous les autres d'avant.
       binder avec un repository distant: LINKenvoiyer
         git remote -v // etre dans mon projet. Sert à savoir à quel repo distant le projet est lie pour les pushpull renvoit le nom du bind (nom=origin)
         git remote rm origin(distant) // pour debinder mon projet avec le repository "origin" distant
         git remote add origin(si c le repo source) ou upstream (si c'est un repo forké d'un repo source je crois) git@github.com:monusername/UnAutreRepository.git // (git@github.com facultatif) pour lier mon projet avec un repository. Je pourrais pusher et puller dessus (la premiere fois il faudra d'abord créer ce repository au meme nom sur github)
+        git remote set-url --push origin svcsvnpr@gitlab.ca.cib:CCI/CIT/DIGITEAM/MyNews/$project # redefini le remote pour les push seulement vers un autre repository
       transferer le code par le reseau: (par defaut en https: il demande le user/pass)        
         git push origin masterOudevelopOuBrancheLocale //HEAD(origin)->ServeurDistantOuRepertoireQQpart(master ou develop) envoi sur le serveurOuRepertoireRepoQQpart pour merger avec le master: ça fetche+merge+commit là bas.
             ne pushe pas les repertoires vides: pour ça ajouter juste un fichier avec "x" dedans
@@ -5112,7 +5122,7 @@ spring security : spring-security : springsecurity :
       @Qualifier("nom")//facultatif // correspond je crois au name du bean
       private FilterChainProxy springSecurityFilterChain;
       puis dans la methode de test:
-      mockMvc=MockMvcBuilders.webApplicationContextSetupOuwebAppContextSetup(this.wac).addFilter(this.springSecurityFilterChain).build(); voir LINKmockmvc 
+      mockMvc=MockMvcBuilders.webApplicationContextSetupOuwebAppContextSetup(this.wac).addFilter(this.springSecurityFilterChain).build(); voir LINKmockmvc tester appel http et/ou webservice 
       et voir plus bas les tests d'urls avec users et roles
   pour connaitre le role d'un utilisateur dans mon controlleur web en java
                 if(request.isUserInRole(Constants.ROLE_GESTFORM))
@@ -7022,7 +7032,13 @@ si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from col
                 {return categoryName!=null? categoryName.hashcode():0;}
 hsqldb :
         base de donnée pour les tests
-        si erreur data exception: string data, right truncation c'est parce que j'ai voulu inserer une colonne trop longue                
+        si erreur data exception: string data, right truncation c'est parce que j'ai voulu inserer une colonne trop longue
+        <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+		<property name="url" value="jdbc:hsqldb:mem:v3" />
+		<property name="username" value="sa" />
+		<property name="password" value="" />
+	</bean>                
 JPA :
     pour faire du reverse engineering java vers base de donnee java2db
     monProjet>Properties>Ajouter Facelets JPA; 
@@ -7979,7 +7995,7 @@ substrring :
 indexof :   INSTR:
         SELECT INSTR('foobarbar', 'bar');
         -> 4
-H2 :
+H2 : voir aussi hsqldb
 client H2: http://www.h2database.com/html/main.html
 h2 : embedded database:
                     dans la config.xml du serveur:
@@ -11086,10 +11102,10 @@ exemple de pom racine
 	
 	// si il a un parent:
 	 <parent>
-    <groupId>net.nanthrax.examples</groupId>
-    <artifactId>jaxrs-blueprint</artifactId>
-    <version>1.0-SNAPSHOT</version> // snapshot indique des versions en cours de dev. Possible de deployer même versions contenant code different: le dernier dans le temps sera pris en compte par maven 
-    <relativePath>../pom.xml</relativePath>
+      <groupId>net.nanthrax.examples</groupId>
+      <artifactId>jaxrs-blueprint</artifactId>
+      <version>1.0-SNAPSHOT</version> // snapshot indique des versions en cours de dev. Possible de deployer même versions contenant code different: le dernier dans le temps sera pris en compte par maven 
+      <relativePath>../pom.xml</relativePath>
   </parent>
 	
 	<properties>
@@ -11099,21 +11115,21 @@ exemple de pom racine
     <properties>
                 <zip.name>parametre peut etre sette en ligne de commande: -Dzip.name</zip.name>
     <properties>
-  		<profiles> 
-			<profile>
-      <id>env-dev</id>
-      <activation>
-      <activeByDefault>true</activeByDefault> // facultatif pour qu'il soit active par defaut Linkmvnprop
-        <property>
-          <name>env</name> Linkmvnprop
-          <value>dev</value>
-        </property>
-      </activation>
-      <properties>
-          <dbusr>root</dbusr> Linkmvnprop ainsi partout ailleur si on met ${dbusr} la valeur est remplacee si LINK**$** c'est un system properties qui est sette
-          <dbpass>root</dbpass>
-          <dburl>jdbc:mysql://localhost:3306/ideaenterprise1</dburl>
-       </properties>
+  	<profiles> 
+	   <profile>
+         <id>env-dev</id>
+         <activation>
+             <activeByDefault>true</activeByDefault> // facultatif pour qu'il soit active par defaut Linkmvnprop
+             <property>
+               <name>env</name> Linkmvnprop
+               <value>dev</value>
+             </property>
+         </activation>
+         <properties>
+              <dbusr>root</dbusr> Linkmvnprop ainsi partout ailleur si on met ${dbusr} la valeur est remplacee si LINK**$** c'est un system properties qui est sette
+              <dbpass>root</dbpass>
+              <dburl>jdbc:mysql://localhost:3306/ideaenterprise1</dburl>
+        </properties>
                         ICI dans le profile on peut mettre une balises <build><plugins><plugin>....</plugin></plugins></build> pour executer des plugins conditionnellement en fonction des profils Linkmvnprop
     </profile>
 		<profile>
@@ -16320,7 +16336,9 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
 													).thenReturn(context);
 				ResultDao rd =mock ou spy(unObjetNONANNOTE ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
 				Result toto = new Result();
-				Mockito.doReturn(toto).when(rd).getLaMethodeResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy
+				Mockito.doReturn(toto).when(rd).getLaMethodeResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy 
+                pour indiquer de retourner une exception à un spy ou stub
+                        Mockito.doThrow(new HibernateException("err")).when(userWebDAO).create(Matchers.any(UserWebEntity.class)); 
 				WelcomeController wc = new WelcomeController(rd);
 				wc.getDisplayResult("1", "1","10:00", "10/10/2016");
                 validation verifier qu'un mock a été appelé par une methode x fois:
@@ -20464,6 +20482,22 @@ ou runtime.exec(new String[] { "C:\\Program Files\\MonAppli\\monappli.exe" } );
 Remarque: Les variables d'environnement specifiees doivent l'être selon le format nom=valeur. 
 ************************
 encodage : encode :
+detecter determiner voir l'encodage encode d'un fichier: 
+            File csv = new File(this.getClass().getClassLoader().getResource("csvInISO1252.csv").getPath());
+              final String[] encodings = { "US-ASCII", "ISO-8859-1", "UTF-8", "UTF-16BE", "UTF-16LE", "UTF-16" };
+              List<String> lines;
+              for (String encoding : encodings) {
+                  try {
+                      lines = Files.readAllLines(csv.toPath(), Charset.forName(encoding));
+                      for (String line : lines) {
+                       System.out.println(encoding.concat(line));
+                          if (line.indexOf("Ã")!=-1) throw new IOException("bad encoding");
+                      }
+                      break;
+                  } catch (IOException ioe) {
+                      System.out.println(encoding + " failed, trying next.");
+                  }
+              }
  url :
     LINK_URLENCODEDECODE  quand un string contient des pourcentages % a cause de l'URI
     url encoder :
@@ -25486,8 +25520,12 @@ pour utiliser le plugin maven tomcat: Si ça marche:-). voir dessous: pas reussi
 				</dependencies>
       </plugin>      
     et                      
-    mvn tomcat7:run (plus rapide) ou  mvn tomcat7:run-war(refait le war) voir LINKkknv ça marche: Ca c'est quand le tomcat est cree qqpart dans mon editeur ecplipse (dans target je crois)
-    mvn tomcat7:deploy  Pas sur:ca c'est quand un serveur tomcat tourne qqpart dejà (sur mon poste par ex) ca deploie direct dessus (bien specif le bon port dans conf pom)
+    mvn tomcat7:run (plus rapide) execute directement le code source dans un tomcat qu'il crée dans target
+    mvn tomcat7:run-war(refait le war) voir LINKkknv ça marche: Ca c'est quand le tomcat est cree qqpart dans mon editeur ecplipse (dans target) il package le war et l'execute dedans
+    mvn tomcat7:run-war-only (NE refait PAS le war) voir LINKkknv ça marche: Ca c'est quand le tomcat est cree qqpart dans mon editeur ecplipse (dans target) il package le war et l'execute dedans
+    mvn tomcat7:deploy       ca c'est quand un serveur tomcat tourne qqpart dejà (sur mon poste par ex) fait un package puis deploie ce war direct dessus (bien specif le bon port dans conf pom)
+    mvn tomcat7:deploy-only  ca c'est quand un serveur tomcat tourne qqpart dejà (sur mon poste par ex) deploie le war qui est dans target direct dessus (bien specif le bon port dans conf pom)
+    mvn tomcat7:exec-war crée un jar(war) executable tout seul. (comme springboot)  
     ca ca ne marche pas: mvn tomcat7:war
     sur tomcat pour retrouver son pass admin et login admin: tomcat-user.xml qui contient le mdp, le login de l'admin.  
     erreur java.lang.IllegalStateException: No output folder
@@ -30858,9 +30896,9 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
     EDSN transmet à FID: -scope // droits necessaires
     autres modes :
         ImplicitMode: ne passe que par le frontchanell: on bypasse la partie "ask code"-"recieve code": on obtien direct l'accessToken (pour les apps qui sont pure javascript)
-        Resource Owner password[credential] flow : ne passe que par back (pour la compat des vieilles applis et de confiance    |
-                                              homme envoit user/password au client EDSN(prd la place du client_secret je crois) |_client demande à l'authorizationServer un accessToken direct+ recommandé:un refreshtoken
-        Client credientials flow : ne passe que par back(pour les échanges entre machines uniquement)                           |
+        Resource Owner password[credential] flow mode : ne passe que par back (pour la compat des vieilles applis et de confiance    |
+                                                   homme envoit user/password au client EDSN(prd la place du client_secret je crois) |_client demande à l'authorizationServer un accessToken direct+ recommandé:un refreshtoken
+             Client credientials flow : ne passe que par back(pour les échanges entre machines uniquement)                           |
                                                    
     Run:
       USER va sur EDSN(Client)
@@ -32481,14 +32519,15 @@ pour tester les urls ci dessous
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coord/2.3749036;48.8467927/places_nearby idf 10 reponses OK
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coord/2.39107;48.65775/places_nearby idf 10 reponses OK
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coord/2.2922926;48.8583736/places_nearby idf 10 reponses OK
+
       Journey interne coverage
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/journeys?from=2.3749036;48.8467927&to=2.2922926;48.8583736 idf-idf OK
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=2.39107;48.65775 idf-idf OK
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=2.64788;48.31951 idf-limiteDansIdf OK
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=2.39107;48.65775 idf vers idf OK
       https://8af43782-3f00-41ef-bd13-57cfdd04e002@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=2.39107;48.65775 test avec compte sncf idf vers idf 
-	  
-												 https://api.navitia.io/v1/journeys?from=2.33245;48.77469&to=2.39107;48.65775&datetime=20190702T170821&datetime_represents=arrival
+	  https://api.navitia.io/v1/journeys?from=2.33245;48.77469&to=2.39107;48.65775&datetime=20190702T170821&datetime_represents=arrival
+      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=-0.57215;44.83792&to=-0.56730;44.83589 bordeaux-bordeaux  
 	  
       Journey cross coverage
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/journeys?from=2.33245;48.77469&to=3.30139;48.21735 idf vers droite hors idf   KO Status: Message: cannot find a region with 2.33245;48.77469 and 3.30139;48.21735 in the same time. You have requested this URI [/v1/journeys] but did you mean /v1/journeys or /v1/vehicle_journeys or /v1/routes ? (404), duration of the request: 414ms
