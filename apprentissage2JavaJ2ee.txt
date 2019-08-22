@@ -1241,8 +1241,9 @@ payara :payaramicro : // executeur direct d'un microservice.
         --autobindhttp // determine le port automatiquement. 
         --startPort 888// fonctionne avec autobindhttp. 888: port à partir duquel commencer à incrementer numero de port
         --mcAdress // facultatif sert à placer mon instance dans un multicast en particulier   
-        --mcPort // facultatif sert à forcer le port de mon multicast (???) 
-    payara maven plugin
+        --mcPort // facultatif sert à forcer le port de mon multicast (???)
+        -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n // pour debugger en remote 
+    payara maven plugin pluggin: mais bof pas super efficace ou j'ai pas trouvé.
     <plugin>
                 <groupId>fish.payara.maven.plugins</groupId>
                 <artifactId>payara-micro-maven-plugin</artifactId>
@@ -2249,9 +2250,25 @@ securite :(JSR375) plus besoin d'utiliser web.xml (sur?): les annotations font p
        |                                                                                                                                                                                                                             ))
        MaCustomClasse implements HttpAuthenticationMechanism                                                                                                                                                                                                             
               @Inject 
-              private IdentityStoreHandler identityStoreHandler; // doit avoir ca
+              private IdentityStoreHandler identityStoreHandler; // doit avoir ca ou peut directement injecter un IdentityStore
        METHODE Importante: validateRequest() que je dois implémenter Les 2 autres c facultatif. S'execute à chaque requete avant les filters si user n'a pas de session
                               Fait appel à->IdentityStoreHandler(Je peux le reecrire moi même)->qui lors de identityStoreHandler.validate(credential) fait appel à tous les->
+                                puis
+                                    if(les parametres d'authent existent)
+                                    {
+                                       CredentialValidationResult result = identityStoreHandler.validate(credential);
+                                       if (result.getStatus().equals(CredentialValidationResult.INVALID_RESULT))
+                                       {
+                                        return httpMessageContext.responseUnauthorized();    
+                                       }
+                                       else
+                                       {
+                                        httpMessageContext.notifyContainerAboutLogin(result.getCallerPrincipal(), result.getCallerGroups());
+                                       }
+                                    }
+                                    else return httpMessageContext.doNothing();
+
+                            
                             
                                    IdentityStore interface ->interagit avec ldap ou database pour authent l'utilisateur. sous classe doit être Bean.
                                    |            |
@@ -2263,7 +2280,7 @@ securite :(JSR375) plus besoin d'utiliser web.xml (sur?): les annotations font p
                                      priority() // retourne un integer: plus il est petit plus il est prioritaire pour IdentityStoreHandler
        **CredentialValidationResult contient le principal et ces roles: return new CredentialValidationResult("Duke",new HashSet<>(asList("foo", "bar")));
         necessaire de parametrer web.xml voir LINKlkjsqgeegege:<security-constraint> et <security-role>       
-       pour securiser une servlet: ACONFIRMER:c'est grace a ca que ça declanche mon HttpAuthenticationMecanism 
+       pour securiser une servlet: ACONFIRMER:c'est grace a ca que ça declanche mon HttpAuthenticationMechanism 
             @WebServlet("/servlet")
             @ServletSecurity(
                             value= @HttpConstraint(
@@ -7030,15 +7047,62 @@ si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from col
                 @Override
                 public int hashCode()
                 {return categoryName!=null? categoryName.hashcode():0;}
-hsqldb :
+hsqldb : LINKldkjgieieioruz
         base de donnée pour les tests
         si erreur data exception: string data, right truncation c'est parce que j'ai voulu inserer une colonne trop longue
-        <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
 		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
 		<property name="url" value="jdbc:hsqldb:mem:v3" />
 		<property name="username" value="sa" />
 		<property name="password" value="" />
 	</bean>                
+    maven:
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.3.4</version>
+        </dependency>
+        classe de test:
+            @BeforeAll
+    public static void initDB() throws ClassNotFoundException, SQLException
+    {
+         Class.forName("org.hsqldb.jdbc.JDBCDriver");
+        try (Connection connection = getConnection(); Statement statement = connection.createStatement();) {
+            statement.execute("CREATE TABLE employee (id INT NOT NULL, name VARCHAR(50) NOT NULL,email VARCHAR(50) NOT NULL, PRIMARY KEY (id))");
+            connection.commit();
+            statement.executeUpdate(
+                    "INSERT INTO employee VALUES (1001,'Vinod Kumar Kashyap', 'vinod@javacodegeeks.com')");
+            statement.executeUpdate("INSERT INTO employee VALUES (1002,'Dhwani Kashyap', 'dhwani@javacodegeeks.com')");
+            statement.executeUpdate("INSERT INTO employee VALUES (1003,'Asmi Kashyap', 'asmi@javacodegeeks.com')");
+            connection.commit();
+        }
+    }
+            @AfterAll
+            public static void destroy() throws SQLException, ClassNotFoundException, IOException
+            {
+                try (Connection connection = getConnection(); Statement statement = connection.createStatement();) {
+                    statement.executeUpdate("DROP TABLE employee");
+                    connection.commit();
+                }
+            }
+            private static Connection getConnection() throws SQLException {
+                return DriverManager.getConnection("jdbc:hsqldb:mem:employees", "vinod", "vinod");
+            }
+            @Test
+            public void getTotalRecordsTest() {
+                int ret=0;
+                try (Connection connection = getConnection(); Statement statement = connection.createStatement();) {
+                    ResultSet result = statement.executeQuery("SELECT count(*) as total FROM employee");
+                    if (result.next()) {
+                        ret= result.getInt("total");
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                Assertions.assertEquals(3, ret);
+            }
+                
+
 JPA :
     pour faire du reverse engineering java vers base de donnee java2db
     monProjet>Properties>Ajouter Facelets JPA; 
@@ -7783,19 +7847,19 @@ MYSQL :
       mysql -h localhost -P 3306 -u root  --password=foulurecalotte --default-character-set=utf8
       puis 
       USE `ple_db_01`;
-afficher la liste des bases : 
+afficher la liste des bases: 
   show databases; 
     Connaitre la version
         mysql -V
-    champ heure : champ TIME:
+    champ heure: champ TIME:
         where monchamptime<TIME('09:00:00')
-    taille d'un string : 
+    taille d'un string: 
         LENGTH(str)
     renvoyer en minuscule 
         LOWEER()
     concatner valeurs d'une seule ligne 
       CONCAT(champ,'bla',bli',champ,'blo')
-se connecter :
+se connecter:
     C:\Program Files\MySQL\MySQL Server 5.6\bin\mysql -uroot -p
     mysql -u root --password=foulurecalotte 
     sur unix 
@@ -7805,7 +7869,7 @@ se connecter :
       mysql -h localhost -P 3306 -u root  --password=foulurecalotte --default-character-set=utf8
       puis 
       USE `ple_db_01`;
-afficher la liste des bases : 
+afficher la liste des bases: 
   show databases;
 si j'ai erreur 
 	Caused by: java.sql.SQLException: The server time zone value 'Paris, Madrid (heure d??t?)' is unrecognized or represents more than one time zone.
@@ -7821,12 +7885,12 @@ si j'ai erreur
 				jdbc.url=jdbc:mysql://localhost:3306/mycampus
 				et ca a marché
 
-si il fait une erreur de group by a cause du sql_mode mal defini : 
+si il fait une erreur de group by a cause du sql_mode mal defini: 
     SELECT @@sql_mode 
         il affiche 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'
         faire
         set sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'
-pour voir quel est l'encodage de ma base de donnee : 
+pour voir quel est l'encodage de ma base de donnee: 
   SELECT @@character_set_database, @@collation_database;   
 pour exporter la base de donnee via la console: 
   mysqldump -u YourUser -pUserPassword YourDatabaseName > wantedsqlfile.sql  
@@ -7834,29 +7898,29 @@ Si un programme java n'arrive pas à se connecter à mysql
       peut etre que le parametre d'encodage envoye à javarun n'est pas bon
 les donnees sont dans var/lib/mysql on peut le voir aussi en faisant select @@datadir;
 la configuration de mysql est sur /etc/mysql/mysql.cnf ou /etc/mysql/mysql.conf.d/mysqld.cnf // dedans il defini dans quelle repertoire est la base de donnee 
-pour voir les users et leur droits :
+pour voir les users et leur droits:
       SHOW GRANTS
-pour creer un user qui puisse se connecter à distance : (si j'ai l'erreur 1130) 
+pour creer un user qui puisse se connecter à distance: (si j'ai l'erreur 1130) 
     CREATE USER 'yannick'@'%' IDENTIFIED BY 'mysql';
     GRANT ALL PRIVILEGES ON *.* TO 'yannick'@'%' WITH GRANT OPTION;
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION; // %: tous les ip peuvent se connecter connexion à distance (a faire si erreur 1045)
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'PourWenhua1234' WITH GRANT OPTION; // faire ca si erreur 1045 que connexion je n'arrive pas a me connecter depuis le reseau network
-pour creer une base de donnee :
+pour creer une base de donnee:
       CREATE DATABASE [IF NOT EXISTS] db_name
 pour se connecter à une base de donnee:
       USE menagerie
-pour connaitre le detail description d'une table: sa structure ses proprietes :
+pour connaitre le detail description d'une table: sa structure ses proprietes:
   desc nom_de_ma_table;      
-insertion :
+insertion:
       INSERT INTO tatable ('date', 'pseudo', 'email') VALUES ('10-10-2010', 'sky', 'test@tets.fr')
 ajouter une colonne 
 ALTER TABLE VPA01_STUDENT ADD VPA01_PHOTO VARCHAR(20) CHARACTER SET latin1 COLLATE latin1_bin DEFAULT NULL AFTER VPA01_PRENOM;
 ALTER TABLE VPA01_STUDENT MODIFY VPA01_PHOTO VARCHAR(20);
 
-pour supprimer les retours chariot du resultat :
+pour supprimer les retours chariot du resultat:
     select ... REPLACE(ps_product_lang.description_short, '\n','') descr ....
-pour concatener plusieurs lignes en une seule : (equivalent de listagg sur oracle) : group_concat
-        si il est trop limite en length alors faire : 
+pour concatener plusieurs lignes en une seule: (equivalent de listagg sur oracle): group_concat
+        si il est trop limite en length alors faire: 
                   SET SESSION group_concat_max_len = 1000000; (ne s'applique que à la session actuelle)
         select group_concat(MyString separator ', ') as myList from table
         where id < 4
@@ -7877,7 +7941,7 @@ pour concatener plusieurs lignes en une seule : (equivalent de listagg sur oracl
 
 pour supprimer une primary cle primaire (sans supprimer les donnees ni la colonne)
       alter table TB0012_USER drop primary key (supprime la clef primaire. Si cette clef n'existe pas, cette commande effacera le premier index UNIQUE  de la table. (MySQL marque la première clef UNIQUE en tant que PRIMARY KEY si aucune PRIMARY KEY  n'a ete specifiee explicitement.) 
-si j'ai l'erreur : Every derived table must have its own alias quand je fais un select imbrique. (select count distinct):
+si j'ai l'erreur: Every derived table must have its own alias quand je fais un select imbrique. (select count distinct):
     c'est parce que quand je fais une requete imbrique sur mysql je dois definir un alias à ma vue view:
     au lieu de faire: 
           select count(*) from 
@@ -7995,7 +8059,8 @@ substrring :
 indexof :   INSTR:
         SELECT INSTR('foobarbar', 'bar');
         -> 4
-H2 : voir aussi hsqldb
+
+H2 : voir LINKldkjgieieioruz
 client H2: http://www.h2database.com/html/main.html
 h2 : embedded database:
                     dans la config.xml du serveur:
@@ -8035,7 +8100,7 @@ h2 : embedded database:
                                             }
                                             ';
  requeter une base de donnée h2 en java
-    pour voir les tables de h2 afficher : SELECT * FROM INFORMATION_SCHEMA.TABLES
+    pour voir les tables de h2 afficher: SELECT * FROM INFORMATION_SCHEMA.TABLES
       Class.forName ("org.h2.Driver");
       Connection conn = DriverManager.getConnection ("jdbc:h2:~/test", "sa",""); 
       Statement st = conn.createStatement();
@@ -8115,10 +8180,10 @@ pour reactiver une contrainte:
     puis se mettre sous l'instance: adequate: 
     instance DB_EGN
     puis demarrer le listener: lsnrctl start (documentation dispo sur internet)
-    pour quitter l'instance : exit
+    pour quitter l'instance: exit
 pour me connecter en tant qu'admin dba système systeme
     sqlplus "sys as sysdba"
-si le mot de passe a expire : ORA-28001: the password has expired
+si le mot de passe a expire: ORA-28001: the password has expired
     se connecter en sys (admin); 
     voir les paramètres dba:  
           select * from dba_profiles; // là je vois que PASSWORD_LIFE_TIME est à 180
@@ -8127,7 +8192,7 @@ si le mot de passe a expire : ORA-28001: the password has expired
     puis soit definir un nouveau mot de passe à un utilisateur: (on peut même remettre le même sa marche aussi si il a expire (je crois))
         sql> alter user [user_name] identified by [password];     
           
-Detail description d'une table : voir les colonnes 
+Detail description d'une table: voir les colonnes 
     describe nomtable;
 pour faire un order by customise:
       order by 
@@ -8136,7 +8201,7 @@ pour faire un order by customise:
                when currency = 'EUR' then '002'
                else currency
             end  desc
-pour remplacer les null par autre chose : utile dans un group by 
+pour remplacer les null par autre chose: utile dans un group by 
   nvl(PREMIERCHAMPRECUPEREPEUTETRENULL, ALORSREMPLACERPARCECHAMPLA)
 pour afficher que les lignes se repetant plusieurs fois: doublons, occurences
 SELECT 
@@ -8165,7 +8230,7 @@ faire un inner join qui ne renvoit qu'une ligne (exclure les doublons du resulta
   ou bien     mais marche moins bien car rownum =1 renvoie la premiere ligne bof bof...
               from TATA 
                 inner join (select cs.*, row_number() over (partition by cs.wec60_iddmd order by cs.wec60_iddmd) as rn from wec60_d_event cs) b  on b.wec60_iddmd = TATA.wec01_id and b.rn=1 and b.wec60_action like 'REAFFECTATION DE%SERVICE-CONTROL-44200-ACCENTURE%'
-Depuis la version 11g pour concatener plusieurs lignes en une seule : 
+Depuis la version 11g pour concatener plusieurs lignes en une seule: 
       select wec60_iddmd, LISTAGG(commentaire,'<br>') WITHIN GROUP (ORDER BY wec60_dcreate) AS commentaire
 			from 
 			(
@@ -8175,7 +8240,7 @@ Depuis la version 11g pour concatener plusieurs lignes en une seule :
               order by wec60_iddmd, wec60_dcreate
 			)      
 			group by wec60_iddmd
-			Ensuite pour l'integrer dans une autre requete avec un inner join :  du coup pour chaque ligne je peux avoir dans une colonne plusieurs autres lignes (ici separees par <br>) 
+			Ensuite pour l'integrer dans une autre requete avec un inner join:  du coup pour chaque ligne je peux avoir dans une colonne plusieurs autres lignes (ici separees par <br>) 
   			select wec53_id, wec53_deng, comments.coment from  wec53_d_cmpdmd 
             inner join (
                           select wec60_iddmd, listagg(coment,'<br>') WITHIN GROUP (ORDER BY wec60_dcreate) AS coment
@@ -8189,31 +8254,31 @@ Depuis la version 11g pour concatener plusieurs lignes en une seule :
                               group by wec60_iddmd
                       ) comments on comments.wec60_iddmd = wec53_id
 			
-pour supprimer les retours chariot du resultat : 
+pour supprimer les retours chariot du resultat: 
       select REPLACE(REPLACE(REPLACE(comment, CHR(10)), CHR(13)), CHR(9)) comment from emp
-changer une cle primaire :
+changer une cle primaire:
             1) alter table wec52_m_champs add (WEC52_LNG Varchar2(10) null);
             2) insert into wec52_m_champs (WEC52_ID, WEC52_IDTEMPLATE, WEC52_NOM, WEC52_MAX) values (2, 1037, 'Perimeter', 10)
             3) update wec52_m_champs set WEC52_LNG = 'FRENCH'
             4) alter table wec52_m_champs modify (WEC52_LNG Varchar2(10) not null )
-            5) ALTER TABLE city DROP CONSTRAINT pk_city; si ça ne marche pas c'est parce que ça a ete cree comme ça :  CONSTRAINT "PK_WECM4_ENV" PRIMARY KEY ("WECM4_LBL") USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645 PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT) TABLESPACE "WEC_I1" ENABLE 
-                                                  dans ce cas,  essayer de supprimer l'index  : DROP INDEX pk_city; puis de refaire le alter
+            5) ALTER TABLE city DROP CONSTRAINT pk_city; si ça ne marche pas c'est parce que ça a ete cree comme ça:  CONSTRAINT "PK_WECM4_ENV" PRIMARY KEY ("WECM4_LBL") USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645 PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT) TABLESPACE "WEC_I1" ENABLE 
+                                                  dans ce cas,  essayer de supprimer l'index: DROP INDEX pk_city; puis de refaire le alter
             6) ALTER TABLE city ADD CONSTRAINT pk_city PRIMARY KEY (city_id, buildtime, time);
-            cle etrangere : ALTER TABLE agency ADD CONSTRAINT fk_agencytype FOREIGN KEY (agencytype) REFERENCES agencytype (id);
+            cle etrangere: ALTER TABLE agency ADD CONSTRAINT fk_agencytype FOREIGN KEY (agencytype) REFERENCES agencytype (id);
             attention time ne doit pas etre nul dans la base de donnee
               alter table toto drop column nomdcolumn
-changer la session de langue :                                 
+changer la session de langue:                                 
       ALTER SESSION SET NLS_LANGUAGE=german;
-utiliser la session de langue : 
+utiliser la session de langue: 
       ... where WEC52_LNG=(SELECT VALUE FROM NLS_SESSION_PARAMETERS where parameter like 'NLS_LANGUAGE')
 group by: si j'ai l'erreur ora00979
   c parce que dans ma liste de select j'ai des champs qui ne sont pas dans ma liste de groupby.
-  Je peux faire un group by comme ca : 
+  Je peux faire un group by comme ca: 
             SELECT distinct(WEC51_ID), count(wec55_idtemplate), WEC51_NOM, WEC51_NOMCHEF, WEC51_CLASS
               ...
               group by WEC51_ID, WEC51_NOM, WEC51_NOMCHEF, WEC51_CLASS (il en est de même pour le order by: il doit etre identique aussi dans le select et dans le order by (si to_char dans order by le mettre aussi dans le select)
 aussi pour donner des droits sur un utilisateur oracle: 
-Par exemple le script : grant_r.sql est de la forme :
+Par exemple le script: grant_r.sql est de la forme:
     su255ars:/rdcre701/rdc/livraison/V02.01.00/db/RDC --> head grant_r.sql
     START _environnement.sql
     GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TB0001_COMITE TO &user_r;
@@ -8225,7 +8290,7 @@ Par exemple le script : grant_r.sql est de la forme :
     GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TB0007_STATUT_ARBO TO &user_r;
     GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TB0008_LIBARBREELEAPOURTRAD TO &user_r;
     su255ars:/rdcre701/rdc/livraison/V02.01.00/db/RDC -->
-Il fait appel à  un script d'initialisation :
+Il fait appel à  un script d'initialisation:
     su255ars:/rdcre701/rdc/livraison/V02.01.00/db/RDC --> cat _environnement.sql
     DEFINE schema_adm=RDC_ADM.
     DEFINE user_rw=RDC_RW
@@ -8264,23 +8329,23 @@ table group
 table user_group
 table group_permission
 
-set define on ou set define off : sert a activer ou non l'interpretation du caractere et commercial & comme etant une variable qu'on envoit à sqlplus
+set define on ou set define off: sert a activer ou non l'interpretation du caractere et commercial & comme etant une variable qu'on envoit à sqlplus
 sqlplus ${OMS_USER}/${OMS_PASSWORD}@${OMS_TNSNAME} @OMS_CREATE_DB_v130.src ou .sql
-	exemple :
+	exemple:
  		sqlplus r08_adm/r08_adm@R08DEV @R08_libelle_PT.sql
  		sqlplus Cpi_adm/passtmp@CPI_RE7.WORLD
 SQL>show all permet de voir toutes les variables du client oracle
 on peut les modifier en faisant:
-set output on : sert a afficher ou non les erreurs sql
+set output on: sert a afficher ou non les erreurs sql
 ou
-set echo off : sert a afficher ou non le script qu'on a execute
+set echo off: sert a afficher ou non le script qu'on a execute
 ou
 set serveroutput on;
 ou
-set long 80 : sert a determiner la longueur du result des requettes à  l'affichage
+set long 80: sert a determiner la longueur du result des requettes à  l'affichage
 ou
 etc etc...
-affichage lignes display lisible  ok :
+affichage lignes display lisible  ok:
     set linesize 200000
 sqlplus pour executer une procedure ou une fonction:
 call nomdelaprocedureoudelafonction();
@@ -10874,7 +10939,7 @@ Set M3="C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2018.2.3\plug
 Set "JAVA_HOME=C:\Program Files\Java\jdk1.8.0_181\jre"
 echo %M3%
 echo %JAVA_HOME%
-%M3%\mvn versions:set
+call %M3%\mvn versions:set // sur des commandes maven pour ne pas que le bat s'interrompe il faut mettre call avant (mais dans certains cas on dirait que ca marche sans avoir besoin de mettre call)
 pause
 echo PAE INT > actuel.txt
 set /P continue=Commit pulled and tested OK ? Y N   // prompt qui dit "Commit pulled and tested OK ? Y N" et set dans la variable continue le resultat 
@@ -13354,7 +13419,7 @@ cygwin :
 Curl : voir aussi wget : pour faire une requette request http doc:https://ec.haxx.se/usingcurl-writeout.html
     sur cygwin (installer dans cygwin. voir cygwin) (sous categorie Net)
 
-    get telecharger: (option -A ou -a maj min importent pas. sauf cas exceptionel comme -o et -O, -X et -x) // ordre option importe peu et existe -V (version courte) equivalent à -vlakjdf : version longue
+    get telecharger: (option -A ou -a maj min importent pas. sauf cas exceptionel comme -o et -O, -X et -x) // ordre option importe peu et existe -A (version courte) equivalent à -ablabla : version longue
             -v ou -V ou --verbose// verbose a utiliser quand ça ne marche pas. attention! 
    	A faire sur une seule ligne et pas sur plusieurs car marche pas. et echapper les caractères spéciaux & ; par \
     curl -O https://index.taskcluster/artifacts/public/deepspeech-0.1.0nux1_x86_64.whl // -O ne marche qu'avec des url qui renvoient un fichier dowload. ne pas mettre de param avec, il telecharge le contenu de la reponse et le depose la ou je suis direct. si -o unNomDeFichier url il recupère la reponse et la met dans unNomDeFichier 
@@ -24172,7 +24237,7 @@ les alias sous unix: exemple: alias ll = 'ls -l' ou bien alias ll="ls -l"
     pour voir le detail d'un alias: alias nomalias
     pour faire des alias persistants: 
       vi ~/.bash_alias (ce dernier est charge par ~/.bashrc qui contient) LINKç'(ç')
-          alias gototemplate='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/' // pour echapper les espaces : alias gotoapprentissage="cd \"/c/Users/Mes documents/apprendre\""
+          alias gototemplate='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/' // pour echapper les espaces: alias gotoapprentissage="cd \"/c/Users/Mes documents/apprendre\""
           alias gotocss='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/css'
           alias gotomodule='cd /var/www/www.wenhuaduverge.com/shop/module'
       puis vi ~/.bashrc
@@ -24444,7 +24509,7 @@ pour reexecuter rerun une commande saisie:
 Si quand on veut lancer un ksh: ./TOTO.ksh il fait: ksh not found ou no such file aucun fichier ou dossier de ce type 
       essayer de le lancer comme ca: . ./TOTO.ksh ou bien c'est la version unix qui ne supporte pas cet executable: upgrader version unix
       voir aussi LINKf9t8p2
-awk: pour definir des tooken dans un string: on peut travailler dans des fichiers.
+awk : pour definir des tooken dans un string: on peut travailler dans des fichiers.
       $TOTO= `echo $ligne | awk -F'mon_separateur' '{ print $2 }'` ## prendre element apres deuxieme separateur
 mkdir pour creer un repertoire. 
     Possibilitee de creer plusieurs repertoires recursivement en un coup: mkdir -p toto/titi/tata
@@ -24885,7 +24950,9 @@ parser du json avec unix: installer jq
             }
       pour faire un include importer d'un autre ksh dans un ksh
           . $path_vers_mon_autre_ksh/DDD_ExportPHX_environnement.ksh
-      pour faire un substring: 
+      pour faire un substring:
+                test=($chose) // ou chose est =blabla blibli bloblo. Automatiquement le fait de mettre entre parentheses fait un split sur les espaces du coup on a echo ${test[0]} retourne blabla et ${test[1]} retourne blibli 
+                ou bien: 
 				echo ${stringvariable:2:4} // sauter 2 chars et prendre les 4 suivants
 				ou bien:
 				NOM_FICH_PAYS=$DATE_ENTREE`echo $ligneLu | cut -d":" -f 2`
@@ -31770,6 +31837,7 @@ renommer un repertoire en un autre :
         gspot       
 raccourci creer un nouveau dossier repertoire: ctrl+shift+n
 window+x ouvre des options de luminosité
+creer un fichier en commande dos: copy NUL nouveaufichier.txt
 impression ecran: 
         alt+impressionecran copie que la fenetre active. Sinon on peut utiliser Greenshot
 bomgar pour assistance a distance partager ecran bureau a distance
