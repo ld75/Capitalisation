@@ -2696,7 +2696,7 @@ pour renvoyer un fichier de la servlet (download): astuce, on peut aussi le zipp
 		ServletOutputStream outstr = response.getOutputStream();
 		FileInputStream lire = new FileInputStream(file);
 		//BufferedReader reader = new BufferedReader(new InputStreamReader(lire)); // en fait si ca marche pour les fichiers UTF-8 à lire (utiliser mark et reset si besoin faire l'equivalent de pos de RandomAccessFile mais bon courage:-))
-		NON!!! il faut utiliser les BufferedInputStream et output stream parce que buffered reader encode! comme ca:
+		NON!!! il faut utiliser les BufferedInputStream et output stream parce que bufferedreader encode! comme ca:
 		BufferedInputStream bis = new BufferedInputStream(lire);
 		NON: /*String ligne = "";
 		while ((ligne=reader.readLine())!=null){
@@ -20547,7 +20547,13 @@ ou runtime.exec(new String[] { "C:\\Program Files\\MonAppli\\monappli.exe" } );
 Remarque: Les variables d'environnement specifiees doivent l'être selon le format nom=valeur. 
 ************************
 encodage : encode :
-detecter determiner voir l'encodage encode d'un fichier: 
+detecter determiner voir l'encodage encode d'un fichier:
+                CharsetEncoder isoencoder = Charset.forName("iso-8859-1").newEncoder();
+          		CharsetEncoder utf8Encoder = Charset.forName("UTF-8").newEncoder();
+          		/*pour savoir si cette chaine de caractere peut etre encodee en iso-8859*/
+          		boolean okutf8 = utf8Encoder.canEncode(query);
+          		boolean okiso = isoencoder.canEncode(query);
+                  ou  
             File csv = new File(this.getClass().getClassLoader().getResource("csvInISO1252.csv").getPath());
               final String[] encodings = { "US-ASCII", "ISO-8859-1", "UTF-8", "UTF-16BE", "UTF-16LE", "UTF-16" };
               List<String> lines;
@@ -20611,18 +20617,13 @@ pour deflateandencode :
             byte[] token = unstring.getBytes(Charset.forName("UTF-8"));
       		  String unStringEncodeEnBase64=Base64.encodeBase64String(token));
       Decoder de base64 
-      		      String toto = new String(Base64.decodeBase64(unStringEncodeEnBase64));
+   		      String toto = new String(Base64.decodeBase64(unStringEncodeEnBase64));
                 ou
-                String sUserPwdDecode = new String(Base64.getDecoder().decode(sUserPwdCode));  
+              String sUserPwdDecode = new String(Base64.getDecoder().decode(sUserPwdCode));  
 		En interne en Java toutes les Strings, les char et charset sont encodes en UTF-16. En Java il est abberant de vouloir changer l'encodage d'une String !
 		String str = "blah";		// c'est forcement de l'utf16
 		Cependant je peux forcer tout mon programe java à fonctionner avec un autre encodage en lancant mon programme java comme ca:
 		java -Dfile.encoding=ISO-8859-15 -Dlog4j.configuration=file:/var/w(...)tchs/log4j.properties -Dconfpath=/v(...)tchs/Parser.properties -jar /var/www(...)adMails.jar 
-		CharsetEncoder isoencoder = Charset.forName("iso-8859-1").newEncoder();
-		CharsetEncoder utf8Encoder = Charset.forName("UTF-8").newEncoder();
-		/*pour savoir si cette chaine de caractere peut etre encodee en iso-8859*/
-		boolean okutf8 = utf8Encoder.canEncode(query);
-		boolean okiso = isoencoder.canEncode(query);
 		// on essaye d'ecoder en utf8
 		1)		InputStream inputStream = new ByteArrayInputStream(monString.getBytes());
 					InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
