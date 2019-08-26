@@ -1210,6 +1210,7 @@ Fermer tab shift+click
 Generer constructor constructeur getter geter seter setter etc: Alt+Insert
 Changer de vue Alt+F1
 focus vers Editor: Echap et F12: focus precedent
+focus vers maven project pannel j'ai rajouté le shortcut Alt+F8
 focus precedent: alt+ctrl+fleches
 fullscreen agrandire aggrandire plain ecrant full size Maximise editor Ctrl+Shift+F12
 creer surround suround trycatch Selectionner puis Ctrl+Alt+T
@@ -2180,23 +2181,24 @@ CDI1.x besoin de weld
 			<version>3.0.1.Final</version>
 		</dependency>
 		
-<!-- pour utiliser les @ : scan les java qui ont :@Named, @Inject
-Cycle de vie du bean: 
+<!-- pour utiliser les @ : scan les java qui ont :@Named(equivalent de @Qualifier de spring), @Inject (equivalent de @Autowire de spring)
+Cycle de vie du CDI bean:
               – @RequestScoped // a mettre absolument sur un webservice utilisant jwt car les claims jwt sont naturelement request-scopeds. LINKkgkgkgklkjsdfljqi
               – @RedirectScoped // fait partie de mvc: utile si apres un post on fait un redirect et qu'on a besoin de l'info du post.
               – @SessionScoped
-              – @ApplicationScoped // (par defaut) sur la classe. le bean est utilise pourl les proprietes generales de l'appli: ex: listes deroulantes qu'on voit tout le temps
-                                            @Singleton // peute etre sur classe meme un webservice. attention ne fait pas partie de la spec CDI mais de EJB. Va de paire avec @Startup. utiliser plutot @ApplicationScoped mais singleton et statup marchent bien. LINKsngletn
-                                            @Startup // a mettre sur une classe. s'execute au demarrage ne fait pas partie de la spec CDI mais de EJB
+              – @ApplicationScoped // (par defaut) sur la classe. le bean est utilise pourl les proprietes generales de l'appli: ex: listes deroulantes qu'on voit tout le temps Attention ne s'initialise pas avnat d'etre injecté
+                                pour dedans executer des trucs qui vivront tant que l'application tourne mais pour l'initialiser en meme temps que le container, voir LINKobsgdgdgz
+                                public void demarrage(@Observes @Initialized(ApplicationScoped.class) Object init) // ou @Destroyed si c'est quand ca s'eteint. LINKobsgdgdgz
+                                {(...)
               – @ViewScoped
               – @CustomScoped pour que les beans soient stockees dans le FacesContext (qui a une duree de vie plus courte que RequestScope donc FC est plus rapide, bouffe moins de memoire)
               – @NoneScoped (si c un bean qui est reference par un autre bean qui lui est scoped)
               >> attention un bean ne peut pas referencer un autre bean si son scope est plus petit que le sien (sauf les @NoneScoped que tous peuvent referencer)
-                  @PostConstruct-->methode s'execute quand le bean est place dans son scope utile pour initialiser
+                  @PostConstruct-->methode s'execute quand le bean est place dans son scope utile pour initialiser marche sur EJB (du coup sur @Singlton) mais ne parche pas sur CDI du coup ApplicationScoped ne s'initialise pas avant d'être injectés. Du coup faire LINKobsgdgdgz
                   public void debut() { ... }//ne doit pas thrower une exception
                   @PreDestroy--->methode s'execute quand le bean est retire du scope ou le scope est detruit.
                   public void fin() { ... }
-          
+                 @TransactionAttribute pouf gerer les transactions (marche aussi sur ejb de type  @Stateful, @Stateless and @Singleton @ManagedBean, @WebServlet, @WebListener, @WebFilter)           
           utilisation d'un champ injecté:                       définition de la classe de l'autre coté:
           @Inject                                                @ApplicationScoped
           @Named("simpleIs")                                     @Named("simpleIs")
@@ -2227,7 +2229,19 @@ try (SeContainer container = initializer.disableDiscovery().initialize()) { cont
            
                                                                 
 		@Pattern(expressionreguliere) // sur un champ d'un bean: pour valider que ce champ quand il est rempli match bien à la regexp.
-		
+    pattern observable: LINKobsgdgdgz
+        @Inject
+        @Named("tutu") LINKkfkgggg
+        Event<Payload> payloadEvent;
+        public void doSomething() {
+          payloadEvent.fire(new Payload()); //ceci va declancher ailleur ceci:**
+        }        
+        dans une autre classe: **
+        public void processUnqualifiedPayload(@Observes Payload event) {}
+        public void processUnqualifiedObject(@Observes Object event) {}
+        public void processQualifiedPayload(@Observes @Named("tutu") Payload event) {} // ne sont executés que si LINKkfkgggg
+        public void processQualifiedObject(@Observes @Named("tutu") Object event) {} // ne sont executés que si LINKkfkgggg
+        		
 securite :(JSR375) plus besoin d'utiliser web.xml (sur?): les annotations font pareil.
        AFAIRE
        https://javaee.github.io/tutorial/security-api004.html
@@ -2237,7 +2251,7 @@ securite :(JSR375) plus besoin d'utiliser web.xml (sur?): les annotations font p
         @LoginToContinue //pour un FORM login seulement: sert à definir loginpage, loginerrorpage etc...
         @RememberMe //Comme le bouton se souvenir de moi (AFAIRE)       
         @RequestScoped(a mettre)
-       HttpAuthenticationMechanism interface role: gère token d'authentification. Une seule classe doit exister par appli donc l'annoter @ApplicationScoped. sous classe doit être Bean. Bean automatiquement appelé par le container pour l'authent
+       HttpAuthenticationMechanism interface role: gère token d'authentification. Une seule classe doit exister par appli donc l'annoter @ApplicationScoped. sous classe doit être Bean. Bean automatiquement appelé par le container à toutes les requetes avant les filtres
        |                    
        |tout customiser----__ou bien utiliser les annotations
        |                     \________________________________________________________________________________________________
@@ -2280,7 +2294,7 @@ securite :(JSR375) plus besoin d'utiliser web.xml (sur?): les annotations font p
                                      priority() // retourne un integer: plus il est petit plus il est prioritaire pour IdentityStoreHandler
        **CredentialValidationResult contient le principal et ces roles: return new CredentialValidationResult("Duke",new HashSet<>(asList("foo", "bar")));
         necessaire de parametrer web.xml voir LINKlkjsqgeegege:<security-constraint> et <security-role>       
-       pour securiser une servlet: ACONFIRMER:c'est grace a ca que ça declanche mon HttpAuthenticationMechanism 
+       pour securiser une servlet:  
             @WebServlet("/servlet")
             @ServletSecurity(
                             value= @HttpConstraint(
@@ -2296,11 +2310,37 @@ securite :(JSR375) plus besoin d'utiliser web.xml (sur?): les annotations font p
             @DeclareRoles({ "role1", "role2bar", "kaz","foo","supervisor" }) //declare juste les roles que je vais utiliser dans cette classe. peut etre mis sur classe ou methode(override classe alors)  possible utilisser aussi avec:voir LINKdeclarereor
             public class MaServlet extends HttpServlet {
             
-            
-            
-            
-            
-                              
+config de la base de donnée donnee : en jee
+    en annotations:(a mettre sur une classe @Statefull je crois)
+      @DataSourceDefinitions( //facultatif mais...                                                 
+      value = { //...du coup possible en enchainer plusieurs et je peux avoir plusieurs datasource
+        @DataSourceDefinition(name="java:global/MyApp/MyDataSource1", // ce nom la est cree ici et sera utilise ailleurs. commence par java:app (scope dans cette appli seulement) java:comp (??) java:module (??) java:global (disponible dans toutes les applications déploiees sur ce serveur)
+            className="com.example.MyDataSource", ou org.hsqldb.jdbc.JDBCDriver
+            portNumber=6689,
+            serverName="example.com",
+            user="lance",
+            password="secret"
+         )
+        ou  (l'un ou l'autre mais ne pas melanger)
+            @DataSourceDefinition(name="java:global/MyApp/MyDataSource2",
+              className="org.apache.derby.jdbc.ClientDataSource", ou org.hsqldb.jdbc.JDBCDriver
+              url="jdbc:derby://localhost:1527/myDB",
+              user="lance",
+              password="secret"
+           )
+        sont equivalents dans web.xml de
+                  <data-source>
+                  <name>jdbc:hsqldb:mem:employees</name>
+                  (...)
+                  <class-name>org.hsqldb.jdbc.JDBCDriver</class-name>
+              </data-source>  
+             puis      
+         @Stateless // exemple d'utilisation appel ailleurs
+         public class MyStatelessEJB {
+           @Resource(lookup="java:global/MyApp/myDataSource")
+            DataSource myDB;
+              ...
+         }
                 
        
 backend 
@@ -2313,7 +2353,7 @@ du code java pour aller afficher une page html sans rien faire de special
   getPage("html.docIntrouvable").print(context);
   out.close();
 Pour afficher du html en sortie de servlet ou du texte en sortie de servlet ou n'importe quoi d'autre
-ejbs : ejb :
+ejbs : ejb : beans EJB
  ejb :3.0,3.1
     on utilise les annotation et pour les besoins plus specifiques on ajoute du metadata dans ejb-jar.xml(facultatif en 3.1. Peut etre vide dans 3.0)
     si pas d'annotations: le container utilise des valeurs par defaut
@@ -2324,11 +2364,17 @@ ejbs : ejb :
 appelable par     @Statefull  // contient des donnees de l'interaction avec le client c a d: thread-safe: il cree autant d'instance indep que de client (c'est comme une session)
 un client               //stateless et statefull ne supportent pas d'acces concurents sur un meme bean.
 en local          @Singleton // uniquement EJB 3.1: un seul ejb bean pour tout le monde.(tout les clients): cree par le container au demarrage sauf si lazy-loading
-ou remote         @Local ---> l'accès à ces beans ne peut se faire que par d'autres beans du meme EJB (même contexte, même classLoader)
+ou remote                       peute etre sur classe meme un webservice. Peut aller de paire avec @Startup. LINKsngletn
+                  @Local ---> l'accès à ces beans ne peut se faire que par d'autres beans du meme EJB (même contexte, même classLoader)
                   @LocalBean ---> >=EJB 3.1: bean sans interface necessaire.
+                  @Asynchronous à utiliser au lieu de faire des threads sur des webservice/servlet. marche avec @Stateful @Stateless et @Singleton LINKashcrinosdf
+                  @Schedule             |_Utilise Quartz et est automatiquement transactionnel. LINKkdgjzoiriririr 
+                  @ScheduleExpression   |
+                  @Startup // a mettre sur une classe. s'execute au demarrage. marque qu'avec @Singleton  
                   @Remote ---> Bean de l'EJB peut être accede de l'exterieur de son classLoader   
-                  @WebService
-  
+                  @WebService  // pour faire un webservice jax-ws marche qu'avec une classe ayant @Stateless et/ou? @Singleton
+                  @Path // pour faire un webservice jax-rs marche qu'avec une classe ayant @Stateless et/ou? @Singleton
+                      
   Message Driver  @MessageDriven // on ne peut le joindre qu'avec des messages JMS à l'interieur du container (du serveur) par des Message Bus
   Message Driver  @WebService
   JPA Entities    @Entity à mettre sur des classes pour l'ORM. ces classes DOIVENT avoir un constructeur vide voir LINKcstrctr 
@@ -3216,7 +3262,7 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
 
         filter : filtre : filters : filtres : pour les webservices jaxrs
                     @Provider // pour que jaxrs le prenne en compte automatiquement au runtime (!=???) du coup je pense qu'il faut absolument le mettre
-                    @Priority(Priorities.AUTHENTICATION ou AUTHORIZATION ou HEADER_DECORATOR etc...)// determine position dans ordre du filtre par priorité plus chiffre petit, plus ca passe avant.
+                    @Priority(Priorities.AUTHENTICATION ou AUTHORIZATION ou HEADER_DECORATOR etc...)// NON! ca ne marche pas dans @ApplicationScoped en tout cas. determine position dans ordre du filtre par priorité plus chiffre petit, plus ca passe avant.
                     public class AuthenticationFilter implements ContainerRequestFilter { // mon filtre doit implementer ContainerRequestFilter qui contient la methode filter 
                     
                         @Inject
@@ -4774,7 +4820,7 @@ bootstrap : (c'est de la merde. utiliser css grid cssgrid)
         </head>
         <div class="container"> ... </div> // le root. Ne peuvent pas s'imbriquer. Largeur fixe.
         ou container-fluid //largeur s'adapte et prend toute la place
-        dedans: rows puis cols
+        dedans: rows puis cols. il y a 12 colonnes en tout
 
        
 SPRING :      https://start.spring.io/
@@ -10972,78 +11018,6 @@ ren %WEB-INF-PAE%\classes\_integr.log4j.properties.template log4j.properties.tem
 
 ------------------
 
-ant : avec maven: pour par exemple renommer un fichier apres coup 
-    utiliser maven avec ant:
-        dans le pom:  
-          <plugin>
-                      <groupId>org.apache.maven.plugins</groupId>
-                      <artifactId>maven-antrun-plugin</artifactId>
-                      <version>1.8</version>
-                      <executions>
-                          <execution>
-                              <id>compile</id>
-                              <phase>compile</phase>
-                              <configuration>
-                                  <target>
-                                      <ant antfile="${project.basedir}/antbuild.xml" target="clean"> // target va pointer vers LINKantslkjsdf
-                                          <property name="version" value="${project.version}"/> // du coup je vais pouvoir utiliser ${version} dans le script antbuild.xml
-                                      </ant>
-                                  </target>
-                              </configuration>
-                              <goals>
-                                  <goal>run</goal>
-                              </goals>
-                          </execution>
-                      </executions>
-                  </plugin>
-        script antbuild.xml:
-            <project>
-    <target name="clean"> // c'est le nom LINKantslkjsdf
-        <delete file="../../batchs/memoclap.copyproject-${version}.jar"/>
-        <delete file="../../batchs/memoclap.filter-${version}.jar"/>
-        <delete file="../../batchs/memoclap.parser-${version}.jar"/>
-    </target>
-        <target name="renameServiceWorkerFile"> //deplacer renommer un fichier avec ant et maven
-          <move todir="../../" includeemptydirs="false">
-              <fileset dir="../../"/>
-              <mapper type="glob" from="service-worker-v*.js" to="service-worker-v${version}.js"/>
-          </move>
-    </target>
-    </project>
-doc utile sur:
-          http://ant.apache.org/manual/
-si j'ai le message: Reference xxxxxxxx classpath not found:
-        il faut savoir que quand j'ai classpathref=xxx ou <classpath refid="xxx
-        xxx est defini en haut par: 
-          <path id="project.class.path">(...)</> qui contient tout mes jars.
-Pour executer sur eclipse: la definition du classpath se fait comme ca:
-         definir le ANTHOME dans onglet Chemin d'acces aux classes: ANT_HOME
-si j'ai le message: 
-BUILD FAILED: file:C:/java/eclipse/workspace/common/build.xml:59: Cannot use classic compiler, as it is not available.  A common solution is to set the environment variable JAVA_HOME to your jdk directory.
-      alors rajouter dans le ant ceci: 
-	           <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/> (en tête de fichier dans la balise <project>
-Si script ant ca ne marche pas c'est peut etre parce que ANT_HOME est defini dans les variables d'environnement: supprimer ANT_HOME
-	             Remonter les bugs antdelivery 2.0.0 sur https://collaboration.renault.com/eRoom/FAC_KORP1_10/RS3Minute/0_95231
-build.xml does not exist alors:
-        ouvrir une fenetre cmd et faire ca: 
-              FAIRE:
-              voir ii*ii
-              set ANT_HOME=K:\apache-ant-1.6.5
-              set CLASSPATH=K:\apache-ant-1.6.5
-              set Path=K:\apache-ant-1.6.5\bin
-              K:
-              puis lancer ant:
-              cd apache-ant-1.6.5/bin
-              ant -buildfile ..\build\Build210.xml
-              quand c'est fini il met l'ear sous: C:\Documents and Settings\Administrator\Local Settings\Temp\build\delivery
-              ou C:\Documents and Settings\p036782\Local Settings\Temp\delivery
-              pour deployer en DEV autant de fois qu'on veut numero de build à  mettre 0
-              pour deployer pour l'Integration, la recette ou l'oper mettre build -1
-              Quand le chef de projet dit OK: deployer en INTEGR  build à  mettre 1 puis faire une fiche OSL
-              pour ca: creer une nouvelle branche v_1_2_0 comme ca: copier trunk vers branche...v_1_2_0 > lancer le script de francois en mettant rien ou build 1?
-              remplir version labell avec TD:00000 ras EVOL:0 bla CH:0 bla
-
-
 
 
 MAVEN : attention: artifactid ne doit pas contenir des points
@@ -11716,6 +11690,79 @@ si j'ai l'erreur Cannot run program "cmd.exe":
   |        |_web.xml
   |_pom.xml
 
+ant : avec maven: pour par exemple renommer un fichier apres coup touch toucher un fichier 
+    utiliser maven avec ant:
+        dans le pom:  
+          <plugin>
+                      <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-antrun-plugin</artifactId>
+                      <version>1.8</version>
+                      <executions>
+                          <execution>
+                              <id>compile</id>
+                              <phase>compile</phase>
+                              <configuration>
+                                  <target>
+                                      <ant antfile="${project.basedir}/antbuild.xml" target="clean"> // target va pointer vers LINKantslkjsdf
+                                          <property name="version" value="${project.version}"/> // du coup je vais pouvoir utiliser ${version} dans le script antbuild.xml
+                                      </ant>
+                                  </target>
+                              </configuration>
+                              <goals>
+                                  <goal>run</goal>
+                              </goals>
+                          </execution>
+                      </executions>
+                  </plugin>
+        script antbuild.xml:
+            <project>
+    <target name="clean"> // c'est le nom LINKantslkjsdf
+        <delete file="../../batchs/memoclap.copyproject-${version}.jar"/>
+        <delete file="../../batchs/memoclap.filter-${version}.jar"/>
+        <delete file="../../batchs/memoclap.parser-${version}.jar"/>
+    </target>
+        <target name="renameServiceWorkerFile"> //deplacer renommer un fichier avec ant et maven
+          <move todir="../../" includeemptydirs="false">
+              <fileset dir="../../"/>
+              <mapper type="glob" from="service-worker-v*.js" to="service-worker-v${version}.js"/>
+          </move>
+    </target>
+    <target name="touch">
+        <touch file="${path}"/>
+    </target>
+    </project>
+doc utile sur:
+          http://ant.apache.org/manual/
+si j'ai le message: Reference xxxxxxxx classpath not found:
+        il faut savoir que quand j'ai classpathref=xxx ou <classpath refid="xxx
+        xxx est defini en haut par: 
+          <path id="project.class.path">(...)</> qui contient tout mes jars.
+Pour executer sur eclipse: la definition du classpath se fait comme ca:
+         definir le ANTHOME dans onglet Chemin d'acces aux classes: ANT_HOME
+si j'ai le message: 
+BUILD FAILED: file:C:/java/eclipse/workspace/common/build.xml:59: Cannot use classic compiler, as it is not available.  A common solution is to set the environment variable JAVA_HOME to your jdk directory.
+      alors rajouter dans le ant ceci: 
+	           <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/> (en tête de fichier dans la balise <project>
+Si script ant ca ne marche pas c'est peut etre parce que ANT_HOME est defini dans les variables d'environnement: supprimer ANT_HOME
+	             Remonter les bugs antdelivery 2.0.0 sur https://collaboration.renault.com/eRoom/FAC_KORP1_10/RS3Minute/0_95231
+build.xml does not exist alors:
+        ouvrir une fenetre cmd et faire ca: 
+              FAIRE:
+              voir ii*ii
+              set ANT_HOME=K:\apache-ant-1.6.5
+              set CLASSPATH=K:\apache-ant-1.6.5
+              set Path=K:\apache-ant-1.6.5\bin
+              K:
+              puis lancer ant:
+              cd apache-ant-1.6.5/bin
+              ant -buildfile ..\build\Build210.xml
+              quand c'est fini il met l'ear sous: C:\Documents and Settings\Administrator\Local Settings\Temp\build\delivery
+              ou C:\Documents and Settings\p036782\Local Settings\Temp\delivery
+              pour deployer en DEV autant de fois qu'on veut numero de build à  mettre 0
+              pour deployer pour l'Integration, la recette ou l'oper mettre build -1
+              Quand le chef de projet dit OK: deployer en INTEGR  build à  mettre 1 puis faire une fiche OSL
+              pour ca: creer une nouvelle branche v_1_2_0 comme ca: copier trunk vers branche...v_1_2_0 > lancer le script de francois en mettant rien ou build 1?
+              remplir version labell avec TD:00000 ras EVOL:0 bla CH:0 bla
   
 SVN :
 pour se connecter à  SVN sans utiliser de client mais seulement un browser.
@@ -17756,7 +17803,7 @@ si sur unix j'ai le message "processus arrete" a l'execution d'un batch
 dans un listener, quand on fait this on a pas accès au parent du listener: pour acceder au parent contenanant le listener, faire ca:
     MaClasseParente.this.monObjetDansMaClasseParente.monParamDansMaClasseParente=2;
 
-threads : thread :
+threads : thread : eviter d'utiliser sur du web. preferer LINKashcrinosdf
 definition threadsafe thread safe:
     si threadsafe: ca peut etre un singleton et plusieurs thread l'atteingnent
     si non thread safe il ne faut pas que ce soit un singleton: il doit etre instancie a chaque fois par un thread
@@ -17842,7 +17889,7 @@ pour attendre qu'une resource se libere:
 								  }
 								}
 
-			pour faire pauser un thread: sleep(duree ms), wait, ne pas utiliser suspend() LINK84838
+			pour faire pauser un thread: sleep(duree ms), wait, ne pas utiliser suspend() LINK84838 ou encore mieux je crois utiliser @AccessTimeout indique combien de temps le thread doit attendre qu'un bean se libère avant d'abandonner. marque qu'avec @Singleton
 					public class MonThread extends (java.lang)Thread (ne jamais mettre un controlleur spring dans un thread) LINK84838 
 					{
 					private	mes variables; (faire les getters et setters)
@@ -17908,7 +17955,7 @@ synchronisation: (voir aussi volatile)
 		est equivalent en java 1.5 a 
 					void methode() 
 					{
-							Lock l = new ReentrantLock(); // le thread qui a locké ici en premier peut revenir et avoir un laissé passer pour continuer
+							Lock l = new ReentrantLock(); // le thread qui a locké ici en premier peut revenir et avoir un laissé passer pour continuer. mais c'est mieux d'utiliser @Lock(READ) and @Lock(WRITE) qui ne marchent qu'avec @Singleton
 							l.lock();
 							try 
 							{
@@ -17943,7 +17990,7 @@ pour faire une liste synchronisee entre plusieurs threads (dans une classe qui v
             
         pour faire un prog qui s'execute regulierement: (sinon voir l'API quartz permet plus d'options) LINKTimersdkjsq
           depuis java 1.5:
-          ScheduledExecutorService:
+          ScheduledExecutorService: voir plutot LINKkdgjzoiriririr
               avantages:
               utilise un pool de threads, ce qui ameliore les performances notamment dans le cas de l'execution en parallèle de plusieurs tâches
               les delais peuvent être precises avec plusieurs unites
