@@ -1,4 +1,4 @@
-(?=.*detect)(?=.*encod)
+(?=.*ant)(?=.*plugin)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -620,7 +620,7 @@ reactjs : react.js + redux :
         document.getElementById('root')
       );
 
-docker : créer une image (executable)-> builder ->image devient container qd est runné(!=VM. Une VM virtual machine contient un OS. Un container est executé dans un OS: plusieurs containers peuvent s'executer dans un meme OS) quand est executee alors des config s'appliquent à lui-> déposer dans machine
+docker : créer une image (executable)-> builder ->image(classe) devient container(instance) qd est runné(!=VM. Une VM virtual machine contient un OS. Un container est executé dans un OS: plusieurs containers peuvent s'executer dans un meme OS) quand est executee alors des config s'appliquent à lui-> déposer dans machine
   continuer à lire https://docs.docker.com/get-started/part2/#share-your-image
   installer docker: sudo apt-get update puis 
     avoir docker CE(community edition) ou EE(entreprise edition) recuperable sur store.docker.com
@@ -631,7 +631,9 @@ docker : créer une image (executable)-> builder ->image devient container qd es
     -Services // defini comment le container se comporte
     -Container // mon executable
     bas
+  docker images // liste des images du repository
   docker image ls // LINKdckrimgls liste les images que j'ai cree. Ajouter --all si je veux voir aussi les images qui run
+  docker ps -a // pour voir la liste de tous les containers (en cours de run et pas)
   docker container ls // liste les containers qui tournent qui sont en cours d'execution 
   Dockerfile= fichier docker: Défini ce qui est dans mon environnement et qui va rentrer dans mon container. Ordre des commandes pour builder mon image(mettre des trucs dedans):execution du haut vers le bas. haut:ce qui bouge le moins. Bas ce qui change le plus car docker utilise un cache.
         FROM node:x.x.x-alpine OU python:2.7-slim OU...// sur quoi le docker est installé ? quel OS OU BIEN une image docker si je veux l'etendre (voir LINKxlxlx puissant disent-ils) 
@@ -654,13 +656,11 @@ docker : créer une image (executable)-> builder ->image devient container qd es
           web: // premier service = 1 container
             build: . (tu te buildera à la racine du container docker (?)
             command: npm run // overrite CMD ci dessus: en general la commande ici sert à demarrer un serveur
-          postgres: // deuxieme service = 1 container                                                                                                                                                                                                                                                                                                                                                                       _ce nom peut etre lu grace à "docker image ls" voir LINKdckrimgls
+          postgres: // deuxieme service = 1 container
   docker build -t(pour tag) unnomquejedonneamoncontainer /pathOuEstDockerfile(. par ex si j'y suis)// Creer mon container docker qui rentre dans la liste. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto
-  docker run -it(pour interactif voir LINKjgjgjg) --rm (pour supprimer le container une fois que son execution est terminee:du coup il ne reste que l'image qui run je crois) -e"nomDuneSystem.PropertySiJeVeux=savaeleur" --name=facultatifUnAutreNomJeCroisQueJeDonneAMonContainer -d (pour executer en background) -p 80:8080 -p 443:8443 nomDeMonConteneurAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path Dans mon container du coup voir l'option -v)// demarrer un contenur à partir de son image. En Foreground si je fais ctrl+c (unix seulement) ça kill le process
-                                  -p portdeOS:portOuvertduContainer(je peux en mettre plusieurs)                                                                                                                                  |_peut etre un truc que Docker recupere automatiquement dans le repository docker sur le net (comme une dependance maven)                      
-  docker run -it --name=facultatifUnAutreNomJeCroisQueJeDonneAMonContainer -d (pour executer en background) -p 80:8080 -p 443:8443 nomDeMonConteneurAExecuter // demarrer un contenur à partir de son image. En Foreground si je fais ctrl+c (unix seulement) ça kill le process
-                                  -p portdeOS:portOuvertduContainer(je peux en mettre plusieurs)
-  docker run -it -v $(pwd):/ext-mount --rm unicon/shibboleth-idp init-idp.sh (-v...c'est l'option volume. Car Le container n'a pas accès au repertoire du host. donc $(pwd) est le repertoire courant où est le container. Monte moi ce repertoire dans le repertoire /ext-mount dans mon container)
+  docker run -it(pour interactif voir LINKjgjgjg) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e"nomDuneSystem.PropertySiJeVeux=savaeleur" --name=facultatifUnAutreNomQueJeDonneAMonContainer -d (pour executer en background) -p 80:8080 -p 443:8443 nomDeMonConteneurAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container
+                                  -p portdeOS:portOuvertduContainer(je peux en mettre plusieurs)                                                                                                                                                                                                                                                             |_ce nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con                                                                                                                                                                                      |_-v $(pwd):/ext-mount //Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container)
+  docker start -ai(comme -ti avec run) nomduconteneurARedemarrer // existe aussi docker stop pour stopper un conteneur                                  
   docker log facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomDeMonConteneurAExecuter // a faire apres avoir fait run pour afficher les logs
   docker history facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomDeMonConteneurAExecuter // pour afficher l'historique d'ajout de ce conteneur 
   docker container stop IDDuContainer // pour stopper l'execution d'un container (par son ID ça marche mieux voir donc la liste.)
@@ -1235,10 +1235,14 @@ OCR : image to texte :
   http://www.onlineocr.net/support/AboutOnlineOCR.aspx
   il accepte les gros jpeg 12qualite <4.1Mo
 
-microprofile :
+microprofile : microprofiles : microprofile : 
+    mode standalone server:on reste sur un seul serveur et une seule jvm
+    mode domain operating: plusieurs jvm(serveur) le "domain controller" gère les autres controlleurs qui peuvent être physiquement ailleurs
+    le serveur peut etre configuré en java+jms plutot qu'avec un gui
   ajoute des urls:
-    healthcheck
-    openapi (plus besoin de swagger)
+    config rafraichie automatiquement pendant le run
+    healthcheck+mphealth:remplace les nodes Ko automatiquement
+    openapi=opentracing (plus besoin de swagger)
     nouvelles annotations:
       @CircuitBreaker(xxx) // permet de definir un timeout, delay etc...
       @Fallback(fallbackmethod="nomdelamethodequivas'executersiKO")
@@ -2202,7 +2206,7 @@ Cycle de vie du CDI bean:
               – @SessionScoped
               – @ApplicationScoped // (par defaut) sur la classe. le bean est utilise pourl les proprietes generales de l'appli: ex: listes deroulantes qu'on voit tout le temps Attention ne s'initialise pas avnat d'etre injecté
                                 pour dedans executer des trucs qui vivront tant que l'application tourne mais pour l'initialiser en meme temps que le container, voir LINKobsgdgdgz
-                                public void demarrage(@Observes @Initialized(ApplicationScoped.class) Object init) // ou @Destroyed si c'est quand ca s'eteint. LINKobsgdgdgz
+                                public void demarrage(@Observes @Initialized(ApplicationOuAutreScoped.class) Object init) // ou @Destroyed si c'est quand ca s'eteint. Ne prennent que des Scope LINKobsgdgdgz
                                 {(...)
               – @ViewScoped
               – @CustomScoped pour que les beans soient stockees dans le FacesContext (qui a une duree de vie plus courte que RequestScope donc FC est plus rapide, bouffe moins de memoire)
@@ -2324,8 +2328,8 @@ securite : security :(JSR375) plus besoin d'utiliser web.xml: les annotations fo
             @DeclareRoles({ "role1", "role2bar", "kaz","foo","supervisor" }) //declare juste les roles que je vais utiliser dans cette classe. peut etre mis sur classe ou methode(override classe alors)  possible utilisser aussi avec:voir LINKdeclarereor
             public class MaServlet extends HttpServlet {
             
-config de la base de donnée donnee : en jee
-    en annotations:(a mettre sur une classe @Statefull je crois)
+config de la base de donnée donnee: en jee
+    en annotations:(a mettre sur une classe @Statefull en tout cas sur un EJB et pas sur CDI)
       @DataSourceDefinitions( //facultatif mais...                                                 
       value = { //...du coup possible en enchainer plusieurs et je peux avoir plusieurs datasource
         @DataSourceDefinition(name="java:global/MyApp/MyDataSource1", // ce nom la est cree ici et sera utilise ailleurs. commence par java:app (scope dans cette appli seulement) java:comp (??) java:module (??) java:global (disponible dans toutes les applications déploiees sur ce serveur)
@@ -2512,6 +2516,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                               return "hello.jsp"; LINKvuejslskjf
                           }
                       }
+        
 freemaker :
       <html>
           <head>
@@ -11752,7 +11757,7 @@ ant : avec maven: pour par exemple renommer un fichier apres coup touch toucher 
     </target>
         <target name="renameServiceWorkerFile"> //deplacer renommer un fichier avec ant et maven
           <move todir="../../" includeemptydirs="false">
-              <fileset dir="../../"/>
+              <fileset dir ou file="../../"/>
               <mapper type="glob" from="service-worker-v*.js" to="service-worker-v${version}.js"/>
           </move>
     </target>
@@ -20011,7 +20016,7 @@ fonctionnement des annotations :
               @NonBinding // AFAIRE.. c'est quoi?
               @Inherited //facultatif. SI je met ça alors les sous classes de la classe annotée se comporteront comme leur classe parente annotée
               @Constraint (validatedBy=ClasseContenantLeCodeDeMonValidateurBean.class) //facultatif. Mais si on l'utilise voir LINKannotconstraintvalidator
-              @Target ({ElementType.METHOD, ElementType.FIELD...}) //obligatoire.  ElementType.ENTITY (c'est pour une anotation d'une classe); ElementType.TYPE pour les interfaces ou les classes ; ElementType.CONSTRUCTOR: se metra donc seulement au dessus du constructeur d'une classe
+              @Target ({ElementType.METHOD, ElementType.FIELD...}) //obigatoire si n'herite pas d'une autre annot.  ElementType.ENTITY (c'est pour une anotation d'une classe.. heu existe pas); ElementType.TYPE pour les interfaces ou les classes ; ElementType.CONSTRUCTOR: se metra donc seulement au dessus du constructeur d'une classe
               @Retention(RetentionPolicy.RUNTIME)  // obligatoire. RetentionPolicy.SOURCE ou COMPILE: l'annotation disparait apres compilation. ca ne sert que pdt les devs. RUNTIME: l'annotation est toujours là apres compilation et joue dans l'execution
               public @interface MonValidateurBean
               {
