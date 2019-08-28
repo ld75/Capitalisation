@@ -656,12 +656,15 @@ docker : créer une image (executable)-> builder ->image devient container qd es
             command: npm run // overrite CMD ci dessus: en general la commande ici sert à demarrer un serveur
           postgres: // deuxieme service = 1 container                                                                                                                                                                                                                                                                                                                                                                       _ce nom peut etre lu grace à "docker image ls" voir LINKdckrimgls
   docker build -t(pour tag) unnomquejedonneamoncontainer /pathOuEstDockerfile(. par ex si j'y suis)// Creer mon container docker qui rentre dans la liste. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto
-  docker run -it(pour interactif voir LINKjgjgjg) --rm (pour supprimer le container une fois que son execution est terminee:du coup il ne reste que l'image qui run je crois) --name=facultatifUnAutreNomJeCroisQueJeDonneAMonContainer -d (pour executer en background) -p 80:8080 -p 443:8443 nomDeMonConteneurAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path Dans mon container du coup voir l'option -v)// demarrer un contenur à partir de son image. En Foreground si je fais ctrl+c (unix seulement) ça kill le process
+  docker run -it(pour interactif voir LINKjgjgjg) --rm (pour supprimer le container une fois que son execution est terminee:du coup il ne reste que l'image qui run je crois) -e"nomDuneSystem.PropertySiJeVeux=savaeleur" --name=facultatifUnAutreNomJeCroisQueJeDonneAMonContainer -d (pour executer en background) -p 80:8080 -p 443:8443 nomDeMonConteneurAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path Dans mon container du coup voir l'option -v)// demarrer un contenur à partir de son image. En Foreground si je fais ctrl+c (unix seulement) ça kill le process
                                   -p portdeOS:portOuvertduContainer(je peux en mettre plusieurs)                                                                                                                                  |_peut etre un truc que Docker recupere automatiquement dans le repository docker sur le net (comme une dependance maven)                      
   docker run -it --name=facultatifUnAutreNomJeCroisQueJeDonneAMonContainer -d (pour executer en background) -p 80:8080 -p 443:8443 nomDeMonConteneurAExecuter // demarrer un contenur à partir de son image. En Foreground si je fais ctrl+c (unix seulement) ça kill le process
                                   -p portdeOS:portOuvertduContainer(je peux en mettre plusieurs)
   docker run -it -v $(pwd):/ext-mount --rm unicon/shibboleth-idp init-idp.sh (-v...c'est l'option volume. Car Le container n'a pas accès au repertoire du host. donc $(pwd) est le repertoire courant où est le container. Monte moi ce repertoire dans le repertoire /ext-mount dans mon container)
+  docker log facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomDeMonConteneurAExecuter // a faire apres avoir fait run pour afficher les logs
+  docker history facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomDeMonConteneurAExecuter // pour afficher l'historique d'ajout de ce conteneur 
   docker container stop IDDuContainer // pour stopper l'execution d'un container (par son ID ça marche mieux voir donc la liste.)
+  docker rm -f facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomDeMonConteneurAExecuter// pour le supprimer.
   
   docker exec -it idp_jetty bash // LINKjgjgjg: la commande bash est executée dans le container qui demarre en mode -it(interactif) donc du coup je vais avoir le prompt bash DANS mon container. De la si j'execute top je ne vois que les process qui tournent DANS le container            
   registry
@@ -1232,6 +1235,15 @@ OCR : image to texte :
   http://www.onlineocr.net/support/AboutOnlineOCR.aspx
   il accepte les gros jpeg 12qualite <4.1Mo
 
+microprofile :
+  ajoute des urls:
+    healthcheck
+    openapi (plus besoin de swagger)
+    nouvelles annotations:
+      @CircuitBreaker(xxx) // permet de definir un timeout, delay etc...
+      @Fallback(fallbackmethod="nomdelamethodequivas'executersiKO")
+      @Bulkhead(3) //si il y a plus de 3 threads qui appellent cette methode alors les suivants vont direct dans le fallback
+      public String unemethode(){...}
 payara :payaramicro : // executeur direct d'un microservice.
     java -jar payara-micro.jar                      // créé un payara serveur
         --rootdir repertoire/de/travail/cree/auto/si/existepas 
