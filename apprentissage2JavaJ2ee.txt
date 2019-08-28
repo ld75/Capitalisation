@@ -620,7 +620,7 @@ reactjs : react.js + redux :
         document.getElementById('root')
       );
 
-docker : créer une image (executable)-> builder ->image devient container qd est runné(!=VM. Une VM virtual machine contient un OS. Un container est executé dans un OS: plusieurs containers peuvent s'executer dans un meme OS) quand est executee alors des config s'appliquent à lui-> déposer dans machine
+docker : créer une image (executable)-> builder ->image(classe) devient container(instance) qd est runné(!=VM. Une VM virtual machine contient un OS. Un container est executé dans un OS: plusieurs containers peuvent s'executer dans un meme OS) quand est executee alors des config s'appliquent à lui-> déposer dans machine
   continuer à lire https://docs.docker.com/get-started/part2/#share-your-image
   installer docker: sudo apt-get update puis 
     avoir docker CE(community edition) ou EE(entreprise edition) recuperable sur store.docker.com
@@ -631,7 +631,9 @@ docker : créer une image (executable)-> builder ->image devient container qd es
     -Services // defini comment le container se comporte
     -Container // mon executable
     bas
+  docker images // liste des images du repository
   docker image ls // LINKdckrimgls liste les images que j'ai cree. Ajouter --all si je veux voir aussi les images qui run
+  docker ps -a // pour voir la liste de tous les containers (en cours de run et pas)
   docker container ls // liste les containers qui tournent qui sont en cours d'execution 
   Dockerfile= fichier docker: Défini ce qui est dans mon environnement et qui va rentrer dans mon container. Ordre des commandes pour builder mon image(mettre des trucs dedans):execution du haut vers le bas. haut:ce qui bouge le moins. Bas ce qui change le plus car docker utilise un cache.
         FROM node:x.x.x-alpine OU python:2.7-slim OU...// sur quoi le docker est installé ? quel OS OU BIEN une image docker si je veux l'etendre (voir LINKxlxlx puissant disent-ils) 
@@ -654,13 +656,11 @@ docker : créer une image (executable)-> builder ->image devient container qd es
           web: // premier service = 1 container
             build: . (tu te buildera à la racine du container docker (?)
             command: npm run // overrite CMD ci dessus: en general la commande ici sert à demarrer un serveur
-          postgres: // deuxieme service = 1 container                                                                                                                                                                                                                                                                                                                                                                       _ce nom peut etre lu grace à "docker image ls" voir LINKdckrimgls
+          postgres: // deuxieme service = 1 container
   docker build -t(pour tag) unnomquejedonneamoncontainer /pathOuEstDockerfile(. par ex si j'y suis)// Creer mon container docker qui rentre dans la liste. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto
-  docker run -it(pour interactif voir LINKjgjgjg) --rm (pour supprimer le container une fois que son execution est terminee:du coup il ne reste que l'image qui run je crois) -e"nomDuneSystem.PropertySiJeVeux=savaeleur" --name=facultatifUnAutreNomJeCroisQueJeDonneAMonContainer -d (pour executer en background) -p 80:8080 -p 443:8443 nomDeMonConteneurAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path Dans mon container du coup voir l'option -v)// demarrer un contenur à partir de son image. En Foreground si je fais ctrl+c (unix seulement) ça kill le process
-                                  -p portdeOS:portOuvertduContainer(je peux en mettre plusieurs)                                                                                                                                  |_peut etre un truc que Docker recupere automatiquement dans le repository docker sur le net (comme une dependance maven)                      
-  docker run -it --name=facultatifUnAutreNomJeCroisQueJeDonneAMonContainer -d (pour executer en background) -p 80:8080 -p 443:8443 nomDeMonConteneurAExecuter // demarrer un contenur à partir de son image. En Foreground si je fais ctrl+c (unix seulement) ça kill le process
-                                  -p portdeOS:portOuvertduContainer(je peux en mettre plusieurs)
-  docker run -it -v $(pwd):/ext-mount --rm unicon/shibboleth-idp init-idp.sh (-v...c'est l'option volume. Car Le container n'a pas accès au repertoire du host. donc $(pwd) est le repertoire courant où est le container. Monte moi ce repertoire dans le repertoire /ext-mount dans mon container)
+  docker run -it(pour interactif voir LINKjgjgjg) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e"nomDuneSystem.PropertySiJeVeux=savaeleur" --name=facultatifUnAutreNomQueJeDonneAMonContainer -d (pour executer en background) -p 80:8080 -p 443:8443 nomDeMonConteneurAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container
+                                  -p portdeOS:portOuvertduContainer(je peux en mettre plusieurs)                                                                                                                                                                                                                                                             |_ce nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con                                                                                                                                                                                      |_-v $(pwd):/ext-mount //Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container)
+  docker start -ai(comme -ti avec run) nomduconteneurARedemarrer // existe aussi docker stop pour stopper un conteneur                                  
   docker log facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomDeMonConteneurAExecuter // a faire apres avoir fait run pour afficher les logs
   docker history facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomDeMonConteneurAExecuter // pour afficher l'historique d'ajout de ce conteneur 
   docker container stop IDDuContainer // pour stopper l'execution d'un container (par son ID ça marche mieux voir donc la liste.)
@@ -1233,10 +1233,14 @@ OCR : image to texte :
   http://www.onlineocr.net/support/AboutOnlineOCR.aspx
   il accepte les gros jpeg 12qualite <4.1Mo
 
-microprofile :
+microprofile : microprofiles : microprofile : 
+    mode standalone server:on reste sur un seul serveur et une seule jvm
+    mode domain operating: plusieurs jvm(serveur) le "domain controller" gère les autres controlleurs qui peuvent être physiquement ailleurs
+    le serveur peut etre configuré en java+jms plutot qu'avec un gui
   ajoute des urls:
-    healthcheck
-    openapi (plus besoin de swagger)
+    config rafraichie automatiquement pendant le run
+    healthcheck+mphealth:remplace les nodes Ko automatiquement
+    openapi=opentracing (plus besoin de swagger)
     nouvelles annotations:
       @CircuitBreaker(xxx) // permet de definir un timeout, delay etc...
       @Fallback(fallbackmethod="nomdelamethodequivas'executersiKO")
@@ -2510,10 +2514,6 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                               return "hello.jsp"; LINKvuejslskjf
                           }
                       }
-microprofiles : microprofile :
-        config rafraichie automatiquement pendant le run
-        healthcheck
-        open tracing = swagger
         
 freemaker :
       <html>
