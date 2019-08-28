@@ -620,7 +620,8 @@ reactjs : react.js + redux :
         document.getElementById('root')
       );
 
-docker : créer une image (executable)-> builder ->image(classe) devient container(instance) qd est runné(!=VM. Une VM virtual machine contient un OS. Un container est executé dans un OS: plusieurs containers peuvent s'executer dans un meme OS) quand est executee alors des config s'appliquent à lui-> déposer dans machine
+docker : créer une image (executable)-> builder ->image(classe) devient container(instance tourne par defaut en vase clos/fichiers et /ports) qd est runné(!=VM. Une VM virtual machine contient un OS. Un container est executé dans un OS: plusieurs containers peuvent s'executer dans un meme OS) quand est executee alors des config s'appliquent à lui-> déposer dans machine
+                    |_populaires:https://hub.docker.com/search?q=&type=image du coup faire run payara/micro par exemple
   continuer à lire https://docs.docker.com/get-started/part2/#share-your-image
   installer docker: sudo apt-get update puis 
     avoir docker CE(community edition) ou EE(entreprise edition) recuperable sur store.docker.com
@@ -635,9 +636,11 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
   docker image ls // LINKdckrimgls liste les images que j'ai cree. Ajouter --all si je veux voir aussi les images qui run
   docker ps -a // pour voir la liste de tous les containers (en cours de run et pas)
   docker container ls // liste les containers qui tournent qui sont en cours d'execution 
-  Dockerfile= fichier docker: Défini ce qui est dans mon environnement et qui va rentrer dans mon container. Ordre des commandes pour builder mon image(mettre des trucs dedans):execution du haut vers le bas. haut:ce qui bouge le moins. Bas ce qui change le plus car docker utilise un cache.
-        FROM node:x.x.x-alpine OU python:2.7-slim OU...// sur quoi le docker est installé ? quel OS OU BIEN une image docker si je veux l'etendre (voir LINKxlxlx puissant disent-ils) 
-        WORKDIR /un/path/DANSMONContainerDocker/PASdans/monOS/ 
+  Dockerfile= bien l'appeler "Dockerfile" fichier docker: Défini une image à partir d'une image source. A ecrire apres avoir testé sur un container l'enchainement des commandes qui marchent grace à docker exec. puis ecrire ici les commandes pour builder mon image(mettre des trucs dedans):execution du haut vers le bas. haut:ce qui bouge le moins. Bas ce qui change le plus car docker utilise un cache.
+        FROM image:tag donc node:x.x.x-alpine OU python:2.7-slim OU...// image docker de base quel OS OU BIEN une image docker (couche 0 = layer 0 de l'image) si je veux l'etendre voir LINKxlxlx  
+        WORKDIR /un/path/DANSMONContainerDocker/PASdans/monOS/ (couche 1 = layer 1 de l'image)
+        RUN apt-get update (couche 2 = layer 2 de l'image)
+        RUN apt-get install -y unelibrairie      (couche 3 = layer 3 de l'image) // -y pour que lors du build docker reponde automatiquement YES à toute question interactive survenant pendant l'apt-get install: si j'ai erreur returned a non-zero code: 1
         RUN apk update && apk add unpacket  // commandes linux executees. si LINKxlxlx ca modifie l'image docker comme une extension
         RUN npm install --quiet // par exemple.
         RUN pip3 install numpy // par exemple. Commande pip3 qui installe numpy dans mon container.
@@ -657,25 +660,62 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
             build: . (tu te buildera à la racine du container docker (?)
             command: npm run // overrite CMD ci dessus: en general la commande ici sert à demarrer un serveur
           postgres: // deuxieme service = 1 container
-  docker build -t(pour tag) unnomquejedonneamoncontainer /pathOuEstDockerfile(. par ex si j'y suis)// Creer mon container docker qui rentre dans la liste. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto
-  docker run -it(pour interactif voir LINKjgjgjg) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e"nomDuneSystem.PropertySiJeVeux=savaeleur" --name=facultatifUnAutreNomQueJeDonneAMonContainer -d (pour executer en background) -p 80:8080 -p 443:8443 nomDeMonConteneurAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container
+  docker build -t(pour tag) unnomquejedonneamoncontainer:untag /pathOuEstDockerfile(. par ex si j'y suis et -f DocerfileToto si j'y su is mais que le nom n'est pas "Dockerfile")// Creer mon container docker qui rentre dans la liste repository d'images. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto
+  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e"nomDuneSystem.PropertySiJeVeux=savaeleur" --name=facultatifUnAutreNomQueJeDonneAMonContainer -d (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement) nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container
                                   -p portdeOS:portOuvertduContainer(je peux en mettre plusieurs)                                                                                                                                                                                                                                                             |_ce nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con                                                                                                                                                                                      |_-v $(pwd):/ext-mount //Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container)
-  docker start -ai(comme -ti avec run) nomduconteneurARedemarrer // existe aussi docker stop pour stopper un conteneur                                  
-  docker log facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomDeMonConteneurAExecuter // a faire apres avoir fait run pour afficher les logs
-  docker history facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomDeMonConteneurAExecuter // pour afficher l'historique d'ajout de ce conteneur 
+  docker start -ia(comme -it avec run) nomduconteneurARedemarrer // existe aussi docker stop nomduconteneur ou idduconteneur pour stopper un conteneur
+  docker inspect nomduconteneur ou nomduneimage // pour avoir plein de details infos donnees exposedPorts sur mon conteneur ou mon image                                  
+  docker log( avec s ?) -f(comme tail -f)facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomD'uneImageAExecuter(en cours d'execution) // a faire apres avoir fait run pour afficher les logs
+  docker attach nomduconteneur ou permierscharDuIdDuConteneur // pour se rattaché à un conteneur demarré en backgroud LINKlgkezoiur
+  docker history facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomD'uneImageAExecuter(qui a un conteneur) // pour afficher l'historique d'ajout de ce conteneur 
   docker container stop IDDuContainer // pour stopper l'execution d'un container (par son ID ça marche mieux voir donc la liste.)
-  docker rm -f facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomDeMonConteneurAExecuter// pour le supprimer.
+  docker rm -f facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomD'uneImageAExecuter(qui est en cours d'execution dans un conteneur)// pour le supprimer.
   
-  docker exec -it idp_jetty bash // LINKjgjgjg: la commande bash est executée dans le container qui demarre en mode -it(interactif) donc du coup je vais avoir le prompt bash DANS mon container. De la si j'execute top je ne vois que les process qui tournent DANS le container            
+  docker exec -it idp_jetty bash // LINKjgjgjgaba: execute une commande dans un conteneur déja actif. ici la commande bash est executée dans le container qui demarre en mode -it(interactif) donc du coup je vais avoir le prompt bash DANS mon container. De la si j'execute top je ne vois que les process qui tournent DANS le container
+        de là je peux faire du apt-get pour installer d'autres librairies si besoin. 
+        ensuite regarder aussi sur le hub.docker la doc de l'image si je veux enrichir cette image.            
   registry
       repository1
-                 imagedocker:tag1 
-                 imagedocker:tag2...
-      repository1
-                 imagedocker:tag1
-                 imagedocker:tag2...
-                 
-                 
+                 imagedocker1:tag1 
+                 imagedocker1:tag2...
+      repository2
+                 imagedocker2:tag1
+                 imagedocker2:tag2...
+  volumes managés: permettent de copier/d'exporter d'avoir en synchro des repertoires/fichier du conteneur vers l'OS (c'est synchro entre les deux meme si conteneur est off)
+      docker volume create monvolumemanagé // creer un volume managé sur l'OS hote
+      docker volume ls // lister les volumes manages
+      docker volume inspect // inspecter un volume managé: savoir où il se trouve sur l'OS hote exemple /usr/moncul
+      docker run -v monvolumemanagé:/path/du/conteneurcontenant/deja/des/trucs    
+                        du coup tout ce qui est dans le conteneur /path/du/conteneurcontenant/deja/des/trucs se retrouve synchro avec le path /usr/moncul et c'est persistant.         
+    docker compose : toujours regarder les doc du hub pour bien utiliser les images standards
+            fichier docker-compose.yml // ecrire que en ascii sans espaces.
+                version: "3"
+                services: //contient la liste des conteneurs dont on a besoin
+                    nomdemonservice1: // nom unique  
+                        image: nomdemonconteneur1:sontag
+                            ports:
+                                - 80:80  // quand on met - c'est parce que c'est une liste
+                                - 81:80  // comme pour -p (cote hote:cote conteneur)
+                            environment:
+                                - UNE_VARIABLE1=lavaleur1
+                                - UNE_VARIABLE2=lavaleur2
+                                - UNE_VARIABLE3=nomdemonservice2 // on peut avoir ca si nomdemonservice1 accede à nomdemonservice2
+                            networks:
+                                - unreseaubridgé   
+                    nomdemonservice2:
+                        image: blabla:2.0
+                            networks:
+                                - unreseaubridgé
+                # commentaire
+                volumes:  //falcultatif
+                networks: //falcultatif                
+                    unreseaubridgé: // je crée un reseau brigé qui est utilisé sur les 2 services dessus pour qu'ils communiquement
+            executer sur l'emplacement de ce fichier:
+                docker-compose up -d // -d pour executer en background sinon il garde le prompt et Ctrl+C kill le process
+                docker-compose logs -f pour voir les logs comme un tail -f
+                docker-compose stop // arret du run mais ne supprime pas les conteneurs
+                docker-compose start// demarre les conteneurs arretés
+                docker-compose down // attention, supprime tous les conteneurs et images sauf les volumes                                        
 visualstudiocode :editeur:
   acceder au fichier trouver: ctrl+p
 gource : annimation de git
@@ -25384,6 +25424,7 @@ lvm :
     
 pour installer des programmes: applications: (le repository miroir est je crois sources.list) (le repository miroir est je crois sources.list)
     avec apt : apt-get : (sinon il ya aussi la commande yum)
+    apt-cache search unelibrairie // pour chercher une librairie que je pourrais puller avec apt-get install
       apt-get update // pour mettre a jour la liste des packages nouvellement installables c a d juste la liste.
     pour installer ksh sur Debian:
       sudo apt-get install ksh pdksh         Linkkshsflk
