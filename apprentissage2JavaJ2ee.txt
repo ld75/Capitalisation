@@ -1,4 +1,4 @@
-(?=.*detect)(?=.*encod)
+(?=.*ant)(?=.*plugin)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -620,7 +620,8 @@ reactjs : react.js + redux :
         document.getElementById('root')
       );
 
-docker : créer une image (executable)-> builder ->image devient container qd est runné(!=VM. Une VM virtual machine contient un OS. Un container est executé dans un OS: plusieurs containers peuvent s'executer dans un meme OS) quand est executee alors des config s'appliquent à lui-> déposer dans machine
+docker : créer une image (executable)-> builder ->image(classe) devient container(instance tourne par defaut en vase clos/fichiers et /ports) qd est runné(!=VM. Une VM virtual machine contient un OS. Un container est executé dans un OS: plusieurs containers peuvent s'executer dans un meme OS) quand est executee alors des config s'appliquent à lui-> déposer dans machine
+                    |_populaires:https://hub.docker.com/search?q=&type=image du coup faire run payara/micro par exemple
   continuer à lire https://docs.docker.com/get-started/part2/#share-your-image
   installer docker: sudo apt-get update puis 
     avoir docker CE(community edition) ou EE(entreprise edition) recuperable sur store.docker.com
@@ -631,11 +632,15 @@ docker : créer une image (executable)-> builder ->image devient container qd es
     -Services // defini comment le container se comporte
     -Container // mon executable
     bas
+  docker images // liste des images du repository
   docker image ls // LINKdckrimgls liste les images que j'ai cree. Ajouter --all si je veux voir aussi les images qui run
+  docker ps -a // pour voir la liste de tous les containers (en cours de run et pas)
   docker container ls // liste les containers qui tournent qui sont en cours d'execution 
-  Dockerfile= fichier docker: Défini ce qui est dans mon environnement et qui va rentrer dans mon container. Ordre des commandes pour builder mon image(mettre des trucs dedans):execution du haut vers le bas. haut:ce qui bouge le moins. Bas ce qui change le plus car docker utilise un cache.
-        FROM node:x.x.x-alpine OU python:2.7-slim OU...// sur quoi le docker est installé ? quel OS OU BIEN une image docker si je veux l'etendre (voir LINKxlxlx puissant disent-ils) 
-        WORKDIR /un/path/DANSMONContainerDocker/PASdans/monOS/ 
+  Dockerfile= bien l'appeler "Dockerfile" fichier docker: Défini une image à partir d'une image source. A ecrire apres avoir testé sur un container l'enchainement des commandes qui marchent grace à docker exec. puis ecrire ici les commandes pour builder mon image(mettre des trucs dedans):execution du haut vers le bas. haut:ce qui bouge le moins. Bas ce qui change le plus car docker utilise un cache.
+        FROM image:tag donc node:x.x.x-alpine OU python:2.7-slim OU...// image docker de base quel OS OU BIEN une image docker (couche 0 = layer 0 de l'image) si je veux l'etendre voir LINKxlxlx  
+        WORKDIR /un/path/DANSMONContainerDocker/PASdans/monOS/ (couche 1 = layer 1 de l'image)
+        RUN apt-get update (couche 2 = layer 2 de l'image)
+        RUN apt-get install -y unelibrairie      (couche 3 = layer 3 de l'image) // -y pour que lors du build docker reponde automatiquement YES à toute question interactive survenant pendant l'apt-get install: si j'ai erreur returned a non-zero code: 1
         RUN apk update && apk add unpacket  // commandes linux executees. si LINKxlxlx ca modifie l'image docker comme une extension
         RUN npm install --quiet // par exemple.
         RUN pip3 install numpy // par exemple. Commande pip3 qui installe numpy dans mon container.
@@ -654,28 +659,63 @@ docker : créer une image (executable)-> builder ->image devient container qd es
           web: // premier service = 1 container
             build: . (tu te buildera à la racine du container docker (?)
             command: npm run // overrite CMD ci dessus: en general la commande ici sert à demarrer un serveur
-          postgres: // deuxieme service = 1 container                                                                                                                                                                                                                                                                                                                                                                       _ce nom peut etre lu grace à "docker image ls" voir LINKdckrimgls
-  docker build -t(pour tag) unnomquejedonneamoncontainer /pathOuEstDockerfile(. par ex si j'y suis)// Creer mon container docker qui rentre dans la liste. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto
-  docker run -it(pour interactif voir LINKjgjgjg) --rm (pour supprimer le container une fois que son execution est terminee:du coup il ne reste que l'image qui run je crois) -e"nomDuneSystem.PropertySiJeVeux=savaeleur" --name=facultatifUnAutreNomJeCroisQueJeDonneAMonContainer -d (pour executer en background) -p 80:8080 -p 443:8443 nomDeMonConteneurAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path Dans mon container du coup voir l'option -v)// demarrer un contenur à partir de son image. En Foreground si je fais ctrl+c (unix seulement) ça kill le process
-                                  -p portdeOS:portOuvertduContainer(je peux en mettre plusieurs)                                                                                                                                  |_peut etre un truc que Docker recupere automatiquement dans le repository docker sur le net (comme une dependance maven)                      
-  docker run -it --name=facultatifUnAutreNomJeCroisQueJeDonneAMonContainer -d (pour executer en background) -p 80:8080 -p 443:8443 nomDeMonConteneurAExecuter // demarrer un contenur à partir de son image. En Foreground si je fais ctrl+c (unix seulement) ça kill le process
-                                  -p portdeOS:portOuvertduContainer(je peux en mettre plusieurs)
-  docker run -it -v $(pwd):/ext-mount --rm unicon/shibboleth-idp init-idp.sh (-v...c'est l'option volume. Car Le container n'a pas accès au repertoire du host. donc $(pwd) est le repertoire courant où est le container. Monte moi ce repertoire dans le repertoire /ext-mount dans mon container)
-  docker log facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomDeMonConteneurAExecuter // a faire apres avoir fait run pour afficher les logs
-  docker history facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomDeMonConteneurAExecuter // pour afficher l'historique d'ajout de ce conteneur 
+          postgres: // deuxieme service = 1 container
+  docker build -t(pour tag) unnomquejedonneamoncontainer:untag /pathOuEstDockerfile(. par ex si j'y suis et -f DocerfileToto si j'y su is mais que le nom n'est pas "Dockerfile")// Creer mon container docker qui rentre dans la liste repository d'images. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto
+  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e"nomDuneSystem.PropertySiJeVeux=savaeleur" --name=facultatifUnAutreNomQueJeDonneAMonContainer -d (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement) nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container
+                                  -p portdeOS:portOuvertduContainer(je peux en mettre plusieurs)                                                                                                                                                                                                                                                             |_ce nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con                                                                                                                                                                                      |_-v $(pwd):/ext-mount //Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container)
+  docker start -ia(comme -it avec run) nomduconteneurARedemarrer // existe aussi docker stop nomduconteneur ou idduconteneur pour stopper un conteneur
+  docker inspect nomduconteneur ou nomduneimage // pour avoir plein de details infos donnees exposedPorts sur mon conteneur ou mon image                                  
+  docker log( avec s ?) -f(comme tail -f)facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomD'uneImageAExecuter(en cours d'execution) // a faire apres avoir fait run pour afficher les logs
+  docker attach nomduconteneur ou permierscharDuIdDuConteneur // pour se rattaché à un conteneur demarré en backgroud LINKlgkezoiur
+  docker history facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomD'uneImageAExecuter(qui a un conteneur) // pour afficher l'historique d'ajout de ce conteneur 
   docker container stop IDDuContainer // pour stopper l'execution d'un container (par son ID ça marche mieux voir donc la liste.)
-  docker rm -f facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomDeMonConteneurAExecuter// pour le supprimer.
+  docker rm -f facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomD'uneImageAExecuter(qui est en cours d'execution dans un conteneur)// pour le supprimer.
   
-  docker exec -it idp_jetty bash // LINKjgjgjg: la commande bash est executée dans le container qui demarre en mode -it(interactif) donc du coup je vais avoir le prompt bash DANS mon container. De la si j'execute top je ne vois que les process qui tournent DANS le container            
+  docker exec -it idp_jetty bash // LINKjgjgjgaba: execute une commande dans un conteneur déja actif. ici la commande bash est executée dans le container qui demarre en mode -it(interactif) donc du coup je vais avoir le prompt bash DANS mon container. De la si j'execute top je ne vois que les process qui tournent DANS le container
+        de là je peux faire du apt-get pour installer d'autres librairies si besoin. 
+        ensuite regarder aussi sur le hub.docker la doc de l'image si je veux enrichir cette image.            
   registry
       repository1
-                 imagedocker:tag1 
-                 imagedocker:tag2...
-      repository1
-                 imagedocker:tag1
-                 imagedocker:tag2...
-                 
-                 
+                 imagedocker1:tag1 
+                 imagedocker1:tag2...
+      repository2
+                 imagedocker2:tag1
+                 imagedocker2:tag2...
+  volumes managés: permettent de copier/d'exporter d'avoir en synchro des repertoires/fichier du conteneur vers l'OS (c'est synchro entre les deux meme si conteneur est off)
+      docker volume create monvolumemanagé // creer un volume managé sur l'OS hote
+      docker volume ls // lister les volumes manages
+      docker volume inspect // inspecter un volume managé: savoir où il se trouve sur l'OS hote exemple /usr/moncul
+      docker run -v monvolumemanagé:/path/du/conteneurcontenant/deja/des/trucs    
+                        du coup tout ce qui est dans le conteneur /path/du/conteneurcontenant/deja/des/trucs se retrouve synchro avec le path /usr/moncul et c'est persistant.         
+    docker compose : toujours regarder les doc du hub pour bien utiliser les images standards
+            fichier docker-compose.yml // ecrire que en ascii sans espaces.
+                version: "3"
+                services: //contient la liste des conteneurs dont on a besoin
+                    nomdemonservice1: // nom unique  
+                        image: nomdemonconteneur1:sontag
+                            ports:
+                                - 80:80  // quand on met - c'est parce que c'est une liste
+                                - 81:80  // comme pour -p (cote hote:cote conteneur)
+                            environment:
+                                - UNE_VARIABLE1=lavaleur1
+                                - UNE_VARIABLE2=lavaleur2
+                                - UNE_VARIABLE3=nomdemonservice2 // on peut avoir ca si nomdemonservice1 accede à nomdemonservice2
+                            networks:
+                                - unreseaubridgé   
+                    nomdemonservice2:
+                        image: blabla:2.0
+                            networks:
+                                - unreseaubridgé
+                # commentaire
+                volumes:  //falcultatif
+                networks: //falcultatif                
+                    unreseaubridgé: // je crée un reseau brigé qui est utilisé sur les 2 services dessus pour qu'ils communiquement
+            executer sur l'emplacement de ce fichier:
+                docker-compose up -d // -d pour executer en background sinon il garde le prompt et Ctrl+C kill le process
+                docker-compose logs -f pour voir les logs comme un tail -f
+                docker-compose stop // arret du run mais ne supprime pas les conteneurs
+                docker-compose start// demarre les conteneurs arretés
+                docker-compose down // attention, supprime tous les conteneurs et images sauf les volumes                                        
 visualstudiocode :editeur:
   acceder au fichier trouver: ctrl+p
 gource : annimation de git
@@ -1084,6 +1124,10 @@ position des accolades a la ligne code format
 pour faire un jar directement sans passer par maven: 
   file>projectStructure>Artifacts>ajouter jar (ne pas choisir "empty") et parametrer. Pour le builder: Build> BuildArtifact
 voir les logs git vcs: alt+9
+svn:
+    parcourir:
+    >VCS>BrowseVCSRepository>BrowseSubersionRepository:
+     >VCS>enable version control integration, choisir svn, j'ai du decocher "use command line client" pour me connecter au reseau hr
 changer de compte user svn deconnecter: 
             File>Settings>Subversion>Clear Auth Cache
 svn disconnect: installer le plugin pour ça.
@@ -1096,8 +1140,6 @@ svn disconnect: installer le plugin pour ça.
 git pull tous les projets/modules en une seule fois VCS>Update projects... // il ne fait que fetch. Penser à cliquer ensuite dans l'onglet VCS du bas pour voir ce qui se passe sinon suis aveugle. Il faudra faire pull après!(voir les fichiers D://git/pull.xls et D://git/pull.bat). 
 si j'ai erreur source release 1.7 requires target release 1.7
           mettre pareil dans settings>build,execution,depl>compiler>javacompiler; projectstructure>project; projectstructure>modules>sources; dans le pom maven;
-svn: >VCS>BrowseVCSRepository>BrowseSubersionRepository:
-     >VCS>enable version control integration, choisir svn, j'ai du decocher "use command line client" pour me connecter au reseau hr
 si je n'arrive pas à cloner un projet git directement avec intellij (a cause erreur password): cmd windows, me placer dans le bon repertoire, faire un git clone. Revenir sur intellij>settings>VersionControl>ajouter (+) le path du projet dans la liste.           
       pour commiter un nouveau projet: VCS > Import into VersionControl > share project into subversion...>Atention, là je peux choisir le repository mais si je ne fais que ça il va copier les sous repertoires de mon projet donc il faut appyer sur + et mettre le repository+/RepertoireDuProjet (meme si il fait une erreur rouge continuer comme ça)
 rafraichir refresh librairies gradle double cliquer sur build.gradle ou
@@ -1122,7 +1164,7 @@ convertir le projet en projet maven:
 ajouter un module equivaut a importer un projet dans le worskpace: module intellij: project structure> "+" importer > choisir Maven ou Gradle sinon pas bon si je choisis "from existing sources" à priori
   main/java=source
   test>java = test
-voir les windows cote a cote split au millieu comparer comparaison
+voir les windows cote a cote split au milieu comparer comparaison
       clique droit sur tab de editeur > split vertically horizontally        
 trouver tous les todos: alt+6 . pour voir les fixme faire settings>todos>Filter> rajouter fixme
 buildpath du projet: file>project structure
@@ -1233,10 +1275,14 @@ OCR : image to texte :
   http://www.onlineocr.net/support/AboutOnlineOCR.aspx
   il accepte les gros jpeg 12qualite <4.1Mo
 
-microprofile :
+microprofile : microprofiles : microprofile : 
+    mode standalone server:on reste sur un seul serveur et une seule jvm
+    mode domain operating: plusieurs jvm(serveur) le "domain controller" gère les autres controlleurs qui peuvent être physiquement ailleurs
+    le serveur peut etre configuré en java+jms plutot qu'avec un gui
   ajoute des urls:
-    healthcheck
-    openapi (plus besoin de swagger)
+    config rafraichie automatiquement pendant le run
+    healthcheck+mphealth:remplace les nodes Ko automatiquement
+    openapi=opentracing (plus besoin de swagger)
     nouvelles annotations:
       @CircuitBreaker(xxx) // permet de definir un timeout, delay etc...
       @Fallback(fallbackmethod="nomdelamethodequivas'executersiKO")
@@ -2200,7 +2246,7 @@ Cycle de vie du CDI bean:
               – @SessionScoped
               – @ApplicationScoped // (par defaut) sur la classe. le bean est utilise pourl les proprietes generales de l'appli: ex: listes deroulantes qu'on voit tout le temps Attention ne s'initialise pas avnat d'etre injecté
                                 pour dedans executer des trucs qui vivront tant que l'application tourne mais pour l'initialiser en meme temps que le container, voir LINKobsgdgdgz
-                                public void demarrage(@Observes @Initialized(ApplicationScoped.class) Object init) // ou @Destroyed si c'est quand ca s'eteint. LINKobsgdgdgz
+                                public void demarrage(@Observes @Initialized(ApplicationOuAutreScoped.class) Object init) // ou @Destroyed si c'est quand ca s'eteint. Ne prennent que des Scope LINKobsgdgdgz
                                 {(...)
               – @ViewScoped
               – @CustomScoped pour que les beans soient stockees dans le FacesContext (qui a une duree de vie plus courte que RequestScope donc FC est plus rapide, bouffe moins de memoire)
@@ -2254,7 +2300,7 @@ try (SeContainer container = initializer.disableDiscovery().initialize()) { cont
         public void processQualifiedPayload(@Observes @Named("tutu") Payload event) {} // ne sont executés que si LINKkfkgggg
         public void processQualifiedObject(@Observes @Named("tutu") Object event) {} // ne sont executés que si LINKkfkgggg
         		
-securite :(JSR375) plus besoin d'utiliser web.xml (sur?): les annotations font pareil.
+securite : security :(JSR375) plus besoin d'utiliser web.xml: les annotations font pareil.
        AFAIRE
        https://javaee.github.io/tutorial/security-api004.html
        https://javaee.github.io/tutorial/security-intro003.html#BNBXE->https://javaee.github.io/tutorial/security-javaee002.html#GJGDI
@@ -2322,8 +2368,8 @@ securite :(JSR375) plus besoin d'utiliser web.xml (sur?): les annotations font p
             @DeclareRoles({ "role1", "role2bar", "kaz","foo","supervisor" }) //declare juste les roles que je vais utiliser dans cette classe. peut etre mis sur classe ou methode(override classe alors)  possible utilisser aussi avec:voir LINKdeclarereor
             public class MaServlet extends HttpServlet {
             
-config de la base de donnée donnee : en jee
-    en annotations:(a mettre sur une classe @Statefull je crois)
+config de la base de donnée donnee: en jee
+    en annotations:(a mettre sur une classe @Statefull en tout cas sur un EJB et pas sur CDI)
       @DataSourceDefinitions( //facultatif mais...                                                 
       value = { //...du coup possible en enchainer plusieurs et je peux avoir plusieurs datasource
         @DataSourceDefinition(name="java:global/MyApp/MyDataSource1", // ce nom la est cree ici et sera utilise ailleurs. commence par java:app (scope dans cette appli seulement) java:comp (??) java:module (??) java:global (disponible dans toutes les applications déploiees sur ce serveur)
@@ -2510,6 +2556,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                               return "hello.jsp"; LINKvuejslskjf
                           }
                       }
+        
 freemaker :
       <html>
           <head>
@@ -4614,6 +4661,15 @@ pour selectionner un nextSibing d'un element
          Sinon utiliser plutot nextElementSibling si on veut exclure les textes
           
 faire disparaitre un div layer au premier plan pour agir derriere: (voir javascript)
+mettre au milieu un div centrer direct:
+        width: 23%;
+        height: 14%;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
 pour centrer direct:
   flexboxes : flex :flex-boxes :   // genial car peut etre complettement independant de la source html!
   .parent
@@ -5795,7 +5851,9 @@ Spring : XML STYLE
                 destroy-method="disconnect" scope="singleton" depends-on="log4jInitialization">
                 <constructor-arg ref="openhr.session.configuration" /> // Attention ça c pas un argument de la classe HRSessionImpl mais c l'argument de la methode createSession du factory openhr.session.factory
                 </bean>
-
+        spring security :
+                <http pattern..... ca c'est l'équivalent de authentificationmecanism sur JEE mais ici je peux regexp les urls avec "pattern" si pas de "pattern" c'est equivalent à "pattern=*" 
+        
       BOF.......Ca c pour JSF :
       difference entre diese et dollar: #{}: evaluation pouvant etre différé ${}: evaluation instantanéé
               FacesContext context = FacesContext.getCurrentInstance();
@@ -7933,7 +7991,7 @@ si j'ai erreur
 	Caused by: java.sql.SQLException: The server time zone value 'Paris, Madrid (heure d??t?)' is unrecognized or represents more than one time zone.
 		j'ai eu beau avoir fait ça ca n'a pas marché: 
 					SET time_zone = '+00:00';
-					SET @@global.time_zone = '+00:00';
+					SET @@global.time_zone = '+00:00'; // ca ca marche mais faut le refaire a chaque fois que je demarre la base de donnee
 					SET @@global.time_zone = 'Europe/Helsinki';
 					SELECT @@global.time_zone;
 					SELECT @@session.time_zone LIMIT 0, 1000
@@ -7975,14 +8033,14 @@ ajouter une colonne
 ALTER TABLE VPA01_STUDENT ADD VPA01_PHOTO VARCHAR(20) CHARACTER SET latin1 COLLATE latin1_bin DEFAULT NULL AFTER VPA01_PRENOM;
 ALTER TABLE VPA01_STUDENT MODIFY VPA01_PHOTO VARCHAR(20);
 
-pour supprimer les retours chariot du resultat:
+pour supprimer suprimer les retours chariot du resultat:
     select ... REPLACE(ps_product_lang.description_short, '\n','') descr ....
 pour concatener plusieurs lignes en une seule: (equivalent de listagg sur oracle): group_concat
         si il est trop limite en length alors faire: 
                   SET SESSION group_concat_max_len = 1000000; (ne s'applique que à la session actuelle)
         select group_concat(MyString separator ', ') as myList from table
         where id < 4
-        exemple avec group by : 
+        exemple avec group by: 
         select group_concat(ps_attribute_lang.name separator ', '), ps_attribute.id_attribute, ps_product.id_product, ps_product.reference, ps_product_attribute.ean13 , ps_product_attribute.id_product_attribute
         from ps_product_attribute
         inner join ps_product on ps_product.id_product = ps_product_attribute.id_product
@@ -8032,7 +8090,7 @@ pour se connecter a mysql:
        USE `ple_db_01`;
 en mysql to_date c'est:
      STR_TO_DATE
-     exemple : mysql> SELECT STR_TO_DATE('01,5,2013','%d,%m,%Y');-> '2013-05-01'
+     exemple: mysql> SELECT STR_TO_DATE('01,5,2013','%d,%m,%Y');-> '2013-05-01'
                 mysql> SELECT STR_TO_DATE('May 1, 2013','%M %d,%Y');-> '2013-05-01'
                 mysql> SELECT STR_TO_DATE('May 1, 2013 23:11:22','%H:%i:%s');-> '23:11:22' (heures minutes secondes)
 comparer une date en mysql: 
@@ -8071,7 +8129,7 @@ pour rechercher underscore dans un champ: (caractère special)
 		select * from TB0006_TRANSPORTEUR where NOM_TRANSPORTEUR like '%\_%'
 DATEDIFF()
 		peut etre qu'il ne vaut mieux pas utiliser cette methode bugguee?
-TIMESTAMPDIFF : pour trouver la diff entre deux dates
+TIMESTAMPDIFF: pour trouver la diff entre deux dates
 				TIMESTAMPDIFF(interval,datetime_expr1,datetime_expr2)
 				 Retourne la difference entière entre les expressions datetime_expr1 et datetime_expr2 (datetime_expr2-datetime_expr1), 
 				 de format DATE et DATETIME.
@@ -8081,7 +8139,7 @@ TIMESTAMPDIFF : pour trouver la diff entre deux dates
 						mysql> SELECT TIMESTAMPDIFF(YEAR,'2002-05-01','2001-01-01'); -> -1
 Si on a une exception Unlock timout exception:
 		On peut unlocker les tables en faisant: 			UNLOCK TABLES
-les plus petits resultats de chaque groupe :
+les plus petits resultats de chaque groupe:
       select type, min(price) as minprice
         from fruits
         group by type;
@@ -8095,7 +8153,7 @@ select max:
 		      Solution: 
 		      select ID_VERSION, ID_ACTION from TB0009_ACTION where ID_ELEMENT =14 and STATUS = -1 order by id_version desc limit 1 
 si j'ai l'erreur Lock wait timeout exceeded; try restarting transaction
-			soit on fait ca : 
+			soit on fait ca: 
 				1/ Le problème dont tu me parles n'est pas lie à "TransactionDeadlockDetectionTimeout" qui est un paramètre NDBD (que nous n'avons pas deploye chez Renault à ma connaissance).
 				2/ Le paramètre dont tu parles est lie au paramètre innodb_lock_wait_timeout.
  				3/ Le parametrage se fait dans /etc/my.cnf dans ta version actuelle de MySQL et est positionnee à 120 s (50 s est la valeur par defaut). Pour le modifier il faut effectuer un A/R de l'instance concernee.
@@ -8109,15 +8167,19 @@ si j'ai l'erreur Lock wait timeout exceeded; try restarting transaction
 						TransactionDeadlockDetectionTimeout=5000 ou 10000
 						HeartbeatIntervalDbDb=3000
 						HeartbeatIntervalDbApi=3000 
-cle : key : index : 
+cle: key: index: 
 		il est inutile de mettre des index sur des cles car elles sont dejà indexees. Il faut mettre des index sur les champs plutot numerique ou textuels mais pas plus longs que 100 char
 		explain select blabla mon select permet de savoir comment mysql gere la requete vis a vis des index.
-substrring : 
+substrring substring: 
       SUBSTR(monstring,positioncommencepar1,length)
-indexof :   INSTR:
+indexof:   INSTR:
         SELECT INSTR('foobarbar', 'bar');
         -> 4
-
+    supprimer une base de donnée:
+        drop database nomdemadatabase
+si erreur 1136 column count doesn't match value count at row 
+        il me manque/j'ai trop de champs dans ma requete
+        
 H2 : voir LINKldkjgieieioruz
 client H2: http://www.h2database.com/html/main.html
 h2 : embedded database:
@@ -11735,7 +11797,7 @@ ant : avec maven: pour par exemple renommer un fichier apres coup touch toucher 
     </target>
         <target name="renameServiceWorkerFile"> //deplacer renommer un fichier avec ant et maven
           <move todir="../../" includeemptydirs="false">
-              <fileset dir="../../"/>
+              <fileset dir ou file="../../"/>
               <mapper type="glob" from="service-worker-v*.js" to="service-worker-v${version}.js"/>
           </move>
     </target>
@@ -19994,7 +20056,7 @@ fonctionnement des annotations :
               @NonBinding // AFAIRE.. c'est quoi?
               @Inherited //facultatif. SI je met ça alors les sous classes de la classe annotée se comporteront comme leur classe parente annotée
               @Constraint (validatedBy=ClasseContenantLeCodeDeMonValidateurBean.class) //facultatif. Mais si on l'utilise voir LINKannotconstraintvalidator
-              @Target ({ElementType.METHOD, ElementType.FIELD...}) //obligatoire.  ElementType.ENTITY (c'est pour une anotation d'une classe); ElementType.TYPE pour les interfaces ou les classes ; ElementType.CONSTRUCTOR: se metra donc seulement au dessus du constructeur d'une classe
+              @Target ({ElementType.METHOD, ElementType.FIELD...}) //obigatoire si n'herite pas d'une autre annot.  ElementType.ENTITY (c'est pour une anotation d'une classe.. heu existe pas); ElementType.TYPE pour les interfaces ou les classes ; ElementType.CONSTRUCTOR: se metra donc seulement au dessus du constructeur d'une classe
               @Retention(RetentionPolicy.RUNTIME)  // obligatoire. RetentionPolicy.SOURCE ou COMPILE: l'annotation disparait apres compilation. ca ne sert que pdt les devs. RUNTIME: l'annotation est toujours là apres compilation et joue dans l'execution
               public @interface MonValidateurBean
               {
@@ -25364,6 +25426,7 @@ lvm :
     
 pour installer des programmes: applications: (le repository miroir est je crois sources.list) (le repository miroir est je crois sources.list)
     avec apt : apt-get : (sinon il ya aussi la commande yum)
+    apt-cache search unelibrairie // pour chercher une librairie que je pourrais puller avec apt-get install
       apt-get update // pour mettre a jour la liste des packages nouvellement installables c a d juste la liste.
     pour installer ksh sur Debian:
       sudo apt-get install ksh pdksh         Linkkshsflk
