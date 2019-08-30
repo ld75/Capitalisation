@@ -25300,7 +25300,8 @@ rsync :
         rsync -avrun /var/www/ /srv/data/var/www/ //n pour tester
     rsync -avrun (archive verbose update_cad n'efface pas les plus recents sur la destination n pour faire juste un test /mon/repertoireSource/ monServeurDestinataire:/monRepertoire/Destinataire (NE PAS mettre / ni /* à la fin de dest sinon il syncrho pas tout) (le slash après le source folder c pour dire de ne pas copier le dernier folder dans dest sinon il mettra repertoireSOurce dans Destinataire
     rsync -vru --list-only --exclude 'sarge' --exclude 'theatre' /cygdrive/c/Users/Laurent/Documents/documents/ /cygdrive/e/Mesdocuments
-    --list-only  il ne fait meme pas un n mais il affiche juste (n il fait une simulation) ATTENTION JE CROIS QUIL NE DIT PAS TOUJOURS VRAI MIEUX VAUT UTILISER -n 
+    --list-only  il ne fait meme pas un n mais il affiche juste (n il fait une simulation) ATTENTION JE CROIS QUIL NE DIT PAS TOUJOURS VRAI MIEUX VAUT UTILISER -n
+    --delete : apparemment sert à supprimer a droite les fichiers non présents à gauche 
     --ignore-existing pour ne rajouter que les orphelins a gauche.
     -a archive: copie les permissions // attention ne jamais mettre ca dans windows sinon ailleurs pourrais pas ouvrir le fichier peut etre
     --exclude 'un/path ou nomrepertoire'
@@ -25331,7 +25332,8 @@ rsync :
                   rsync -avu --exclude sons --exclude proc --exclude tmp root@www.wenhuaduverge.com:/srv/data /cygdrive/f/BackupServeurGandiDemeterCASSE/srv/data                                                                                                                                                                                                                                                                                                                                                 
                     Vers Doroty
                     rsync -vr /cygdrive/f/Mesdocuments/ /cygdrive/e/documents/
-                      rsync -vr --exclude 'PHOTOS' --exclude 'Karie' --exclude 'theatre' --exclude 'icecream' --exclude 'avance services' --exclude 'AUDIOLOOPPLUS2' --exclude 'AUDIOLOOPPLUS' --exclude 'AH1*' --exclude 'PE1*' --exclude 'ImagesPhotos' --exclude '*.avi' --exclude '*.MOD'  --exclude 'Cakewalk*' /cygdrive/f/Mesdocuments/ /cygdrive/e/documents
+                      sync -vr --exclude 'PHOTOS' --exclude 'Karie' --exclude 'theatre' --exclude 'icecream' --exclude 'avance services' --exclude 'AUDIOLOOPPLUS2' --exclude 'AUDIOLOOPPLUS' --exclude 'AH1*' --exclude 'PE1*' --exclude 'ImagesPhotos' --exclude '*.avi' --exclude '*.MOD'  --exclude 'Cakewalk*' --exclude 'Chinoisfacile' --exclude 'IntelliJ IDEA Community Edition 2017.2.2' --delete /cygdrive/e/Mesdocuments/ /cygdrive/d/documents
+                      rsync -vr --exclude 'PHOTOS' --exclude 'Karie' --exclude 'theatre' --exclude 'icecream' --exclude 'avance services' --exclude 'AUDIOLOOPPLUS2' --exclude 'AUDIOLOOPPLUS' --exclude 'AH1*' --exclude 'PE1*' --exclude 'ImagesPhotos' --exclude '*.avi' --exclude '*.MOD'  --exclude 'Cakewalk*' /cygdrive/e/Mesdocuments/ /cygdrive/d/documents
                       rsync -vr --exclude 'testcubase' --exclude '*.au' /cygdrive/f/MaMusique/ /cygdrive/e/Mamusique 
                     sauvegarde de wenhua
                       rsync -vru --exclude 'default-bootstrap' --exclude 'prestashop' --exclude 'prestashopINUTILE' --exclude 'themeconfiguratorINUTILE' --exclude 'wpzoom' --exclude 'zoom' --exclude 'themeconfigurator' --exclude '.htaccess' --exclude 'Install_PrestaShop.html' /cygdrive/f/www/WenhuaDuvergeShop/toutNEW /cygdrive/e/www/WenhuaDuvergeShop/WenhuaDuvergeShop/toutNEW
