@@ -661,9 +661,11 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
             command: npm run // overrite CMD ci dessus: en general la commande ici sert à demarrer un serveur
           postgres: // deuxieme service = 1 container
   docker build -t(pour tag) unnomquejedonneamoncontainer:untag /pathOuEstDockerfile(. par ex si j'y suis et -f DocerfileToto si j'y su is mais que le nom n'est pas "Dockerfile")// Creer mon container docker qui rentre dans la liste repository d'images. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto
-  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e"nomDuneSystem.PropertySiJeVeux=savaeleur" --name=facultatifUnAutreNomQueJeDonneAMonContainer -d (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement) nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container
-                                  -p portdeOS:portOuvertduContainer(je peux en mettre plusieurs)                                                                                                                                                                                                                                                             |_ce nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con                                                                                                                                                                                      |_-v $(pwd):/ext-mount //Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container)
-  docker start -ia(comme -it avec run) nomduconteneurARedemarrer // existe aussi docker stop nomduconteneur ou idduconteneur pour stopper un conteneur
+  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e"nomDuneSystem.PropertySiJeVeux=savaeleur" --name=facultatifUnAutreNomQueJeDonneAMonContainer -d (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement) -v $(pwd)(ou un repertoire du host os. S'il n'existe pas il est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container) nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+                                  -p portdeOS:portOuvertduContainer(je peux en mettre plusieurs)                                                                                                                                                                                                                                                             |_ce nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con                                                                                                                                                                                      
+  docker start -ia(comme -it avec run) nomduconteneurARedemarrer // existe aussi docker stop nomduconteneur ou idduconteneur pour stopper un conteneur                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
   docker inspect nomduconteneur ou nomduneimage // pour avoir plein de details infos donnees exposedPorts sur mon conteneur ou mon image                                  
   docker log( avec s ?) -f(comme tail -f)facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomD'uneImageAExecuter(en cours d'execution) // a faire apres avoir fait run pour afficher les logs
   docker attach nomduconteneur ou permierscharDuIdDuConteneur // pour se rattaché à un conteneur demarré en backgroud LINKlgkezoiur
@@ -683,7 +685,7 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
                  imagedocker2:tag2...
   volumes managés: permettent de copier/d'exporter d'avoir en synchro des repertoires/fichier du conteneur vers l'OS (c'est synchro entre les deux meme si conteneur est off)
       docker volume create monvolumemanagé // creer un volume managé sur l'OS hote
-      docker volume ls // lister les volumes manages
+      docker volume ls // lister les volumes manages (leur nom= repertoireOSOuEstMonProjetDocker_nomduvolumemanagé)
       docker volume inspect // inspecter un volume managé: savoir où il se trouve sur l'OS hote exemple /usr/moncul
       docker run -v monvolumemanagé:/path/du/conteneurcontenant/deja/des/trucs    
                         du coup tout ce qui est dans le conteneur /path/du/conteneurcontenant/deja/des/trucs se retrouve synchro avec le path /usr/moncul et c'est persistant.         
@@ -701,13 +703,19 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
                                 - UNE_VARIABLE2=lavaleur2
                                 - UNE_VARIABLE3=nomdemonservice2 // on peut avoir ca si nomdemonservice1 accede à nomdemonservice2
                             networks:
-                                - unreseaubridgé   
+                                - unreseaubridgé (AFAIRE reprendre cours sur reseaubridgés sur udemy docker)
+                            volumes:
+                                - /un/path/host:/un/path/du/container
+                                - unnomdevolumemanagé:/un/path/du/container2 LINKaze
+                            restart: always(redemarre ce container toujours quand on fait docker-compose up) ou no (redemarre jamais ce container) ou unless-stop(dedemarre ce container sauf si on a fait docker-compose stop avant (sur?)                                   
                     nomdemonservice2:
                         image: blabla:2.0
                             networks:
                                 - unreseaubridgé
                 # commentaire
-                volumes:  //falcultatif
+                volumes:  //falcultatif utile que pour les volumes managés
+                    unnomdevolumemanagé: // je declare ici des volumes bridgés qui peuvent etre utilisés là LINKaze
+                    auautrevolumemanagé:
                 networks: //falcultatif                
                     unreseaubridgé: // je crée un reseau brigé qui est utilisé sur les 2 services dessus pour qu'ils communiquement
             executer sur l'emplacement de ce fichier:
@@ -715,7 +723,8 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
                 docker-compose logs -f pour voir les logs comme un tail -f
                 docker-compose stop // arret du run mais ne supprime pas les conteneurs
                 docker-compose start// demarre les conteneurs arretés
-                docker-compose down // attention, supprime tous les conteneurs et images sauf les volumes                                        
+                docker-compose down // attention, supprime tous les conteneurs et images sauf les volumes
+                docker-compose down -v// attention, supprime tous les conteneurs, images et volumes managés                                        
 visualstudiocode :editeur:
   acceder au fichier trouver: ctrl+p
 gource : annimation de git
@@ -915,7 +924,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       binder avec un repository distant: LINKenvoiyer
         git remote -v // etre dans mon projet. Sert à savoir à quel repo distant le projet est lie pour les pushpull renvoit le nom du bind (nom=origin)
         git remote rm origin(distant) // pour debinder mon projet avec le repository "origin" distant
-        git remote add origin(si c le repo source) ou upstream (si c'est un repo forké d'un repo source je crois) git@github.com:monusername/UnAutreRepository.git // (git@github.com facultatif) pour lier mon projet avec un repository. Je pourrais pusher et puller dessus (la premiere fois il faudra d'abord créer ce repository au meme nom sur github)
+        git remote add origin(si c le repo source) ou upstream (si c'est un repo forké d'un repo source je crois) git@github.com:monusername/UnAutreRepository.git // (git@github.com facultatif) pour lier mon projet avec un repository. Je pourrais pusher et puller dessus (la premiere fois il faudra d'abord créer ce repository au meme nom sur github mais sans le .git à la fin)
         git remote set-url --push origin svcsvnpr@gitlab.ca.cib:CCI/CIT/DIGITEAM/MyNews/$project # redefini le remote pour les push seulement vers un autre repository
       transferer le code par le reseau: (par defaut en https: il demande le user/pass)        
         git push origin masterOudevelopOuBrancheLocale //HEAD(origin)->ServeurDistantOuRepertoireQQpart(master ou develop) envoi sur le serveurOuRepertoireRepoQQpart pour merger avec le master: ça fetche+merge+commit là bas.
@@ -25313,7 +25322,8 @@ rsync :
         rsync -avrun /var/www/ /srv/data/var/www/ //n pour tester
     rsync -avrun (archive verbose update_cad n'efface pas les plus recents sur la destination n pour faire juste un test /mon/repertoireSource/ monServeurDestinataire:/monRepertoire/Destinataire (NE PAS mettre / ni /* à la fin de dest sinon il syncrho pas tout) (le slash après le source folder c pour dire de ne pas copier le dernier folder dans dest sinon il mettra repertoireSOurce dans Destinataire
     rsync -vru --list-only --exclude 'sarge' --exclude 'theatre' /cygdrive/c/Users/Laurent/Documents/documents/ /cygdrive/e/Mesdocuments
-    --list-only  il ne fait meme pas un n mais il affiche juste (n il fait une simulation) ATTENTION JE CROIS QUIL NE DIT PAS TOUJOURS VRAI MIEUX VAUT UTILISER -n 
+    --list-only  il ne fait meme pas un n mais il affiche juste (n il fait une simulation) ATTENTION JE CROIS QUIL NE DIT PAS TOUJOURS VRAI MIEUX VAUT UTILISER -n
+    --delete : apparemment sert à supprimer a droite les fichiers non présents à gauche 
     --ignore-existing pour ne rajouter que les orphelins a gauche.
     -a archive: copie les permissions // attention ne jamais mettre ca dans windows sinon ailleurs pourrais pas ouvrir le fichier peut etre
     --exclude 'un/path ou nomrepertoire'
@@ -25344,7 +25354,8 @@ rsync :
                   rsync -avu --exclude sons --exclude proc --exclude tmp root@www.wenhuaduverge.com:/srv/data /cygdrive/f/BackupServeurGandiDemeterCASSE/srv/data                                                                                                                                                                                                                                                                                                                                                 
                     Vers Doroty
                     rsync -vr /cygdrive/f/Mesdocuments/ /cygdrive/e/documents/
-                      rsync -vr --exclude 'PHOTOS' --exclude 'Karie' --exclude 'theatre' --exclude 'icecream' --exclude 'avance services' --exclude 'AUDIOLOOPPLUS2' --exclude 'AUDIOLOOPPLUS' --exclude 'AH1*' --exclude 'PE1*' --exclude 'ImagesPhotos' --exclude '*.avi' --exclude '*.MOD'  --exclude 'Cakewalk*' /cygdrive/f/Mesdocuments/ /cygdrive/e/documents
+                      rsync -vr --exclude 'PHOTOS' --exclude 'Karie' --exclude 'theatre' --exclude 'icecream' --exclude 'avance services' --exclude 'AUDIOLOOPPLUS2' --exclude 'AUDIOLOOPPLUS' --exclude 'AH1*' --exclude 'PE1*' --exclude 'ImagesPhotos' --exclude '*.avi' --exclude '*.MOD'  --exclude 'Cakewalk*' --exclude 'Chinoisfacile' --exclude 'IntelliJ IDEA Community Edition 2017.2.2' --delete /cygdrive/e/Mesdocuments/ /cygdrive/d/documents
+                      rsync -vr --exclude 'PHOTOS' --exclude 'Karie' --exclude 'theatre' --exclude 'icecream' --exclude 'avance services' --exclude 'AUDIOLOOPPLUS2' --exclude 'AUDIOLOOPPLUS' --exclude 'AH1*' --exclude 'PE1*' --exclude 'ImagesPhotos' --exclude '*.avi' --exclude '*.MOD'  --exclude 'Cakewalk*' /cygdrive/e/Mesdocuments/ /cygdrive/d/documents
                       rsync -vr --exclude 'testcubase' --exclude '*.au' /cygdrive/f/MaMusique/ /cygdrive/e/Mamusique 
                     sauvegarde de wenhua
                       rsync -vru --exclude 'default-bootstrap' --exclude 'prestashop' --exclude 'prestashopINUTILE' --exclude 'themeconfiguratorINUTILE' --exclude 'wpzoom' --exclude 'zoom' --exclude 'themeconfigurator' --exclude '.htaccess' --exclude 'Install_PrestaShop.html' /cygdrive/f/www/WenhuaDuvergeShop/toutNEW /cygdrive/e/www/WenhuaDuvergeShop/WenhuaDuvergeShop/toutNEW
