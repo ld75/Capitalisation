@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 (?=.*maven)(?=.*tomcat)
+=======
+(?=.*string)(?=.*vide)
+>>>>>>> c98809ad5801a7d1515d844c8709b969ef1f7a46
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -789,7 +793,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
     Première chose: parametrer mon git:
           gitconfig est sur 3 scopes: --local(par defaut) > --global(scope user) > --system(scope systeme windows)
                                     repertoireprojet/config  ~/.gitconfig               /etc/gitconfig
-          git config --global user.name mon_nom
+          git config --global ou --local ou --system user.name mon_nom
           git config --global user.email mon_mail
           git config --list // voir lire mes variables de configuration: d'abord ecrit les sytems puis global puis local qui override les autres
           git config --local credential.helper store //store pour lui dire de stocker en clair dans un fichier mon user/password  MAIS AU FINAL MARCHE PAS: voir ci dessous
@@ -821,6 +825,8 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       dupliquer/copier/recuperer un repository present sur le web en local. (en general c'est un fork que je clone si je me greffe à un projet existant)
         git clone https://username(facultatif):motdepasse(facultatifLesguillemetsdoiventEtreEchappeesPar\)@githubSuiteUrl.com/spring-projects/spring-security-oauth-javaconfig.git // le copie dans le repertoireLocal ou je suis tout le projet son histoire ses vieilles branches commitees.
         git clone https://scm.soprahr.com/scm/su/sample-edsn-usermanager.git nomdefacultatifmonprojetRepertoireQueJeLuiDemandeDeCreer
+        git clone unUserNameSur?@ungithubUrl:un/path/vers/un/.git
+        git clone --bare ....etc... fait pareil mais c'est un bare 
       dupliquer/copier/recuperer un repertoire-repository local vers mon nouvel espace de travail
         git clone D:/path/repertoireacloner (besoin peut etre faire commit dans ce repository(repertoireacloner) pour l'initialiser) 
     git init:
@@ -5901,7 +5907,7 @@ Spring : XML STYLE
                                                             <value>/WEB-INF/</value>
                                                           </property>
                                                           <property name="suffix">
-                                                            <value>.jsp</value>
+                                                            <value>.jsp</value> LINKvieresolkjdfa
                                                           </property>
                                                   </bean>
                                                   OU BIEN si je veux faire des views qui renvoient autre chose: pdf, xls etc... je rajoute ça: 
@@ -5942,8 +5948,16 @@ Spring : XML STYLE
                                                         		</bean>
                                                         	</mvc:interceptors> -->
 
-                            dans les jsp: 
-                                  <spring:message code="lacledansmesfichiermsg" text="default text" />
+                            dans les jsp:
+                             // pour faire un e checkbox
+                              <%@ taglib prefix="spring"	uri="http://www.springframework.org/tags"%>
+                              <form:checkbox  class="form-control" path="rciInternal"/> 
+                                  <spring:message code="la.cle.dans.mes.fichier.msg" text="default text" var="facultatifUneCleIciPourUtilisationDeCeLabelAilleursDansCetteJsp"/> // on utilise comme ça dans la jsp:${facultatifUneCleIciPourUtilisationDeCeLabelAilleursDansCetteJsp}
+                            //les champs du formulaire:
+                                <form:form id="blah" commandName="monbean" role="aquoicasert?"   method="post">
+                                    <spring:bind path="rciInternal"> //rciInternal est le champ de mon modele envoyé en java par ModelMap model.addAttribute("monbean", new BeanContenantLeChamprciInternal());
+                                            <form:checkbox  class="form-control" path="rciInternal"/>
+                                    </spring:bind>
                               en java recuperer le message i18n : 
                                     @RequestMapping(value = "/inputbadge", method = RequestMethod.POST//est GET par defaut, produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE)
                                     @ResponseBody
@@ -6096,25 +6110,42 @@ Spring : XML STYLE
                                 @RequestMapping(value="/monpath.html" ou "/welcome",method=RequestMethod.POST ou .GET ou method={ RequestMethod.GET, RequestMethod.POST }) //est GET par defaut. ou ("/welcome") ou ("/welcome/{parametre1}/{parametre2}") // url: /welcome/toto/titi. consumes = "multipart/form-data" ou consumes={"toto","titi",MediaType.APPLICATION_JSON_VALUE})
                                 ou 
                                 @GetMapping("/mon/path/{param1}") // c'est comme @RequestMapping avec methode get. param1 se retrouve dans @PathVariable
-                                public ModelAndView helloworld(@ModelAttribute("student1") Student student1, Error ou BindingResult sierrorlorsdubiding //bind les parametres de mon formulaire id="student1" avec les champs ayant un name:"toto" avec mon objet Student qui a une methode getsetToto. @Valid//pourPrendreEnCompteLesAnnotAuDessusDesGettersEtSettersDeMesBeansPojo(voir @Size) ou @RequestBody Object[]  request ou ObjetJavaAvecAnnotations ou LinkedMultiValueMap<String, Object>//pour recuperer du JSON ou du XML. request ou @RequestPart Map request ou @PathVariable("parametre1") String monparam1, @PathVariable("parametre2") String monparam2, @PathVariable Map<String,String> rePathVar)// @PathVariable c pour l'URL ex:x/y/z. ou @RequestParam(value="parametre1",defaultValue="siParametre1EstNullVide", required=true) String monparam1, @RequestParam("parametre2") int monparam2) @RequestParam c pour la request ex:?monparam2=x: pour un post ca se met comme ca dans le body du post: paramname+"="+paramvalue; @RequestParam Map<String,String> reqPar) // du coup j'ai reqPar.get("monParametre1"); reqPar.get("monParametre1");)
-                                                               ou                                               Bind avec n'importe quel type de var: date, arraylist etc...Meme les objets sous-jacents
-                                                               @Valid Student                                   si je veux personaliser mon binding il faut utiliser une methode annotee avec @InitBinder (voir LINKInitBinder)
-                                ou
-                                public String postCommentAgency(MultipartHttpServletRequest request, HttpServletResponse response){...
-                                {
-                                  if (sierrorlorsdubiding==true) // si erreurs lors du biding 
-                                  {
-                                             ModelAndView modv = new ModelAndView("leNomDeMaJsp");  grace au viewResolver (voir config spring au dessus LINKvrvvrvrvr)
-                                           return modv;
-                                    }
-                                  else{
-                                    ModelAndView modv = new ModelAndView("leNomDeMaJspDeMaViewEnFait");  grace au viewResolver (voir config spring au dessus LINKvrvvrvrvr)
-                                     INUTILE GRACE A @ModelAttribute-> //modv.addObject("student",student); <- inutile.
-                                                                        modv.addObject("monMessage","tataaaaa"+monparam1);
-                                                                        modv.addObject("monMessage",unObjetAvecDesGetters);
-                                    return modv;  // avec le viewResolver ca va afficher du coup: META-INF/leNomDeMaJsp.jsp
-                                    }
-                                }
+                                public ModelAndView helloworld(
+                                            //bind les parametres de mon formulaire à un objet java
+                                              HttpSession session, ModelMap model // du coup dans la methode si on fait model.addAttribute("newAccountFormAdmin", new NewAccountFormAdmin()); dans la jsp je peux mettre <form:form id="newAccountFormAdmin" commandName="newAccountFormAdmin"  role="form"   method="post"> et ça bind les champs de mon formulaire à l'objet NewAccountFormAdmin 
+                                           //bind les parametres de mon formulaire id="student1" avec les champs ayant un name:"toto" avec mon objet Student qui a une methode getsetToto.
+                                              @ModelAttribute("student1") Student student1, Error ou BindingResult sierrorlorsdubiding // Bind avec n'importe quel type de var: date, arraylist etc...Meme les objets sous-jacents. si je veux personaliser mon binding il faut utiliser une methode annotee avec @InitBinder (voir LINKInitBinder)  
+                                              ou
+                                              @Valid Student //pourPrendreEnCompteLesAnnotAuDessusDesGettersEtSettersDeMesBeansPojo(voir @Size) 
+                                              ou 
+                                              @RequestBody Object[]  request ou ObjetJavaAvecAnnotations ou LinkedMultiValueMap<String, Object>//pour recuperer du JSON ou du XML. request 
+                                              ou 
+                                              @RequestPart Map request 
+                                              ou 
+                                              @PathVariable("parametre1") String monparam1, @PathVariable("parametre2") String monparam2 //c pour l'URL ex:x/y/z. 
+                                              @PathVariable Map<String,String> rePathVar) // @PathVariable c pour l'URL ex:x/y/z. 
+                                              ou 
+                                           //@RequestParam c pour la request ex:?monparam2=x: pour un post ca se met comme ca dans le body du post: paramname+"="+paramvalue;
+                                              @RequestParam(value="parametre1",defaultValue="siParametre1EstNullVide", required=true) String monparam1, 
+                                              @RequestParam("parametre2") int monparam2) 
+                                              @RequestParam Map<String,String> reqPar) // du coup j'ai reqPar.get("monParametre1"); reqPar.get("monParametre1");)
+                                              ou
+                                              MultipartHttpServletRequest request, HttpServletResponse response
+                                             ){...
+                                                  if (sierrorlorsdubiding==true) // si erreurs lors du biding 
+                                                  {
+                                                             ModelAndView modv = new ModelAndView("leNomDeMaJsp");  grace au viewResolver (voir config spring au dessus LINKvrvvrvrvr)
+                                                           return modv;
+                                                    }
+                                                  else{
+                                                    ModelAndView modv = new ModelAndView("leNomDeMaJspDeMaViewEnFait");  grace au viewResolver (voir config spring au dessus LINKvrvvrvrvr)
+                                                     INUTILE GRACE A @ModelAttribute-> //modv.addObject("student",student); <- inutile.
+                                                                                        modv.addObject("monMessage","tataaaaa"+monparam1);
+                                                                                        modv.addObject("monMessage",unObjetAvecDesGetters);
+                                                    return modv;  // avec le viewResolver ca va afficher du coup: META-INF/leNomDeMaJsp.jsp
+                                                    return "admin/newAccount"; // va afficher la jsp "admin/newAccount.html ou jsp" selon la conf LINKvieresolkjdfa
+                                                    }
+                                                }
          // SANS UTILISER D ANNOTATIONS:
                             MaclasseMonCOntrolleur extends AbstractController
                             {
@@ -6290,7 +6321,7 @@ Spring-batch :
 			   
                                       }
                                       @Test
-                                      @Transactional // possible
+                                      @Transactional // à mettre si j'ai  org.hibernate.HibernateException: No Session found for current thread
                                       public void searchSendRequest()
                                       {
                                       
@@ -15598,7 +15629,7 @@ hacking : haking : hack :
 			  injection sql : ne jamais faire de requete sql par concatenation mais toujours pas procedure stockée. Un hacker sinon peut metre un bout de sql dans un champ texte. idemn sur mongodb
         x-frame-options header not set // en-tête de response permettant d'eviter qu'un site s'affiche dans un autre site (iframe i-frame object).(clickjacking: quand je clique ça clique sur un autre bouton invisible)
         xss//crosssitescripting // ma servlet vulnerable fait executer au navigateur du javascript passé en parametre de ma requete. ce javascript pourrait lire mes cookies (de session!): LINKcooklskjhh LINKc.s.r.f  et le pirate de se connecter à ma place
-                    pour s'en premunire faire du @safeHTML sur les champs pour que du javascript ne puisse pas etre injecté dedans. aussi empecher le javascript d'acceder aux cookies.
+                    pour s'en premunire faire du @safeHTML ou faire  org.jsoup.Jsoup.isValid(lechampatester); sur les champs pour que du javascript ne puisse pas etre injecté dedans. aussi empecher le javascript d'acceder aux cookies.
         pathtraversal// une servlet renvoit n'importe quel fichier ! ex: monsite/maservlet?vachercher=/unpath/unfichierANeSurtoutPasMontrer !affiche le fichier!    
         redirectionexterne // une servlet redirige vers un autre site! http://monsite?maservletTresConne?forward=http://un_autre_site
         CSRF :(CrossSiteRequestForgery :) LINKc.s.r.f (Cross-site scripting appartient à csrf) 
@@ -21044,8 +21075,9 @@ pour convertir un byte[]  en string
 pour convertir un int en string 
 							et vice et versa string en int: utiliser la classe statique Integer: Integer.parseInt ou Integer.toString(int)...
 		convertir un long en string: String.valueOf(long)
+        convertir un long en string: long.toString() //mais attention je crois qu'il insert des espaces dans le string a chaque centaines et milliers: donc passer par int plutot(intValue())
+        convertir un string en long: Long a = Long.parseLong(string2);
 		convertir un long en date puis en string: new Date(long).toString();
-		convertir un string en long: long.toString() //mais attention je crois qu'il insert des espaces dans le string a chaque centaines et milliers: donc passer par int plutot(intValue())
 		convertir un int en bigdecimal: int i=125; BigDecimal j = new BigDecimal(i);
 		convertir un big decimal en int: ((BigDecimal) ht.get("ISFORONEFILE")).intValue()
 		convertir un char en string: Character.toString(content[i]) (ou content[i] serait un char) c'est indispensable à faire dans les tags jsp sinon on va avoir l'erreur:java/lang/StringBuffer.append(C)Ljava/lang/Appendable;
@@ -26680,7 +26712,7 @@ yahoo.js :pour faire un drag and drop
         	}-*/;
         // l'objet e peut maintenant etre la cible d'un autre objet drague
 fetch : LINKsljqffetch
-                        async mamethode() { 
+                        async function mamethode() { 
                               const response = await fetch("/hello");
                               const { greeting } = await response.json();
                               this.innerHTML = `
