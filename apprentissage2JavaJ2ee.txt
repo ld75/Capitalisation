@@ -1,4 +1,4 @@
-(?=.*ant)(?=.*plugin)
+(?=.*maven)(?=.*tomcat)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -621,7 +621,7 @@ reactjs : react.js + redux :
       );
 
 docker : créer une image (executable)-> builder ->image(classe) devient container(instance tourne par defaut en vase clos/fichiers et /ports) qd est runné(!=VM. Une VM virtual machine contient un OS. Un container est executé dans un OS: plusieurs containers peuvent s'executer dans un meme OS) quand est executee alors des config s'appliquent à lui-> déposer dans machine
-                    |_populaires:https://hub.docker.com/search?q=&type=image du coup faire run payara/micro par exemple
+                    |_populaires: le registry https://hub.docker.com/search?q=&type=image du coup faire run payara/micro par exemple
   continuer à lire https://docs.docker.com/get-started/part2/#share-your-image
   installer docker: sudo apt-get update puis 
     avoir docker CE(community edition) ou EE(entreprise edition) recuperable sur store.docker.com
@@ -676,7 +676,7 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
   docker exec -it idp_jetty bash // LINKjgjgjgaba: execute une commande dans un conteneur déja actif. ici la commande bash est executée dans le container qui demarre en mode -it(interactif) donc du coup je vais avoir le prompt bash DANS mon container. De la si j'execute top je ne vois que les process qui tournent DANS le container
         de là je peux faire du apt-get pour installer d'autres librairies si besoin. 
         ensuite regarder aussi sur le hub.docker la doc de l'image si je veux enrichir cette image.            
-  registry
+  registry (docker.hub par exemple)
       repository1
                  imagedocker1:tag1 
                  imagedocker1:tag2...
@@ -864,7 +864,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git commit -am // -a pour ne commiter que les fichiers je crois ou bien -a pour forcer l'ajout de fichier non indexes avant de faire le commit
       apres commit je peux faire un pull puis ensuite un push
         
-      git diff pour parametrer avec un meilleur visibilité: external tool:        
+      git diff compare pour parametrer avec un meilleur visibilité: external tool:        
           installer C:\Program Files\KDiff3
           git config --global --add diff.guitool kdiff3
           git config --global --add difftool.kdiff3.path "C:\Users\ut2sn0\My_IT_Applications\programmes\kdiff\KDiff3/kdiff3.exe"
@@ -1311,7 +1311,7 @@ payara :payaramicro : // executeur direct d'un microservice.
         --mcAdress // facultatif sert à placer mon instance dans un multicast en particulier   
         --mcPort // facultatif sert à forcer le port de mon multicast (???)
         -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n // pour debugger en remote 
-    payara maven plugin pluggin: mais bof pas super efficace ou j'ai pas trouvé.
+    payaramicro maven plugin pluggin: mais bof pas super efficace ou j'ai pas trouvé.
     <plugin>
                 <groupId>fish.payara.maven.plugins</groupId>
                 <artifactId>payara-micro-maven-plugin</artifactId>
@@ -1351,7 +1351,8 @@ glassfish :
     C:\glassfish3\glassfish\bin>asadmin stop-domain
   localhost:8080 puis localhost:4848
   http://localhost:2097/common/index.jsf
-    glassfish maven plugin pluggin demarer avec mvn embedded-glassfish:run PAS REUSSI A FAIRE MARCHER 
+    glassfish maven plugin pluggin demarer avec mvn embedded-glassfish:run PAS REUSSI A FAIRE MARCHER
+    differentes commandes voir LINKlksjgalhhh 
                 <plugin>
                     <groupId>org.glassfish</groupId>
                     <artifactId>maven-embedded-glassfish-plugin</artifactId>
@@ -2397,7 +2398,7 @@ config de la base de donnée donnee: en jee
            )
         sont equivalents dans web.xml de
                   <data-source>
-                  <name>jdbc:hsqldb:mem:employees</name>
+                  <name>jdbc:hsqldb:mem:employees</name> // bien mettre mem sinon il fait chier avec les connexions mais c'est que pour tester car volatile
                   (...)
                   <class-name>org.hsqldb.jdbc.JDBCDriver</class-name>
               </data-source>  
@@ -2521,27 +2522,32 @@ System.out.println(name);// output is "Richard Wayne Monson-Haefel"
 
 mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de csrf) 
     krazo (projet eclipse). Pour les utliser sur differents serveurs voir https://www.mvc-spec.org/krazo/docs/install-javaee.html 
-                        <dependency>
-                          <groupId>javax.mvc</groupId>
-                          <artifactId>javax.mvc-api</artifactId>
-                          <version>1.0-pfd</version>
-                      </dependency>
-                      et 
-                       <dependency>
-                            <groupId>org.mvc-spec.ozark</groupId>
-                            <artifactId>ozark-core</artifactId>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.mvc-spec.ozark</groupId>
-                            <artifactId>ozark-jersey</artifactId>
-                        </dependency>
-                    ou
-                      <dependency>
-                         <groupId>org.glassfish.ozark</groupId>
-                         <artifactId>ozark</artifactId>
-                         <version>1.0.0-m03-SNAPSHOT</version>
-                         <scope>runtime</scope>
-                      </dependency>
+                         <dependency>
+                                <groupId>javax.mvc</groupId>
+                                <artifactId>javax.mvc-api</artifactId>
+                                <version>1.0-pr</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>javax.mvc</groupId>
+                                <artifactId>javax.mvc-api</artifactId>
+                                <version>1.0-pfd</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>javax.mvc</groupId>
+                                <artifactId>javax.mvc-api</artifactId>
+                                <version>1.0-edr2</version>
+                                <scope>provided</scope>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.mvc-spec.ozark</groupId>
+                                <artifactId>ozark-core</artifactId>
+                                <version>LATEST</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.mvc-spec.ozark</groupId>
+                                <artifactId>ozark-jersey</artifactId>
+                                <version>LATEST</version>
+                            </dependency>
                       fonctionne que sur des webservices.
                       @Path("hello")
                       @View("private.jsp") mais c'est mieux de faire LINKvuejslskjf car ici meme si user n'a pas le rôle il va afficher la jsp
@@ -2726,7 +2732,7 @@ ou si c'est dans le payload de la request
     ou voir LINKee"(çà)" si c'est multipart		 
 (Il y a aussi: recuperer l'url du request 
 request.getMethod() 
-request.getRequestURI() // pour connaitre la page appelante. Exemple: /saml-landing
+request.getRequestURI() // pour connaitre l'url la page appelante. Exemple: /saml-landing
 request.getRequestURL() // renvoit tout l'URL: http://monespacerh-dev.idkidscommunity.com/saml-landing. attention si existe reverse proxy ca renvoit le bon port et le bon host.(je crois) pas l'url origine initiale du client SINON:parametrer apache avec http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#proxypreservehost
 request.getQueryString() // retourne l'url mais uniquement après "?"
 request.getScheme() // renvoit http ou https... attention si existe reverse proxy ca renvoit pas celui du reverseproxy mais celui du serveurMOI.(je crois)
@@ -3630,6 +3636,158 @@ AppConfigurationEntry localAppConfigurationEntry = localConfiguration.getAppConf
                                               Subject subject = new Subject();
                                               subject.getPrincipals().add(up);
                                               subject.getPublicCredentials().add(role);                                                                                                                                                                                       
+JSP :
+faire un include:
+<%@include file="/utis.jspjsp/charte/FunctionsJS.jsp"%>
+pour changer le titre d'une jsp: 
+			<script type="text/javascript">
+						document.getElementById("TitreMenu").innerHTML='<bean:message key="TypeBSCR004-1MAJ" />><bean:message key="TypeBSCR004-1CR" /> <div id="TitreMenu" class="H2Separator"></div>';
+				</script>                      
+pour acceder à un fichier depuis une jsp 	
+	pageContext.getServletContext().getRealPath (url) 
+pour que le request soit transfere a une autre page:
+      <jsp:forward page="/utils/errorReporter.jsp" /> (en dur)
+      ou bien
+      <jsp:forward page="<%= someJavaExpression %>" />
+
+      ${pageContext.request.contextPath}
+pour afficher les erreurs dans la page d'erreur jsp:
+                                  <%@ page import="java.lang.Exception"%>
+                                  <%@ page import="java.io.PrintWriter"%>
+                                  Error occured. Stacktrace below:
+                                  <br>
+                                  <br>
+                                  
+                                  <%
+                                  if ((Exception)request.getAttribute("javax.servlet.error.exception") != null) {
+                                  	
+                                      out.println(((Exception)request.getAttribute("javax.servlet.error.exception")).getMessage());
+                                  }
+                                  %>
+                                  <br>
+                                  <br>
+                                  Cause:
+                                  <br>
+                                  <br>
+                                  <%
+                                  if ((Exception)request.getAttribute("javax.servlet.error.exception") != null) {
+                                  	 ((Exception)request.getAttribute("javax.servlet.error.exception")).printStackTrace(new java.io.PrintWriter(out));
+                                  } %> 
+pour simuler un click sur un bouton parcourir ou un autre element upload file: 
+        function openParcourir()
+        {
+          //document.getElementById("files").click();
+        	//var evObj = document.createEvent('Events');
+        	//evObj.initEvent("click", true, false);
+        	//document.getElementById("files").dispatchEvent(evObj);
+        	//document.getElementById('files').fireEvent('onclick');
+        }
+        plus generalement on peut utiliser cette methode: 
+        function eventFire(el, etype)
+        {
+                if (el.fireEvent) {
+                  (el.fireEvent('on' + etype));
+                } else {
+                  var evObj = document.createEvent('Events');
+                  evObj.initEvent(etype, true, false);
+                  el.dispatchEvent(evObj);
+                }
+              }
+pour pouvoir saisir quelquechose dans le bouton parcourir...: 
+			faire en javascript: 
+			function validate(){
+				try{
+					document.filesUploadForm.submit();
+				} catch(err) { 		
+			   		document.filesUploadForm.reset();
+			   		document.filesUploadForm.submit();
+				}
+			}
+			<html:form action="/UploadAnomaliesFile.do" method="post" enctype="multipart/form-data" >
+			(...) 						<input type="file" name="file" id="filesUploadForm" size="70" class="RnoButton" />		
+			(...)
+			<layout:link href="javascript:validate();" styleClass="RnoButton"> ou plutot: <layout:link href="#" onclick="javascript:window.open('ArcaPaged.do');" styleClass="RnoButton">
+										<bean:message key="SYS_VALID"/>
+									</layout:link>
+									<layout:link href="javascript:document.filesUploadForm.reset();" styleClass="RnoButton">
+										<bean:message key="01020"/>
+									</layout:link>
+				</html:form>
+			
+Si on ne veut pas que bean:write interprette le html il faut mettre: filter = false
+Java bean: pour creer des instances d'objets java avec jsp:
+on peut alors lui definir des attributs et les recuperer:
+
+<!-- pour desactiver les cellules ne pas utiliser disabled dans les input type = text mais mettre: 
+							                    		onblur="formatInputValue('<%= ((rc9.restitution.documents.datas.IndicateurDecorator)indicateur).getFormatDonnee() %>', 'saisie[<%= String.valueOf(indexSaisie) %>].strValeur'); document.forms[0].elements['saisie[<%= String.valueOf(indexSaisie) %>].strValeur'].value='<%= ((rc9.restitution.documents.datas.IndicateurDecorator)indicateur).getValeur( ((rc9.bean.PeriodBean)period).getDateStart(), ((Integer)typeSaisie).intValue()) %>'" 
+-->                                         blur c comme loosefocus
+
+pour recuperer des variables java dans des jsp:
+        <html:select name="item" property="defauval">
+				    <option value =""></option>
+					<logic:iterate name="item" id = "itemChild" property="childSimpleInf" scope="request"> scope="request" facultatif
+					<jsp:useBean id="champ"  scope="request ou page ou application ou " class="renault.wec.dmd.backend.dao.SimpleInf"/> // attention champ est le nom de l'objet sette dans le request et aussi le nom utilise par la suite dans la jsp
+                                                                                        ou beanName="xxx" // ACAPITALISER
+					<jsp:useBean id="option" scope="request"  class="java.lang.String"/> // attention option est le nom de l'objet sette dans le request et aussi le nom utilise par la suite dans la jsp
+					<%int i=0;%>
+ 	        <jsp:useBean id="arrayDynCmpDmd"  scope="session" class="java.util.Vector" />
+					  // idemn (ici comme c un vecteur: oblige d'iterer avec un int... oui c tres moche)
+					       Puis possible faire:<%=I18NManager.get("DESCR_"+((renault.wec.dmd.backend.dao.SimpleInf)arrayDynCmpDmd.get(i)).getNom(), I18NService.getSessionLangue(request)) %>
+					       ou <%=I18NManager.get(ficheForm.getEnv(), I18NService.getSessionLangue(request)) %> je peux remplacer un <bean:write name="ficheForm" property="env"/> par ca ! hehe
+					<option value="<bean:write name="itemChild" />" <% if (champ.getDefauval().equals(option)){%>selected="selected" <%}%>><bean:write name="itemChild"/></option>
+					<%=((renault.wec.dmd.backend.dao.SimpleInf)arrayDynCmpDmd.get(i)).getNom()%>
+        <%i++;%>
+      </logic:iterate>					
+autre facon de faire un select: le plus adaptable possible je pense: (avec preselection) 
+		    			<% renault.wec.fou.form.FouIPNForm  formulaire = (renault.wec.fou.form.FouIPNForm)request.getAttribute("fouIPNForm"); %>
+	        			<% java.util.Vector  liste = (java.util.Vector)request.getSession(false).getAttribute("arrayAllRol"); %>
+				<html:select property="group" size="1" onchange="javascript: loadGroupData(this)">
+	        		<option value=''><%=I18NManager.get("01175",I18NService.getSessionLangue(request))%></option>
+	        	<%    	for (int i = 0; i<liste.size();i++)
+	        			{
+	        				renault.wec.dmd.backend.dao.UsrRolInfo item = (renault.wec.dmd.backend.dao.UsrRolInfo)liste.get(i); %>
+			        		<option value="<%=item.getUsr()%>¤<%=item.getCn()%>" <% if (formulaire.getGroup().equals(item.getRol())){ %> selected="selected"<%}%>><%=item.getRol()%></option>
+					<%}%>							
+	        	</html:select>
+
+
+BeanTest.jsp:
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+...
+<BODY>
+...
+<jsp:useBean id="test" class="hall.SimpleBean" scope="page"/> scope peut etre egal à: page, request, session, ou application // attention test est le nom de l'objet sette dans le request et aussi le nom utilise par la suite dans la jsp
+permet ensuite de faire des <% if (test...) voir "pour recuperer des variables java dans des jsp"
+<jsp:setProperty name="test" 
+                 property="message" 
+                 value="Hello WWW" />
+( ou bien: 
+<jsp:setProperty name="orderBean"
+                 property="numberOfItems"
+                 param="numItems" />
+correspond à  value = request.getParameter("numItems")
+)
+             
+<H1>Message: <I>
+<jsp:getProperty name="test" property="message" />
+</I></H1>
+             
+</BODY>^
+</HTML>
+
+SimpleBean.java:
+
+public class SimpleBean {
+  private String message = "No message specified";
+
+  public String getMessage() {
+    return(message);
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
+  }
+}
                                                                                                                                                                                                                 
 web.xml : webxml :
 <web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" version="4.0" metadata-complete="true">
@@ -4027,7 +4185,7 @@ Bonne methode pour faire des selectbox:
 					SimpleDateFormat dateformatter = new SimpleDateFormat("dd/MM/yyyy");
 					SimpleDateFormat hourformatter = new SimpleDateFormat("HH");
 					SimpleDateFormat minuteformatter = new SimpleDateFormat("mm");
-					//nb de minutesjours hors weekend entre les deux joures des dates :
+					//nb de minutesjours hors weekend entre les deux joures des dates:
 					long minutesToRemove=new Long(0);
 					long minutesToAdd=new Long(0);
 					Date debutdate= dateformatter.parse(dateformatter.format(debut));
@@ -4078,7 +4236,7 @@ Bonne methode pour faire des selectbox:
                   		ResourceBundle appResources = ResourceBundle.getBundle("ApplicationResources");
                   		String all = appResources.getString("01002" );
                   		String ret = " - ";
-                  		for(Select sel : select)
+                  		for(Select sel: select)
                   		{
                   			if (sel.value.equals(id)) ret=sel.getLabel(); 
                   		}
@@ -4101,7 +4259,7 @@ pour declarer un listener:
 		    <listener-class>renault.dwi.util.filter.SessionTraceFilterClass</listener-class>
 	   </listener>
 pour capter un startup demarre et un shutdown arrete d'une appli:
-       faire pareil qu'un listener mais implementer aussi : javax.servlet.ServletContextListener (la classe est aussi un listener)
+       faire pareil qu'un listener mais implementer aussi: javax.servlet.ServletContextListener (la classe est aussi un listener)
 pour detruire une session:
       dans l'action:
       		session.setArcaBean(null);
@@ -4134,7 +4292,7 @@ Variables en session et variables applicatives partagees pour tout le monde:
 		ServletContext est applicatif et est single pour tous les utilisateurs contrairement à l'objet Session qui est specifique à un utilisateur
 		utile pour connetre le nombre d'utilisateurs connectes nombre utilisateurs
 pour les versions was voir was :
-Si les jsp includes (inclues) ne compilent pas il faut se mettre en dos dans le repertoire contenant les jsp et faire : (Sous Dos)
+Si les jsp includes (inclues) ne compilent pas il faut se mettre en dos dans le repertoire contenant les jsp et faire: (Sous Dos)
 	COPY /B *.jsp +,,
 pour appeller une action lorsque la fenetre est fermee (quand on ferme une fenetre)
 					<body onunload="javascript:closeApplication();">// attention ca ca s'execute quand on quitte la fenetre en cours ou quand on close la fenetre donc besoin d'un gardefou
@@ -4147,7 +4305,7 @@ pour appeller une action lorsque la fenetre est fermee (quand on ferme une fenet
 					        }
 					    }
 					</script>
-					dans temp.jsp il y a : 
+					dans temp.jsp il y a: 
 					<html>
 					<body>
 					    <form name="oncloseForm" action="<%=request.getContextPath()%>/auth/CloseApplication.do" method="get" onsubmit="window.close();">
@@ -6008,155 +6166,6 @@ Spring : XML STYLE
                               mesmessages.properties                        
                                     Size.student.sonchamp="titit{min} ljksdflo {max} sdlksd" voir @size
                                     Size.autrecledobjet.sonchamp="titit{0} ljksdflo {1} sdlksd{2} 0 = champ, 1=min,2=max voir @size                                    
-JSP :
-pour changer le titre d'une jsp: 
-			<script type="text/javascript">
-						document.getElementById("TitreMenu").innerHTML='<bean:message key="TypeBSCR004-1MAJ" />><bean:message key="TypeBSCR004-1CR" /> <div id="TitreMenu" class="H2Separator"></div>';
-				</script>                      
-pour acceder à un fichier depuis une jsp 	
-	pageContext.getServletContext().getRealPath (url) 
-pour que le request soit transfere a une autre page:
-      <jsp:forward page="/utils/errorReporter.jsp" /> (en dur)
-      ou bien
-      <jsp:forward page="<%= someJavaExpression %>" />
-
-      ${pageContext.request.contextPath}
-pour afficher les erreurs dans la page d'erreur jsp:
-                                  <%@ page import="java.lang.Exception"%>
-                                  <%@ page import="java.io.PrintWriter"%>
-                                  Error occured. Stacktrace below:
-                                  <br>
-                                  <br>
-                                  
-                                  <%
-                                  if ((Exception)request.getAttribute("javax.servlet.error.exception") != null) {
-                                  	
-                                      out.println(((Exception)request.getAttribute("javax.servlet.error.exception")).getMessage());
-                                  }
-                                  %>
-                                  <br>
-                                  <br>
-                                  Cause:
-                                  <br>
-                                  <br>
-                                  <%
-                                  if ((Exception)request.getAttribute("javax.servlet.error.exception") != null) {
-                                  	 ((Exception)request.getAttribute("javax.servlet.error.exception")).printStackTrace(new java.io.PrintWriter(out));
-                                  } %> 
-pour simuler un click sur un bouton parcourir ou un autre element upload file: 
-        function openParcourir()
-        {
-          //document.getElementById("files").click();
-        	//var evObj = document.createEvent('Events');
-        	//evObj.initEvent("click", true, false);
-        	//document.getElementById("files").dispatchEvent(evObj);
-        	//document.getElementById('files').fireEvent('onclick');
-        }
-        plus generalement on peut utiliser cette methode: 
-        function eventFire(el, etype)
-        {
-                if (el.fireEvent) {
-                  (el.fireEvent('on' + etype));
-                } else {
-                  var evObj = document.createEvent('Events');
-                  evObj.initEvent(etype, true, false);
-                  el.dispatchEvent(evObj);
-                }
-              }
-pour pouvoir saisir quelquechose dans le bouton parcourir...: 
-			faire en javascript: 
-			function validate(){
-				try{
-					document.filesUploadForm.submit();
-				} catch(err) { 		
-			   		document.filesUploadForm.reset();
-			   		document.filesUploadForm.submit();
-				}
-			}
-			<html:form action="/UploadAnomaliesFile.do" method="post" enctype="multipart/form-data" >
-			(...) 						<input type="file" name="file" id="filesUploadForm" size="70" class="RnoButton" />		
-			(...)
-			<layout:link href="javascript:validate();" styleClass="RnoButton"> ou plutot: <layout:link href="#" onclick="javascript:window.open('ArcaPaged.do');" styleClass="RnoButton">
-										<bean:message key="SYS_VALID"/>
-									</layout:link>
-									<layout:link href="javascript:document.filesUploadForm.reset();" styleClass="RnoButton">
-										<bean:message key="01020"/>
-									</layout:link>
-				</html:form>
-			
-Si on ne veut pas que bean:write interprette le html il faut mettre: filter = false
-Java bean: pour creer des instances d'objets java avec jsp:
-on peut alors lui definir des attributs et les recuperer:
-
-<!-- pour desactiver les cellules ne pas utiliser disabled dans les input type = text mais mettre: 
-							                    		onblur="formatInputValue('<%= ((rc9.restitution.documents.datas.IndicateurDecorator)indicateur).getFormatDonnee() %>', 'saisie[<%= String.valueOf(indexSaisie) %>].strValeur'); document.forms[0].elements['saisie[<%= String.valueOf(indexSaisie) %>].strValeur'].value='<%= ((rc9.restitution.documents.datas.IndicateurDecorator)indicateur).getValeur( ((rc9.bean.PeriodBean)period).getDateStart(), ((Integer)typeSaisie).intValue()) %>'" 
--->                                         blur c comme loosefocus
-
-pour recuperer des variables java dans des jsp:
-        <html:select name="item" property="defauval">
-				    <option value =""></option>
-					<logic:iterate name="item" id = "itemChild" property="childSimpleInf" scope="request"> scope="request" facultatif
-					<jsp:useBean id="champ"  scope="request" class="renault.wec.dmd.backend.dao.SimpleInf"/> // attention champ est le nom de l'objet sette dans le request et aussi le nom utilise par la suite dans la jsp
-					<jsp:useBean id="option" scope="request"  class="java.lang.String"/> // attention option est le nom de l'objet sette dans le request et aussi le nom utilise par la suite dans la jsp
-					<%int i=0;%>
- 	        <jsp:useBean id="arrayDynCmpDmd"  scope="session" class="java.util.Vector" />
-					  // idemn (ici comme c un vecteur: oblige d'iterer avec un int... oui c tres moche)
-					       Puis possible faire:<%=I18NManager.get("DESCR_"+((renault.wec.dmd.backend.dao.SimpleInf)arrayDynCmpDmd.get(i)).getNom(), I18NService.getSessionLangue(request)) %>
-					       ou <%=I18NManager.get(ficheForm.getEnv(), I18NService.getSessionLangue(request)) %> je peux remplacer un <bean:write name="ficheForm" property="env"/> par ca ! hehe
-					<option value="<bean:write name="itemChild" />" <% if (champ.getDefauval().equals(option)){%>selected="selected" <%}%>><bean:write name="itemChild"/></option>
-					<%=((renault.wec.dmd.backend.dao.SimpleInf)arrayDynCmpDmd.get(i)).getNom()%>
-        <%i++;%>
-      </logic:iterate>					
-autre facon de faire un select: le plus adaptable possible je pense: (avec preselection) 
-		    			<% renault.wec.fou.form.FouIPNForm  formulaire = (renault.wec.fou.form.FouIPNForm)request.getAttribute("fouIPNForm"); %>
-	        			<% java.util.Vector  liste = (java.util.Vector)request.getSession(false).getAttribute("arrayAllRol"); %>
-				<html:select property="group" size="1" onchange="javascript: loadGroupData(this)">
-	        		<option value=''><%=I18NManager.get("01175",I18NService.getSessionLangue(request))%></option>
-	        	<%    	for (int i = 0; i<liste.size();i++)
-	        			{
-	        				renault.wec.dmd.backend.dao.UsrRolInfo item = (renault.wec.dmd.backend.dao.UsrRolInfo)liste.get(i); %>
-			        		<option value="<%=item.getUsr()%>¤<%=item.getCn()%>" <% if (formulaire.getGroup().equals(item.getRol())){ %> selected="selected"<%}%>><%=item.getRol()%></option>
-					<%}%>							
-	        	</html:select>
-
-
-BeanTest.jsp:
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-...
-<BODY>
-...
-<jsp:useBean id="test" class="hall.SimpleBean" scope="page"/> scope peut etre egal à: page, request, session, ou application // attention test est le nom de l'objet sette dans le request et aussi le nom utilise par la suite dans la jsp
-permet ensuite de faire des <% if (test...) voir "pour recuperer des variables java dans des jsp"
-<jsp:setProperty name="test" 
-                 property="message" 
-                 value="Hello WWW" />
-( ou bien: 
-<jsp:setProperty name="orderBean"
-                 property="numberOfItems"
-                 param="numItems" />
-correspond à  value = request.getParameter("numItems")
-)
-             
-<H1>Message: <I>
-<jsp:getProperty name="test" property="message" />
-</I></H1>
-             
-</BODY>^
-</HTML>
-
-SimpleBean.java:
-
-public class SimpleBean {
-  private String message = "No message specified";
-
-  public String getMessage() {
-    return(message);
-  }
-
-  public void setMessage(String message) {
-    this.message = message;
-  }
-}
 
 Spring-batch :
     voir ci dessous spring-batch-tester tests : test :
@@ -7177,7 +7186,7 @@ hsqldb : LINKldkjgieieioruz
         si erreur data exception: string data, right truncation c'est parce que j'ai voulu inserer une colonne trop longue
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
 		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
-		<property name="url" value="jdbc:hsqldb:mem:v3" />
+		<property name="url" value="jdbc:hsqldb:mem:v3" /> // bien mettre mem sinon il fait chier avec les connexions mais c'est que pour tester car volatile
 		<property name="username" value="sa" />
 		<property name="password" value="" />
 	</bean>                
@@ -7211,7 +7220,7 @@ hsqldb : LINKldkjgieieioruz
                 }
             }
             private static Connection getConnection() throws SQLException {
-                return DriverManager.getConnection("jdbc:hsqldb:mem:employees", "vinod", "vinod");
+                return DriverManager.getConnection("jdbc:hsqldb:mem:employees", "vinod", "vinod");// bien mettre mem sinon il fait chier avec les connexions mais c'est que pour tester car volatile
             }
             @Test
             public void getTotalRecordsTest() {
@@ -12077,7 +12086,7 @@ utiliser html:link p60
 navigation simple p70
 pour pointer vers une autre application p71
 protection des jsp p73
-utile si on met des jsp d'une auter appli en include dans notre appli struts p75
+utile si on met des jsp d'une autre appli en include dans notre appli struts p75
 quand un formulaire a plusieurs actions possibles p76 (aussi pour faire un bouton submit)
 				// sans mise en forme
 					<layout:form action="/pageAjoutCompte" reqCode="init"> l'attribut name="" (facultatif) doit correspondre au nom du formulaire qu'on a donne dans struts-config.xml pour cette action.
@@ -23028,7 +23037,7 @@ public static void loadProperties () throws Exception {
 		PtlInitialize.commandFile = properties.getProperty("command").trim();
 		PtlInitialize.filelock = properties.getProperty("lock").trim();
 		PtlInitialize.interval = Long.parseLong(properties.getProperty("lock_interval").trim());
-		on peut utiliser String toto = StrSubstitutor.replaceSystemProperties("un texte avec ${uneproprietesysteme} blabla"); // pour resoudre les properties proprietes systeme environnement ${catalina.out} par exemple
+		on peut utiliser String toto = StrSubstitutor.replaceSystemProperties("un texte avec ${uneproprietesysteme} blabla"); // pour resoudre les properties proprietes systeme environnement ${catalina.out} par exemple dollar
 		      est dans
 		                <dependency>
                     <groupId>org.apache.commons</groupId>
@@ -25720,13 +25729,14 @@ pour utiliser le plugin maven tomcat: Si ça marche:-). voir dessous: pas reussi
 					</dependency>
 				</dependencies>
       </plugin>      
-    et                      
-    mvn tomcat7:run (plus rapide) execute directement le code source dans un tomcat qu'il crée dans target
-    mvn tomcat7:run-war(refait le war) voir LINKkknv ça marche: Ca c'est quand le tomcat est cree qqpart dans mon editeur ecplipse (dans target) il package le war et l'execute dedans
-    mvn tomcat7:run-war-only (NE refait PAS le war) voir LINKkknv ça marche: Ca c'est quand le tomcat est cree qqpart dans mon editeur ecplipse (dans target) il package le war et l'execute dedans
-    mvn tomcat7:deploy       ca c'est quand un serveur tomcat tourne qqpart dejà (sur mon poste par ex) fait un package puis deploie ce war direct dessus (bien specif le bon port dans conf pom)
-    mvn tomcat7:deploy-only  ca c'est quand un serveur tomcat tourne qqpart dejà (sur mon poste par ex) deploie le war qui est dans target direct dessus (bien specif le bon port dans conf pom)
-    mvn tomcat7:exec-war crée un jar(war) executable tout seul. (comme springboot)  
+    et      
+    LINKlksjgalhhh:                
+    mvn xxx:run (plus rapide) execute directement le code source dans un serveur qu'il crée dans target
+    mvn xxx:run-war(refait le war) c'est quand le serveur est cree dans target dans mon editeur il package le war et l'execute dedans
+    mvn xxx:run-war-only (NE refait PAS le war) voir LINKkknv ça marche: le serveur est cree dans target dans mon editeur il package le war et l'execute dedans
+    mvn xxx:deploy       ca c'est quand un serveur tourne qqpart dejà (sur mon poste par ex) fait un package puis deploie ce war direct dessus (bien specif le bon port dans conf pom)
+    mvn xxx:deploy-only  ca c'est quand un serveur tourne qqpart dejà (sur mon poste par ex) deploie le war qui est dans target direct dessus (bien specif le bon port dans conf pom)
+    mvn xxx:exec-war crée un jar(war) executable tout seul. (comme springboot)  
     ca ca ne marche pas: mvn tomcat7:war
     sur tomcat pour retrouver son pass admin et login admin: tomcat-user.xml qui contient le mdp, le login de l'admin.  
     erreur java.lang.IllegalStateException: No output folder
