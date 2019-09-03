@@ -1,4 +1,4 @@
-(?=.*ant)(?=.*plugidn)
+(?=.*string)(?=.*vide)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -5745,7 +5745,7 @@ Spring : XML STYLE
                                                             <value>/WEB-INF/</value>
                                                           </property>
                                                           <property name="suffix">
-                                                            <value>.jsp</value>
+                                                            <value>.jsp</value> LINKvieresolkjdfa
                                                           </property>
                                                   </bean>
                                                   OU BIEN si je veux faire des views qui renvoient autre chose: pdf, xls etc... je rajoute ça: 
@@ -5791,6 +5791,11 @@ Spring : XML STYLE
                               <%@ taglib prefix="spring"	uri="http://www.springframework.org/tags"%>
                               <form:checkbox  class="form-control" path="rciInternal"/> 
                                   <spring:message code="la.cle.dans.mes.fichier.msg" text="default text" var="facultatifUneCleIciPourUtilisationDeCeLabelAilleursDansCetteJsp"/> // on utilise comme ça dans la jsp:${facultatifUneCleIciPourUtilisationDeCeLabelAilleursDansCetteJsp}
+                            //les champs du formulaire:
+                                <form:form id="blah" commandName="monbean" role="aquoicasert?"   method="post">
+                                    <spring:bind path="rciInternal"> //rciInternal est le champ de mon modele envoyé en java par ModelMap model.addAttribute("monbean", new BeanContenantLeChamprciInternal());
+                                            <form:checkbox  class="form-control" path="rciInternal"/>
+                                    </spring:bind>
                               en java recuperer le message i18n : 
                                     @RequestMapping(value = "/inputbadge", method = RequestMethod.POST//est GET par defaut, produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE)
                                     @ResponseBody
@@ -5955,8 +5960,7 @@ Spring : XML STYLE
                                               ou 
                                               @RequestPart Map request 
                                               ou 
-                                           //@PathVariable c pour l'URL ex:x/y/z. 
-                                              @PathVariable("parametre1") String monparam1, @PathVariable("parametre2") String monparam2 
+                                              @PathVariable("parametre1") String monparam1, @PathVariable("parametre2") String monparam2 //c pour l'URL ex:x/y/z. 
                                               @PathVariable Map<String,String> rePathVar) // @PathVariable c pour l'URL ex:x/y/z. 
                                               ou 
                                            //@RequestParam c pour la request ex:?monparam2=x: pour un post ca se met comme ca dans le body du post: paramname+"="+paramvalue;
@@ -5977,6 +5981,7 @@ Spring : XML STYLE
                                                                                         modv.addObject("monMessage","tataaaaa"+monparam1);
                                                                                         modv.addObject("monMessage",unObjetAvecDesGetters);
                                                     return modv;  // avec le viewResolver ca va afficher du coup: META-INF/leNomDeMaJsp.jsp
+                                                    return "admin/newAccount"; // va afficher la jsp "admin/newAccount.html ou jsp" selon la conf LINKvieresolkjdfa
                                                     }
                                                 }
          // SANS UTILISER D ANNOTATIONS:
@@ -6303,7 +6308,7 @@ Spring-batch :
 			   
                                       }
                                       @Test
-                                      @Transactional // possible
+                                      @Transactional // à mettre si j'ai  org.hibernate.HibernateException: No Session found for current thread
                                       public void searchSendRequest()
                                       {
                                       
@@ -15611,7 +15616,7 @@ hacking : haking : hack :
 			  injection sql : ne jamais faire de requete sql par concatenation mais toujours pas procedure stockée. Un hacker sinon peut metre un bout de sql dans un champ texte. idemn sur mongodb
         x-frame-options header not set // en-tête de response permettant d'eviter qu'un site s'affiche dans un autre site (iframe i-frame object).(clickjacking: quand je clique ça clique sur un autre bouton invisible)
         xss//crosssitescripting // ma servlet vulnerable fait executer au navigateur du javascript passé en parametre de ma requete. ce javascript pourrait lire mes cookies (de session!): LINKcooklskjhh LINKc.s.r.f  et le pirate de se connecter à ma place
-                    pour s'en premunire faire du @safeHTML sur les champs pour que du javascript ne puisse pas etre injecté dedans. aussi empecher le javascript d'acceder aux cookies.
+                    pour s'en premunire faire du @safeHTML ou faire  org.jsoup.Jsoup.isValid(lechampatester); sur les champs pour que du javascript ne puisse pas etre injecté dedans. aussi empecher le javascript d'acceder aux cookies.
         pathtraversal// une servlet renvoit n'importe quel fichier ! ex: monsite/maservlet?vachercher=/unpath/unfichierANeSurtoutPasMontrer !affiche le fichier!    
         redirectionexterne // une servlet redirige vers un autre site! http://monsite?maservletTresConne?forward=http://un_autre_site
         CSRF :(CrossSiteRequestForgery :) LINKc.s.r.f (Cross-site scripting appartient à csrf) 
@@ -21057,8 +21062,9 @@ pour convertir un byte[]  en string
 pour convertir un int en string 
 							et vice et versa string en int: utiliser la classe statique Integer: Integer.parseInt ou Integer.toString(int)...
 		convertir un long en string: String.valueOf(long)
+        convertir un long en string: long.toString() //mais attention je crois qu'il insert des espaces dans le string a chaque centaines et milliers: donc passer par int plutot(intValue())
+        convertir un string en long: Long a = Long.parseLong(string2);
 		convertir un long en date puis en string: new Date(long).toString();
-		convertir un string en long: long.toString() //mais attention je crois qu'il insert des espaces dans le string a chaque centaines et milliers: donc passer par int plutot(intValue())
 		convertir un int en bigdecimal: int i=125; BigDecimal j = new BigDecimal(i);
 		convertir un big decimal en int: ((BigDecimal) ht.get("ISFORONEFILE")).intValue()
 		convertir un char en string: Character.toString(content[i]) (ou content[i] serait un char) c'est indispensable à faire dans les tags jsp sinon on va avoir l'erreur:java/lang/StringBuffer.append(C)Ljava/lang/Appendable;
@@ -26692,7 +26698,7 @@ yahoo.js :pour faire un drag and drop
         	}-*/;
         // l'objet e peut maintenant etre la cible d'un autre objet drague
 fetch : LINKsljqffetch
-                        async mamethode() { 
+                        async function mamethode() { 
                               const response = await fetch("/hello");
                               const { greeting } = await response.json();
                               this.innerHTML = `
