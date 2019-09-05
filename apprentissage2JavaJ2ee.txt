@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-(?=.*maven)(?=.*tomcat)
-=======
-(?=.*string)(?=.*vide)
->>>>>>> c98809ad5801a7d1515d844c8709b969ef1f7a46
+(?=.*import)(?=.*http)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -1312,7 +1308,9 @@ payara :payaramicro : // executeur direct d'un microservice.
         --name nomdemoninstancequejedeploie
             ssl: au déploiement automatiquement importe dans mon microprofile les keystores et password defini par les proprietes systèmes javax.net.ssl.xxxx
             clustering: deux instances indentiques déployées sur des ports differents sont automatiquement clusterisees (partagent les memes sessions users)
-        --autobindhttp // determine le port automatiquement. 
+            --nocluster // marche pas! pour ne pas qu'il cherche d'autres instances pour clutoriser. Ca prend du temps quand il cherche
+        --autobindhttp // determine le port automatiquement.
+        --verbose 
         --startPort 888// fonctionne avec autobindhttp. 888: port à partir duquel commencer à incrementer numero de port
         --mcAdress // facultatif sert à placer mon instance dans un multicast en particulier   
         --mcPort // facultatif sert à forcer le port de mon multicast (???)
@@ -1354,7 +1352,7 @@ payara :payaramicro : // executeur direct d'un microservice.
     
 glassfish :
     C:\glassfish3\glassfish\bin>asadmin start-domain
-    C:\glassfish3\glassfish\bin>asadmin stop-domain
+    C:\glassfish3\glassfish\bin>asadmin stop-domain  
   localhost:8080 puis localhost:4848
   http://localhost:2097/common/index.jsf
     glassfish maven plugin pluggin demarer avec mvn embedded-glassfish:run PAS REUSSI A FAIRE MARCHER
@@ -2546,7 +2544,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                             </dependency>
                             <dependency>
                                 <groupId>org.mvc-spec.ozark</groupId>
-                                <artifactId>ozark-core</artifactId>
+                                <artifactId>ozark-core</artifactId> // a mettre
                                 <version>LATEST</version>
                             </dependency>
                             <dependency>
@@ -2556,25 +2554,34 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                             </dependency>
                       fonctionne que sur des webservices.
                       @Path("hello")
-                      @View("private.jsp") mais c'est mieux de faire LINKvuejslskjf car ici meme si user n'a pas le rôle il va afficher la jsp
+                      @View("private.jsp" ou "redirect:/unAutreControlleur") sur la classe ou sur la methode. Si sur classe on peut l'overrider dans les methodes. Si on l'utilise la/les methodes doivent retourner void. On peut a la place faire LINKvuejslskjf car ici meme si user n'a pas le rôle il va afficher la jsp
+                      ou
+                      @Controller // peut etre mis soir sur la classe soit sur les methodes. Si sur la classe toutes les methodes sont des controllers
                       public class HelloController {
                             @Inject 
                             private BindingResult validateurDeBinding; // pour valider le BeanParam
                             @Inject
-                            private MvcContext mvc; // pour i18n: internationalisation internationalization. du coup on peut faire Locale locale = mvc.getLocale(); 
+                            private MvcContext mvc; // pour i18n: internationalisation internationalization. du coup on peut faire Locale locale = mvc.getLocale();
+                            @Inject
+                            private Models models; // c'est une classe de la spec mvc: pour renvoyer des valeurs à la jsp 
                           @Context
                           private SecurityContext securityContext;
                           @GET ou @POST
-                          @CsrfValid // necessite dans la jsp: <input type="hidden" name="${mvc.csrf.name}" value="${mvc.csrf.token}"/>
-                          @Controller
-                          public String hello(@QueryParam("unChampApres?ou&DanslUrl") String name ETOU @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464 OU @FormParam("parametrePost") String unParametre OU @Valid @BeanParam FormDataBean f) {
+                          @CsrfValid ou @javax.mvc.security.CsrfProtected// necessite dans la jsp: <input type="hidden" name="${mvc.csrf.name}" value="${mvc.csrf.token}"/>
+                          @Path("une/url") //facultatif
+                          @Produces(xxxx)// facultatif. par defaut si on met pas cette annotation c'est "text/html"
+                          @Controller   // on ne met ca que si LINKcontrlkjsqdf 
+                          public String hello(@QueryParam("unChampApres?ou&DanslUrl") String name ETOU @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464 OU @FormParam("parametrePost") String unParametreDeFormulaire OU @Valid @BeanParam FormDataBean f) {
                               if (validateurDeBinding.isFailed()) {
-                                return Response.status(BAD_REQUEST)
-                                               .entity(“error.jsp”).build(); LINKvuejslskjf
+                                return Response.status(BAD_REQUEST).entity(“error.jsp”).build(); LINKvuejslskjf Ici on ne doit pas mettre @Controller
                               }
+                              models.put("toto",unObjet);                              
                               return Response.status(OK).entity(“data.jsp”).build(); LINKvuejslskjf
-                           }
-                              return "hello.jsp"; LINKvuejslskjf
+                              ou 
+                              return "hello.jsp"; ou return "/WEB-INF/jsp/majsp.jsp"; LINKvuejslskjf LINKcontrlkjsqdf
+                              ou
+                              return new Viewable("WEB-INF/jsp/majsp.jsp");
+                              
                           }
                       }
         
@@ -3650,12 +3657,13 @@ pour changer le titre d'une jsp:
 						document.getElementById("TitreMenu").innerHTML='<bean:message key="TypeBSCR004-1MAJ" />><bean:message key="TypeBSCR004-1CR" /> <div id="TitreMenu" class="H2Separator"></div>';
 				</script>                      
 pour acceder à un fichier depuis une jsp 	
-	pageContext.getServletContext().getRealPath (url) 
+	pageContext.getServletContext().getRealPath (url)
+recuperer mes beans cdi et leurs valeurs:
+    ${toto.getMachin()} ou ${toto.machin}  et j'ai un bean cdi @Named(value="toto") ou @Named("toto")
 pour que le request soit transfere a une autre page:
       <jsp:forward page="/utils/errorReporter.jsp" /> (en dur)
       ou bien
       <jsp:forward page="<%= someJavaExpression %>" />
-
       ${pageContext.request.contextPath}
 pour afficher les erreurs dans la page d'erreur jsp:
                                   <%@ page import="java.lang.Exception"%>
