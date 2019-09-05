@@ -2554,7 +2554,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                             </dependency>
                       fonctionne que sur des webservices.
                       @Path("hello")
-                      @View("private.jsp" ou "redirect:/unAutreControlleur") sur la classe ou sur la methode. Si sur classe on peut l'overrider dans les methodes. Si on l'utilise la/les methodes doivent retourner void. On peut a la place faire LINKvuejslskjf car ici meme si user n'a pas le rôle il va afficher la jsp
+                      @View("privateQuiDoitEtreSousWEB-INF/views.jsp" ou "redirect:/unAutreControlleur") sur la classe ou sur la methode. Si sur classe on peut l'overrider dans les methodes. Si on l'utilise la/les methodes doivent retourner void. On peut a la place faire LINKvuejslskjf car ici meme si user n'a pas le rôle il va afficher la jsp
                       ou
                       @Controller // peut etre mis soir sur la classe soit sur les methodes. Si sur la classe toutes les methodes sont des controllers
                       public class HelloController {
@@ -2573,10 +2573,10 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                           @Controller   // on ne met ca que si LINKcontrlkjsqdf 
                           public String hello(@QueryParam("unChampApres?ou&DanslUrl") String name ETOU @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464 OU @FormParam("parametrePost") String unParametreDeFormulaire OU @Valid @BeanParam FormDataBean f) {
                               if (validateurDeBinding.isFailed()) {
-                                return Response.status(BAD_REQUEST).entity(“error.jsp”).build(); LINKvuejslskjf Ici on ne doit pas mettre @Controller
+                                return Response.status(BAD_REQUEST).entity(“error.jsp”).build(); LINKvuejslskjf Necessite @Controller
                               }
                               models.put("toto",unObjet);                              
-                              return Response.status(OK).entity(“data.jsp”).build(); LINKvuejslskjf
+                              return Response.status(OK).entity(“dataQuiDoitEtreSousWEB-INF/views.jsp”).build(); LINKvuejslskjf
                               ou 
                               return "hello.jsp"; ou return "/WEB-INF/jsp/majsp.jsp"; LINKvuejslskjf LINKcontrlkjsqdf
                               ou
