@@ -1,4 +1,4 @@
-(?=.*import)(?=.*http)
+(?=.*maven)(?=.*tomcat)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -5930,11 +5930,9 @@ Spring : XML STYLE
                                                                 xsi:schemaLocation="http://www.springframework.org/schema/beans
                                                                 http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
                                                                 <bean id="excelView" class="mon.package.MonExcelBuilder" />--------> creer une classe MonExcelBuilder: public class ExcelBuilder extends AbstractExcelView {org.springframework.web.servlet.view.document.AbstractExcelView) Overrider buildExcelDocument
-                                                                </beans>                 
+                                                                </beans>
+                                                <bean id="multipartResolver"  class="org.springframework.web.multipart.commons.CommonsMultipartResolver" /> // pour gerer les multiparts (upload de fichiers)                 
                         <!-- dans ce fichier je vais stocker les messages par ex: dans le fichier mesmessages.properties mettre: Size.student.sonchamp="titit{min} ljksdflo {max} sdlksd" voir @size
-                                              // pour gerer les multiparts (upload de fichiers)
-                                            <bean id="multipartResolver"  class="org.springframework.web.multipart.commons.CommonsMultipartResolver" /> 
-                                  
                                         <!-- i18n internationalisation: dans ce fichier je vais stocker les messages par ex: dans le fichier mesmessages.properties mettre: Size.student.sonchamp="titit{min} ljksdflo {max} sdlksd" voir @size
                                                                                                                                                                               Size.student.sonchamp doit etre en unicode: si accent faire une conversion vers unicode en ligne http://www.ratfactor.com/utf-8-to-unicode: les espaces c'est \u0020
                                        <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
@@ -9250,7 +9248,7 @@ creer une application :
           Je peux remplacer dans le classpath du projet JUNIT 3 par JUNIT 4
 formater une date : 
     datePicker.setText(DateTimeFormat.getFormat("DD-MM-YYYY").format(h.getVPA04_DATE()));
-faire un formulaire de upload telechargement  d'image: 
+faire un formulaire de upload telechargement de fichier, d'image: 
       cote client :   
                       // FORMULAIRE D'IMAGE
                             formulaire = new FormPanel();
@@ -9285,15 +9283,16 @@ faire un formulaire de upload telechargement  d'image:
                                 }
                             });
                             splitPanel.add(formulaire);
-          cote serveur :
+          cote serveur : avec apache Commons FileUpload (si avant servlet 3.0)
                         public class ProfileUpload extends HttpServlet {   // Une vraie servlet, pas un service RPC
                             @Override
                             protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+                                attention ne pas utiliser getParameter(), getParameterMap(), getParameterValues(), getInputStream(), getReader(), etc avant ce qui suit 
                                 try {
                                     ServletFileUpload upload = new ServletFileUpload();  //LINKee"(çà)" Une requete request ajax arrive. pour charger une image en servlet <3.0 sinon voir @WebServlet plus haut
                         //            response.setContentType("image/x-png");
                                     FileItemIterator iterator = upload.getItemIterator(req);
-                                    while (iterator.hasNext()) { // mettre un name a mon champ fileUpload sinon passera pas par ici
+                                    while (iterator.hasNext()) { // mettre un name a mon champ fileUpload sinon passera pas par ici. Attention on ne peut pas passer deux fois.
                                         FileItemStream item = iterator.next();
                                         if (!item.isFormField()) {   // On ne s'interesse pas aux differents champs du formulaire mais on pourrait
                                             String filename = req.getParameter("id");
@@ -9306,6 +9305,15 @@ faire un formulaire de upload telechargement  d'image:
                                             response.setContentType("text/html");
                                             response.getOutputStream().print(filename);
                                             //response.getWriter().printf(filename);
+                                        }
+                                        else
+                                        {   //c'est un champ
+                                        	InputStream stream = item.openStream();
+                        					String name = item.getFieldName();
+                        					if (name.equals(fieldNameRequired)) {
+                        						String value = Streams.asString(stream);
+                        						return value;
+                        					}
                                         }
                                     }
                                 } catch (Exception ex) {
