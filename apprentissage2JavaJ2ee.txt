@@ -2367,7 +2367,7 @@ securite : security :(JSR375) plus besoin d'utiliser web.xml: les annotations fo
        **CredentialValidationResult contient le principal et ces roles: return new CredentialValidationResult("Duke",new HashSet<>(asList("foo", "bar")));
         necessaire de parametrer web.xml voir LINKlkjsqgeegege:<security-constraint> et <security-role>       
        pour securiser une servlet:  
-            @WebServlet("/servlet")
+            @WebServlet(urlPatterns="/un/path) .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention bien mettre urlPatterns sinon il se comporte comme si j'avais mis "un/path/*"
             @ServletSecurity(
                             value= @HttpConstraint(
                                 rolesAllowed = {"foo","supervisor"}), //limite cet acces aux utilisateurs qui ont ces roles.
