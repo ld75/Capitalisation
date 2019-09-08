@@ -1,4 +1,4 @@
-(?=.*maven)(?=.*tomcat)
+(?=.*filt)(?=.*utf)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -2258,7 +2258,7 @@ Cycle de vie du CDI bean:
               – @RequestScoped // a mettre absolument sur un webservice utilisant jwt car les claims jwt sont naturelement request-scopeds. LINKkgkgkgklkjsdfljqi
               – @RedirectScoped // fait partie de mvc: utile si apres un post on fait un redirect et qu'on a besoin de l'info du post.
               – @SessionScoped
-              – @ApplicationScoped // (par defaut) sur la classe. le bean est utilise pourl les proprietes generales de l'appli: ex: listes deroulantes qu'on voit tout le temps Attention ne s'initialise pas avnat d'etre injecté
+              – @ApplicationScoped // (par defaut) sur la classe. le bean est utilise pour les proprietes generales de l'appli: ex: listes deroulantes qu'on voit tout le temps Attention ne s'initialise pas avnat d'etre injecté
                                 pour dedans executer des trucs qui vivront tant que l'application tourne mais pour l'initialiser en meme temps que le container, voir LINKobsgdgdgz
                                 public void demarrage(@Observes @Initialized(ApplicationOuAutreScoped.class) Object init) // ou @Destroyed si c'est quand ca s'eteint. Ne prennent que des Scope LINKobsgdgdgz
                                 {(...)
@@ -2278,7 +2278,7 @@ Cycle de vie du CDI bean:
 
           
           faire des servlets sans web.xml: 
-                ajouter en tete de classe qui etend HttpServlet @WebServlet("/un/path) .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters.
+                ajouter en tete de classe qui etend HttpServlet @WebServlet("/un/path") ou (urlPatterns={"/a","/b"}) ou (urlPatterns="/b") .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention pour index page d'accueil on ne peut pas mettre / donc utiliser web.xml et welcome-file qui pointent sur une servlet ou une page
                  et @MultipartConfig // si je veux je crois que ma servlet gere l'upload de fichier (pas encore sur). recup les params avec request.getParmeters   
                 du coup ma classe n'est plus un webservice et ne pas utiliser @Produce et @Path avec. 
                 juste 
@@ -2554,7 +2554,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                             </dependency>
                       fonctionne que sur des webservices.
                       @Path("hello")
-                      @View("privateQuiDoitEtreSousWEB-INF/views.jsp" ou "redirect:/unAutreControlleur") sur la classe ou sur la methode. Si sur classe on peut l'overrider dans les methodes. Si on l'utilise la/les methodes doivent retourner void. On peut a la place faire LINKvuejslskjf car ici meme si user n'a pas le rôle il va afficher la jsp
+                      @View("privateQuiDoitEtreSousWEB-INF/views.jsp" ou "redirect:/unAutreControlleur") GRR j'arrive pas a le faire marcher. sur la classe ou sur la methode. Si sur classe on peut l'overrider dans les methodes. Si on l'utilise la/les methodes doivent retourner void. On peut a la place faire LINKvuejslskjf car ici meme si user n'a pas le rôle il va afficher la jsp
                       ou
                       @Controller // peut etre mis soir sur la classe soit sur les methodes. Si sur la classe toutes les methodes sont des controllers
                       public class HelloController {
@@ -2569,14 +2569,14 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                           @GET ou @POST
                           @CsrfValid ou @javax.mvc.security.CsrfProtected// necessite dans la jsp: <input type="hidden" name="${mvc.csrf.name}" value="${mvc.csrf.token}"/>
                           @Path("une/url") //facultatif
-                          @Produces(xxxx)// facultatif. par defaut si on met pas cette annotation c'est "text/html"
+                          @Produces("text/html")// facultatif. par defaut si on met pas cette annotation c'est "application/json" ou LINKkbndnb
                           @Controller   // on ne met ca que si LINKcontrlkjsqdf 
                           public String hello(@QueryParam("unChampApres?ou&DanslUrl") String name ETOU @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464 OU @FormParam("parametrePost") String unParametreDeFormulaire OU @Valid @BeanParam FormDataBean f) {
                               if (validateurDeBinding.isFailed()) {
                                 return Response.status(BAD_REQUEST).entity(“error.jsp”).build(); LINKvuejslskjf Necessite @Controller
                               }
                               models.put("toto",unObjet);                              
-                              return Response.status(OK).entity(“dataQuiDoitEtreSousWEB-INF/views.jsp”).build(); LINKvuejslskjf
+                              return Response.status(OK).header("headerEstFacultatifLINKkbndnb","bla").entity(“dataQuiDoitEtreSousWEB-INF/views.jsp”).build(); LINKvuejslskjf
                               ou 
                               return "hello.jsp"; ou return "/WEB-INF/jsp/majsp.jsp"; LINKvuejslskjf LINKcontrlkjsqdf
                               ou
@@ -3651,7 +3651,9 @@ AppConfigurationEntry localAppConfigurationEntry = localConfiguration.getAppConf
                                               subject.getPublicCredentials().add(role);                                                                                                                                                                                       
 JSP :
 faire un include:
-<%@include file="/utis.jspjsp/charte/FunctionsJS.jsp"%>
+<%@include file="/utis/charte/FunctionsJS.jsp"%> // va chercher dans webapp/utils/charte/FunctionJS.jsp 
+<%@include file="utis/charte/FunctionsJS.jsp"%> // va chercher dans webapp/WEB-INF/views/utils/charte/FunctionsJS.jsp 
+<@:include file="<%= request.getContextPath() %>/index.html" /> //PAS REUSSI A FAIRE MARCHER
 pour changer le titre d'une jsp: 
 			<script type="text/javascript">
 						document.getElementById("TitreMenu").innerHTML='<bean:message key="TypeBSCR004-1MAJ" />><bean:message key="TypeBSCR004-1CR" /> <div id="TitreMenu" class="H2Separator"></div>';
@@ -3664,7 +3666,7 @@ pour que le request soit transfere a une autre page:
       <jsp:forward page="/utils/errorReporter.jsp" /> (en dur)
       ou bien
       <jsp:forward page="<%= someJavaExpression %>" />
-      ${pageContext.request.contextPath}
+      ${pageContext.request.contextPath} // ca renvoit /monwarMonApplication
 pour afficher les erreurs dans la page d'erreur jsp:
                                   <%@ page import="java.lang.Exception"%>
                                   <%@ page import="java.io.PrintWriter"%>
@@ -3804,7 +3806,10 @@ public class SimpleBean {
 }
                                                                                                                                                                                                                 
 web.xml : webxml :
-<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" version="4.0" metadata-complete="true">
+                si erreur 
+                        Exception while preparing the app : Unable to load the EJB module. DeploymentContext does not contain any EJB. Check the archive to ensure correct packaging for C:\Users\lduverge\Desktop\memoclap\memoclap\java\MemOclapFront\target\authentication.If you use EJB component annotations to define the EJB, and an ejb or web deployment descriptor is also used, please make sure that the deployment descriptor references a Java EE 5 or higher version schema, and that the metadata-complete attribute is not set to true, so the component annotations can be processed as expected
+                        je dois virer metadata-complete=true
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" version="4.0">
             icon Le chemin d'accès a une icône qui peut être employee par un outil graphique pour representer l'application Web. 
             display-name Un nom qui peut être employe par un outil de gestion d'applications pour representer l'application Web. 
             description Une description de l'application. 
