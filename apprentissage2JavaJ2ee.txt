@@ -25053,7 +25053,7 @@ yy: copier ligne puis P: coller ligne
 4yy puis P: le faire pour 4 lgines
 copier-coller bouts:
   v puis bouger fleche pour selectionner puis d pour couper ou y pour copier puis P pour coller ce que j'avais selectionne
-faire une recherche find:faire / ignore case:set ignorecase puis /recherche\C pour prendre en commpte la case ou set ignorecase puis set smartcase pour une recherche case sensitive seulement si ya une majuscule dans ma recherche
+faire une recherche find: :set ignorecase puis :set smartcase puis /blabla // si j'ai pas fait les set alors faire /blabla\c pour une recherche case noncasesensitive majuscule minuscule
 		ou /bla\c exemple: /motcherche\c pour case insensitive ignorer majuscule minuscules.\c peut apparaitre partout debut ou fin et tapper. pour faire next, tapper n (pour echapper les / slash faire un backslash) pour rechercher en arrière: N
 ?: recherche de bas en haut
 u: undo si multiple undo ne marche pas: aptitude et charger vim
