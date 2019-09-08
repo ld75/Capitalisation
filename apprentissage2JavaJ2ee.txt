@@ -2367,7 +2367,7 @@ securite : security :(JSR375) plus besoin d'utiliser web.xml: les annotations fo
        **CredentialValidationResult contient le principal et ces roles: return new CredentialValidationResult("Duke",new HashSet<>(asList("foo", "bar")));
         necessaire de parametrer web.xml voir LINKlkjsqgeegege:<security-constraint> et <security-role>       
        pour securiser une servlet:  
-            @WebServlet("/servlet")
+            @WebServlet(urlPatterns="/un/path) .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention bien mettre urlPatterns sinon il se comporte comme si j'avais mis "un/path/*"
             @ServletSecurity(
                             value= @HttpConstraint(
                                 rolesAllowed = {"foo","supervisor"}), //limite cet acces aux utilisateurs qui ont ces roles.
@@ -2526,32 +2526,17 @@ System.out.println(name);// output is "Richard Wayne Monson-Haefel"
 
 mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de csrf) 
     krazo (projet eclipse). Pour les utliser sur differents serveurs voir https://www.mvc-spec.org/krazo/docs/install-javaee.html 
-                         <dependency>
-                                <groupId>javax.mvc</groupId>
-                                <artifactId>javax.mvc-api</artifactId>
-                                <version>1.0-pr</version>
-                            </dependency>
                             <dependency>
-                                <groupId>javax.mvc</groupId>
-                                <artifactId>javax.mvc-api</artifactId>
-                                <version>1.0-pfd</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>javax.mvc</groupId>
-                                <artifactId>javax.mvc-api</artifactId>
-                                <version>1.0-edr2</version>
-                                <scope>provided</scope>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.mvc-spec.ozark</groupId>
-                                <artifactId>ozark-core</artifactId> // a mettre
-                                <version>LATEST</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.mvc-spec.ozark</groupId>
-                                <artifactId>ozark-jersey</artifactId>
-                                <version>LATEST</version>
-                            </dependency>
+            <groupId>org.mvc-spec.ozark</groupId>
+            <artifactId>ozark-core</artifactId>
+            <version>1.0.0-m04</version>
+        </dependency>
+	              <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>8.0</version>
+            <scope>provided</scope>
+        </dependency>
                       fonctionne que sur des webservices.
                       @Path("hello")
                       @View("privateQuiDoitEtreSousWEB-INF/views.jsp" ou "redirect:/unAutreControlleur") GRR j'arrive pas a le faire marcher. sur la classe ou sur la methode. Si sur classe on peut l'overrider dans les methodes. Si on l'utilise la/les methodes doivent retourner void. On peut a la place faire LINKvuejslskjf car ici meme si user n'a pas le rôle il va afficher la jsp
@@ -2573,7 +2558,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                           @Controller   // on ne met ca que si LINKcontrlkjsqdf 
                           public String hello(@QueryParam("unChampApres?ou&DanslUrl") String name ETOU @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464 OU @FormParam("parametrePost") String unParametreDeFormulaire OU @Valid @BeanParam FormDataBean f) {
                               if (validateurDeBinding.isFailed()) {
-                                return Response.status(BAD_REQUEST).entity(“error.jsp”).build(); LINKvuejslskjf Necessite @Controller
+                                return Response.status(BAD_REQUEST).entity(“error.jsp”).build(); //recupere /webapp/WEB-INF/views/error.jsp LINKvuejslskjf Necessite @Controller
                               }
                               models.put("toto",unObjet);                              
                               return Response.status(OK).header("headerEstFacultatifLINKkbndnb","bla").entity(“dataQuiDoitEtreSousWEB-INF/views.jsp”).build(); LINKvuejslskjf
@@ -3654,6 +3639,7 @@ faire un include:
 <%@include file="/utis/charte/FunctionsJS.jsp"%> // va chercher dans webapp/utils/charte/FunctionJS.jsp 
 <%@include file="utis/charte/FunctionsJS.jsp"%> // va chercher dans webapp/WEB-INF/views/utils/charte/FunctionsJS.jsp 
 <@:include file="<%= request.getContextPath() %>/index.html" /> //PAS REUSSI A FAIRE MARCHER
+<%@include file="<%=request.getContextPath() %>/utis.jspjsp/charte/FunctionsJS.jsp"%> //PEUT ETRE QUE CA MARCHE
 pour changer le titre d'une jsp: 
 			<script type="text/javascript">
 						document.getElementById("TitreMenu").innerHTML='<bean:message key="TypeBSCR004-1MAJ" />><bean:message key="TypeBSCR004-1CR" /> <div id="TitreMenu" class="H2Separator"></div>';
@@ -3662,6 +3648,8 @@ pour acceder à un fichier depuis une jsp
 	pageContext.getServletContext().getRealPath (url)
 recuperer mes beans cdi et leurs valeurs:
     ${toto.getMachin()} ou ${toto.machin}  et j'ai un bean cdi @Named(value="toto") ou @Named("toto")
+    on peut faire aussi du java attribution: setter une variable
+    ${titi=unbean.getMachin()} et plus loin: ${titi} // utiliser titi plus loin
 pour que le request soit transfere a une autre page:
       <jsp:forward page="/utils/errorReporter.jsp" /> (en dur)
       ou bien
@@ -24313,6 +24301,8 @@ connectionPassword=AWTWSAD
 userSearchMatching=(uid={0})
 
 UNIX : linux :(unix est la plus basse couche; linux est au dessus mais il a été complettement réecrit, c le kernel=noyau; ubuntu(https://wiki.ubuntu.com/Releases) et debian sont deux distrib au dessus de linux. Sont differentes mais ubuntu est un layer par dessus debian)
+pour installer un fichier extension extention .deb
+	dpkg -i lefichier.deb
 La commande utilisee pour creer les fichiers ISO sous unix est:
         mkisofs -J -r -o $FILE_OUT $FILE_IN
         mkisofs -r -o CD-CS-1.iso CD-CS-1
@@ -24387,7 +24377,7 @@ liste des machines qui ont le droit de se logger sur mon serveur
   vi /etc/hosts.allow 
   je peux interdir à une adresse ip de se connecter sous /etc/hosts.deny
 pour recuperer telecharger uploader directement java: installer updater programme voir aussi curl 
-      wget http://javadl.sun.com/webapps/download/AutoDL?BundleId=59621 -O jre-6u31-linux-i586.bin
+      wget http://javadl.sun.com/webapps/download/AutoDL?BundleId=59621 -O jre-6u31-linux-i586.bin // -O pour output je crois
       wget http://javadl.sun.com/webapps/download/AutoDL?BundleId=63202 -O jre-7u4-linux-i586.tar.gz
       wget http://javadl.sun.com/webapps/download/AutoDL?BundleId=63202 -O jdk-8u101-linux-x64.tar.gz
 
@@ -24735,7 +24725,7 @@ deziper: unzip GroupNet.zip (on peut aussi deziper un ear et un war) PEUT ETRE b
 (pour compresser XXX.toto faire: compress  XXX.toto ca va donner un XXX.toto.Z à  ne pas confondre avec la commande unzip qui cree des .zip)
 pour zipper ziper un fichier ziper: zip monfichier.zip *
 pour zipper ziper un repertoire ziper: zip -r lenomdemonzip.zip * (* contient le repertoire.) -r pour zipper de manière recursive 
-dos2unix: la commande unix est: Dos2Unix fichier_original fichier destination // sinon si cette commande n'existe pas faire: vi puis :set ff=unix ou :set ff=dos puis sauver le fichier
+dos2unix: la commande unix est: Dos2Unix fichier_original fichier destination // sinon si cette commande n'existe pas faire: vi puis:set ff=unix ou:set ff=dos puis sauver le fichier
 ssh : se logger sur une machine a distance
     installer ssh sur debian:
       si serveur openssh deja la faire /etc/init.d/ssh reload
@@ -25067,7 +25057,8 @@ yy: copier ligne puis P: coller ligne
 4yy puis P: le faire pour 4 lgines
 copier-coller bouts:
   v puis bouger fleche pour selectionner puis d pour couper ou y pour copier puis P pour coller ce que j'avais selectionne
-faire une recherche find:faire / ou /\c exemple: /\cmotcherche pour case insensitive ignorer majuscule minuscules et tapper. pour faire next, tapper n (pour echapper les / slash faire un backslash) pour rechercher en arrière: N
+faire une recherche find:faire / ignore case:set ignorecase puis /recherche\C pour prendre en commpte la case ou set ignorecase puis set smartcase pour une recherche case sensitive seulement si ya une majuscule dans ma recherche
+		ou /bla\c exemple: /motcherche\c pour case insensitive ignorer majuscule minuscules.\c peut apparaitre partout debut ou fin et tapper. pour faire next, tapper n (pour echapper les / slash faire un backslash) pour rechercher en arrière: N
 ?: recherche de bas en haut
 u: undo si multiple undo ne marche pas: aptitude et charger vim
 .:redo Ou plutot  Ctrl+r
@@ -25363,7 +25354,7 @@ rsync :
     rsync -avrun (archive verbose update_cad n'efface pas les plus recents sur la destination n pour faire juste un test /mon/repertoireSource/ monServeurDestinataire:/monRepertoire/Destinataire (NE PAS mettre / ni /* à la fin de dest sinon il syncrho pas tout) (le slash après le source folder c pour dire de ne pas copier le dernier folder dans dest sinon il mettra repertoireSOurce dans Destinataire
     rsync -vru --list-only --exclude 'sarge' --exclude 'theatre' /cygdrive/c/Users/Laurent/Documents/documents/ /cygdrive/e/Mesdocuments
     --list-only  il ne fait meme pas un n mais il affiche juste (n il fait une simulation) ATTENTION JE CROIS QUIL NE DIT PAS TOUJOURS VRAI MIEUX VAUT UTILISER -n
-    --delete : apparemment sert à supprimer a droite les fichiers non présents à gauche 
+    --delete: apparemment sert à supprimer a droite les fichiers non présents à gauche 
     --ignore-existing pour ne rajouter que les orphelins a gauche.
     -a archive: copie les permissions // attention ne jamais mettre ca dans windows sinon ailleurs pourrais pas ouvrir le fichier peut etre
     --exclude 'un/path ou nomrepertoire'
@@ -25495,7 +25486,7 @@ raid :
 lvm :
     equivalent de git avec des snapshots mais pour les disques unix    
     
-pour installer des programmes: applications: (le repository miroir est je crois sources.list) (le repository miroir est je crois sources.list)
+pour installer des programmes: applications: (le repository miroir local qui lui indique ou chercher les paquets determine aussi la version de l'os. On peut le modifier. C'est le texte /etc/apt/sources.list C'est aussi ce fichier qu'utilise aptitude. Attention a resecter mon code version debian dedans)
     avec apt : apt-get : (sinon il ya aussi la commande yum)
     apt-cache search unelibrairie // pour chercher une librairie que je pourrais puller avec apt-get install
       apt-get update // pour mettre a jour la liste des packages nouvellement installables c a d juste la liste.
@@ -25503,6 +25494,12 @@ pour installer des programmes: applications: (le repository miroir est je crois 
       sudo apt-get install ksh pdksh         Linkkshsflk
     pour desinstaller
       sudo apt-get --purge remove nomprogramme
+   pour raffraichir reinitialiser nettoyer ma memoire aptget aptitutde apt-get:
+ 	apt-get clean
+  	apt-get autoclean
+   	apt-get autoremove
+   	apt-get update
+   	apt-get upgrade
     pour savoir quel language utilise un utilisateur
         grep "^utilisateur" /etc/passwd
     pour basculer le user en cours en ksh 
@@ -25681,7 +25678,8 @@ ADMIN_URL=http://130.98.232.97:7001
     
      il faut essayer ca: 
      java -Djava.awt.headless=true -classpath JimiProClasses.jar:. convertisseur.Main
-
+xfce : // bureautique debian
+	modifier les shortcuts raccourcis clavier: xfce>parametres>gestionnaire de parametres > gestionnaire de fenetre > clavier
 PHP :     
 pour faire marcher php avec oracle: (wamp) il faut que j'utilise l'utilitaire de wamp pour activer les extensions dll et decommenter aussi les lignes dans php.ini( deux lignes.. ora et oci un truc comme ca)
 ORACLE_HOME 
