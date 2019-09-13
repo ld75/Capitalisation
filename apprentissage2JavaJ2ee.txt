@@ -1,4 +1,4 @@
-(?=.*filt)(?=.*utf)
+(?=.*ajout)(?=.*classpath)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -2303,7 +2303,7 @@ try (SeContainer container = initializer.disableDiscovery().initialize()) { cont
                                                       <beans xmlns="http://xmlns.jcp.org/xml/ns/javaee"
                                                              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                                              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
-                                                             bean-discovery-mode="all">
+                                                             bean-discovery-mode="all"> // va scanner tous les packages pour faire du CDI
                                                       </beans>
            
                                                                 
