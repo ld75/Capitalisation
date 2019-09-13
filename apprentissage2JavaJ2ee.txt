@@ -1286,7 +1286,7 @@ OCR : image to texte :
   http://www.onlineocr.net/support/AboutOnlineOCR.aspx
   il accepte les gros jpeg 12qualite <4.1Mo
 
-microprofile : microprofiles : microprofile : 
+microprofile : microprofiles : microprofile : pannels d'outils en plus facultatifs. 
     mode standalone server:on reste sur un seul serveur et une seule jvm
     mode domain operating: plusieurs jvm(serveur) le "domain controller" gère les autres controlleurs qui peuvent être physiquement ailleurs
     le serveur peut etre configuré en java+jms plutot qu'avec un gui
@@ -2253,7 +2253,7 @@ CDI1.x besoin de weld
 			<version>3.0.1.Final</version>
 		</dependency>
 		
-<!-- pour utiliser les @ : scan les java qui ont :@Named(equivalent de @Qualifier de spring), @Inject (equivalent de @Autowire de spring)
+<!-- pour utiliser les @ : scan les java qui ont :@Qualifier mieux que @Named(equivalent de @Qualifier de spring mais on l'utilise plutôt pour JSF), @Inject (equivalent de @Autowire de spring)
 Cycle de vie du CDI bean:
               – @RequestScoped // a mettre absolument sur un webservice utilisant jwt car les claims jwt sont naturelement request-scopeds. LINKkgkgkgklkjsdfljqi
               – @RedirectScoped // fait partie de mvc: utile si apres un post on fait un redirect et qu'on a besoin de l'info du post.
@@ -2273,7 +2273,7 @@ Cycle de vie du CDI bean:
                  @TransactionAttribute pouf gerer les transactions (marche aussi sur ejb de type  @Stateful, @Stateless and @Singleton @ManagedBean, @WebServlet, @WebListener, @WebFilter)           
           utilisation d'un champ injecté:                       définition de la classe de l'autre coté:
           @Inject                                                @ApplicationScoped
-          @Named("simpleIs")                                     @Named("simpleIs")
+          @Named("simpleIs")//utiliser plutot @Qualifier         @Named("simpleIs")//utiliser plutot @Qualifier
           private IdentityStore simpleIdentityStore;             public class SimpleIdentityStore implements IdentityStore {
 
           
@@ -2303,7 +2303,7 @@ try (SeContainer container = initializer.disableDiscovery().initialize()) { cont
 		@Pattern(expressionreguliere) // sur un champ d'un bean: pour valider que ce champ quand il est rempli match bien à la regexp.
     pattern observable: LINKobsgdgdgz
         @Inject
-        @Named("tutu") LINKkfkgggg
+        @Named("tutu") LINKkfkgggg //utiliser plutot @Qualifier
         Event<Payload> payloadEvent;
         public void doSomething() {
           payloadEvent.fire(new Payload()); //ceci va declancher ailleur ceci:**
@@ -2338,11 +2338,11 @@ securite : security :(JSR375) plus besoin d'utiliser web.xml: les annotations fo
               @Inject 
               private IdentityStoreHandler identityStoreHandler; // doit avoir ca ou peut directement injecter un IdentityStore
        METHODE Importante: validateRequest() que je dois implémenter Les 2 autres c facultatif. S'execute à chaque requete avant les filters si user n'a pas de session
-                              Fait appel à->IdentityStoreHandler(Je peux le reecrire moi même)->qui lors de identityStoreHandler.validate(credential) fait appel à tous les->
+                              Fait appel à->IdentityStoreHandler(Je peux le reecrire moi même)
                                 puis
                                     if(les parametres d'authent existent)
                                     {
-                                       CredentialValidationResult result = identityStoreHandler.validate(credential);
+                                       CredentialValidationResult result = identityStoreHandler.validate(credential); //fait appel à tous les Identitystore
                                        if (result.getStatus().equals(CredentialValidationResult.INVALID_RESULT))
                                        {
                                         return httpMessageContext.responseUnauthorized();    
@@ -3351,7 +3351,8 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
                             }
                         } 
                                            
-                       
+JSON-B :jsonb : pour binder java et json
+JSON-P : jsonp : pour manipuler json: json processing                       
 SOAP : webservice : webservices :
 http://ws.apache.org/axis/java/user-guide.html
 voir l'outil Soap Ui soapui bien pratique (dans installations)
@@ -5247,7 +5248,7 @@ demarrer un batch tout simple avec spring-boot
           spring.profiles.active=oracle
           #server.tomcat.basedir=
           server.port=8090
-          server.ssl.key-store=classpath:dgac2.p12
+          server.ssl.key-store=classpath:dgac2.p12 
           ou
           server.ssl.key-store=config/dgac2.p12 //chemin relatif à la racine du projet/du jar ou /pour/chemin/absolu
           #mot de passe du keystore
@@ -13623,7 +13624,7 @@ Curl : voir aussi wget : pour faire une requette request http doc:https://ec.hax
      -c pour ecrire les cookies -d ou b ? pour les stocker... ATERMINER
      -w "totocequejeveux %{unevariablequim'estrenvoyéeparleserveur (voir la doc pour la liste des variables)}" > jepeuxecrireleresultatdansunfichier.txt        
 certificats : certificat : formats: types
-                              Échange d’informations personnelles (PKCS #12)  (.pfx ou .p12)
+                              Échange d’informations personnelles (PKCS #12)  (.pfx ou .p12) contient la clé publique(pour encrypter vers...) de la machine que je veux joindre et ma clé privée facultatif(pour décrypter ce que je reçois) c'est un certificat
                                     Le format d’échange d’informations personnelles (PFX, également appelé P12) prend en charge le stockage sécurisé des certificats, des clés privées et de tous les certificats d’un chemin d’accès de certification.
                                     Le format PKCS #12 est le seul format de fichier utilisable pour l’exportation d’un certificat et de sa clé privée.
                                     peut etre transcode en .pem (contenant le certif et la cle privee) 
