@@ -639,19 +639,24 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
   Dockerfile= bien l'appeler "Dockerfile" fichier docker: Défini une image à partir d'une image source. A ecrire apres avoir testé sur un container l'enchainement des commandes qui marchent grace à docker exec. puis ecrire ici les commandes pour builder mon image(mettre des trucs dedans):execution du haut vers le bas. haut:ce qui bouge le moins. Bas ce qui change le plus car docker utilise un cache.
         FROM image:tag donc node:x.x.x-alpine OU python:2.7-slim OU...// image docker de base quel OS OU BIEN une image docker (couche 0 = layer 0 de l'image) si je veux l'etendre voir LINKxlxlx  
         WORKDIR /un/path/DANSMONContainerDocker/PASdans/monOS/ (couche 1 = layer 1 de l'image)
+        ENV foo /bla // du coup en dessous quand je mets ${foo} c'est en fait "/bla"
         RUN apt-get update (couche 2 = layer 2 de l'image)
         RUN apt-get install -y unelibrairie      (couche 3 = layer 3 de l'image) // -y pour que lors du build docker reponde automatiquement YES à toute question interactive survenant pendant l'apt-get install: si j'ai erreur returned a non-zero code: 1
         RUN apk update && apk add unpacket  // commandes linux executees. si LINKxlxlx ca modifie l'image docker comme une extension
         RUN npm install --quiet // par exemple.
         RUN pip3 install numpy // par exemple. Commande pip3 qui installe numpy dans mon container.
         RUN pip install --trusted-host pypi.python.org - r requirement.txt // requirement.txt doit avoir été copie precedemment dans mon container dans le WORKDIR
+        LABEL image.mynews-authentication.maintainer=developer@cacd2.fr // ca ajoute une metadata à mon image
+        ARG user=jboss // la seule commande qui peut etre mise avant FROM. C'est comme ENV mais il peut etre mis avant FROM mais dans ce cas seul FROM peut l'utiliser. S'il est après FROM. Voir la doc
+        USER root // defini le user qui va executer les commandes suivantes. On peut en mettre un executer un truc puis refaire USER ${autreuser} et executer d'autres trucs
         COPY /un/path/dans/mon/Os /destination/dans/mon/image/docker
         COPY . . // par exemple: je copy tout dans mon image docker
         ADD . OU /un/PathDeMonOS/que/je/veuxCopierDansContainer /un/path/DANSMONContainerDocker/PASdans/monOS/    // comme COPY mais premier argument peut etre une URL
         EXPOSE 80 // ouvre le port 80 du container.
         ENV NAMEDEMAVARIABLE totoValeurDeMaVariable // créer une variable d'environnement (?) // tous les params de config doivent etre mis dans ce fichier docker. pas ailleurs(bonne pratique). (mysql.conf.d, javaMemory, phpini...) du coup ailleurs dans le fichier je peux mettre $totoValeurDeMaVariable
         ENV http_proxy hostAremplir:portAremplir // mettre ça si je suis derriere un proxy sinon il ne peut pas builder mon conteiner
-        ENV https_proxy hostAremplir:portAremplir // mettre ça si je suis derriere un proxy sinon il ne peut pas builder mon conteiner 
+        ENV https_proxy hostAremplir:portAremplir // mettre ça si je suis derriere un proxy sinon il ne peut pas builder mon conteiner
+        ENTRYPOINT ["/docker-entrypoint.sh"] // facultatif c'est le script qui est executé pour lors du démarrage de l'image et qui prend tous les arguments de la commande docker 
         CMD ["npm","start"] OU ["python", "app.py"]// execute npm start OU python app.py (app.py doit avoir été copie precedemment dans mon container dans le WORKDIR) qui va s'executer quand je vais executer mon container
   fichier docker-compose.yml: (overrite le fichier docker ci-dessus)
          version:'3'
@@ -1295,6 +1300,7 @@ microprofile : microprofiles : microprofile :
     healthcheck+mphealth:remplace les nodes Ko automatiquement
     openapi=opentracing (plus besoin de swagger)
     nouvelles annotations:
+      @ConfigProperties(name="nom.d'une.propriete.dans.le.fichier.microprofile.properties") // au dessus mettre @Inject et en dessous String ou Array ou etc maproprietepropertyes
       @CircuitBreaker(xxx) // permet de definir un timeout, delay etc...
       @Fallback(fallbackmethod="nomdelamethodequivas'executersiKO")
       @Bulkhead(3) //si il y a plus de 3 threads qui appellent cette methode alors les suivants vont direct dans le fallback
@@ -2224,6 +2230,7 @@ erreurs codes http: LINKcodesHttp
 407 : probleme de proxy ou plutot le proxy demande une authentification. le proxy a du renvoyer dans le header Proxy-Authenticate contenant comme valeur le challenge demandé. cela veut dire qu'il reclame le header Proxy-Authorization ou autre-chose
 408: timeout
 413 Payload Too Large
+415 Unsupported Media Type
 304: le serveur dit que le browser a deja toutes les infos et pas besoin de renvoyer d'autres infos + code 200
 500: erreur interne du serveur
 503: Service unavailable
@@ -6097,7 +6104,7 @@ Spring : XML STYLE
                             @Controller
                             (optionnel)@RequestMapping("/welcome") Si je mets ca , mon url doit etre: /welcome/autrechemin (par ex) //est GET par defaut
                             @RestController pour qu'il soit cap de renvoyer que du JSON ou XML(je crois) (pour webservice et ajax): a mettre en tête de classe: equivaut a mettre: @Controller en tete de classe +  @ResponseBody devant  chaque methode
-                            @Scope("request") (par exemp<le) ou @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)                             
+                            @Scope("request") (par exemp<le) ou @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON) // toujours accompagner @Scope d'une annotation de type @Component sinon l'autowired ne se fait pas                             
                             public class MaClasseMonController // NE PAS l'appeler Controller tout court
                             {
                                 @ResponseBody // en tete de methode ou de classe pour qu'il soit cap de renvoyer que du json même si je retourne un objet java(webservice mais inutile si j'ai mis @RestController en tête de classe) marche aussi avec les methodes get.
@@ -6224,7 +6231,7 @@ Spring-batch :
                                     import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
                                     import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
                                                       
-                                    @RunWith(SpringRunner.class[plus recent]) ou c'est la meme chose (SpringJUnit4ClassRunner.class)  ou (JMock.class)   si on veut tester non pas une seule classe mais une classe appelant une autre (qui est mockee) // grace à @RunWith(SpringJUnit4ClassRunner.class) ça initialise la classe SpringJUnit4ClassRunner avant de demarrer les tests. Cette classe permet d'injecter des beans dans cette classe //INDISPENSABLE POUR QUE @TESTPROPERTYSOURCE MARCHE
+                                    @RunWith(SpringRunner.class[plus recent]) ou c'est la meme chose (SpringJUnit4ClassRunner.class)  ou (JMock.class) ou (MockitoJUnitRunner.class)  si on veut tester non pas une seule classe mais une classe appelant une autre (qui est mockee) // grace à @RunWith(SpringJUnit4ClassRunner.class) ça initialise la classe SpringJUnit4ClassRunner avant de demarrer les tests. Cette classe permet d'injecter des beans dans cette classe //INDISPENSABLE POUR QUE @TESTPROPERTYSOURCE MARCHE
                                     puis
                                     @SpringBootTest(webEnvironment=RANDOM_PORT//facultatif. Si c'est du springboot. Du coup c'est pour les tests d'integration. Pas pour les tests unitaires. On peut aussi forcer le port) si spring-boot: demarre carrement le serveur. // recherche la classe annotee @SpringBootApplication pour def ApplicationContext qui est partage entre toutes les methodes et classes de test sauf si on met @DirtiesContext
                                      ou
@@ -6315,10 +6322,9 @@ Spring-batch :
 			   
                                       }
                                       @Test
-                                      @Transactional // à mettre si j'ai  org.hibernate.HibernateException: No Session found for current thread
+                                      @Transactional // à mettre si j'ai  org.hibernate.HibernateException: No Session found for current thread voir LINKxcxcvlqjk pour gerer les transactions de maniere plus fine
                                       public void searchSendRequest()
                                       {
-                                      
                                       //si dans mes controlleurs j'ai besoin que l'utilisateur soit authentifie: simuler qu'il est authentifie:
                                           		  GrantedAuthority role = new SimpleGrantedAuthority("AUTH");
                                           		  List<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
@@ -6334,7 +6340,7 @@ Spring-batch :
                                                                                                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                                                                                                .contentType(MediaType.APPLICATION_JSON) ou contentType(MediaType.TEXT_HTML)
                                                                                                .with(user("toto").roles("TATA"))
-                                                                                               .param("jsonobj","{\"destination\":\"yaounde\",\"departure\":\"douala\",\"timedeparture\":\"3\",\"daydeparture\":\"01/01/2016\"}")
+                                                                                               .param("jsonobj","{\"destination\":\"yaounde\",\"departure\":\"douala\",\"timedeparture\":\"3\",\"daydeparture\":\"01/01/2016\"}") // marche aussi pour des formulaires en post
                                                                                                .content(request)) // requete envoyee si c'est du POST(je crois) ne s'applique pas pour du GET
                                                                                              )***    
                                   			  ).andExpect(status().isOk()) // necessite import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -6398,8 +6404,16 @@ Spring-batch :
         si j'ai erreur lors du test
                         org.springframework.web.client.RestClientException: Error while extracting response for type and content type nested exception is org.springframework.http.converter.HttpMessageNotReadableException: JSON parse error: Cannot construct instance of ... (although at least one Creator exists): cannot deserialize from Object value (no delegate- or property-based Creator); nested exception is com.fasterxml.jackson.databind.exc.MismatchedInputException: Cannot construct instance of ... (although at least one Creator exists): cannot deserialize from Object value (no delegate- or property-based Creator)
                         c'est parce qu'il manque un constructeur vide dans ma classe entité entity                                    
-                              
-                  
+        pour controller les transations de manière plus fine dans un test au lieu d'utiliser @Transactional
+            @Autowired
+            PlatformTransactionManager platformTransactionManager;
+            TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
+            transactionTemplate.execute(new TransactionCallback<Object>() {
+            @Override
+            public Object doInTransaction(TransactionStatus status) {
+            ...mes requetes ici
+            }
+
               JDBC : pour recuperer le dernier Id insere : 
                                     SqlUpdSqlUpdate insert = new SqlUpdate(datasource, "INSERT INTO departure (agency, place) VALUES (?,?)");
                               insert.declareParameter(new SqlParameter(Types.INTEGER));
@@ -15611,7 +15625,7 @@ hacking : haking : hack :
                 affiche une liste de modules puis use un_des_modules_affiche puis "show options" pour afficher les options du modules puis les definir exemple: "set SOURCE <ADDR_IP> puis "run". Manuel: "show info". Si besoin voir cle: "show keys". Si besoin definir cle: "key add facebook_api<CLE_API>". revenir au menu precedent "back"
       nikto -h adresse_ipOu_url // pour voir les vulnerabilites d'un site web
             OSVDB-xxx est un identifiant(nonmaintenuA8) pour trouver plus d'info sur internet
-     owasp zap: outil pour trouver les failles d'un site web:sur kalilinux LINKfkjOwasplkjsg . Owasp=organisation d'evangelisation de hack a but non lucratif
+     owasp : owasp zap: outil pour trouver les failles d'un site web:sur kalilinux LINKfkjOwasplkjsg . Owasp=organisation d'evangelisation de hack a but non lucratif
           sur maven faire: 
                 <plugin>
 				<groupId>org.owasp</groupId>
@@ -15631,17 +15645,18 @@ hacking : haking : hack :
         MD5 et SHA1 et SHA2 sont obsoletes. parade: hasher 4 fois de suite. BcryptPasswordEncoder de spring le fait pour nous pour hasher des passwords par exemple
         ne pas loguer les users passwords  
 			  injection sql : ne jamais faire de requete sql par concatenation mais toujours pas procedure stockée. Un hacker sinon peut metre un bout de sql dans un champ texte. idemn sur mongodb
-        x-frame-options header not set // en-tête de response permettant d'eviter qu'un site s'affiche dans un autre site (iframe i-frame object).(clickjacking: quand je clique ça clique sur un autre bouton invisible)
-        xss//crosssitescripting // ma servlet vulnerable fait executer au navigateur du javascript passé en parametre de ma requete. ce javascript pourrait lire mes cookies (de session!): LINKcooklskjhh LINKc.s.r.f  et le pirate de se connecter à ma place
+        x-frame-options header not set // en-tête header http de response permettant d'eviter qu'un site s'affiche dans un autre site (iframe i-frame object).(clickjacking: quand je clique ça clique sur un autre bouton invisible)
+        xss ://crosssitescripting // ma servlet vulnerable fait executer au navigateur du javascript passé en parametre de ma requete. ce javascript pourrait lire mes cookies (de session!): LINKcooklskjhh LINKc.s.r.f  et le pirate de se connecter à ma place
                     pour s'en premunire faire du @safeHTML ou faire  org.jsoup.Jsoup.isValid(lechampatester); sur les champs pour que du javascript ne puisse pas etre injecté dedans. aussi empecher le javascript d'acceder aux cookies.
         pathtraversal// une servlet renvoit n'importe quel fichier ! ex: monsite/maservlet?vachercher=/unpath/unfichierANeSurtoutPasMontrer !affiche le fichier!    
         redirectionexterne // une servlet redirige vers un autre site! http://monsite?maservletTresConne?forward=http://un_autre_site
-        CSRF :(CrossSiteRequestForgery :) LINKc.s.r.f (Cross-site scripting appartient à csrf) 
+        CSRF :=XSRF :(CrossSiteRequestForgery :) LINKc.s.r.f (Cross-site scripting appartient à csrf) 
           inciter quelqu'un qui est connecté avec sa session sur le site X à lui faire executer une requette HTTP (genre rm -r*) par javascript caché (dans une image par ex) depuis un autre site web sur le meme navigateur.           
               la parrade est: 
                       - limiter Access-Control-Allow-Origin : ainsi le serveur fait une preflight request method=OPTION qui verifie si cette requete provient de source sure avant de faire la vraie requete.
-                      - la meilleure soluce: Utiliser des jetons de validité dans les formulaires: faire en sorte qu'un formulaire posté ne soit accepté que s'il a été produit quelques minutes auparavant: le jeton de validité en sera la preuve. Le jeton de validité doit être transmis en paramètre et vérifié côté serveur.
-                      - Effectuer une vérification du référent dans les pages sensibles: connaître la provenance du client permet de sécuriser ce genre d'attaques. Ceci consiste à bloquer la requête du client si la valeur de son référent est différente de la page d'où il doit théoriquement provenir.
+                      - la meilleure soluce: Utiliser des jetons de validité dans les formulaires: faire en sorte qu'un formulaire posté ne soit accepté que s'il a été produit quelques minutes auparavant: le jeton de validité en sera la preuve. Le jeton de validité stokés coté serveur dans la session de l'utilisateur est envoyé sur le browsser. Au retour il doit être transmis en paramètre et vérifié côté serveur puis supprimé de la session.
+                      - Effectuer une vérification du référent referer dans les pages sensibles: connaître la provenance du client permet de sécuriser ce genre d'attaques. Ceci consiste à bloquer la requête du client si la valeur de son référent est différente de la page d'où il doit théoriquement provenir.
+                      - captcha mais tres tres bof ici car lourd pour l'utilisateur: faire un captcha pour chaque formulaire beurk
         Session hijacking: si pas en https: hacker peut sniffer sur le reseau mon jsessionid ou autre. Pour eviter faire LINKlizifoizf                      
     metasploitable:
         /usr/share/metasploit-framework
@@ -16563,24 +16578,23 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
 			@Before
 				public void setup()
 				{
-					MockitoAnnotations.initMocks(this); // ca active les anotations @InjectMocks et @Mocks et @Spy
+					MockitoAnnotations.initMocks(this); // ca active les anotations @InjectMocks et @Mocks et @Spy // attention @Spy qui doit etre accompagné de par exemple @Autowired dans mon test car le bean doit exister avant que le spy s'applique: CA CA NE MARCHE PAS:mon objet spyé n'est pas le meme que celui qui est injecté dans le runcode.
 				}
-				FilterConfig filterConfig = mock(FilterConfig.class); // c'est soit je fais comme ca, soit j'utilise les anotations ci dessus. les deux font la meme chos
+				FilterConfig filterConfig = mock(FilterConfig.class); // c'est soit je fais comme ca, soit j'utilise les anotations ci dessus. les deux font la meme chose
 				ServletContext context = mock(ServletContext.class);
-				when(filterConfig.getServletContext( // ca s'appelle faire du "stub"
+                ResultDao rd =mock ou spy(unObjetNONANNOTE ou new ResultDao() ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
+                Mockito.doReturn(toto).when(rd).getLaMethodeResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy
+				when(filterConfig.getServletContext( // ca s'appelle faire du "stub" et utiliser ca je crois pour les mock
 				ou                                   anyString()//tout string
-				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça
+				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça . si je met des variables direct alors j'ai l'erreur InvalidUseOfMatchersException
                                                     ,anyList() // ne pas utiliser anyObject si j'ai une liste
 													,Matchers.any(UneClasse.class) avant : anyObject(UneClasse.class)
 													).thenReturn(context);
-				ResultDao rd =mock ou spy(unObjetNONANNOTE ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
-				Result toto = new Result();
-				Mockito.doReturn(toto).when(rd).getLaMethodeResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy 
                 pour indiquer de retourner une exception à un spy ou stub
                         Mockito.doThrow(new HibernateException("err")).when(userWebDAO).create(Matchers.any(UserWebEntity.class)); 
 				WelcomeController wc = new WelcomeController(rd);
 				wc.getDisplayResult("1", "1","10:00", "10/10/2016");
-                validation verifier qu'un mock a été appelé par une methode x fois:
+                validation verifier qu'un mock a été appelé invoké invoquée par une methode x fois nombre compter combien:
                         verify(userDetailDAOMock, times(2)).laMathodeDuMock(any(UserDetailsEntity.class));
 cucumber : il fait ce que fait junit mais permet à des non techniciens de comprendre les tests.LINKcucumberldfj 
       Feature: action globale
@@ -26047,47 +26061,48 @@ Pour rediriger les requetes du port 8080 de apache vers jetty:
                           </VirtualHost>
 User apache
 Group apache // user et group veulent dire que le serveur est executer par le user apache qui n'a pas trop de privilege pour eviter qu'un script de mon site web efface tout par exemple car apache n'a pas trop de privileges
-load balancing : loadbalancing : clustering :
-    loadbalancing: une requette de l'utilisateur arrive LB redirige vers le serveur qui contient la session de cet utilisateur. si c'est page sans session(statique) redirige selon le LBpolicy selon les charges. Les serveurs ne se voient pas entre eux. Simple à mettre en place.
-    clustering: inclu LB. mais en plus les serveurs se voient à travers un port et echangent entre eux pour partager la charge de boulot. +Complexe à installer.
-              voir article http://docs.motechproject.org/en/latest/deployment/sticky_session_apache.html
-              <Proxy balancer://HRaCluster>
-                 BalancerMember ajp://localhost:52665 loadfactor=1 route=route6 timeout=300 retry=1
-                 BalancerMember ajp://localhost:52685 loadfactor=1 route=route8 timeout=300 retry=1
-                 BalancerMember ajp://localhost:52695 loadfactor=1 route=route9 timeout=300 retry=1
-
-                 ProxySet stickysession=ROUTEID
-                  ou bien        
-                 ProxyPass / balancer://hra/ stickysession=JSESSIONID|jessionid scolonpathdelim=On voir LINKpppassorder
-
-                 # timeout à 300 sinon on avait trop rapidement le message d'indisponibilite
-                 # retry à 1 pour que apache reessaye une seconde apres avoir detecte un timeout
-                 # car  pendant la duree du retry on a le message 'All workers are in error state for route' et on a un HTTP 501 .
-              </Proxy>
-              
-              # stickysession means a user will stay on the same Tomcat
-              # nofailover=Off means Tomcat should failover and Apache redirects
-              ProxyPass        /hra-space balancer://HRaCluster/hra-space stickysession=ROUTEID nofailover=On voir LINKpppassorder
-              ProxyPassReverse /hra-space balancer://HRaCluster/hra-space
-              ProxyPass        /hr-dms balancer://HRaCluster:52683/hr-dms stickysession=ROUTEID nofailover=On
-              ProxyPassReverse /hr-dms balancer://HRaCluster/hr-dms
-              ProxyPass        /hr-rich-client balancer://HRaCluster:52683/hr-rich-client stickysession=ROUTEID nofailover=On
-              ProxyPassReverse /hr-rich-client balancer://HRaCluster/hr-rich-client
-              ProxyPass        /hr-portlets balancer://HRaCluster:52683/hr-portlets stickysession=ROUTEID nofailover=On
-              ProxyPassReverse /hr-portlets balancer://HRaCluster/hr-portlets
-              ProxyPass        /hr-self-service balancer://HRaCluster:52683/hr-self-service stickysession=ROUTEID nofailover=On
-              ProxyPassReverse /hr-self-service balancer://HRaCluster/hr-self-service
-              ProxyPass        /hr-configuration-tool-web-smartgwt balancer://HRaCluster:52683/hr-configuration-tool-web-smartgwt stickysession=ROUTEID nofailover=On
-              ProxyPassReverse /hr-configuration-tool-web-smartgwt balancer://HRaCluster/hr-configuration-tool-web-smartgwt
-              ProxyPass        /hr-audit-console balancer://HRaCluster:52683/hr-audit-console stickysession=ROUTEID nofailover=On
-              ProxyPassReverse /hr-audit-console balancer://HRaCluster/hr-audit-console
-              ProxyPass        /hr-admin-console balancer://HRaCluster:52683/hr-admin-console stickysession=ROUTEID nofailover=On
-              ProxyPassReverse /hr-admin-console balancer://HRaCluster/hr-admin-console
-              ProxyPass        /hr-online-query balancer://HRaCluster:52683/hr-online-query stickysession=ROUTEID nofailover=On
-              ProxyPassReverse /hr-online-query balancer://HRaCluster/hr-online-query
-              
-              ProxyTimeout 300
-
+clustering : clusters : cluster :
+    Actif/actif: load balancing : loadbalancing :
+        loadbalancing: une requette de l'utilisateur arrive LB redirige vers le serveur qui contient la session de cet utilisateur. si c'est page sans session(statique) redirige selon le LBpolicy(existe plusieurs algo possibles aux choix) selon les charges. Les serveurs ne se voient pas entre eux. Simple à mettre en place.
+        clustering: inclu LB. mais en plus les serveurs se voient à travers un port et echangent entre eux pour partager la charge de boulot. +Complexe à installer.
+                  voir article http://docs.motechproject.org/en/latest/deployment/sticky_session_apache.html
+                  <Proxy balancer://HRaCluster>
+                     BalancerMember ajp://localhost:52665 loadfactor=1 route=route6 timeout=300 retry=1
+                     BalancerMember ajp://localhost:52685 loadfactor=1 route=route8 timeout=300 retry=1
+                     BalancerMember ajp://localhost:52695 loadfactor=1 route=route9 timeout=300 retry=1
+    
+                     ProxySet stickysession=ROUTEID
+                      ou bien        
+                     ProxyPass / balancer://hra/ stickysession=JSESSIONID|jessionid scolonpathdelim=On voir LINKpppassorder
+    
+                     # timeout à 300 sinon on avait trop rapidement le message d'indisponibilite
+                     # retry à 1 pour que apache reessaye une seconde apres avoir detecte un timeout
+                     # car  pendant la duree du retry on a le message 'All workers are in error state for route' et on a un HTTP 501 .
+                  </Proxy>
+                  
+                  # stickysession means a user will stay on the same Tomcat
+                  # nofailover=Off means Tomcat should failover and Apache redirects
+                  ProxyPass        /hra-space balancer://HRaCluster/hra-space stickysession=ROUTEID nofailover=On voir LINKpppassorder
+                  ProxyPassReverse /hra-space balancer://HRaCluster/hra-space
+                  ProxyPass        /hr-dms balancer://HRaCluster:52683/hr-dms stickysession=ROUTEID nofailover=On
+                  ProxyPassReverse /hr-dms balancer://HRaCluster/hr-dms
+                  ProxyPass        /hr-rich-client balancer://HRaCluster:52683/hr-rich-client stickysession=ROUTEID nofailover=On
+                  ProxyPassReverse /hr-rich-client balancer://HRaCluster/hr-rich-client
+                  ProxyPass        /hr-portlets balancer://HRaCluster:52683/hr-portlets stickysession=ROUTEID nofailover=On
+                  ProxyPassReverse /hr-portlets balancer://HRaCluster/hr-portlets
+                  ProxyPass        /hr-self-service balancer://HRaCluster:52683/hr-self-service stickysession=ROUTEID nofailover=On
+                  ProxyPassReverse /hr-self-service balancer://HRaCluster/hr-self-service
+                  ProxyPass        /hr-configuration-tool-web-smartgwt balancer://HRaCluster:52683/hr-configuration-tool-web-smartgwt stickysession=ROUTEID nofailover=On
+                  ProxyPassReverse /hr-configuration-tool-web-smartgwt balancer://HRaCluster/hr-configuration-tool-web-smartgwt
+                  ProxyPass        /hr-audit-console balancer://HRaCluster:52683/hr-audit-console stickysession=ROUTEID nofailover=On
+                  ProxyPassReverse /hr-audit-console balancer://HRaCluster/hr-audit-console
+                  ProxyPass        /hr-admin-console balancer://HRaCluster:52683/hr-admin-console stickysession=ROUTEID nofailover=On
+                  ProxyPassReverse /hr-admin-console balancer://HRaCluster/hr-admin-console
+                  ProxyPass        /hr-online-query balancer://HRaCluster:52683/hr-online-query stickysession=ROUTEID nofailover=On
+                  ProxyPassReverse /hr-online-query balancer://HRaCluster/hr-online-query
+                  
+                  ProxyTimeout 300
+    
 
 
 pour faire des liens url plus petits shortened links : 
