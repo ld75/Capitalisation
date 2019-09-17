@@ -1,4 +1,4 @@
-(?=.*ajout)(?=.*classpath)
+(?=.*system)(?=.*var)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -1296,11 +1296,13 @@ microprofile : microprofiles : microprofile : pannels d'outils en plus facultati
     mode domain operating: plusieurs jvm(serveur) le "domain controller" gère les autres controlleurs qui peuvent être physiquement ailleurs
     le serveur peut etre configuré en java+jms plutot qu'avec un gui
   ajoute des urls:
-    config rafraichie automatiquement pendant le run
+    config rafraichie automatiquement pendant le run LINKmcroprofileconfig (Config 1.3)
     healthcheck+mphealth:remplace les nodes Ko automatiquement
     openapi=opentracing (plus besoin de swagger)
     nouvelles annotations:
-      @ConfigProperties(name="nom.d'une.propriete.dans.le.fichier.microprofile.properties") // au dessus mettre @Inject et en dessous String ou Array ou etc maproprietepropertyes
+      @ConfigProperties(name="nom.d'une.propriete.dans.le.fichier.microprofile.properties") // au dessus mettre @Inject et en dessous String ou Array ou etc maproprietepropertyes LINKmcroprofileconfig
+        String ou int ou double etc... mavaleur; ou pour un rechargement à chaud: Provider<String> mavaleur;
+        recupere les valeurs depuis META-INF/microprofile-config.properties overridé par les variables d'environnement par key overridé par les variables systemes par key 
       @CircuitBreaker(xxx) // permet de definir un timeout, delay etc...
       @Fallback(fallbackmethod="nomdelamethodequivas'executersiKO")
       @Bulkhead(3) //si il y a plus de 3 threads qui appellent cette methode alors les suivants vont direct dans le fallback
@@ -2342,7 +2344,7 @@ securite : security :(JSR375) plus besoin d'utiliser web.xml: les annotations fo
        |                                                                                                                                                                                                                            errorPage = "/login-error.html"),
        |                                                                                                                                                                                                                            useForwardToLogin=false // facultatif: pour faire un redirect a la place d'un forward  
        |                                                                                                                                                                                                                             ))
-       MaCustomClasse implements HttpAuthenticationMechanism                                                                                                                                                                                                             
+       MaCustomClasse implements HttpAuthenticationMechanism SEUL TRUC QUE JE REUSSI A FAIRE MARCHER. MAIS PAS CEUX CI DESSUS                                                                                                                                                                                                             
               @Inject 
               private IdentityStoreHandler identityStoreHandler; // doit avoir ca ou peut directement injecter un IdentityStore
        METHODE Importante: validateRequest() que je dois implémenter Les 2 autres c facultatif. S'execute à chaque requete avant les filters si user n'a pas de session
@@ -2394,7 +2396,7 @@ config de la base de donnée donnee: en jee
     en annotations:(a mettre sur une classe @Statefull en tout cas sur un EJB et pas sur CDI)
       @DataSourceDefinitions( //facultatif mais...                                                 
       value = { //...du coup possible en enchainer plusieurs et je peux avoir plusieurs datasource
-        @DataSourceDefinition(name="java:global/MyApp/MyDataSource1", // ce nom la est cree ici et sera utilise ailleurs. commence par java:app (scope dans cette appli seulement) java:comp (??) java:module (??) java:global (disponible dans toutes les applications déploiees sur ce serveur)
+        @DataSourceDefinition(name="java:global/MyApp/MyDataSource1", // ce nom la est cree ici et sera utilise ailleurs. commence par java:app (scope dans cette appli seulement) java:comp (??) java:module (??) java:global (disponible dans toutes les applications déploiees sur ce serveur) // permet de definir la source de donnée dans l'application au lieu de dans le serveur container.
             className="com.example.MyDataSource", ou org.hsqldb.jdbc.JDBCDriver
             portNumber=6689,
             serverName="example.com",
@@ -3282,14 +3284,14 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
     envoyer faire une requette http à un webservice SEULEMENT. ne marche pas pour les servlets: utile pour les tests d'integration:
         Client client = ClientBuilder.newClient();
         en mode synchrone:
-              WebTarget target = client.target("http://localhost:9990") //FINURLENLEVEEXPRES attention ne pas utiliser les variables mais enchainer les points comme ci dessous target().path().request().get....
+              WebTarget target = client.target("http://localhost:9990") //attention ne pas utiliser les variables ? et & mais enchainer les points comme ci dessous target().path().request().get....
               .queryParam("bli","blah")
               .path("/backoffice/resources/ping/echo/glk")
               .request()
               .accept("application/json")
               .header("foo","bar")
               .get(...) ca ou bien ci dessous
-              Invocation.Builder invokationBuilder = target.request(MediaType.APPLICATION_JSON_TYPE); // ou MediaType.APPLICATION_XML.(soap)..
+              Invocation.Builder invokationBuilder = target.request(MediaType.APPLICATION_JSON_TYPE); // si j'attaque un webservice ou MediaType.APPLICATION_XML.(soap)..
               invokationBuilder.get();
               invokationBuilder.get(MaClassePartageeParLes2WebServices.class);
               Response response = invokationBuilder.post(Entity.entity(maclasseAPoster,MediaType.APPLICATION_JSON_TYPE);
@@ -3359,7 +3361,37 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
                             }
                         } 
                                            
-JSON-B :jsonb : pour binder java et json
+JSON-B :jsonb : pour binder java et json LINKjsonbnew
+          <!-- jsonb -->
+            <!-- JSON-P -->
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>jakarta.json</artifactId>
+                <version>1.1.5</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <!-- JSON-B API -->
+            <dependency>
+                <groupId>jakarta.json.bind</groupId>
+                <artifactId>jakarta.json.bind-api</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+
+            <!-- Yasson (JSON-B implementation) -->
+            <dependency>
+                <groupId>org.eclipse</groupId>
+                <artifactId>yasson</artifactId>
+                <version>1.0.3</version>
+                <scope>runtime</scope>
+            </dependency>
+    de java vers json:
+      AuthentMessage ret = new AuthentMessage("Mauvais identitiants");
+                    Jsonb jsonb = JsonbBuilder.create();
+                    String dujson = jsonb.toJson(ret);
+    de json vers java:
+        AuthentMessage ret = jsonb.fromJson(dujson,AuthentMessage.class);
+                    
 JSON-P : jsonp : pour manipuler json: json processing                       
 SOAP : webservice : webservices :
 http://ws.apache.org/axis/java/user-guide.html
@@ -7283,13 +7315,29 @@ hsqldb : LINKldkjgieieioruz
             }
                 
 
-JPA :
+JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
     pour faire du reverse engineering java vers base de donnee java2db
-    monProjet>Properties>Ajouter Facelets JPA; 
+    monProjet>Properties>Ajouter Facelets JPA; //bof 
     Recuperer dans ecolipse Help>Update>Plugin Hibernate tools (http://download.jboss.org/jbosstools/updates/stable/indigo)
     ouvrir console Hibernate et configurer une connection à une base
     Clic droit sur mon projet > JAP > faire le reverseEngeniring
-
+    fichier META-INF ou WEB-INF/persistence.xml
+    <persistence> 
+        <persistence-unit name="com.memoclap" transaction-type="RESOURCE_LOCAL"> // du coup applicativement je l'appelle comme ça : LINKentitym
+            <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> // facultatif provider peut etre eclipselink ou hibernate. si on met rien.. sais pas. depend jars ?
+            <description>EclipseLink EntityManager</description>                 // facultatif
+            <exclude-unlisted-classes>false</exclude-unlisted-classes>
+             <jta-data-source>java:app/MemOclapDataSource</jta-data-source> //LINKjta: mettre la valeur de @DataSourceDefinition(name="java:app/MemOclapDataSource" pour aller cherche un datasource deja defini applicativement
+             ou
+            <properties> // parametres envoyés au persistenceprovider. On peut définir la base de donnée ici mais je prefere LINKjta  
+                <property name="eclipselink.logging.level" value="FINE"/>
+                <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+                <property name="javax.persistence.jdbc.url" value="jdbc:mysql://127.0.0.1:3306/moviecatalog"/>
+                <property name="javax.persistence.jdbc.user" value="root"/>
+                <property name="javax.persistence.jdbc.password" value="root"/>
+            </properties>
+       </persistence-unit>
+     </persistence>   
   FORMS ----> envoie des DTO---ne plus les utiliser et passer direct par les entities sauf si ils ont pas la meme structure que les Entities
                            |                               |
                            vers                            |
@@ -7302,7 +7350,12 @@ JPA :
   EntityManager remplaceDAO = methodes crud                |
       methode(fait appel à ENTITY)------------------(BO=MODEL)ENTITIES connectees à la base
     Enleve expres
-
+    //recuperer l'entitymanager applicativement: LINKentitym
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.memoclap"); 
+        et
+        public static EntityManager getEntityManager() {
+        return emf.createEntityManager();
+        }
 DAO : design pattern bonne pratique est mort remplacé par entitymanager
 un @Repository se base sur les DAO pour faire des find, get etc sur plusieurs tables. Le DAO lui sert aux updates sur une seule table
   Besoin que MonObjet extends BaseEntity.
@@ -18120,7 +18173,7 @@ pour imposer qu'il ya  qu'une seule instance de mon batch java qui tourne:
        
 
 
-parser convertir json :
+parser convertir json : tout ca est vieux ci dessous. Voir LINKjsonbnew
 pour convertir un string objet java en array json meme si l'array a plusieurs niveau:
                 avec jackson avec controle du mapping
                 classe ObjetclasseJava->Json
@@ -26625,12 +26678,26 @@ yahoo.js :pour faire un drag and drop
         	}-*/;
         // l'objet e peut maintenant etre la cible d'un autre objet drague
 fetch : LINKsljqffetch
+            en mode synchro:
                         async function mamethode() { 
                               const response = await fetch("/hello");
                               const { greeting } = await response.json();
                               this.innerHTML = `
                                   <h2>${greeting}</h2>
                               `;
+                        ou en mode callback:
+               fetch(url,{
+              method:'GET',
+              credentials:'omit'
+          })
+          .then(response=>response.json()) // attention renvoit une promesse a retraiter comme telle car en fait response contient le header mais response.json() fait appel à recup la promesse du body
+          .then((json)=>{
+            (new AlertMessage()).appear(json.message);
+           })
+           .catch(err=>{(new AlertMessage()).appear("Erreur: "+err );});
+     }
+
+
 ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch)
                         ans = canvas.toDataURL("image/png");  //Pour sauver un canvas sur le serveur en image png ou jpg il faut obligatoirement envoyer les donnees en POST sinon le fichier genere est pourri:
             	    		var formData = new FormData(); ou new FormData(document.getElementById("forText")); // forText est juste un   html recuperable avec document.getElement...ATTENTION les champs de mon formulaire doivent avoir un name sinon ils ne sont pas ajoute dans les formdata 
