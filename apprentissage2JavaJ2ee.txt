@@ -1,4 +1,4 @@
-(?=.*system)(?=.*var)
+(?=.*jsp)(?=.*html)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -2572,7 +2572,8 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                                 return Response.status(BAD_REQUEST).entity(“error.jsp”).build(); //recupere /webapp/WEB-INF/views/error.jsp LINKvuejslskjf Necessite @Controller
                               }
                               models.put("toto",unObjet);                              
-                              return Response.status(OK).header("headerEstFacultatifLINKkbndnb","bla").entity(“dataQuiDoitEtreSousWEB-INF/views.jsp”).build(); LINKvuejslskjf
+                              return Response.status(OK).header("headerEstFacultatifLINKkbndnb","bla").entity(“unepage.jsp(QuiDoitEtreSousWEB-INF/views/)”).build(); LINKvuejslskjf
+                                                exemple .header("Content-Type","text/html") mais voir LINKkbndnb
                               ou 
                               return "hello.jsp"; ou return "/WEB-INF/jsp/majsp.jsp"; LINKvuejslskjf LINKcontrlkjsqdf
                               ou
