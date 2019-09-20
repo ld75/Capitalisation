@@ -1,4 +1,4 @@
-(?=.*set)(?=.*java_home)
+(?=.*jsp)(?=.*html)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -1264,6 +1264,7 @@ trouver rechercher un fichier par son nom name Ctrl + n(classe) ctrl + shift + n
 pour faire une trouver recherche dans les projets: focusser sur le projet et commencer à saisir les caractères
 renommer refractor rename Maj+F6: a la fin faire echape!!!
 renommer Maj+F6
+changer le type d'une variable: Ctrl+Shift+F6
 bouger move un truc F6 essayer aussi ctrl+alt+v(jamais essayé)
 overide override: Ctrl+O
 implementer methode: Ctrl+I 
@@ -2571,7 +2572,8 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                                 return Response.status(BAD_REQUEST).entity(“error.jsp”).build(); //recupere /webapp/WEB-INF/views/error.jsp LINKvuejslskjf Necessite @Controller
                               }
                               models.put("toto",unObjet);                              
-                              return Response.status(OK).header("headerEstFacultatifLINKkbndnb","bla").entity(“dataQuiDoitEtreSousWEB-INF/views.jsp”).build(); LINKvuejslskjf
+                              return Response.status(OK).header("headerEstFacultatifLINKkbndnb","bla").entity(“unepage.jsp(QuiDoitEtreSousWEB-INF/views/)”).build(); LINKvuejslskjf
+                                                exemple .header("Content-Type","text/html") mais voir LINKkbndnb
                               ou 
                               return "hello.jsp"; ou return "/WEB-INF/jsp/majsp.jsp"; LINKvuejslskjf LINKcontrlkjsqdf
                               ou
@@ -7321,7 +7323,7 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
     Recuperer dans ecolipse Help>Update>Plugin Hibernate tools (http://download.jboss.org/jbosstools/updates/stable/indigo)
     ouvrir console Hibernate et configurer une connection à une base
     Clic droit sur mon projet > JAP > faire le reverseEngeniring
-    fichier META-INF ou WEB-INF/persistence.xml
+    fichier resources/META-INF/persistence.xml ou WEB-INF/persistence.xml
     <persistence> 
         <persistence-unit name="com.memoclap" transaction-type="RESOURCE_LOCAL"> // du coup applicativement je l'appelle comme ça : LINKentitym
             <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> // facultatif provider peut etre eclipselink ou hibernate. si on met rien.. sais pas. depend jars ?
@@ -7351,11 +7353,14 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
       methode(fait appel à ENTITY)------------------(BO=MODEL)ENTITIES connectees à la base
     Enleve expres
     //recuperer l'entitymanager applicativement: LINKentitym
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.memoclap"); 
-        et
-        public static EntityManager getEntityManager() {
-        return emf.createEntityManager();
-        }
+            @PersistenceContext(name = "com.memoclap")
+            EntityManager em;
+        ou
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.memoclap"); 
+            et
+            public static EntityManager getEntityManager() {
+            return emf.createEntityManager();
+            }
 DAO : design pattern bonne pratique est mort remplacé par entitymanager
 un @Repository se base sur les DAO pour faire des find, get etc sur plusieurs tables. Le DAO lui sert aux updates sur une seule table
   Besoin que MonObjet extends BaseEntity.
@@ -24304,7 +24309,7 @@ sudo :
     /opt logiciels commerciaux installes
     /home repertoires persos pour utilisateur
     /var donnees frequements reecrites
-les comptes utilisateurs sont sur etc/passwd (si un jour un gars qu'on ne connait pas fait des trucs)
+les comptes utilisateurs sont sur etc/passwd (si un jour un gars qu'on ne connait pas fait des trucs) figurent dedans les homes des utilisateurs et on peut atteindre leur home en faisant cd ~nomutilisateur
 pour recharger le .profile // fichier chargé lorsque je me connecte a la connexion initialise. dedans je peux mettre des commandes qui s'executent lors de ma connexion 
     faire: cd ou cd . puis . .profile (faire ls -tral pour voir tout (attention pas tout forcement... mais je ne sais pas pourquoi)
 changer mot de passe d'un utilisateur:
@@ -24943,7 +24948,11 @@ sur sed :
  où ma_commande = num_premiere_ligne,num_derniere_ligne/expression reguliere/remplacee par/flag
  où flag=... 
 sed -e "s/4095,4095/\([0-9][0-9]*\)/**\1**/" fichier
-
+raccourcis shortcut commandes:
+	Ctrl+a debut ligne
+	Ctrl+e fin ligne
+	Alt+b arriere
+	Alt+f avant
 sur vi : 
 pour affichier avec des fonts colorees couleurs: aptitude: charger vim
 view nomfichier pour afficher en lecture seule
@@ -25004,7 +25013,7 @@ yy: copier ligne puis P: coller ligne
 copier-coller bouts:
   v puis bouger fleche pour selectionner puis d pour couper ou y pour copier puis P pour coller ce que j'avais selectionne
 faire une recherche find: :set ignorecase puis :set smartcase puis /blabla // si j'ai pas fait les set alors faire /blabla\c pour une recherche case noncasesensitive majuscule minuscule
-		ou /bla\c exemple: /motcherche\c pour case insensitive ignorer majuscule minuscules.\c peut apparaitre partout debut ou fin et tapper. pour faire next, tapper n (pour echapper les / slash faire un backslash) pour rechercher en arrière: N
+		ou /bla\c exemple: /motcherche\c pour case insensitive ignorer majuscule minuscules.\c peut apparaitre partout debut ou fin et tapper. pour faire next, wildcard faire .*, tapper n (pour echapper les / slash faire un backslash) pour rechercher en arrière: N
 ?: recherche de bas en haut
 u: undo si multiple undo ne marche pas: aptitude et charger vim
 .:redo Ou plutot  Ctrl+r
@@ -25331,6 +25340,7 @@ rsync :
                   rsync -avu --exclude sons --exclude proc --exclude tmp root@www.wenhuaduverge.com:/srv/data /cygdrive/f/BackupServeurGandiDemeterCASSE/srv/data                                                                                                                                                                                                                                                                                                                                                 
                     Vers Doroty
                     rsync -vr /cygdrive/f/Mesdocuments/ /cygdrive/e/documents/
+                      rsync -vrn --exclude 'PHOTOS' --exclude 'Karie' --exclude 'theatre' --exclude 'icecream' --exclude 'avance services' --exclude 'AUDIOLOOPPLUS2' --exclude 'AUDIOLOOPPLUS' --exclude 'AH1*' --exclude 'PE1*' --exclude 'ImagesPhotos' --exclude '*.avi' --exclude '*.MOD'  --exclude 'Cakewalk*' --exclude 'Chinoisfacile' --exclude 'IntelliJ IDEA Community Edition 2017.2.2' /media/laurent/OUGARIT/Mesdocuments/ /media/laurent/Doroty/documents/
                       rsync -vr --exclude 'PHOTOS' --exclude 'Karie' --exclude 'theatre' --exclude 'icecream' --exclude 'avance services' --exclude 'AUDIOLOOPPLUS2' --exclude 'AUDIOLOOPPLUS' --exclude 'AH1*' --exclude 'PE1*' --exclude 'ImagesPhotos' --exclude '*.avi' --exclude '*.MOD'  --exclude 'Cakewalk*' --exclude 'Chinoisfacile' --exclude 'IntelliJ IDEA Community Edition 2017.2.2' --delete /cygdrive/e/Mesdocuments/ /cygdrive/d/documents
                       rsync -vr --exclude 'PHOTOS' --exclude 'Karie' --exclude 'theatre' --exclude 'icecream' --exclude 'avance services' --exclude 'AUDIOLOOPPLUS2' --exclude 'AUDIOLOOPPLUS' --exclude 'AH1*' --exclude 'PE1*' --exclude 'ImagesPhotos' --exclude '*.avi' --exclude '*.MOD'  --exclude 'Cakewalk*' /cygdrive/e/Mesdocuments/ /cygdrive/d/documents
                       rsync -vr --exclude 'testcubase' --exclude '*.au' /cygdrive/f/MaMusique/ /cygdrive/e/Mamusique 
@@ -25358,7 +25368,7 @@ pour voir les partitions:
   more /proc/partitions
 montage des disques parametres au lancement sur (ou à une commande mount avec un seul argument: partition ou repertoire)  
 /etc/fstab
-    cat /etc/fstab
+    cat /etc/fstab ou bien sudo blkid
       c'est là qu'on declare les montages et lorsqu'on reboot ce fichier est lu pour remonter le volume dans l'arborescence du sys de fichier
       on y voit quelquechose comme:
 
@@ -25413,6 +25423,14 @@ verifier que mon systeme de disque est OK
            attache
        demonte, (je suis sur que sys ne peut pas ecrire dessus) 
        resize
+changer le nom labell d'un disque:
+	installer mtools pour avoir mlabel si ce n'est pas déjà fait:
+		sudo apt-get install mtools
+	verifier que je vise bien le bon disque à renommer:
+		sudo mlabel -i /dev/sdb1 -s ::
+	modifier le label de ce disque
+		sudo mlabel -i /dev/sdb1 ::NouveauNomDuDisque
+	ENSUITE REDEMARRER! pour prise en compte totale
 condition: 
   if [-z bla] //si bla=null return true.
 compter le nombre de fichiers dans un repertoire:
