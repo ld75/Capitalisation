@@ -1,4 +1,4 @@
-(?=.*system)(?=.*var)
+(?=.*set)(?=.*java_home)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -11599,7 +11599,7 @@ utilisation du plugin assembly pour créer un zip:
                         <goals>
                             <goal>single</goal>
                         </goals>
-                          <configuration>
+                          <configuration> // si ca ne marche pas et qu'il ne trouve pas l'assembly.xml alors mettre le bloc <configuration> en dehors deu bloc Executions au meme niveau.
                             <descriptors>
                             	<filters> //facultatif 
 								    <filter>${project.basedir}/src/main/resources/dev/env_${env}.properties</filter> //facultatif sais pas exactement ce que ça fait encore
