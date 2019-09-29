@@ -1,4 +1,4 @@
-(?=.*jsp)(?=.*html)
+(?=.*file)(?=.*resour)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -883,6 +883,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git reset HEAD~ annule/undo le dernier commit. Ne pas le faire après que mon dernier commit ait ete pushe et merge avec l'origin car cela desynchronise mon local du distant. SI je veux quand même le faire par necessite alors faire git reverT: ça recommiT un snap d'avant le commit pourri.
                 on peut aussi faire git commit --amend // pour redéfinir le dernier commit sans besoin de l'annuler
       git reset //LINKresetgit annuler le dernier add
+      git reset fichierAEnleverDuAdd//LINKresetgit annuler le dernier add
       git reset --hard versionDuTag: ce tag revient dans le mon HEAD/branch + repertoire
       git rebase //TROP GALERE!!!! ne pas utiliser avant une formation
       git rebase commitquinebougepasEtQuiVaRecevoirLaSuiteDeLHistoire commitQuiVaMettreSonHistoireALaSuiteDuPremierArgument // a la toute fin faire rebase DernierCommit master pour que le master se remette au bout
@@ -1311,7 +1312,7 @@ microprofile : microprofiles : microprofile : pannels d'outils en plus facultati
       public String unemethode(){...}
 payara :payaramicro : // executeur direct d'un microservice.
     java -jar payara-micro.jar                      // créé un payara serveur
-        --rootdir repertoire/de/travail/cree/auto/si/existepas 
+        --rootdir repertoire/de/travail/cree/auto/si/existepas // pour y mettre sous lib les jars qu'il n'arrive pas à trouver au demarrage: les drivers par exemple. 
         --deploy /home/user/example.war ou le repertoire root du war exploaded(dans target)// mettre un .reload sous la racine de mon war exploded et le modifier/toucher recharge le war exploded automatiquement (faire mvn package)(sauf si le war ne s'est pas déployé la fois précédente)
                  possible faire plusieurs --deploy dans une meme commande seront sur le meme port
         --contextroot contextrootquiremplacelenomdemonwarcommecontextroot //ou faire --deploy /x/y:contextroot
@@ -2268,7 +2269,7 @@ CDI1.x besoin de weld
 Cycle de vie du CDI bean:
               – @RequestScoped // a mettre absolument sur un webservice utilisant jwt car les claims jwt sont naturelement request-scopeds. LINKkgkgkgklkjsdfljqi
               – @RedirectScoped // fait partie de mvc: utile si apres un post on fait un redirect et qu'on a besoin de l'info du post.
-              – @SessionScoped
+              – @SessionScoped // s'appuye sur jsessionid: il faut qu'il soit le même pour que le bean soit le meme
               – @ApplicationScoped // (par defaut) sur la classe. le bean est utilise pour les proprietes generales de l'appli: ex: listes deroulantes qu'on voit tout le temps Attention ne s'initialise pas avnat d'etre injecté
                                 pour dedans executer des trucs qui vivront tant que l'application tourne mais pour l'initialiser en meme temps que le container, voir LINKobsgdgdgz
                                 public void demarrage(@Observes @Initialized(ApplicationOuAutreScoped.class) Object init) // ou @Destroyed si c'est quand ca s'eteint. Ne prennent que des Scope LINKobsgdgdgz
@@ -2282,15 +2283,15 @@ Cycle de vie du CDI bean:
                   @PreDestroy--->methode s'execute quand le bean est retire du scope ou le scope est detruit.
                   public void fin() { ... }
                  @TransactionAttribute pouf gerer les transactions (marche aussi sur ejb de type  @Stateful, @Stateless and @Singleton @ManagedBean, @WebServlet, @WebListener, @WebFilter)           
-          utilisation d'un champ injecté:                       définition de la classe de l'autre coté:
-          @Inject                                                @ApplicationScoped
-          @Named("simpleIs")//utiliser plutot @Qualifier         @Named("simpleIs")//utiliser plutot @Qualifier
-          private IdentityStore simpleIdentityStore;             public class SimpleIdentityStore implements IdentityStore {
+          utilisation d'un champ injecté:                                   définition de la classe de l'autre coté:
+            @Inject                                                        @ApplicationScoped
+          @Named("simpleIs")//utiliser plutot @Qualifier.Ms ça pour jsp    @Named("simpleIs")//utiliser plutot @Qualifier.Ms ça pour jsp
+          private IdentityStore simpleIdentityStore;                       public class SimpleIdentityStore implements IdentityStore {
 
           
           faire des servlets sans web.xml: 
                 ajouter en tete de classe qui etend HttpServlet @WebServlet("/un/path") ou (urlPatterns={"/a","/b"}) ou (urlPatterns="/b") .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention pour index page d'accueil on ne peut pas mettre / donc utiliser web.xml et welcome-file qui pointent sur une servlet ou une page
-                 et @MultipartConfig // si je veux je crois que ma servlet gere l'upload de fichier (pas encore sur). recup les params avec request.getParmeters   
+                 et @MultipartConfig // si je veux je crois que ma servlet gere l'upload de fichier (pas encore sur). recup les params avec request.getParmeters LINKmultilkjfqsdf   
                 du coup ma classe n'est plus un webservice et ne pas utiliser @Produce et @Path avec. 
                 juste 
                 public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {response.getWriter().println("Hello");
@@ -2314,7 +2315,7 @@ try (SeContainer container = initializer.disableDiscovery().initialize()) { cont
 		@Pattern(expressionreguliere) // sur un champ d'un bean: pour valider que ce champ quand il est rempli match bien à la regexp.
     pattern observable: LINKobsgdgdgz
         @Inject
-        @Named("tutu") LINKkfkgggg //utiliser plutot @Qualifier
+        @Named("tutu") LINKkfkgggg //utiliser plutot @Qualifier.Ms ça pour jsp.
         Event<Payload> payloadEvent;
         public void doSomething() {
           payloadEvent.fire(new Payload()); //ceci va declancher ailleur ceci:**
@@ -2360,7 +2361,7 @@ securite : security :(JSR375) plus besoin d'utiliser web.xml: les annotations fo
                                        }
                                        else
                                        {
-                                        httpMessageContext.notifyContainerAboutLogin(result.getCallerPrincipal(), result.getCallerGroups());
+                                        httpMessageContext.notifyContainerAboutLogin(result.getCallerPrincipal(), result.getCallerGroups()); // permet d'utiliser @RolesAllowed({"connected"}) voir LINKdeclarereor
                                        }
                                     }
                                     else return httpMessageContext.doNothing();
@@ -2381,7 +2382,7 @@ securite : security :(JSR375) plus besoin d'utiliser web.xml: les annotations fo
             @WebServlet(urlPatterns="/un/path) .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention bien mettre urlPatterns sinon il se comporte comme si j'avais mis "un/path/*"
             @ServletSecurity(
                             value= @HttpConstraint(
-                                rolesAllowed = {"foo","supervisor"}), //limite cet acces aux utilisateurs qui ont ces roles.
+                                rolesAllowed = {"foo","supervisor"}), //limite cet acces aux utilisateurs qui ont ces roles. SI n'ont pas ses roles ca renvoie direct http200 sans passer dans le code
                                 transportGuarantee= TransportGuarantee.CONFIDENTIAL, // facultatif: bloque l'accès ici si on est pas en https equivaut à LINKglkdlkflglglg                                
                                 httpMethodConstraints={
                                         @HttpMethodConstraint(
@@ -2390,37 +2391,47 @@ securite : security :(JSR375) plus besoin d'utiliser web.xml: les annotations fo
                                             value = "POST",rolesAllowed = {"supervisor"})
                                                         }
                             )
-            @DeclareRoles({ "role1", "role2bar", "kaz","foo","supervisor" }) //declare juste les roles que je vais utiliser dans cette classe. peut etre mis sur classe ou methode(override classe alors)  possible utilisser aussi avec:voir LINKdeclarereor
+            @DeclareRoles({ "role1", "role2bar", "kaz","foo","supervisor" }) //declare juste les roles que je vais utiliser dans cette classe. peut etre mis sur classe ou methode(override classe alors)  possible utilisser aussi pour les webservices voir LINKdeclarereor
             public class MaServlet extends HttpServlet {
-            
+    pour securiser un webservice : voir LINKsecuws
+        
 config de la base de donnée donnee: en jee
     en annotations:(a mettre sur une classe @Statefull en tout cas sur un EJB et pas sur CDI)
-      @DataSourceDefinitions( //facultatif mais...                                                 
-      value = { //...du coup possible en enchainer plusieurs et je peux avoir plusieurs datasource
-        @DataSourceDefinition(name="java:global/MyApp/MyDataSource1", // ce nom la est cree ici et sera utilise ailleurs. commence par java:app (scope dans cette appli seulement) java:comp (??) java:module (??) java:global (disponible dans toutes les applications déploiees sur ce serveur) // permet de definir la source de donnée dans l'application au lieu de dans le serveur container.
-            className="com.example.MyDataSource", ou org.hsqldb.jdbc.JDBCDriver
-            portNumber=6689,
-            serverName="example.com",
-            user="lance",
-            password="secret"
-         )
-        ou  (l'un ou l'autre mais ne pas melanger)
+      @DataSourceDefinitions( //facultatif mais...
+        value = {             //...du coup possible en enchainer plusieurs et je peux avoir plusieurs datasource
+                @DataSourceDefinition(name = "java:app/MemOclapDataSource", // ce nom la est cree ici et sera utilise ailleurs LINKdtresr. commence par java:app (scope dans cette appli seulement) java:comp (??) java:module (??) java:global (disponible dans toutes les applications déploiees sur ce serveur) // permet de definir la source de donnée dans l'application au lieu de dans le serveur container.
+                        className = "org.hsqldb.jdbc.JDBCDataSource", ou com.example.MyDataSource", ou org.apache.derby.jdbc.ClientDataSource // NE PAS mettre un driver ici mais bien un connectiondatapoolsource
+                        url = "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;"
+                ),
+                @DataSourceDefinition(name = "java:app/MemOclapDataSourceRemote", 
+                        className = "com.mysql.jdbc.jdbc2.optional.MysqlDataSource", // ou com.mysql.cj.jdbc.MysqlConnectionPoolDataSource ? PAS DE Driver
+                        url = "jdbc:mysql://www.memoclap.com:3306/alo",
+                        user = "root",
+                        password = "foulurecalotte"
+                )
+        })    // facultatif pour @DataSourceDefinitions
+        ou  (l'un ou l'autre mais ne pas melanger) // ci dessous si je ne veux déclarer qu'une seule datasource.
             @DataSourceDefinition(name="java:global/MyApp/MyDataSource2",
-              className="org.apache.derby.jdbc.ClientDataSource", ou org.hsqldb.jdbc.JDBCDriver
-              url="jdbc:derby://localhost:1527/myDB",
-              user="lance",
-              password="secret"
+                  url="jdbc:derby://localhost:1527/myDB",
+                  portNumber=6689,
+                  serverName="example.com",
+                  user="lance",
+                  password="secret"
            )
+      @Stateless // a mettre sous les datasource: c'est un ejb stateless
+      public class DatasourceDefinition
+      {
+
         sont equivalents dans web.xml de
                   <data-source>
                   <name>jdbc:hsqldb:mem:employees</name> // bien mettre mem sinon il fait chier avec les connexions mais c'est que pour tester car volatile
                   (...)
                   <class-name>org.hsqldb.jdbc.JDBCDriver</class-name>
               </data-source>  
-             puis      
-         @Stateless // exemple d'utilisation appel ailleurs
+             puis ailleurs LINKdtresr:       
+         @Stateless  ou @ApplicationScoped// exemple d'utilisation appel ailleurs
          public class MyStatelessEJB {
-           @Resource(lookup="java:global/MyApp/myDataSource")
+           @Resource(lookup= ou name="java:global/MyApp/myDataSource")
             DataSource myDB;
               ...
          }
@@ -2453,7 +2464,7 @@ ou remote                       peute etre sur classe meme un webservice. Peut a
                   @Asynchronous à utiliser au lieu de faire des threads sur des webservice/servlet. marche avec @Stateful @Stateless et @Singleton LINKashcrinosdf
                   @Schedule             |_Utilise Quartz et est automatiquement transactionnel. LINKkdgjzoiriririr 
                   @ScheduleExpression   |
-                  @Startup // a mettre sur une classe. s'execute au demarrage. marque qu'avec @Singleton  
+                  @Startup // a mettre sur une classe. s'execute au demarrage. marche qu'avec @Singleton  
                   @Remote ---> Bean de l'EJB peut être accede de l'exterieur de son classLoader   
                   @WebService  // pour faire un webservice jax-ws marche qu'avec une classe ayant @Stateless et/ou? @Singleton
                   @Path // pour faire un webservice jax-rs marche qu'avec une classe ayant @Stateless et/ou? @Singleton
@@ -2552,7 +2563,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                       @Path("hello")
                       @View("privateQuiDoitEtreSousWEB-INF/views.jsp" ou "redirect:/unAutreControlleur") GRR j'arrive pas a le faire marcher. sur la classe ou sur la methode. Si sur classe on peut l'overrider dans les methodes. Si on l'utilise la/les methodes doivent retourner void. On peut a la place faire LINKvuejslskjf car ici meme si user n'a pas le rôle il va afficher la jsp
                       ou
-                      @Controller // peut etre mis soir sur la classe soit sur les methodes. Si sur la classe toutes les methodes sont des controllers
+                      @Controller // peut etre mis soit sur la classe soit sur les methodes. Si sur la classe toutes les methodes sont des controllers LINKcontrlkjsqdf 
                       public class HelloController {
                             @Inject 
                             private BindingResult validateurDeBinding; // pour valider le BeanParam
@@ -2566,8 +2577,9 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                           @CsrfValid ou @javax.mvc.security.CsrfProtected// necessite dans la jsp: <input type="hidden" name="${mvc.csrf.name}" value="${mvc.csrf.token}"/>
                           @Path("une/url") //facultatif
                           @Produces("text/html")// facultatif. par defaut si on met pas cette annotation c'est "application/json" ou LINKkbndnb
+                          @Consumes({MediaType.MULTIPART_FORM_DATA}) // si POST et besoin LINKupldfilews
                           @Controller   // on ne met ca que si LINKcontrlkjsqdf 
-                          public String hello(@QueryParam("unChampApres?ou&DanslUrl") String name ETOU @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464 OU @FormParam("parametrePost") String unParametreDeFormulaire OU @Valid @BeanParam FormDataBean f) {
+                          public String hello(@DefaultValue ("valeurpardefautAmettreJusteAvantQueryParam.facultatif") @QueryParam("unChampApres?ou&DanslUrl") String name ETOU @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464 OU @FormParam("parametrePost") String unParametreDeFormulaire OU @Valid @BeanParam FormDataBean f) {
                               if (validateurDeBinding.isFailed()) {
                                 return Response.status(BAD_REQUEST).entity(“error.jsp”).build(); //recupere /webapp/WEB-INF/views/error.jsp LINKvuejslskjf Necessite @Controller
                               }
@@ -2743,6 +2755,7 @@ ou si c'est dans le payload de la request
 (Il y a aussi: recuperer l'url du request 
 request.getMethod() 
 request.getRequestURI() // pour connaitre l'url la page appelante. Exemple: /saml-landing
+request.getPathInfo() // recuperer le nom du fichier "/bip.wav"
 request.getRequestURL() // renvoit tout l'URL: http://monespacerh-dev.idkidscommunity.com/saml-landing. attention si existe reverse proxy ca renvoit le bon port et le bon host.(je crois) pas l'url origine initiale du client SINON:parametrer apache avec http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#proxypreservehost
 request.getQueryString() // retourne l'url mais uniquement après "?"
 request.getScheme() // renvoit http ou https... attention si existe reverse proxy ca renvoit pas celui du reverseproxy mais celui du serveurMOI.(je crois)
@@ -2820,6 +2833,14 @@ pour recuperer le nom de l'utilisateur connecte:
          
  fichier :
 pour renvoyer un fichier de la servlet (download): astuce, on peut aussi le zipper en java et envoyer le zip comme ca il n'y a pas de pb d'encodage
+    @WebServlet(value={"/sons/*"})(...)
+        String filename = URLDecoder.decode(request.getPathInfo().substring(1),"UTF-8");
+        File file = new File(app.getProps().getProperty("SOUND_PATH").concat(filename));
+        response.setHeader("Content-Type",getServletContext().getMimeType(filename));
+        response.setHeader("Content-Length",String.valueOf(file.length()));
+        response.setHeader("Content-Disposition","inline; filename=\""+file.getName()+"\"");
+        Files.copy(file.toPath(),response.getOutputStream()); // pour copier le contenu d'un fichier dans un outputstream
+    avant:
 	 String header = "attachement;filename="+fileName.substring(0,fileName.lastIndexOf("."));
 				response.addHeader("content-disposition", header);
 				response.setContentType("text");
@@ -3228,12 +3249,16 @@ webservices: http://users.skynet.be/pascalbotte/
                 public class RESTConfiguration extends Application {
                 rien.
                 ou 
-                @Override //si je veux seulement exposer certains controlleurs/entrypoints
+                @Override
                 public Set<Class<?>> getClasses() {
                     Set<Class<?>> classes = new HashSet<>();
-                    classes.add(HelloController.class);
+                    classes.add(HelloController.class);  //si je veux seulement exposer certains controlleurs/entrypoints
                     classes.add(LoginController.class);
                     return classes;
+                    
+                    final Set resources = new HashSet<Class<?>>(); // LINKupldfilews
+                    resources.add(MultiPartFeature.class);
+                    return resources;
                 }
 
                 }
@@ -3283,8 +3308,15 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
               	<artifactId>json</artifactId>
               	<version>20141113</version>
               </dependency>
+              <dependency>  //pour l'upload de fichier dans les webservices LINKupldfilews
+              	<groupId>org.glassfish.jersey.media</groupId>
+              	<artifactId>jersey-media-multipart</artifactId>
+              	<version>xxx</version>
+              </dependency>
     envoyer faire une requette http à un webservice SEULEMENT. ne marche pas pour les servlets: utile pour les tests d'integration:
         Client client = ClientBuilder.newClient();
+                        ou
+                                    .newBuilder().register(MultiPartFeature.class).build(); // si c'est un upload fichier multipart
         en mode synchrone:
               WebTarget target = client.target("http://localhost:9990") //attention ne pas utiliser les variables ? et & mais enchainer les points comme ci dessous target().path().request().get....
               .queryParam("bli","blah")
@@ -3312,11 +3344,12 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
                                 @Override
                                 public void failed(Throwable th){...}
                               }     
-            	@Context// request et response comme ça sont automatiquement injectes. permet d'injecter tout ce qui est dans le contexte d'une requete http: HttpHeaders;UriInfo;SecurityContext;ResourceContext;Request;Application;Configuration;Providers;HttpServletRequest;HttpServletResponse;ServletConfig;ServletContext
+            	@Context// request et response comme ça sont automatiquement injectes. permet d'injecter tout ce qui est dans le contexte d'une requete http: HttpHeaders;UriInfo;javax.ws.rs.core.SecurityContext (permet de savoir si le user appartient à un role);ResourceContext;Request;Application;Configuration;Providers;HttpServletRequest;HttpServletResponse;ServletConfig;ServletContext
                 private HttpServletRequest httpRequest; // attention on dirait que pas possible de faire httpRequest.getParameter("x") si dans la methode en bas j'utilise @FormParam
 	            @Context
             	HttpServletResponse httpResponse;
-                @RolesAllowed({"Echoer", "Subscriber"}) // pour securiser l'acces à la classe. Peut etre mis au niveau de la methode (authorizations) Besoin de déclarer tous les roles qu'on va utiliser en tete de la classe avec @DeclareRoles({"x","y"}) LINKdeclarereor
+                    LINKsecuws
+                @RolesAllowed({"Echoer", "Subscriber"}) // pour securiser l'acces à la classe. Peut etre mis au niveau de la methode (authorizations) ATTENTION ne marche pas si j'ai pas déclaré tous les roles qu'on va utiliser en tete de la classe avec @DeclareRoles({"x","y"}) LINKdeclarereor
                 ou
                 @PermitAll
                   @GET ou @POST
@@ -3348,7 +3381,7 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
                     @Provider // pour que jaxrs le prenne en compte automatiquement au runtime (!=???) du coup je pense qu'il faut absolument le mettre
                     @Priority(Priorities.AUTHENTICATION ou AUTHORIZATION ou HEADER_DECORATOR etc...)// NON! ca ne marche pas dans @ApplicationScoped en tout cas. determine position dans ordre du filtre par priorité plus chiffre petit, plus ca passe avant.
                     public class AuthenticationFilter implements ContainerRequestFilter { // mon filtre doit implementer ContainerRequestFilter qui contient la methode filter 
-                    
+                                                              ou ContainerResponseFilter // si je veux que je soit un filtre de retour de la reponse serveur->client
                         @Inject
                         JwtHelper jwtHelper;
                     
@@ -3692,7 +3725,12 @@ pour acceder à un fichier depuis une jsp
 recuperer mes beans cdi et leurs valeurs:
     ${toto.getMachin()} ou ${toto.machin}  et j'ai un bean cdi @Named(value="toto") ou @Named("toto")
     on peut faire aussi du java attribution: setter une variable
-    ${titi=unbean.getMachin()} et plus loin: ${titi} // utiliser titi plus loin
+    ${titi=unbean.getMachin()} (attention ca output) et plus loin: ${titi} // utiliser titi plus loin.
+pour recuperer le principal name userid utilisateur dans jsp:
+        ${pageContext.request.remoteUser}
+        ou  <%=request.getRemoteUser()%>
+        mais plutot bonne pratique: a mettre dans un bean que je cree (avec son interface et l'injecter)
+   
 pour que le request soit transfere a une autre page:
       <jsp:forward page="/utils/errorReporter.jsp" /> (en dur)
       ou bien
@@ -3835,6 +3873,26 @@ public class SimpleBean {
     this.message = message;
   }
 }
+jstl :(GENIAL CE TRUC POUR STANDARD OU SPRING)
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%> besoin de le mettre en tete de chaque page jsp qui l'utilise
+  pour faire des liens qui indique automatiquement le contexte:
+      href="<c:url value="/logout"/>"
+   faire des boucles loops  foreach:
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      <c:forEach items="${ideaBean.columns}" var="col">
+      		<tr><td>		<h:outputText value="#{col}" /></td><td>  <p:selectBooleanCheckbox value="value="#{userBean.value2}" /></td></tr>
+     		</c:forEach>
+  formater pattern dans les jsp: 
+      <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+      <fmt:formatNumber value="${result.priceReduced}" type="currency"/>
+test if: condition:
+<c:if test="${results.size()==0}"> il n'y a pas de else.
+<c:if test="${result.nbComments>0}">!!!!</c:if>
+egalitee de string: 
+    <option value="${imgoption}"<c:if test="${imgoption==departure.imageName}">selected="selected"</c:if>>${imgoption}</option>
+un string est null ou vide:
+        <c:if test="${empty projet or empty acteur}">...</c:if> ou l'inverse  <c:if test="${not empty projet and not empty acteur}">...</c:if>      
+
                                                                                                                                                                                                                 
 web.xml : webxml :
                 si erreur 
@@ -5226,20 +5284,8 @@ Springbatch : spring-batch : spring batch :
 		</property> 
 	</bean>
 
-      mapping mapper mappage d'une classe A en une classe B
-      public class MaClasseItemProcessor implements ItemProcessor<ClasseA, ClasseB> 
-      {
-              @Override
-          public ClasseB process(final Classe1 person) throws Exception 
-          {
-              final String firstName = person.getFirstName().toUpperCase();
-              final String lastName = person.getLastName().toUpperCase();
-              final ClasseB transformedPerson = new ClasseB(firstName, lastName);
-              log.info("Converting (" + person + ") into (" + transformedPerson + ")");
-              return transformedPerson;
-          }
-      }            
-Partitionner divise par bloc d'items. P Creer map d'ExecutionContext=1session(key/value) pour 1 step.
+            
+Partitionner :divise : diviser :par bloc d'items. P Creer map d'ExecutionContext=1session(key/value) pour 1 step.
     public class ColumnRangePartitioner implements Partitioner 
     {
       public Map<String, ExecutionContext> partition(int gridSize) 
@@ -5463,8 +5509,6 @@ spring security : spring-security : springsecurity :
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); // getAuthentication renvoit null pointer exception si personne connecte
         if (principal instanceof UserDeatails){String username=((UserDetails)principal).getUsername();} linkinstanceof
         else{String username = principal.toString();}
-        dans jsp:${pageContext.request.remoteUser}
-        Bonne pratique: a mettre dans un bean spring que je cree (avec son interface et l'injecter)
      Tester les filtres de securite: tests : test : 
       @Autowired
       @Qualifier("nom")//facultatif // correspond je crois au name du bean
@@ -6517,26 +6561,6 @@ Spring-batch :
                                                           departure.setPlace(pe.extractData(resultSet));
                                                           return departure ;
                                                       }
-
-
-      
-jstl :(GENIAL CE TRUC POUR SPRING)
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%> besoin de le mettre en tete de chaque page jsp qui l'utilise
-  pour faire des liens qui indique automatiquement le contexte:
-      href="<c:url value="/logout"/>"
-   faire des boucles loops  foreach:
-      xmlns:c="http://java.sun.com/jsp/jstl/core"
-      <c:forEach items="${ideaBean.columns}" var="col">
-      		<tr><td>		<h:outputText value="#{col}" /></td><td>  <p:selectBooleanCheckbox value="value="#{userBean.value2}" /></td></tr>
-     		</c:forEach>
-  formater pattern dans les jsp: 
-      <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-      <fmt:formatNumber value="${result.priceReduced}" type="currency"/>
-test if:
-<c:if test="${results.size()==0}">
-<c:if test="${result.nbComments>0}">!!!!</c:if>
-egalitee de string: 
-    <option value="${imgoption}"<c:if test="${imgoption==departure.imageName}">selected="selected"</c:if>>${imgoption}</option>      
       
 jsf2 : jsf : ---------DEBUTBEURK----------
 faire des boucles loops  foreach:
@@ -6793,7 +6817,7 @@ lifecycle :
                                                                     <from-outcome>siMonBeanReturnCaOuMonUILienouBouton a cette action</from-outcome> // exemple: mapage
                                                                                          ici on peut y mettre ca: <if>#{model.booleanValue}</if> MAIS C MOCHE DE METTRE DE LA LOGIQUE LA DEDANS JE NE LE FERAIS JAMAIS
                                                                     <to-view-id>/aller-vers-ca.xhtml</to-view-id>
-                                                                    <redirect> // facultatif: si on met pas, l'url du browser ne change pas car le serveur renvoit sa response dans la meme http et c plus performant. Si on met: creation d'un nouveau request/response mais au moins l'url du browser change. Mais si mon bean n'est pas sessionScoped, le request/response est perdu
+                                                                    <redirect> // facultatif: si on met pas, l'url du browser ne change pas car le serveur renvoit sa response dans la meme http et c plus performant. Si on met: creation d'un nouveau request/response mais au moins l'url du browser change. Mais si mon bean n'est pas sessionScoped, le request/response est perdu. Si j'ai l'erreur WELD-000072: Bean declaring a passivating scope must be passivation capable, ma classe doit implementer Serializable. 
                                                                                 // c'est equivalent à mettre ><h:commandButton value="HTTP POST with Redirect"action="page02?faces-redirect=true" /> // faces-redirect est le mot cle pour indiquer que cest un <redirect>
                                                                         <view-param> Optionnel mais dans le cas d'un post, pour refaire un get (Pour respecter PRG) on met ici tous les  champs à repopuler (car ils sont perdus à cause du redirect) mais au moins l'URL peut etre bookmarquee
                                                                           <name>nomDuParamDeLUrl</name>
@@ -7155,7 +7179,7 @@ si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from col
         il faut que je modif mes valeurs ='0000-00-00 00:00:00' en date valide 
   definition bean: getter, setter independant (pas d'extension ni d'heritage) serializable
   definition pojo: idemn que bean mais peut etendre, heriter, peut ne pas être serializable
-  DAO faire un dao par dm p7 gestion des sessions à ce niveau grâce au Contextual Session
+  DAO faire un store par dm p7 gestion des sessions à ce niveau grâce au Contextual Session
       possibilite synchro schema base-DAO java
       annotations hibernate:p5-6
           Feaching
@@ -7248,7 +7272,7 @@ si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from col
         	@OneToMany(mappedBy="permission") // car je suis dans le classe Permission.class et je fais ref à UserPermission.permission
         	private Set<UserPermission> userPermission;
              Comparer des entitees entre elles si elles sont des listes comme proprietes: il faut overrider equals et hashcode: (voir page 84Spring persistance with Hibernate)
-                @Override    (A FAIRE: GENERALISER AVEC LE DESIGN PATTERN DES DAO: dao sont morts remplacés par entitymanager)
+                @Override    (A FAIRE: GENERALISER AVEC LE DESIGN PATTERN DES DAO: dao sont morts remplacés par entitymanager voir LINKemdlksqj)
                 public boolean equals(Object o)
                 {
                   if(this==o) return true;
@@ -7323,9 +7347,9 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
     Recuperer dans ecolipse Help>Update>Plugin Hibernate tools (http://download.jboss.org/jbosstools/updates/stable/indigo)
     ouvrir console Hibernate et configurer une connection à une base
     Clic droit sur mon projet > JAP > faire le reverseEngeniring
-    fichier resources/META-INF/persistence.xml ou WEB-INF/persistence.xml
+    fichier resources/META-INF/persistence.xml marche bien. sinon ou mais pas sur dutout: WEB-INF/persistence.xml
     <persistence> 
-        <persistence-unit name="com.memoclap" transaction-type="RESOURCE_LOCAL"> // du coup applicativement je l'appelle comme ça : LINKentitym
+        <persistence-unit name="com.memoclap" transaction-type="RESOURCE_LOCAL(pour des testsunitaires) ou JTA(pour tapper dans LINKjta)"> // du coup applicativement je l'appelle comme ça : LINKentitym
             <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> // facultatif provider peut etre eclipselink ou hibernate. si on met rien.. sais pas. depend jars ?
             <description>EclipseLink EntityManager</description>                 // facultatif
             <exclude-unlisted-classes>false</exclude-unlisted-classes>
@@ -7340,7 +7364,7 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
             </properties>
        </persistence-unit>
      </persistence>   
-  FORMS ----> envoie des DTO---ne plus les utiliser et passer direct par les entities sauf si ils ont pas la meme structure que les Entities
+  FORMS ----> envoie des DTO---ne plus les utiliser et passer direct par les entities voir LINKemdlksqj sauf si ils ont pas la meme structure que les Entities
                            |                               |
                            vers                            |
                     CMD     |                              |
@@ -7349,19 +7373,21 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
                         converti DTO->BO                   |
                         et appelle EntityManager(avant:DAO)|
                       }                                    |
-  EntityManager remplaceDAO = methodes crud                |
+  EntityManager remplaceDAO = methodes crud LINKemdlksqj  |
       methode(fait appel à ENTITY)------------------(BO=MODEL)ENTITIES connectees à la base
     Enleve expres
-    //recuperer l'entitymanager applicativement: LINKentitym
-            @PersistenceContext(name = "com.memoclap")
+    //recuperer l'entitymanager applicativement: 
+            @PersistenceContext(name = "com.memoclap") // est def ici LINKentitym
             EntityManager em;
         ou
-            EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.memoclap"); 
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.memoclap"); //est def ici LINKentitym 
             et
             public static EntityManager getEntityManager() {
             return emf.createEntityManager();
             }
-DAO : design pattern bonne pratique est mort remplacé par entitymanager
+    recuperer la connection jdbc depuis un entitymanager :
+        Connection conn = entityManager.unwrap(Session.class).getJDBCConnection();            
+DAO : design pattern bonne pratique est mort remplacé par entitymanager voir LINKemdlksqj
 un @Repository se base sur les DAO pour faire des find, get etc sur plusieurs tables. Le DAO lui sert aux updates sur une seule table
   Besoin que MonObjet extends BaseEntity.
   IMonObjetDao ----------extends-------->IGenericDao (contient toutes les methodes CRUD basiques) public interface IGenericDao<T extends BaseEntity> { public T getBook(long id);}
@@ -8302,7 +8328,7 @@ indexof:   INSTR:
 si erreur 1136 column count doesn't match value count at row 
         il me manque/j'ai trop de champs dans ma requete
         
-H2 : voir LINKldkjgieieioruz
+H2 : voir LINKldkjgieieioruz qui est mieux
 client H2: http://www.h2database.com/html/main.html
 h2 : embedded database:
                     dans la config.xml du serveur:
@@ -9350,7 +9376,7 @@ faire un formulaire de upload telechargement de fichier, d'image:
                                 }
                             });
                             splitPanel.add(formulaire);
-          cote serveur : avec apache Commons FileUpload (si avant servlet 3.0)
+          cote serveur : avec apache Commons FileUpload (si avant servlet 3.0) apres voir LINKmultilkjfqsdf
                         public class ProfileUpload extends HttpServlet {   // Une vraie servlet, pas un service RPC
                             @Override
                             protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -16453,7 +16479,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
                               
                                MAIS mettre tous ces fields plutot en parametre de ma méthode de test comme ci-dessous sinon risque d'objet mocké null (pour les statics) et pour que le scope soit limité à un test
                               @Test
-                              public void testThePerformMethod(@Mocked final JMockitTest.Model model, @Mocked final SsoContext request) { // si j'ai erreur "should have no parameters" c parce que j'ai oublié de mettre  @RunWith(JMockit.class)
+                              public void testThePerformMethod(@Mocked final JMockitTest.Model model, @Mocked final SsoContext request) { // si j'ai erreur "should have no parameters" ou No ParameterResolver registered c parce que j'ai oublié de mettre  @RunWith(JMockit.class)
                                   try {
                                       new Expectations() {{   // possible en faire plusieurs pour un test.(si par ex le test s'appuye sur une autre methode qui en contient)
                                          reportManager.onPeutMettreUneMethIntermediaire().createReport((String)any,(String)any,(Map<String,Object>)any); result="renvera ca la premiere fois","renverra ci la deuxieme fois",...); minTimes=0 //l'ordre est important la premiere fois seulement avec ça. // il accepte tous les parametres possibles et renverra toujours la meme chose. Ca s'appelle "stub"
@@ -20633,10 +20659,24 @@ POUR LES FOREEACH A 2 ARGUMENTS: j'ai d'un coté:
         System.out.println("something else");
     }
   }
-mapping :
+mapping :mapper :mappage :d'une classe A en une classe B (si c'est pour les DTO voir LINKemdlksqj)
+ methodeA:
+        public class MaClasseItemProcessor implements ItemProcessor<ClasseA, ClasseB> 
+      {
+              @Override
+          public ClasseB process(final Classe1 person) throws Exception 
+          {
+              final String firstName = person.getFirstName().toUpperCase();
+              final String lastName = person.getLastName().toUpperCase();
+              final ClasseB transformedPerson = new ClasseB(firstName, lastName);
+              log.info("Converting (" + person + ") into (" + transformedPerson + ")");
+              return transformedPerson;
+          }
+      }
+ methodeb:       
 pour recuperer les proprietes (methodes d'acces getset) d'une classe dans un tableau (utilie pour faire un binder)
         PropertyDescriptor origDescriptors[] = PropertyUtils.getPropertyDescriptors(theSource);
-pour copier les proprietes d'un bean formulaire vers un autre bean de type info par exemple faire: convertir mapper maper un objet java transformer en un autre bean  
+pour copier les proprietes d'un bean formulaire vers un autre bean de type info par exemple faire: en un autre bean  
 						org.apache.commons.beanutils.BeanUtils.copyProperties(Object dest, Object orig) // ModelMapper c'est de la merde faut pas l'utiliser. le plus performant c'est mapstruct (il genere les classes de mapping au compile time par maven.)
                      avec ModelMapper: // de la merde oublie!!!! parce que je voulais transormer un string en Method: ca c pas évidant à faire.
                              ModelMapper modelMapper = new ModelMapper();
@@ -22852,8 +22892,12 @@ pour recuperer les bytes d'un fichier:
 			lire.close();
 pour recuperer le string d'un fichier lire un fichier
         depuis java10 je crois:
-                new FileInputStream("path/fichier.txt").transfertTo(System.out)
+                new FileInputStream("path/fichier.txt").transferTo(System.out)
         java7 et plus:
+            File script = new File(getClass().getResource("/data.sql").getFile());
+                    InputStream inputStream = new FileInputStream(script);
+                    final byte[] bytes = inputStream.readAllBytes();
+                    String sql = new String(bytes);
           Path resPath = Paths.get(this.getClass()).getResource("/chemin/unfichier.son").toURI());
           String jsonContent = new String(java.nio.file.Files.readAllBytes(resPath),"UTF8");  
         public String getStringFromFile(File file) throws Exception
@@ -22870,53 +22914,6 @@ pour recuperer le string d'un fichier lire un fichier
         		reader.close(); 
         	return lByteOut.toString();
         	}
-pour compter le nombre de caractères dans un fichier:
-                        public int getNbCharFromFile(File file) throws Exception
-                            	{
-                                	int nb=0;
-                            		ByteArrayOutputStream  lByteOut = new ByteArrayOutputStream();
-                            		byte[] bytes = new byte[1024];
-                            		FileInputStream lire = new FileInputStream(file); // fichier est un File
-                            		BufferedInputStream reader = new BufferedInputStream(lire);
-                            		int i;
-                            		while((i=lire.read(bytes, 0, bytes.length))>-1) {
-                            			
-                            			lByteOut.write(bytes, 0, i);
-                            			nb = nb+ lByteOut.toString().length();
-                            			lByteOut = new ByteArrayOutputStream();
-                            		}
-                            		lire.close();
-                            		reader.close(); 
-                            	return nb;
-                            	}
-Pour ecrire des lignes dans un fichier:
-/** Write fixed content to the given file. */
-  void write() throws IOException  {
-    log("Writing to file named " + fFileName + ". Encoding: " + fEncoding);
-    Writer out = new OutputStreamWriter(new FileOutputStream(fFileName), fEncoding); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
-    try {
-      out.write(FIXED_TEXT);
-    }
-    finally {
-      out.close();
-    }
-  }
-// AVANT: mais pb encodage ci-dessous
-//creation ou ajout dans le fichier texte
-		try {
-		// attention fileWriter et FileReader utilisent l'encodage du systeme!!! donc pas bon! à la place faire : new InputStreamReader(new FileInputStream(monFile), Charset.forName("UTF-8"))
-			FileWriter fw = new FileWriter (fichier);
-			BufferedWriter bw = new BufferedWriter (fw);
-			PrintWriter fichierSortie = new PrintWriter (bw); 
-				fichierSortie.println (chaine+"\n test de lecture et ecriture !!"); 
-			fichierSortie.close();
-			System.out.println("Le fichier " + fichier + " a ete cree!"); 
-		}
-		catch (Exception e){
-			System.out.println(e.toString());
-		}		
-
------------
 Pour lire les lignes d'un fichier: 
 FileInputStream lire = new FileInputStream(fichier); // fichier est un File
 			BufferedReader reader = new BufferedReader(new InputStreamReader(lire));
@@ -22977,6 +22974,53 @@ Pour utiliser readLine() qui permet de lire un fichier encode en utf8 et conserv
         			return new String(buffer.toByteArray(), "UTF-8");
         		}
         	}
+pour compter le nombre de caractères dans un fichier:
+                        public int getNbCharFromFile(File file) throws Exception
+                            	{
+                                	int nb=0;
+                            		ByteArrayOutputStream  lByteOut = new ByteArrayOutputStream();
+                            		byte[] bytes = new byte[1024];
+                            		FileInputStream lire = new FileInputStream(file); // fichier est un File
+                            		BufferedInputStream reader = new BufferedInputStream(lire);
+                            		int i;
+                            		while((i=lire.read(bytes, 0, bytes.length))>-1) {
+                            			
+                            			lByteOut.write(bytes, 0, i);
+                            			nb = nb+ lByteOut.toString().length();
+                            			lByteOut = new ByteArrayOutputStream();
+                            		}
+                            		lire.close();
+                            		reader.close(); 
+                            	return nb;
+                            	}
+Pour ecrire des lignes dans un fichier:
+/** Write fixed content to the given file. */
+  void write() throws IOException  {
+    log("Writing to file named " + fFileName + ". Encoding: " + fEncoding);
+    Writer out = new OutputStreamWriter(new FileOutputStream(fFileName), fEncoding); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
+    try {
+      out.write(FIXED_TEXT);
+    }
+    finally {
+      out.close();
+    }
+  }
+// AVANT: mais pb encodage ci-dessous
+//creation ou ajout dans le fichier texte
+		try {
+		// attention fileWriter et FileReader utilisent l'encodage du systeme!!! donc pas bon! à la place faire : new InputStreamReader(new FileInputStream(monFile), Charset.forName("UTF-8"))
+			FileWriter fw = new FileWriter (fichier);
+			BufferedWriter bw = new BufferedWriter (fw);
+			PrintWriter fichierSortie = new PrintWriter (bw); 
+				fichierSortie.println (chaine+"\n test de lecture et ecriture !!"); 
+			fichierSortie.close();
+			System.out.println("Le fichier " + fichier + " a ete cree!"); 
+		}
+		catch (Exception e){
+			System.out.println(e.toString());
+		}		
+
+-----------
 proprietes : properties :
     recuperer un fichier selon son path relative relatif et non pas absolu: 
         grace à System.getProperty("user.dir") qui est toujours dispo.
@@ -25802,10 +25846,10 @@ definir le contexte pour les images avec maven: LINKlrroqlkjqdflmh
                       <war>${project.basedir}/target/${project.artifactId}-${project.version}.war</war>
                       <contextPath>/Sami</contextPath>
                   </contextHandler>
-             <!-- si dessous contexte pour images ailleurs -->
+             <!-- si dessous contexte pour images ailleurs:servire dehors-->
                   <contextHandler implementation="org.eclipse.jetty.maven.plugin.JettyWebAppContext">
-                      <contextPath>/SamiCoursImages</contextPath>
-                      <resourceBase>../SamiCoursImages/</resourceBase>
+                      <contextPath>/SamiCoursImages</contextPath> // le path de l'url http LINKlrroqlkjqdflmh
+                      <resourceBase>../SamiCoursImages/</resourceBase> // pointe vers ce repertoire
                   </contextHandler>
               </contextHandlers>
         <!-- declarer que log4j doit etre sous web-inf/classes : --> 
@@ -26706,7 +26750,7 @@ fetch : LINKsljqffetch
                         ou en mode callback:
                fetch(url,{
               method:'GET',
-              credentials:'omit'
+              credentials:'omit'// sans jsessionid ni cookies ou 'same-origin' ou 'include'//tout le temps meme en cross-origin
           })
           .then(response=>response.json()) // attention renvoit une promesse a retraiter comme telle car en fait response contient le header mais response.json() fait appel à recup la promesse du body
           .then((json)=>{
