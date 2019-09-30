@@ -1,4 +1,4 @@
-(?=.*file)(?=.*resour)
+(?=.*string)(?=.*vide)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -2291,7 +2291,7 @@ Cycle de vie du CDI bean:
           
           faire des servlets sans web.xml: 
                 ajouter en tete de classe qui etend HttpServlet @WebServlet("/un/path") ou (urlPatterns={"/a","/b"}) ou (urlPatterns="/b") .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention pour index page d'accueil on ne peut pas mettre / donc utiliser web.xml et welcome-file qui pointent sur une servlet ou une page
-                 et @MultipartConfig // si je veux je crois que ma servlet gere l'upload de fichier (pas encore sur). recup les params avec request.getParmeters LINKmultilkjfqsdf   
+                 et @MultipartConfig // si je veux je crois que ma servlet gere l'upload de fichier. recup les params avec request.getParmeters LINKmultilkjfqsdf   
                 du coup ma classe n'est plus un webservice et ne pas utiliser @Produce et @Path avec. 
                 juste 
                 public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {response.getWriter().println("Hello");
@@ -2709,7 +2709,7 @@ freemaker :
                         ou
                         
         
-            Avant: 
+            Avant: pour afficher une jsp depuis une servlet. Marche encore 
             import java.io.*;
             import javax.servlet.*;
             import javax.servlet.http.*;
@@ -2861,11 +2861,8 @@ autre facon PROPRE(pas de pb encodage) de faire un download a partir de l'objet 
 				inputStream.read(fileContents);
 				FileOutputStream outputFile = new FileOutputStream(new File(location + file.getFileName())); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
 				OutputStream fos = new BufferedOutputStream(outputFile);
-				saj.filemanager.enterprise.FileManagerService service = (saj.filemanager.enterprise.FileManagerService) SajEnterpriseLayer
-					.getDefaultInstance().getService(
-						saj.filemanager.enterprise.FileManagerService.class);
-						fos.write(fileContent);
-						fos.close();	    
+				fos.write(fileContent);
+				fos.close();	    
 			
  
 Pour recuperer telecharger downloader un fichier java à partir d'une url faire une requete http lien et stocker ce fichier localement:
@@ -9376,7 +9373,25 @@ faire un formulaire de upload telechargement de fichier, d'image:
                                 }
                             });
                             splitPanel.add(formulaire);
-          cote serveur : avec apache Commons FileUpload (si avant servlet 3.0) apres voir LINKmultilkjfqsdf
+          upload du fichier cote serveur :
+          si apres servlet 3.0)  completer avec LINKmultilkjfqsdf
+                 je peux toujours faire request.getParameter("name") pour recuperer des parametres de l'url 
+                  for (Part part : request.getParts()) {
+                      //String fileName = getFileName(part);
+                      String fileName = "test"+i+".wav";
+                      log.info(uploadPath + File.separator + fileName);
+                      InputStream inputStream = part.getInputStream();
+                      part.getSize();
+                      byte[] fileContents = new byte[Math.round(part.getSize())];
+                      inputStream.read(fileContents);
+                      FileOutputStream outputFile = new FileOutputStream(new File(uploadPath + File.separator + fileName));
+                      OutputStream fos = new BufferedOutputStream(outputFile);
+                      fos.write(fileContents);
+                      fos.close();
+                     i++;
+              }
+              
+          upload du fichier cote serveur :avec apache Commons FileUpload (si avant servlet 3.0) si apres voir LINKmultilkjfqsdf
                         public class ProfileUpload extends HttpServlet {   // Une vraie servlet, pas un service RPC
                             @Override
                             protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -9414,6 +9429,8 @@ faire un formulaire de upload telechargement de fichier, d'image:
                                 }
                             }
                         }
+                        
+                        
 Faire appel a un rpc :
     Class bidule
     {
@@ -11277,9 +11294,11 @@ possible d'overrider dans le pom lurl du repository: AH... n'a pas l'air de pren
 		<repository>
 			<id>sopra hr releases</id>
 			<url>http://hra-nexus.ptx.fr.sopra/content/repositories/soprahr-releases/</url>
-			ou
-      <url>https://maven.java.net/content/repositories/public/</url>
 		</repository>
+        <repository>
+            <id>maven</id>
+            <url>https://maven.java.net/content/repositories/public/</url>
+        </repository>
 	</repositories>	
  dans settings.xml:
   <servers>
@@ -16533,37 +16552,46 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
                         
 
     Mockito : Mokito :dans mon test:
-    <!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
+    si JUNIT5
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>3.0.0</version>
+            <scope>test</scope>
+        </dependency>
+    si JUNIT4<!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
       <dependency>
           <groupId>org.mockito</groupId>
           <artifactId>mockito-all</artifactId>
           <version>1.10.19</version>
           <scope>test</scope>
       </dependency>
-		@InjectMocks // facultatif Mock peut marcher sans.
-		private RealTimePathCoverageController realTimePathCoverageController = new RealTimePathCoverageController(); // equivalent de @Tested dans jmockit : c'est une classe a tester dans laquelle je peux injecter des mocs LINKpourquecamarcheFairemokito
-		@Mock private RestTemplate restTemplate; // (peut etre une classe ou une interface) mock qui sera injectée dans RealTimePathCoverageController.
-			@Before
-				public void setup()
-				{
-					MockitoAnnotations.initMocks(this); // ca active les anotations @InjectMocks et @Mocks et @Spy // attention @Spy qui doit etre accompagné de par exemple @Autowired dans mon test car le bean doit exister avant que le spy s'applique: CA CA NE MARCHE PAS:mon objet spyé n'est pas le meme que celui qui est injecté dans le runcode.
-				}
-				FilterConfig filterConfig = mock(FilterConfig.class); // c'est soit je fais comme ca, soit j'utilise les anotations ci dessus. les deux font la meme chose
-				ServletContext context = mock(ServletContext.class);
-                ResultDao rd =mock ou spy(unObjetNONANNOTE ou new ResultDao() ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
-                Mockito.doReturn(toto).when(rd).getLaMethodeResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy
-				when(filterConfig.getServletContext( // ca s'appelle faire du "stub" et utiliser ca je crois pour les mock
-				ou                                   anyString()//tout string
-				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça . si je met des variables direct alors j'ai l'erreur InvalidUseOfMatchersException
-                                                    ,anyList() // ne pas utiliser anyObject si j'ai une liste
-													,Matchers.any(UneClasse.class) avant : anyObject(UneClasse.class)
-													).thenReturn(context);
-                pour indiquer de retourner une exception à un spy ou stub
-                        Mockito.doThrow(new HibernateException("err")).when(userWebDAO).create(Matchers.any(UserWebEntity.class)); 
-				WelcomeController wc = new WelcomeController(rd);
-				wc.getDisplayResult("1", "1","10:00", "10/10/2016");
-                validation verifier qu'un mock a été appelé invoké invoquée par une methode x fois nombre compter combien:
-                        verify(userDetailDAOMock, times(2)).laMathodeDuMock(any(UserDetailsEntity.class));
+      @ExtendWith(MockitoExtension.class)  // si junit5 seulement
+        public class UploadToServerServiceTest {
+    		@InjectMocks // facultatif Mock peut marcher sans.
+    		private RealTimePathCoverageController realTimePathCoverageController = new RealTimePathCoverageController(); // equivalent de @Tested dans jmockit : c'est une classe a tester dans laquelle je peux injecter des mocs LINKpourquecamarcheFairemokito
+    		@Mock private RestTemplate restTemplate; // (peut etre une classe ou une interface) mock qui sera injectée dans RealTimePathCoverageController.
+    			@Before
+    				public void setup()
+    				{
+    					MockitoAnnotations.initMocks(this); // ca active les anotations @InjectMocks et @Mocks et @Spy // attention @Spy qui doit etre accompagné de par exemple @Autowired dans mon test car le bean doit exister avant que le spy s'applique: CA CA NE MARCHE PAS:mon objet spyé n'est pas le meme que celui qui est injecté dans le runcode.
+    				}
+    				FilterConfig filterConfig = mock(FilterConfig.class); // c'est soit je fais comme ca, soit j'utilise les anotations ci dessus. les deux font la meme chose
+    				ServletContext context = mock(ServletContext.class);
+                    ResultDao rd =mock ou spy(unObjetNONANNOTE ou new ResultDao() ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
+                    Mockito.doReturn(toto).when(rd).getLaMethodeResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy
+    				when(filterConfig.getServletContext( // ca s'appelle faire du "stub" et utiliser ca je crois pour les mock
+    				ou                                   anyString()//tout string
+    				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça . si je met des variables direct alors j'ai l'erreur InvalidUseOfMatchersException
+                                                        ,anyList() // ne pas utiliser anyObject si j'ai une liste
+    													,Matchers.any(UneClasse.class) avant : anyObject(UneClasse.class)
+    													).thenReturn(context);
+                    pour indiquer de retourner une exception à un spy ou stub
+                            Mockito.doThrow(new HibernateException("err")).when(userWebDAO).create(Matchers.any(UserWebEntity.class)); 
+    				WelcomeController wc = new WelcomeController(rd);
+    				wc.getDisplayResult("1", "1","10:00", "10/10/2016");
+                    validation verifier qu'un mock a été appelé invoké invoquée par une methode x fois nombre compter combien:
+                            verify(userDetailDAOMock, times(2)).laMathodeDuMock(any(UserDetailsEntity.class));
 cucumber : il fait ce que fait junit mais permet à des non techniciens de comprendre les tests.LINKcucumberldfj 
       Feature: action globale
         Scenario: User case label
@@ -21543,6 +21571,8 @@ delta entre deux chaines de caracteres characters strings:
             }
 
 pour savoir si un string chaine est vide empty, ou null:
+            if(monstring != null && !monstring.isEmpty()) 
+            ou
               org.apache.commons.lang.StringUtils.isEmpty(this.url_redirect)
 pour formater une chaine de caractères (mapper convertir fichier)
 pour faire un message avec des {0}{1}{2}...  qui sont remplace par des strings: (utilisable comme moteur de template?) 
