@@ -1,4 +1,4 @@
-(?=.*pattern)(?=.*design)
+(?=.*response)(?=.*content)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -2257,8 +2257,8 @@ J2EE : jee : jee8 :javaee : EE4J : jakartaee : https://github.com/eclipse-ee4j/j
                <scope>provided</scope>
         </dependency>
         necessite LINKbensoncle
-cdi :CDI2.0 (JSR365) pour les tests utiliser weld3.0 lire https://docs.jboss.org/cdi/learn/cdi_2/slides.html
-CDI1.x besoin de weld2.4
+cdi :CDI2.0 (JSR365) pour les tests utiliser weld3.0. CDI1.x besoin de weld2.4 lire https://docs.jboss.org/cdi/learn/cdi_2/slides.html
+     weld :
         <dependency>
 			<groupId>org.jboss.weld</groupId>
 			<artifactId>weld-junit5</artifactId>
@@ -2269,8 +2269,27 @@ CDI1.x besoin de weld2.4
         ou
         @EnableAutoWeld=@ExtendWIth(WeldJunit5AutoExtension.class)//injecte automatiquement. Pas besoin de LINKweldgkl
 		public class MaClasseDeTest{
-            @WeldSetup //facultatif pour gérer mes injections LINKweldgkl 
-            public WeldInitiator weld = WeldInitiator.of(UneClasseBean.class);
+            @WeldSetup //facultatif pour gérer mes injections LINKweldgkl //TODO: capitaliser weld
+            public WeldInitiator weld = WeldInitiator.from(AbonnementService.class) //crée les beans dans un container virtuel pour tests.
+            .addBeans(
+                    MockBean.read(Utils.class).build(), //injectera Utils automatiquement dans le code projet si bonne annotation
+                    MockBean.read(UserStore.class).build(),
+                    MockBean.builder()   // pour injecter un mock plutot qu'un bean complet.
+                            .types(ProjectStore.class)
+                            .scope(RequestScoped.class)
+                            .addQualifier(MonQualifier.Literal.INSTANCE) // au cas ou j'ai un qualifier particulier
+                            .creating(
+                                    //new ApplicationConfigurationLocal()
+                                    ou
+                                    Mockito.when(Mockito.mock(ProjectStore.class).findByName(anyString())).thenReturn(new ArrayList<>(),autrechoseladeuxiemefois).getMock()
+                                    )
+                            .creating( // on peut créer comme ca en enchainant plusieurs comportements pour différentes fonctions
+                                    Mockito.when(Mockito.mock(ProjectStore.class).getProjectsCreatedByUser(anyString())).thenReturn(
+                                            Arrays.asList(new Project("bla","bli","blo","blu",new Date(),true,1.0))
+                                    ).getMock()
+                            )
+                            .build()
+               ).activate(RequestScoped.class, ApplicationScoped.class).build(); // comme si j'étais dans ces scopes.
         }
 <!-- pour utiliser les @ : scan les java qui ont :@Qualifier (voir LINKqualifsdlfk) mieux que @Named(equivalent de @Qualifier de spring mais on l'utilise plutôt pour jsp et JSF), @Inject (equivalent de @Autowire de spring)
 Cycle de vie du CDI bean:
@@ -2323,13 +2342,13 @@ Cycle de vie du CDI bean:
                   @NormalScope
                   @Inherited
                   public @interface MonQualifierAMoi { du coup j'ai à ma disposition un qualifier @MonQualifierAMoi
-                      public static final class Literal extends AnnotationLiteral<ApplicationScoped> implements ApplicationScoped {
-                          public static final ApplicationScoped.Literal INSTANCE = new ApplicationScoped.Literal();
-                          private static final long serialVersionUID = 1L;
-                  
-                          public Literal() {
-                          }
+                        @SuppressWarnings("all")
+                      public static final class Literal extends AnnotationLiteral<MonQualifierAMoi> implements MonQualifierAMoi { // il faut mettre tout ca pour que quand j'utilise weld je peux faire addQualifier
+                          private static final long serialVersionUID = 1L; 
+                          public static final MonQualifierAMoi.Literal INSTANCE = new MonQualifierAMoi.Literal();
+                          private Literal() {
                       }
+                   }
                   }
 
                          
@@ -3750,11 +3769,11 @@ JSON-B :jsonb : pour binder java et json LINKjsonbnew
                 <version>1.0.3</version>
                 <scope>runtime</scope>
             </dependency>
-    de java vers json:
+    de java vers json: java en json:
       AuthentMessage ret = new AuthentMessage("Mauvais identitiants");
                     Jsonb jsonb = JsonbBuilder.create();
                     String dujson = jsonb.toJson(ret);
-    de json vers java:
+    de json vers java: json en java:
         AuthentMessage ret = jsonb.fromJson(dujson,AuthentMessage.class);
                     
 JSON-P : jsonp : pour manipuler json: json processing                       
@@ -16867,7 +16886,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
     				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça . si je met des variables direct alors j'ai l'erreur InvalidUseOfMatchersException
                                                         ,anyList() // ne pas utiliser anyObject si j'ai une liste
     													,ArgumentMatchers.any(UneClasse.class) avant: Matchers.any(UneClasse.class) avant: anyObject(UneClasse.class)
-    													).thenReturn(context);
+    													).thenReturn(untruclapremierefois,unautretruclasecondefois...);
                     pour indiquer de retourner une exception à un spy ou stub
                             Mockito.doThrow(new HibernateException("err")).when(userWebDAO).create(Matchers.any(UserWebEntity.class)); 
     				WelcomeController wc = new WelcomeController(rd);
