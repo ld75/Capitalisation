@@ -1,4 +1,4 @@
-(?=.*java)(?=.*json)
+(?=.*pattern)(?=.*design)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -187,7 +187,7 @@ plannification :planning :conseils Erwin:
     GELER DES JOURS ET MY TENIR (+LE JOUR DE CAPIT)
     CAPITALISER SUR LE WIKI LES VENDREDIS
 
-Design patterns : Gof est mort remplacé par CDI: A FAIRE voir @Specializes, @Decorator, @Interceptor. Pattern Command est remplacé par MessageDrivenBeans et CDI Events
+Design patterns : Gof est mort remplacé par CDI: A FAIRE voir @Specializes, @Decorator, @Interceptor. Pattern Command est remplacé par MessageDrivenBeans et CDI Events, pattern factory remplacé par @Produces LINKfactoproduce
 cleancoding : clean coding :LA SEULE FACON D ALLER VITE C EST D ALLER CLEAN ignorance is no excuse. No divided devs(frontetback = meme pers) expose your ignorance to learn. (its not weakness) 
 0: 20 minutes de tomate tomatoes*18-20/jours(4pauses2m,1pause10m). https://tomato-timer.com/ pour partager: https://www.marinaratimer.com  Sous pression, se coller à la discipline ne pas être tenté de la bypasser
 1. I will not produce harmful code
@@ -2257,15 +2257,22 @@ J2EE : jee : jee8 :javaee : EE4J : jakartaee : https://github.com/eclipse-ee4j/j
                <scope>provided</scope>
         </dependency>
         necessite LINKbensoncle
-cdi :CDI2.0 (JSR365) pas besoin d'utiliser weld (je crois) lire https://docs.jboss.org/cdi/learn/cdi_2/slides.html
-CDI1.x besoin de weld
+cdi :CDI2.0 (JSR365) pour les tests utiliser weld3.0 lire https://docs.jboss.org/cdi/learn/cdi_2/slides.html
+CDI1.x besoin de weld2.4
         <dependency>
-			<groupId>org.jboss.weld.se</groupId>
-			<artifactId>weld-se-core</artifactId>
-			<version>3.0.1.Final</version>
+			<groupId>org.jboss.weld</groupId>
+			<artifactId>weld-junit5</artifactId>
+			<version>3.0</version>
+            <scope>test</scope>
 		</dependency>
-		
-<!-- pour utiliser les @ : scan les java qui ont :@Qualifier mieux que @Named(equivalent de @Qualifier de spring mais on l'utilise plutôt pour JSF), @Inject (equivalent de @Autowire de spring)
+        @EnableWeld=@ExtendWith(WeldJunit5Extension.class)//peut fonctionner en meme temps que mockito. Besoin de LINKweldgkl
+        ou
+        @EnableAutoWeld=@ExtendWIth(WeldJunit5AutoExtension.class)//injecte automatiquement. Pas besoin de LINKweldgkl
+		public class MaClasseDeTest{
+            @WeldSetup //facultatif pour gérer mes injections LINKweldgkl 
+            public WeldInitiator weld = WeldInitiator.of(UneClasseBean.class);
+        }
+<!-- pour utiliser les @ : scan les java qui ont :@Qualifier (voir LINKqualifsdlfk) mieux que @Named(equivalent de @Qualifier de spring mais on l'utilise plutôt pour jsp et JSF), @Inject (equivalent de @Autowire de spring)
 Cycle de vie du CDI bean:
               – @RequestScoped // a mettre absolument sur un webservice utilisant jwt car les claims jwt sont naturelement request-scopeds. LINKkgkgkgklkjsdfljqi
               – @RedirectScoped // fait partie de mvc: utile si apres un post on fait un redirect et qu'on a besoin de l'info du post.
@@ -2275,6 +2282,7 @@ Cycle de vie du CDI bean:
                                 public void demarrage(@Observes @Initialized(ApplicationOuAutreScoped.class) Object init) // ou @Destroyed si c'est quand ca s'eteint. Ne prennent que des Scope LINKobsgdgdgz
                                 {(...)
               – @ViewScoped
+              - @Dependent // ne s'instancie que quand on fait appel à lui dans la classe qui l'injecte. Comme un new Blabla();
               – @CustomScoped pour que les beans soient stockees dans le FacesContext (qui a une duree de vie plus courte que RequestScope donc FC est plus rapide, bouffe moins de memoire)
               – @NoneScoped (si c un bean qui est reference par un autre bean qui lui est scoped)
               >> attention un bean ne peut pas referencer un autre bean si son scope est plus petit que le sien (sauf les @NoneScoped que tous peuvent referencer)
@@ -2285,10 +2293,46 @@ Cycle de vie du CDI bean:
                  @TransactionAttribute pouf gerer les transactions (marche aussi sur ejb de type  @Stateful, @Stateless and @Singleton @ManagedBean, @WebServlet, @WebListener, @WebFilter)           
           utilisation d'un champ injecté:                                   définition de la classe de l'autre coté:
             @Inject                                                        @ApplicationScoped
-          @Named("simpleIs")//utiliser plutot @Qualifier.Ms ça pour jsp    @Named("simpleIs")//utiliser plutot @Qualifier.Ms ça pour jsp
+          @Named("simpleIs")//utiliser plutot @Qualifier.Ms ça c pour jsp  @Named("simpleIs")//utiliser plutot @Qualifier.Ms ça c pour jsp
           private IdentityStore simpleIdentityStore;                       public class SimpleIdentityStore implements IdentityStore {
 
+        design pattern factory remplacé par @Produces dans CDI LINKfactoproduce
+        class MonFactory
+            @Inject
+            ClasseA classeA;
+            @Inject
+            ClasseB classeB;
+              @Produces // de javax.enterprise.inject.Produces 
+              @MonQualifierAMoi //un Qualifier que j'ai crée voir LINKqualifsdlfk
+              @AppConfig
+              IApplicationConfiguration getApplicationConfiguration(){
+                  if (machintruc)
+                  {
+                      return classeA;
+                  }
+                  else {
+                      return classeB;
+                  }
           
+              }
+            les @Qualifier :LINKqualifsdlfk
+                dans la classe MonQualifierAMoi:
+                  @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
+                  @Retention(RetentionPolicy.RUNTIME)
+                  @Documented
+                  @NormalScope
+                  @Inherited
+                  public @interface MonQualifierAMoi { du coup j'ai à ma disposition un qualifier @MonQualifierAMoi
+                      public static final class Literal extends AnnotationLiteral<ApplicationScoped> implements ApplicationScoped {
+                          public static final ApplicationScoped.Literal INSTANCE = new ApplicationScoped.Literal();
+                          private static final long serialVersionUID = 1L;
+                  
+                          public Literal() {
+                          }
+                      }
+                  }
+
+                         
           faire des servlets sans web.xml: 
                 ajouter en tete de classe qui etend HttpServlet @WebServlet("/un/path") ou (urlPatterns={"/a","/b"}) ou (urlPatterns="/b") .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention pour index page d'accueil on ne peut pas mettre / donc utiliser web.xml et welcome-file qui pointent sur une servlet ou une page
                  et @MultipartConfig // si je veux je crois que ma servlet gere l'upload de fichier. recup les params avec request.getParmeters LINKmultilkjfqsdf   
@@ -2315,7 +2359,7 @@ try (SeContainer container = initializer.disableDiscovery().initialize()) { cont
 		@Pattern(expressionreguliere) // sur un champ d'un bean: pour valider que ce champ quand il est rempli match bien à la regexp.
     pattern observable: LINKobsgdgdgz
         @Inject
-        @Named("tutu") LINKkfkgggg //utiliser plutot @Qualifier.Ms ça pour jsp.
+        @Named("tutu") LINKkfkgggg //utiliser plutot @Qualifier.Ms ça c pour jsp.
         Event<Payload> payloadEvent;
         public void doSomething() {
           payloadEvent.fire(new Payload()); //ceci va declancher ailleur ceci:**
@@ -2431,7 +2475,7 @@ config de la base de donnée donnee: en jee
              puis ailleurs LINKdtresr:       
          @Stateless  ou @ApplicationScoped// exemple d'utilisation appel ailleurs
          public class MyStatelessEJB {
-           @Resource(lookup= ou name="java:global/MyApp/myDataSource")
+           @Resource(lookup= ou plutot name="java:global/MyApp/myDataSource") // fait reference au datasource declaré ici LINKdtresr
             DataSource myDB;
               ...
          }
@@ -2757,7 +2801,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
           			String ttfPath = (String)ServiceLocator.getInstance().getRefByName("NOM_DE_LA_VARIABLE");
           
                   recuperer les valeurs d'un select du request
-                      request.getParameterValues("nomDeMonSelect"); // recupere les parametres get ou post. Ne pas confondre avec request.getAttribute() .setAttribute() c'est uniquement cote serveur: utilisable entre jsp et servlet aussi. Ne vient pas d'une requette request http. Peut etre un objet
+                      request.getParameterValues("nomDeMonSelect"); // recupere les parametres get ou post. Ne pas confondre avec request.getAttribute() request.setAttribute() c'est uniquement cote serveur: utilisable entre jsp et servlet aussi. Ne vient pas d'une requette request http. Peut etre un objet LINKrequgeurei
 
                   si je voulais renvoyer vers une jsp ou une page je ferais:request.getRequestDispatcher("(/WEB-INF?)/views/login.jsp").include(request, resp); ou si c'est vers un controlleur: voir plus haut LINKçç("'"'
                         ATTENTION! doit être la dernière chose executee: pas de chain après ou d'autre redirection de request requette! java.lang.IllegalStateException: Impossible d'utiliser faire-suivre (forward) après que la reponse ait ete envoyee
@@ -4009,7 +4053,8 @@ pour changer le titre d'une jsp:
 pour acceder à un fichier depuis une jsp 	
 	pageContext.getServletContext().getRealPath (url)
 recuperer mes beans cdi et leurs valeurs:
-    ${toto.getMachin()} ou ${toto.machin}  et j'ai un bean cdi @Named(value="toto") ou @Named("toto")
+    ${toto.getMachin()} ou ${toto.machin}  et j'ai un bean cdi @Named(value="toto") ou @Named("toto") 
+    ${machin} qui peut etre settée grace coté servlet à request.setAttribute("machin","bidule"); LINKrequgeurei
     on peut faire aussi du java attribution: setter une variable
     ${titi=unbean.getMachin()} (attention ca output) et plus loin: ${titi} // utiliser titi plus loin.
 pour recuperer le principal name userid utilisateur dans jsp:
@@ -9322,7 +9367,7 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
     Recuperer dans ecolipse Help>Update>Plugin Hibernate tools (http://download.jboss.org/jbosstools/updates/stable/indigo)
     ouvrir console Hibernate et configurer une connection à une base
     Clic droit sur mon projet > JAP > faire le reverseEngeniring
-    fichier resources/META-INF/persistence.xml marche bien. sinon ou mais pas sur dutout: WEB-INF/persistence.xml
+    fichier resources/META-INF/persistence.xml marche bien. sinon ou mais pas sur dutout: WEB-INF/persistence.xml. Ce fichier DOIT etre dans le jar ou le war qui contient les @Entity
     <persistence> 
         <persistence-unit name="com.memoclap" transaction-type="RESOURCE_LOCAL(pour des testsunitaires) ou JTA(pour tapper dans LINKjta)"> // du coup applicativement je l'appelle comme ça : LINKentitym
             <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> // facultatif provider peut etre eclipselink ou hibernate. si on met rien.. sais pas. depend jars ?
@@ -11483,7 +11528,7 @@ echo %version%
 %M3%\mvn clean
 %M3%\mvn compile
 %M3%\mvn package
-if [[ "$?" -ne 0 ]] ; then // $? c'est le code que renvoit le programme precedent dernier code. -ne c'est pour "not equal" donc ici si code retour different de zero alors... si maven echoue rate ko les tests interruption de la livraison devops 
+if [[ "$?" -ne 0 ]] ; then // $? c'est le code que renvoit le programme precedent dernier code. -ne c'est pour "not equal" donc ici si code retour different de zero alors... si maven echoue rate erreur ko les tests interruption de la livraison devops 
   echo 'could not perform tests'; exit $rc      // quitte le programme. exit $rc
 fi
 git add src
@@ -12225,10 +12270,10 @@ ant : avec maven: pour par exemple renommer un fichier apres coup touch toucher 
         <delete file="../../batchs/memoclap.parser-${version}.jar"/>
     </target>
         <target name="renameServiceWorkerFile"> //deplacer renommer un fichier avec ant et maven
-          <move todir="../../" includeemptydirs="false">
-              <fileset dir ou file="../../"/>
-              <mapper type="glob" from="service-worker-v*.js" to="service-worker-v${version}.js"/>
-          </move>
+          <move ou bien copy todir="../../repertoire/ou/copier/" includeemptydirs="false">
+              <fileset dir oubien file="../../"/>
+              <mapper type="glob" from="service-worker-v*.js" to="service-worker-v${version}.js"/> //utile si dans fileset on a mis "dir"
+          </move ou bien copy>
     </target>
     <target name="touch">
         <touch file="${path}"/>
@@ -22649,6 +22694,8 @@ supprimer les accents:
 
 --------------------------------
 mails : mail :email : emails :
+avant: 
+
 pour envoyer un mail avec une piece jointe: Plutot que ca, avec spring c'est plus facile. Voir http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mail.html
 import javax.mail.Message;
 import javax.mail.Session;
@@ -22658,9 +22705,8 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeUtility;
 
 	    // Creation d'un message
-	    Properties props = new Properties();
-			props.put("mail.smtp.host", mailSmtp); // ou mailSmtp: wsmtp.renault.fr
-			props.put("mail.debug", "true"); // si besoin quand ca marche pas
+	    Properties props = new Properties(); 
+			props.put(".... voir la suite ici LINKproemailghs
 			
 			Session session = Session.getDefaultInstance(props, null);
 			session.setDebug(true); // pour comprendre pourquoi ca ne marche pas sinon mettre:
@@ -22733,14 +22779,15 @@ import javax.mail.internet.MimeUtility;
 	    Transport.send (messageAdm);
 	    cat.info("Message envoye a administrateur "+AdressMailAdmin);
 pour envoyer un mail simple avec javax.mail et qu'on a eu un message d'erreur de non authentification ou probleme startttssslchaispas quoi:
-					Properties props = new Properties();
-					props.put("mail.smtp.host", "smtp.googlemail.com");
-					props.put("mail.smtp.starttls.enable", "true");
-//					 props.put("mail.user", "kanailaurent@gmail.com");
-//					 props.put("mail.password", "calottezoclos");
-					props.put ("mail.smtp.auth","true");
-					props.setProperty("mail.smtp.submitter", authenticator.getPasswordAuthentication().getUserName());
-					//properties.setProperty("mail.smtp.port", "25");
+					props.put("mail.smtp.starttls.enable", "true"); //LINKproemailghs
+          			props.put ("mail.smtp.auth","true");
+          			props.put("mail.smtp.host", mailSmtp); // ou wsmtp.renault.fr ou smtp.googlemail.com
+                    props.put("mail.smtp.port", "25");
+                    props.put("mail.smtp.ssl.trust", "smtp.mailtrap.io");            
+          			props.put("mail.debug", "true"); // si besoin quand ca marche pas
+           		    props.put("mail.user", "kanailaurent@gmail.com");
+          			props.put("mail.password", "calottezoclos");
+          			props.put("mail.smtp.submitter", authenticator.getPasswordAuthentication().getUserName());
 					javax.mail.Session mailSession =javax.mail.Session.getDefaultInstance(props, authenticator);
 					avec
           static MyAuthenticator authenticator = new StartParse().new MyAuthenticator();
