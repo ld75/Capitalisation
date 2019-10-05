@@ -1,4 +1,4 @@
-(?=.*response)(?=.*content)
+(?=.*java)(?=.*json)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -881,6 +881,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git diff-tree --no-commit-id --name-only -r <numero de commit> // voir la liste des fichiers commités  d'un commit 
       git reset HEAD .OuNomFichier ou *.extensionfichier // opposé inverse de add pour retirer ce fichier de l'index added(voir LINKresetgit et Linkcheckout) annuler undo un delete MAIS: si j'ai déjà pushé alors faire:LINKrmgit 
       git reset HEAD~ annule/undo le dernier commit. Ne pas le faire après que mon dernier commit ait ete pushe et merge avec l'origin car cela desynchronise mon local du distant. SI je veux quand même le faire par necessite alors faire git reverT: ça recommiT un snap d'avant le commit pourri.
+      git reset HEAD~ pathFichier/A/retirer/du/commit.txt
                 on peut aussi faire git commit --amend // pour redéfinir le dernier commit sans besoin de l'annuler
       git reset //LINKresetgit annuler le dernier add
       git reset fichierAEnleverDuAdd//LINKresetgit annuler le dernier add
@@ -2269,7 +2270,7 @@ cdi :CDI2.0 (JSR365) pour les tests utiliser weld3.0. CDI1.x besoin de weld2.4 l
         ou
         @EnableAutoWeld=@ExtendWIth(WeldJunit5AutoExtension.class)//injecte automatiquement. Pas besoin de LINKweldgkl
 		public class MaClasseDeTest{
-            @WeldSetup //facultatif pour gérer mes injections LINKweldgkl //TODO: capitaliser weld
+            @WeldSetup //facultatif pour gérer mes injections LINKweldgkl
             public WeldInitiator weld = WeldInitiator.from(AbonnementService.class) //crée les beans dans un container virtuel pour tests.
             .addBeans(
                     MockBean.read(Utils.class).build(), //injectera Utils automatiquement dans le code projet si bonne annotation
@@ -2281,6 +2282,8 @@ cdi :CDI2.0 (JSR365) pour les tests utiliser weld3.0. CDI1.x besoin de weld2.4 l
                             .creating(
                                     //new ApplicationConfigurationLocal()
                                     ou
+                                    Mockito.mock(CreatedProjectOfUserStore.class) //si doit rien faire. void
+                                    ou
                                     Mockito.when(Mockito.mock(ProjectStore.class).findByName(anyString())).thenReturn(new ArrayList<>(),autrechoseladeuxiemefois).getMock()
                                     )
                             .creating( // on peut créer comme ca en enchainant plusieurs comportements pour différentes fonctions
@@ -2291,6 +2294,7 @@ cdi :CDI2.0 (JSR365) pour les tests utiliser weld3.0. CDI1.x besoin de weld2.4 l
                             .build()
                ).activate(RequestScoped.class, ApplicationScoped.class).build(); // comme si j'étais dans ces scopes.
         }
+            retrouver un bean de weld : weld.select(MonBeanInjecte.class).get()
 <!-- pour utiliser les @ : scan les java qui ont :@Qualifier (voir LINKqualifsdlfk) mieux que @Named(equivalent de @Qualifier de spring mais on l'utilise plutôt pour jsp et JSF), @Inject (equivalent de @Autowire de spring)
 Cycle de vie du CDI bean:
               – @RequestScoped // a mettre absolument sur un webservice utilisant jwt car les claims jwt sont naturelement request-scopeds. LINKkgkgkgklkjsdfljqi
@@ -3775,6 +3779,12 @@ JSON-B :jsonb : pour binder java et json LINKjsonbnew
                     String dujson = jsonb.toJson(ret);
     de json vers java: json en java:
         AuthentMessage ret = jsonb.fromJson(dujson,AuthentMessage.class);
+    Je peux personnaliser le mapping avec les annotations: (PAS FAIT AFAIRE)
+        MaClasse
+            @JsonbDateFormat("yyyy.MM.dd")
+            private Date updateDate;
+            @JsonbTransient
+            un champ complettement ignoré lors du binding
                     
 JSON-P : jsonp : pour manipuler json: json processing                       
 SOAP : webservice : webservices :
@@ -9427,15 +9437,16 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
         Connection conn = entityManager.unwrap(Session.class).getJDBCConnection();
      utilisation de entitymanager: JPQL (sql en string) 2.0 contient JPA_API(criterias) preferer criteria api si besoin validation requettes à la compilation et requetes à la synthaxe dynamique
                 JPQL :
-                      - List cat = entityManager.createQuery("SELECT cat FROM category cat LEFT JOIN FETCH cat.art WHERE toto like '%M%' AND cat.id=:id").getResultList(); //overrite lazy default behaviour at runtime
+                      - List cat = entityManager.createQuery("SELECT cat FROM nomDeMonObjetJAVA cat LEFT JOIN FETCH cat.nomDeMonFieldJAVA WHERE toto.nomDunFieldJAVA like '%M%' AND cat.unFieldJava=:totocestmoi")
+                                .setParameter("totocestmoi",projectId).setFirstResult(0) ou .getResultList(); //overrite lazy default behaviour at runtime
                       - List<MonEntite> cat = entityManager.createQuery("SELECT cat FROM category cat LEFT JOIN FETCH cat.art WHERE cat.id=:id",MonEntite.class).getResultList(); //overrite lazy default behaviour at runtime
                       - String query = "select distinct(alo_project.id), alo_project.nam......from alo_usr alo_usr left join alo_usrcrea alo_usrcrea on alo_usr.usr_id=alo_usrcrea.usrcrea_idusr where alo_usrcrea.usrcrea_idusr is not null and alo_usr.usr_id='"+uid+"' order by alo_project.name";
                         return em.createNativeQuery(query,Project.class).getResultList();
-                JPA_API_CRITERIA :
+                JPA_API_CRITERIA : Cest trop de la merde!!!!!!!!!
                         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
                         CriteriaQuery<MonEntite> query = cb.createQuery(MonEntite.class);
-                        Root<MonEntite> criteria = query.from(MonEntite.class); //Root c'est le FROM
-                        List<MonEntite> = query.select(criteria);
+                      Root<MonEntite> criteria = query.from(MonEntite.class); //Root c'est le FROM
+                               List<MonEntite> = query.select(criteria); // il renvoit tous les champs
 DAO : design pattern bonne pratique est mort remplacé par entitymanager voir LINKemdlksqj
 un @Repository se base sur les DAO pour faire des find, get etc sur plusieurs tables. Le DAO lui sert aux updates sur une seule table
   Besoin que MonObjet extends BaseEntity.
@@ -20032,10 +20043,10 @@ exceptions :exception :
           ma classe d'exception 
           public class TooMuchDB2RowsException extends Exception 
           {
-            	public TooMuchDB2RowsException(String string) 
-            	{
-            		super(string);
-            	}
+              	public TooMuchDB2RowsException(String string) 
+              	{
+              		super(string);
+              	}
           ....
           eventuellement si on appelle une methode function fonction qui renvoit mon exception par introspection: voici comment catcher:
            		}
@@ -27410,12 +27421,13 @@ promesses : promese :promeses :Promises :promise : ne plus utiliser les callback
                                            alert("a");
                                            if(true)
                                            {
-                                              resolve(something à retourner); // toujours mettre au moins un truc (parce que une fois dans une requete ajax il allait dans le then avant meme de passer par le resolve. QUand j'ai mis un truc ça a fonctionné)
+                                              resolve(something à retourner); // toujours mettre au moins un truc (parce que une fois dans une requete ajax il allait dans le then avant meme de passer par le resolve. QUand j'ai mis un truc ça a fonctionné). ATTENTION!! reject n'est qu'un callback mais le code ici LINKjecontinue continue après execution du callback. Pour eviter faire "return resolve(something à retourner);" 
                                               }
                                               else
                                               {
-                                              reject(something à retourner); // ça renvoit une erreur et donc on va se retrouver sur LINKtootot
+                                              reject(something à retourner); // ça renvoit une erreur et donc on va se retrouver sur LINKtootot ATTENTION!! reject n'est qu'un callback mais le code ici LINKjecontinue continue après execution du callback. Pour eviter faire "return reject(something à retourner);"" 
                                               }
+                                              du code ici peut continue a etre executé LINKjecontinue 
                                             });
                     return promesse;
               }
