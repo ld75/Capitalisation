@@ -1,4 +1,4 @@
-(?=.*java)(?=.*json)
+(?=.*fichier)(?=.*servlet)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -4495,7 +4495,7 @@ Si j'ai un problème d'accents dans le RESPONSE: des actions vers les jsp (affic
 							}
 
 
-Pour convertir un input stream en output stream voir afficher
+Pour convertir un input stream inputstream en output stream outputstream voir afficher
 		OUI: 
 		byte[] buffer = new byte[1024]; (=1Giga)
 	    int line = 0;
@@ -9522,6 +9522,7 @@ si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from col
 
               @ManyToOne //1ici a n labas(passur?)
               @Column(name="NonDeLaColonneEnBDSIDifferenteQueNomProprieteJava") // optionnel
+              @Column(name="price", columnDefinition="Decimal(10,2) default '0.0'") // si on veut une valeur par defaut DANS LA BASE de donnée seulement; renvoit qd meme null en java si ce champ est déjà null dans la base
               @Cache peut etre aussi mis au niveau d'une propriete
               @NotNull // si je veux valider que le champ ne soit pas null
                @Pattern(regexp = "^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$",message = "{invalid.phonenumber}") // si je veux valider que le champ respecte un pattern regexp
