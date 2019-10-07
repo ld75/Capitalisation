@@ -1,4 +1,4 @@
-(?=.*fichier)(?=.*servlet)
+(?=.*xml)(?=.*serial)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -1185,6 +1185,7 @@ ajouter un module equivaut a importer un projet dans le worskpace: module intell
 voir les windows cote a cote split au milieu comparer comparaison
       clique droit sur tab de editeur > split vertically horizontally        
 trouver tous les todos: alt+6 . pour voir les fixme faire settings>todos>Filter> rajouter fixme
+naviguer dans l'arbo du projet alt+début
 buildpath du projet: file>project structure
 show outline structure: alt+7 ou Ctrl+F12
 les elements d'une classe ou outline: Ctrl+F12
@@ -2273,7 +2274,7 @@ cdi :CDI2.0 (JSR365) pour les tests utiliser weld3.0. CDI1.x besoin de weld2.4 l
             @WeldSetup //facultatif pour gérer mes injections LINKweldgkl
             public WeldInitiator weld = WeldInitiator.from(AbonnementService.class) //crée les beans dans un container virtuel pour tests.
             .addBeans(
-                    MockBean.read(Utils.class).build(), //injectera Utils automatiquement dans le code projet si bonne annotation
+                    MockBean.read(Utils.class).build(), //injectera Utils automatiquement dans le code projet si bonne annotation. Et c'est la vraie classe Utils dont je peux mocker chirurgiquement les methodes que je veux(voir ci dessous)
                     MockBean.read(UserStore.class).build(),
                     MockBean.builder()   // pour injecter un mock plutot qu'un bean complet.
                             .types(ProjectStore.class)
@@ -2290,7 +2291,7 @@ cdi :CDI2.0 (JSR365) pour les tests utiliser weld3.0. CDI1.x besoin de weld2.4 l
                                     Mockito.when(Mockito.mock(ProjectStore.class).getProjectsCreatedByUser(anyString())).thenReturn(
                                             Arrays.asList(new Project("bla","bli","blo","blu",new Date(),true,1.0))
                                     ).getMock()
-                            )
+                            )        
                             .build()
                ).activate(RequestScoped.class, ApplicationScoped.class).build(); // comme si j'étais dans ces scopes.
         }
@@ -4075,6 +4076,7 @@ faire un include:
 <%@include file="utis/charte/FunctionsJS.jsp"%> // va chercher dans webapp/WEB-INF/views/utils/charte/FunctionsJS.jsp 
 <@:include file="<%= request.getContextPath() %>/index.html" /> //PAS REUSSI A FAIRE MARCHER
 <%@include file="<%=request.getContextPath() %>/utis.jspjsp/charte/FunctionsJS.jsp"%> //PEUT ETRE QUE CA MARCHE
+<%@include file="/js/memoclap-redirection.js" %> // on peut y mettre une jsp si je veux y utiliser les EL expression dedans mais alors dans ce cas mon memoclap-redirection.js doit etre entouré des balises <script>
 pour changer le titre d'une jsp: 
 			<script type="text/javascript">
 						document.getElementById("TitreMenu").innerHTML='<bean:message key="TypeBSCR004-1MAJ" />><bean:message key="TypeBSCR004-1CR" /> <div id="TitreMenu" class="H2Separator"></div>';
@@ -18818,7 +18820,11 @@ DOM parseur : avec Xpath (a partir de java 5 je crois)
                             		 
                             		//read a nodelist using xpath
                             		NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(document, XPathConstants.NODESET);
-
+                                ensuite pour reecrire le document xml dans un fichier: 
+                                    Source source = new DOMSource(document);
+                                    Result result = new StreamResult(destFile);
+                                    Transformer xformer = TransformerFactory.newInstance().newTransformer();
+                                    xformer.transform(source, result);
 DOM parseur: (vieille methode) 
 // permet de parser un xml avec xpath et on peut soit ecrire le contenu des nodes trouves (uniquement le texte) ou bien tout le contenu grace a la methode getElementContent ci dessous:
                                                                           package ddd.com;
@@ -20809,7 +20815,8 @@ lambdas : lambda : lambdas expression :     (lire http://labs.excilys.com/2014/1
       limit= .limit(x) // recupère que les valeurs sous x inclu (faire une boucle LINK3223)
       stop= .takeWhile(s->!s.equals("END"))// ou un boolean onoff global (dès java9)
       union all=.concat()
-      minus:   List<x> intersect = list1.stream().filter(list2::contains).collect(Collectors.toList());                                                                          
+      minus:   List<x> intersect = list1.stream().filter(list2::contains).collect(Collectors.toList());
+               list1.removeAll(intersect);                                                                          
         PUIS A METTRE ABSOLUMENT SINON RIEN NE SE PASSE c'est seulement à la dernière commande que tout s'execute. (lazy procedure stockees):
   groupby:grouper: group by:=List<MaClass>.stream.collect(groupingBy(MaClasse::getNameOuObjet,LINKGRPDlsdflkj))) // retourne Map<NameOuObjet,List<MaClasse>> ne plus developper les groupebys!!
                 ou
