@@ -2767,7 +2767,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                   upload du fichier cote serveur :
           si apres servlet 3.0)  completer avec LINKmultilkjfqsdf
                  je peux toujours faire request.getParameter("name") pour recuperer des parametres de l'url 
-                  for (Part part : request.getParts()) {
+                  for (Part part : request.getParts()) { // il y a les fichiers en PJ puis les champs. Les fichiers en PJ toujours en premier.
                       //String fileName = getFileName(part);
                       String fileName = "test"+i+".wav";
                       log.info(uploadPath + File.separator + fileName);
@@ -29551,7 +29551,7 @@ METHODE CLASS: THEBEST? classes es6
                                           2)            constructor() // execute en premier à la creation MAIS n'est pas encore dans le DOM. // declarer mes proprietes ici pas au dessus
                                                         { 
                                                           super(); // a faire toujours en premier
-                                                          var varmaclasse=this;
+                                                          var varmaclasse=this; // heu.. marche plus ? du coup utiliser .bind(this)
                                                           this.id="tata"; // defini direct l'id du dom element|_ATTENTION ne marche que si on instancie la classe en javascript. Pas si on met la balise html dans la page
                                                           this.toto=true;// c'est une propriete properties    |
                                             //         creer un shadowdom: Maintenant FFOx supporte aussi. Avant: (pas encore supporte sur firefox: besoin faire about:config puis dom.webcomponents.enabled et dom.webcomponents.shadowdom.enabled a true)
