@@ -1,4 +1,4 @@
-(?=.*xml)(?=.*serial)
+(?=.*nom)(?=.*fichier)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -12,7 +12,7 @@ svn tortoise: merger depuis 2.11 sur trunk en modifiant trunk:
 prototype Array
 select innerjoin
 classloader
-
+                                   
 Renault :
 Rule à faire : 
     refaire crossing-covariant mais cette fois les tags * et + et 0/* sont sur les instances! > difficile
@@ -2287,7 +2287,7 @@ cdi :CDI2.0 (JSR365) pour les tests utiliser weld3.0. CDI1.x besoin de weld2.4 l
                                     ou
                                     Mockito.when(Mockito.mock(ProjectStore.class).findByName(anyString())).thenReturn(new ArrayList<>(),autrechoseladeuxiemefois).getMock()
                                     )
-                            .creating( // on peut créer comme ca en enchainant plusieurs comportements pour différentes fonctions
+                            .creating( // on peut créer comme ca en enchainant plusieurs comportements pour DIFFERENTES fonctions (pas la meme fonction sinon il ne prend que la dernière definition)
                                     Mockito.when(Mockito.mock(ProjectStore.class).getProjectsCreatedByUser(anyString())).thenReturn(
                                             Arrays.asList(new Project("bla","bli","blo","blu",new Date(),true,1.0))
                                     ).getMock()
@@ -2295,7 +2295,7 @@ cdi :CDI2.0 (JSR365) pour les tests utiliser weld3.0. CDI1.x besoin de weld2.4 l
                             .build()
                ).activate(RequestScoped.class, ApplicationScoped.class).build(); // comme si j'étais dans ces scopes.
         }
-            retrouver un bean de weld : weld.select(MonBeanInjecte.class).get()
+            retrouver un bean de weld : weld.select(MonBeanInjecte.class).get() on peut lui faire executer quelquechose: String idProjet = weld.select(AbonnementService.class).get().createNewProjectFromMicrophone(properties);
 <!-- pour utiliser les @ : scan les java qui ont :@Qualifier (voir LINKqualifsdlfk) mieux que @Named(equivalent de @Qualifier de spring mais on l'utilise plutôt pour jsp et JSF), @Inject (equivalent de @Autowire de spring)
 Cycle de vie du CDI bean:
               – @RequestScoped // a mettre absolument sur un webservice utilisant jwt car les claims jwt sont naturelement request-scopeds. LINKkgkgkgklkjsdfljqi
@@ -2328,7 +2328,7 @@ Cycle de vie du CDI bean:
             ClasseB classeB;
               @Produces // de javax.enterprise.inject.Produces 
               @MonQualifierAMoi //un Qualifier que j'ai crée voir LINKqualifsdlfk
-              @AppConfig
+              @AppConfig                                
               IApplicationConfiguration getApplicationConfiguration(){
                   if (machintruc)
                   {
@@ -2854,7 +2854,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
             response.setHeader("Content-Type",getServletContext().getMimeType(filename));
             response.setHeader("Content-Length",String.valueOf(file.length()));
             response.setHeader("Content-Disposition","inline; filename=\""+file.getName()+"\"");
-            Files.copy(file.toPath(),response.getOutputStream()); // pour copier le contenu d'un fichier dans un outputstream
+            Files.copy(file.toPath(),response.getOutputStream()); // pour copier ecrire le contenu d'un fichier dans un outputstream
         avant:
     	 String header = "attachement;filename="+fileName.substring(0,fileName.lastIndexOf("."));
     				response.addHeader("content-disposition", header);
@@ -6537,10 +6537,6 @@ Spring : XML STYLE
                           reutiliser des petits programmes ou on veut par parametrage spring
                           poincut = intersection de notre code avec le programme aspect
                           voir P34: on prog 1 aspect puis @aspect (aspecj)
-                                      utile pour transactions
-                                                            mettre @Transactional devant classe ou methode // rend ma methode dans une transaction LINKtranslsdfjai
-                                                                    @Transactional(rollbackFor = Exception.class, noRollbackFor = AuthWebBusinessWSException.class) // si je throw  une exception dans mon programme ca fait un rollback si c'est une autre exception de type Authmachin ca ne fait pas de rollback 
-                                                            AF pourquoi mettre transactional pour readonly requettes?
                                                   loging
                                       utile pour la securite decouplee du code
   .............BOF                   
@@ -9587,6 +9583,13 @@ si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from col
                 @Override
                 public int hashCode()
                 {return categoryName!=null? categoryName.hashcode():0;}
+        utile pour transactions
+            mettre @Transactional devant classe ou methode // rend ma methode dans une transaction LINKtranslsdfjai
+            @Transactional(rollbackFor = Exception.class, noRollbackFor = AuthWebBusinessWSException.class) // si je throw  une exception dans mon programme ca fait un rollback si c'est une autre exception de type Authmachin ca ne fait pas de rollback 
+            AF pourquoi mettre transactional pour readonly requettes?
+            si j'ai javax.persistence.TransactionRequiredException: null mettre @Transactional plus en amont ou plus en aval du stacktrace. Il n'est pas sur la bonne méthode.
+
+    
 hsqldb : LINKldkjgieieioruz
         base de donnée pour les tests
         si erreur data exception: string data, right truncation c'est parce que j'ai voulu inserer une colonne trop longue
@@ -23560,7 +23563,7 @@ pour convertire un wav foireux en bon wave
         convert1AIS.close();
         clip1.close();
         fi.delete();
-        temp.renameTo(fi); // pour deplacer bouger move un fichier voir LINKjgdlkqjfqdgmlk
+        temp.renameTo(fi); // pour renommer rename deplacer bouger move un fichier voir LINKjgdlkqjfqdgmlk
 	}
 pour mixer deux sons ou meme plus:
 	      AudioInputStream clip1 = AudioSystem.getAudioInputStream(new File("C:/wamp/www/kanail/AudioLoopOnline/sons/20121107963241352287465954/1531352287502673=Lovely0.wav"));
@@ -32398,7 +32401,7 @@ pour recuperer les rôles de l'utilisateur qui s'est connecté côté IDP:
         }                
         
 windows : (commande dos :)
-renommer un repertoire en un autre : 
+renommer un repertoire fichier en un autre : 
     rename dir1 dir2
     commande dos pour voir les ports utilises sur mon ordi: netstat (voir netstat plus haut)
     les alias: c a d le nom des serveurs et adresse ip sont a definir dans C:/WINNT/system32/drivers/etc/hosts: a la modif il prend en compte tout de suite. LINKàç<çç_à
