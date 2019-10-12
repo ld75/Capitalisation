@@ -1,4 +1,4 @@
-(?=.*nom)(?=.*fichier)
+(?=.*vers)(?=.*jsp)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -2359,7 +2359,7 @@ Cycle de vie du CDI bean:
                          
           faire des servlets sans web.xml: 
                 ajouter en tete de classe qui etend HttpServlet @WebServlet("/un/path") ou (urlPatterns={"/a","/b"}) ou (urlPatterns="/b") .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention pour index page d'accueil on ne peut pas mettre / donc utiliser web.xml et welcome-file qui pointent sur une servlet ou une page
-                 et @MultipartConfig // si je veux je crois que ma servlet gere l'upload de fichier. recup les params avec request.getParmeters LINKmultilkjfqsdf   
+                 et @MultipartConfig // a utiliser si le content-type est multipart/form-data pour pouvoir recup les params avec request.getParmeters ainsi que le fichier uploade sans avoir besoin de parcourir le payload du body LINKmultilkjfqsdf. Si coté servlet on fait du GET cette annotation est ignorée.   
                 du coup ma classe n'est plus un webservice et ne pas utiliser @Produce et @Path avec. 
                 juste 
                 public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {response.getWriter().println("Hello");
@@ -2446,7 +2446,7 @@ securite : security :(JSR375) plus besoin d'utiliser web.xml: les annotations fo
                                      priority() // retourne un integer: plus il est petit plus il est prioritaire pour IdentityStoreHandler
        **CredentialValidationResult contient le principal et ces roles: return new CredentialValidationResult("Duke",new HashSet<>(asList("foo", "bar")));
         necessaire de parametrer web.xml voir LINKlkjsqgeegege:<security-constraint> et <security-role>       
-       pour securiser une servlet:  
+       pour securiser securite une servlet: servlet :// pour ouvrir à tous ne pas mettre l'anotation @ServletSecurity ou bien mettre je crois @PermitAll. Mais ne rien mettre dutout marche.  
             @WebServlet(urlPatterns="/un/path) .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention bien mettre urlPatterns sinon il se comporte comme si j'avais mis "un/path/*"
             @ServletSecurity(
                             value= @HttpConstraint(
@@ -2800,9 +2800,9 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                                             InputStream in = item.openStream();
                                             out.write(IOUtils.toByteArray(in));
                                             out.close();
-                                            //response.getOutputStream().print(filename);   // On renvoie le nom d'origine du fichier ainsi que son nom aleatoire
+                                            //response.getOutputStream().print(filename);   // On renvoie le nom d'origine du fichier ainsi que son nom aleatoire. Le code continue a s'executer apres donc attention.
                                             response.setContentType("text/html");
-                                            response.getOutputStream().print(filename);
+                                            response.getOutputStream().print(filename); //attention le code continue à s'executer en dessous
                                             //response.getWriter().printf(filename);
                                         }
                                         else
@@ -4456,8 +4456,8 @@ Si j'ai un problème d'accents encodage dans le REQUEST:(voir plutot la solution
 				<filter-name>SetCharacterEncodingFilter</filter-name>	
 						<url-pattern>/*</url-pattern>
 			</filter-mapping>
-Si j'ai un problème d'accents dans le RESPONSE: des actions vers les jsp (affichage errone a l'ecran):
-						ajouter dans la main.jsp: <%@ page contentType="text/html; charset=UTF-8" %>
+Si j'ai un problème d'accents dans le RESPONSE: des actions vers les jsp (affichage encodage utf errone a l'ecran ):
+						ajouter dans la main.jsp: <%@ page contentType="text/html; charset=UTF-8" %> tout en haut
 						Dans web.xml:
 					<filter>
 				<filter-name>UtfResponseEncoderFilter</filter-name>
@@ -9588,7 +9588,8 @@ si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from col
             @Transactional(rollbackFor = Exception.class, noRollbackFor = AuthWebBusinessWSException.class) // si je throw  une exception dans mon programme ca fait un rollback si c'est une autre exception de type Authmachin ca ne fait pas de rollback 
             AF pourquoi mettre transactional pour readonly requettes?
             si j'ai javax.persistence.TransactionRequiredException: null mettre @Transactional plus en amont ou plus en aval du stacktrace. Il n'est pas sur la bonne méthode.
-
+    si j'ai l'erreur Internal Exception: java.sql.SQLIntegrityConstraintViolationException: integrity constraint violation: NOT NULL check constraint; SYS_CT_10110 table: ALO_USR column: USR_NAME
+            il me disait que l'erreur etait dans une methode select mais qui n'avait rien a voir avec la table ci dessus. En fait l'erreur a eu lieu juste avant! Connerie de merde. bref. effectivement le champ etait null dans la requette precedente alors qu'il ne devait pas. un peu merdique ce truc. Il aurait pu m'indiquer le bon stack ce con.
     
 hsqldb : LINKldkjgieieioruz
         base de donnée pour les tests
@@ -16888,11 +16889,12 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
         public class UploadToServerServiceTest {
     		@InjectMocks // facultatif Mock peut marcher sans.
     		private RealTimePathCoverageController realTimePathCoverageController = new RealTimePathCoverageController(); // equivalent de @Tested dans jmockit : c'est une classe a tester dans laquelle je peux injecter des mocs LINKpourquecamarcheFairemokito
-    		@Mock private RestTemplate restTemplate; // (peut etre une classe ou une interface) mock qui sera injectée dans RealTimePathCoverageController.
+    		@Mock ou @Spy     //Mock par defaut n'execute rien et on peut changer son comportement. Spy par defaut execute tout et on peut ecouter
+            private RestTemplate restTemplate; // (peut etre une classe ou une interface) mock qui sera injectée dans RealTimePathCoverageController.
     			@Before
     				public void setup()
     				{
-    					MockitoAnnotations.initMocks(this); // ca active les anotations @InjectMocks et @Mocks et @Spy // attention @Spy qui doit etre accompagné de par exemple @Autowired dans mon test car le bean doit exister avant que le spy s'applique: CA CA NE MARCHE PAS:mon objet spyé n'est pas le meme que celui qui est injecté dans le runcode.
+    					MockitoAnnotations.initMocks(this); // ca active les anotations @InjectMocks et @Mocks et @Spy // attention @Spy qui doit etre accompagné de par exemple @Autowired dans mon test car le bean doit exister avant que le spy s'applique: CA CA NE MARCHE PAS:mon objet spyé n'est pas toujours le meme que celui qui est injecté dans le runcode.
     				}
     				FilterConfig filterConfig = mock(FilterConfig.class); // c'est soit je fais comme ca, soit j'utilise les anotations ci dessus. les deux font la meme chose
     				ServletContext context = mock(ServletContext.class);
@@ -22734,7 +22736,7 @@ supprimer les accents:
       	
 
 --------------------------------
-mails : mail :email : emails :
+mails : mail :email : emails envoyer envoi :
 avant: 
 
 pour envoyer un mail avec une piece jointe: Plutot que ca, avec spring c'est plus facile. Voir http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mail.html
@@ -22784,8 +22786,8 @@ import javax.mail.internet.MimeUtility;
 	    
 	    
 	             si ça ne marche pas au format text/html essayer come ca: 
-                  			DataHandler.setDataContentHandlerFactory( new WecFonction().new UtlMailContentFactory() );
-                  			msg.setDataHandler(new DataHandler(new ByteArrayDataSource(message.toString(), "text/html")) );
+                  			DataHandler.setDataContentHandlerFactory( new WecFonction().new UtlMailContentFactory() ); // attention ne doit s'executer qu'une fois dans l'instance de la classe
+                  			msg.setDataHandler(new DataHandler(new ByteArrayDataSource(message.toString(), "text/html")) ); // msg c'est MimeBodyPart
                   					//msg.setText(message);
                   			msg.setSentDate(new java.util.Date());
                         
@@ -22829,7 +22831,7 @@ pour envoyer un mail simple avec javax.mail et qu'on a eu un message d'erreur de
            		    props.put("mail.user", "kanailaurent@gmail.com");
           			props.put("mail.password", "calottezoclos");
           			props.put("mail.smtp.submitter", authenticator.getPasswordAuthentication().getUserName());
-					javax.mail.Session mailSession =javax.mail.Session.getDefaultInstance(props, authenticator);
+					javax.mail.Session mailSession =javax.mail.Session.getDefaultInstance(props, authenticator); ou getInstance(props,authenticator) si le me fait l'erreur  java.lang.SecurityException: Access to default session denied
 					avec
           static MyAuthenticator authenticator = new StartParse().new MyAuthenticator();
               	private class MyAuthenticator extends javax.mail.Authenticator 
@@ -27118,12 +27120,12 @@ fetch : LINKsljqffetch
 
 ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch)
                         ans = canvas.toDataURL("image/png");  //Pour sauver un canvas sur le serveur en image png ou jpg il faut obligatoirement envoyer les donnees en POST sinon le fichier genere est pourri:
-            	    		var formData = new FormData(); ou new FormData(document.getElementById("forText")); // forText est juste un   html recuperable avec document.getElement...ATTENTION les champs de mon formulaire doivent avoir un name sinon ils ne sont pas ajoute dans les formdata 
+            	    		var formData = new FormData(); ou new FormData(document.getElementById("forText")); // forText est juste un form html recuperable avec document.getElement...ATTENTION les champs de mon formulaire doivent avoir un name sinon ils ne sont pas ajoute dans les formdata 
                             formData.append('ans', ans); // Append extra data before send.
                             formData.append('idp', idprojetEnCours); // Append extra data before send.
                             formData.append('fs', askValidator.fs); // Append extra data before send.
                       var xhr = new XMLHttpRequest();
-                              xhr.setRequestHeader("Content-Type", "multipart/form-data"); // c'est ca par défaut! pour le gerer sur une servlet sans avoir a regarder dans le payload mettre LINKmultilkjfqsdf 
+                              xhr.setRequestHeader("Content-Type", "multipart/form-data"); // c'est ca par défaut si j'utilise FormData()! pour le gerer sur une servlet sans avoir a regarder dans le payload mettre LINKmultilkjfqsdf 
                               ou
                               xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); Attention A METTRE APRES LE .open. dans ce cas c'est dans l'URL que sont les parametres comme un GET. Si on ne veut pas que notre formulaire puisse envoyer des fichiers
                         // ne pas mettre ces lignes ci dessous sinon ca ne marche pas... ??....pq? 
@@ -27954,7 +27956,7 @@ bordure:
 couleur de fond:
   s.style.backgroundColor="blue";
 pour generer un numero aleatoire hasard hazard en javascript:
-    Math.random()*10 // 10 c'est le numero+1max(donc la on a un num entre 0 et9) voir LINK_haqsdfsaqsdfrd 
+    Math.random()*10 // 10 c'est le numero max(donc la on a un num entre 0 et 10. ou 9?) voir LINK_haqsdfsaqsdfrd 
 pour acceder au filesystem:
     window.requestFileSystem
       (type(PERSISTENT ou TEMPORARY),
@@ -29125,7 +29127,7 @@ pour faire un select qu'on peut remplir au vider a volonte avec un libelle et un
                                           
                                           
                                           
-                                          	<form action="#" method="post">
+                                          	<form action="#" method="post"> // pour que mon formulaire execute du javascript à la soumission: action="#" onsubmit="MOCsubscribe();"> ATTENTION!!! pour que ca marche si j'ai plus de deux champs dans le formulaire il faut mettre un bouton submit. La methode javascript doit retourner false si je ne veux pas qu'il change de page! 
                                           				libelle document: <input type="text" id="libelle"></input>
                                           			<br />
                                           			date document: <input type="text" id="date"></input>
