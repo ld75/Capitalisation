@@ -1,4 +1,4 @@
-(?=.*vers)(?=.*jsp)
+(?=.*string)(?=.*empty)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -1185,7 +1185,7 @@ ajouter un module equivaut a importer un projet dans le worskpace: module intell
 voir les windows cote a cote split au milieu comparer comparaison
       clique droit sur tab de editeur > split vertically horizontally        
 trouver tous les todos: alt+6 . pour voir les fixme faire settings>todos>Filter> rajouter fixme
-naviguer dans l'arbo du projet alt+début
+naviguer dans l'arbo du projet repertoire fichiers voir où je suis position alt+début
 buildpath du projet: file>project structure
 show outline structure: alt+7 ou Ctrl+F12
 les elements d'une classe ou outline: Ctrl+F12
@@ -2310,7 +2310,7 @@ Cycle de vie du CDI bean:
               – @CustomScoped pour que les beans soient stockees dans le FacesContext (qui a une duree de vie plus courte que RequestScope donc FC est plus rapide, bouffe moins de memoire)
               – @NoneScoped (si c un bean qui est reference par un autre bean qui lui est scoped)
               >> attention un bean ne peut pas referencer un autre bean si son scope est plus petit que le sien (sauf les @NoneScoped que tous peuvent referencer)
-                  @PostConstruct-->methode s'execute quand le bean est place dans son scope utile pour initialiser marche sur EJB (du coup sur @Singlton) mais ne parche pas sur CDI du coup ApplicationScoped ne s'initialise pas avant d'être injectés. Du coup faire LINKobsgdgdgz
+                  @PostConstruct-->methode s'execute quand le bean est place dans son scope utile pour initialiser marche sur EJB (du coup sur @Singlton) mais ne marche pas sur CDI du coup ApplicationScoped ne s'initialise pas avant d'être injectés. Du coup faire LINKobsgdgdgz
                   public void debut() { ... }//ne doit pas thrower une exception
                   @PreDestroy--->methode s'execute quand le bean est retire du scope ou le scope est detruit.
                   public void fin() { ... }
@@ -2386,10 +2386,10 @@ try (SeContainer container = initializer.disableDiscovery().initialize()) { cont
         @Named("tutu") LINKkfkgggg //utiliser plutot @Qualifier.Ms ça c pour jsp.
         Event<Payload> payloadEvent;
         public void doSomething() {
-          payloadEvent.fire(new Payload()); //ceci va declancher ailleur ceci:**
+          payloadEvent.fire(new Payload()); //ceci va declancher ailleur ceci:LINKobsksf
         }        
-        dans une autre classe: **
-        public void processUnqualifiedPayload(@Observes Payload event) {}
+        dans une autre classe:
+        public void processUnqualifiedPayload(@Observes Payload event) {} LINKobsksf
         public void processUnqualifiedObject(@Observes Object event) {}
         public void processQualifiedPayload(@Observes @Named("tutu") Payload event) {} // ne sont executés que si LINKkfkgggg
         public void processQualifiedObject(@Observes @Named("tutu") Object event) {} // ne sont executés que si LINKkfkgggg
@@ -4009,6 +4009,8 @@ Pour faire un serveur serveur de chat etc... fonctionnement des sockets
 
 eventsource :sse(server-sent-event) autre alternative aux websocket mais ca ne fonctionne que dans un sens : serveur->client: rafraichit en live la page dans une seule requete
     voir https://github.com/mdn/dom-examples/blob/master/server-sent-events/sse.php
+    coté serveur:
+    // pour un webservice : (sur ?)
         @Singleton
         @Path("battements")
         public class BroadcastsResource{
@@ -4033,7 +4035,35 @@ eventsource :sse(server-sent-event) autre alternative aux websocket mais ca ne f
             eventSink.send(sse.newEvent("blabla"));
             eventSink.send(sse.newEvent("blibli"));
             eventSink.close();
-    et voir coté javascript sur MDN: EventSource 
+    pour une servlet : servlet 3.0
+        WebServlet("/maservleteventsource", asyncSupported=true //asyncSUpported est facultatif c'est si je veux LINKrequestmultithreadAFAIRE)  
+        public class HelloServlet extends HttpServlet {
+          	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { // je cois que ca marche qu'avec les GET
+                si je fais request.getHeader("Accept") ça renverra "text/event-stream"
+          		response.setContentType("text/event-stream"); // a faire pour sse 
+          		response.setCharacterEncoding("UTF-8");
+          		PrintWriter writer = response.getWriter();
+          		for (int i = 0; i < 20; i++) {
+          			writer.write("id:tititata\n"); //facultatif
+                    writer.write("event:toto\n"); //facultatif LINKsseevent
+                    writer.write("data:blablabla\n"); // je peux faire plusieurs lignes(doivent se terminer par \n)
+                    writer.write("data:bliblibli\n\n"); // mais la dernière ligne qui va déclancher la notif coté front doit finir par \n\n
+                    if (out.checkError()){} // renvoie true si le browser ou l'onget a été fermé
+          			writer.flush();
+          				Thread.sleep(1000);
+          		}
+          		writer.close(); //ferme le stream
+          	}
+          }
+    et voir coté javascript sur MDN: EventSource
+          var eventSource = new EventSource("/url/maservleteventsource");
+      		eventSource.onmessage = function(event) {
+      			document.getElementById('foo').innerHTML = event.data;
+      		};
+              ou eventSource.addEventListener("toto",function(event){ // si j'ai fait LINKsseevent
+                ...event.data...
+              }
+            IL FAUT appeler quand c'est fini eventSource.close(); sinon le client va encore essayer de se reconnecter au bout de 3 secondes meme si coté serveur j'ai fait close. JE CROIS. 
 jwebsocket : (Web Socket) faire un chat : 
   declarer  JWEBSOCKET_HOME vers D:\LocalData\p036782\jWebSocket-1.0
   en variable d'environnement
@@ -26777,7 +26807,7 @@ pour supprimer le cache d'un element audio:
     // pour supprimer cache audio
     	d = new Date();
     	audioeltnew.src=url+"?"+d.getTime();
-pour verifier la validite des champs avec html5: 
+pour verifier la validite des champs avec html5: d'un formulaire validation 
 
                       for (i=0; i<document.querySelector("monFormulaire").elements.length; i++)
                       {   
