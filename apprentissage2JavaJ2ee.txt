@@ -11867,7 +11867,11 @@ Les goals:(appartiennent à phases) si on veut executer mvn un_goal alors ecrire
 pour voir les dependances des jars, rajouter à la fin des commandes ci-dessus: dependency:tree
       exemple: %M3%/mvn clean package dependency:tree      
 pour incrementer mon projet d'une version: changer la version versionning versioning: versionset version:set set:version 
-      %M3%/mvn versions:set
+      %M3%/mvn versions:set attention si j'ai parent/pom.xml (version specifiée toto)
+                                                    V
+                                                enfant/pom.xml (inutile de lui donner une version)si il est parent aussi et de <packaging>pom</packaging> .Depuis maven 3.0 c'est de facto la meme version toto que parent/pom.xml
+                                                    V
+                                                    sous-enfant/pom.xml (sera = version spécifiée toto)
       sur eclipse faire Run MavenBuild... goal=versions:set ajouter parameter newVersion=x.x.x 
             il va changer ca:
                                 <groupId>renault-app.rits.wec</groupId>
