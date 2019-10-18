@@ -1259,6 +1259,7 @@ trouver rechercher un fichier par son nom name Ctrl + n(classe) ctrl + shift + n
 pour faire une trouver recherche dans les projets: focusser sur le projet et commencer à saisir les caractères
 renommer refractor rename Maj+F6: a la fin faire echape!!!
 renommer Maj+F6
+changer le type d'une variable: Ctrl+Shift+F6
 bouger move un truc F6 essayer aussi ctrl+alt+v(jamais essayé)
 overide override: Ctrl+O
 implementer methode: Ctrl+I 
@@ -2245,7 +2246,24 @@ J2EE : jee : jee8 :javaee : EE4J : jakartaee : https://github.com/eclipse-ee4j/j
                <scope>provided</scope>
         </dependency>
         necessite LINKbensoncle
-cdi :CDI2.0 (JSR365) pas besoin d'utiliser weld (je crois) lire https://docs.jboss.org/cdi/learn/cdi_2/slides.html
+cdi :CDI2.0 (JSR365) utiliser weld3.0 pour les tests. pas besoin d'utiliser weld si j'utilise un serveur container qui le contient deja lire https://dzone.com/articles/weld-junit-easy-testing-of-cdi-beans et https://docs.jboss.org/cdi/learn/cdi_2/slides.html
+        <dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-junit5</artifactId>
+            <version>2.0.0.Final</version>
+            <scope>test</scope>
+        </dependency>
+	test avec cdi:
+	@EnableWeld // pour que les injections cdi fonctionnent avec mon test
+	class MyTest {
+	    @WeldSetup
+	    public WeldInitiator weld = WeldInitiator.from(Baz.class).activate(RequestScoped.class).build(); // pour ignorer toutes les autres annotations beans
+	    @Test
+	    public void test(Baz baz) {
+	      // A mocking request context is activated within the test method execution
+	    }
+}
+
 CDI1.x besoin de weld
         <dependency>
 			<groupId>org.jboss.weld.se</groupId>
@@ -24358,7 +24376,7 @@ sudo :
     /opt logiciels commerciaux installes
     /home repertoires persos pour utilisateur
     /var donnees frequements reecrites
-les comptes utilisateurs sont sur etc/passwd (si un jour un gars qu'on ne connait pas fait des trucs)
+les comptes utilisateurs sont sur etc/passwd (si un jour un gars qu'on ne connait pas fait des trucs) figurent dedans les homes des utilisateurs et on peut atteindre leur home en faisant cd ~nomutilisateur
 pour recharger le .profile // fichier chargé lorsque je me connecte a la connexion initialise. dedans je peux mettre des commandes qui s'executent lors de ma connexion 
     faire: cd ou cd . puis . .profile (faire ls -tral pour voir tout (attention pas tout forcement... mais je ne sais pas pourquoi)
 changer mot de passe d'un utilisateur:
@@ -24997,7 +25015,11 @@ sur sed :
  où ma_commande = num_premiere_ligne,num_derniere_ligne/expression reguliere/remplacee par/flag
  où flag=... 
 sed -e "s/4095,4095/\([0-9][0-9]*\)/**\1**/" fichier
-
+raccourcis shortcut commandes:
+	Ctrl+a debut ligne
+	Ctrl+e fin ligne
+	Alt+b arriere
+	Alt+f avant
 sur vi : 
 pour affichier avec des fonts colorees couleurs: aptitude: charger vim
 view nomfichier pour afficher en lecture seule
@@ -25052,13 +25074,14 @@ virer le retour chariot de la ligne courante:
 dd: supprimer une ligne (en fait il fait un couper)(copier mais supprime) 
 2dd: supprimer deux lignes  (en fait il fait un couper)
 100dd: supprimer cent lignes (en fait il fait un couper)
+kdgg: supprimer tout avant le curseur en arriere arrière
 D: supprimer à  partir du curseur (en fait il fait un couper je crois) jusqu'à la fin de la ligne
 yy: copier ligne puis P: coller ligne
 4yy puis P: le faire pour 4 lgines
 copier-coller bouts:
   v puis bouger fleche pour selectionner puis d pour couper ou y pour copier puis P pour coller ce que j'avais selectionne
 faire une recherche find: :set ignorecase puis :set smartcase puis /blabla // si j'ai pas fait les set alors faire /blabla\c pour une recherche case noncasesensitive majuscule minuscule
-		ou /bla\c exemple: /motcherche\c pour case insensitive ignorer majuscule minuscules.\c peut apparaitre partout debut ou fin et tapper. pour faire next, tapper n (pour echapper les / slash faire un backslash) pour rechercher en arrière: N
+		ou /bla\c exemple: /motcherche\c pour case insensitive ignorer majuscule minuscules.\c peut apparaitre partout debut ou fin et tapper. pour wildcard faire .* pour faire next, tapper n (pour echapper les / slash faire un backslash) pour rechercher en arrière: N
 ?: recherche de bas en haut
 u: undo si multiple undo ne marche pas: aptitude et charger vim
 .:redo Ou plutot  Ctrl+r
@@ -25384,9 +25407,7 @@ rsync :
                       rsync --ignore-existing -avunr /cygdrive/f/BackupServeurGandiDemeter2/srv/data/var/www/www.wenhuaduverge.com www-data@www.wenhuaduverge.com:/srv/data/var/www/www.wenhuaduverge.com
                   rsync -avu --exclude sons --exclude proc --exclude tmp root@www.wenhuaduverge.com:/srv/data /cygdrive/f/BackupServeurGandiDemeterCASSE/srv/data                                                                                                                                                                                                                                                                                                                                                 
                     Vers Doroty
-                    rsync -vr /cygdrive/f/Mesdocuments/ /cygdrive/e/documents/
-                      rsync -vr --exclude 'PHOTOS' --exclude 'Karie' --exclude 'theatre' --exclude 'icecream' --exclude 'avance services' --exclude 'AUDIOLOOPPLUS2' --exclude 'AUDIOLOOPPLUS' --exclude 'AH1*' --exclude 'PE1*' --exclude 'ImagesPhotos' --exclude '*.avi' --exclude '*.MOD'  --exclude 'Cakewalk*' --exclude 'Chinoisfacile' --exclude 'IntelliJ IDEA Community Edition 2017.2.2' --delete /cygdrive/e/Mesdocuments/ /cygdrive/d/documents
-                      rsync -vr --exclude 'PHOTOS' --exclude 'Karie' --exclude 'theatre' --exclude 'icecream' --exclude 'avance services' --exclude 'AUDIOLOOPPLUS2' --exclude 'AUDIOLOOPPLUS' --exclude 'AH1*' --exclude 'PE1*' --exclude 'ImagesPhotos' --exclude '*.avi' --exclude '*.MOD'  --exclude 'Cakewalk*' /cygdrive/e/Mesdocuments/ /cygdrive/d/documents
+                    rsync -vrn --exclude 'PHOTOS' --exclude 'Karie' --exclude 'theatre' --exclude 'icecream' --exclude 'avance services' --exclude 'AUDIOLOOPPLUS2' --exclude 'AUDIOLOOPPLUS' --exclude 'AH1*' --exclude 'PE1*' --exclude 'ImagesPhotos' --exclude '*.avi' --exclude '*.MOD'  --exclude 'Cakewalk*' --exclude 'Chinoisfacile' --exclude 'IntelliJ IDEA Community Edition 2017.2.2' /media/laurent/OUGARIT/Mesdocuments/ /media/laurent/Doroty/documents/
                       rsync -vr --exclude 'testcubase' --exclude '*.au' /cygdrive/f/MaMusique/ /cygdrive/e/Mamusique 
                     sauvegarde de wenhua
                       rsync -vru --exclude 'default-bootstrap' --exclude 'prestashop' --exclude 'prestashopINUTILE' --exclude 'themeconfiguratorINUTILE' --exclude 'wpzoom' --exclude 'zoom' --exclude 'themeconfigurator' --exclude '.htaccess' --exclude 'Install_PrestaShop.html' /cygdrive/f/www/WenhuaDuvergeShop/toutNEW /cygdrive/e/www/WenhuaDuvergeShop/WenhuaDuvergeShop/toutNEW
@@ -25411,8 +25432,7 @@ pour voir les disques (les montages les partitions)
 pour voir les partitions: 
   more /proc/partitions
 montage des disques parametres au lancement sur (ou à une commande mount avec un seul argument: partition ou repertoire)  
-/etc/fstab
-    cat /etc/fstab
+    cat /etc/fstab ou bien sudo blkid
       c'est là qu'on declare les montages et lorsqu'on reboot ce fichier est lu pour remonter le volume dans l'arborescence du sys de fichier
       on y voit quelquechose comme:
 
@@ -25444,9 +25464,6 @@ montage des disques parametres au lancement sur (ou à une commande mount avec u
        umount /srv2 srv2 ne contient plus rien on peut effacer ces deux repertoires
        rmdir srv2, rmdir srv3
        
-       
-       
-       
 changer la taille d'une partition: 
   sur l'interface utilisateur Gandi, changer la taille.
   attache (sur gandi)
@@ -25467,6 +25484,14 @@ verifier que mon systeme de disque est OK
            attache
        demonte, (je suis sur que sys ne peut pas ecrire dessus) 
        resize
+changer le nom labell d'un disque:
+	installer mtools pour avoir mlabel si ce n'est pas déjà fait:
+		sudo apt-get install mtools
+	verifier que je vise bien le bon disque à renommer:
+		sudo mlabel -i /dev/sdb1 -s ::
+	modifier le label de ce disque
+		sudo mlabel -i /dev/sdb1 ::NouveauNomDuDisque
+	ENSUITE REDEMARRER! pour prise en compte totale
 condition: 
   if [-z bla] //si bla=null return true.
 compter le nombre de fichiers dans un repertoire:
