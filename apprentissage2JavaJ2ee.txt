@@ -1,4 +1,4 @@
-(?=.*string)(?=.*empty)
+(?=.*recharg)(?=.*profil)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -1105,7 +1105,7 @@ ajouter une dependence un pluggin dans le pom: alt+insert
 pour voir les stats (nombre de lignes de code etc...) charger le plugin de statistiques https://plugins.jetbrains.com/plugin/4509-statistic: on voit tout en bas une nouvelle icone pour les afficher   
 creer un bookmark flag tag ctrl+f11. Acceder à ce bookmark trouver: ctrl+chiffredubookmark. Ensuite editer la note du bookmark:shift+f11 puis Ctrl+entree sur le bookmark  
 supprimer les bookmarks: shift+f11 (j'ai le choix)
-si erreur  Error:java: invalid target release: 10 : file>settings...>build>java compiler>choisir la bonne version
+si erreur  Error:java: invalid target release: 10: file>settings...>build>java compiler>choisir la bonne version
 si erreur Error connecting to 127.0.0.1:51924; reason: Error:failed to create a child event loop
     redémarrer pc
 Piege: pour ajouter des jars dans le classpath: il ne faut pas ajouter les repertoires directories directorys contenant les jars mais directement les jars
@@ -1223,6 +1223,7 @@ renommer rename un projet:
 trouver une classe meme dans les dependances et jars: Ctrl+n
 replace remplacer: Ctrl+r puis alt+e pour y le faire
 remplacer partout: Ctrl+shift+r
+remplacer avec des retours chariot ca marche cocher regexp et le retour chario c'est \n
 hierarchie herite parent voir heritage: Ctrl+h
 voir hierarchie remonter methode parente sur methode faire Ctrl+u
 gotoline Ctrl+g
@@ -2274,9 +2275,10 @@ cdi :CDI2.0 (JSR365) pour les tests utiliser weld3.0. CDI1.x besoin de weld2.4 l
             @WeldSetup //facultatif pour gérer mes injections LINKweldgkl
             public WeldInitiator weld = WeldInitiator.from(AbonnementService.class) //crée les beans dans un container virtuel pour tests.
             .addBeans(
+                    uneMethodePourCreerMockerUnBean(),// je peux deporter la creation dans une autre methode
                     MockBean.read(Utils.class).build(), //injectera Utils automatiquement dans le code projet si bonne annotation. Et c'est la vraie classe Utils dont je peux mocker chirurgiquement les methodes que je veux(voir ci dessous)
                     MockBean.read(UserStore.class).build(),
-                    MockBean.builder()   // pour injecter un mock plutot qu'un bean complet.
+                    MockBean.builder()   // pour injecter un mock plutot qu'un bean complet. methode 1 
                             .types(ProjectStore.class)
                             .scope(RequestScoped.class)
                             .addQualifier(MonQualifier.Literal.INSTANCE) // au cas ou j'ai un qualifier particulier
@@ -2286,13 +2288,16 @@ cdi :CDI2.0 (JSR365) pour les tests utiliser weld3.0. CDI1.x besoin de weld2.4 l
                                     Mockito.mock(CreatedProjectOfUserStore.class) //si doit rien faire. void
                                     ou
                                     Mockito.when(Mockito.mock(ProjectStore.class).findByName(anyString())).thenReturn(new ArrayList<>(),autrechoseladeuxiemefois).getMock()
+                                    ou on peut utiliser .thenAnswer voir LINKmktoanswrweld
                                     )
                             .creating( // on peut créer comme ca en enchainant plusieurs comportements pour DIFFERENTES fonctions (pas la meme fonction sinon il ne prend que la dernière definition)
                                     Mockito.when(Mockito.mock(ProjectStore.class).getProjectsCreatedByUser(anyString())).thenReturn(
                                             Arrays.asList(new Project("bla","bli","blo","blu",new Date(),true,1.0))
                                     ).getMock()
                             )        
-                            .build()
+                            .build(),
+                      MockBean.builder().types(IInterfaceDeMaClasseInjectee.class).creating(new ClasseMockQueJeCustomise()).build(), //methode2 tres bien aussi pour déporter le comportement voulu
+
                ).activate(RequestScoped.class, ApplicationScoped.class).build(); // comme si j'étais dans ces scopes.
         }
             retrouver un bean de weld : weld.select(MonBeanInjecte.class).get() on peut lui faire executer quelquechose: String idProjet = weld.select(AbonnementService.class).get().createNewProjectFromMicrophone(properties);
@@ -2306,42 +2311,31 @@ Cycle de vie du CDI bean:
                                 public void demarrage(@Observes @Initialized(ApplicationOuAutreScoped.class) Object init) // ou @Destroyed si c'est quand ca s'eteint. Ne prennent que des Scope LINKobsgdgdgz
                                 {(...)
               – @ViewScoped
-              - @Dependent // ne s'instancie que quand on fait appel à lui dans la classe qui l'injecte. Comme un new Blabla();
+              - @Dependent // ne s'instancie que quand on fait appel à lui dans la classe qui l'injecte. Comme un new Blabla(); absence de proxy on a à faire directement à la classe.
               – @CustomScoped pour que les beans soient stockees dans le FacesContext (qui a une duree de vie plus courte que RequestScope donc FC est plus rapide, bouffe moins de memoire)
               – @NoneScoped (si c un bean qui est reference par un autre bean qui lui est scoped)
               >> attention un bean ne peut pas referencer un autre bean si son scope est plus petit que le sien (sauf les @NoneScoped que tous peuvent referencer)
-                  @PostConstruct-->methode s'execute quand le bean est place dans son scope utile pour initialiser marche sur EJB (du coup sur @Singlton) mais ne marche pas sur CDI du coup ApplicationScoped ne s'initialise pas avant d'être injectés. Du coup faire LINKobsgdgdgz
+                  @PostConstruct-->methode s'execute quand le bean est place dans son scope utile pour initialiser marche sur EJB (du coup sur @Singlton) mais ne marche pas sur CDI(sur?) du coup ApplicationScoped ne s'initialise pas avant d'être injectés. Du coup faire LINKobsgdgdgz
                   public void debut() { ... }//ne doit pas thrower une exception
                   @PreDestroy--->methode s'execute quand le bean est retire du scope ou le scope est detruit.
                   public void fin() { ... }
                  @TransactionAttribute pouf gerer les transactions (marche aussi sur ejb de type  @Stateful, @Stateless and @Singleton @ManagedBean, @WebServlet, @WebListener, @WebFilter)           
-          utilisation d'un champ injecté:                                   définition de la classe de l'autre coté:
-            @Inject                                                        @ApplicationScoped
-          @Named("simpleIs")//utiliser plutot @Qualifier.Ms ça c pour jsp  @Named("simpleIs")//utiliser plutot @Qualifier.Ms ça c pour jsp
-          private IdentityStore simpleIdentityStore;                       public class SimpleIdentityStore implements IdentityStore {
-
-        design pattern factory remplacé par @Produces dans CDI LINKfactoproduce
-        class MonFactory
-            @Inject
-            ClasseA classeA;
-            @Inject
-            ClasseB classeB;
-              @Produces // de javax.enterprise.inject.Produces 
-              @MonQualifierAMoi //un Qualifier que j'ai crée voir LINKqualifsdlfk
-              @AppConfig                                
-              IApplicationConfiguration getApplicationConfiguration(){
-                  if (machintruc)
-                  {
-                      return classeA;
-                  }
-                  else {
-                      return classeB;
-                  }
-          
-              }
+          utilisation d'un champ injecté:                                       définition de la classe de l'autre coté:
+            Injection par field:
+                @Inject                                                        @ApplicationScoped
+                @Named("simpleIs")//utiliser plutot @Qualifier.Ms ça c pour jsp  @Named("simpleIs")//utiliser plutot @Qualifier.Ms ça c pour jsp
+                private IdentityStore simpleIdentityStore;                       public class SimpleIdentityStore implements IdentityStore {
+            Injection par constructeur(mieux car crée immutable)
+               @Inject 
+               @MonQualifier               
+                MaClasse(IdentityStore estinjecte){this.identitystore=estinjecte}
+            Injection par methode
+               @Inject 
+               @MonQualifier               
+               public void toto(IdentityStore estinjecte){...}
             les @Qualifier :LINKqualifsdlfk
                 dans la classe MonQualifierAMoi:
-                  @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
+                  @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD,ElementType.PARAMETER})
                   @Retention(RetentionPolicy.RUNTIME)
                   @Documented
                   @NormalScope
@@ -2355,7 +2349,39 @@ Cycle de vie du CDI bean:
                       }
                    }
                   }
-
+            Un bean sans @Qualifier a  implicitement le qualifier @Default. Si j'injecte avec l'annotation @Any le container cherche tous les beans candidats avec un @Qualifier excluant du coup les implicites @Default
+                    exemple:
+                    @Inject
+                    void initServices(@Any Instance<Service> services)
+                    {
+                        for(Service service:services){...}
+                    }
+                    Les injections ne se font pas dans les new UneClasseAvecDesInjectDedans();
+                     pour que ça marche il faut faire si on fait new MaClasse();
+                     MaClasse() //constructeur
+                     {
+                     	CDI<Object> cdi = CDI.current(); // pas reussi jusqu'au bout ce truc
+		                leservice = cdi.select(ClasseInjectee.class).get();
+                     }            
+        design pattern factory remplacé par @Produces dans CDI LINKfactoproduce Bon moyen de choisir le bean au runtime
+        class MonFactory 
+            @Inject
+            ClasseA classeA; //ou bien LINKprodpara
+            @Inject
+            ClasseB classeB;
+              @Produces // de javax.enterprise.inject.Produces 
+              @MonQualifierAMoi //un Qualifier que j'ai crée voir LINKqualifsdlfk
+              @AppConfig                                
+              IApplicationConfiguration getApplicationConfiguration(){ ou LINKprodpara IApplicationConfiguration getApplicationConfiguration(ClasseA classea,ClasseB classb)// pas besoin de mettre @Inject ici dans un producer.
+                  if (machintruc)
+                  {
+                      return classeA;
+                  }
+                  else {
+                      return classeB;
+                  }
+          
+              }
                          
           faire des servlets sans web.xml: 
                 ajouter en tete de classe qui etend HttpServlet @WebServlet("/un/path") ou (urlPatterns={"/a","/b"}) ou (urlPatterns="/b") .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention pour index page d'accueil on ne peut pas mettre / donc utiliser web.xml et welcome-file qui pointent sur une servlet ou une page
@@ -2828,8 +2854,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                       request.getParameterValues("nomDeMonSelect"); // recupere les parametres get ou post. Ne pas confondre avec request.getAttribute() request.setAttribute() c'est uniquement cote serveur: utilisable entre jsp et servlet aussi. Ne vient pas d'une requette request http. Peut etre un objet LINKrequgeurei
 
                   si je voulais renvoyer vers une jsp ou une page je ferais:request.getRequestDispatcher("(/WEB-INF?)/views/login.jsp").include(request, resp); ou si c'est vers un controlleur: voir plus haut LINKçç("'"'
-                        ATTENTION! doit être la dernière chose executee: pas de chain après ou d'autre redirection de request requette! java.lang.IllegalStateException: Impossible d'utiliser faire-suivre (forward) après que la reponse ait ete envoyee
-                response.setContentType("text/html"); (ou application/txt etc etc...)
+                    response.setContentType("text/html"); (ou application/txt etc etc...) // on peut rajouter des trucs apres un .include (je crois)
                 PrintWriter out = response.getWriter();
                 out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 " +
                                                     "Transitional//EN\">\n" +
@@ -2845,8 +2870,8 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
   redirige redirection web en java: (voir aussi LINKRedirectwebservice)
     HttpServletResponse servletResponse = (HttpServletResponse)response;
     servletResponse.sendRedirect("http://www.google.com"); Fait une redirection 302( pour faire une 301 faire response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);response.setHeader("Location", "http://somewhere/"); //pour un webservice voir //LINKredirwebservice998 
-    servletResponse.sendRedirect("/login");ou response.sendRedirect(request.getContextPath()+"/show.html"); // la requette request est renvoyee vers le client(url change sur browser navigateur) et redirige vers nouvelle url avec perte des params de la requette. !=.getRequestDispatcher("/urlduncontrolleur").forward(req, resp) ça reste côte serveur: ça ne va pas vers navigateur client: les params de requette sont conserves. voir LINKçç("'"'
-          ATTENTION! doit être la dernière chose executee: pas de chain après ou d'autre redirection de requette! sinon j'aurais java.lang.IllegalStateException: Impossible d'utiliser faire-suivre (forward) après que la reponse ait ete envoyee          
+    servletResponse.sendRedirect("/login");ou response.sendRedirect(request.getContextPath()+"/show.html"); // la requette request est renvoyee vers le client(url change sur browser navigateur) et redirige vers nouvelle url avec perte des params de la requette. !=.getRequestDispatcher("/urlduncontrolleurOuUneJSP.jsp").forward(req, resp) ça reste côte serveur: ça ne va pas vers navigateur client: les params de requette sont conserves. voir LINKçç("'"'
+          ATTENTION! forward et sendRedirect doivent être executées avant le commit de la response: pas de chain après ou d'autre redirection de requette! requette!  sinon j'aurais java.lang.IllegalStateException: Impossible d'utiliser faire-suivre (forward) après que la reponse ait ete envoyee
      fichier :
     pour renvoyer un fichier de la servlet (download): astuce, on peut aussi le zipper en java et envoyer le zip comme ca il n'y a pas de pb d'encodage
             String filename = URLDecoder.decode(request.getPathInfo().substring(1),"UTF-8");
@@ -3391,11 +3416,6 @@ Super methode: recupere la session si il y en a une. Sinon, il en cree une nouve
          request.isRequestedSessionIdValid() // est equivalent à request.getSession(false); je crois. mais si je veux savoir si l'utilisateur a ete authentifie je devrais ajouter une variable dans la session. Ou bien utiliser le request.getUserPrincipal()? 
 ************************ 
     		
-  redirige redirection web en java: (voir aussi LINKRedirectwebservice)
-    HttpServletResponse servletResponse = (HttpServletResponse)response;
-    servletResponse.sendRedirect("http://www.google.com"); Fait une redirection 302( pour faire une 301 faire response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);response.setHeader("Location", "http://somewhere/"); //pour un webservice voir //LINKredirwebservice998 
-    servletResponse.sendRedirect("/login");ou response.sendRedirect(request.getContextPath()+"/show.html"); // la requette request est renvoyee vers le client(url change sur browser navigateur) et redirige vers nouvelle url avec perte des params de la requette. !=.getRequestDispatcher("/urlduncontrolleur").forward(req, resp) ça reste côte serveur: ça ne va pas vers navigateur client: les params de requette sont conserves. voir LINKçç("'"'
-          ATTENTION! doit être la dernière chose executee: pas de chain après ou d'autre redirection de requette! sinon j'aurais java.lang.IllegalStateException: Impossible d'utiliser faire-suivre (forward) après que la reponse ait ete envoyee          
   pour voir l'adresse ip du client adresse ip du reverse proxy:
       String ipadress = request.getHeader("X-FORWARDED-FOR"); // renvoit l'adresse ip de l'utilisateur client original
       if (ipadress==null)
@@ -16936,6 +16956,18 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
                                                         ,anyList() // ne pas utiliser anyObject si j'ai une liste
     													,ArgumentMatchers.any(UneClasse.class) avant: Matchers.any(UneClasse.class) avant: anyObject(UneClasse.class)
     													).thenReturn(untruclapremierefois,unautretruclasecondefois...);
+                                                        ou
+                                                        .thenAnswer(
+                                                                    new Answer<String>() // pour controler les retours conditionnellement LINKmktoanswrweld
+                                                                    {
+                                                                        @Override
+                                                                        public String answer(InvocationOnMock invocationOnMock) throws Throwable
+                                                                        {
+                                                                            if (invocationOnMock.getArgument(0).toString().equals("SOUND_PATH")) return classPath;
+                                                                            else if (invocationOnMock.getArgument(0).toString().equals("ENV")) return "dev";
+                                                                            else return "UTF-8";
+                                                                        }
+                                                                    }
                     pour indiquer de retourner une exception à un spy ou stub
                             Mockito.doThrow(new HibernateException("err")).when(userWebDAO).create(Matchers.any(UserWebEntity.class)); 
     				WelcomeController wc = new WelcomeController(rd);
@@ -24791,7 +24823,7 @@ pour seter setter les variable d'environnement sur unix linux
       si on edite une variable existante: 
         MA_VAR=titi
       mais ca ca ne marche que pour la session du moment. Pour que ca persiste il faut editer sous 
-      $HOME/.profile ou ~/.bash_profile ou /etc/profile   mettre aussi si besion export PATH=.:unpath:$PATH (Je peux le creer si il n'existe pas LINKç'(ç')
+      $HOME/.profile ou ~/.profile ou ~/.bash_profile ou /etc/profile   mettre aussi si besion export PATH=.:unpath:$PATH (Je peux le creer si il n'existe pas LINKç'(ç')
       et recharger avec source pathdufichierquonvientdemodifier 
       exemple pour charger:LINKç'(ç')
               if [ -f ~/.bash_aliases ]; then
@@ -24802,7 +24834,7 @@ les alias sous unix: exemple: alias ll = 'ls -l' ou bien alias ll="ls -l"
     pour voir la liste des alias, tapper alias (permet de voir les raccourcis de commandes)
     pour voir le detail d'un alias: alias nomalias
     pour faire des alias persistants: 
-      vi ~/.bash_alias (ce dernier est charge par ~/.bashrc qui contient) LINKç'(ç')
+      vi ~/.bash_alias (ce dernier est charge par ~/.bashrc qui contient) voir aussi LINKç'(ç')
           alias gototemplate='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/' // pour echapper les espaces: alias gotoapprentissage="cd \"/c/Users/Mes documents/apprendre\""
           alias gotocss='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/css'
           alias gotomodule='cd /var/www/www.wenhuaduverge.com/shop/module'
@@ -24975,7 +25007,7 @@ pour recharger le .profile faire: cd ou cd . puis . .profile (faire ls -tral pou
 pour recharger un environnement faire cd . (la il y a des fichiers environnement(faire ls -tral pour voir tout) dont le nom est par ex: .env_machin) puis . .env_machin ou . ./.env_machin
 pour verifier que "truc" est bien dans l'environnement faire: env | grep truc
 les comptes utilisateurs sont sur etc/password (si un jour un gars qu'on ne connait pas fait des trucs)
-SUPER methode pour trouver les plus gros fichiers: 
+SUPER methode pour trouver les plus gros fichiers: il y a aussi apparemment sur unix baobab l'equivalent de windirstat.  
 du -sk -h * | grep '[0-9\.]\+[M;G]'
 du -sh * c'est mieux c'est plus clair ou du -sh . pour voir la taille du repertoire courant
 du -s -k -h *: permet de voir la taille espace du repertoire courant: en kilo. (-h pour voir si c M ou G ...)
@@ -27185,6 +27217,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                     xhr.onload = function(e) { // retour du serveur: "e" c'est progressEvent et "this" c'est la reponse du serveur
                             printStacktrace(req.name);
                             askValidator.class_AskValidator.record.call(this);
+                                this.getResponseHeader("Content-type") // on peut recuperer ca et autre...
                               if (this.status == 200) {
                               try
                                 {
