@@ -12281,7 +12281,11 @@ Les goals:(appartiennent à phases) si on veut executer mvn un_goal alors ecrire
 pour voir les dependances des jars, rajouter à la fin des commandes ci-dessus: dependency:tree
       exemple: %M3%/mvn clean package dependency:tree      
 pour incrementer mon projet d'une version: changer la version versionning versioning: versionset version:set set:version 
-      %M3%/mvn versions:set
+      %M3%/mvn versions:set attention si j'ai parent/pom.xml (version specifiée toto)
+                                                    V
+                                                enfant/pom.xml (inutile de lui donner une version)si il est parent aussi et de <packaging>pom</packaging> .Depuis maven 3.0 c'est de facto la meme version toto que parent/pom.xml
+                                                    V
+                                                    sous-enfant/pom.xml (sera = version spécifiée toto)
       sur eclipse faire Run MavenBuild... goal=versions:set ajouter parameter newVersion=x.x.x 
             il va changer ca:
                                 <groupId>renault-app.rits.wec</groupId>
@@ -25471,6 +25475,7 @@ virer le retour chariot de la ligne courante:
 dd: supprimer une ligne (en fait il fait un couper)(copier mais supprime) 
 2dd: supprimer deux lignes  (en fait il fait un couper)
 100dd: supprimer cent lignes (en fait il fait un couper)
+kdgg: supprimer tout avant le curseur en arriere arrière
 D: supprimer à  partir du curseur (en fait il fait un couper je crois) jusqu'à la fin de la ligne
 yy: copier ligne puis P: coller ligne
 4yy puis P: le faire pour 4 lgines
@@ -25803,10 +25808,7 @@ rsync :
                       rsync --ignore-existing -avunr /cygdrive/f/BackupServeurGandiDemeter2/srv/data/var/www/www.wenhuaduverge.com www-data@www.wenhuaduverge.com:/srv/data/var/www/www.wenhuaduverge.com
                   rsync -avu --exclude sons --exclude proc --exclude tmp root@www.wenhuaduverge.com:/srv/data /cygdrive/f/BackupServeurGandiDemeterCASSE/srv/data                                                                                                                                                                                                                                                                                                                                                 
                     Vers Doroty
-                    rsync -vr /cygdrive/f/Mesdocuments/ /cygdrive/e/documents/
-                      rsync -vrn --exclude 'PHOTOS' --exclude 'Karie' --exclude 'theatre' --exclude 'icecream' --exclude 'avance services' --exclude 'AUDIOLOOPPLUS2' --exclude 'AUDIOLOOPPLUS' --exclude 'AH1*' --exclude 'PE1*' --exclude 'ImagesPhotos' --exclude '*.avi' --exclude '*.MOD'  --exclude 'Cakewalk*' --exclude 'Chinoisfacile' --exclude 'IntelliJ IDEA Community Edition 2017.2.2' /media/laurent/OUGARIT/Mesdocuments/ /media/laurent/Doroty/documents/
-                      rsync -vr --exclude 'PHOTOS' --exclude 'Karie' --exclude 'theatre' --exclude 'icecream' --exclude 'avance services' --exclude 'AUDIOLOOPPLUS2' --exclude 'AUDIOLOOPPLUS' --exclude 'AH1*' --exclude 'PE1*' --exclude 'ImagesPhotos' --exclude '*.avi' --exclude '*.MOD'  --exclude 'Cakewalk*' --exclude 'Chinoisfacile' --exclude 'IntelliJ IDEA Community Edition 2017.2.2' --delete /cygdrive/e/Mesdocuments/ /cygdrive/d/documents
-                      rsync -vr --exclude 'PHOTOS' --exclude 'Karie' --exclude 'theatre' --exclude 'icecream' --exclude 'avance services' --exclude 'AUDIOLOOPPLUS2' --exclude 'AUDIOLOOPPLUS' --exclude 'AH1*' --exclude 'PE1*' --exclude 'ImagesPhotos' --exclude '*.avi' --exclude '*.MOD'  --exclude 'Cakewalk*' /cygdrive/e/Mesdocuments/ /cygdrive/d/documents
+                    rsync -vrn --exclude 'PHOTOS' --exclude 'Karie' --exclude 'theatre' --exclude 'icecream' --exclude 'avance services' --exclude 'AUDIOLOOPPLUS2' --exclude 'AUDIOLOOPPLUS' --exclude 'AH1*' --exclude 'PE1*' --exclude 'ImagesPhotos' --exclude '*.avi' --exclude '*.MOD'  --exclude 'Cakewalk*' --exclude 'Chinoisfacile' --exclude 'IntelliJ IDEA Community Edition 2017.2.2' /media/laurent/OUGARIT/Mesdocuments/ /media/laurent/Doroty/documents/
                       rsync -vr --exclude 'testcubase' --exclude '*.au' /cygdrive/f/MaMusique/ /cygdrive/e/Mamusique 
                     sauvegarde de wenhua
                       rsync -vru --exclude 'default-bootstrap' --exclude 'prestashop' --exclude 'prestashopINUTILE' --exclude 'themeconfiguratorINUTILE' --exclude 'wpzoom' --exclude 'zoom' --exclude 'themeconfigurator' --exclude '.htaccess' --exclude 'Install_PrestaShop.html' /cygdrive/f/www/WenhuaDuvergeShop/toutNEW /cygdrive/e/www/WenhuaDuvergeShop/WenhuaDuvergeShop/toutNEW
@@ -25831,7 +25833,6 @@ pour voir les disques (les montages les partitions)
 pour voir les partitions: 
   more /proc/partitions
 montage des disques parametres au lancement sur (ou à une commande mount avec un seul argument: partition ou repertoire)  
-/etc/fstab
     cat /etc/fstab ou bien sudo blkid
       c'est là qu'on declare les montages et lorsqu'on reboot ce fichier est lu pour remonter le volume dans l'arborescence du sys de fichier
       on y voit quelquechose comme:
@@ -25863,9 +25864,6 @@ montage des disques parametres au lancement sur (ou à une commande mount avec u
        umount /srv3 srv3 ne contient plus rien
        umount /srv2 srv2 ne contient plus rien on peut effacer ces deux repertoires
        rmdir srv2, rmdir srv3
-       
-       
-       
        
 changer la taille d'une partition: 
   sur l'interface utilisateur Gandi, changer la taille.
