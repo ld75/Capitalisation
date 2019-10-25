@@ -1,4 +1,4 @@
-(?=.*recharg)(?=.*profil)
+(?=.*inputstream)(?=.*outputstream)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -2816,7 +2816,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                                             String filename = req.getParameter("id");
                                             filename=PersistanceManagerFactorySingleton.getInstance().getImages_path()+filename+".png";
                                             FileOutputStream out = new FileOutputStream(new File(filename));
-                                            InputStream in = item.openStream();
+                                            InputStream in = item.openStream(); //toujours mettre ça dans un trywithresources
                                             out.write(IOUtils.toByteArray(in));
                                             out.close();
                                             //response.getOutputStream().print(filename);   // On renvoie le nom d'origine du fichier ainsi que son nom aleatoire. Le code continue a s'executer apres donc attention.
@@ -2826,7 +2826,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                                         }
                                         else
                                         {   //c'est un champ
-                                        	InputStream stream = item.openStream();
+                                        	InputStream stream = item.openStream();//toujours mettre ça dans un trywithresources
                         					String name = item.getFieldName();
                         					if (name.equals(fieldNameRequired)) {
                         						String value = Streams.asString(stream);
@@ -3644,6 +3644,37 @@ webservices: http://users.skynet.be/pascalbotte/
                               return new Hello("hello, component");
                           }
                       } can be easily accessed from a vanilla WebComponent
+        webserviceencore:
+                        	@Context// request et response comme ça sont automatiquement injectes. permet d'injecter tout ce qui est dans le contexte d'une requete http: HttpHeaders;UriInfo;SecurityContext;ResourceContext;Request;Application;Configuration;Providers;HttpServletRequest;HttpServletResponse;ServletConfig;ServletContext
+                private HttpServletRequest httpRequest; // attention on dirait que pas possible de faire httpRequest.getParameter("x") si dans la methode en bas j'utilise @FormParam
+	            @Context
+            	HttpServletResponse httpResponse;
+                @RolesAllowed({"Echoer", "Subscriber"}) // pour securiser l'acces à la classe. Peut etre mis au niveau de la methode (authorizations) Besoin de déclarer tous les roles qu'on va utiliser en tete de la classe avec @DeclareRoles({"x","y"}) LINKdeclarereor
+                ou
+                @PermitAll
+                  @GET ou @POST
+                @Path("/la_suite_de_lurl") ou @Path("/") // facultatif ou @Path("/{a:api/v1/realtimepath|api/v2/apps/{appNameId}/realtimepath") //si j'ai plusieurs multiples urls 
+                public interface ou une classe FeaturesRestService { /// TRES IMPORTANT: la methode doit etre public sinon il ne la voit pas
+                @Path("/lafindelurl") // mettre {monparamdanspath} si on veut utiliser @PathParam("userlogin")String login ci dessous LINK5464  
+               (javax.ws.rs.)@Produces("application/xml") // possible aussi mais à traduire: produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE ou MediaType.SERVER_SENT_EVENTS
+                  public Collection getFeatures( @Context SecurityContext securityContext LINKoooooooog @FormParam("parametrePost") String unParametre  ) throws Exception;
+                                                  ou 
+                                                      @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464
+                                                      et si besoin
+                                                      @QueryParam("unChampApres?ou&DanslUrl") 
+                    // ci dessous: pour recuperer un bundle complettement ailleurs dans le meme karaf en java(l'autre façon c'est d'injecter dans blueprint)
+                  		BundleContext bundleContext = FrameworkUtil.getBundle(UnServiceDeCeBundleLa.class).getBundleContext();
+                  		@SuppressWarnings("rawtypes")
+                  		ServiceReference serviceReference = bundleContext.getServiceReference(une.classe.qui.est.un.service.dans.un.autre.bundle.AutreClasse.class.getCanonicalName());
+                  		return (String) serviceReference.getProperty("UNEPROPRIETTEESETTEE_DANS_LE_BLUEPRINT_DE_CET_AUTRE_BUNDLE");
+                  
+                } 
+                et la sous classe si c'est une interface mais bof autant faire une classe direct sans interface:
+                contient juste la methode                         
+                  public Collection getFeatures(@FormParam("SAMLResponse") String samlReponse) throws Exception {...} sans les annotations
+               Pour fair une servlet karaf LINKkarafservlet
+                   public class MetadataDisplayServlet extends HttpServlet
+                  { contient les methodes post et get habituelles
                            
 
 si erreur java.lang.AbstractMethodError: javax.ws.rs.core.UriBuilder.uri(Ljava/lang/String;)Ljavax/ws/rs/core/UriBuilder
@@ -3705,36 +3736,6 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
                                 @Override
                                 public void failed(Throwable th){...}
                               }     
-            	@Context// request et response comme ça sont automatiquement injectes. permet d'injecter tout ce qui est dans le contexte d'une requete http: HttpHeaders;UriInfo;SecurityContext;ResourceContext;Request;Application;Configuration;Providers;HttpServletRequest;HttpServletResponse;ServletConfig;ServletContext
-                private HttpServletRequest httpRequest; // attention on dirait que pas possible de faire httpRequest.getParameter("x") si dans la methode en bas j'utilise @FormParam
-	            @Context
-            	HttpServletResponse httpResponse;
-                @RolesAllowed({"Echoer", "Subscriber"}) // pour securiser l'acces à la classe. Peut etre mis au niveau de la methode (authorizations) Besoin de déclarer tous les roles qu'on va utiliser en tete de la classe avec @DeclareRoles({"x","y"}) LINKdeclarereor
-                ou
-                @PermitAll
-                  @GET ou @POST
-                @Path("/la_suite_de_lurl") ou @Path("/") // facultatif ou @Path("/{a:api/v1/realtimepath|api/v2/apps/{appNameId}/realtimepath") //si j'ai plusieurs multiples urls 
-                public interface ou une classe FeaturesRestService { /// TRES IMPORTANT: la methode doit etre public sinon il ne la voit pas
-                @Path("/lafindelurl") // mettre {monparamdanspath} si on veut utiliser @PathParam("userlogin")String login ci dessous LINK5464  
-               (javax.ws.rs.)@Produces("application/xml") // possible aussi mais à traduire: produces = MediaType.APPLICATION_JSON_VALUE ou MediaType.APPLICATION_STREAM_JSON_VALUE ou MediaType.TEXT_EVENT_STREAM_VALUE ou MediaType.SERVER_SENT_EVENTS
-                  public Collection getFeatures( @Context SecurityContext securityContext LINKoooooooog @FormParam("parametrePost") String unParametre  ) throws Exception;
-                                                  ou 
-                                                      @PathParam("monparamdanspath")String login mais alors attention il faut mettre LINK5464
-                                                      et si besoin
-                                                      @QueryParam("unChampApres?ou&DanslUrl") 
-                    // ci dessous: pour recuperer un bundle complettement ailleurs dans le meme karaf en java(l'autre façon c'est d'injecter dans blueprint)
-                  		BundleContext bundleContext = FrameworkUtil.getBundle(UnServiceDeCeBundleLa.class).getBundleContext();
-                  		@SuppressWarnings("rawtypes")
-                  		ServiceReference serviceReference = bundleContext.getServiceReference(une.classe.qui.est.un.service.dans.un.autre.bundle.AutreClasse.class.getCanonicalName());
-                  		return (String) serviceReference.getProperty("UNEPROPRIETTEESETTEE_DANS_LE_BLUEPRINT_DE_CET_AUTRE_BUNDLE");
-                  
-                } 
-                et la sous classe si c'est une interface mais bof autant faire une classe direct sans interface:
-                contient juste la methode                         
-                  public Collection getFeatures(@FormParam("SAMLResponse") String samlReponse) throws Exception {...} sans les annotations
-               Pour fair une servlet karaf LINKkarafservlet
-                   public class MetadataDisplayServlet extends HttpServlet
-                  { contient les methodes post et get habituelles
 
 
         filter : filtre : filters : filtres : pour les webservices jaxrs
@@ -8547,7 +8548,8 @@ insertion:
 ajouter une colonne 
 ALTER TABLE VPA01_STUDENT ADD VPA01_PHOTO VARCHAR(20) CHARACTER SET latin1 COLLATE latin1_bin DEFAULT NULL AFTER VPA01_PRENOM;
 ALTER TABLE VPA01_STUDENT MODIFY VPA01_PHOTO VARCHAR(20);
-
+affacer supprimer une colonne:
+    ALTER TABLE userweb DROP COLUMN lostPasswordMailToken;
 pour supprimer suprimer les retours chariot du resultat:
     select ... REPLACE(ps_product_lang.description_short, '\n','') descr ....
 pour concatener plusieurs lignes en une seule: (equivalent de listagg sur oracle): group_concat
@@ -9758,7 +9760,7 @@ faire un formulaire de upload telechargement de fichier, d'image:
                                             String filename = req.getParameter("id");
                                             filename=PersistanceManagerFactorySingleton.getInstance().getImages_path()+filename+".png";
                                             FileOutputStream out = new FileOutputStream(new File(filename));
-                                            InputStream in = item.openStream();
+                                            InputStream in = item.openStream();//toujours mettre ça dans un trywithresources
                                             out.write(IOUtils.toByteArray(in));
                                             out.close();
                                             //response.getOutputStream().print(filename);   // On renvoie le nom d'origine du fichier ainsi que son nom aleatoire
@@ -9768,7 +9770,7 @@ faire un formulaire de upload telechargement de fichier, d'image:
                                         }
                                         else
                                         {   //c'est un champ
-                                        	InputStream stream = item.openStream();
+                                        	InputStream stream = item.openStream();//toujours mettre ça dans un trywithresources
                         					String name = item.getFieldName();
                         					if (name.equals(fieldNameRequired)) {
                         						String value = Streams.asString(stream);
@@ -16928,7 +16930,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
 
       @ExtendWith(MockitoExtension.class)  // si junit5 seulement
         public class UploadToServerServiceTest {
-    		@InjectMocks // facultatif Mock peut marcher sans.
+    		@InjectMocks // facultatif Mock peut marcher sans. Classe qui est testee dans laquelle on injectera les mocks
     		private RealTimePathCoverageController realTimePathCoverageController = new RealTimePathCoverageController(); // equivalent de @Tested dans jmockit : c'est une classe a tester dans laquelle je peux injecter des mocs LINKpourquecamarcheFairemokito
     		@Mock ou @Spy     //Mock par defaut n'execute rien et on peut changer son comportement. Spy par defaut execute tout et on peut ecouter
             private RestTemplate restTemplate; // (peut etre une classe ou une interface) mock qui sera injectée dans RealTimePathCoverageController.
@@ -21244,6 +21246,7 @@ expressions regulieres :regexp :LINKçeeçeeçregexpçeeçeeç
 pour faire une expression reguliere: regexp: 
 		String str=blabla;
 		if (str.matches("[^|]*[|][^|]*[|][^|]*[|][^|]*[|]")) etc etc... ici on cherche une chaine qui ressebmble à lqjsdf|lksdfj|sjklhf|kljsdf|
+        pour remplacer dans les groupes qsdf(regexp1)qsdfl(regexp2)kljs on fait $1, $2...
 		il y a aussi une api qui s'appelle Perl5Compiler (org.apache.oro.text.regex.Perl5Compiler;)... c'est peut etre bien?
 		regexp majuscules avec accents: utiliser \\p{javaUpperCase}
       exemple: 
@@ -21414,10 +21417,29 @@ pour convertir une map en list
       List<Value> list = new ArrayList<Value>(map.values());
 pour convertir un string en boolean:
     Boolean boolean1 = Boolean.valueOf("true");              	    
-inputstream et ouputstream :
+inputstream et outputstream:
       input LIT dans un truc: on l'ecoute. output ECRIT dans un truc. on ecrit dedans.
 Convertir un outputstream en inputstream : 
-    ByteArrayInputStream toto  = new ByteArrayInputStream(byteOutputStream.toByteArray());      
+    ByteArrayInputStream toto  = new ByteArrayInputStream(byteOutputStream.toByteArray());
+convertir un inputstream en outputstream: inputstream vers outputstream
+	public static long stream(InputStream input, OutputStream output, int maxSizeToReach) throws IOException {
+		try (
+				ReadableByteChannel inputChannel = Channels.newChannel(input);
+				WritableByteChannel outputChannel = Channels.newChannel(output);
+		) {
+			ByteBuffer buffer = ByteBuffer.allocateDirect(10240);
+			long size = 0;
+
+			while (inputChannel.read(buffer) != -1) {
+				buffer.flip();
+				size += outputChannel.write(buffer);
+				buffer.clear();
+				log.debug("bytes written in response: {}/{}", size,maxSizeToReach);
+			}
+			return size;
+		}
+	}
+
 convertir un Number en int: 
 		Number.intValue()
 convertir un double en int integer et convertir un double en long: 
@@ -29925,7 +29947,10 @@ PWA : progressive webapps :
               if (event.tag == 'myFirstSync') {
                 event.waitUntil(doSomeStuff());
               }
-            });            
+            });
+            
+vuejs :  https://vuejs.org/v2/guide/
+            
 Typescript :
     tsc fichier.ts // commpile en .js
       Voici une documentation à jour sur l’utilisation de TypeScript au sein d’un projet 4YOU: 
@@ -29970,7 +29995,7 @@ fancybox: // pour faire des caroussels
         	</script>
         <a class="single_image" href="https://www.wenhuaduverge.com/modules/amazzingblog/views/img/uploads/posts/11/2-59aae3efb1c90.jpg"><img src="https://www.wenhuaduverge.com/modules/amazzingblog/views/img/uploads/posts/10/1-59a50232f1ff2.jpg" alt=""/></a>              
               
-AngularJS1 : Angular1 :
+angular :AngularJS1 : Angular1 :
            'use strict'; // pour interdir les variables globales par le navigateur
           // appli demoApp
           var demoApp = angular.module('nomDeMonApp', // notre app est aussi un module                                                                     <!DOCTYPE html><html lang="fr" ng-app="nomDeMonApp">
@@ -29994,6 +30019,8 @@ AngularJS1 : Angular1 :
                 ]                                                                                                              \                                     
                 );                                                                                                                \                          <article ng-show="todos.length"> //ng-show n'affiche <article que si todos.length>0        
                                                                                                                                                                                                   <button class="btn btn-danger" ng-click="clearCompletedTodos()">Supprimer les tâches cochees</button>
+
+                                                                                                                                                                                                      
 angular : Angularjs2 : ANGULAR2 : typescript :
   monprojet
   |_monfichier.ts // si il s'appelle app.ts c'est mon composant root
