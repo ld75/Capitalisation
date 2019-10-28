@@ -1,5 +1,8 @@
-(?=.*recharg)(?=.*profil)
-AFAIRE : 
+(?=.*ppk)(?=.*pem)
+AFAIRE :
+        AFAIRE voir vert.x; kubernetes elastisearch, vuejs reacx
+        Afaire go, play, ngix 
+        bootstrap=tweeter; materialUI
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
  Envoyer à dorothé le script de synchro gitlab vers gitcacib
@@ -1318,12 +1321,13 @@ payara :payaramicro : // executeur direct d'un microservice.
         --rootdir repertoire/de/travail/cree/auto/si/existepas // pour y mettre sous lib les jars qu'il n'arrive pas à trouver au demarrage: les drivers par exemple. 
         --deploy /home/user/example.war ou le repertoire root du war exploaded(dans target)// mettre un .reload sous la racine de mon war exploded et le modifier/toucher recharge le war exploded automatiquement (faire mvn package)(sauf si le war ne s'est pas déployé la fois précédente)
                  possible faire plusieurs --deploy dans une meme commande seront sur le meme port
-        --contextroot contextrootquiremplacelenomdemonwarcommecontextroot //ou faire --deploy /x/y:contextroot
+        --contextroot contextrootquiremplacelenomdemonwarcommecontextroot (avec / au debut, sans / à la fin) //ou faire --deploy /x/y:contextroot
         --name nomdemoninstancequejedeploie
             ssl: au déploiement automatiquement importe dans mon microprofile les keystores et password defini par les proprietes systèmes javax.net.ssl.xxxx
             clustering: deux instances indentiques déployées sur des ports differents sont automatiquement clusterisees (partagent les memes sessions users)
             --nocluster // marche pas! pour ne pas qu'il cherche d'autres instances pour clutoriser. Ca prend du temps quand il cherche
         --autobindhttp // determine le port automatiquement.
+        --logtofile <file-path> // attention si j'utilise --logProperties ca remplace logtofile
         --verbose 
         --startPort 888// fonctionne avec autobindhttp. 888: port à partir duquel commencer à incrementer numero de port
         --mcAdress // facultatif sert à placer mon instance dans un multicast en particulier   
@@ -2287,7 +2291,7 @@ cdi :CDI2.0 (JSR365) pour les tests utiliser weld3.0. CDI1.x besoin de weld2.4 l
                                     ou
                                     Mockito.mock(CreatedProjectOfUserStore.class) //si doit rien faire. void
                                     ou
-                                    Mockito.when(Mockito.mock(ProjectStore.class).findByName(anyString())).thenReturn(new ArrayList<>(),autrechoseladeuxiemefois).getMock()
+                                    Mockito.when(Mockito.mock(ProjectStore.class).findByName(anyString())).thenReturn(new ArrayList<>(),autrechoseladeuxiemefois).getMock() // ne pas oublier getMock() sinon j'ai l'erreur  Can not set ...to org.mockito.internal.stubbing.ConsecutiveStubbing
                                     ou on peut utiliser .thenAnswer voir LINKmktoanswrweld
                                     )
                             .creating( // on peut créer comme ca en enchainant plusieurs comportements pour DIFFERENTES fonctions (pas la meme fonction sinon il ne prend que la dernière definition)
@@ -2314,7 +2318,7 @@ Cycle de vie du CDI bean:
               - @Dependent // ne s'instancie que quand on fait appel à lui dans la classe qui l'injecte. Comme un new Blabla(); absence de proxy on a à faire directement à la classe.
               – @CustomScoped pour que les beans soient stockees dans le FacesContext (qui a une duree de vie plus courte que RequestScope donc FC est plus rapide, bouffe moins de memoire)
               – @NoneScoped (si c un bean qui est reference par un autre bean qui lui est scoped)
-              >> attention un bean ne peut pas referencer un autre bean si son scope est plus petit que le sien (sauf les @NoneScoped que tous peuvent referencer)
+              >> attention un bean ne peut pas referencer un autre bean si son scope est plus petit que le sien (sauf les @NoneScoped que tous peuvent referencer). Moi grand je ne peux pas referencer un petit. Seulement un plus grand que moi.
                   @PostConstruct-->methode s'execute quand le bean est place dans son scope utile pour initialiser marche sur EJB (du coup sur @Singlton) mais ne marche pas sur CDI(sur?) du coup ApplicationScoped ne s'initialise pas avant d'être injectés. Du coup faire LINKobsgdgdgz
                   public void debut() { ... }//ne doit pas thrower une exception
                   @PreDestroy--->methode s'execute quand le bean est retire du scope ou le scope est detruit.
@@ -2335,7 +2339,7 @@ Cycle de vie du CDI bean:
                public void toto(IdentityStore estinjecte){...}
             les @Qualifier :LINKqualifsdlfk
                 dans la classe MonQualifierAMoi:
-                  @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD,ElementType.PARAMETER})
+                  @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD,ElementType.PARAMETER,ElementType.CONSTRUCTOR})
                   @Retention(RetentionPolicy.RUNTIME)
                   @Documented
                   @NormalScope
@@ -2358,20 +2362,20 @@ Cycle de vie du CDI bean:
                     }
                     Les injections ne se font pas dans les new UneClasseAvecDesInjectDedans();
                      pour que ça marche il faut faire si on fait new MaClasse();
-                     MaClasse() //constructeur
+                     MaClasse() //constructeur publique
                      {
                      	CDI<Object> cdi = CDI.current(); // pas reussi jusqu'au bout ce truc
 		                leservice = cdi.select(ClasseInjectee.class).get();
                      }            
         design pattern factory remplacé par @Produces dans CDI LINKfactoproduce Bon moyen de choisir le bean au runtime
-        class MonFactory 
+        class MonFactory // doit avoir un scope CDI sinon risque de probleme avec weld 
             @Inject
             ClasseA classeA; //ou bien LINKprodpara
             @Inject
             ClasseB classeB;
-              @Produces // de javax.enterprise.inject.Produces 
+              @Produces // de javax.enterprise.inject.Produces LINKfactoproduce 
               @MonQualifierAMoi //un Qualifier que j'ai crée voir LINKqualifsdlfk
-              @AppConfig                                
+              @UnPetitScope genre @Dependent pour que au cas ou on redeploie, weld arrive a rappeler cette methode                               
               IApplicationConfiguration getApplicationConfiguration(){ ou LINKprodpara IApplicationConfiguration getApplicationConfiguration(ClasseA classea,ClasseB classb)// pas besoin de mettre @Inject ici dans un producer.
                   if (machintruc)
                   {
@@ -2491,8 +2495,8 @@ securite : security :(JSR375) plus besoin d'utiliser web.xml: les annotations fo
         
 config de la base de donnée donnee: en jee
     en annotations:(a mettre sur une classe @Statefull en tout cas sur un EJB et pas sur CDI)
-      @DataSourceDefinitions( //facultatif mais...
-        value = {             //...du coup possible en enchainer plusieurs et je peux avoir plusieurs datasource
+      @DataSourceDefinitions( //facultatif mais... // de la merde parce qu'on ne peut pas externaliser les credentials
+        value = {             //...du coup possible en enchainer plusieurs et je peux avoir plusieurs datasource. c bien si je veux me connecter à 2 bases en meme temps mais c la merde si je veux faire un switch. Passer plutot par resources/META-INF/application.xml ou web.xml
                 @DataSourceDefinition(name = "java:app/MemOclapDataSource", // ce nom la est cree ici et sera utilise ailleurs LINKdtresr. commence par java:app (scope dans cette appli seulement) java:comp (??) java:module (??) java:global (disponible dans toutes les applications déploiees sur ce serveur) // permet de definir la source de donnée dans l'application au lieu de dans le serveur container.
                         className = "org.hsqldb.jdbc.JDBCDataSource", ou com.example.MyDataSource", ou org.apache.derby.jdbc.ClientDataSource // NE PAS mettre un driver ici mais bien un connectiondatapoolsource
                         url = "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;"
@@ -2533,7 +2537,7 @@ config de la base de donnée donnee: en jee
        
 backend 
 du code java pour aller afficher une page html sans rien faire de special
-  res.setContentType("text/html");
+  res.setContentType("text/html"); ou MediaType.APPLICATION_JSON
   res.setHeader("pragma", "no-cache"); LINKcachehttp
   ServletOutputStream out = res.getOutputStream();
   TemplateContext context = new ProxyBundle();
@@ -2877,7 +2881,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
             String filename = URLDecoder.decode(request.getPathInfo().substring(1),"UTF-8");
             File file = new File(app.getProps().getProperty("SOUND_PATH").concat(filename));
             response.setHeader("Content-Type",getServletContext().getMimeType(filename));
-            response.setHeader("Content-Length",String.valueOf(file.length()));
+            response.setHeader("Content-Length",String.valueOf(file.length())); voir LINKcontentlengh
             response.setHeader("Content-Disposition","inline; filename=\""+file.getName()+"\"");
             Files.copy(file.toPath(),response.getOutputStream()); // pour copier ecrire le contenu d'un fichier dans un outputstream
         avant:
@@ -9489,7 +9493,8 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
                                 .setParameter("totocestmoi",projectId).setFirstResult(0) ou .getResultList(); //overrite lazy default behaviour at runtime
                       - List<MonEntite> cat = entityManager.createQuery("SELECT cat FROM category cat LEFT JOIN FETCH cat.art WHERE cat.id=:id",MonEntite.class).getResultList(); //overrite lazy default behaviour at runtime
                       - String query = "select distinct(alo_project.id), alo_project.nam......from alo_usr alo_usr left join alo_usrcrea alo_usrcrea on alo_usr.usr_id=alo_usrcrea.usrcrea_idusr where alo_usrcrea.usrcrea_idusr is not null and alo_usr.usr_id='"+uid+"' order by alo_project.name";
-                        return em.createNativeQuery(query,Project.class).getResultList();
+                        return em.createNativeQuery(query,Project.class).getResultList(); // pour les selects natifs
+                        em.createNativeQuery(sql).executeUpdate(); // pour les updates natifs
                 JPA_API_CRITERIA : Cest trop de la merde!!!!!!!!!
                         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
                         CriteriaQuery<MonEntite> query = cb.createQuery(MonEntite.class);
@@ -12256,7 +12261,7 @@ Les phases: se jouent de manière sequencielle du haut vers le bas:
             verify - run any checks to verify the package is valid and meets quality criteria
             install - install the package into the local repository, for use as a dependency in other projects locally
             deploy - done in an integration or release environment, copies the final package to the remote repository for sharing with other developers and projects.
-            si je fais mvn deploy tout est execute. Si je fais mvn clean deploy il fait d'abord un clean avant de tout executer 	
+            sequence d'execution: si je fais mvn deploy tout est execute. Si je fais mvn install il execute compile, package et install. Si je fais mvn clean deploy il fait d'abord un clean avant de tout executer 	
 Les goals:(appartiennent à phases) si on veut executer mvn un_goal alors ecrire mvn maven-nomplugin-plugin:goal mais enlever maven- et -plugin
     un goal appartient à 0 à n phases. et une phase peut avoir 0 à n goals. Une phase sans goal n'est pas executee
     Moreover, if a goal is bound to one or more build phases, that goal will be called in all those phases.
@@ -12273,7 +12278,7 @@ Les goals:(appartiennent à phases) si on veut executer mvn un_goal alors ecrire
       %M3%/mvn install:install-file -Dfile=E:/__hr-crypto-utils-1.0.jar -DgroupId=com.hraccess.services -DartifactId=crypto-utils -Dversion=1.0 -Dpackaging=jar
       
   pour nettoyer, compiler puis packager: 
-      %M3%/mvn clean package -Denv=test (il va executer toutes les etapes precedantes dans l'ordre)
+      %M3%/mvn clean package -Denv=test (il va executer toutes les etapes precedantes dans l'ordre mais le clean il faut explicitement le dire)
       %M3%/mvn clean package -Denv=prod
       %M3%/mvn clean package -Denv=dev 
       %M3%/mvn clean package jboss:hard-deploy -Denv=dev
@@ -14040,7 +14045,7 @@ http://www.robinhowlett.com/blog/2016/01/05/everything-you-ever-wanted-to-know-a
                 openssl pkcs12 -in renault.p12 -nokeys | openssl x509 -noout -enddate
                 openssl x509 -enddate -noout -in Certigna.pem
 pour utiliser les fichiers ppk:
-      ppk est un format windows puttygen de paire de cle. pour convertir un ppk en fichier openssl:
+      ppk est un format windows puttygen de paire de cle. pour convertir un .ppk en fichier openssl .pem:
           apt-get install putty-tools // installer sur linux putty pour l'utiliser pour convertir ppk->openssl
           puttygen mapaireDecleaconvertir.ppk -O private-openssh -o nomdemaPairDecleensortie
           on peut le faire avec la fenetre windows puttygen: export openssl ca exporte la cle prive au format openssh (à mettre dans id_rsa) "voir" afficher la cle privee                
@@ -16959,7 +16964,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
     				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça . si je met des variables direct alors j'ai l'erreur InvalidUseOfMatchersException
                                                         ,anyList() // ne pas utiliser anyObject si j'ai une liste
     													,ArgumentMatchers.any(UneClasse.class) avant: Matchers.any(UneClasse.class) avant: anyObject(UneClasse.class)
-    													).thenReturn(untruclapremierefois,unautretruclasecondefois...);
+    													).thenReturn(untruclapremierefois,unautretruclasecondefois...).getMock();
                                                         ou
                                                         .thenAnswer(
                                                                     new Answer<String>() // pour controler les retours conditionnellement LINKmktoanswrweld
@@ -17985,7 +17990,7 @@ java6 :
 http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase6-419409.html 
 java7 :
 http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase7-521261.html  
-JAVA :
+JAVA : https://adoptopenjdk.net/
         proprietes systèmes definies par -D:
               javax.net.ssl.trustStore
               javax.net.ssl.keyStore
@@ -18163,7 +18168,7 @@ slf4j : (vieux voir LinkLogutils)Bonne methode copier L'interface  jdk.internal.
                       }
                       voir explications:http://commons.apache.org/proper/commons-logging/troubleshooting.html#The%20Incompatible%20LogFactory%20Issue
     dans la classe pour logguer: 
-    			LOG.info("Login: {} ", request.getLoginId());                       
+    			log.info("Login: {} lqskjd {}", request.getLoginId(), machin);                       
 logback : (mieux que LinkLogutils)
   <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
   <dependency>
@@ -18212,7 +18217,7 @@ logback : (mieux que LinkLogutils)
       public class UpdatePasswordFilter implements Filter {
             static final Logger log = LoggerFactory.getLogger(UpdatePasswordFilter.class);
             MDC.put("first", "Richard");pour tracer le userid LINKslf4jMcd
-            log.info("I am not a crook.");
+            log.info("Login: {} lqskjd {}", request.getLoginId(), machin);
 log4j : (vieux voir LinkLogutils)
 si j'ai l'erreur:
         Attempted to append to closed appender named
@@ -25171,6 +25176,10 @@ ssh : se logger sur une machine a distance
                           IdentityFile ~/.ssh/wenhua_rsa  //chemin vers un autre fichier contenant la cle privee de l'autre domaine.
                           User root           
                         recharger le ssh après avoir cree/ecrit dans fichier .ssh/config voir LINKsshreload
+            changer mot de passe de la cle privee
+                     ssh-keygen -p
+            reecrire la cle publique à partir de la cle privee: (si j'ai perdu ma cle publique)
+                 ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/idgit_rsa.pub                        
       pour ne plus avoir a ressaisir mon mdp quand je fais du scp rsync ssh j'ai besoin de me connecter par key:
                     Copier cle publique dans id_rsa.pub sur autre serveur dans sous homeUtilisateurAvecQuiJeVeuxMeConnecterDansServerB/.ssh/authorized_keys et authorized_keys2 (pour être sur je mets dans les deux... chais pas si c bon.) LINKmljsdf
                           authorized_keys et 2 contient les cles publiques des autres serveurs qui peuvent se connecter ici grace à leur clé privee dans id_rsa.priv et/ou id_rsa //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
@@ -25180,8 +25189,6 @@ ssh : se logger sur une machine a distance
                 -rw------- 1 utisateurInteresse utisateurInteresse  820 nov.  25  2014 authorized_keys
                 -rw------- 1 utisateurInteresse utisateurInteresse  883 nov.  28  2014 id_rsa 
                  mais si je veux automatiser le transfert de clé publique dans le serveur sur lequel je veux me connecter: voir voir LINK9939572
-      changer mot de passe de la cle privee
-         ssh-keygen -p
       pour qu'il retienne toujours mon mot de passe:(bof. MobaXterm retient) 
                 editer dans mon home ~/ le fichier .bash_profile et rajouter
                       ## only ask for my SSH key passphrase once!
@@ -25264,6 +25271,7 @@ scp :commande
     -r pour recursif si c un repertoire.
     -vvv pour verbose (mode debug)
     pull: PUTAIN j'arrivaispas à faire marcher avec cle: toujours permission denied (publickey) meme apres avoir declare ma cle publique sur le serveur> il falait utiliser une cle privee de type .pem pour que ca marche et non pas .ppk (sur windows en tout cas)
+        si j'ai le message Permission denied c'est parce que je n'ai pas les droits d'ecriture dans le repertoire de destination: faire un chmod
       scp -i cheminVersMaClePriveeFacultatifDeType.pem user@machine:cequejeveuxcopierDeLaMachineDistante repertoireoujeveuxlecopiersurMAmachine ATTENTION espace interdits apres le:
     push:
       scp -i cheminVersMaClePriveeFacultatifDeType.pem cequejeveuxcopierdeMAmachine user@machine:oujeveuxLecopiersurlaamachinedistante
@@ -25938,7 +25946,7 @@ pour installer des programmes: applications: (le repository miroir local qui lui
       Ctrl+t ou F10 pour acceder au menu et utiliser aptitude. refaire Ctrl+t pour fermer le menu
       les touches 'haut', 'bas', 'gauche', 'droite' pour naviguer.
       la touche 'entree' pour deplier/replier
-      Ctrl+u undo annuler
+      Ctrl+u undo annuler : je peux annuler plusieurs fois jusqu'au debut de mes modifs si j'ai pas fait gg 
       e si apptitude affiche un conflit appyer sur e pour voir plus de details et une solution proposee
       . pour voir la solution suivante proposee
       r pour rejetter/ne plus rejetter une solution
@@ -27194,7 +27202,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                               xhr.setRequestHeader("X-File-Size", file.fileSize);
                               xhr.setRequestHeader("X-File-Type", file.type);*/
              	    		  
-                      xhr.open('POST', "AudioLoopOnlinePushAnsDRW.php ou url", true); ou xhr.open('POST', form.action, true); // alors remplir le payload LINK564894 sauf si x-www-form-urlencoded
+                      xhr.open('POST', "AudioLoopOnlinePushAnsDRW.php ou url", true); ou xhr.open('POST', form.action, true); // alors remplir le payload LINK564894 sauf si x-www-form-urlencoded// true  veut dire en mode asynchrone. false en mode synchrone mais attention ne pas mettre false dans le mainthread sinon j'ai l'erreur memoclap.js?version=2.20.28:6693 [Deprecation] Synchronous XMLHttpRequest on the main thread is deprecated because of its detrimental effects to the end user's experience. For more help, check https://xhr.spec.whatwg.org/.
                       ou
                       xhr.open("POST", "/musclesWeb/strongPassword?action="+JSON.stringify(jsontable), true); //alors mettre au dessus: xhr.setRequestHeader("Content-Type", "application/json"); recuperable dans servlet java: httpServletRequest.getParameter("action"); voir convert conversion champs formulaire en json LINKç'ç'ç"_() 
                       ou
@@ -27358,7 +27366,7 @@ jouer un fichier audio sans objet audio
               };
             
             }
-tester avec jest :
+tester avec jest : le meilleur d'apres sylvain
     npm install --save-dev jest
     les fichiers de tests doivent s'appeler xxxx.test.js            
 tester le javascript avec Jasmine : et testem : (sinon utiliser https://jsfiddle.net/)
@@ -27406,7 +27414,7 @@ ES6 :modules: une page peut importer une page qui importe aussi: le browser gèr
         dans path/xxx.js:  
             export var toto =.... 
             export function() blabla(arg){...}
-  avant dans un .js charger en ajax un autre .js et faire eval sur le retour pour executer.
+  avant dans un .js charger en ajax un autre .js et faire eval sur le retour pour executer. executer un javascript dans un tag script renvoyé par le serveur. ATTENTION impossible de eval de nouvelles fonctions elles ne seront pas visibles par le browser pour execution depuis la page principale
   avant: dans un .html creer un src et l'ajouter au document          
   avant: methode ancienne: <link rel="import" href="laurent-moncompoentn1.html">              
               
@@ -31338,7 +31346,7 @@ attention si nouveau compte première fois logguer bien d'abord supprimer tous l
           String requestStr = ''
           +'<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://siebel.com/CustomUI" xmlns:cus1="http://custdata.crm.bservice.renault">'
           +'</soapenv:Envelope>';
-              req.setHeader('Content-Length', String.valueOf(requestStr.length())); // c la taille du nombre de caracteres ca permet au client de savoir que tout le contenu a été bien recu sinon il continue a ecouter LINKcontentlengh
+              req.setHeader('Content-Length', String.valueOf(requestStr.length())); // c la taille du nombre de caracteres ca permet au client de savoir que tout le contenu a été bien recu sinon il continue a ecouter. coupe la taille du response si elle est trop longue par rapport à ce qu'on a mis ici LINKcontentlengh
               req.setBody(requestStr);
               Http http = new Http();
               try {
