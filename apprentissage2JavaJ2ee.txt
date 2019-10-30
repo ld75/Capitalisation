@@ -1,4 +1,4 @@
-(?=.*inputstream)(?=.*outputstream)
+(?=.*ls)(?=.*mega)
 AFAIRE : 
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
@@ -4321,6 +4321,7 @@ web.xml : webxml :
                 	<session-timeout>15</session-timeout>
                 	   <cookie-config>
                 	       <secure>true</secure> // fait pareil que LINKlizifoizf  (a partir de servlet3.0)
+                           <http-only>true</http-only> // fait pareil que LINKlkgjkljkjgjgjgjgj
                 	  <cookie-config>
                 </session-config>
             mime-mapping Definit une association entre les fichiers publics de l'application et des types MIME.  
@@ -4806,6 +4807,7 @@ effet parallax: une image ne scroll pas ou scroll à vitesse differente
     sur un div: background-image: url("https://www.wenhuaduverge.com/img/NewsLetter/Ah02hight.jpg");display: block;position: relative;
                 background-attachment: fixed;
     scroll à vitesse decallée
+            <style>
                     /* Tiny reset thingy */
                     body,html{margin:0;padding:0;}
                     
@@ -4867,6 +4869,7 @@ effet parallax: une image ne scroll pas ou scroll à vitesse differente
                     .bg2::after {
                       background-image: url('https://placekitten.com/g/800/600');
                     }
+                    </style>
                     <main class="wrapper">
                       <section class="section parallax bg1">
                         <h1>Such Adorableness</hi>
@@ -13960,7 +13963,7 @@ Curl : voir aussi wget : pour faire une requette request http doc:https://ec.hax
    	A faire sur une seule ligne et pas sur plusieurs car marche pas. et echapper les caractères spéciaux & ; par \
     curl -O https://index.taskcluster/artifacts/public/deepspeech-0.1.0nux1_x86_64.whl // -O ne marche qu'avec des url qui renvoient un fichier dowload. ne pas mettre de param avec, il telecharge le contenu de la reponse et le depose la ou je suis direct. si -o unNomDeFichier url il recupère la reponse et la met dans unNomDeFichier 
     post json: // mettre des guillemets autour des valeurs des options si il y a des espaces dans ces valeurs. Si c'est du json mettre single quotes
-	curl -v -X POST http://localhost:8080/web/api/login --header "Content-Type: application/json" -d '{"anonymousUser":"true","uuid":"uid","appAccessKey":"mycampusapikey"}' > fichieroul'outputjsonsecritdedans
+	curl -v -X POST http://localhost:8080/web/api/login --header "Content-Type: application/json" -d '{"anonymousUser":"true","uuid":"uid","appAccessKey":"mycampusapikey"}' > fichieroul'outputjsonsecritdedans //-X pour methode
     post sans bodypayload comme un get
     curl -v -X POST http://localhost:8080/web/api/login --header "Content-Type: application/x-www-form-urlencoded" -d 'grant_type=password&username=toto&password=titi' -H "Authorization: Basic $(echo -n codetestlaurent:hihi | base64)" // je peux appeler du bash ici et encoder/decoder en base64 (-n pour que le echo ne mette pas les retour chariot)
     pour passer par un proxy rajouter:
@@ -13977,7 +13980,8 @@ Curl : voir aussi wget : pour faire une requette request http doc:https://ec.hax
 	curl -v -X GET https://api.airfranceklm.com/opendata/offers/reference-data -H "accept: application/hal+json" -H "accept-language: en-US" -H "afkl-travel-country: NL" -H "afkl-travel-host: KL" -H "api-key: testapikey"
 	curl -v -X GET http://localhost:8080/web/api/v2/apps/mycampuscode/realtimepath/navitia/paths?physicalModes=bus\&coverage=fr-idf\&from=2.33245\;48.77469\&to=2.33245\;48.77469\&datetime=20190720T1004\&datetimeRepresents=arrival --header "X-AUTH-TOKEN:eyJpZCI6bnVsbCwidXVpZCI6InVpZCIsImFub255bW91c1VzZXIiOnRydWUsInVzZXJMb2dpbiI6IkFub255bW91c1VzZXIiLCJ1c2VyRW1haWwiOm51bGwsImV4cGlyZXMiOjE1NjQwMzk0MDY1OTAsImFwcENvZGUiOiJteWNhbXB1c2NvZGUiLCJhcHBBY2Nlc3NLZXkiOm51bGwsInZlbG9Vc2VyIjpmYWxzZSwibXdhVXNlciI6ZmFsc2UsInJvbGVzIjpbIlJPTEVfQVBQIl19.KVUcP3cOD3aLJzNJeua+BZR3MNQBdUktyRUag7V5/dg="
      -L pour que si le serveur renvoit une redirection il la suivre direct
-     -c pour ecrire les cookies -d ou b ? pour les stocker... ATERMINER
+     --cookie pour ecrire les cookies -d ou b ? pour les stocker... exemple: --cookie "JSESSIONID=08F21783333EE10B64F296CD3F9D0CDC; path=/"      
+     
      -w "totocequejeveux %{unevariablequi m'estrenvoyéeparleserveur (voir la doc pour la liste des variables)}" > jepeuxecrireleresultatdansunfichier.txt mettre -w "" >unlog.log ecrit le payload body contenu de la reponse        
 certificats : certificat : formats: types
                               Échange d’informations personnelles (PKCS #12)  (.pfx ou .p12) contient la clé publique(pour encrypter vers...) de la machine que je veux joindre et ma clé privée facultatif(pour décrypter ce que je reçois) c'est un certificat
@@ -16034,6 +16038,8 @@ cookies :
     dans le serveur setter le httponly: LINKcooklskjhh
                         NewCookie hraCookie= new NewCookie(UserManagementConstants.CONNECTION_ID, getDatasourceSessionIdFromContext(), "/", getCookieDomain(), null, -1, httpRequest.isSecure());
                         return javax.ws.rs.core.Response.seeOther(go).header("Set-Cookie",hraCookie.toString()+"; Secure; HttpOnly").build();                                              |_revoit true si on est en https
+                        ou en spring :Cookie cookie = WebUtils.getCookie(request, "JSESSIONID"); response.addCookie(new Cookie("JSESSIONID", cookie.getValue()+"; Secure; HttpOnly"));
+                                                                                                                                                                    |_bien, que des strings. KISS.
                           ou
                                         	final String cookiePath = "/";
                                       		final String cookieDomain = getCookieDomain();
@@ -16041,7 +16047,7 @@ cookies :
                                       		cookie.setPath(cookiePath);
                                       		//cookie.setSecure(httpRequest.isSecure()); //.isSecure() renvoit true si on est en https. setsecure n'envoie le cookie a travers le reseau que si on est en https 
                                       		cookie.setSecure(true); //setSecure: le cookie n'est transmis sur le reseau que si on est en https LINKlizifoizf
-                                      		cookie.setHttpOnly(httpOnly); //javascript n'a pas acces au cookies
+                                      		cookie.setHttpOnly(httpOnly); //javascript n'a pas acces au cookies LINKlkgjkljkjgjgjgjgj
 letsencrypt :
       les logs sont sous /var/log/letsencrypt/letsencrypt.log
       les confs de renew sont sous /etc/letsencrypt/renewal
@@ -24761,7 +24767,7 @@ sudo :
     /var donnees frequements reecrites
 les comptes utilisateurs sont sur etc/passwd (si un jour un gars qu'on ne connait pas fait des trucs) figurent dedans les homes des utilisateurs et on peut atteindre leur home en faisant cd ~nomutilisateur
 pour recharger le .profile // fichier chargé lorsque je me connecte a la connexion initialise. dedans je peux mettre des commandes qui s'executent lors de ma connexion 
-    faire: cd ou cd . puis . .profile (faire ls -tral pour voir tout (attention pas tout forcement... mais je ne sais pas pourquoi)
+    faire: cd ou cd . puis . .profile (faire ls -tralh pour voir tout (attention pas tout forcement... mais je ne sais pas pourquoi)
 changer mot de passe d'un utilisateur:
   changepasswd nomutilisateur (je crois)    
 creer un nouvel utilisateur: 
@@ -24830,7 +24836,7 @@ les alias sous unix: exemple: alias ll = 'ls -l' ou bien alias ll="ls -l"
           fi
     
 dans /usr/bin noramlement (on peut retrouver dans les variables d'environnement) on voit tous les programmes que le user peut utiliser (.exe) (les commandes)
-pour recharger un environnement faire cd . (la il y a des fichiers environnement(faire ls -tral pour voir tout) dont le nom est par ex: .env_machin) puis . .env_machin ou . ./.env_machin
+pour recharger un environnement faire cd . (la il y a des fichiers environnement(faire ls -tralh pour voir tout) dont le nom est par ex: .env_machin) puis . .env_machin ou . ./.env_machin
 pour verifier que "truc" est bien dans l'environnement faire: env | grep truc
 compter le nombre de lignes dans un fichier:
   wc -l nomdufichier ou bien nb_lignes=`cat $VARIABLEPATH/monfichier.xls | wc -l`
@@ -24989,8 +24995,8 @@ Pour executer un fichier: . fichieraexecuter.cfg (ou .sh ou whatever)
 inferieure à: lt 
 supperieur à: gt
 egal: eq
-pour recharger le .profile faire: cd ou cd . puis . .profile (faire ls -tral pour voir tout (attention pas tout forcement... mais je ne sais pas pourquoi)
-pour recharger un environnement faire cd . (la il y a des fichiers environnement(faire ls -tral pour voir tout) dont le nom est par ex: .env_machin) puis . .env_machin ou . ./.env_machin
+pour recharger le .profile faire: cd ou cd . puis . .profile (faire ls -tralh pour voir tout (attention pas tout forcement... mais je ne sais pas pourquoi)
+pour recharger un environnement faire cd . (la il y a des fichiers environnement(faire ls -tralh pour voir tout) dont le nom est par ex: .env_machin) puis . .env_machin ou . ./.env_machin
 pour verifier que "truc" est bien dans l'environnement faire: env | grep truc
 les comptes utilisateurs sont sur etc/password (si un jour un gars qu'on ne connait pas fait des trucs)
 SUPER methode pour trouver les plus gros fichiers: il y a aussi apparemment sur unix baobab l'equivalent de windirstat.  
@@ -25048,7 +25054,7 @@ quand on fait ">" on ecrase on effacer un fichier, quand on fait ">>" on ecrit �
     
 ls recursif: ls -R
 ls trie par taille: ls -ls
-ls -tral: taille: exemples: 8565 octets = 9 kilo mais c indique en octets
+ls -tral: taille: exemples: 8565 octets = 9 kilo mais c indique en octets mettre h pour un filesize plus lisible ls -tralh
 export: dans un script, ne marche que si on execute ce script en tappant: . ./Script.ksh (dans Script.ksh il y a par exemple: export TOTO=machin) 
 cd - pour revenir au repertoire precedent
 rappeler commande precedente si fleches ne marchent pas: escape+k
