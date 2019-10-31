@@ -1010,6 +1010,12 @@ Messagerie email :
 traitement en ligne des images :
   déflouter unblur
     http://www.photo-sharpen.com/
+gimp :
+	pour copier un caque dans une autre image:
+		draguer le caque dans le milieu de l'autre image
+	pour redimentioner transformer: 
+		shift+t
+		pour une redimension relative respectant la proportion: draguer un caré du bord tout en maintenant ctrl+shift enfoncés
 photoshop :
 justifier un texte: menu calques>texte>transformer en paragraphe > ouvrir fenetre pannel texte: les options justification sont activées: je peux focaliser la justfication sur les lignes selectionnees
 virer effet aimant magnet
@@ -24688,8 +24694,10 @@ connectionPassword=AWTWSAD
 userSearchMatching=(uid={0})
 
 UNIX : linux :(unix est la plus basse couche; linux est au dessus mais il a été complettement réecrit, c le kernel=noyau; ubuntu(https://wiki.ubuntu.com/Releases) et debian sont deux distrib au dessus de linux. Sont differentes mais ubuntu est un layer par dessus debian)
+Pour utiliser USB avec mon mobile utiliser gnome_file (de son nom de programme "file") tiroir bleu
 pour installer un fichier extension extention .deb
 	dpkg -i lefichier.deb
+pour pouvoir lire cd audio installer cdrskin et xorriso et executer cdrskin --devices puis ca marche tout seul
 La commande utilisee pour creer les fichiers ISO sous unix est:
         mkisofs -J -r -o $FILE_OUT $FILE_IN
         mkisofs -r -o CD-CS-1.iso CD-CS-1
@@ -25124,7 +25132,7 @@ ssh : se logger sur une machine a distance
                 sont sous /var/log/user.log ou /var/log/auth.log  si ça défile par sécurité désactiver la connexion par mot de passe.
                 /homeDuUser/.ssh repertoire contient les cles publiques (le creer si il n'existe pas) il doit appartenir à l'utilisateur interessé droit doivent etre rwx-------
           generer creer paire de cle sur cygwin ou sur unix:
-                    ssh-keygen -t rsa // stocke la cle privee sous /repertoireHomeDuUser/.ssh/id_rsa et la cle publique sous /repertoireHomeDuUser/.ssh/id_rsa.pub  (creer ces fichiers si n'existent pas) //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
+                    ssh-keygen -t rsa // stocke la cle privee sous /repertoireHomeDuUser/.ssh/id_rsa ou toto_rsa et la cle publique sous /repertoireHomeDuUser/.ssh/id_rsa.pub  (creer ces fichiers si n'existent pas) //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
                     definir passphrase (sauf si c'est pour faire du ssh rsync scp etc... avec un autre serveur, alors ne pas mettre de mot de passe!)
                     cle prive est dans id_rsa, la cle publique corresp est dans id_rsa.pub. //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
                     ssh-keygen -y -f id_rsa > id_rsa.pub // ensuite je peux copier cette cle publique et la mettre sur un autre serveur LINKmljsdf
@@ -25140,7 +25148,7 @@ ssh : se logger sur une machine a distance
                           User root           
                         recharger le ssh après avoir cree/ecrit dans fichier .ssh/config voir LINKsshreload
       pour ne plus avoir a ressaisir mon mdp quand je fais du scp rsync ssh j'ai besoin de me connecter par key:
-                    Copier cle publique dans id_rsa.pub sur autre serveur dans sous homeUtilisateurAvecQuiJeVeuxMeConnecterDansServerB/.ssh/authorized_keys et authorized_keys2 (pour être sur je mets dans les deux... chais pas si c bon.) LINKmljsdf
+                    Copier cle publique dans id_rsa.pub sur autre serveur dans sous homeUtilisateurAvecQuiJeVeuxMeConnecterDansServerB/.ssh/authorized_keys et authorized_keys2 (pour être sur je mets dans les deux... chais pas si c bon.)VERIFIER que la ligne a zero retour chario et espace LINKmljsdf
                           authorized_keys et 2 contient les cles publiques des autres serveurs qui peuvent se connecter ici grace à leur clé privee dans id_rsa.priv et/ou id_rsa //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
               se connecter alors en faisant depuis serveurA: ssh homeUtilisateurAvecQuiJeVeuxMeConnecterDansServerB@serverB                          
               les droits doivent être comme ça:
@@ -25236,7 +25244,7 @@ scp :commande
     push:
       scp -i cheminVersMaClePriveeFacultatifDeType.pem cequejeveuxcopierdeMAmachine user@machine:oujeveuxLecopiersurlaamachinedistante
     exemples  
-      scp -p admddd\@su571ars.mc2.renault.fr:/data/documentum/applications/a_ddd/ExportPHX/jar/Exporter-0.0.1.jar .
+      scp -p admddd\@su571ars.mc2.renault.fr:/data/documentum/applications/a_ddd/ExportPHX/jar/Exporter-0.0.1.jar . //-p pour preserver l'horodatage du fichier
       scp -p admddd\@su571ars.mc2.renault.fr:/data/documentum/applications/a_ddd/ExportPHX/sh/L.ksh .
       scp -p admddd\@sum50301:/data/documentum/applications/a_ddd/ExportPHX/tmp/pgn/*.xml .
 smtp :
@@ -27419,6 +27427,7 @@ erreur: (intermediate value)(...) is not a function
                     ou(index,value)   
                 doSomethingWith(number); // faire un traitement... a creuser
             });;
+	si c'est un NodeList faire Array.from(lanodelist).forEach(....
         par exemple cherche dans un tableau si les valeurs existent dans un autre tableau: boucle imbriquee:
           if(unTableauAParcourir.filter(function(act,idx){return unAutreTableauAParcourir.filter(function(actor){return actor == idx;}).length>0;})
                                                  .filter(function(act){return (act!=null //sur le resultat de l'imbrication on peut enchainer avec dauters filtres
