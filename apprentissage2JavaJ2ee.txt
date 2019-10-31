@@ -1,5 +1,8 @@
-(?=.*string)(?=.*empty)
-AFAIRE : 
+(?=.*ppk)(?=.*pem)
+AFAIRE :
+        AFAIRE voir vert.x; kubernetes elastisearch, vuejs reacx
+        Afaire go, play, ngix 
+        bootstrap=tweeter; materialUI
     base de donnée h2 pour les tests unitaires à capitaliser
  authweb :AFAIRE_ACONVERTIR_EN_CURL.png
  Envoyer à dorothé le script de synchro gitlab vers gitcacib
@@ -187,7 +190,7 @@ plannification :planning :conseils Erwin:
     GELER DES JOURS ET MY TENIR (+LE JOUR DE CAPIT)
     CAPITALISER SUR LE WIKI LES VENDREDIS
 
-Design patterns : Gof est mort remplacé par CDI: A FAIRE voir @Specializes, @Decorator, @Interceptor. Pattern Command est remplacé par MessageDrivenBeans et CDI Events, pattern factory remplacé par @Produces LINKfactoproduce
+Design patterns : Gof est mort remplacé par CDI: A FAIRE voir @Specializes, @Decorator, @Interceptor. Pattern Command est remplacé par MessageDrivenBeans et CDI Events, pattern factory remplacé par @Produces sauf que @Produces renvoit des instances deja crées LINKfactoproduce 
 cleancoding : clean coding :LA SEULE FACON D ALLER VITE C EST D ALLER CLEAN ignorance is no excuse. No divided devs(frontetback = meme pers) expose your ignorance to learn. (its not weakness) 
 0: 20 minutes de tomate tomatoes*18-20/jours(4pauses2m,1pause10m). https://tomato-timer.com/ pour partager: https://www.marinaratimer.com  Sous pression, se coller à la discipline ne pas être tenté de la bypasser
 1. I will not produce harmful code
@@ -796,16 +799,23 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
                                     repertoireprojet/config  ~/.gitconfig               /etc/gitconfig
           git config --global ou --local ou --system user.name mon_nom
           git config --global user.email mon_mail
-          git config --list // voir lire mes variables de configuration: d'abord ecrit les sytems puis global puis local qui override les autres
+          git config (--global ou --localSiJeSuisDansUnProjetGit ou rienpourtoutafficher) --list // voir lire mes variables de configuration: d'abord ecrit les sytems puis global puis local qui override les autres
           git config --local credential.helper store //store pour lui dire de stocker en clair dans un fichier mon user/password  MAIS AU FINAL MARCHE PAS: voir ci dessous
           git config --globaloubien--local credential.helper store --file .gitidentifiants //MARCHE PAS store pour lui dire de stocker en clair dans un fichier mon user/password
-          git config --system --unset credential.helper puis/ou git config --global --unset credential.helper puis/ou git credential-manager clear (l'aide s'affiche si on fait git credential-manager) // pour virer le cache du credential si il ne me  prompte plus pour saisir l'authentif user password
+          git config --system --unset credential.helper puis/ou git config --global --unset credential.helper puis/ou git credential-manager clear (l'aide s'affiche si on fait git credential-manager) // unset c'est pour virer supprimer une configuration. Ici on fait ça pour virer le cache du credential si il ne me  prompte plus pour saisir l'authentif user password
           pour pusher en ssh connecter avec une cle: mais je peux aussi choisir le mode https pour ne pas avoir besoin de ssh 
                  ssh-keygen -t rsa -b 4096 -C "kanailaurent@gmail.com" // generer une paire de clé dans gitbash
                  clip < /c/Users/lduverge/.ssh/id_rsa.pub // copier dans le ... ma cle publique.. et ensuite le copier dans github
                  ssh-add /c/Users/lduverge/.ssh/id_rsa // ajouter (je peux renommer id_rsa comme je veux: toto_rsa par ex) 
                  eval $(ssh-agent -s) // utiliser ca si ma cle n'est pas sous .ssh: demarrer le ssh-agent (il se peut qu'il ne soit pas demarré c pour ca.) sert aussi pour une authentification automatique
                  ssh-add /c/path/vers/ma/cle/prive/toto_rsa // ajouter ma paire de clé au ssh agent (je peux renommer id_rsa comme je veux: toto ou toto_rsa par ex)
+        sur certains serveurs on peut etre amené à devoir declarer des certificats pour se connecter au serveur git
+            git config --global http.sslcert /c/Users/ut2sn0/My_IT_Applications/configs/Gitas_mygitcert.crt
+            git config --global http.sslkey /c/Users/ut2sn0/My_IT_Applications/configs/Gitas_mygitcert.key
+            git config --global http.sslcainfo /c/Users/ut2sn0/My_IT_Applications/configs/Gitas_cagitcert.crt
+            git config --global http.sslverify false
+            ou bien plus recemment remplacer tout ca par
+            git config --global http.sslBackend schannel // il va directement cercher les certifs installés dans windows: plus besoin de mettre le chemin comme ci dessus. Cette commande rend http.sslcainfo ignorée.
           pour definir un proxy: 
                 git config --global http.proxy http://proxyUsername:proxyPassword(echaper par urlEncode si presence de char speciaux)@proxy.server.com(SANS HTTP):port
                 pour dégager le proxy: 
@@ -881,10 +891,8 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git diff-tree --no-commit-id --name-only -r <numero de commit> // voir la liste des fichiers commités  d'un commit 
       git reset HEAD .OuNomFichier ou *.extensionfichier // opposé inverse de add pour retirer ce fichier de l'index added(voir LINKresetgit et Linkcheckout) annuler undo un delete MAIS: si j'ai déjà pushé alors faire:LINKrmgit 
       git reset HEAD~ annule/undo le dernier commit. Ne pas le faire après que mon dernier commit ait ete pushe et merge avec l'origin car cela desynchronise mon local du distant. SI je veux quand même le faire par necessite alors faire git reverT: ça recommiT un snap d'avant le commit pourri.
-      git reset HEAD~ pathFichier/A/retirer/du/commit.txt
                 on peut aussi faire git commit --amend // pour redéfinir le dernier commit sans besoin de l'annuler
       git reset //LINKresetgit annuler le dernier add
-      git reset fichierAEnleverDuAdd//LINKresetgit annuler le dernier add
       git reset --hard versionDuTag: ce tag revient dans le mon HEAD/branch + repertoire
       git rebase //TROP GALERE!!!! ne pas utiliser avant une formation
       git rebase commitquinebougepasEtQuiVaRecevoirLaSuiteDeLHistoire commitQuiVaMettreSonHistoireALaSuiteDuPremierArgument // a la toute fin faire rebase DernierCommit master pour que le master se remette au bout
@@ -1111,7 +1119,7 @@ ajouter une dependence un pluggin dans le pom: alt+insert
 pour voir les stats (nombre de lignes de code etc...) charger le plugin de statistiques https://plugins.jetbrains.com/plugin/4509-statistic: on voit tout en bas une nouvelle icone pour les afficher   
 creer un bookmark flag tag ctrl+f11. Acceder à ce bookmark trouver: ctrl+chiffredubookmark. Ensuite editer la note du bookmark:shift+f11 puis Ctrl+entree sur le bookmark  
 supprimer les bookmarks: shift+f11 (j'ai le choix)
-si erreur  Error:java: invalid target release: 10 : file>settings...>build>java compiler>choisir la bonne version
+si erreur  Error:java: invalid target release: 10: file>settings...>build>java compiler>choisir la bonne version
 si erreur Error connecting to 127.0.0.1:51924; reason: Error:failed to create a child event loop
     redémarrer pc
 Piege: pour ajouter des jars dans le classpath: il ne faut pas ajouter les repertoires directories directorys contenant les jars mais directement les jars
@@ -1229,6 +1237,7 @@ renommer rename un projet:
 trouver une classe meme dans les dependances et jars: Ctrl+n
 replace remplacer: Ctrl+r puis alt+e pour y le faire
 remplacer partout: Ctrl+shift+r
+remplacer avec des retours chariot ca marche cocher regexp et le retour chario c'est \n
 hierarchie herite parent voir heritage: Ctrl+h
 voir hierarchie remonter methode parente sur methode faire Ctrl+u
 gotoline Ctrl+g
@@ -1323,12 +1332,13 @@ payara :payaramicro : // executeur direct d'un microservice.
         --rootdir repertoire/de/travail/cree/auto/si/existepas // pour y mettre sous lib les jars qu'il n'arrive pas à trouver au demarrage: les drivers par exemple. 
         --deploy /home/user/example.war ou le repertoire root du war exploaded(dans target)// mettre un .reload sous la racine de mon war exploded et le modifier/toucher recharge le war exploded automatiquement (faire mvn package)(sauf si le war ne s'est pas déployé la fois précédente)
                  possible faire plusieurs --deploy dans une meme commande seront sur le meme port
-        --contextroot contextrootquiremplacelenomdemonwarcommecontextroot //ou faire --deploy /x/y:contextroot
+        --contextroot contextrootquiremplacelenomdemonwarcommecontextroot (avec / au debut, sans / à la fin) //ou faire --deploy /x/y:contextroot
         --name nomdemoninstancequejedeploie
             ssl: au déploiement automatiquement importe dans mon microprofile les keystores et password defini par les proprietes systèmes javax.net.ssl.xxxx
             clustering: deux instances indentiques déployées sur des ports differents sont automatiquement clusterisees (partagent les memes sessions users)
             --nocluster // marche pas! pour ne pas qu'il cherche d'autres instances pour clutoriser. Ca prend du temps quand il cherche
         --autobindhttp // determine le port automatiquement.
+        --logtofile <file-path> // attention si j'utilise --logProperties ca remplace logtofile
         --verbose 
         --startPort 888// fonctionne avec autobindhttp. 888: port à partir duquel commencer à incrementer numero de port
         --mcAdress // facultatif sert à placer mon instance dans un multicast en particulier   
@@ -2265,8 +2275,8 @@ J2EE : jee : jee8 :javaee : EE4J : jakartaee : https://github.com/eclipse-ee4j/j
                <scope>provided</scope>
         </dependency>
         necessite LINKbensoncle
-cdi :CDI2.0 (JSR365) pour les tests utiliser weld3.0. CDI1.x besoin de weld2.4 lire https://docs.jboss.org/cdi/learn/cdi_2/slides.html
-     weld :
+cdi :CDI2.0 (JSR365) pas besoin d'utiliser weld (je crois) lire https://docs.jboss.org/cdi/learn/cdi_2/slides.html
+CDI1.x besoin de weld
         <dependency>
 			<groupId>org.jboss.weld</groupId>
 			<artifactId>weld-junit5</artifactId>
@@ -2280,9 +2290,10 @@ cdi :CDI2.0 (JSR365) pour les tests utiliser weld3.0. CDI1.x besoin de weld2.4 l
             @WeldSetup //facultatif pour gérer mes injections LINKweldgkl
             public WeldInitiator weld = WeldInitiator.from(AbonnementService.class) //crée les beans dans un container virtuel pour tests.
             .addBeans(
+                    uneMethodePourCreerMockerUnBean(),// je peux deporter la creation dans une autre methode
                     MockBean.read(Utils.class).build(), //injectera Utils automatiquement dans le code projet si bonne annotation. Et c'est la vraie classe Utils dont je peux mocker chirurgiquement les methodes que je veux(voir ci dessous)
                     MockBean.read(UserStore.class).build(),
-                    MockBean.builder()   // pour injecter un mock plutot qu'un bean complet.
+                    MockBean.builder()   // pour injecter un mock plutot qu'un bean complet. methode 1 
                             .types(ProjectStore.class)
                             .scope(RequestScoped.class)
                             .addQualifier(MonQualifier.Literal.INSTANCE) // au cas ou j'ai un qualifier particulier
@@ -2291,14 +2302,17 @@ cdi :CDI2.0 (JSR365) pour les tests utiliser weld3.0. CDI1.x besoin de weld2.4 l
                                     ou
                                     Mockito.mock(CreatedProjectOfUserStore.class) //si doit rien faire. void
                                     ou
-                                    Mockito.when(Mockito.mock(ProjectStore.class).findByName(anyString())).thenReturn(new ArrayList<>(),autrechoseladeuxiemefois).getMock()
+                                    Mockito.when(Mockito.mock(ProjectStore.class).findByName(anyString())).thenReturn(new ArrayList<>(),autrechoseladeuxiemefois).getMock() // ne pas oublier getMock() sinon j'ai l'erreur  Can not set ...to org.mockito.internal.stubbing.ConsecutiveStubbing
+                                    ou on peut utiliser .thenAnswer voir LINKmktoanswrweld
                                     )
                             .creating( // on peut créer comme ca en enchainant plusieurs comportements pour DIFFERENTES fonctions (pas la meme fonction sinon il ne prend que la dernière definition)
                                     Mockito.when(Mockito.mock(ProjectStore.class).getProjectsCreatedByUser(anyString())).thenReturn(
                                             Arrays.asList(new Project("bla","bli","blo","blu",new Date(),true,1.0))
                                     ).getMock()
                             )        
-                            .build()
+                            .build(),
+                      MockBean.builder().types(IInterfaceDeMaClasseInjectee.class).creating(new ClasseMockQueJeCustomise()).build(), //methode2 tres bien aussi pour déporter le comportement voulu
+
                ).activate(RequestScoped.class, ApplicationScoped.class).build(); // comme si j'étais dans ces scopes.
         }
             retrouver un bean de weld : weld.select(MonBeanInjecte.class).get() on peut lui faire executer quelquechose: String idProjet = weld.select(AbonnementService.class).get().createNewProjectFromMicrophone(properties);
@@ -2312,42 +2326,31 @@ Cycle de vie du CDI bean:
                                 public void demarrage(@Observes @Initialized(ApplicationOuAutreScoped.class) Object init) // ou @Destroyed si c'est quand ca s'eteint. Ne prennent que des Scope LINKobsgdgdgz
                                 {(...)
               – @ViewScoped
-              - @Dependent // ne s'instancie que quand on fait appel à lui dans la classe qui l'injecte. Comme un new Blabla();
+              - @Dependent // ne s'instancie que quand on fait appel à lui dans la classe qui l'injecte. Comme un new Blabla(); absence de proxy on a à faire directement à la classe.
               – @CustomScoped pour que les beans soient stockees dans le FacesContext (qui a une duree de vie plus courte que RequestScope donc FC est plus rapide, bouffe moins de memoire)
               – @NoneScoped (si c un bean qui est reference par un autre bean qui lui est scoped)
-              >> attention un bean ne peut pas referencer un autre bean si son scope est plus petit que le sien (sauf les @NoneScoped que tous peuvent referencer)
-                  @PostConstruct-->methode s'execute quand le bean est place dans son scope utile pour initialiser marche sur EJB (du coup sur @Singlton) mais ne marche pas sur CDI du coup ApplicationScoped ne s'initialise pas avant d'être injectés. Du coup faire LINKobsgdgdgz
+              >> attention un bean ne peut pas referencer un autre bean si son scope est plus petit que le sien (sauf les @NoneScoped que tous peuvent referencer). Moi grand je ne peux pas referencer un petit. Seulement un plus grand que moi.
+                  @PostConstruct-->methode s'execute quand le bean est place dans son scope utile pour initialiser marche sur EJB (du coup sur @Singlton) mais ne marche pas sur CDI(sur?) du coup ApplicationScoped ne s'initialise pas avant d'être injectés. Du coup faire LINKobsgdgdgz
                   public void debut() { ... }//ne doit pas thrower une exception
                   @PreDestroy--->methode s'execute quand le bean est retire du scope ou le scope est detruit.
                   public void fin() { ... }
                  @TransactionAttribute pouf gerer les transactions (marche aussi sur ejb de type  @Stateful, @Stateless and @Singleton @ManagedBean, @WebServlet, @WebListener, @WebFilter)           
-          utilisation d'un champ injecté:                                   définition de la classe de l'autre coté:
-            @Inject                                                        @ApplicationScoped
-          @Named("simpleIs")//utiliser plutot @Qualifier.Ms ça c pour jsp  @Named("simpleIs")//utiliser plutot @Qualifier.Ms ça c pour jsp
-          private IdentityStore simpleIdentityStore;                       public class SimpleIdentityStore implements IdentityStore {
-
-        design pattern factory remplacé par @Produces dans CDI LINKfactoproduce
-        class MonFactory
-            @Inject
-            ClasseA classeA;
-            @Inject
-            ClasseB classeB;
-              @Produces // de javax.enterprise.inject.Produces 
-              @MonQualifierAMoi //un Qualifier que j'ai crée voir LINKqualifsdlfk
-              @AppConfig                                
-              IApplicationConfiguration getApplicationConfiguration(){
-                  if (machintruc)
-                  {
-                      return classeA;
-                  }
-                  else {
-                      return classeB;
-                  }
-          
-              }
+          utilisation d'un champ injecté:                                       définition de la classe de l'autre coté:
+            Injection par field:
+                @Inject                                                        @ApplicationScoped
+                @Named("simpleIs")//utiliser plutot @Qualifier.Ms ça c pour jsp  @Named("simpleIs")//utiliser plutot @Qualifier.Ms ça c pour jsp
+                private IdentityStore simpleIdentityStore;                       public class SimpleIdentityStore implements IdentityStore {
+            Injection par constructeur(mieux car crée immutable)
+               @Inject 
+               @MonQualifier               
+                MaClasse(IdentityStore estinjecte){this.identitystore=estinjecte}
+            Injection par methode
+               @Inject 
+               @MonQualifier               
+               public void toto(IdentityStore estinjecte){...}
             les @Qualifier :LINKqualifsdlfk
                 dans la classe MonQualifierAMoi:
-                  @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
+                  @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD,ElementType.PARAMETER,ElementType.CONSTRUCTOR})
                   @Retention(RetentionPolicy.RUNTIME)
                   @Documented
                   @NormalScope
@@ -2361,7 +2364,39 @@ Cycle de vie du CDI bean:
                       }
                    }
                   }
-
+            Un bean sans @Qualifier a  implicitement le qualifier @Default. Si j'injecte avec l'annotation @Any le container cherche tous les beans candidats avec un @Qualifier excluant du coup les implicites @Default
+                    exemple:
+                    @Inject
+                    void initServices(@Any Instance<Service> services)
+                    {
+                        for(Service service:services){...}
+                    }
+                    Les injections ne se font pas dans les new UneClasseAvecDesInjectDedans();
+                     pour que ça marche il faut faire si on fait new MaClasse();
+                     MaClasse() //constructeur publique
+                     {
+                     	CDI<Object> cdi = CDI.current(); // pas reussi jusqu'au bout ce truc
+		                leservice = cdi.select(ClasseInjectee.class).get();
+                     }            
+        design pattern factory remplacé par @Produces dans CDI LINKfactoproduce Bon moyen de choisir le bean au runtime
+        class MonFactory // doit avoir un scope CDI sinon risque de probleme avec weld 
+            @Inject
+            ClasseA classeA; //ou bien LINKprodpara
+            @Inject
+            ClasseB classeB;
+              @Produces // de javax.enterprise.inject.Produces LINKfactoproduce 
+              @MonQualifierAMoi //un Qualifier que j'ai crée voir LINKqualifsdlfk
+              @UnPetitScope genre @Dependent pour que au cas ou on redeploie, weld arrive a rappeler cette methode                               
+              IApplicationConfiguration getApplicationConfiguration(){ ou LINKprodpara IApplicationConfiguration getApplicationConfiguration(ClasseA classea,ClasseB classb)// pas besoin de mettre @Inject ici dans un producer.
+                  if (machintruc)
+                  {
+                      return classeA;
+                  }
+                  else {
+                      return classeB;
+                  }
+          
+              }
                          
           faire des servlets sans web.xml: 
                 ajouter en tete de classe qui etend HttpServlet @WebServlet("/un/path") ou (urlPatterns={"/a","/b"}) ou (urlPatterns="/b") .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention pour index page d'accueil on ne peut pas mettre / donc utiliser web.xml et welcome-file qui pointent sur une servlet ou une page
@@ -2389,7 +2424,7 @@ try (SeContainer container = initializer.disableDiscovery().initialize()) { cont
 		@Pattern(expressionreguliere) // sur un champ d'un bean: pour valider que ce champ quand il est rempli match bien à la regexp.
     pattern observable: LINKobsgdgdgz
         @Inject
-        @Named("tutu") LINKkfkgggg //utiliser plutot @Qualifier.Ms ça c pour jsp.
+        @Named("tutu") LINKkfkgggg //Ms ça c pour jsp. utiliser plutot @Qualifier.
         Event<Payload> payloadEvent;
         public void doSomething() {
           payloadEvent.fire(new Payload()); //ceci va declancher ailleur ceci:LINKobsksf
@@ -2471,8 +2506,8 @@ securite : security :(JSR375) plus besoin d'utiliser web.xml: les annotations fo
         
 config de la base de donnée donnee: en jee
     en annotations:(a mettre sur une classe @Statefull en tout cas sur un EJB et pas sur CDI)
-      @DataSourceDefinitions( //facultatif mais...
-        value = {             //...du coup possible en enchainer plusieurs et je peux avoir plusieurs datasource
+      @DataSourceDefinitions( //facultatif mais... // de la merde parce qu'on ne peut pas externaliser les credentials
+        value = {             //...du coup possible en enchainer plusieurs et je peux avoir plusieurs datasource EN MEME TEMPS. c bien si je veux me connecter à 2 bases en meme temps mais c la merde si je veux faire un switch. Passer plutot par resources/META-INF/application.xml ou web.xml
                 @DataSourceDefinition(name = "java:app/MemOclapDataSource", // ce nom la est cree ici et sera utilise ailleurs LINKdtresr. commence par java:app (scope dans cette appli seulement) java:comp (??) java:module (??) java:global (disponible dans toutes les applications déploiees sur ce serveur) // permet de definir la source de donnée dans l'application au lieu de dans le serveur container.
                         className = "org.hsqldb.jdbc.JDBCDataSource", ou com.example.MyDataSource", ou org.apache.derby.jdbc.ClientDataSource // NE PAS mettre un driver ici mais bien un connectiondatapoolsource
                         url = "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;"
@@ -2482,15 +2517,15 @@ config de la base de donnée donnee: en jee
                         url = "jdbc:mysql://www.memoclap.com:3306/alo",
                         user = "root",
                         password = "foulurecalotte"
+                        portNumber=6689
                 )
         })    // facultatif pour @DataSourceDefinitions
         ou  (l'un ou l'autre mais ne pas melanger) // ci dessous si je ne veux déclarer qu'une seule datasource.
             @DataSourceDefinition(name="java:global/MyApp/MyDataSource2",
-                  url="jdbc:derby://localhost:1527/myDB",
-                  portNumber=6689,
-                  serverName="example.com",
-                  user="lance",
-                  password="secret"
+              className="org.apache.derby.jdbc.ClientDataSource", ou org.hsqldb.jdbc.JDBCDriver
+              url="jdbc:derby://localhost:1527/myDB",
+              user="lance",
+              password="secret"
            )
       @Stateless // a mettre sous les datasource: c'est un ejb stateless
       public class DatasourceDefinition
@@ -2513,7 +2548,7 @@ config de la base de donnée donnee: en jee
        
 backend 
 du code java pour aller afficher une page html sans rien faire de special
-  res.setContentType("text/html");
+  res.setContentType("text/html"); ou MediaType.APPLICATION_JSON
   res.setHeader("pragma", "no-cache"); LINKcachehttp
   ServletOutputStream out = res.getOutputStream();
   TemplateContext context = new ProxyBundle();
@@ -2803,7 +2838,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                                             String filename = req.getParameter("id");
                                             filename=PersistanceManagerFactorySingleton.getInstance().getImages_path()+filename+".png";
                                             FileOutputStream out = new FileOutputStream(new File(filename));
-                                            InputStream in = item.openStream();
+                                            InputStream in = item.openStream(); //toujours mettre ça dans un trywithresources
                                             out.write(IOUtils.toByteArray(in));
                                             out.close();
                                             //response.getOutputStream().print(filename);   // On renvoie le nom d'origine du fichier ainsi que son nom aleatoire. Le code continue a s'executer apres donc attention.
@@ -2813,7 +2848,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                                         }
                                         else
                                         {   //c'est un champ
-                                        	InputStream stream = item.openStream();
+                                        	InputStream stream = item.openStream();//toujours mettre ça dans un trywithresources
                         					String name = item.getFieldName();
                         					if (name.equals(fieldNameRequired)) {
                         						String value = Streams.asString(stream);
@@ -2834,8 +2869,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                       request.getParameterValues("nomDeMonSelect"); // recupere les parametres get ou post. Ne pas confondre avec request.getAttribute() request.setAttribute() c'est uniquement cote serveur: utilisable entre jsp et servlet aussi. Ne vient pas d'une requette request http. Peut etre un objet LINKrequgeurei
 
                   si je voulais renvoyer vers une jsp ou une page je ferais:request.getRequestDispatcher("(/WEB-INF?)/views/login.jsp").include(request, resp); ou si c'est vers un controlleur: voir plus haut LINKçç("'"'
-                        ATTENTION! doit être la dernière chose executee: pas de chain après ou d'autre redirection de request requette! java.lang.IllegalStateException: Impossible d'utiliser faire-suivre (forward) après que la reponse ait ete envoyee
-                response.setContentType("text/html"); (ou application/txt etc etc...)
+                    response.setContentType("text/html"); (ou application/txt etc etc...) // on peut rajouter des trucs apres un .include (je crois)
                 PrintWriter out = response.getWriter();
                 out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 " +
                                                     "Transitional//EN\">\n" +
@@ -2851,14 +2885,14 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
   redirige redirection web en java: (voir aussi LINKRedirectwebservice)
     HttpServletResponse servletResponse = (HttpServletResponse)response;
     servletResponse.sendRedirect("http://www.google.com"); Fait une redirection 302( pour faire une 301 faire response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);response.setHeader("Location", "http://somewhere/"); //pour un webservice voir //LINKredirwebservice998 
-    servletResponse.sendRedirect("/login");ou response.sendRedirect(request.getContextPath()+"/show.html"); // la requette request est renvoyee vers le client(url change sur browser navigateur) et redirige vers nouvelle url avec perte des params de la requette. !=.getRequestDispatcher("/urlduncontrolleur").forward(req, resp) ça reste côte serveur: ça ne va pas vers navigateur client: les params de requette sont conserves. voir LINKçç("'"'
-          ATTENTION! doit être la dernière chose executee: pas de chain après ou d'autre redirection de requette! sinon j'aurais java.lang.IllegalStateException: Impossible d'utiliser faire-suivre (forward) après que la reponse ait ete envoyee          
+    servletResponse.sendRedirect("/login");ou response.sendRedirect(request.getContextPath()+"/show.html"); // la requette request est renvoyee vers le client(url change sur browser navigateur) et redirige vers nouvelle url avec perte des params de la requette. !=.getRequestDispatcher("/urlduncontrolleurOuUneJSP.jsp").forward(req, resp) ça reste côte serveur: ça ne va pas vers navigateur client: les params de requette sont conserves. voir LINKçç("'"'
+          ATTENTION! forward et sendRedirect doivent être executées avant le commit de la response: pas de chain après ou d'autre redirection de requette! requette!  sinon j'aurais java.lang.IllegalStateException: Impossible d'utiliser faire-suivre (forward) après que la reponse ait ete envoyee
      fichier :
     pour renvoyer un fichier de la servlet (download): astuce, on peut aussi le zipper en java et envoyer le zip comme ca il n'y a pas de pb d'encodage
             String filename = URLDecoder.decode(request.getPathInfo().substring(1),"UTF-8");
             File file = new File(app.getProps().getProperty("SOUND_PATH").concat(filename));
             response.setHeader("Content-Type",getServletContext().getMimeType(filename));
-            response.setHeader("Content-Length",String.valueOf(file.length()));
+            response.setHeader("Content-Length",String.valueOf(file.length())); voir LINKcontentlengh
             response.setHeader("Content-Disposition","inline; filename=\""+file.getName()+"\"");
             Files.copy(file.toPath(),response.getOutputStream()); // pour copier ecrire le contenu d'un fichier dans un outputstream
         avant:
@@ -3083,8 +3117,7 @@ freemaker :
                         ou
                         
         
-  recuperer un cookies a partir du request:
-      methode plus rapide avec spring: WebUtils.getCookie(request, "nomdemoncookie");
+
   
   pour uploader un fichier audio du mobile vers le serveur: faire envoyer une requette requete POST http. voir LINKrequ939302 plus bas      
                      cote mobile: 
@@ -3382,6 +3415,8 @@ pour recuperer de manière sympa les parametres renvoyes par une page web:
                             }
                             return(defaultValue);
                           }
+
+      methode plus rapide avec spring: WebUtils.getCookie(request, "nomdemoncookie");
   pour definir ajouter add un cookie:
       response.addCookie(new Cookie("com.hraccess.portal.last_language", "fr_FR"));
   renvoyer les codes d'erreur ou de succes à la reponse:(200, 500 etc...) 
@@ -3396,12 +3431,10 @@ Super methode: recupere la session si il y en a une. Sinon, il en cree une nouve
          On peut tout recuperer avec l'objet session: le temps passe sur le site, le nombre de fois, la date d'acces au site....
          request.isRequestedSessionIdValid() // est equivalent à request.getSession(false); je crois. mais si je veux savoir si l'utilisateur a ete authentifie je devrais ajouter une variable dans la session. Ou bien utiliser le request.getUserPrincipal()? 
 ************************ 
+  recuperer les valeurs d'un select du request
+            request.getParameterValues("nomDeMonSelect"); // recupere les parametres get ou post. Ne pas confondre avec request.getAttribute() .setAttribute() c'est uniquement cote serveur: utilisable entre jsp et servlet aussi. Ne vient pas d'une requette request http. Peut etre un objet
+   		
     		
-  redirige redirection web en java: (voir aussi LINKRedirectwebservice)
-    HttpServletResponse servletResponse = (HttpServletResponse)response;
-    servletResponse.sendRedirect("http://www.google.com"); Fait une redirection 302( pour faire une 301 faire response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);response.setHeader("Location", "http://somewhere/"); //pour un webservice voir //LINKredirwebservice998 
-    servletResponse.sendRedirect("/login");ou response.sendRedirect(request.getContextPath()+"/show.html"); // la requette request est renvoyee vers le client(url change sur browser navigateur) et redirige vers nouvelle url avec perte des params de la requette. !=.getRequestDispatcher("/urlduncontrolleur").forward(req, resp) ça reste côte serveur: ça ne va pas vers navigateur client: les params de requette sont conserves. voir LINKçç("'"'
-          ATTENTION! doit être la dernière chose executee: pas de chain après ou d'autre redirection de requette! sinon j'aurais java.lang.IllegalStateException: Impossible d'utiliser faire-suivre (forward) après que la reponse ait ete envoyee          
   pour voir l'adresse ip du client adresse ip du reverse proxy:
       String ipadress = request.getHeader("X-FORWARDED-FOR"); // renvoit l'adresse ip de l'utilisateur client original
       if (ipadress==null)
@@ -5907,6 +5940,7 @@ spring security : spring-security : springsecurity :
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); // getAuthentication renvoit null pointer exception si personne connecte
         if (principal instanceof UserDeatails){String username=((UserDetails)principal).getUsername();} linkinstanceof
         else{String username = principal.toString();}
+        dans jsp:${pageContext.request.remoteUser}
      Tester les filtres de securite: tests : test : 
       @Autowired
       @Qualifier("nom")//facultatif // correspond je crois au name du bean
@@ -9475,7 +9509,8 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
                                 .setParameter("totocestmoi",projectId).setFirstResult(0) ou .getResultList(); //overrite lazy default behaviour at runtime
                       - List<MonEntite> cat = entityManager.createQuery("SELECT cat FROM category cat LEFT JOIN FETCH cat.art WHERE cat.id=:id",MonEntite.class).getResultList(); //overrite lazy default behaviour at runtime
                       - String query = "select distinct(alo_project.id), alo_project.nam......from alo_usr alo_usr left join alo_usrcrea alo_usrcrea on alo_usr.usr_id=alo_usrcrea.usrcrea_idusr where alo_usrcrea.usrcrea_idusr is not null and alo_usr.usr_id='"+uid+"' order by alo_project.name";
-                        return em.createNativeQuery(query,Project.class).getResultList();
+                        return em.createNativeQuery(query,Project.class).getResultList(); // pour les selects natifs
+                        em.createNativeQuery(sql).executeUpdate(); // pour les updates natifs
                 JPA_API_CRITERIA : Cest trop de la merde!!!!!!!!!
                         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
                         CriteriaQuery<MonEntite> query = cb.createQuery(MonEntite.class);
@@ -10431,7 +10466,8 @@ insertion:
 ajouter une colonne 
 ALTER TABLE VPA01_STUDENT ADD VPA01_PHOTO VARCHAR(20) CHARACTER SET latin1 COLLATE latin1_bin DEFAULT NULL AFTER VPA01_PRENOM;
 ALTER TABLE VPA01_STUDENT MODIFY VPA01_PHOTO VARCHAR(20);
-
+affacer supprimer une colonne:
+    ALTER TABLE userweb DROP COLUMN lostPasswordMailToken;
 pour supprimer suprimer les retours chariot du resultat:
     select ... REPLACE(ps_product_lang.description_short, '\n','') descr ....
 pour concatener plusieurs lignes en une seule: (equivalent de listagg sur oracle): group_concat
@@ -11694,6 +11730,13 @@ si le repository maven n'a pas l'air de se raffraichir recharger jar missing art
     supprimer dans le repository local le fichier correspondant lastUpdated reexecuter maven (click droit projet>Maven>update)
 si erreur Deployment failed: repository element was not specified in the POM inside distributionManagement
     c parce que je fais deploy et je n'ai pas defini de repository pour deployer sur repository
+    on peut le definir soit dans le settings.xml soit dans le pom comme ça:
+        distributionManagement>
+		<repository>
+			<id>pic-prod</id>
+			<url>https://pic.ca-sa.group.gca/mvnrepo/content/repositories/edcmp5_b3</url>
+		</repository>
+	</distributionManagement> 
 si erreur Erreur: impossible de trouver ou charger la classe principale org.codehaus.classworlds.Launcher
    renommer la variable d'environnement M2_HOME en M3_HOME... NON! en fait pointer vers ../apache marche pas. il faut pointer vers .../apache/bin et l'appeler comme ci-dessous 
 pour savoir ou est mon settings.xml 
@@ -12004,7 +12047,7 @@ utilisation du plugin assembly pour créer un zip:
                         <goals>
                             <goal>single</goal>
                         </goals>
-                          <configuration> // si ca ne marche pas et qu'il ne trouve pas l'assembly.xml alors mettre le bloc <configuration> en dehors deu bloc Executions au meme niveau.
+                          <configuration> // si ca ne marche pas et qu'il ne trouve pas l'assembly.xml avec l'erreur Error reading assemblies: No assembly descriptors found. alors mettre le bloc <configuration> en dehors deu bloc Executions au meme niveau.
                             <descriptors>
                             	<filters> //facultatif 
 								    <filter>${project.basedir}/src/main/resources/dev/env_${env}.properties</filter> //facultatif sais pas exactement ce que ça fait encore
@@ -12242,7 +12285,7 @@ Les phases: se jouent de manière sequencielle du haut vers le bas:
             verify - run any checks to verify the package is valid and meets quality criteria
             install - install the package into the local repository, for use as a dependency in other projects locally
             deploy - done in an integration or release environment, copies the final package to the remote repository for sharing with other developers and projects.
-            si je fais mvn deploy tout est execute. Si je fais mvn clean deploy il fait d'abord un clean avant de tout executer 	
+            sequence d'execution: si je fais mvn deploy tout est execute. Si je fais mvn install il execute compile, package et install. Si je fais mvn clean deploy il fait d'abord un clean avant de tout executer 	
 Les goals:(appartiennent à phases) si on veut executer mvn un_goal alors ecrire mvn maven-nomplugin-plugin:goal mais enlever maven- et -plugin
     un goal appartient à 0 à n phases. et une phase peut avoir 0 à n goals. Une phase sans goal n'est pas executee
     Moreover, if a goal is bound to one or more build phases, that goal will be called in all those phases.
@@ -12259,7 +12302,7 @@ Les goals:(appartiennent à phases) si on veut executer mvn un_goal alors ecrire
       %M3%/mvn install:install-file -Dfile=E:/__hr-crypto-utils-1.0.jar -DgroupId=com.hraccess.services -DartifactId=crypto-utils -Dversion=1.0 -Dpackaging=jar
       
   pour nettoyer, compiler puis packager: 
-      %M3%/mvn clean package -Denv=test (il va executer toutes les etapes precedantes dans l'ordre)
+      %M3%/mvn clean package -Denv=test (il va executer toutes les etapes precedantes dans l'ordre mais le clean il faut explicitement le dire)
       %M3%/mvn clean package -Denv=prod
       %M3%/mvn clean package -Denv=dev 
       %M3%/mvn clean package jboss:hard-deploy -Denv=dev
@@ -13976,7 +14019,7 @@ Curl : voir aussi wget : pour faire une requette request http doc:https://ec.hax
 	curl -v -X GET http://localhost:8080/web/api/v2/apps/mycampuscode/realtimepath/navitia/paths?physicalModes=bus\&coverage=fr-idf\&from=2.33245\;48.77469\&to=2.33245\;48.77469\&datetime=20190720T1004\&datetimeRepresents=arrival --header "X-AUTH-TOKEN:eyJpZCI6bnVsbCwidXVpZCI6InVpZCIsImFub255bW91c1VzZXIiOnRydWUsInVzZXJMb2dpbiI6IkFub255bW91c1VzZXIiLCJ1c2VyRW1haWwiOm51bGwsImV4cGlyZXMiOjE1NjQwMzk0MDY1OTAsImFwcENvZGUiOiJteWNhbXB1c2NvZGUiLCJhcHBBY2Nlc3NLZXkiOm51bGwsInZlbG9Vc2VyIjpmYWxzZSwibXdhVXNlciI6ZmFsc2UsInJvbGVzIjpbIlJPTEVfQVBQIl19.KVUcP3cOD3aLJzNJeua+BZR3MNQBdUktyRUag7V5/dg="
      -L pour que si le serveur renvoit une redirection il la suivre direct
      -c pour ecrire les cookies -d ou b ? pour les stocker... ATERMINER
-     -w "totocequejeveux %{unevariablequim'estrenvoyéeparleserveur (voir la doc pour la liste des variables)}" > jepeuxecrireleresultatdansunfichier.txt        
+     -w "totocequejeveux %{unevariablequi m'estrenvoyéeparleserveur (voir la doc pour la liste des variables)}" > jepeuxecrireleresultatdansunfichier.txt mettre -w "" >unlog.log ecrit le payload body contenu de la reponse        
 certificats : certificat : formats: types
                               Échange d’informations personnelles (PKCS #12)  (.pfx ou .p12) contient la clé publique(pour encrypter vers...) de la machine que je veux joindre et ma clé privée facultatif(pour décrypter ce que je reçois) c'est un certificat
                                     Le format d’échange d’informations personnelles (PFX, également appelé P12) prend en charge le stockage sécurisé des certificats, des clés privées et de tous les certificats d’un chemin d’accès de certification.
@@ -13989,7 +14032,7 @@ certificats : certificat : formats: types
   un.cer .crt peut etre soit | PEM (.pem) format texte. version Base64 de DER Chiffré en Base64 X.509 (commence par ----BEGIN fini par END---) pour en crée une avec mobaxterm faire Conversion>ExportSSH key
   importable dans browser    |       Le format Base64 ASCII prend en charge le stockage d’un seul certificat. Peut etre un csr.
                              |_      Possible y stocker la chaine de certifs et possible la cle privee.
-                             KEY (.key) est un PEM ne contenant que la cle privee
+                             KEY (.key) est un PEM ne contenant que la cle privee. il est aussi au format texte Base64 ASCII
                              PKCS #10 csr peut etre transcodé en .pem                                        
                           voir LINKhttpslkjsdgfml
           ATTENTION ne pas tester avec IE car si certif non authentifie on dirait que ça ne marche pas sur IE
@@ -14025,8 +14068,14 @@ http://www.robinhowlett.com/blog/2016/01/05/everything-you-ever-wanted-to-know-a
         verification date expiration certificat .p12(un .p12 peut contenir ou pas une cle privée dedans) ou .pem:
                 openssl pkcs12 -in renault.p12 -nokeys | openssl x509 -noout -enddate
                 openssl x509 -enddate -noout -in Certigna.pem
+        extraire le .crt qui est dans un .p12
+                openssl pkcs12 -in filename.p12 -clcerts -nokeys -out filename.crt
+        extraire le .key (cle privée) qui est dans un .p12 (le .key est de type )
+                openssl pkcs12 -in filename.p12 -out keys_out.key // il nous oblige à definir un mot de passe pour pouvoir utiliser ce .key.
+                ensuite si besoin je peux supprimer le mot de passe de cette clé privée (c'est pas sécure mais utile pour les automatisations) 
+                openssl rsa -in keys_out.key -out keys_outSansPassword.key                
 pour utiliser les fichiers ppk:
-      ppk est un format windows puttygen de paire de cle. pour convertir un ppk en fichier openssl:
+      ppk est un format windows puttygen de paire de cle. pour convertir un .ppk en fichier openssl .pem:
           apt-get install putty-tools // installer sur linux putty pour l'utiliser pour convertir ppk->openssl
           puttygen mapaireDecleaconvertir.ppk -O private-openssh -o nomdemaPairDecleensortie
           on peut le faire avec la fenetre windows puttygen: export openssl ca exporte la cle prive au format openssh (à mettre dans id_rsa) "voir" afficher la cle privee                
@@ -16004,6 +16053,7 @@ hacking : haking : hack :
                       - Effectuer une vérification du référent referer dans les pages sensibles: connaître la provenance du client permet de sécuriser ce genre d'attaques. Ceci consiste à bloquer la requête du client si la valeur de son référent est différente de la page d'où il doit théoriquement provenir.
                       - captcha mais tres tres bof ici car lourd pour l'utilisateur: faire un captcha pour chaque formulaire beurk
         Session hijacking: si pas en https: hacker peut sniffer sur le reseau mon jsessionid ou autre. Pour eviter faire LINKlizifoizf                      
+        hsts : header response strict-transport-security pour que le browser n'accepte de naviger que en https                      
     metasploitable:
         /usr/share/metasploit-framework
         chemin prog pour pirater:     /modules/exploits/...
@@ -16927,7 +16977,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
       </dependency>
       @ExtendWith(MockitoExtension.class)  // si junit5 seulement
         public class UploadToServerServiceTest {
-    		@InjectMocks // facultatif Mock peut marcher sans.
+    		@InjectMocks // facultatif Mock peut marcher sans. Classe qui est testee dans laquelle on injectera les mocks
     		private RealTimePathCoverageController realTimePathCoverageController = new RealTimePathCoverageController(); // equivalent de @Tested dans jmockit : c'est une classe a tester dans laquelle je peux injecter des mocs LINKpourquecamarcheFairemokito
     		@Mock ou @Spy     //Mock par defaut n'execute rien et on peut changer son comportement. Spy par defaut execute tout et on peut ecouter
             private RestTemplate restTemplate; // (peut etre une classe ou une interface) mock qui sera injectée dans RealTimePathCoverageController.
@@ -16945,7 +16995,19 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
     				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça . si je met des variables direct alors j'ai l'erreur InvalidUseOfMatchersException
                                                         ,anyList() // ne pas utiliser anyObject si j'ai une liste
     													,ArgumentMatchers.any(UneClasse.class) avant: Matchers.any(UneClasse.class) avant: anyObject(UneClasse.class)
-    													).thenReturn(untruclapremierefois,unautretruclasecondefois...);
+    													).thenReturn(untruclapremierefois,unautretruclasecondefois...).getMock();
+                                                        ou
+                                                        .thenAnswer(
+                                                                    new Answer<String>() // pour controler les retours conditionnellement LINKmktoanswrweld
+                                                                    {
+                                                                        @Override
+                                                                        public String answer(InvocationOnMock invocationOnMock) throws Throwable
+                                                                        {
+                                                                            if (invocationOnMock.getArgument(0).toString().equals("SOUND_PATH")) return classPath;
+                                                                            else if (invocationOnMock.getArgument(0).toString().equals("ENV")) return "dev";
+                                                                            else return "UTF-8";
+                                                                        }
+                                                                    }
                     pour indiquer de retourner une exception à un spy ou stub
                             Mockito.doThrow(new HibernateException("err")).when(userWebDAO).create(Matchers.any(UserWebEntity.class)); 
     				WelcomeController wc = new WelcomeController(rd);
@@ -17959,7 +18021,7 @@ java6 :
 http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase6-419409.html 
 java7 :
 http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase7-521261.html  
-JAVA :
+JAVA : https://adoptopenjdk.net/
         proprietes systèmes definies par -D:
               javax.net.ssl.trustStore
               javax.net.ssl.keyStore
@@ -18137,7 +18199,7 @@ slf4j : (vieux voir LinkLogutils)Bonne methode copier L'interface  jdk.internal.
                       }
                       voir explications:http://commons.apache.org/proper/commons-logging/troubleshooting.html#The%20Incompatible%20LogFactory%20Issue
     dans la classe pour logguer: 
-    			LOG.info("Login: {} ", request.getLoginId());                       
+    			log.info("Login: {} lqskjd {}", request.getLoginId(), machin);                       
 logback : (mieux que LinkLogutils)
   <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
   <dependency>
@@ -18186,7 +18248,7 @@ logback : (mieux que LinkLogutils)
       public class UpdatePasswordFilter implements Filter {
             static final Logger log = LoggerFactory.getLogger(UpdatePasswordFilter.class);
             MDC.put("first", "Richard");pour tracer le userid LINKslf4jMcd
-            log.info("I am not a crook.");
+            log.info("Login: {} lqskjd {}", request.getLoginId(), machin);
 log4j : (vieux voir LinkLogutils)
 si j'ai l'erreur:
         Attempted to append to closed appender named
@@ -21069,7 +21131,7 @@ mapping :mapper :mappage :d'une classe A en une classe B (si c'est pour les DTO 
  methodeb:       
 pour recuperer les proprietes (methodes d'acces getset) d'une classe dans un tableau (utilie pour faire un binder)
         PropertyDescriptor origDescriptors[] = PropertyUtils.getPropertyDescriptors(theSource);
-pour copier les proprietes d'un bean formulaire vers un autre bean de type info par exemple faire: en un autre bean  
+pour copier les proprietes d'un bean formulaire vers un autre bean de type info par exemple faire: convertir mapper maper un objet java transformer en un autre bean  
 						org.apache.commons.beanutils.BeanUtils.copyProperties(Object dest, Object orig) // ModelMapper c'est de la merde faut pas l'utiliser. le plus performant c'est mapstruct (il genere les classes de mapping au compile time par maven.)
                      avec ModelMapper: // de la merde oublie!!!! parce que je voulais transormer un string en Method: ca c pas évidant à faire.
                              ModelMapper modelMapper = new ModelMapper();
@@ -21249,6 +21311,7 @@ expressions regulieres :regexp :LINKçeeçeeçregexpçeeçeeç
 pour faire une expression reguliere: regexp: 
 		String str=blabla;
 		if (str.matches("[^|]*[|][^|]*[|][^|]*[|][^|]*[|]")) etc etc... ici on cherche une chaine qui ressebmble à lqjsdf|lksdfj|sjklhf|kljsdf|
+        pour remplacer dans les groupes qsdf(regexp1)qsdfl(regexp2)kljs on fait $1, $2...
 		il y a aussi une api qui s'appelle Perl5Compiler (org.apache.oro.text.regex.Perl5Compiler;)... c'est peut etre bien?
 		regexp majuscules avec accents: utiliser \\p{javaUpperCase}
       exemple: 
@@ -21423,7 +21486,26 @@ pour convertir un string en boolean:
 inputstream et ouputstream :
       input LIT dans un truc: on l'ecoute. output ECRIT dans un truc. on ecrit dedans.
 Convertir un outputstream en inputstream : 
-    ByteArrayInputStream toto  = new ByteArrayInputStream(byteOutputStream.toByteArray());      
+    ByteArrayInputStream toto  = new ByteArrayInputStream(byteOutputStream.toByteArray());
+convertir un inputstream en outputstream: inputstream vers outputstream
+	public static long stream(InputStream input, OutputStream output, int maxSizeToReach) throws IOException {
+		try (
+				ReadableByteChannel inputChannel = Channels.newChannel(input);
+				WritableByteChannel outputChannel = Channels.newChannel(output);
+		) {
+			ByteBuffer buffer = ByteBuffer.allocateDirect(10240);
+			long size = 0;
+
+			while (inputChannel.read(buffer) != -1) {
+				buffer.flip();
+				size += outputChannel.write(buffer);
+				buffer.clear();
+				log.debug("bytes written in response: {}/{}", size,maxSizeToReach);
+			}
+			return size;
+		}
+	}
+
 convertir un Number en int: 
 		Number.intValue()
 convertir un double en int integer et convertir un double en long: 
@@ -22790,7 +22872,7 @@ import javax.mail.internet.MimeUtility;
 	    // Creation d'un message
 	    Properties props = new Properties(); 
 			props.put(".... voir la suite ici LINKproemailghs
-			
+			props.put("mail.debug", "true"); // si besoin quand ca marche pas
 			Session session = Session.getDefaultInstance(props, null);
 			session.setDebug(true); // pour comprendre pourquoi ca ne marche pas sinon mettre:
 			session.setDebug(false);
@@ -22862,6 +22944,7 @@ import javax.mail.internet.MimeUtility;
 	    Transport.send (messageAdm);
 	    cat.info("Message envoye a administrateur "+AdressMailAdmin);
 pour envoyer un mail simple avec javax.mail et qu'on a eu un message d'erreur de non authentification ou probleme startttssslchaispas quoi:
+					Properties props = new Properties();
 					props.put("mail.smtp.starttls.enable", "true"); //LINKproemailghs
           			props.put ("mail.smtp.auth","true");
           			props.put("mail.smtp.host", mailSmtp); // ou wsmtp.renault.fr ou smtp.googlemail.com
@@ -24803,7 +24886,7 @@ pour seter setter les variable d'environnement sur unix linux
       si on edite une variable existante: 
         MA_VAR=titi
       mais ca ca ne marche que pour la session du moment. Pour que ca persiste il faut editer sous 
-      $HOME/.profile ou ~/.bash_profile ou /etc/profile   mettre aussi si besion export PATH=.:unpath:$PATH (Je peux le creer si il n'existe pas LINKç'(ç')
+      $HOME/.profile ou ~/.profile ou ~/.bash_profile ou /etc/profile   mettre aussi si besion export PATH=.:unpath:$PATH (Je peux le creer si il n'existe pas LINKç'(ç')
       et recharger avec source pathdufichierquonvientdemodifier 
       exemple pour charger:LINKç'(ç')
               if [ -f ~/.bash_aliases ]; then
@@ -24814,7 +24897,7 @@ les alias sous unix: exemple: alias ll = 'ls -l' ou bien alias ll="ls -l"
     pour voir la liste des alias, tapper alias (permet de voir les raccourcis de commandes)
     pour voir le detail d'un alias: alias nomalias
     pour faire des alias persistants: 
-      vi ~/.bash_alias (ce dernier est charge par ~/.bashrc qui contient) LINKç'(ç')
+      vi ~/.bash_alias (ce dernier est charge par ~/.bashrc qui contient) voir aussi LINKç'(ç')
           alias gototemplate='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/' // pour echapper les espaces: alias gotoapprentissage="cd \"/c/Users/Mes documents/apprendre\""
           alias gotocss='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/css'
           alias gotomodule='cd /var/www/www.wenhuaduverge.com/shop/module'
@@ -24987,7 +25070,7 @@ pour recharger le .profile faire: cd ou cd . puis . .profile (faire ls -tral pou
 pour recharger un environnement faire cd . (la il y a des fichiers environnement(faire ls -tral pour voir tout) dont le nom est par ex: .env_machin) puis . .env_machin ou . ./.env_machin
 pour verifier que "truc" est bien dans l'environnement faire: env | grep truc
 les comptes utilisateurs sont sur etc/password (si un jour un gars qu'on ne connait pas fait des trucs)
-SUPER methode pour trouver les plus gros fichiers: 
+SUPER methode pour trouver les plus gros fichiers: il y a aussi apparemment sur unix baobab l'equivalent de windirstat.  
 du -sk -h * | grep '[0-9\.]\+[M;G]'
 du -sh * c'est mieux c'est plus clair ou du -sh . pour voir la taille du repertoire courant
 du -s -k -h *: permet de voir la taille espace du repertoire courant: en kilo. (-h pour voir si c M ou G ...)
@@ -25147,6 +25230,10 @@ ssh : se logger sur une machine a distance
                           IdentityFile ~/.ssh/wenhua_rsa  //chemin vers un autre fichier contenant la cle privee de l'autre domaine.
                           User root           
                         recharger le ssh après avoir cree/ecrit dans fichier .ssh/config voir LINKsshreload
+            changer mot de passe de la cle privee
+                     ssh-keygen -p
+            reecrire la cle publique à partir de la cle privee: (si j'ai perdu ma cle publique)
+                 ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/idgit_rsa.pub                        
       pour ne plus avoir a ressaisir mon mdp quand je fais du scp rsync ssh j'ai besoin de me connecter par key:
                     Copier cle publique dans id_rsa.pub sur autre serveur dans sous homeUtilisateurAvecQuiJeVeuxMeConnecterDansServerB/.ssh/authorized_keys et authorized_keys2 (pour être sur je mets dans les deux... chais pas si c bon.)VERIFIER que la ligne a zero retour chario et espace LINKmljsdf
                           authorized_keys et 2 contient les cles publiques des autres serveurs qui peuvent se connecter ici grace à leur clé privee dans id_rsa.priv et/ou id_rsa //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
@@ -25156,8 +25243,6 @@ ssh : se logger sur une machine a distance
                 -rw------- 1 utisateurInteresse utisateurInteresse  820 nov.  25  2014 authorized_keys
                 -rw------- 1 utisateurInteresse utisateurInteresse  883 nov.  28  2014 id_rsa 
                  mais si je veux automatiser le transfert de clé publique dans le serveur sur lequel je veux me connecter: voir voir LINK9939572
-      changer mot de passe de la cle privee
-         ssh-keygen -p
       pour qu'il retienne toujours mon mot de passe:(bof. MobaXterm retient) 
                 editer dans mon home ~/ le fichier .bash_profile et rajouter
                       ## only ask for my SSH key passphrase once!
@@ -25240,6 +25325,7 @@ scp :commande
     -r pour recursif si c un repertoire.
     -vvv pour verbose (mode debug)
     pull: PUTAIN j'arrivaispas à faire marcher avec cle: toujours permission denied (publickey) meme apres avoir declare ma cle publique sur le serveur> il falait utiliser une cle privee de type .pem pour que ca marche et non pas .ppk (sur windows en tout cas)
+        si j'ai le message Permission denied c'est parce que je n'ai pas les droits d'ecriture dans le repertoire de destination: faire un chmod
       scp -i cheminVersMaClePriveeFacultatifDeType.pem user@machine:cequejeveuxcopierDeLaMachineDistante repertoireoujeveuxlecopiersurMAmachine ATTENTION espace interdits apres le:
     push:
       scp -i cheminVersMaClePriveeFacultatifDeType.pem cequejeveuxcopierdeMAmachine user@machine:oujeveuxLecopiersurlaamachinedistante
@@ -25914,7 +26000,7 @@ pour installer des programmes: applications: (le repository miroir local qui lui
       Ctrl+t ou F10 pour acceder au menu et utiliser aptitude. refaire Ctrl+t pour fermer le menu
       les touches 'haut', 'bas', 'gauche', 'droite' pour naviguer.
       la touche 'entree' pour deplier/replier
-      Ctrl+u undo annuler
+      Ctrl+u undo annuler : je peux annuler plusieurs fois jusqu'au debut de mes modifs si j'ai pas fait gg 
       e si apptitude affiche un conflit appyer sur e pour voir plus de details et une solution proposee
       . pour voir la solution suivante proposee
       r pour rejetter/ne plus rejetter une solution
@@ -27170,7 +27256,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                               xhr.setRequestHeader("X-File-Size", file.fileSize);
                               xhr.setRequestHeader("X-File-Type", file.type);*/
              	    		  
-                      xhr.open('POST', "AudioLoopOnlinePushAnsDRW.php ou url", true); ou xhr.open('POST', form.action, true); // alors remplir le payload LINK564894 sauf si x-www-form-urlencoded
+                      xhr.open('POST', "AudioLoopOnlinePushAnsDRW.php ou url", true); ou xhr.open('POST', form.action, true); // alors remplir le payload LINK564894 sauf si x-www-form-urlencoded// true  veut dire en mode asynchrone. false en mode synchrone mais attention ne pas mettre false dans le mainthread sinon j'ai l'erreur memoclap.js?version=2.20.28:6693 [Deprecation] Synchronous XMLHttpRequest on the main thread is deprecated because of its detrimental effects to the end user's experience. For more help, check https://xhr.spec.whatwg.org/.
                       ou
                       xhr.open("POST", "/musclesWeb/strongPassword?action="+JSON.stringify(jsontable), true); //alors mettre au dessus: xhr.setRequestHeader("Content-Type", "application/json"); recuperable dans servlet java: httpServletRequest.getParameter("action"); voir convert conversion champs formulaire en json LINKç'ç'ç"_() 
                       ou
@@ -27191,6 +27277,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                     xhr.onload = function(e) { // retour du serveur: "e" c'est progressEvent et "this" c'est la reponse du serveur
                             printStacktrace(req.name);
                             askValidator.class_AskValidator.record.call(this);
+                                this.getResponseHeader("Content-type") // on peut recuperer ca et autre...
                               if (this.status == 200) {
                               try
                                 {
@@ -27333,7 +27420,7 @@ jouer un fichier audio sans objet audio
               };
             
             }
-tester avec jest :
+tester avec jest : le meilleur d'apres sylvain
     npm install --save-dev jest
     les fichiers de tests doivent s'appeler xxxx.test.js            
 tester le javascript avec Jasmine : et testem : (sinon utiliser https://jsfiddle.net/)
@@ -27381,7 +27468,7 @@ ES6 :modules: une page peut importer une page qui importe aussi: le browser gèr
         dans path/xxx.js:  
             export var toto =.... 
             export function() blabla(arg){...}
-  avant dans un .js charger en ajax un autre .js et faire eval sur le retour pour executer.
+  avant dans un .js charger en ajax un autre .js et faire eval sur le retour pour executer. executer un javascript dans un tag script renvoyé par le serveur. ATTENTION impossible de eval de nouvelles fonctions elles ne seront pas visibles par le browser pour execution depuis la page principale
   avant: dans un .html creer un src et l'ajouter au document          
   avant: methode ancienne: <link rel="import" href="laurent-moncompoentn1.html">              
               
@@ -29943,6 +30030,7 @@ PWA : progressive webapps :
                 event.waitUntil(doSomeStuff());
               }
             });            
+vuejs :  https://vuejs.org/v2/guide/
 Typescript :
     tsc fichier.ts // commpile en .js
       Voici une documentation à jour sur l’utilisation de TypeScript au sein d’un projet 4YOU: 
@@ -29987,7 +30075,7 @@ fancybox: // pour faire des caroussels
         	</script>
         <a class="single_image" href="https://www.wenhuaduverge.com/modules/amazzingblog/views/img/uploads/posts/11/2-59aae3efb1c90.jpg"><img src="https://www.wenhuaduverge.com/modules/amazzingblog/views/img/uploads/posts/10/1-59a50232f1ff2.jpg" alt=""/></a>              
               
-AngularJS1 : Angular1 :
+angular :AngularJS1 : Angular1 :
            'use strict'; // pour interdir les variables globales par le navigateur
           // appli demoApp
           var demoApp = angular.module('nomDeMonApp', // notre app est aussi un module                                                                     <!DOCTYPE html><html lang="fr" ng-app="nomDeMonApp">
@@ -31314,7 +31402,7 @@ attention si nouveau compte première fois logguer bien d'abord supprimer tous l
           String requestStr = ''
           +'<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://siebel.com/CustomUI" xmlns:cus1="http://custdata.crm.bservice.renault">'
           +'</soapenv:Envelope>';
-              req.setHeader('Content-Length', String.valueOf(requestStr.length())); // c la taille du nombre de caracteres ca permet au client de savoir que tout le contenu a été bien recu sinon il continue a ecouter LINKcontentlengh
+              req.setHeader('Content-Length', String.valueOf(requestStr.length())); // c la taille du nombre de caracteres ca permet au client de savoir que tout le contenu a été bien recu sinon il continue a ecouter. coupe la taille du response si elle est trop longue par rapport à ce qu'on a mis ici LINKcontentlengh
               req.setBody(requestStr);
               Http http = new Http();
               try {
