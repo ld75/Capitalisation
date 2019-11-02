@@ -2324,8 +2324,8 @@ Cycle de vie du CDI bean:
               – @CustomScoped pour que les beans soient stockees dans le FacesContext (qui a une duree de vie plus courte que RequestScope donc FC est plus rapide, bouffe moins de memoire)
               – @NoneScoped (si c un bean qui est reference par un autre bean qui lui est scoped)
               >> attention un bean ne peut pas referencer un autre bean si son scope est plus petit que le sien (sauf les @NoneScoped que tous peuvent referencer). Moi grand je ne peux pas referencer un petit. Seulement un plus grand que moi.
-                  @PostConstruct-->methode s'execute quand le bean est place dans son scope utile pour initialiser marche sur EJB (du coup sur @Singlton) mais ne marche pas sur CDI(sur?) du coup ApplicationScoped ne s'initialise pas avant d'être injectés. Du coup faire LINKobsgdgdgz
-                  public void debut() { ... }//ne doit pas thrower une exception
+                  @PostConstruct-->methode s'execute quand le bean est place dans son scope utile pour initialiser marche sur EJB (du coup sur @Singlton) et CDI mais attention avec ApplicationScoped chais pas pourquoi peut ne pas s'initialiser avant d'être injectés. Du coup faire LINKobsgdgdgz
+                  public void debut() { ... }//ne doit pas thrower une exception donc y mettre un trycatch
                   @PreDestroy--->methode s'execute quand le bean est retire du scope ou le scope est detruit.
                   public void fin() { ... }
                  @TransactionAttribute pouf gerer les transactions (marche aussi sur ejb de type  @Stateful, @Stateless and @Singleton @ManagedBean, @WebServlet, @WebListener, @WebFilter)           
@@ -2557,9 +2557,9 @@ ejbs : ejb : beans EJB
   ------------------
   type            annotation
   // session bean est le seul ejb qu'on peut appeller remotely
-  SessionBean     @Stateless // n'a pas de donnees de l'interaction avec client c a d: seul un client accède à ce bean pour une seule tache, il n'est pas persistent, le bean est un webservice. On peut avoir plusieurs clients qui accedent a ce bean mais c'est pour chacun une relation 1client-1bean (pooled)                                        
-appelable par     @Statefull  // contient des donnees de l'interaction avec le client c a d: thread-safe: il cree autant d'instance indep que de client (c'est comme une session)
-un client               //stateless et statefull ne supportent pas d'acces concurents sur un meme bean.
+  SessionBean     @Stateless // a chaque appel de methode de l'ejb, le proxy va selectionner n'importe quel vrai bean derriere. un new ou un deja utilisé. C'est vraiment n'importe quel bean derriere.                                        
+appelable par     @Statefull  // a chaque appel de methode de l'ejb par une classe, le proxy choisit un et un seul bean pour cette classe. proxy=cebeanderriere. Ils sont marriés et fideles. Thread safe car il cree autant d'instance indep que de client (c'est comme une session). @Remove sert à detruire ce bean ejb sinon ne se detruira jamais tout seul.
+un client               //stateless et statefull sont threadsafe car à chaque appel, un seul thread a accès au bean
 en local          @Singleton // uniquement EJB 3.1: un seul ejb bean pour tout le monde.(tout les clients): cree par le container au demarrage sauf si lazy-loading
 ou remote                       peute etre sur classe meme un webservice. Peut aller de paire avec @Startup. LINKsngletn
                   @Local ---> l'accès à ces beans ne peut se faire que par d'autres beans du meme EJB (même contexte, même classLoader)
@@ -2606,9 +2606,9 @@ ou remote                       peute etre sur classe meme un webservice. Peut a
 //1 appel de mon bean d'ejb (qui est en fait un proxy cree par le container) par injection de dependance 
  public class Main
  {
-  @EJB ou @Ressources (c'est pareil)// injection de dep: le container trouve tout seul grace au nom de ma classe mon bean EJB en cherchant tout seul dans le jndi. // il faut avoir qu'une seul sous classe de cette interface pour que ca marche
-                      // facultatif (name="monlookupnomdebean")
-  static MonInterfaceDeBeanDEJB ejbbean;
+  @Inject ou @EJB ou @Ressources (c'est pareil)// le container trouve tout seul grace au nom de ma classe mon bean EJB en cherchant tout seul dans le jndi. // il faut avoir qu'une seul sous classe de cette interface pour que ca marche
+                      // facultatif (name="monlookupnomdebean" ou/et beanName="nomDeLaClasseSiC'estUneImplementationDinterfaceEtQuilYEnADautres")
+  static MonInterfaceDeBeanDEJB ejbbean; ATTENTION ca DOIT etre une interface si il y en a une. Si yen a pas ca marche avec la classe direct. Si je fais pas ça il n'arrive pas a injecter avec erreur WELD-001408
   public static void main(String[] args)
   {
      String toto = ejbbean.calcule(4,2);
@@ -2627,28 +2627,7 @@ ou remote                       peute etre sur classe meme un webservice. Peut a
     String toto = ejbbean.calcule(4,2);
   }
  } 
-//2 appel de mon bean d'ejb (qui est en fait un proxy cree par le container) remotely avec JNDI 
- public class Main
- {
-  static MonInterfaceDeBeanDEJB ejbbean;
-  public static void main(String[] args)
-  {
-    Context c = new InitialContext();
-    ejbbean = (MonInterfaceDeBeanDEJB) c.lookup("com.path.jndi.MonInterfaceDeBeanDEJB");
-    String toto = ejbbean.calcule(4,2);
-  }
- }
- 
-utilisation:
-CustomerHome home =// Get a reference to the CustomerHome object 
-Customer customer = home.create(new Integer(33));
-Name name = new Name("Richard","Wayne", "Monson-Haefel");
-customer.setName(name);
-Enumeration enumOfCustomers =home.findByZip(55410);
-Customer customer2 =home.findByPrimaryKey(new Integer(33));
-Name name2 = customer2.getName();
-System.out.println(name);// output is "Richard Wayne Monson-Haefel"
-
+ENLEVE EXPRES
 mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de csrf) 
     krazo (projet eclipse). Pour les utliser sur differents serveurs voir https://www.mvc-spec.org/krazo/docs/install-javaee.html 
                             <dependency>
@@ -9460,7 +9439,7 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
     Clic droit sur mon projet > JAP > faire le reverseEngeniring
     fichier resources/META-INF/persistence.xml marche bien. sinon ou mais pas sur dutout: WEB-INF/persistence.xml. Ce fichier DOIT etre dans le jar ou le war qui contient les @Entity
     <persistence> 
-        <persistence-unit name="com.memoclap" transaction-type="RESOURCE_LOCAL(pour des testsunitaires) ou JTA(pour tapper dans LINKjta)"> // du coup applicativement je l'appelle comme ça : LINKentitym
+        <persistence-unit name="voirLINKdkdkfjfj" transaction-type="RESOURCE_LOCAL(pour des testsunitaires) ou JTA(pour tapper dans LINKjta)"> // du coup applicativement je l'appelle comme ça : LINKentitym
             <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> // facultatif provider peut etre eclipselink ou hibernate. si on met rien.. sais pas. depend jars ?
             <description>EclipseLink EntityManager</description>                 // facultatif
             <exclude-unlisted-classes>false</exclude-unlisted-classes>
@@ -9468,10 +9447,17 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
              ou
             <properties> // parametres envoyés au persistenceprovider. On peut définir la base de donnée ici mais je prefere LINKjta  
                 <property name="eclipselink.logging.level" value="FINE"/>
-                <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
-                <property name="javax.persistence.jdbc.url" value="jdbc:mysql://127.0.0.1:3306/moviecatalog"/>
-                <property name="javax.persistence.jdbc.user" value="root"/>
-                <property name="javax.persistence.jdbc.password" value="root"/>
+                <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbc.JDBCDataSource"/><!-- com.mysql.jdbc.Driver -->
+            <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;"/> <!-- jdbc:mysql://127.0.0.1:3306/moviecatalog -->
+            <!-- <property name="javax.persistence.jdbc.user" value="root"/> -->
+            <!-- <property name="javax.persistence.jdbc.password" value="root"/>-->
+            <property name="javax.persistence.schema-generation.database.action" value="create"/><!-- none, create, drop-and-create, drop -->
+            <property name="javax.persistence.schema-generation.create-source" value="metadata"/><!-- metadata, script, metadata-then-script, script-then-metadata -->
+            <!-- <property name="javax.persistence.schema-generation.create-script-source" value="META-INF/memoclapCreate_hsqldb.sql"/> execute ce script pour la creation du shema a mettre si au dessus j'ai mis script -->
+            <!-- <property name="javax.persistence.sql-load-script-source" value="META-INF/memoclapInsert_hsqldb.sql"/> execute ce script pour les insertions-->
+            <!-- <property name="javax.persistence.schema-generation.scripts.action" value="none, create, drop-and-create, drop	"/> pour qu'il genere ces scripts. Besoin ajouter path voir javax.persistence.schema-generation.scripts.create-target -->
+                        <!--<property name="javax.persistence.schema-generation.scripts.create-target" value="file URL, java.IO.Writer"/> -->
+            <!-- <property name="javax.persistence.schema-generation.drop-source	metadata" value="script, metadata-then-script, script-then-metadata"/> -->
             </properties>
        </persistence-unit>
      </persistence>   
@@ -9487,16 +9473,26 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
   EntityManager remplaceDAO = methodes crud LINKemdlksqj   |
       methode(fait appel à ENTITY)------------------(BO=MODEL)ENTITIES connectees à la base
     //recuperer l'entitymanager applicativement: 
-            @PersistenceContext(name = "com.memoclap") // est def ici LINKentitym
+            @PersistenceContext(name = "facultatifUtileDansLeJavaChaisPasTropEncoreCOmmentAFAIRE" unitName="LINKdkdkfjfjnomcorrespondantA<persistence-unit nameEstFacultatifSiYEnAQunDansLeXml) // est def ici LINKentitym . attention c'est une annotation ejb. Est Injectable dans Ejbs. Pour la rendre injectable dans cdi faire LINKlerendreinjectable (heu je crois que ca marche quand meme l'injection sans ça.)  
             EntityManager em;
         ou
-            EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.memoclap"); //est def ici LINKentitym 
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.memoclap"); //est def ici LINKentitym. dans persistence.xml mettre <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> sinon ca ne marche pas 
             et
             public static EntityManager getEntityManager() {
             return emf.createEntityManager();
             }
+            
+            pour rendre injectable mon entitymanager: LINKlerendreinjectable
+            public class EntityManagerForCDI{
+                  @Produces
+                  @PersistenceContext(name = "com.memoclap.db")
+                  private EntityManager em;
+              }
+            
     recuperer la connection jdbc depuis un entitymanager :
-        Connection conn = entityManager.unwrap(Session.class).getJDBCConnection();
+        Connection conn = entityManager.unwrap(Session.class).getJDBCConnection(); 
+        ou 
+        Connection connection = em.unwrap(Connection.class);
      utilisation de entitymanager: JPQL (sql en string) 2.0 contient JPA_API(criterias) preferer criteria api si besoin validation requettes à la compilation et requetes à la synthaxe dynamique
                 JPQL :
                       - List cat = entityManager.createQuery("SELECT cat FROM nomDeMonObjetJAVA cat LEFT JOIN FETCH cat.nomDeMonFieldJAVA WHERE toto.nomDunFieldJAVA like '%M%' AND cat.unFieldJava=:totocestmoi")
