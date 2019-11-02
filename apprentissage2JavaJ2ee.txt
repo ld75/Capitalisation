@@ -15771,12 +15771,13 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
         public class UploadToServerServiceTest {
     		@InjectMocks // facultatif Mock peut marcher sans. Classe qui est testee dans laquelle on injectera les mocks
     		private RealTimePathCoverageController realTimePathCoverageController = new RealTimePathCoverageController(); // equivalent de @Tested dans jmockit : c'est une classe a tester dans laquelle je peux injecter des mocs LINKpourquecamarcheFairemokito
+                                                                                ou =spy(new RealTimePathCoverageController()); // si on veut injecter niveau en dessous. Necessite le LINKlkfjjgjgjgozo
     		@Mock ou @Spy     //Mock par defaut n'execute rien et on peut changer son comportement. Spy par defaut execute tout et on peut ecouter
             private RestTemplate restTemplate; // (peut etre une classe ou une interface) mock qui sera injectée dans RealTimePathCoverageController.
     			@Before
     				public void setup()
     				{
-    					MockitoAnnotations.initMocks(this); // ca active les anotations @InjectMocks et @Mocks et @Spy // attention @Spy qui doit etre accompagné de par exemple @Autowired dans mon test car le bean doit exister avant que le spy s'applique: CA CA NE MARCHE PAS:mon objet spyé n'est pas toujours le meme que celui qui est injecté dans le runcode.
+    					MockitoAnnotations.initMocks(this); // ca active les anotations @InjectMocks et @Mocks et @Spy // attention @Spy qui doit etre accompagné de par exemple @Autowired dans mon test car le bean doit exister avant que le spy s'applique: CA CA NE MARCHE PAS:mon objet spyé n'est pas toujours le meme que celui qui est injecté dans le runcode. LINKlkfjjgjgjgozo
     				}
     				FilterConfig filterConfig = mock(FilterConfig.class); // c'est soit je fais comme ca, soit j'utilise les anotations ci dessus. les deux font la meme chose
     				ServletContext context = mock(ServletContext.class);
