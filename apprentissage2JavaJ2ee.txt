@@ -15771,7 +15771,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
         public class UploadToServerServiceTest {
     		@InjectMocks // facultatif Mock peut marcher sans. Classe qui est testee dans laquelle on injectera les mocks
     		private RealTimePathCoverageController realTimePathCoverageController = new RealTimePathCoverageController(); // equivalent de @Tested dans jmockit : c'est une classe a tester dans laquelle je peux injecter des mocs LINKpourquecamarcheFairemokito
-                                                                                ou =spy(new RealTimePathCoverageController()); // si on veut injecter niveau en dessous. Necessite le LINKlkfjjgjgjgozo
+                                                                                ou =spy(new MockRealTimePathCoverageController()); // si on veut injecter niveau en dessous. Necessite le LINKlkfjjgjgjgozo. avec @InjectMocks en haut c'est top! on peut remplacer facilement par un mock et en plus injecter dedans ce quon veut comme autre @Mock
     		@Mock ou @Spy     //Mock par defaut n'execute rien et on peut changer son comportement. Spy par defaut execute tout et on peut ecouter
             private RestTemplate restTemplate; // (peut etre une classe ou une interface) mock qui sera injectée dans RealTimePathCoverageController.
     			@Before
