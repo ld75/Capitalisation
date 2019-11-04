@@ -1,4 +1,4 @@
-(?=.*ppk)(?=.*pem)
+(?=.*context)(?=.*root)
 AFAIRE :
         AFAIRE voir vert.x; kubernetes elastisearch, vuejs reacx
         Afaire go, play, ngix 
@@ -2869,7 +2869,7 @@ pour recuperer une variable d'environnement qui est declaree dans web.xml:
   redirige redirection web en java: (voir aussi LINKRedirectwebservice)
     HttpServletResponse servletResponse = (HttpServletResponse)response;
     servletResponse.sendRedirect("http://www.google.com"); Fait une redirection 302( pour faire une 301 faire response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);response.setHeader("Location", "http://somewhere/"); //pour un webservice voir //LINKredirwebservice998 
-    servletResponse.sendRedirect("/login");ou response.sendRedirect(request.getContextPath()+"/show.html"); // la requette request est renvoyee vers le client(url change sur browser navigateur) et redirige vers nouvelle url avec perte des params de la requette. !=.getRequestDispatcher("/urlduncontrolleurOuUneJSP.jsp").forward(req, resp) ça reste côte serveur: ça ne va pas vers navigateur client: les params de requette sont conserves. voir LINKçç("'"'
+    servletResponse.sendRedirect("/login");ou response.sendRedirect(request.getContextPath()+"/show.html"); // avec le contextroot la requette request est renvoyee vers le client(url change sur browser navigateur) et redirige vers nouvelle url avec perte des params de la requette. !=.getRequestDispatcher("/urlduncontrolleurOuUneJSP.jsp").forward(req, resp) ça reste côte serveur: ça ne va pas vers navigateur client: les params de requette sont conserves. voir LINKçç("'"'
           ATTENTION! forward et sendRedirect doivent être executées avant le commit de la response: pas de chain après ou d'autre redirection de requette! requette!  sinon j'aurais java.lang.IllegalStateException: Impossible d'utiliser faire-suivre (forward) après que la reponse ait ete envoyee
      fichier :
     pour renvoyer un fichier de la servlet (download): astuce, on peut aussi le zipper en java et envoyer le zip comme ca il n'y a pas de pb d'encodage
@@ -3033,7 +3033,7 @@ freemaker :
           
   Avec Velocity : (voir freemaker c'est mieux.)
     dans un fichier toto.vm
-    #set( $contextPath = $request.getContextPath() )
+    #set( $contextPath = $request.getContextPath() ) //contextroot
   <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
         <link rel="stylesheet" href="${contextPath}/bower_components/bootstrap/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="${contextPath}/bower_components/font-awesome/css/font-awesome.min.css"/>
@@ -26967,7 +26967,7 @@ pour enregistrer avec le micro: (NON pas encore comme ci dessous! utiliser recor
 recuperer des elements par leur nom de classe: pour ajouter des elements à un tableau: 
     document.getElementsByClassName("nomboucle") (byclass par classe)
 et si on veut merger plusieurs elements ayant des classesnames differents dans une seule liste faire: 
-      var buttonToReduce = Array.prototype.slice.call(document.getElementsByClassName("button"), 0);
+      var buttonToReduce = Array.prototype.slice.call(document.getElementsByClassName("button"), 0);// equivalent de [].slice.call(etc...)
 			var buttonToReduce = buttonToReduce.concat(Array.prototype.slice.call(document.getElementsByClassName("buttonclose"), 0));
 			var buttonToReduce =  buttonToReduce.concat(Array.prototype.slice.call(document.getElementsByClassName("buttonmove"), 0));
 			var buttonToReduce =  buttonToReduce.concat(Array.prototype.slice.call(document.getElementsByClassName("switch2"), 0));
