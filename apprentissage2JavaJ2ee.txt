@@ -484,7 +484,7 @@ si problemes dans npm: https://github.com/npm/npm/wiki/Troubleshooting
             npm config rm https-proxy        
   afficher un module dispo sur le net:
       typings search --name react   ou typings search --name angular
- si je suis sous mon repertoire projet et je fais npm install: //-g pour installer dans le repository(globalement sur mon systeme) et non pas dans le projet; --save alors il ajoute la dependance "dependencies" dans le package.json où je suis. avec --save-dev il ajoute la dependance dans le package.json dans "devDependencies" et dans le repertoire qu'il cree node_modules ou je suis: c'est un package que j'installe qui ne sera utile que pour les tests de dev et non pas la prod 
+ si je suis sous mon repertoire projet et je fais npm install: //-g pour installer dans le repository(globalement sur mon systeme) et non pas dans le projet; --save alors il ajoute la dependance "dependencies" dans le package.json où je suis. avec --save-dev il ajoute la dependance dans le package.json dans "devDependencies" et dans le repertoire qu'il cree node_modules ou je suis: c'est un package que j'installe qui ne sera utile que pour les tests de dev et non pas la prod
         va installer toutes les dependances necessaire du projet (grace a package.json) dans mon repository npm
 mettre à jour npm:// pour installer la derniere version update upgrade
       npm i npm ou npm install npm@latest -g
@@ -1211,6 +1211,7 @@ bouger une classe dans un autre package: dans package explorer faire ctrl+x puis
 bouger un bloc: selectionner puis ctrl+shift+fleches
 supprimer ligne: Shift+suppr ou Ctrl+y
 wrap ligne line j'ai ajouté le raccourci Ctrl+w
+Afficher masquer le menu du haut: alt+f11
 editer raccourcis shortcuts: key file>settings>keymap>Default> Editor Actions
 si les shortcuts ne marchent plus faire peut etre controle + alt + fleches pave numerique peut etre que ça debloque (j'ai reussi une fois mais sais pas trop comment)
 column colonne editing: plusieurs lignes multiples en meme temps:  alt+maj+insert
@@ -1329,7 +1330,7 @@ microprofile : microprofiles : microprofile : pannels d'outils en plus facultati
       public String unemethode(){...}
 payara :payaramicro : // executeur direct d'un microservice.
     java -jar payara-micro.jar                      // créé un payara serveur
-        --rootdir repertoire/de/travail/cree/auto/si/existepas // pour y mettre sous lib les jars qu'il n'arrive pas à trouver au demarrage: les drivers par exemple. 
+        --rootDir repertoire/de/travail/cree/auto/si/existepas // pour y mettre sous lib les jars qu'il n'arrive pas à trouver au demarrage: les drivers par exemple. il y met automatiquement des trucs. ca se rempli beaucoup donc il faut mettre ce parametre pour avoir un control de la ou il ecrit tout son fatras
         --deploy /home/user/example.war ou le repertoire root du war exploaded(dans target)// mettre un .reload sous la racine de mon war exploded et le modifier/toucher recharge le war exploded automatiquement (faire mvn package)(sauf si le war ne s'est pas déployé la fois précédente)
                  possible faire plusieurs --deploy dans une meme commande seront sur le meme port
         --contextroot contextrootquiremplacelenomdemonwarcommecontextroot (avec / au debut, sans / à la fin) //ou faire --deploy /x/y:contextroot
@@ -2276,7 +2277,7 @@ J2EE : jee : jee8 :javaee : EE4J : jakartaee : https://github.com/eclipse-ee4j/j
         </dependency>
         necessite LINKbensoncle
 cdi :CDI2.0 (JSR365) pas besoin d'utiliser weld (je crois) lire https://docs.jboss.org/cdi/learn/cdi_2/slides.html
-CDI1.x besoin de weld
+CDI1.x besoin de weld pour tester Tres galère: autant utiliser mockito seul ca marche très bien
         <dependency>
 			<groupId>org.jboss.weld</groupId>
 			<artifactId>weld-junit5</artifactId>
@@ -9831,7 +9832,7 @@ Si quand je fais makePersistent j'ai l'erreur:
                    c'est peut etre parce que <package name=" dans mon fichier jdo ne contient pas le chemin complet vers ma classe (mettre tous les packages depuis la racine)        
 	pour enhancer les classes:   (is not persistable.) utiliser log4j c'est important pour comprendre ce qui se passe ne cas d'erreur
         on peut le faire aussi avec ant: voir ci dessous:
-          	   java -cp D:\workspaceGanymede\YoaniWeb\WebContent\WEB-INF\classes\com\application\yoani\server\servlet\persistance\*.class;D:\workspaceGanymede\YoaniWeb\WebContent\WEB-INF\lib\log4j-1.2.8.jar;D:\workspaceGanymede\YoaniWeb\WebContent\WEB-INF\lib\datanucleus-api-jdo-3.0.0-m2.jar;D:\workspaceGanymede\YoaniWeb\WebContent\WEB-INF\lib\asm-all-3.3.1.jar;D:\workspaceGanymede\YoaniWeb\WebContent\WEB-INF\lib\datanucleus-enhancer-3.0.0-m2.jar;D:\workspaceGanymede\YoaniWeb\WebContent\WEB-INF\lib\datanucleus-core-3.0.0-m2.jar;D:\workspaceGanymede\YoaniWeb\WebContent\WEB-INF\lib\jdo-api-3.0.jar -Dlog4j.configuration=file:D:\workspaceGanymede\YoaniWeb\WebContent\WEB-INF\classes\log4j.properties org.datanucleus.enhancer.DataNucleusEnhancer -api JDO -v D:\workspaceGanymede\YoaniWeb\WebContent\WEB-INF\classes\com\application\yoani\server\servlet\persistance\persistance.jdo
+          	   java -cp path1\istance\*.class;path2\log4j-1.2.8.jar;\lib\jdo-api-3.0.jar -Dlog4j.configuration=file:D:\workspaceGanymede\YoaniWeb\WebContent\WEB-INF\classes\log4j.properties org.datanucleus.enhancer.DataNucleusEnhancer -api JDO -v D:\workspaceGanymede\YoaniWeb\WebContent\WEB-INF\classes\com\application\yoani\server\servlet\persistance\persistance.jdo
                ou
                java -cp D:\workspaceRAD7\ecl_Enterprise\bin;D:\workspaceRAD7\ecl_Lib\lib\log4j-1.2.12.jar;D:\workspaceRAD7\ecl_Lib\lib\asm-3.2.jar;D:\workspaceRAD7\ecl_Lib\lib\datanucleus-enhancer-2.0.0-release.jar;D:\workspaceRAD7\ecl_Lib\lib\datanucleus-core-2.0.0-release.jar;D:\workspaceRAD7\ecl_Lib\lib\jdo2-api-2.3-eb.jar -Dlog4j.configuration=file:D:\workspaceRAD7\eclWeb\WebContent\WEB-INF\classes\log4j.properties org.datanucleus.enhancer.DataNucleusEnhancer -v D:\workspaceRAD7\ecl_Enterprise\src\java\ecl\entity\package.jdo
                 ou
@@ -11744,39 +11745,39 @@ exemple de pom racine
   </parent>
 	
 	<properties>
-	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> Linkmvnprop
+	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> LINKmvnprop
   	</properties>
     ou
     <properties>
                 <zip.name>parametre peut etre sette en ligne de commande: -Dzip.name</zip.name>
     <properties>
-  	<profiles> 
+  	<profiles> LINKpfoflikjsdfv
 	   <profile>
-         <id>env-dev</id>
+         <id>env-dev</id> // correspond au profil choisi dans intellij ou eclipse
          <activation>
-             <activeByDefault>true</activeByDefault> // facultatif pour qu'il soit active par defaut Linkmvnprop
+             <activeByDefault>true</activeByDefault> // facultatif pour qu'il soit active par defaut LINKmvnprop
              <property>
-               <name>env</name> Linkmvnprop
-               <value>dev</value>
+               <name>env</name> LINKmvnprop
+               <value>dev</value> // correspond à -Denv=dev dans la commande maven
              </property>
          </activation>
          <properties>
-              <dbusr>root</dbusr> Linkmvnprop ainsi partout ailleur si on met ${dbusr} la valeur est remplacee si LINK**$** c'est un system properties qui est sette
+              <dbusr>root</dbusr> LINKmvnprop ainsi partout ailleur si on met ${dbusr} la valeur est remplacee si LINK**$** c'est un system properties qui est sette
               <dbpass>root</dbpass>
               <dburl>jdbc:mysql://localhost:3306/ideaenterprise1</dburl>
         </properties>
-                        ICI dans le profile on peut mettre une balises <build><plugins><plugin>....</plugin></plugins></build> pour executer des plugins conditionnellement en fonction des profils Linkmvnprop
+                        ICI dans le profile on peut mettre une balises <build><plugins><plugin>....</plugin></plugins></build> pour executer des plugins conditionnellement en fonction des profils LINKmvnprop
     </profile>
 		<profile>
       <id>env-production</id>               
       <activation>
         <property>
-          <name>env</name> Linkmvnprop
+          <name>env</name> LINKmvnprop
           <value>prod</value>
             </property>
           </activation>
           <properties>
-              <dbusr>root</dbusr> Linkmvnprop
+              <dbusr>root</dbusr> LINKmvnprop
               <dbpass>root</dbpass>
               <dburl>jdbc:mysql://localhost:3306/ideaenterprise1</dburl>
        </properties>
@@ -11888,7 +11889,7 @@ exemple de pom racine
                                   <resources>          
                                     <resource>  // ou bien LINK_ààà"çç"
                                       <directory>${basedir}/src/main/resources</directory>
-                                      <filtering>false</filtering>
+                                      <filtering>false</filtering> // du coup si je mets à true, remplacera dans les fichiers par les proprietes du profil encours voir LINKpfoflikjsdfv
                                       <includes>
                                           <include>*.jar</include> // ne marche que pour les fichiers par pour les directories repertoires
                                           <include>*.properties</include>...
@@ -12051,12 +12052,12 @@ pour connaitre les profiles:
                         <id>env_dev</id> // a utiliser quand je lance maven via eclipse: runconfigurations... profiles: env_dev // voir * ci dessus
                         <activation>
                         <property>
-                        <name>env</name> // Linkmvnprop a utiliser quand j'appelle maven en ligne de commande: -Denv=dev CA MARCHE. COMMENTER TOUS LES PROFILES DANS SETTINGS.XML
+                        <name>env</name> // LINKmvnprop a utiliser quand j'appelle maven en ligne de commande: -Denv=dev CA MARCHE. COMMENTER TOUS LES PROFILES DANS SETTINGS.XML
                         <value>dev</value>
                         </property>
                         </activation>
                         <properties>
-                        <db.url>jdbc:oracle:thin:@wecdevo01.intra.renault.fr:1521:ml1p15</db.url> Linkmvnprop
+                        <db.url>jdbc:oracle:thin:@wecdevo01.intra.renault.fr:1521:ml1p15</db.url> LINKmvnprop
                         <db.usr>wec_adm</db.usr>
                         <db.pwd>wec1234</db.pwd>
                         </properties>
@@ -16928,7 +16929,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
     		private RealTimePathCoverageController realTimePathCoverageController = new RealTimePathCoverageController(); // equivalent de @Tested dans jmockit : c'est une classe a tester dans laquelle je peux injecter des mocs LINKpourquecamarcheFairemokito
     		@Mock ou @Spy     //Mock par defaut n'execute rien et on peut changer son comportement. Spy par defaut execute tout et on peut ecouter
             private RestTemplate restTemplate; // (peut etre une classe ou une interface) mock qui sera injectée dans RealTimePathCoverageController.
-    			@Before
+    			@BeforeEach ou @Before // selon junit5 ou 4
     				public void setup()
     				{
     					MockitoAnnotations.initMocks(this); // ca active les anotations @InjectMocks et @Mocks et @Spy // attention @Spy qui doit etre accompagné de par exemple @Autowired dans mon test car le bean doit exister avant que le spy s'applique: CA CA NE MARCHE PAS:mon objet spyé n'est pas toujours le meme que celui qui est injecté dans le runcode.
@@ -20656,7 +20657,7 @@ modules :java 9 : java9 : java10 : java11 : depuis java9
   Jdk A8 devient divisé en modules xxx.jmod = 1jar = 1 ou plsrs package. un module peut dépendre de x modules et inversement.
                                   defini dans monapplimodule1/src/main/java/module-info.java |_lun ou l'autre mais ca doit etre le repertoire declare comme source
                                               monapplimodule2/src/module-info.java           |
-                                              monapplimodule2/src/paquage.numero.un/...etc...
+                                              monapplimodumail.smtp.hostle2/src/paquage.numero.un/...etc...
                                   module-info.java: // si absent, java9 maet tout en unnamed et ça marche qd meme
                                                                       automatic module: export tout requires tout (jar n'ayant pas de module-info.class: du coup son nom de module c'est le nom du jar et si j'ai IllegalArgumentException FindException Invalid module name c'est parce que le nom du jar a un chiffre et c'est interdit pour un module)
                                                                       unnamed module: exporte rien requires tout
@@ -22900,7 +22901,7 @@ pour envoyer un mail simple avec javax.mail et qu'on a eu un message d'erreur de
           			props.put("mail.debug", "true"); // si besoin quand ca marche pas
            		    props.put("mail.user", "kanailaurent@gmail.com");
           			props.put("mail.password", "calottezoclos");
-          			props.put("mail.smtp.submitter", authenticator.getPasswordAuthentication().getUserName());
+          			props.put("mail.smtp.submitter", authenticator.getPasswordAuthentication().getUserName()); // a mettre si j'ai l'erreur du genre "utilisateur non defini?"
 					javax.mail.Session mailSession =javax.mail.Session.getDefaultInstance(props, authenticator); ou getInstance(props,authenticator) si le me fait l'erreur  java.lang.SecurityException: Access to default session denied
 					avec
           static MyAuthenticator authenticator = new StartParse().new MyAuthenticator();
@@ -24892,7 +24893,6 @@ pour setter les variable d'environnement:
   $HOME/.profile 
     
 dans /usr/bin noramlement (on peut retrouver dans les variables d'environnement) on voit tous les programmes que le user peut utiliser (.exe) (les commandes)
-pour voir la liste des alias, tapper alias (permet de voir les raccourcis de commandes)
 
 commande unix: ifconfig -a determine adresse ip(nonfixe) (equivalent windows = ipconfig)(adresse ipv4 donne une valeur qui bouge) //pour une valeur ipfixe: un appel à https://httpbin.org/ip = http://www.mon-ip.com/
 les droits: 
@@ -25029,7 +25029,7 @@ du -sk *: permet de voir la taille de chacun des repertoires en dessous
 trouver les plus gros fichiers: 
 find . -type f -size +14096c
 find . -name '*ora'
-df -h . pour voir combien il reste de place là ou on est situe. Plus clair que df -k
+df -h . pour voir combien il reste de place espace restant disponible memoire disque là ou on est situe. Plus clair que df -k
 df -k pour voir si il y a de la place dans les systemes de fichiers. le pourcentage = espace utilise je suis sur. 1 Mo devrait suffire (1 xxx xxx)
   convertisseur: http://mon-ip.awardspace.com/convertisseur.php (ne pas mettre espaces)
     1 octet = 1 byte = 8 bits
@@ -25055,7 +25055,7 @@ ps -ef | grep whatever pour voir si whatever tournent
 renvoit le nombre de process qui repondent a la recherche:
       ps -ef | grep whatever | wc -l 
 pour localiser une commande grace au path: which nomdelacommande
-pour connaitre l'heure: date
+pour connaitre voir l'heure: date
 pour mettre à jour update modifier la date et l'heure:
 	date -s '2019-10-31 20:49:00' // a faire en sudo ou en root
 si on a l'erreur sh: cannot execute
@@ -25100,7 +25100,16 @@ mpstat pour voir ce qui tourne et cpu utilise memoire utilisee
 prstat idemn
 top idemn mais encore mieux... on peut l'installer facilement en le recuperant sur SUN top (sun.com, package top ou prstat si on veut). Faire tab+p pour classer conso mem cpu par ordre decroissant
     ensuite faire maj+m pour trier par ordre decroissant sort.
-free pour voir si mon disque swap beaucoup trop (on peut voir la qte de memoire virtuelle dispo/utilisee et le swap qui ne doit pas depasser 56xxx=56Mega) 
+free ou free -m ou -h // -m pour mega, -h pour giga. pour voir si mon disque swap beaucoup trop (on peut voir la qte de memoire virtuelle dispo/utilisee et le swap qui ne doit pas depasser 56xxx=56Mega) 
+pour rajouter du swap:
+  sudo swapon --show // verifier ce que j'ai comme swap
+  sudo fallocate -l 2G /swapfile //créé un nouveau fichier à partir de rien. equivalent de la commande dd mais c'est mieux (voir google dd mais bof)
+  sudo chmod 600 /swapfile //attribuer que root pour modifier ce nouveau fichier
+  sudo mkswap /swapfile //formater le fichier swap
+  sudo swapon /swapfile // activer le swapp
+  sudo vi /etc/fstab // besoin d'ajouter dedans:/swapfile swap swap defaults 0 0
+  verifier avec free que ca a bien augmenté
+	
 a utiliser pour regarder si CPU sature.: avec top on peut recuperer un ID de process... faire un kill -15 dessus par ex.
 pour savoir combien j'ai de coeurs cpu
     cat /proc/cpuinfo | grep processor | wc -l
@@ -25188,7 +25197,7 @@ ssh : se logger sur une machine a distance
       pour ne plus avoir a ressaisir mon mdp quand je fais du scp rsync ssh j'ai besoin de me connecter par key:
                     Copier cle publique dans id_rsa.pub sur autre serveur dans sous homeUtilisateurAvecQuiJeVeuxMeConnecterDansServerB/.ssh/authorized_keys et authorized_keys2 (pour être sur je mets dans les deux... chais pas si c bon.)VERIFIER que la ligne a zero retour chario et espace LINKmljsdf
                           authorized_keys et 2 contient les cles publiques des autres serveurs qui peuvent se connecter ici grace à leur clé privee dans id_rsa.priv et/ou id_rsa //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
-              se connecter alors en faisant depuis serveurA: ssh homeUtilisateurAvecQuiJeVeuxMeConnecterDansServerB@serverB                          
+              se connecter alors en faisant depuis serveurA: ssh -i path/vers/la/cle/priveeRSA/que/je/veux/forcer_rsa homeUtilisateurAvecQuiJeVeuxMeConnecterDansServerB@serverB  //-i est facultatif. Comme pour scp
               les droits doivent être comme ça:
                 -rw-r--r-- 1 utisateurInteresse utisateurInteresse  820 nov.  25  2014 authorized_keys2
                 -rw------- 1 utisateurInteresse utisateurInteresse  820 nov.  25  2014 authorized_keys
@@ -27230,7 +27239,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                     xhr.onload = function(e) { // retour du serveur: "e" c'est progressEvent et "this" c'est la reponse du serveur
                             printStacktrace(req.name);
                             askValidator.class_AskValidator.record.call(this);
-                                this.getResponseHeader("Content-type") // on peut recuperer ca et autre...
+                               if(this.getResponseHeader("Content-type").indexOf("text/html")!=-1) on peut recuperer ça et autre...
                               if (this.status == 200) {
                               try
                                 {
@@ -27326,7 +27335,7 @@ jouer un fichier audio sans objet audio
         				      playSound(soundBuffer);
     function playSound(buffer) 
       {
-      printStacktrace();
+      rintStacktrace();
         source = context.createBufferSource(); // creates a sound source
         source.buffer = buffer;                    // tell the source which sound to play
         //source.connect(filter);       
