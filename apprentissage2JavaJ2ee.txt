@@ -1,6 +1,6 @@
 (?=.*test)(?=.*javascript)
 AFAIRE :
-        AFAIRE voir vert.x; kubernetes elastisearch, vuejs reacx
+        voir vert.x; kubernetes elastisearch, vuejs reacx
         Afaire go, play, ngix 
         bootstrap=tweeter; materialUI
     base de donnée h2 pour les tests unitaires à capitaliser
@@ -1117,7 +1117,7 @@ Changer la couleur des instances selectionnées: settings>(editor>color scheme>g
 pour voir les dependances depandenc dependency dependencies le diagrame c pourri et en plus c'est que sur ultimate. mieux vaut faire Analyze>Analyze Dependencies....
 ajouter une dependence un pluggin dans le pom: alt+insert
 pour voir les stats (nombre de lignes de code etc...) charger le plugin de statistiques https://plugins.jetbrains.com/plugin/4509-statistic: on voit tout en bas une nouvelle icone pour les afficher   
-creer un bookmark flag tag ctrl+f11. Acceder à ce bookmark trouver: ctrl+chiffredubookmark. Ensuite editer la note du bookmark:shift+f11 puis Ctrl+entree sur le bookmark  
+creer un bookmark flag tag ctrl+f11. Acceder à ce bookmark trouver: alt+2 ou ctrl+chiffredubookmark. Ensuite editer la note du bookmark:shift+f11 puis Ctrl+entree sur le bookmark  
 supprimer les bookmarks: shift+f11 (j'ai le choix)
 si erreur  Error:java: invalid target release: 10: file>settings...>build>java compiler>choisir la bonne version
 si erreur Error connecting to 127.0.0.1:51924; reason: Error:failed to create a child event loop
@@ -1276,7 +1276,7 @@ atteindre declaration variable? Ctrl+B
 afficher voir parcourir liste les elements fonctions methodes d'une classe: Ctrl+F12
 mettre un breakpoint placer un point d'arret ctrl+F8
 enable disable breakpoint: CTRL + SHIFT + F8 puis alt+d
-afficher tous les breakpoints: Ctrl+Shift+F8
+afficher tous les breakpoints: alt+2 ou Ctrl+Shift+F8
 parcourir les erreurs problems: F2 / shift+F2
 trouver rechercher un fichier par son nom name Ctrl + n(classe) ctrl + shift + n: fichier
 pour faire une trouver recherche dans les projets: focusser sur le projet et commencer à saisir les caractères
@@ -2613,10 +2613,11 @@ ou remote                       peute etre sur classe meme un webservice. Peut a
 //1 appel de mon bean d'ejb (qui est en fait un proxy cree par le container) par injection de dependance 
  public class Main
  {
-  @Inject ou @EJB ou @Ressources (c'est pareil)// le container trouve tout seul grace au nom de ma classe mon bean EJB en cherchant tout seul dans le jndi. // il faut avoir qu'une seul sous classe de cette interface pour que ca marche
-                      // facultatif (name="monlookupnomdebean" ou/et beanName="nomDeLaClasseSiC'estUneImplementationDinterfaceEtQuilYEnADautres")
+<<
+  @Inject ou @EJB ou @Ressources (c'est pareil)// injection de dep: autant utiliser @Inject partout. Le container trouve tout seul grace au nom de ma classe mon bean EJB en cherchant tout seul dans le jndi. // il faut avoir qu'une seul sous classe de cette interface pour que ca marche
+                        // facultatif (name="monlookupnomdebean" ou/et beanName="nomDeLaClasseSiC'estUneImplementationDinterfaceEtQuilYEnADautres")
   static MonInterfaceDeBeanDEJB ejbbean; ATTENTION ca DOIT etre une interface si il y en a une. Si yen a pas ca marche avec la classe direct. Si je fais pas ça il n'arrive pas a injecter avec erreur WELD-001408
-  public static void main(String[] args)
+==public static void main(String[] args)
   {
      String toto = ejbbean.calcule(4,2);
   }
@@ -4161,6 +4162,7 @@ web.xml : webxml :
                 	<session-timeout>15</session-timeout>
                 	   <cookie-config>
                 	       <secure>true</secure> // fait pareil que LINKlizifoizf  (a partir de servlet3.0)
+                           <http-only>true</http-only> // fait pareil que LINKlkgjkljkjgjgjgjgj
                 	  <cookie-config>
                 </session-config>
             mime-mapping Definit une association entre les fichiers publics de l'application et des types MIME.  
@@ -4646,6 +4648,7 @@ effet parallax: une image ne scroll pas ou scroll à vitesse differente
     sur un div: background-image: url("https://www.wenhuaduverge.com/img/NewsLetter/Ah02hight.jpg");display: block;position: relative;
                 background-attachment: fixed;
     scroll à vitesse decallée
+            <style>
                     /* Tiny reset thingy */
                     body,html{margin:0;padding:0;}
                     
@@ -4707,6 +4710,7 @@ effet parallax: une image ne scroll pas ou scroll à vitesse differente
                     .bg2::after {
                       background-image: url('https://placekitten.com/g/800/600');
                     }
+                    </style>
                     <main class="wrapper">
                       <section class="section parallax bg1">
                         <h1>Such Adorableness</hi>
@@ -8367,8 +8371,9 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
     ouvrir console Hibernate et configurer une connection à une base
     Clic droit sur mon projet > JAP > faire le reverseEngeniring
     fichier resources/META-INF/persistence.xml marche bien. sinon ou mais pas sur dutout: WEB-INF/persistence.xml. Ce fichier DOIT etre dans le jar ou le war qui contient les @Entity
-    <persistence> 
-        <persistence-unit name="voirLINKdkdkfjfj" transaction-type="RESOURCE_LOCAL(pour des testsunitaires) ou JTA(pour tapper dans LINKjta)"> // du coup applicativement je l'appelle comme ça : LINKentitym
+    <?xml version="1.0" encoding="UTF-8"?> // super important de mettre ça
+    <persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"> // super important de mettre ça 
+        <persistence-unit name="com.memoclap"     transaction-type="RESOURCE_LOCAL(utilise le système de transaction du JDBC natif donc a utiliser pour les testsunitaires) ou JTA(pour utiliser la gestion de transaction du container donc d'un jndi LINKjta)"> // du coup applicativement je l'appelle comme ça : LINKentitym
             <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> // facultatif provider peut etre eclipselink ou hibernate. si on met rien.. sais pas. depend jars ?
             <description>EclipseLink EntityManager</description>                 // facultatif
             <exclude-unlisted-classes>false</exclude-unlisted-classes>
@@ -8401,8 +8406,11 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
                       }                                    |
   EntityManager remplaceDAO = methodes crud LINKemdlksqj   |
       methode(fait appel à ENTITY)------------------(BO=MODEL)ENTITIES connectees à la base
-    //recuperer l'entitymanager applicativement: 
-            @PersistenceContext(name = "facultatifUtileDansLeJavaChaisPasTropEncoreCOmmentAFAIRE" unitName="LINKdkdkfjfjnomcorrespondantA<persistence-unit nameEstFacultatifSiYEnAQunDansLeXml) // est def ici LINKentitym . attention c'est une annotation ejb. Est Injectable dans Ejbs. Pour la rendre injectable dans cdi faire LINKlerendreinjectable (heu je crois que ca marche quand meme l'injection sans ça.)  
+    //recuperer l'entitymanager applicativement:
+          "EntityManager gère le lifecycle de persistenceContexts //ATERMINER
+          Persistencecontext a une duree de vie dependante de celle de la transaction.
+          Une transaction peut contenir un ou plusieurs persistencecontext" 
+            @PersistenceContext(name = "facultatifUtileDansLeJavaChaisPasTropEncoreCOmmentAFAIRE" unitName="LINKdkdkfjfjnomcorrespondantA<persistence-unit nameEstFacultatifSiYEnAQunDansLeXml) // est def ici LINKentitym . attention c'est une annotation ejb. Est Injectable dans Ejbs. Pour la rendre injectable dans cdi faire LINKlerendreinjectable (heu je crois que ca marche quand meme l'injection sans ça.)
             EntityManager em;
         ou
             EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.memoclap"); //est def ici LINKentitym. dans persistence.xml mettre <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> sinon ca ne marche pas 
@@ -8507,8 +8515,134 @@ si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from col
             	@Id //Cle primaire
             	@GeneratedValue //(strategy=GenerationType.AUTO par defaut c a d 1 sequence pot tables. Deconseille) ou (strategy=GenerationType.SEQUENCE, generator="NOMDEMASEQ") 1 sequence nommee NOMDEMASEQ pour cette table seulement
             	private Integer id;
-                  	      
-      JOOQ : mieus que jdo?
+              @ManyToOne //1ici a n labas(passur?)
+              @Column(name="NonDeLaColonneEnBDSIDifferenteQueNomProprieteJava") // optionnel
+              @Column(name="price", columnDefinition="Decimal(10,2) default '0.0'") // si on veut une valeur par defaut DANS LA BASE de donnée seulement; renvoit qd meme null en java si ce champ est déjà null dans la base
+              @Cache peut etre aussi mis au niveau d'une propriete
+              @NotNull // si je veux valider que le champ ne soit pas null
+               @Pattern(regexp = "^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$",message = "{invalid.phonenumber}") // si je veux valider que le champ respecte un pattern regexp
+            	   private Idea idea;
+            	@OneToMany (orphanRemoval=true//pour les deletes en cascade, cascade={javax.persistence.CascadeType.ALL}//pour les update en cascades)
+            	               ,mappedBy="permission") // car je suis dans le classe Permission.class et je fais ref à UserPermission.permission
+            	   private Set<User> getUsers(){return users;}
+            	@Temporal(TemporalType.TIMESTAMP)
+            	   public Date getCommentDate(){return commentDate;}
+            	@Version //pour les acces concurents   (voir cache ci-dessus)
+            	   public Integer getVersion(){return version;}
+              @Transient // en opposition à @Basic qui est mis par defaut
+                  public String proprieteNonPersistanteCarOnAMisTransient;                            
+                  ManyToMany: 2 possibilites:
+                        permission.class:
+                          @ManyToMany (mappedBy="nomDeLaProprieteDeLautreEntiteQuiAppelleCetteClasseLà") //mappedBy optionel
+                        	@JoinTable(name="UserPermission")  // ma table de jointure. pas besoin de creer la table de cette classe.
+                        	private Set<User> users;
+                        user.class:
+                            @ManyToMany
+                    	      @JoinTable(name="UserPermission")
+                    	      private Set<Permission> permissions;
+                  ManyToMany jointure de trois tables: 
+                            ma table de jointure: 
+                              @Entity
+                            public class UserPermission implements DomainObject, Serializable 
+                            {
+                            	@Id
+                            	private Integer id;
+                            	@ManyToOne 
+                            	private Idea idea;
+            	@ManyToOne
+            	private User user;
+            	@ManyToOne
+            	private Permission permission;
+            	@Override
+            	public String getId() {
+            		return null;
+            	}
+                            } 
+                          	@Override
+                          	public String getId() {
+                          		return null;
+                          	}
+                          }    	      
+      chacune de mes tables jointes: 
+        	@OneToMany(mappedBy="permission") // car je suis dans le classe Permission.class et je fais ref à UserPermission.permission
+        	private Set<UserPermission> userPermission;
+             Comparer des entitees entre elles si elles sont des listes comme proprietes: il faut overrider equals et hashcode: (voir page 84Spring persistance with Hibernate)
+                @Override    (A FAIRE: GENERALISER AVEC LE DESIGN PATTERN DES DAO: dao sont morts remplacés par entitymanager voir LINKemdlksqj)
+                public boolean equals(Object o)
+                {
+                  if(this==o) return true;
+                  if(!(o instanceof Category)) return false;
+                  Category category = (Category));
+                  if (categoryName!=null? !categoryName.equals(category.categoryName): category.categoryName!=null)
+                  {return false;
+                  }else{return true;}
+                }
+                @Override
+                public int hashCode()
+                {return categoryName!=null? categoryName.hashcode():0;}
+        utile pour transactions
+            mettre @Transactional devant classe ou methode // rend ma methode dans une transaction LINKtranslsdfjai
+            @Transactional(rollbackFor = Exception.class, noRollbackFor = AuthWebBusinessWSException.class) // si je throw  une exception dans mon programme ca fait un rollback si c'est une autre exception de type Authmachin ca ne fait pas de rollback 
+            AF pourquoi mettre transactional pour readonly requettes?
+            si j'ai javax.persistence.TransactionRequiredException: null mettre @Transactional plus en amont ou plus en aval du stacktrace. Il n'est pas sur la bonne méthode.
+    si j'ai l'erreur Internal Exception: java.sql.SQLIntegrityConstraintViolationException: integrity constraint violation: NOT NULL check constraint; SYS_CT_10110 table: ALO_USR column: USR_NAME
+            il me disait que l'erreur etait dans une methode select mais qui n'avait rien a voir avec la table ci dessus. En fait l'erreur a eu lieu juste avant! Connerie de merde. bref. effectivement le champ etait null dans la requette precedente alors qu'il ne devait pas. un peu merdique ce truc. Il aurait pu m'indiquer le bon stack ce con.
+    
+hsqldb : LINKldkjgieieioruz
+        base de donnée pour les tests
+        si erreur data exception: string data, right truncation c'est parce que j'ai voulu inserer une colonne trop longue
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="org.hsqldb.jdbcDriver" /> 
+		<property name="url" value="jdbc:hsqldb:mem:v3" /> // bien mettre mem sinon il fait chier avec les connexions mais c'est que pour tester car volatile
+		<property name="username" value="sa" />
+		<property name="password" value="" />
+	</bean>                
+    maven:
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.3.4</version>
+        </dependency>
+        classe de test:
+            @BeforeAll
+    public static void initDB() throws ClassNotFoundException, SQLException
+    {
+         Class.forName("org.hsqldb.jdbc.JDBCDriver");
+        try (Connection connection = getConnection(); Statement statement = connection.createStatement();) {
+            statement.execute("CREATE TABLE employee (id INT NOT NULL, name VARCHAR(50) NOT NULL,email VARCHAR(50) NOT NULL, PRIMARY KEY (id))");
+            connection.commit();
+            statement.executeUpdate(
+                    "INSERT INTO employee VALUES (1001,'Vinod Kumar Kashyap', 'vinod@javacodegeeks.com')");
+            statement.executeUpdate("INSERT INTO employee VALUES (1002,'Dhwani Kashyap', 'dhwani@javacodegeeks.com')");
+            statement.executeUpdate("INSERT INTO employee VALUES (1003,'Asmi Kashyap', 'asmi@javacodegeeks.com')");
+            connection.commit();
+        }
+    }
+            @AfterAll
+            public static void destroy() throws SQLException, ClassNotFoundException, IOException
+            {
+                try (Connection connection = getConnection(); Statement statement = connection.createStatement();) {
+                    statement.executeUpdate("DROP TABLE employee");
+                    connection.commit();
+                }
+            }
+            private static Connection getConnection() throws SQLException {
+                return DriverManager.getConnection("jdbc:hsqldb:mem:employees", "vinod", "vinod");// bien mettre mem sinon il fait chier avec les connexions mais c'est que pour tester car volatile
+            }
+            @Test
+            public void getTotalRecordsTest() {
+                int ret=0;
+                try (Connection connection = getConnection(); Statement statement = connection.createStatement();) {
+                    ResultSet result = statement.executeQuery("SELECT count(*) as total FROM employee");
+                    if (result.next()) {
+                        ret= result.getInt("total");
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                Assertions.assertEquals(3, ret);
+            }
+JOOQ : mieus que jdo?
     facile: dans eclipse pour lancer le generateur: 
     class main: org.jooq.util.GenerationTool
     arguments de programme: /jooq.properties
@@ -12794,7 +12928,7 @@ Curl : voir aussi wget : pour faire une requette request http doc:https://ec.hax
    	A faire sur une seule ligne et pas sur plusieurs car marche pas. et echapper les caractères spéciaux & ; par \
     curl -O https://index.taskcluster/artifacts/public/deepspeech-0.1.0nux1_x86_64.whl // -O ne marche qu'avec des url qui renvoient un fichier dowload. ne pas mettre de param avec, il telecharge le contenu de la reponse et le depose la ou je suis direct. si -o unNomDeFichier url il recupère la reponse et la met dans unNomDeFichier 
     post json: // mettre des guillemets autour des valeurs des options si il y a des espaces dans ces valeurs. Si c'est du json mettre single quotes
-	curl -v -X POST http://localhost:8080/web/api/login --header "Content-Type: application/json" -d '{"anonymousUser":"true","uuid":"uid","appAccessKey":"mycampusapikey"}' > fichieroul'outputjsonsecritdedans
+	curl -v -X POST http://localhost:8080/web/api/login --header "Content-Type: application/json" -d '{"anonymousUser":"true","uuid":"uid","appAccessKey":"mycampusapikey"}' > fichieroul'outputjsonsecritdedans //-X pour methode
     post sans bodypayload comme un get
     curl -v -X POST http://localhost:8080/web/api/login --header "Content-Type: application/x-www-form-urlencoded" -d 'grant_type=password&username=toto&password=titi' -H "Authorization: Basic $(echo -n codetestlaurent:hihi | base64)" // je peux appeler du bash ici et encoder/decoder en base64 (-n pour que le echo ne mette pas les retour chariot)
     pour passer par un proxy rajouter:
@@ -12811,7 +12945,8 @@ Curl : voir aussi wget : pour faire une requette request http doc:https://ec.hax
 	curl -v -X GET https://api.airfranceklm.com/opendata/offers/reference-data -H "accept: application/hal+json" -H "accept-language: en-US" -H "afkl-travel-country: NL" -H "afkl-travel-host: KL" -H "api-key: testapikey"
 	curl -v -X GET http://localhost:8080/web/api/v2/apps/mycampuscode/realtimepath/navitia/paths?physicalModes=bus\&coverage=fr-idf\&from=2.33245\;48.77469\&to=2.33245\;48.77469\&datetime=20190720T1004\&datetimeRepresents=arrival --header "X-AUTH-TOKEN:eyJpZCI6bnVsbCwidXVpZCI6InVpZCIsImFub255bW91c1VzZXIiOnRydWUsInVzZXJMb2dpbiI6IkFub255bW91c1VzZXIiLCJ1c2VyRW1haWwiOm51bGwsImV4cGlyZXMiOjE1NjQwMzk0MDY1OTAsImFwcENvZGUiOiJteWNhbXB1c2NvZGUiLCJhcHBBY2Nlc3NLZXkiOm51bGwsInZlbG9Vc2VyIjpmYWxzZSwibXdhVXNlciI6ZmFsc2UsInJvbGVzIjpbIlJPTEVfQVBQIl19.KVUcP3cOD3aLJzNJeua+BZR3MNQBdUktyRUag7V5/dg="
      -L pour que si le serveur renvoit une redirection il la suivre direct
-     -c pour ecrire les cookies -d ou b ? pour les stocker... ATERMINER
+     --cookie pour ecrire les cookies -d ou b ? pour les stocker... exemple: --cookie "JSESSIONID=08F21783333EE10B64F296CD3F9D0CDC; path=/"      
+     
      -w "totocequejeveux %{unevariablequi m'estrenvoyéeparleserveur (voir la doc pour la liste des variables)}" > jepeuxecrireleresultatdansunfichier.txt mettre -w "" >unlog.log ecrit le payload body contenu de la reponse        
 certificats : certificat : formats: types
                               Échange d’informations personnelles (PKCS #12)  (.pfx ou .p12) contient la clé publique(pour encrypter vers...) de la machine que je veux joindre et ma clé privée facultatif(pour décrypter ce que je reçois) c'est un certificat
@@ -14868,6 +15003,8 @@ cookies :
     dans le serveur setter le httponly: LINKcooklskjhh
                         NewCookie hraCookie= new NewCookie(UserManagementConstants.CONNECTION_ID, getDatasourceSessionIdFromContext(), "/", getCookieDomain(), null, -1, httpRequest.isSecure());
                         return javax.ws.rs.core.Response.seeOther(go).header("Set-Cookie",hraCookie.toString()+"; Secure; HttpOnly").build();                                              |_revoit true si on est en https
+                        ou en spring :Cookie cookie = WebUtils.getCookie(request, "JSESSIONID"); response.addCookie(new Cookie("JSESSIONID", cookie.getValue()+"; Secure; HttpOnly"));
+                                                                                                                                                                    |_bien, que des strings. KISS.
                           ou
                                         	final String cookiePath = "/";
                                       		final String cookieDomain = getCookieDomain();
@@ -14875,7 +15012,7 @@ cookies :
                                       		cookie.setPath(cookiePath);
                                       		//cookie.setSecure(httpRequest.isSecure()); //.isSecure() renvoit true si on est en https. setsecure n'envoie le cookie a travers le reseau que si on est en https 
                                       		cookie.setSecure(true); //setSecure: le cookie n'est transmis sur le reseau que si on est en https LINKlizifoizf
-                                      		cookie.setHttpOnly(httpOnly); //javascript n'a pas acces au cookies
+                                      		cookie.setHttpOnly(httpOnly); //javascript n'a pas acces au cookies LINKlkgjkljkjgjgjgjgj
 letsencrypt :
       les logs sont sous /var/log/letsencrypt/letsencrypt.log
       les confs de renew sont sous /etc/letsencrypt/renewal
@@ -23632,7 +23769,7 @@ sudo :
     /var donnees frequements reecrites
 les comptes utilisateurs sont sur etc/passwd (si un jour un gars qu'on ne connait pas fait des trucs) figurent dedans les homes des utilisateurs et on peut atteindre leur home en faisant cd ~nomutilisateur
 pour recharger le .profile // fichier chargé lorsque je me connecte au demarrage a la connexion initialise. dedans je peux mettre des commandes qui s'executent lors de ma connexion 
-    faire: cd ou cd . puis . .profile (faire ls -tral pour voir tout (attention pas tout forcement... mais je ne sais pas pourquoi)
+    faire: cd ou cd . puis . .profile (faire ls -tralh pour voir tout (attention pas tout forcement... mais je ne sais pas pourquoi)
 changer mot de passe d'un utilisateur:
   changepasswd nomutilisateur (je crois)    
 creer un nouvel utilisateur: 
@@ -23702,7 +23839,7 @@ les alias sous unix: exemple: alias ll = 'ls -l' ou bien alias ll="ls -l"
 	puis recharger le tout . .bashrc
     
 dans /usr/bin noramlement (on peut retrouver dans les variables d'environnement) on voit tous les programmes que le user peut utiliser (.exe) (les commandes)
-pour recharger un environnement faire cd . (la il y a des fichiers environnement(faire ls -tral pour voir tout) dont le nom est par ex: .env_machin) puis . .env_machin ou . ./.env_machin
+pour recharger un environnement faire cd . (la il y a des fichiers environnement(faire ls -tralh pour voir tout) dont le nom est par ex: .env_machin) puis . .env_machin ou . ./.env_machin
 pour verifier que "truc" est bien dans l'environnement faire: env | grep truc
 compter le nombre de lignes dans un fichier:
   wc -l nomdufichier ou bien nb_lignes=`cat $VARIABLEPATH/monfichier.xls | wc -l`
@@ -23862,8 +23999,8 @@ Pour executer un fichier: . fichieraexecuter.cfg (ou .sh ou whatever)
 inferieure à: lt 
 supperieur à: gt
 egal: eq
-pour recharger le .profile faire: cd ou cd . puis . .profile (faire ls -tral pour voir tout (attention pas tout forcement... mais je ne sais pas pourquoi)
-pour recharger un environnement faire cd . (la il y a des fichiers environnement(faire ls -tral pour voir tout) dont le nom est par ex: .env_machin) puis . .env_machin ou . ./.env_machin
+pour recharger le .profile faire: cd ou cd . puis . .profile (faire ls -tralh pour voir tout (attention pas tout forcement... mais je ne sais pas pourquoi)
+pour recharger un environnement faire cd . (la il y a des fichiers environnement(faire ls -tralh pour voir tout) dont le nom est par ex: .env_machin) puis . .env_machin ou . ./.env_machin
 pour verifier que "truc" est bien dans l'environnement faire: env | grep truc
 les comptes utilisateurs sont sur etc/password (si un jour un gars qu'on ne connait pas fait des trucs)
 SUPER methode pour trouver les plus gros fichiers: il y a aussi apparemment sur unix baobab l'equivalent de windirstat.  
@@ -23927,7 +24064,7 @@ quand on fait ">" on ecrase on effacer un fichier, quand on fait ">>" on ecrit �
     
 ls recursif: ls -R
 ls trie par taille: ls -ls
-ls -tral: taille: exemples: 8565 octets = 9 kilo mais c indique en octets
+ls -tral: taille: exemples: 8565 octets = 9 kilo mais c indique en octets mettre h pour un filesize plus lisible ls -tralh
 export: dans un script, ne marche que si on execute ce script en tappant: . ./Script.ksh (dans Script.ksh il y a par exemple: export TOTO=machin) 
 cd - pour revenir au repertoire precedent
 rappeler commande precedente si fleches ne marchent pas: escape+k
