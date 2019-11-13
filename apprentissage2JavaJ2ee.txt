@@ -1,4 +1,4 @@
-(?=.*test)(?=.*javascript)
+(?=.*inputstream)(?=.*file)
 AFAIRE :
         voir vert.x; kubernetes elastisearch, vuejs reacx
         Afaire go, play, ngix 
@@ -94,6 +94,7 @@ public class CharacterEncodingFilter implements Filter {
    reqwrapper.setCharacterEncoding(this.encoding);
    if (this.forceEncoding) {
     response.setCharacterEncoding(this.encoding);
+    
    }
   }
   chain.doFilter(reqwrapper, response);
@@ -21990,7 +21991,7 @@ erreurs exception java: faire un e.printStackTrace() linkgetStringStackTrace pou
 	}
 ---------------------------
 	/**
-	 * Copy a file from srcPath to dstPath. 
+	 * Copy copier fichier a file from srcPath to dstPath. 
 	 * 
 	 * @param srcPath
 	 * @param dstPath
@@ -22139,7 +22140,7 @@ pour creer des repertoires: create directories creer un repertoire create a dire
     }
 -----------------------
 traitement de fichiers : fichier :
-pour creer un fichier temporaire de travail: 
+pour creer un nouveau fichier temporaire de travail: 
   nomFichierTemporaireCourant = File.createTempFile super pratique car genere lui meme le nom du fichier aleatoires
   nomFichierTemporaireCourant.deleteOnExit(); // supprime le fichier quand la JVM a fini le process
 
@@ -22231,8 +22232,7 @@ pour copier un fichier:
                       java.io.FileInputStream sourceFile=null; 
                       java.io.FileOutputStream destinationFile=null; 
                       try { 
-                      // Creation du fichier: 
-                      destination.createNewFile(); 
+                       destination.createNewFile(); // pour creer creation fichier en java: creer un nouveau fichier vide (destination est un File) 
                       // Ouverture des flux 
                       sourceFile = new java.io.FileInputStream(source); 
                       destinationFile = new java.io.FileOutputStream(destination); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true 
