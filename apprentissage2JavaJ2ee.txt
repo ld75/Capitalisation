@@ -1,4 +1,4 @@
-(?=.*context)(?=.*root)
+(?=.*p12)(?=.*key)
 AFAIRE :
         voir vert.x; kubernetes elastisearch, vuejs reacx
         Afaire go, play, ngix 
@@ -797,7 +797,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
     Première chose: parametrer mon git:
           gitconfig est sur 3 scopes: --local(par defaut) > --global(scope user) > --system(scope systeme windows)
                                     repertoireprojet/config  ~/.gitconfig               /etc/gitconfig
-          git config --global ou --local ou --system user.name mon_nom
+          git config --global ou --local ou --system user.name mon_nom (par defaut c'est local)
           git config --global user.email mon_mail
           git config (--global ou --localSiJeSuisDansUnProjetGit ou rienpourtoutafficher) --list // voir lire mes variables de configuration: d'abord ecrit les sytems puis global puis local qui override les autres
           git config --local credential.helper store //store pour lui dire de stocker en clair dans un fichier mon user/password  MAIS AU FINAL MARCHE PAS: voir ci dessous
@@ -1018,8 +1018,12 @@ Messagerie email :
 traitement en ligne des images :
   déflouter unblur
     http://www.photo-sharpen.com/
+partage d'image : 
+    https://snipboard.io/2Ew6ns.jpg
+    et
+    Greenshot        
 gimp :
-	pour copier un caque dans une autre image:
+	pour copier un calque dans une autre image:
 		draguer le caque dans le milieu de l'autre image
 	pour redimentioner transformer: 
 		shift+t
@@ -2245,7 +2249,7 @@ erreurs codes http: LINKcodesHttp
 202: Confirmation que changement accepté mais pas encore terminé. Lien vers l'objet qui sera crée/modifié figure dans le header "Location"
 204: OK mais je reste sur la meme page
 301: redirection permanante et definitive
-302: redirection temporaire. Google n'aimepas
+302: redirection temporaire. Google n'aimepas il faut faire des redirections permanantes 301 quand on veut faire http -> vers https.
 400: erreur de synthaxe:protocole http non respecte
 401: non authorise (manque login/password): n'a pas encore été authentifé et le navigateur doit maintenant chercher à s'authentifier. En récupérent dans la résponse envoyée par le serveur le header  WWW-Authenticate et son( ou ses séparés par des virgules) challenge associé et doit renvoyer une requete avec en général le header WWW-Authenticate rempli mais ça peut etre autrechose.
 403 : interdit (login/password incorrect) authentification a bien été comprise mais elle est fausse
@@ -12486,6 +12490,9 @@ pomme suppr pour supprimer
 emc: documentum:
 http://softwaresupport.emc.com user: duverge pass: QEUl3PHE
 
+homebrew : ou brew :// pour installer des applications. C'est le aptitude de apple.
+    brew install jenkins-lts // installe jenkins lts
+    et on peut directement en ligne de commande executer jenkins-lts ca demarre jenkins
 ----------------------------------
 
 
@@ -13186,7 +13193,7 @@ fin c ca que j'ai fait qui marche PAS jusqu'au bout.
                           D:\Java\jdk1.7.0_03-32b\bin\keytool -certreq -alias "aliasDunDesCertificatDansMonTrousseau" -file mycertreqEnSortie.csr -keystore mon.keystore.jks ou .p12
                           ce fichier .csr c'est du texte à transmettre a une Certificate Authority
                       L'Autorite me renvoie tototo.crt (oubien certif.cer?) (on peut prendre le parent d'un certif ca marche aussi) C'est un certificat. Pour l'importer ajouter dans mon trousseau truststore je fais:
-                          D:\Java\jdk1.7.0_03-32b\bin\keytool -import -alias "aliasDuCertifAImporterDansMonTrousseau" -file tototo.crt -keystore mon.keystore.jks (ou java/jre/lib/security/cacerts si je veux le mettre dans le trousseau de Java) -storetype JKS (facultatif) (si erreur "java.util.IllegalFormatConversionException: d != java.lang.String" rajouter -J-Duser.language=en: ca se produit pour java>7)
+                          D:\Java\jdk1.7.0_03-32b\bin\keytool -import -alias "aliasDuCertifAImporterDansMonTrousseau" -file tototo.crt -keystore mon.keystore.jks (ou java/jre/lib/security/cacerts si je veux le mettre dans le trousseau de Java. mot de passe par defaut=changeit) -storetype JKS (facultatif) (si erreur "java.util.IllegalFormatConversionException: d != java.lang.String" rajouter -J-Duser.language=en: ca se produit pour java>7)
                       Importer mon certif prive en tant que certif public publique dans un keystore (si le certif existe deja, même avec un autre alias il le detecte et refuse l'import mais on peut forcer )
                           D:\Java\jdk1.7.0_03-32b\bin\keytool -import(ou -importcert c pareil apparemment) -alias "nouvelAliasDuCertifQuonVeutDefinirDansMonTrousseau" -file tototo.crtOU.p7bMAISCANAPASLAIRDEMARCHERERRURX509 -keystore mon.keystore.jks (si erreur "java.util.IllegalFormatConversionException: d != java.lang.String" rajouter -J-Duser.language=en: ca se produit pour java>7)
                       Supprimer un certificat du keystore:
@@ -20141,7 +20148,7 @@ detecter determiner voir l'encodage encode d'un fichier:
                 }
     url decoder: 
     java.net.URLDecoder.decode(url, "UTF-8");
-    pointvirgule point virgule : %3B%0A
+    pointvirgule point virgule : %3B et %0A
   
 pour deflateandencode : 
       import java.util.zip.Deflater;
@@ -32174,6 +32181,7 @@ curl -X GET \
                 
          
 navitia :
+    les coordonnées gps de navitia sont inversées par rapport à googlemaps et navitia utilise des ";" point-virgule alors que google des "," virgules 
 90 000 appels gratuits/mois
 https://www.navitia.io:
 doc:
@@ -32239,7 +32247,12 @@ pour tester les urls ci dessous
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/journeys?from=2.33245;48.77469&to=3.30139;48.21735 idf vers droite hors idf   KO Status: Message: cannot find a region with 2.33245;48.77469 and 3.30139;48.21735 in the same time. You have requested this URI [/v1/journeys] but did you mean /v1/journeys or /v1/vehicle_journeys or /v1/routes ? (404), duration of the request: 414ms
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.64788;48.31951&to=3.30139;48.21735 limiteDansIdf vers DroiteHorsIdf KO  cannot find a region with 2.64788;48.31951 and 3.30139;48.21735 in the same time. You have requested this URI [/v1/journeys] but did you mean /v1/journeys or /v1/vehicle_journeys or /v1/routes ? (404), duration of the request: 338ms
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=-0.56730;44.83589 idf-bordeaux KO  cannot find a region with 2.33245;48.77469 and -0.56730;44.83589 in the same time. You have requested this URI [/v1/journeys] but did you mean /v1/journeys or /v1/vehicle_journeys or /v1/routes ? (404), duration of the request: 578ms
+    
+      si navitia renvoit une erreur qu'il ne trouve pas la coordonnée gps c'est parce que ce point est loin de tout transport. Solution: lui dire qu'on utilise au moins un vélo pour atteindre ce point:
+            last_section_mode%5B%5D=bike&min_bike=0& // si j'ai l'erreur Error: no destination point 
+            first_section_mode%5B%5D=bike&min_bike=0 // si j'ai l'erreur Error: no origin point
 
+        
 api sncf :
      https://api.sncf.com/v1 
      pour tester les URLS : voir LINKNavitiaPlayground ca marche aussi!
