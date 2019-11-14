@@ -1,4 +1,4 @@
-(?=.*p12)(?=.*key)
+(?=.*test)(?=.*javascript)
 AFAIRE :
         voir vert.x; kubernetes elastisearch, vuejs reacx
         Afaire go, play, ngix 
@@ -922,7 +922,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git tag 1.2.0 iducommit fourni par >git log // cree un tag pour le désigné
       git diff --name-only // affiche que les noms des fichiers differents
       Linktaggit:  le tag ne se push pas par defaut: pour le pusher faire git push origin <identifiant du tag>
-      git checkout pathfichiermodifieMaisPasAdded //annuler mes modifs 
+      git checkout pathfichiermodifieMaisPasAdded //undo retour annuler mes modifs 
       git checkout <nom_du_tag> pour revenir à une ancienne version// ne marche pas si je veux remplacer mon working directory modifié par le dernier commit: dans ce cas faire git chekout -- pathAvecWildcardDesFichiersQueJaiModifieDansLeWorkSpaceMaisQueJeNaiPasAdded (undo) Linkcheckout
       git checkout -f <nom_du_tag> pour ignorer le message "The following untracked working tree files would be overwritten by checkout" ATTENTION d'avoir commité avant et d'etre sur que le warning ne parle que de fichiers dont je m'en fous. LINKcheckoutquandmeme  
       si j'ai l'erreur "Please commit your changes or stash them before you merge." quand je pull: soit je stash soit je LINKcheckoutquandmeme
@@ -1117,7 +1117,7 @@ Adobe illustrator :
 intelliji : intellij : Afaire: utiliser le git et l'apprendre.(dixit christophe)
 shortcut pour deplacer le splitpannel du projet: Ctrl+Shift+fleches droite et gauche 
 si j'ai unexpected end of file: c parce que j'ai des retours chario crlf au lieu de lf: faire file > line separator
-Changer la couleur des instances selectionnées: settings-> chercher "identifier under caret" // j'ai du faire ça car le bleu de fond était trop pale et non visible
+Changer la couleur des instances selectionnées: settings>(editor>color scheme>general pas obligéToutCaEntreParentheses)> chercher "identifier under caret" // j'ai du faire ça car le bleu de fond était trop pale et non visible
 pour voir les dependances depandenc dependency dependencies le diagrame c pourri et en plus c'est que sur ultimate. mieux vaut faire Analyze>Analyze Dependencies....
 ajouter une dependence un pluggin dans le pom: alt+insert
 pour voir les stats (nombre de lignes de code etc...) charger le plugin de statistiques https://plugins.jetbrains.com/plugin/4509-statistic: on voit tout en bas une nouvelle icone pour les afficher   
@@ -2260,6 +2260,7 @@ erreurs codes http: LINKcodesHttp
 408: timeout
 413 Payload Too Large
 415 Unsupported Media Type
+417 SC_EXPECTATION_FAILED 
 304: le serveur dit que le browser a deja toutes les infos et pas besoin de renvoyer d'autres infos + code 200
 500: erreur interne du serveur
 503: Service unavailable
@@ -3570,7 +3571,7 @@ JSON-B :jsonb : pour binder java et json LINKjsonbnew
         AuthentMessage ret = jsonb.fromJson(dujson,AuthentMessage.class);
     Je peux personnaliser le mapping avec les annotations: (PAS FAIT AFAIRE)
         MaClasse
-            @JsonbDateFormat("yyyy.MM.dd")
+            @JsonbDateFormat("yyyy.MM.dd") // attention a la conversion Jsonb.toJson() il change l'heure de la date le con!
             private Date updateDate;
             @JsonbTransient
             un champ complettement ignoré lors du binding
@@ -15612,7 +15613,7 @@ junit5 : junit 5 :  version 5: // https://stackify.com/junit-5/ tests repetees, 
           
           import org.junit.jupiter.api.Nested;
           import org.junit.jupiter.api.Test;
-        public class TestUtilsTest { // les classes de test doivent toujours se terminer par Test ou Tests
+        public class TestUtilsTest { // les classes de test doivent toujours se terminer par Test ou Tests sinon j'ai message d'erreur java.lang.Exception: No runnable methods
         @Rule public TestName name = new TestName(); // sert à savoir quel test est lancé voir (pas sur que ce soit ca sur junit5) LINKjgjgjgiiiii
           @BeforeAll(...) //remplace @BeforeClass.
           public static void xxxx()....
@@ -23320,7 +23321,7 @@ DEVOPS :
  Run tests auto à chaque commit (et non pas periodiquement)
  les environnements aussi doivent être dans versionControlGit-svn. Sont versionnés.
  Si pb detecté pendant livraison: feedback(a chaque livr) info a transmettre à tous.(pas blamer mais informer)
- Chaque jour meeting(avec les devs+ops): ce que j'ai fait hier, ce que je fais aujourd'hui, ce qui m'empêche d'avancer
+ Chaque jourou chaque soir ou lors meeting(avec les devs+ops): ce que j'ai fait hier, ce que je fais aujourd'hui, ce qui m'empêche d'avancer
  meeting fin d'un cycle de dev: ce qui a fonctionné, ce qui peut etre amélioré
   Tout le monde (Dev et Ops) utilisent le meme mantis
   chat avec historique et possible à plusieurs. 
@@ -24040,10 +24041,14 @@ pour parametrer ce qui doit se lancer automatiquement au demarrage
 pour savoir ce qui tourne:
 (ps -fu ? ou)ps -ef | grep monnomutilisateur pour voir quelles instances que j'ai lance tournent (affiche les ports) ps -ef donne aussi la date de debut d'execution du process
 on peut ensuite faire un kill -15 (soft) ou -9 (hard) sur l'id qu'on veut killer ( premiere colonne en chiffres (PID)) ferme aussi le port du service du coup
+pour killer en une seule ligne de commande
+    pkill nomdutrucquejeveuxkillerCeNomEstparExempleJavaOuPayaraVoirPs-ef
 ps -ef donne aussi la date de debut d'execution du process
 ps -ef | grep whatever pour voir si whatever tournent
 renvoit le nombre de process qui repondent a la recherche:
       ps -ef | grep whatever | wc -l 
+pour recuperer que le pid:
+    pgrep -f java
 pour localiser une commande grace au path: which nomdelacommande
 pour connaitre l'heure: date
 pour mettre à jour update modifier la date et l'heure:
@@ -24188,10 +24193,12 @@ ssh : se logger sur une machine a distance
                 editer dans mon home ~/ le fichier .bash_profile et rajouter
                       ## only ask for my SSH key passphrase once!
                       #use existing ssh-agent if possible
-                      if [ -f ${HOME}/.ssh-agent ]; then
+                      if [ -f ${HOME}/.ssh-agent ];
+                       then
                          . ${HOME}/.ssh-agent > /dev/null
                       fi
-                      if [ -z "$SSH_AGENT_PID" -o -z "`/usr/bin/ps -a|/usr/bin/egrep \"^[ ]+$SSH_AGENT_PID\"`" ]; then
+                      if [ -z "$SSH_AGENT_PID" -o -z "`/usr/bin/ps -a|/usr/bin/egrep \"^[ ]+$SSH_AGENT_PID\"`" ]; 
+                      then
                          /usr/bin/ssh-agent > ${HOME}/.ssh-agent
                          . ${HOME}/.ssh-agent > /dev/null
                       fi
@@ -24552,8 +24559,18 @@ parser du json avec unix: installer jq
                       ./Update*
               fi
       conditions: 
-                  if [ -z $REPLY ] // si $REPLY est vide 
-                  if [ !-z $REPLY ] pour l'inverse
+                  - if [ -z $REPLY -aOu-o autrecondition ] // si $REPLY est vide // -a:and -o:or toujours mettre un espace [ici et là] 
+                  - if [ !-z $REPLY ] pour l'inverse
+                  - if [ !-z $REPLY ]
+                      then
+                        blablabla
+                       fi
+                  - if [ !-z $REPLY ]
+                       then 
+                       bliblibli
+                       else
+                       blobloblo
+                     fi                  
       si j'ai ': not a valid identifier c'est parce que mon fichier de script est en mode windows avec des retours chario CR au lieu de LF.                             
       pour faire une methode dans un ksh:
             MaMethode ()
@@ -26363,10 +26380,11 @@ jouer un fichier audio sans objet audio
               };
             
             }
-tester avec jest : le meilleur d'apres sylvain
-    npm install --save-dev jest
-    les fichiers de tests doivent s'appeler xxxx.test.js            
-tester le javascript avec Jasmine : et testem : (sinon utiliser https://jsfiddle.net/)
+tester le javascript
+    tester avec jest : le meilleur d'apres sylvain
+        npm install --save-dev jest
+        les fichiers de tests doivent s'appeler xxxx.test.js            
+    avec Jasmine : et testem : (sinon utiliser https://jsfiddle.net/)
       installer testem: (pas besoin d'installer jasmine)
           npm install testem -g (installe testem globalement sur mon systeme)
           ensuite je peux executer en ligne de commande >testem là où se trouve mon javascript ou un fichier testem.json qui contient: 
@@ -26565,7 +26583,9 @@ pour filtrer un array tableau:
             return !todo.completed; // renvoyer true inclu ce record
           });
 setter plusieurs variables:
-    mavar1 = mavar2 = moncalcul; // on set les 2 variables en mm temps     
+    mavar1 = mavar2 = moncalcul; // on set les 2 variables en mm temps
+convertir un string en boolean 
+    JSON.parse("true") ou ("false") renvoit true ou false     
 convertir un tableau en string: 
             var tab = ['5', '6', '12', '22', '20', '11', '9', '1', '8', '7', '11' ]
             var monstring = tab.join(); // join 
