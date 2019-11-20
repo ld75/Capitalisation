@@ -795,10 +795,13 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
     .gitlab-ci.yml contient une suite de jobs qui s'executent sequenciellement(possible executer .sh)
     git --version // voir la version installee de git.
     pour installer la derniere version faire: git update-git-for-windows
+    git init: creer un nouveau projet from scrach dans repertoireLocal (cree aussi un repository) 
+        git init // a faire dans le repertoire ou y a mes sources: c'est un repo pour bosser dessus et modifier dessus direct. N'est pas fait pour pusher dedans.. Ensuite si je veux pusher ça sur mon repository github voir LINKenvoiyer
+        git init --bare // cree un repository qui ne sert qu'à partager: le code source dedans n'est pas visible. on ne peut que cloner pusher et puller à ce repo.
     Première chose: parametrer mon git:
           gitconfig est sur 3 scopes: --local(par defaut) > --global(scope user) > --system(scope systeme windows)
-                                    repertoireprojet/config  ~/.gitconfig               /etc/gitconfig
-          git config --global ou --local ou --system user.name mon_nom
+                                    repertoireprojet/config  ~/.gitconfig               /etc/gitconfig  //pour commenter dedans utiliser #
+          git config --global ou --local ou --system user.name mon_nom (par defaut c'est local)
           git config --global user.email mon_mail
           git config (--global ou --localSiJeSuisDansUnProjetGit ou rienpourtoutafficher) --list // voir lire mes variables de configuration: d'abord ecrit les sytems puis global puis local qui override les autres
           git config --local credential.helper store //store pour lui dire de stocker en clair dans un fichier mon user/password  MAIS AU FINAL MARCHE PAS: voir ci dessous
@@ -841,10 +844,6 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
         git clone --bare ....etc... fait pareil mais c'est un bare 
       dupliquer/copier/recuperer un repertoire-repository local vers mon nouvel espace de travail
         git clone D:/path/repertoireacloner (besoin peut etre faire commit dans ce repository(repertoireacloner) pour l'initialiser) 
-    git init:
-      creer un nouveau projet from scrach dans repertoireLocal (cree aussi un repository) 
-        git init // a faire dans le repertoire ou y a mes sources: c'est un repo pour bosser dessus et modifier dessus direct. N'est pas fait pour pusher dedans.. Ensuite si je veux pusher ça sur mon repository github voir LINKenvoiyer
-        git init --bare // cree un repository qui ne sert qu'à partager: le code source dedans n'est pas visible. on ne peut que cloner pusher et puller à ce repo. 
     branches: master; develop; etc etc... elles existent en local et sur le repo distant et sont toutes TOUTES indépendantes les unes des autres c a d: je peux avoir en local un master qui push dans le develop distant. Les branches c de la merde. DEVOPS.
         si j'ai (HEAD detached from 351dcab) c'est parce que mon HEAD est orphelin et dans aucune branche(parce que j'ai fait un git checkout sur un commit). faire git stash save "bla"; git checkout master; git merge codeDeMonHeadDetached. Ancienne methode: pour le recuperer dabord le rattacher a une branche temporaire: git branch temp puis git checkout temp. Ensuite il faut ecraser une branche par temp (voir ci dessous)
       git branch // pour voir toutes les branches.(attention ne montre pas toutes les branches en fait. pour les voir toutes je ne sais pas comment faire) et voir quelle branche est activee A8. Ou est mon HEAD. Les branches c la merde. DEVOPS
@@ -1019,8 +1018,12 @@ Messagerie email :
 traitement en ligne des images :
   déflouter unblur
     http://www.photo-sharpen.com/
+partage d'image : 
+    https://snipboard.io/2Ew6ns.jpg
+    et
+    Greenshot        
 gimp :
-	pour copier un caque dans une autre image:
+	pour copier un calque dans une autre image:
 		draguer le caque dans le milieu de l'autre image
 	pour redimentioner transformer: 
 		shift+t
@@ -1345,7 +1348,56 @@ payara :payaramicro : // executeur direct d'un microservice.
         --startPort 888// fonctionne avec autobindhttp. 888: port à partir duquel commencer à incrementer numero de port
         --mcAdress // facultatif sert à placer mon instance dans un multicast en particulier   
         --mcPort // facultatif sert à forcer le port de mon multicast (???)
-        -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n // pour debugger en remote 
+        -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n // pour debugger en remote
+        --prebootcommandfile fichier LINKasadmdfirez//facultatif. Execute le fichier avant de demarrer le serveur. Attention tout ne peux pas marcher dedans puisque le serveur n'est pas encore demarré
+        --postbootcommandfile fichier LINKasadmdfirez//facultatif. s'execute dès que le serveur a demarré
+        --postdeploycommandfile fichier LINKasadmdfirez//facultatif s'execute après les deployements sont terminés.         
+executer de la configuration post demarrage: LINKasadmdfirez
+            #Disable dynamic reloading of applications
+            set configs.config.server-config.admin-service.das-config.dynamic-reload-enabled=false
+            #Disable auto deployment
+            set configs.config.server-config.admin-service.das-config.autodeploy-enabled=false
+            #Optimizing Heap size
+            delete-jvm-options -client:-Xmx1024:-Xms512
+            create-jvm-options -server:-Xmx2048:-Xms2048
+            #Configuring Hazelcast cluster
+            set-hazelcast-configuration --clusterName=my-production-cluster --target=server-config
+            #Using a reference to a system property payara.deployed-app-name
+            set configs.config.server-config.http-service.virtual-server.server.default-web-module=${payara.deployed-app-name}
+            #Using a reference to an environment variable security-enabled
+            set configs.config.server-config.network-config.protocols.protocol.http-listener-1.security-enabled=${ENV=security-enabled}
+            #Augmenter la limite du nombre de headers des httpresponses
+            set configs.config.server-config.network-config.protocols.protocol.http-listener-1.http.max-response-headers=1000 // correspond à la configuration Grizzly sous jaceante maxResponseHeaders (en camelcase côté Grizzly (voir leur doc :https://javaee.github.io/grizzly/httpserverframework.html#HTTP_Server_Configuration)
+            
+            
+    Requete GET:
+            Host: www.memoclap.com
+            User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101 Firefox/68.0
+            Accept: audio/webm,audio/ogg,audio/wav,audio/*;q=0.9,application/ogg;q=0.7,video/*;q=0.6,*/*;q=0.5
+            Accept-Language: fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3
+            Referer: https://www.memoclap.com/indexPro.php?projet=20130608702591370701150964&acteur=0
+            Range: bytes=0-
+            Connection: keep-alive
+            Cookie: memoclap=kfp8cui1usqugu4e8d8g61ma2i
+            Pragma: no-cache
+            Cache-Control: no-cache
+    Reponse
+            HTTP/1.1 206 Partial Content
+            Date: Wed, 20 Nov 2019 15:11:07 GMT
+            Server: Apache/2.4.29 (Ubuntu)
+            Last-Modified: Fri, 21 Mar 2014 13:36:22 GMT
+            ETag: "d72fc-4f51df8b04180"
+            Accept-Ranges: bytes
+            Content-Length: 881404
+            Content-Range: bytes 0-881403/881404
+            Keep-Alive: timeout=5, max=70
+            Connection: Keep-Alive
+            Content-Type: audio/mpeg
+            
+            
+            
+            
+             
     payaramicro maven plugin pluggin: mais bof pas super efficace ou j'ai pas trouvé.
     <plugin>
                 <groupId>fish.payara.maven.plugins</groupId>
@@ -2256,7 +2308,7 @@ erreurs codes http: LINKcodesHttp
 202: Confirmation que changement accepté mais pas encore terminé. Lien vers l'objet qui sera crée/modifié figure dans le header "Location"
 204: OK mais je reste sur la meme page
 301: redirection permanante et definitive
-302: redirection temporaire. Google n'aimepas
+302: redirection temporaire. Google n'aimepas il faut faire des redirections permanantes 301 quand on veut faire http -> vers https.
 400: erreur de synthaxe:protocole http non respecte
 401: non authorise (manque login/password): n'a pas encore été authentifé et le navigateur doit maintenant chercher à s'authentifier. En récupérent dans la résponse envoyée par le serveur le header  WWW-Authenticate et son( ou ses séparés par des virgules) challenge associé et doit renvoyer une requete avec en général le header WWW-Authenticate rempli mais ça peut etre autrechose.
 403 : interdit (login/password incorrect) authentification a bien été comprise mais elle est fausse
@@ -11002,7 +11054,7 @@ utilisation du plugin assembly pour créer un zip:
                     </execution>
                 </executions>
             </plugin>
-            le fichier assembly.xml:
+            le fichier assembly.xml: 
             <assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
                             <id>zip</id> // ce nom à la con Linksljfggg
                             <formats><format>zip</format></formats>
@@ -11030,9 +11082,9 @@ utilisation du plugin assembly pour créer un zip:
                       			<outputDirectory>/ ou un/path</outputDirectory>
                       		</fileSet>
                       		<fileSet>(...)		
-                                                        
+                                                          //si j'ai l'erreur You must set at least one file c'est parce que je ne mets rien dans mon zip a cause de path mal configurés ici.
                         </assembly>
-            pour executer l'assembly: mvn assembly:single 
+            pour executer l'assembly: mvn assembly:single  
                                                           
 pour connaitre les profiles: 
   %M3%/mvn help:active-profiles (et si c sur eclipse mettre de quel profile il s'agit quand on run: profile=env_dev ou mettre direct env_dev si le champ s'appelle profile (valeur de <id>))
@@ -12500,6 +12552,9 @@ pomme suppr pour supprimer
 emc: documentum:
 http://softwaresupport.emc.com user: duverge pass: QEUl3PHE
 
+homebrew : ou brew :// pour installer des applications. C'est le aptitude de apple.
+    brew install jenkins-lts // installe jenkins lts
+    et on peut directement en ligne de commande executer jenkins-lts ca demarre jenkins
 ----------------------------------
 
 
@@ -12937,6 +12992,7 @@ Curl : voir aussi wget : pour faire une requette request http doc:https://ec.hax
     sur cygwin (installer dans cygwin. voir cygwin) (sous categorie Net)
 
     get telecharger: (option -A ou -a maj min importent pas. sauf cas exceptionel comme -o et -O, -X et -x) // ordre option importe peu et existe -A (version courte) equivalent à -ablabla : version longue
+    voir la version : curl --version
             -v ou -V ou --verbose// verbose a utiliser quand ça ne marche pas. attention! 
    	A faire sur une seule ligne et pas sur plusieurs car marche pas. et echapper les caractères spéciaux & ; par \
     curl -O https://index.taskcluster/artifacts/public/deepspeech-0.1.0nux1_x86_64.whl // -O ne marche qu'avec des url qui renvoient un fichier dowload. ne pas mettre de param avec, il telecharge le contenu de la reponse et le depose la ou je suis direct. si -o unNomDeFichier url il recupère la reponse et la met dans unNomDeFichier 
@@ -13200,7 +13256,7 @@ fin c ca que j'ai fait qui marche PAS jusqu'au bout.
                           D:\Java\jdk1.7.0_03-32b\bin\keytool -certreq -alias "aliasDunDesCertificatDansMonTrousseau" -file mycertreqEnSortie.csr -keystore mon.keystore.jks ou .p12
                           ce fichier .csr c'est du texte à transmettre a une Certificate Authority
                       L'Autorite me renvoie tototo.crt (oubien certif.cer?) (on peut prendre le parent d'un certif ca marche aussi) C'est un certificat. Pour l'importer ajouter dans mon trousseau truststore je fais:
-                          D:\Java\jdk1.7.0_03-32b\bin\keytool -import -alias "aliasDuCertifAImporterDansMonTrousseau" -file tototo.crt -keystore mon.keystore.jks (ou java/jre/lib/security/cacerts si je veux le mettre dans le trousseau de Java) -storetype JKS (facultatif) (si erreur "java.util.IllegalFormatConversionException: d != java.lang.String" rajouter -J-Duser.language=en: ca se produit pour java>7)
+                          D:\Java\jdk1.7.0_03-32b\bin\keytool -import -alias "aliasDuCertifAImporterDansMonTrousseau" -file tototo.crt -keystore mon.keystore.jks (ou java/jre/lib/security/cacerts si je veux le mettre dans le trousseau de Java. mot de passe par defaut=changeit) -storetype JKS (facultatif) (si erreur "java.util.IllegalFormatConversionException: d != java.lang.String" rajouter -J-Duser.language=en: ca se produit pour java>7)
                       Importer mon certif prive en tant que certif public publique dans un keystore (si le certif existe deja, même avec un autre alias il le detecte et refuse l'import mais on peut forcer )
                           D:\Java\jdk1.7.0_03-32b\bin\keytool -import(ou -importcert c pareil apparemment) -alias "nouvelAliasDuCertifQuonVeutDefinirDansMonTrousseau" -file tototo.crtOU.p7bMAISCANAPASLAIRDEMARCHERERRURX509 -keystore mon.keystore.jks (si erreur "java.util.IllegalFormatConversionException: d != java.lang.String" rajouter -J-Duser.language=en: ca se produit pour java>7)
                       Supprimer un certificat du keystore:
@@ -20076,7 +20132,7 @@ mapping :mapper :mappage :d'une classe A en une classe B (si c'est pour les DTO 
 pour recuperer les proprietes (methodes d'acces getset) d'une classe dans un tableau (utilie pour faire un binder)
         PropertyDescriptor origDescriptors[] = PropertyUtils.getPropertyDescriptors(theSource);
 pour copier les proprietes d'un bean formulaire vers un autre bean de type info par exemple faire: convertir mapper maper un objet java transformer en un autre bean  
-						org.apache.commons.beanutils.BeanUtils.copyProperties(Object dest, Object orig) // ModelMapper c'est de la merde faut pas l'utiliser. le plus performant c'est mapstruct (il genere les classes de mapping au compile time par maven.)
+						org.apache.commons.beanutils.BeanUtils.copyProperties(Object dest, Object orig,String[] ignoreFieldsFacultatifNomDesChampsEnTouteLettre) // ModelMapper c'est de la merde faut pas l'utiliser. le plus performant c'est mapstruct (il genere les classes de mapping au compile time par maven.)
                      avec ModelMapper: // de la merde oublie!!!! parce que je voulais transormer un string en Method: ca c pas évidant à faire.
                              ModelMapper modelMapper = new ModelMapper();
                       		PropertyMap<ClasseSource, ClasseDestinataire> surclasse new PropertyMap<ClasseSource, ClasseDestinataire>() { // pour personnaliser le mapping au plus fin
@@ -20155,7 +20211,7 @@ detecter determiner voir l'encodage encode d'un fichier:
                 }
     url decoder: 
     java.net.URLDecoder.decode(url, "UTF-8");
-    pointvirgule point virgule : %3B%0A
+    pointvirgule point virgule : %3B et %0A
   
 pour deflateandencode : 
       import java.util.zip.Deflater;
@@ -23352,7 +23408,10 @@ DEVOPS :
     logs: sur: authent et logout, accessdata, updates des droits, modifs niveau crud, invalid input, ram et cpu dispo, service repond? erreurs, delais,SAVok ou ko, valeurs business(nbventes...) durees transactions requettes
     alertes: alerts: alert: qd existe ko quels logs avant? les rajouter dans les alertes.
 
-
+teamcity :
+    modifier les settings d'un projet:
+        projects> choisir son projet > en haut a droite :"edit project settings"
+    
 jenkins :
   jenkins home directory contient: // parametrable dans l'admin web. Existe commandes CLI plus rapides que ihm  
         /etc/...
@@ -24431,6 +24490,22 @@ sur sed :
  où ma_commande = num_premiere_ligne,num_derniere_ligne/expression reguliere/remplacee par/flag
  où flag=... 
 sed -e "s/4095,4095/\([0-9][0-9]*\)/**\1**/" fichier
+ -i insert du texte après un truc: exemple:
+        sed -i '' '/blablablaTexteJusteApresblabla/i \
+        \                                         // ca c'est un retour chariot
+        \  blibliblibliJ'insèrecaBlibli\
+        \  blibliblibliJ'insèreciBlibli\
+        \
+        '    /path/fichier/destination.txt 
+       ainsi juste avant blablablaTexteJusteApresblabla
+       on va avoir   
+          blibliblibliJ'insèrecaBlibli
+          blibliblibliJ'insèreciBlibli
+ 
+ 
+ 
+ 
+ 
 raccourcis shortcut commandes:
 	Ctrl+a debut ligne
 	Ctrl+e fin ligne
@@ -25713,6 +25788,8 @@ faire un speech input:
               input.addEventListener('webkitspeechchange', inputChange, false);
 pour faire un ancre: 
         <a href="#x" // x c'est en fait l'identifant de l'element vers lequel je veux que mon scroll pointe. exemple: href= "#3"
+pour faire un lien de telechargement download:
+     <a href="/images/myw3schoolsimage.jpg" download="nouveauNomDuFichier"> 
 email:<a href="mailto:webmaster@example.com">
 pour faire les icones des boutons bouttons c mieux de les faire en vectoriel avec fontawesome (LINKfontaw)
 faire un separateur hr personnalise avec label titre
@@ -30606,7 +30683,9 @@ attention si nouveau compte première fois logguer bien d'abord supprimer tous l
         (standard) controllers 190
      
 
-JWT :  
+JWT : JSON Web Token  
+    JWS : JSON Web Signature
+    JWE : JSON Web Encryption  
         <dependency>
                     <groupId>io.jsonwebtoken</groupId>
                     <artifactId>jjwt</artifactId>
@@ -30617,21 +30696,37 @@ JWT :
     le tooken n'est pas sensé etre stocké dans les cookies ou dans le localstorage du browser.
     stateless: pas besoin de session ni de base de donnée avec l'utilisateur dedans. Le token suffit a valider que je suis Laurent !=cookie de session ou le serveur conserve une table des sessions.
     bonne pratique: ajouter dans le payload sub:9830984,exp:0938098Z: subscribe et expire date shortlife: duree de vie courte.: du coup necesite background authentication a chaque requette: pour ça utiliser librairies.
-                        toujour mettre aud: = audience = pour quel service/serveur uniquement sert ce token?
                         toujours utiliser secret!= ou cle publique!= par service/serveur
                         toujours refuser les token avec algo:null. il faut qu'il y ait un algo. UN ALGO ET UN SEUL
+                        LINKjwwijge
+                                    [active ]{true|false} SEUL TRUC OBLIGATOIRE DU JSON. true=valid et actif. false=invalide car a expiré ou n'est pas dans le scope.
+                                    [ scope ] {string} The scope values for the token.
+                                    [ client_id ] {string} The identifier of the OAuth 2.0 client to which the token was issued.
+                                    [ username ] {string} Username of the resource owner who authorised the token.
+                                    [ token_type ] {string} Type of the token, set to Bearer.
+                                    [ exp ] {number} date d'expiration (future) en secondes depuis 1970-01-01T0:0:0Z
+                                    [ iat ] {number} date de délivration (maintenant) en secondes depuis 1970-01-01T0:0:0Z
+                                    [ nbf ] {number} date avant laquelle le token ne fonctionnera pas encore en secondes depuis 1970-01-01T0:0:0Z
+                                    [ sub ] {string} pseudo de l'utilisateur qui s'est connecté
+                                    [ aud ] {string array} Audience values for the token. pour quel service/serveur uniquement sert ce token? Recommandé de toujours le mettre. Has the same semantics as the standard JWT claim name. If the token has an explicit audience only the client_id of the calling resource server will be included; any other identifiers will be omitted.
+                                    [ iss ] {string} The token issuer (the OpenID Provider / Authorisation Server issuer URI). Has the same semantics as the standard JWT claim name.
+                                    [ jti ] {string} Identifier for the token. Has the same semantics as the standard JWT claim name. Always included for identifier-based access tokens and a JWT-secured response.
+                                    [ cnf.x5t#S256 ] {string} Client X.509 certificate confirmation, represented by a SHA-256 thumbprint of the certificate.
+                                    [ act ] {object} The actor, in impersonation and delegation scenarios.
+                                    [ dat ] {object} Optional custom authorisation data.
      archi: [1Client(Mon Browser)]<----1-------->[1Authentificationservice pour tous: il a 1 clé privée differente pour chaque RessourceService a qui il donne la cle publique correspondante.]
                                    \___2_______>[xRessourcesServices: chacune a une clé publique.] 
     algoritmes recommandés: ES256(cle publique pour verifier et cle privee pour signer mais plus rapide que RS256)  puis RS256(cle publique pour verifier et cle privee pour signer) puis HS256(ce n'est que un secret=chaine de caractère a garder privée. Attention danger avec ça car dans ce cas le client pourra hacker: Client    Service1JWTOuJeSuisAdmin,    Service2JWTOuJeNeSUisPasAdmin)
-OAuth : OAuth2 : (oltu : https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Client+Quickstart et https://github.com/apache/oltu)
-est fait pour gerer que authorization à la base. Pas pour Authentification: On a rajouté openidConnect : pour l'authentification (https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata)
+OAuth : OAuth2 : (https://medium.com/@darutk/diagrams-of-all-the-openid-connect-flows-6968e3990660)
+                (oltu : https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Client+Quickstart et https://github.com/apache/oltu)
+est fait pour gerer que authorization à la base. Pas pour Authentification: On a rajouté openidConnect1.0 par dessus oauth2 : pour l'authentification (https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata)
     USER = RessourceOwner = homme = moi 
-    EDSN = Client = l'application qui demande une autorisation pour faire une action dans le ResourceServer.
-    FID = AuthenticationServer=authorization server: accepte de donner le ticket (Access Tocken)
+    EDSN = Client = l'application =RelayingParty=RP qui demande une autorisation pour faire une action dans le ResourceServer.
+    FID = AuthenticationServer=authorization server=OpenIdProvider=OP: accepte de donner le ticket (Access Tocken)   l'OP doit rendre dispo cet URL /.well-known/openid-configuration qui renvoit un json contenant: LINKopeniddconf
     FIDx = ResourceServer(API contenant les resources)
     En amont: 
     créer un abonnement
-    FID transmet à EDSN: -id applicatif = client_id
+    FID transmet à EDSN: -idApplicatif = client_id
     FID transmet à EDSN: -client_secret = secret_key = ne doit pas passer par le frontchannel et doit rester sur le serveur du Client.
     FID transmet à EDSN: -url de la fid de dev,recette,prod
     EDSN transmet à FID: -nomapplication
@@ -30648,10 +30743,10 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
       (facultatif)EDSN presente un bouton pour rediriger vers FID(AuthenticationServer). Si clique 
       EDSN redirige vers FID(facebook par ex) ; // FID et FIDx pourraient être une seule app.
                 Requete http frontchannel:
-                .setResponseType(ResponseType.CODE.toString())(c a d demande un access code) ou AccessToken(SiJeVeuxFaireDel'ImplicitMode) ET Token_ID=JWS(=JWTSigné)(SiJeVeuxFaireDeL'OpenIdConnectEnImplicitMode)
+                .setResponseType(ResponseType.CODE.toString() ou .... voir LINKResponseType)
                 .setRedirectURI(oauthParams.getRedirectUri())=url de retour vers EDSN(Client)
                 .setScope(oauthParams.getScope()=cequejeveuxfaire=monprofile(espace)listecontacts x y openid(sijeveuxUtiliserOpenIdConnectPourM'authentifier)
-                .setClientId(oauthParams.getClientId())  
+                .setClientId(oauthParams.getClientId()=idApplicatif)  
                 .authorizationLocation(oauthParams.getAuthzEndpoint())
                 .setState(oauthParams.getState()) // juste un texte "tatatoto"
                 // nounce=qsfqmkjg
@@ -30660,25 +30755,22 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
                 return new ModelAndView(new RedirectView(request.getLocationUri()));
                                 -------------------------------------frontchannel---------------------->>>>>>>FID(AuthenticationServer) présente le prompt d'authentification. USER s'authentifie
                                                                                                               FID présente le consent Screen/scope. USER approuve. SI User n'approuve pas FID retournera ?error=x&error_description=y
-                                <<<<<<<<<<<<<<<<<<<<<<---------------frontchannel-----------------------------FID retourne AuthorizationCode=code=AuthorizationGrant(Dans les en-tête http.)+Token_ID si ImpliciteMode + renvoit le meme state qu'il a reçu ("tatatoto")                
+                                <<<<<<<<<<<<<<<<<<<<<<---------------frontchannel-----------------------------FID retourne AuthorizationCode=code=AuthorizationGrant(Dans les en-tête http.)(+Token_ID si ImpliciteMode(c.a.d LINKResponseType=token ou token_id) + renvoit le meme state qu'il a reçu ("tatatoto")                
                                                                     url = redirectURI = callback                        
     
-    EDSN renvoit l’AuthorisationCode + idApplicatif + client_secret à FID--------backchannel------------>>>>>
+    EDSN renvoit l’AuthorizationCode + idApplicatif + client_secret à FID--------backchannel------------>>>>>
                                      + GrantType=Authorization_code
                                      POST
                                      Content-Type:application/x-www-form-urlencoded
-                                     code=l’AuthorisationCode
+                                     code=l’AuthorizationCode comme ça:
                                      &client_id=1234
                                      &client_secret=456
                                      &grant_type=authorization_code
- OU BIEN                             
-    EDSN envoit ResponseType=Token ou =Token_ID ---------------------------------frontchannel------------>>>>>
-    =1ere étape si ImplicitMode                                                                                             
-                                                                                                              FID vérifie que code n'est pas l'AuthorisationCode n'a pas été hacké grâce à client_secret
-                                 <<<<<<<<<<<<<<<<<<<<<<<<<-----------backchannel/frontSiImplicitMode--------- FID renvoit l’AccessToken(scopé&expirable)   +                Token_ID si OpenID =JWTSigné=JWS (AuthenticationServer doit supporter)
-                                                               HTTPS-SSL si Bearer                                        expires_in=xms(stokéDsDBSaufSi) +TokenType=      								 Signature avec SecretKey 
-                                                                                                                          stocké en base sauf si durée            bearer                       ou
-                                                                                                                          vie tres courte                                                  Signature avec paire de clé assymetriques (donc clé privée)
+                                                                                                              FID vérifie que AuthorizationCode n'a pas été hacké à l'aide du client_secret
+                                 <<<<<<<<<<<<<<<<<<<<<<<<<-----------backchannel/frontSiImplicitMode--------- FID renvoit l’AccessToken peut être un JWT(scopé&expirable)(n'envoit que ça si response_type=code)   +     Token_ID si OpenID(de OpenIdConnect1.0 c.a.d response_type=openid) =JWTSigné=JWS (AuthenticationServer doit supporter)
+                                                               HTTPS-SSL si Bearer                                        expires_in=xms(stokéDsDBSaufSi) +TokenType=      				             				 Signature avec SecretKey 
+                                                                                                                          stocké en base sauf si durée            bearer                                                ou
+                                                                                                                          vie tres courte                                                                            Signature avec paire de clé assymetriques (donc clé privée)
                                                                                                                                                                    ou
                                                                  pasBesoin si Mac                                           utilisation unique                      mac                          
                                                                                                                             chaque fois
@@ -30687,19 +30779,98 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
     EDSN demande une authorisation                                                                                                                                                              
                    --->GET                                                                                                                
                    --->GET  plusieurs fois tant que expir OK.
-                   --->GET----------backchannel/frontSiImplicitMode-----renvoit l'AccessToken qui contient le scope----------->>>>>>FIDx(Ressource) Vérifie que l'AccessToken est valide Puis Execute l'action ou                                                                                            
-                                                  |                       GET url.FIDx/toto/endpoint                                                                            |
+                   --->GET----------backchannel/frontSiImplicitMode-----renvoit l'AccessToken qui contient le scope----------->>>>>>FIDx(Ressource) Vérifie que l'AccessToken est valide Puis Execute l'action ou LINKrevokeneje                                                                                           
+                                                  |                       GET url.FIDx/toto/endpoint ou plutot /token/introspect                                                |
                                                   |                  Authorization:Bearer ou Mac blaMonAccessTockenblabla // dans le cookies httponly de preference sinon       | 
                                                   |                         OU renvoit                                     dans le header(bearer pour dire que c du oauth2.0)   |
                                                   |                       getUserInfo si a reçu l'Token_ID                                                                      |
                                            s'assurer que le token ne peut pas                                                                                                   | 
                                            être pompé hors du browser                                                                                                           |
-                                                                                                                                                                                |
+          ou
+          client username/password->---------------------------------------------------------------------------------------------------------------------------------------->>>>>>>>>>>> si Bearer,capable revoquer son access token (stoké en base) LINKrevokeneje                                                                                                                                                                                |
+            POST "grant-type":"client_credentials"
+            et facultatif Authorization: Bearer blaMonAccessTockenblabla 
+          
                           <<<<<<<<<<<<<<<<<<<<---------------------info demandée(restreinte au scope) backchannel---------------------------------------------------------------------retourne------FID(AuthenticationServer) renvoit un RefreshToken à EDSN(Client)
-                          
-                          
-                   client username/password->---------------------------------------------------------------------------------------------------------------------------------------->>>>>>>>>>>> si Bearer,capable revoquer son access token (stoké en base) 
-                          
+                                                                                                                                                                                                                                       ou
+                                                                                                                                                                                                                                objet JSON voir LINKjwwijge
+
+
+
+un OpenIdProvider doit renvoyer ces infos via l'URL unDomaine.com/.well-known/openid-configuration avec un content-type=application/json pour du Get seulement. doit retourner 200 OK HTTP
+ LINKopeniddconf:                                                                                                                                                                                                                                
+    "issuer":xxx
+        REQUIRED. URL using the https scheme with no query or fragment component that the OP asserts as its Issuer Identifier. If Issuer discovery is supported (see Section 2), this value MUST be identical to the issuer value returned by WebFinger. This also MUST be identical to the iss Claim value in ID Tokens issued from this Issuer. 
+    "authorization_endpoint":"xxx"
+        REQUIRED. URL of the OP's OAuth 2.0 Authorization Endpoint [OpenID.Core]. 
+    "token_endpoint":xxx
+        URL of the OP's OAuth 2.0 Token Endpoint [OpenID.Core]. This is REQUIRED unless only the Implicit Flow is used. 
+    "userinfo_endpoint":xxx
+        RECOMMENDED. URL of the OP's UserInfo Endpoint [OpenID.Core]. This URL MUST use the https scheme and MAY contain port, path, and query parameter components. 
+    "jwks_uri":xxx              
+        REQUIRED. URL of the OP's JSON Web Key Set [JWK] document. This contains the signing key(s) the RP uses to validate signatures from the OP. The JWK Set MAY also contain the Server's encryption key(s), which are used by RPs to encrypt requests to the Server. When both signing and encryption keys are made available, a use (Key Use) parameter value is REQUIRED for all keys in the referenced JWK Set to indicate each key's intended usage. Although some algorithms allow the same key to be used for both signatures and encryption, doing so is NOT RECOMMENDED, as it is less secure. The JWK x5c parameter MAY be used to provide X.509 representations of keys provided. When used, the bare key values MUST still be present and MUST match those in the certificate. 
+    "registration_endpoint":xxx             
+        RECOMMENDED. URL of the OP's Dynamic Client Registration Endpoint [OpenID.Registration]. 
+    "scopes_supported":xxx              
+        RECOMMENDED. JSON array containing a list of the OAuth 2.0 [RFC6749] scope values that this server supports. The server MUST support the openid scope value (d'autant plus si je mets LINKozero). Servers MAY choose not to advertise some supported scope values even when this parameter is used, although those defined in [OpenID.Core] SHOULD be listed, if supported. 
+    "response_types_supported":xxx  LINKResponseType            
+        REQUIRED. JSON array containing a list of the OAuth 2.0 response_type(obligatoire) values that this OP supports. Dynamic OpenID Providers MUST support the "code", "id_token", and the "token id_token" Response Type values.
+                                                                    sur Oauth2 response_type peut etre "code" ou "token"(=implicitMode). OpenIdConnect1.0 a rajouté "id_token"LINKozero et "none" du coup on peut combiner: "id_token token" ou "code id_token" etc etc... 
+    "response_modes_supported":xxx              
+        OPTIONAL. JSON array containing a list of the OAuth 2.0 response_mode values that this OP supports, as specified in OAuth 2.0 Multiple Response Type Encoding Practices [OAuth.Responses]. If omitted, the default for Dynamic OpenID Providers is ["query", "fragment"]. 
+    "grant_types_supported":xxx             
+        OPTIONAL. JSON array containing a list of the OAuth 2.0 Grant Type values that this OP supports. Dynamic OpenID Providers MUST support the authorization_code and implicit Grant Type values and MAY support other Grant Types. If omitted, the default value is ["authorization_code", "implicit"]. 
+    "acr_values_supported":xxx              
+        OPTIONAL. JSON array containing a list of the Authentication Context Class References that this OP supports. 
+    "subject_types_supported":xxx               
+        REQUIRED. JSON array containing a list of the Subject Identifier types that this OP supports. Valid types include pairwise and public. 
+    "id_token_signing_alg_values_supported":xxx             
+        REQUIRED. JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for the ID Token to encode the Claims in a JWT [JWT]. The algorithm RS256 MUST be included. The value none MAY be supported, but MUST NOT be used unless the Response Type used returns no ID Token from the Authorization Endpoint (such as when using the Authorization Code Flow). 
+    "id_token_encryption_alg_values_supported":xxx              
+        OPTIONAL. JSON array containing a list of the JWE encryption algorithms (alg values) supported by the OP for the ID Token to encode the Claims in a JWT [JWT]. 
+    "id_token_encryption_enc_values_supported":xxx              
+        OPTIONAL. JSON array containing a list of the JWE encryption algorithms (enc values) supported by the OP for the ID Token to encode the Claims in a JWT [JWT]. 
+    "userinfo_signing_alg_values_supported":xxx             
+        OPTIONAL. JSON array containing a list of the JWS [JWS] signing algorithms (alg values) [JWA] supported by the UserInfo Endpoint to encode the Claims in a JWT [JWT]. The value none MAY be included. 
+    "userinfo_encryption_alg_values_supported":xxx              
+        OPTIONAL. JSON array containing a list of the JWE [JWE] encryption algorithms (alg values) [JWA] supported by the UserInfo Endpoint to encode the Claims in a JWT [JWT]. 
+    "userinfo_encryption_enc_values_supported":xxx              
+        OPTIONAL. JSON array containing a list of the JWE encryption algorithms (enc values) [JWA] supported by the UserInfo Endpoint to encode the Claims in a JWT [JWT]. 
+    "request_object_signing_alg_values_supported":xxx               
+        OPTIONAL. JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for Request Objects, which are described in Section 6.1 of OpenID Connect Core 1.0 [OpenID.Core]. These algorithms are used both when the Request Object is passed by value (using the request parameter) and when it is passed by reference (using the request_uri parameter). Servers SHOULD support none and RS256. 
+    "request_object_encryption_alg_values_supported":xxx                
+        OPTIONAL. JSON array containing a list of the JWE encryption algorithms (alg values) supported by the OP for Request Objects. These algorithms are used both when the Request Object is passed by value and when it is passed by reference. 
+    "request_object_encryption_enc_values_supported":xxx                
+        OPTIONAL. JSON array containing a list of the JWE encryption algorithms (enc values) supported by the OP for Request Objects. These algorithms are used both when the Request Object is passed by value and when it is passed by reference. 
+    "token_endpoint_auth_methods_supported":xxx             
+        OPTIONAL. JSON array containing a list of Client Authentication methods supported by this Token Endpoint. The options are client_secret_post, client_secret_basic, client_secret_jwt, and private_key_jwt, as described in Section 9 of OpenID Connect Core 1.0 [OpenID.Core]. Other authentication methods MAY be defined by extensions. If omitted, the default is client_secret_basic -- the HTTP Basic Authentication Scheme specified in Section 2.3.1 of OAuth 2.0 [RFC6749]. 
+    "token_endpoint_auth_signing_alg_values_supported":xxx              
+        OPTIONAL. JSON array containing a list of the JWS signing algorithms (alg values) supported by the Token Endpoint for the signature on the JWT [JWT] used to authenticate the Client at the Token Endpoint for the private_key_jwt and client_secret_jwt authentication methods. Servers SHOULD support RS256. The value none MUST NOT be used. 
+    "display_values_supported":xxx              
+        OPTIONAL. JSON array containing a list of the display parameter values that the OpenID Provider supports. These values are described in Section 3.1.2.1 of OpenID Connect Core 1.0 [OpenID.Core]. 
+    "claim_types_supported":xxx             
+        OPTIONAL. JSON array containing a list of the Claim Types that the OpenID Provider supports. These Claim Types are described in Section 5.6 of OpenID Connect Core 1.0 [OpenID.Core]. Values defined by this specification are normal, aggregated, and distributed. If omitted, the implementation supports only normal Claims. 
+    "claims_supported":[xxx,yyy,zzzz]              
+        RECOMMENDED. JSON array containing a list of the Claim Names of the Claims that the OpenID Provider MAY be able to supply values for. Note that for privacy or other reasons, this might not be an exhaustive list. 
+    "service_documentation":xxx             
+        OPTIONAL. URL of a page containing human-readable information that developers might want or need to know when using the OpenID Provider. In particular, if the OpenID Provider does not support Dynamic Client Registration, then information on how to register Clients needs to be provided in this documentation. 
+    "claims_locales_supported":xxx              
+        OPTIONAL. Languages and scripts supported for values in Claims being returned, represented as a JSON array of BCP47 [RFC5646] language tag values. Not all languages and scripts are necessarily supported for all Claim values. 
+    "ui_locales_supported":xxx              
+        OPTIONAL. Languages and scripts supported for the user interface, represented as a JSON array of BCP47 [RFC5646] language tag values. 
+    "claims_parameter_supported":xxx                
+        OPTIONAL. Boolean value specifying whether the OP supports use of the claims parameter, with true indicating support. If omitted, the default value is false. 
+    "request_parameter_supported":xxx               
+        OPTIONAL. Boolean value specifying whether the OP supports use of the request parameter, with true indicating support. If omitted, the default value is false. 
+    "request_uri_parameter_supported":xxx               
+        OPTIONAL. Boolean value specifying whether the OP supports use of the request_uri parameter, with true indicating support. If omitted, the default value is true. 
+    "require_request_uri_registration":xxx              
+        OPTIONAL. Boolean value specifying whether the OP requires any request_uri values used to be pre-registered using the request_uris registration parameter. Pre-registration is REQUIRED when the value is true. If omitted, the default value is false. 
+    "op_policy_uri":xxx             
+        OPTIONAL. URL that the OpenID Provider provides to the person registering the Client to read about the OP's requirements on how the Relying Party can use the data provided by the OP. The registration process SHOULD display this URL to the person registering the Client if it is given. 
+    "op_tos_uri":xxx                
+        OPTIONAL. URL that the OpenID Provider provides to the person registering the Client to read about OpenID Provider's terms of service. The registration process SHOULD display this URL to the person registering the Client if it is given. 
+    
 
 Kerberos : 
     utilisation de d'apache mod_auth_kerb: 
@@ -32212,6 +32383,7 @@ curl -X GET \
                 
          
 navitia :
+    les coordonnées gps de navitia sont inversées par rapport à googlemaps et navitia utilise des ";" point-virgule alors que google des "," virgules 
 90 000 appels gratuits/mois
 https://www.navitia.io:
 doc:
@@ -32277,7 +32449,12 @@ pour tester les urls ci dessous
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/journeys?from=2.33245;48.77469&to=3.30139;48.21735 idf vers droite hors idf   KO Status: Message: cannot find a region with 2.33245;48.77469 and 3.30139;48.21735 in the same time. You have requested this URI [/v1/journeys] but did you mean /v1/journeys or /v1/vehicle_journeys or /v1/routes ? (404), duration of the request: 414ms
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.64788;48.31951&to=3.30139;48.21735 limiteDansIdf vers DroiteHorsIdf KO  cannot find a region with 2.64788;48.31951 and 3.30139;48.21735 in the same time. You have requested this URI [/v1/journeys] but did you mean /v1/journeys or /v1/vehicle_journeys or /v1/routes ? (404), duration of the request: 338ms
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=-0.56730;44.83589 idf-bordeaux KO  cannot find a region with 2.33245;48.77469 and -0.56730;44.83589 in the same time. You have requested this URI [/v1/journeys] but did you mean /v1/journeys or /v1/vehicle_journeys or /v1/routes ? (404), duration of the request: 578ms
+    
+      si navitia renvoit une erreur qu'il ne trouve pas la coordonnée gps c'est parce que ce point est loin de tout transport. Solution: lui dire qu'on utilise au moins un vélo pour atteindre ce point:
+            last_section_mode%5B%5D=bike&min_bike=0& // si j'ai l'erreur Error: no destination point 
+            first_section_mode%5B%5D=bike&min_bike=0 // si j'ai l'erreur Error: no origin point
 
+        
 api sncf :
      https://api.sncf.com/v1 
      pour tester les URLS : voir LINKNavitiaPlayground ca marche aussi!
