@@ -1,4 +1,4 @@
-(?=.*inputstream)(?=.*file)
+(?=.*conv)(?=.*int)(?=.*long)
 AFAIRE :
         voir vert.x; kubernetes elastisearch, vuejs reacx
         Afaire go, play, ngix 
@@ -749,7 +749,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
     repertoireLocal | index(~=pannier=stagging) | HEAD(~=commande) | serveurDistant
                   add                        commit              push
     .gitignore est un fichier à la racine du projet dans lequel j'ecris toutes les extensions de fichiers que je ne veux pas gerer dans git (*.iml)
-    POUR QUIL SOIT PRIS EN COMPTE IL FAUT LE COMMITER ET LE PUSHER (ET RECREER LE FICHIER QUI FAIT CH... ?)
+    POUR QUIL SOIT PRIS EN COMPTE IL FAUT LE COMMITER ET LE PUSHER (ET RECREER LE FICHIER QUI FAIT CH... ?) ET dans le repository distant il faut le supprimer car gitignore ne peut pas supprimer des fichiers si ils sont déjà versionnés
               exemple de gitignore
                     # ---- Maven
                     target/
@@ -1334,6 +1334,7 @@ payara :payaramicro : // executeur direct d'un microservice.
         --deploy /home/user/example.war ou le repertoire root du war exploaded(dans target)// mettre un .reload sous la racine de mon war exploded et le modifier/toucher recharge le war exploded automatiquement (faire mvn package)(sauf si le war ne s'est pas déployé la fois précédente)
                  possible faire plusieurs --deploy dans une meme commande seront sur le meme port
         --contextroot contextrootquiremplacelenomdemonwarcommecontextroot (avec / au debut, sans / à la fin) //ou faire --deploy /x/y:contextroot
+        --domainConfig fichierDomain.xml // situé au meme niveau. A recuperer dans payara.jar et à mettre au meme niveau si je veux declarer une base de donnee jta voir LINKlskjdfqm
         --name nomdemoninstancequejedeploie
             ssl: au déploiement automatiquement importe dans mon microprofile les keystores et password defini par les proprietes systèmes javax.net.ssl.xxxx
             clustering: deux instances indentiques déployées sur des ports differents sont automatiquement clusterisees (partagent les memes sessions users)
@@ -1379,6 +1380,15 @@ payara :payaramicro : // executeur direct d'un microservice.
                     </javaCommandLineOptions>
                 </configuration>
             </plugin>
+rajouter une base de LINKlskjdfqm  donnée jta au serveur payara
+    jai mis un domain.xml  a coté de payara.jar et j'ai rajouté dedans 
+        <jdbc-connection-pool is-isolation-level-guaranteed="false" name="H2Pool" datasource-classname="com.mysql.cj.jdbc.MysqlConnectionPoolDataSource" res-type="javax.sql.DataSource">
+            <property name="URL" value="jdbc:mysql://127.0.0.1:3306/memoclap"/>
+            <property name="user" value="root"/>
+            <property name="password" value="foulurecalotte"/>
+        </jdbc-connection-pool>
+
+
     
 glassfish :
     C:\glassfish3\glassfish\bin>asadmin start-domain
@@ -2882,6 +2892,7 @@ pour recuperer une variable d'environnement qui est declaree dans web.xml:
             response.setHeader("Content-Length",String.valueOf(file.length())); voir LINKcontentlengh
             response.setHeader("Content-Disposition","inline; filename=\""+file.getName()+"\"");
             Files.copy(file.toPath(),response.getOutputStream()); // pour copier ecrire le contenu d'un fichier dans un outputstream
+            Files.copy(unInputStream,Paths.get("path/vers/un/fichier.x"))); // pour copier un inputstream dans  un fichier Ca marche bien meme pour les wave. A la main j'y arrivais pas.
         avant:
     	 String header = "attachement;filename="+fileName.substring(0,fileName.lastIndexOf("."));
     				response.addHeader("content-disposition", header);
@@ -5148,8 +5159,9 @@ pour centrer direct:
                                 queryselectorAll ramene tous les elements correspondants alors que queryselector ne ramene que le premier
                                #toto c'est pour les id, .toto c'est pour la classe toto c'est pour la balise? [unattribut=valeurattrut] c'est pour par exemple name. LINKcssselectors
                                > c'est fils direct; " "(espace) c'est fils indirect ou direct
-                               , (virgule)c'est pour "OU" et ;:first-child;:nth-child(2); element1+element2 cherche element2 precede par un element1;
-                               rien sans espace c'est ET: #font.creer: c'est pour <div id="font" class="creer">
+                               , (virgule)c'est pour "OU" donc a,b retourne a ET b
+                               ; (point-virgule):first-child;:nth-child(2); element1+element2 cherche element2 precede par un element1;
+                               rien sans espace c'est "ET": #font.creer: c'est pour <div id="font" class="creer">
                             element(div par ex...)[monatribut] tout element ayant un attribut "monattribut"; element[monattribut=toto] tout element ayant un atribut ayant valeur toto: donc on peut l'utiliser pour name!!!! hahaha!
                             [monatribut] tout court: tout element ayant cet attribut "monatribut"
                             element^[monattribut] tout element commençant par mon attribut $:finissant par... *:contenant
@@ -11630,7 +11642,7 @@ enchainement des actions p93:
 								actionForward = mapping.findForward(Constants.ECHEC);
 							}
 							filterRealiseForm.setActionId("");
-							if(!messages.isEmpty()){
+							if(!messages.isEmpty()){ 
 								saveErrors(request, messages);
 							}
 							return actionForward;
@@ -20950,7 +20962,7 @@ delta entre deux chaines de caracteres characters strings:
                 });
             }
 
-pour savoir si un string chaine est vide empty, ou null:
+pour savoir si un string chaine est vide empty, ou null en java:
             if(monstring != null && !monstring.isEmpty()) 
             ou
               org.apache.commons.lang.StringUtils.isEmpty(this.url_redirect)
@@ -25744,7 +25756,7 @@ pour mettre un retour chario dans la value d'un bouton:
 pour faire un enregistrement audio ou video en html5:
    function onBtnRecordClicked ()
    {
-       if (typeof MediaRecorder === 'undefined' || !navigator.getUserMedia) {
+       if (typeof MediaRecorder === 'undefined' || !navigator.getUserMedia) { // tester qu'une variable est undefined: if (!typeof mavariable===undefined) ou sans le "!"pour l'affirmation 
           alert('Sorry! This demo requires Firefox 30 and up or Chrome 47 and up.');
         }else {
           navigator.getUserMedia({"audio": false, "video": { "mandatory": { "minWidth": 320, "maxWidth": 320, "minHeight": 240,"maxHeight": 240 }, "optional": [] }}, startRecording, errorCallback);
@@ -26199,6 +26211,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                             formData.append('ans', ans); // Append extra data before send.
                             formData.append('idp', idprojetEnCours); // Append extra data before send.
                             formData.append('fs', askValidator.fs); // Append extra data before send.
+                            pour recuperer une valeur  :formData.get("fs")
                       var xhr = new XMLHttpRequest();
                               xhr.setRequestHeader("Content-Type", "multipart/form-data"); // c'est ca par défaut si j'utilise FormData()! pour le gerer sur une servlet sans avoir a regarder dans le payload mettre LINKmultilkjfqsdf 
                               ou
@@ -26227,7 +26240,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                       printStacktrace(req.name);
                       // quand le chargement a demarre
                     };
-                    xhr.onload = function(e) { // retour du serveur: "e" c'est progressEvent et "this" c'est la reponse du serveur
+                    xhr.onload = function(e) { // retour du serveur: "e" c'est progressEvent et "this" c'est la reponse du serveur. SI j'ai besoin de this pour une classe faire LINKbindthisclasseresponse ou bien utiliser le e comme ça: e.target.response
                             printStacktrace(req.name);
                             askValidator.class_AskValidator.record.call(this);
                                 this.getResponseHeader("Content-type") // on peut recuperer ca et autre...
@@ -26246,7 +26259,9 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                                 {
                                   console.log(this.response);
                                   console.log(e);
-                                  ...
+                                }
+                        }
+                        LINKbindthisclasseresponse: dans ajax, si besoin de this dans la fonction xhr.onload faire }.bind(this) et pour this.status remplacer par xhr.status
                      xhr.onComplete = function(transport) // je ne sais pas si ca sert vraiment 
                       {
                          if (200 == transport.status) 
@@ -26335,6 +26350,8 @@ jouer un fichier audio sans objet audio
         sendMessageDisappear("messageAudio", "OK");
         source.noteOn(0);                          // play the source now
       }
+savoir si un element audio joue:
+    if(document.getElementById(lecteur).paused
     possible de mettre a jour le texte du css avec du javascript mais tout d'un coup pas possible (pas trouvé) de façon chirurgicale
         document.getElementById("identifiantDeMaBaliseStyle").innerHTML
   pour savoir si une variable est un chiffre: 
@@ -27374,7 +27391,7 @@ pour faire un paint avec canvas: Attention ne jamais donner un style a un canvas
                             // Pencil tool instance.
                             tool = new tool_ecrire();
                             // Attach the mousedown, mousemove and mouseup event listeners.
-                            canvas.removeEventListener('mousedown', ev_canvas, false); // removeEventListner des fois ne marche pas parce que c'est chiant faut etre super precis. Du coup faire comme ca LINKrmvEvntListner
+                            canvas.removeEventListener('mousedown', ev_canvas, false); // removeEventListner des fois ne marche pas parce que c'est chiant faut etre super precis. Du coup faire comme ca pour supprimer effacer les eventlisteners LINKrmvEvntListner
                             canvas.removeEventListener('mousemove', ev_canvas, false);
                             canvas.addEventListener('mouseup',   ev_canvas, false);
                             canvas.classList.add('ecrire');
@@ -27540,7 +27557,7 @@ ou
                                             }
                                             
 pour supprimer tous all les eventlisnter LINKrmvEvntListner
-    l'idée est de clonner l'element que je veux nettoyer et que le clone remplace celui qui contient les eventlisnter. Tout est dupliqué sauf les eventlistners:
+    l'idée est de clonner l'element que je veux nettoyer et que le clone remplace celui qui contient les eventlistener. Tout est dupliqué sauf les eventlistners:
             elementANettoyer.parentNode.replaceChild(elementANettoyer.cloneNode(false), elementANettoyer); // elementquiremplace,elementaremplacer 
 
                                                      
@@ -28604,7 +28621,7 @@ requirejs : require.js : require : approximatif: a bien améliorer
           }
          </script>         
   
-webcomponents : web-components : web components : custom elements : customelements : customelement :
+webcomponent :webcomponents : web-components : web components : custom elements : customelements : customelement :
 https://developers.google.com/web/fundamentals/web-components/customelements#attrchanges
  au final dans mon html j'aurais:
  <script src="laurent-moncomponent1.js"/>  
@@ -28630,7 +28647,7 @@ https://developers.google.com/web/fundamentals/web-components/customelements#att
           du dom (balises html..ne pas mettre d'appel a des methodes dedans. Marche pas (onclick..marche que si on utilise le javascript direct dedans sans faire appel à des methodes. Si besoin appeler methodes alors faire LINKlkjsdflh)
           `; // ` ` marche partout pour faire des strings qui vont a la ligne ! 
 METHODE CLASS: THEBEST? classes es6
-                                                class MonElement extends HTMLElement ou un autre element webcomponent (avec de l'animation par exemple)
+                                                class MonElement extends HTMLElement ou un autre element webcomponent (avec de l'animation par exemple) du coup pour que le fils appelle une methode du parent il doit faire super.methodeDuParent()
                                                  {
                                                  // attention les alerts ne marchent dans un webcomponent faire console.log (si j'en ai besoin chercher sur internet)
                                           2)            constructor() // execute en premier à la creation MAIS n'est pas encore dans le DOM. // declarer mes proprietes ici pas au dessus
@@ -28646,6 +28663,7 @@ METHODE CLASS: THEBEST? classes es6
                                                          var monTemplate = templatexxx; ou voir LINKCustomTemplate=`du contenu
                                                                                               <span>SSSS<slot name(facultatif)='aaa'>bBBBB</slot><slot name='bbb'/>CCCC</span>   //se remplira avec par defaut le HTML qui est dans la page dans ma balise custom element sinon si name existe alors avec le HTML de base qui est comme ça:<mon-customelement><h1 slot='aaa'>bla</h1><div slot='bbb'></div></mon-customelement>
                                                                                              html${this.variable}html` // pour que ${this.variable} marche il faut mettre tout ce bloc non pas dans constructor mais dans connectedcallback en ayant préalablement défini MaCLasse.variabl=xx
+                                                                                             `${super.gui()}` //pour appeler dans le template un autre template retourne dans la classe parente
                                                                                         ou autre facon de definir un template: <template id="x">lkjsdf</template>
                                                          var cloneDuTemplate = monTemplate.content.cloneNode(true);  // true: il est recursif dans le dom
                                                         this.shadowRoot.appendChild(cloneDuTemplate); ou root.appendChild(cloneDuTemplate); ou root.appendChild(document.importNode(cloneDuTemplate,true)); ou root.innerHtml=... ou ou this.shadowRoot.innerHTML=""; ou this.shadowRoot.querySelector.....
