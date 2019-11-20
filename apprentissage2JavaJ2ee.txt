@@ -1346,7 +1346,56 @@ payara :payaramicro : // executeur direct d'un microservice.
         --startPort 888// fonctionne avec autobindhttp. 888: port à partir duquel commencer à incrementer numero de port
         --mcAdress // facultatif sert à placer mon instance dans un multicast en particulier   
         --mcPort // facultatif sert à forcer le port de mon multicast (???)
-        -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n // pour debugger en remote 
+        -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n // pour debugger en remote
+        --prebootcommandfile fichier LINKasadmdfirez//facultatif. Execute le fichier avant de demarrer le serveur. Attention tout ne peux pas marcher dedans puisque le serveur n'est pas encore demarré
+        --postbootcommandfile fichier LINKasadmdfirez//facultatif. s'execute dès que le serveur a demarré
+        --postdeploycommandfile fichier LINKasadmdfirez//facultatif s'execute après les deployements sont terminés.         
+executer de la configuration post demarrage: LINKasadmdfirez
+            #Disable dynamic reloading of applications
+            set configs.config.server-config.admin-service.das-config.dynamic-reload-enabled=false
+            #Disable auto deployment
+            set configs.config.server-config.admin-service.das-config.autodeploy-enabled=false
+            #Optimizing Heap size
+            delete-jvm-options -client:-Xmx1024:-Xms512
+            create-jvm-options -server:-Xmx2048:-Xms2048
+            #Configuring Hazelcast cluster
+            set-hazelcast-configuration --clusterName=my-production-cluster --target=server-config
+            #Using a reference to a system property payara.deployed-app-name
+            set configs.config.server-config.http-service.virtual-server.server.default-web-module=${payara.deployed-app-name}
+            #Using a reference to an environment variable security-enabled
+            set configs.config.server-config.network-config.protocols.protocol.http-listener-1.security-enabled=${ENV=security-enabled}
+            #Augmenter la limite du nombre de headers des httpresponses
+            set configs.config.server-config.network-config.protocols.protocol.http-listener-1.http.max-response-headers=1000 // correspond à la configuration Grizzly sous jaceante maxResponseHeaders (en camelcase côté Grizzly (voir leur doc :https://javaee.github.io/grizzly/httpserverframework.html#HTTP_Server_Configuration)
+            
+            
+    Requete GET:
+            Host: www.memoclap.com
+            User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101 Firefox/68.0
+            Accept: audio/webm,audio/ogg,audio/wav,audio/*;q=0.9,application/ogg;q=0.7,video/*;q=0.6,*/*;q=0.5
+            Accept-Language: fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3
+            Referer: https://www.memoclap.com/indexPro.php?projet=20130608702591370701150964&acteur=0
+            Range: bytes=0-
+            Connection: keep-alive
+            Cookie: memoclap=kfp8cui1usqugu4e8d8g61ma2i
+            Pragma: no-cache
+            Cache-Control: no-cache
+    Reponse
+            HTTP/1.1 206 Partial Content
+            Date: Wed, 20 Nov 2019 15:11:07 GMT
+            Server: Apache/2.4.29 (Ubuntu)
+            Last-Modified: Fri, 21 Mar 2014 13:36:22 GMT
+            ETag: "d72fc-4f51df8b04180"
+            Accept-Ranges: bytes
+            Content-Length: 881404
+            Content-Range: bytes 0-881403/881404
+            Keep-Alive: timeout=5, max=70
+            Connection: Keep-Alive
+            Content-Type: audio/mpeg
+            
+            
+            
+            
+             
     payaramicro maven plugin pluggin: mais bof pas super efficace ou j'ai pas trouvé.
     <plugin>
                 <groupId>fish.payara.maven.plugins</groupId>
@@ -10992,7 +11041,7 @@ utilisation du plugin assembly pour créer un zip:
                     </execution>
                 </executions>
             </plugin>
-            le fichier assembly.xml:
+            le fichier assembly.xml: 
             <assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
                             <id>zip</id> // ce nom à la con Linksljfggg
                             <formats><format>zip</format></formats>
@@ -11020,9 +11069,9 @@ utilisation du plugin assembly pour créer un zip:
                       			<outputDirectory>/ ou un/path</outputDirectory>
                       		</fileSet>
                       		<fileSet>(...)		
-                                                        
+                                                          //si j'ai l'erreur You must set at least one file c'est parce que je ne mets rien dans mon zip a cause de path mal configurés ici.
                         </assembly>
-            pour executer l'assembly: mvn assembly:single 
+            pour executer l'assembly: mvn assembly:single  
                                                           
 pour connaitre les profiles: 
   %M3%/mvn help:active-profiles (et si c sur eclipse mettre de quel profile il s'agit quand on run: profile=env_dev ou mettre direct env_dev si le champ s'appelle profile (valeur de <id>))
@@ -23347,7 +23396,10 @@ DEVOPS :
     logs: sur: authent et logout, accessdata, updates des droits, modifs niveau crud, invalid input, ram et cpu dispo, service repond? erreurs, delais,SAVok ou ko, valeurs business(nbventes...) durees transactions requettes
     alertes: alerts: alert: qd existe ko quels logs avant? les rajouter dans les alertes.
 
-
+teamcity :
+    modifier les settings d'un projet:
+        projects> choisir son projet > en haut a droite :"edit project settings"
+    
 jenkins :
   jenkins home directory contient: // parametrable dans l'admin web. Existe commandes CLI plus rapides que ihm  
         /etc/...
@@ -25724,6 +25776,8 @@ faire un speech input:
               input.addEventListener('webkitspeechchange', inputChange, false);
 pour faire un ancre: 
         <a href="#x" // x c'est en fait l'identifant de l'element vers lequel je veux que mon scroll pointe. exemple: href= "#3"
+pour faire un lien de telechargement download:
+     <a href="/images/myw3schoolsimage.jpg" download="nouveauNomDuFichier"> 
 email:<a href="mailto:webmaster@example.com">
 pour faire les icones des boutons bouttons c mieux de les faire en vectoriel avec fontawesome (LINKfontaw)
 faire un separateur hr personnalise avec label titre
@@ -30645,7 +30699,8 @@ JWT : JSON Web Token
      archi: [1Client(Mon Browser)]<----1-------->[1Authentificationservice pour tous: il a 1 clé privée differente pour chaque RessourceService a qui il donne la cle publique correspondante.]
                                    \___2_______>[xRessourcesServices: chacune a une clé publique.] 
     algoritmes recommandés: ES256(cle publique pour verifier et cle privee pour signer mais plus rapide que RS256)  puis RS256(cle publique pour verifier et cle privee pour signer) puis HS256(ce n'est que un secret=chaine de caractère a garder privée. Attention danger avec ça car dans ce cas le client pourra hacker: Client    Service1JWTOuJeSuisAdmin,    Service2JWTOuJeNeSUisPasAdmin)
-OAuth : OAuth2 : (oltu : https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Client+Quickstart et https://github.com/apache/oltu)
+OAuth : OAuth2 : (https://medium.com/@darutk/diagrams-of-all-the-openid-connect-flows-6968e3990660)
+                (oltu : https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Client+Quickstart et https://github.com/apache/oltu)
 est fait pour gerer que authorization à la base. Pas pour Authentification: On a rajouté openidConnect1.0 par dessus oauth2 : pour l'authentification (https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata)
     USER = RessourceOwner = homme = moi 
     EDSN = Client = l'application =RelayingParty=RP qui demande une autorisation pour faire une action dans le ResourceServer.
@@ -30670,7 +30725,7 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
       (facultatif)EDSN presente un bouton pour rediriger vers FID(AuthenticationServer). Si clique 
       EDSN redirige vers FID(facebook par ex) ; // FID et FIDx pourraient être une seule app.
                 Requete http frontchannel:
-                .setResponseType(ResponseType.CODE.toString())(c a d demande un code) ou AccessToken(SiJeVeuxFaireDel'ImplicitMode) ET Token_ID=JWS(=JWTSigné)(SiJeVeuxFaireDeL'OpenIdConnectEnImplicitMode)
+                .setResponseType(ResponseType.CODE.toString() ou .... voir LINKResponseType)
                 .setRedirectURI(oauthParams.getRedirectUri())=url de retour vers EDSN(Client)
                 .setScope(oauthParams.getScope()=cequejeveuxfaire=monprofile(espace)listecontacts x y openid(sijeveuxUtiliserOpenIdConnectPourM'authentifier)
                 .setClientId(oauthParams.getClientId()=idApplicatif)  
@@ -30682,7 +30737,7 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
                 return new ModelAndView(new RedirectView(request.getLocationUri()));
                                 -------------------------------------frontchannel---------------------->>>>>>>FID(AuthenticationServer) présente le prompt d'authentification. USER s'authentifie
                                                                                                               FID présente le consent Screen/scope. USER approuve. SI User n'approuve pas FID retournera ?error=x&error_description=y
-                                <<<<<<<<<<<<<<<<<<<<<<---------------frontchannel-----------------------------FID retourne AuthorizationCode=code=AuthorizationGrant(Dans les en-tête http.)(+Token_ID si ImpliciteMode(c.a.d response_types=token) PAS SUR!!!) + renvoit le meme state qu'il a reçu ("tatatoto")                
+                                <<<<<<<<<<<<<<<<<<<<<<---------------frontchannel-----------------------------FID retourne AuthorizationCode=code=AuthorizationGrant(Dans les en-tête http.)(+Token_ID si ImpliciteMode(c.a.d LINKResponseType=token ou token_id) + renvoit le meme state qu'il a reçu ("tatatoto")                
                                                                     url = redirectURI = callback                        
     
     EDSN renvoit l’AuthorizationCode + idApplicatif + client_secret à FID--------backchannel------------>>>>>
@@ -30693,9 +30748,6 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
                                      &client_id=1234
                                      &client_secret=456
                                      &grant_type=authorization_code
- OU BIEN                             
-    EDSN envoit ResponseType=Token ou =Token_ID ---------------------------------frontchannel------------>>>>>
-    =1ere étape si ImplicitMode                                                                                             
                                                                                                               FID vérifie que AuthorizationCode n'a pas été hacké à l'aide du client_secret
                                  <<<<<<<<<<<<<<<<<<<<<<<<<-----------backchannel/frontSiImplicitMode--------- FID renvoit l’AccessToken peut être un JWT(scopé&expirable)(n'envoit que ça si response_type=code)   +     Token_ID si OpenID(de OpenIdConnect1.0 c.a.d response_type=openid) =JWTSigné=JWS (AuthenticationServer doit supporter)
                                                                HTTPS-SSL si Bearer                                        expires_in=xms(stokéDsDBSaufSi) +TokenType=      				             				 Signature avec SecretKey 
@@ -30743,7 +30795,7 @@ un OpenIdProvider doit renvoyer ces infos via l'URL unDomaine.com/.well-known/op
         RECOMMENDED. URL of the OP's Dynamic Client Registration Endpoint [OpenID.Registration]. 
     "scopes_supported":xxx              
         RECOMMENDED. JSON array containing a list of the OAuth 2.0 [RFC6749] scope values that this server supports. The server MUST support the openid scope value (d'autant plus si je mets LINKozero). Servers MAY choose not to advertise some supported scope values even when this parameter is used, although those defined in [OpenID.Core] SHOULD be listed, if supported. 
-    "response_types_supported":xxx              
+    "response_types_supported":xxx  LINKResponseType            
         REQUIRED. JSON array containing a list of the OAuth 2.0 response_type(obligatoire) values that this OP supports. Dynamic OpenID Providers MUST support the "code", "id_token", and the "token id_token" Response Type values.
                                                                     sur Oauth2 response_type peut etre "code" ou "token"(=implicitMode). OpenIdConnect1.0 a rajouté "id_token"LINKozero et "none" du coup on peut combiner: "id_token token" ou "code id_token" etc etc... 
     "response_modes_supported":xxx              
