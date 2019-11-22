@@ -1369,7 +1369,7 @@ executer de la configuration post demarrage: LINKasadmdfirez
             #Augmenter la limite du nombre de headers des httpresponses
             set configs.config.server-config.network-config.protocols.protocol.http-listener-1.http.max-response-headers=1000 // correspond à la configuration Grizzly sous jaceante maxResponseHeaders (en camelcase côté Grizzly (voir leur doc :https://javaee.github.io/grizzly/httpserverframework.html#HTTP_Server_Configuration)
             
-            
+Apache renvoit avec de l'audio    
     Requete GET:
             Host: www.memoclap.com
             User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101 Firefox/68.0
@@ -1393,7 +1393,25 @@ executer de la configuration post demarrage: LINKasadmdfirez
             Keep-Alive: timeout=5, max=70
             Connection: Keep-Alive
             Content-Type: audio/mpeg
-            
+payara renvoit:
+    Requete GET
+            Host: localhost:8080
+            User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0
+            Accept: */*
+            Accept-Encoding: identity;q=1, *;q=0
+            Accept-Language: fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7
+            Referer: http://localhost:8080/memoclaptest/resources/auth/indexPro
+            Range: bytes=0-
+            Connection: keep-alive
+            Cookie: JSESSIONID=964d92ef42790c41256234dfcff7; JSESSIONID=0bef676170f3a1a684db137635a4
+    Reponse
+            HTTP/1.1 200 OK
+            Server: Payara Micro #badassfish
+            Content-Disposition: inline; filename="toto=toto.mp3"
+            Content-Type: audio/mpeg;charset=UTF-8
+            Content-Length: 1104068
+            X-Frame-Options: SAMEORIGIN
+                
             
             
             
@@ -17158,7 +17176,7 @@ logs :logguer : logger :tracer :
                                         LOGGER.config("Configuration Generals log done.");
                                         LOGGER.log(Level.FINE, "Finer logged");
                                         }
-                                      catch(IOException exception) {
+                                      catch(IOException exception) {  // pour catcher different type d'exception : catch(IOException | FileNotFoundException e)
                                           LOGGER.log(Level.SEVERE, "Error occur in FileHandler.", exception);
                                       }
                 Utilisation:
@@ -19585,7 +19603,7 @@ pour tester la performance : perfs : perf : performances : performences :
             si j'ai exception outofmemory error heap space faire ca: 
             Xms: espace alloue à l'init pour les objets(instances)                         |_heap
             Xmx: espace alloue max pour les objets(instances) si depasse: heapoutofmemory  |
-            MaxPermSize: espace pour les CLASSES (pas les instances mais tout ce qui est static) par defaut 64MegaByte. A partir de java8 c'est stocké dans le metaspace oùy a plus de limites         
+            MaxPermSize: espace pour les CLASSES (pas les instances mais tout ce qui est static) par defaut 64MegaByte. A partir de java8 c'est stocké dans le metaspace où y a plus de limites         
     				JAVA_OPTIONS="-Xms64m -Xmx256m"----> Xmx512m ou Xmx1024m ou Xmx1800m ou Xmx2048(!!ennorme) pour avoir à disposition 1Go de memoire sur le heap. En general on met 700m Meg sur les applis Renault
     				en theorie: Xms=1/4 de Xmx
     				sur eclipse on peut dans "executer" ecrire dans Arguments VM: -Xmx1024m OU -XX:MaxPermSize=1024m
@@ -27646,7 +27664,7 @@ dessiner un cercle dans un canvas:
       context.lineWidth = 5;
       context.strokeStyle = '#003300';
       context.stroke();         
-pour faire des graphs 
+pour faire des graphs graphiques 
     interactifs avec canvas prendre exemple sur memoclap diagram.php
     utiliser superbe librairie data-driver-documents d3 : 
                 <canvas></canvas>
