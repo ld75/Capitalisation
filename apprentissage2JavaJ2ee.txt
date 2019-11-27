@@ -1,4 +1,4 @@
-(?=.*conv)(?=.*int)(?=.*long)
+(?=.*int)(?=.*long)(?=.*convert)
 AFAIRE :
         voir vert.x; kubernetes elastisearch, vuejs reacx
         Afaire go, play, ngix 
@@ -2657,7 +2657,7 @@ ou remote                       peute etre sur classe meme un webservice. Peut a
                   @ScheduleExpression   |
                   @Startup // a mettre sur une classe. s'execute au demarrage. marche qu'avec @Singleton  
                   @Remote ---> Bean de l'EJB peut être accede de l'exterieur de son classLoader   
-                  @WebService  // pour faire un webservice jax-ws marche qu'avec une classe ayant @Stateless et/ou? @Singleton
+                  @WebService  // pour faire un webservice jax-ws(donc soap) marche qu'avec une classe ayant @Stateless et/ou? @Singleton
                   @Path // pour faire un webservice jax-rs marche qu'avec une classe ayant @Stateless et/ou? @Singleton
                       
   Message Driver  @MessageDriven // on ne peut le joindre qu'avec des messages JMS à l'interieur du container (du serveur) par des Message Bus
@@ -2817,11 +2817,12 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                         ou voir LINKee"(çà)" si c'est multipart		 
                     (Il y a aussi: recuperer l'url du request 
                     request.getMethod() 
-                    request.getRequestURI() // pour connaitre l'url la page appelante. Exemple: /saml-landing
+                    request.getRequestURI() // pour connaitre l'url la page appelante incluant le contextPath. Exemple: toto/saml-landing ou /saml-landing si contexte="" 
                     request.getPathInfo() // recuperer le nom du fichier "/bip.wav"
                     request.getRequestURL() // renvoit tout l'URL: http://monespacerh-dev.idkidscommunity.com/saml-landing. attention si existe reverse proxy ca renvoit le bon port et le bon host.(je crois) pas l'url origine initiale du client SINON:parametrer apache avec http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#proxypreservehost
                     request.getQueryString() // retourne l'url mais uniquement après "?"
                     request.getScheme() // renvoit http ou https... attention si existe reverse proxy ca renvoit pas celui du reverseproxy mais celui du serveurMOI.(je crois)
+                    request.getServletPath() // pareil que getRequestURI() sans le contextPath?? pas vraiment on dirait qu'il prend le milieu du path! grrrr
                     request.getServerName() // renvoit le domaine: monespacerh-dev.idkidscommunity.com
                     ou bien   request.getHeader("referer") ;// si c'est un src= et qu'on souhaite vraiment connaitre la page appelante. Mais peut etre que c Referer(R maj)
                     request.getProtocol() ... bof...)
@@ -3662,7 +3663,7 @@ utilise WSDL (le serveur donne au client un wsdl pour qu'il puisse appeller ses 
 pour generer le wsdl a la main:
           se placer dans le repertoire classes et faire:
           "C:\Program Files\Java\jdk1.6.0_24\bin\wsgen" -verbose -keep -cp . com.test.TestSessionBeanBean -wsdl // ou com.test.TestSessionBeanBean  est une classe contenant anotation @WebService(et @Statefull si c un EJB aussi) et @WebMethod au niveau des meths
-           cette classe doit implementer une interface qui est annotee de @WebService  et @WebMethod de la meme facon. 
+           cette classe doit implementer une interface qui est annotee de @WebService(facultatiftargetNamespace="http://xxx/wsdl")  et @WebMethod de la meme facon. 
           il va generer le wsdl et le xsd sous classes
 pour generer java a partir de wsdl mais beurk: 
       "C:\Program Files\Java\jdk1.6.0_24\bin\wsimport" TestWebServiceBeanService.wsdl -verbose -keep -d repertoireOuGenererLeCodeSource
@@ -7443,8 +7444,8 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
     ouvrir console Hibernate et configurer une connection à une base
     Clic droit sur mon projet > JAP > faire le reverseEngeniring
     fichier resources/META-INF/persistence.xml marche bien. sinon ou mais pas sur dutout: WEB-INF/persistence.xml. Ce fichier DOIT etre dans le jar ou le war qui contient les @Entity
-    <persistence> 
-        <persistence-unit name="com.memoclap" transaction-type="RESOURCE_LOCAL(pour des testsunitaires) ou JTA(pour tapper dans LINKjta)"> // du coup applicativement je l'appelle comme ça : LINKentitym
+    <persistence> ou <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"> 
+        <persistence-unit name="com.memoclap" transaction-type="RESOURCE_LOCAL(pour des testsunitaires car c'est a moi de gerer les transactions) ou JTA(pour tapper dans LINKjta)"> // du coup applicativement je l'appelle comme ça : LINKentitym
             <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> // facultatif provider peut etre eclipselink ou hibernate. si on met rien.. sais pas. depend jars ?
             <description>EclipseLink EntityManager</description>                 // facultatif
             <exclude-unlisted-classes>false</exclude-unlisted-classes>
@@ -7641,6 +7642,7 @@ si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from col
       B extends A     C extends A                        
        @Entity
        @Cache(usage=CacheConcurrencyStrategy.READ_WRITE//existe quasi pas de cache: access concurent bien tolere .NONSTRICT_READ_WRITE si updates rares(bof, pas bien pige) .READ_ONLY(cache jamais invalide: tres performant mais updates pas possibles si cache est outOfdate (sur?))
+         @IdClass(ProjectId.class) // facultatif mais recommandé: quand ma classe à deux champs qui forment la cle primaire JPA demande de faire ça et dans la classe ProjectId  c'est juste une classe avec deux champs et aucune annotation. Meme pas besoin de getter et setters
        @Table(name="NonDeLaTableEnBDSIDifferenteQueNomClasseJava") // optionnel
             public class UserPermission implements DomainObject, Serializable 
             {
@@ -8456,7 +8458,7 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
     fichier resources/META-INF/persistence.xml marche bien. sinon ou mais pas sur dutout: WEB-INF/persistence.xml. Ce fichier DOIT etre dans le jar ou le war qui contient les @Entity
     <?xml version="1.0" encoding="UTF-8"?> // super important de mettre ça
     <persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"> // super important de mettre ça 
-        <persistence-unit name="com.memoclap"     transaction-type="RESOURCE_LOCAL(utilise le système de transaction du JDBC natif donc a utiliser pour les testsunitaires) ou JTA(pour utiliser la gestion de transaction du container donc d'un jndi LINKjta)"> // du coup applicativement je l'appelle comme ça : LINKentitym
+        <persistence-unit name="com.memoclap"     transaction-type="RESOURCE_LOCAL(utilise le système de transaction du JDBC natif donc a utiliser pour les testsunitaires LINKentitymlocal) ou JTA(pour utiliser la gestion de transaction du container donc d'un jndi LINKjta)"> // du coup applicativement je l'appelle comme ça : LINKentitym
             <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> // facultatif provider peut etre eclipselink ou hibernate. si on met rien.. sais pas. depend jars ?
             <description>EclipseLink EntityManager</description>                 // facultatif
             <exclude-unlisted-classes>false</exclude-unlisted-classes>
@@ -8496,7 +8498,7 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
             @PersistenceContext(name = "facultatifUtileDansLeJavaChaisPasTropEncoreCOmmentAFAIRE" unitName="LINKdkdkfjfjnomcorrespondantA<persistence-unit nameEstFacultatifSiYEnAQunDansLeXml) // est def ici LINKentitym . attention c'est une annotation ejb. Est Injectable dans Ejbs. Pour la rendre injectable dans cdi faire LINKlerendreinjectable (heu je crois que ca marche quand meme l'injection sans ça.)
             EntityManager em;
         ou
-            EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.memoclap"); //est def ici LINKentitym. dans persistence.xml mettre <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> sinon ca ne marche pas 
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.memoclap"); //est def ici LINKentitymlocal(jecrois voir doc tomee). dans persistence.xml mettre <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> sinon ca ne marche pas 
             et
             public static EntityManager getEntityManager() {
             return emf.createEntityManager();
@@ -10670,7 +10672,8 @@ ren %WEB-INF-PAE%\classes\_integr.log4j.properties.template log4j.properties.tem
 
 
 
-MAVEN : attention: artifactid ne doit pas contenir des points
+MAVEN : super pour trouver un maven à partir de package ou meme classe: https://search.maven.org/
+ attention: artifactid ne doit pas contenir des points
 versionning : versioning :
 v.x.y.z_u (x=evol maj; y=evolmin; z=ano; u=ano du build)
   pour verifier la securite des dependances voir LINKfkjOwasplkjsg
@@ -13213,6 +13216,8 @@ fin c ca que j'ai fait qui marche PAS jusqu'au bout.
                   Il n'est possible de signer que de petits documents. Pour signer un gros document on calcule d'abord une empreinte de ce document. La commande dgst permet de le faire.
                     pour hasher un document:(md5...)
                     openssl dgst <hachage: -md5 ou -sha1 ou -ripemd160> −out <empreinte> <fichier_entree>
+                        donc pour verifier l'integrite d'un fichier:
+                            openssl dgst -sha512 apache-tomee-8.0.0-webprofile.zip
                     exemple:openssl dgst -sha1 -out hashashge.txt SYE.opc
                             C:\OPENSSL\bin>openssl.exe dgst -md5 D:\Profiles\lduverge\Downloads\mysql-5.7.17-winx64.zip
                     pour signer le hashage du document ca se fait avec une cle privee:
@@ -22397,7 +22402,7 @@ pour recuperer le string d'un fichier lire un fichier
                     final byte[] bytes = inputStream.readAllBytes();
                     String sql = new String(bytes);
           Path resPath = Paths.get(this.getClass()).getResource("/chemin/unfichier.son").toURI());
-          String jsonContent = new String(java.nio.file.Files.readAllBytes(resPath),"UTF8");  
+          String jsonContent = new String(java.nio.file.Files.readAllBytes(resPath ou new File(stringChemin).toPath(),"UTF8");  
         public String getStringFromFile(File file) throws Exception
         	{
         		ByteArrayOutputStream  lByteOut = new ByteArrayOutputStream();
@@ -25366,7 +25371,11 @@ pour utiliser le plugin maven tomcat: Si ça marche:-). voir dessous: pas reussi
                         factory="org.apache.commons.dbcp.BasicDataSourceFactory"
                         type="javax.sql.DataSource" username="JETSPEED" password="JETSPEED"
                         driverClassName="oracle.jdbc.driver.OracleDriver ou com.microsoft.sqlserver.jdbc.SQLServerDriver" url="jdbc:oracle:thin:@localhost:1521:HRBAC92"
-                        maxActive="100" maxIdle="30" maxWait="10000" validationQuery="SELECT CLIENT_ID FROM CLIENT"/>                                                                                      
+                        maxActive="100" maxIdle="30" maxWait="10000" validationQuery="SELECT CLIENT_ID FROM CLIENT"/>
+                        
+catalina.bat catalina.sh  c'est pour demarrer tomcat dans le fenetre courante. startup.bat c'est pour démarrer en bg a part
+    catalina.bat run demarre au premier plan
+    catalina.bat start demarre dans une nouvelle fenetre                                                                                          
                                  
 jetty :
 definir le contexte pour les images avec maven: LINKlrroqlkjqdflmh 
@@ -31691,7 +31700,12 @@ pour recuperer les rôles de l'utilisateur qui s'est connecté côté IDP:
         }                
         
 windows : (commande dos :)
-renommer un repertoire fichier en un autre : 
+pour effacer supprimer delete un fichier:
+    del /f C:\Users\lduverge\apache-tomee-plume-8.0.0\webapps\memoclap.front.war // /f pour forcer
+pour effacer un repertoire directory:
+    rmDir C:\path\vers\repertoire // rajouter <espace>/Q/S après rmDir pour effacer de facon recursive 
+        
+renommer un repertoire fichier en un autre: 
     rename dir1 dir2
     commande dos pour voir les ports utilises sur mon ordi: netstat (voir netstat plus haut)
     les alias: c a d le nom des serveurs et adresse ip sont a definir dans C:/WINNT/system32/drivers/etc/hosts: a la modif il prend en compte tout de suite. LINKàç<çç_à
@@ -31850,8 +31864,9 @@ pour avoir la liste des taches (control alt suppr; ctrl alt suppr):
         del /s *.MF (il supprime tous les fichiers *.MF recursivement) /Q pour qu'il ne demande pas de confirmation
         rmdir /S repertoire // pour supprimer un repertoire. /S c'est pour forcer meme si repertoires non vides
             
-      pour copier le nom de plusieurs fichiers: nom des fichiers
+      pour copier copy le nom de plusieurs fichiers: nom des fichiers en dos
           aller en commande dos
+                copy ..\MemOclapFront\target\memoclap.front.war C:\Users\lduverge\apache-tomee-plume-8.0.0\webapps\
       raccourcis clavier: http://www.infoprat.net/astuces/windows9x/astuces/raccourcis_015.php
       demarrer une application de la barre des taches: Windows + T
       Acceder à une application: Alt+Tab puis les fleches
