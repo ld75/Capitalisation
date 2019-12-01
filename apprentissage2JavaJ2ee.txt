@@ -1,4 +1,4 @@
-(?=.*context)(?=.*root)
+(?=.*int)(?=.*long)(?=.*convert)
 AFAIRE :
         voir vert.x; kubernetes elastisearch, vuejs reacx
         Afaire go, play, ngix 
@@ -94,6 +94,7 @@ public class CharacterEncodingFilter implements Filter {
    reqwrapper.setCharacterEncoding(this.encoding);
    if (this.forceEncoding) {
     response.setCharacterEncoding(this.encoding);
+    
    }
   }
   chain.doFilter(reqwrapper, response);
@@ -748,7 +749,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
     repertoireLocal | index(~=pannier=stagging) | HEAD(~=commande) | serveurDistant
                   add                        commit              push
     .gitignore est un fichier à la racine du projet dans lequel j'ecris toutes les extensions de fichiers que je ne veux pas gerer dans git (*.iml)
-    POUR QUIL SOIT PRIS EN COMPTE IL FAUT LE COMMITER ET LE PUSHER (ET RECREER LE FICHIER QUI FAIT CH... ?)
+    POUR QUIL SOIT PRIS EN COMPTE IL FAUT LE COMMITER ET LE PUSHER (ET RECREER LE FICHIER QUI FAIT CH... ?) ET dans le repository distant il faut le supprimer car gitignore ne peut pas supprimer des fichiers si ils sont déjà versionnés
               exemple de gitignore
                     # ---- Maven
                     target/
@@ -794,10 +795,13 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
     .gitlab-ci.yml contient une suite de jobs qui s'executent sequenciellement(possible executer .sh)
     git --version // voir la version installee de git.
     pour installer la derniere version faire: git update-git-for-windows
+    git init: creer un nouveau projet from scrach dans repertoireLocal (cree aussi un repository) 
+        git init // a faire dans le repertoire ou y a mes sources: c'est un repo pour bosser dessus et modifier dessus direct. N'est pas fait pour pusher dedans.. Ensuite si je veux pusher ça sur mon repository github voir LINKenvoiyer
+        git init --bare // cree un repository qui ne sert qu'à partager: le code source dedans n'est pas visible. on ne peut que cloner pusher et puller à ce repo.
     Première chose: parametrer mon git:
           gitconfig est sur 3 scopes: --local(par defaut) > --global(scope user) > --system(scope systeme windows)
-                                    repertoireprojet/config  ~/.gitconfig               /etc/gitconfig
-          git config --global ou --local ou --system user.name mon_nom
+                                    repertoireprojet/config  ~/.gitconfig               /etc/gitconfig  //pour commenter dedans utiliser #
+          git config --global ou --local ou --system user.name mon_nom (par defaut c'est local)
           git config --global user.email mon_mail
           git config (--global ou --localSiJeSuisDansUnProjetGit ou rienpourtoutafficher) --list // voir lire mes variables de configuration: d'abord ecrit les sytems puis global puis local qui override les autres
           git config --local credential.helper store //store pour lui dire de stocker en clair dans un fichier mon user/password  MAIS AU FINAL MARCHE PAS: voir ci dessous
@@ -840,10 +844,6 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
         git clone --bare ....etc... fait pareil mais c'est un bare 
       dupliquer/copier/recuperer un repertoire-repository local vers mon nouvel espace de travail
         git clone D:/path/repertoireacloner (besoin peut etre faire commit dans ce repository(repertoireacloner) pour l'initialiser) 
-    git init:
-      creer un nouveau projet from scrach dans repertoireLocal (cree aussi un repository) 
-        git init // a faire dans le repertoire ou y a mes sources: c'est un repo pour bosser dessus et modifier dessus direct. N'est pas fait pour pusher dedans.. Ensuite si je veux pusher ça sur mon repository github voir LINKenvoiyer
-        git init --bare // cree un repository qui ne sert qu'à partager: le code source dedans n'est pas visible. on ne peut que cloner pusher et puller à ce repo. 
     branches: master; develop; etc etc... elles existent en local et sur le repo distant et sont toutes TOUTES indépendantes les unes des autres c a d: je peux avoir en local un master qui push dans le develop distant. Les branches c de la merde. DEVOPS.
         si j'ai (HEAD detached from 351dcab) c'est parce que mon HEAD est orphelin et dans aucune branche(parce que j'ai fait un git checkout sur un commit). faire git stash save "bla"; git checkout master; git merge codeDeMonHeadDetached. Ancienne methode: pour le recuperer dabord le rattacher a une branche temporaire: git branch temp puis git checkout temp. Ensuite il faut ecraser une branche par temp (voir ci dessous)
       git branch // pour voir toutes les branches.(attention ne montre pas toutes les branches en fait. pour les voir toutes je ne sais pas comment faire) et voir quelle branche est activee A8. Ou est mon HEAD. Les branches c la merde. DEVOPS
@@ -922,7 +922,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git tag 1.2.0 iducommit fourni par >git log // cree un tag pour le désigné
       git diff --name-only // affiche que les noms des fichiers differents
       Linktaggit:  le tag ne se push pas par defaut: pour le pusher faire git push origin <identifiant du tag>
-      git checkout pathfichiermodifieMaisPasAdded //annuler mes modifs 
+      git checkout pathfichiermodifieMaisPasAdded //undo retour annuler mes modifs 
       git checkout <nom_du_tag> pour revenir à une ancienne version// ne marche pas si je veux remplacer mon working directory modifié par le dernier commit: dans ce cas faire git chekout -- pathAvecWildcardDesFichiersQueJaiModifieDansLeWorkSpaceMaisQueJeNaiPasAdded (undo) Linkcheckout
       git checkout -f <nom_du_tag> pour ignorer le message "The following untracked working tree files would be overwritten by checkout" ATTENTION d'avoir commité avant et d'etre sur que le warning ne parle que de fichiers dont je m'en fous. LINKcheckoutquandmeme  
       si j'ai l'erreur "Please commit your changes or stash them before you merge." quand je pull: soit je stash soit je LINKcheckoutquandmeme
@@ -1018,8 +1018,12 @@ Messagerie email :
 traitement en ligne des images :
   déflouter unblur
     http://www.photo-sharpen.com/
+partage d'image : 
+    https://snipboard.io/2Ew6ns.jpg
+    et
+    Greenshot        
 gimp :
-	pour copier un caque dans une autre image:
+	pour copier un calque dans une autre image:
 		draguer le caque dans le milieu de l'autre image
 	pour redimentioner transformer: 
 		shift+t
@@ -1113,7 +1117,7 @@ Adobe illustrator :
 intelliji : intellij : Afaire: utiliser le git et l'apprendre.(dixit christophe)
 shortcut pour deplacer le splitpannel du projet: Ctrl+Shift+fleches droite et gauche 
 si j'ai unexpected end of file: c parce que j'ai des retours chario crlf au lieu de lf: faire file > line separator
-Changer la couleur des instances selectionnées: settings-> chercher "identifier under caret" // j'ai du faire ça car le bleu de fond était trop pale et non visible
+Changer la couleur des instances selectionnées: settings>(editor>color scheme>general pas obligéToutCaEntreParentheses)> chercher "identifier under caret" // j'ai du faire ça car le bleu de fond était trop pale et non visible
 pour voir les dependances depandenc dependency dependencies le diagrame c pourri et en plus c'est que sur ultimate. mieux vaut faire Analyze>Analyze Dependencies....
 ajouter une dependence un pluggin dans le pom: alt+insert
 pour voir les stats (nombre de lignes de code etc...) charger le plugin de statistiques https://plugins.jetbrains.com/plugin/4509-statistic: on voit tout en bas une nouvelle icone pour les afficher   
@@ -1334,6 +1338,7 @@ payara :payaramicro : // executeur direct d'un microservice.
         --deploy /home/user/example.war ou le repertoire root du war exploaded(dans target)// mettre un .reload sous la racine de mon war exploded et le modifier/toucher recharge le war exploded automatiquement (faire mvn package)(sauf si le war ne s'est pas déployé la fois précédente)
                  possible faire plusieurs --deploy dans une meme commande seront sur le meme port
         --contextroot contextrootquiremplacelenomdemonwarcommecontextroot (avec / au debut, sans / à la fin) //ou faire --deploy /x/y:contextroot
+        --domainConfig fichierDomain.xml // situé au meme niveau. A recuperer dans payara.jar et à mettre au meme niveau si je veux declarer une base de donnee jta voir LINKlskjdfqm
         --name nomdemoninstancequejedeploie
             ssl: au déploiement automatiquement importe dans mon microprofile les keystores et password defini par les proprietes systèmes javax.net.ssl.xxxx
             clustering: deux instances indentiques déployées sur des ports differents sont automatiquement clusterisees (partagent les memes sessions users)
@@ -1344,7 +1349,74 @@ payara :payaramicro : // executeur direct d'un microservice.
         --startPort 888// fonctionne avec autobindhttp. 888: port à partir duquel commencer à incrementer numero de port
         --mcAdress // facultatif sert à placer mon instance dans un multicast en particulier   
         --mcPort // facultatif sert à forcer le port de mon multicast (???)
-        -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n // pour debugger en remote 
+        -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n // pour debugger en remote
+        --prebootcommandfile fichier LINKasadmdfirez//facultatif. Execute le fichier avant de demarrer le serveur. Attention tout ne peux pas marcher dedans puisque le serveur n'est pas encore demarré
+        --postbootcommandfile fichier LINKasadmdfirez//facultatif. s'execute dès que le serveur a demarré
+        --postdeploycommandfile fichier LINKasadmdfirez//facultatif s'execute après les deployements sont terminés.         
+executer de la configuration post demarrage: LINKasadmdfirez
+            #Disable dynamic reloading of applications
+            set configs.config.server-config.admin-service.das-config.dynamic-reload-enabled=false
+            #Disable auto deployment
+            set configs.config.server-config.admin-service.das-config.autodeploy-enabled=false
+            #Optimizing Heap size
+            delete-jvm-options -client:-Xmx1024:-Xms512
+            create-jvm-options -server:-Xmx2048:-Xms2048
+            #Configuring Hazelcast cluster
+            set-hazelcast-configuration --clusterName=my-production-cluster --target=server-config
+            #Using a reference to a system property payara.deployed-app-name
+            set configs.config.server-config.http-service.virtual-server.server.default-web-module=${payara.deployed-app-name}
+            #Using a reference to an environment variable security-enabled
+            set configs.config.server-config.network-config.protocols.protocol.http-listener-1.security-enabled=${ENV=security-enabled}
+            #Augmenter la limite du nombre de headers des httpresponses
+            set configs.config.server-config.network-config.protocols.protocol.http-listener-1.http.max-response-headers=1000 // correspond à la configuration Grizzly sous jaceante maxResponseHeaders (en camelcase côté Grizzly (voir leur doc :https://javaee.github.io/grizzly/httpserverframework.html#HTTP_Server_Configuration)
+            
+Apache renvoit avec de l'audio    
+    Requete GET:
+            Host: www.memoclap.com
+            User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101 Firefox/68.0
+            Accept: audio/webm,audio/ogg,audio/wav,audio/*;q=0.9,application/ogg;q=0.7,video/*;q=0.6,*/*;q=0.5
+            Accept-Language: fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3
+            Referer: https://www.memoclap.com/indexPro.php?projet=20130608702591370701150964&acteur=0
+            Range: bytes=0-
+            Connection: keep-alive
+            Cookie: memoclap=kfp8cui1usqugu4e8d8g61ma2i
+            Pragma: no-cache
+            Cache-Control: no-cache
+    Reponse
+            HTTP/1.1 206 Partial Content
+            Date: Wed, 20 Nov 2019 15:11:07 GMT
+            Server: Apache/2.4.29 (Ubuntu)
+            Last-Modified: Fri, 21 Mar 2014 13:36:22 GMT
+            ETag: "d72fc-4f51df8b04180"
+            Accept-Ranges: bytes
+            Content-Length: 881404
+            Content-Range: bytes 0-881403/881404
+            Keep-Alive: timeout=5, max=70
+            Connection: Keep-Alive
+            Content-Type: audio/mpeg
+payara renvoit:
+    Requete GET
+            Host: localhost:8080
+            User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0
+            Accept: */*
+            Accept-Encoding: identity;q=1, *;q=0
+            Accept-Language: fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7
+            Referer: http://localhost:8080/memoclaptest/resources/auth/indexPro
+            Range: bytes=0-
+            Connection: keep-alive
+            Cookie: JSESSIONID=964d92ef42790c41256234dfcff7; JSESSIONID=0bef676170f3a1a684db137635a4
+    Reponse
+            HTTP/1.1 200 OK
+            Server: Payara Micro #badassfish
+            Content-Disposition: inline; filename="toto=toto.mp3"
+            Content-Type: audio/mpeg;charset=UTF-8
+            Content-Length: 1104068
+            X-Frame-Options: SAMEORIGIN
+                
+            
+            
+            
+             
     payaramicro maven plugin pluggin: mais bof pas super efficace ou j'ai pas trouvé.
     <plugin>
                 <groupId>fish.payara.maven.plugins</groupId>
@@ -1379,6 +1451,15 @@ payara :payaramicro : // executeur direct d'un microservice.
                     </javaCommandLineOptions>
                 </configuration>
             </plugin>
+rajouter une base de LINKlskjdfqm  donnée jta au serveur payara
+    jai mis un domain.xml  a coté de payara.jar et j'ai rajouté dedans 
+        <jdbc-connection-pool is-isolation-level-guaranteed="false" name="H2Pool" datasource-classname="com.mysql.cj.jdbc.MysqlConnectionPoolDataSource" res-type="javax.sql.DataSource">
+            <property name="URL" value="jdbc:mysql://127.0.0.1:3306/memoclap"/>
+            <property name="user" value="root"/>
+            <property name="password" value="foulurecalotte"/>
+        </jdbc-connection-pool>
+
+
     
 glassfish :
     C:\glassfish3\glassfish\bin>asadmin start-domain
@@ -2246,7 +2327,7 @@ erreurs codes http: LINKcodesHttp
 202: Confirmation que changement accepté mais pas encore terminé. Lien vers l'objet qui sera crée/modifié figure dans le header "Location"
 204: OK mais je reste sur la meme page
 301: redirection permanante et definitive
-302: redirection temporaire. Google n'aimepas
+302: redirection temporaire. Google n'aimepas il faut faire des redirections permanantes 301 quand on veut faire http -> vers https.
 400: erreur de synthaxe:protocole http non respecte
 401: non authorise (manque login/password): n'a pas encore été authentifé et le navigateur doit maintenant chercher à s'authentifier. En récupérent dans la résponse envoyée par le serveur le header  WWW-Authenticate et son( ou ses séparés par des virgules) challenge associé et doit renvoyer une requete avec en général le header WWW-Authenticate rempli mais ça peut etre autrechose.
 403 : interdit (login/password incorrect) authentification a bien été comprise mais elle est fausse
@@ -2257,6 +2338,7 @@ erreurs codes http: LINKcodesHttp
 408: timeout
 413 Payload Too Large
 415 Unsupported Media Type
+417 SC_EXPECTATION_FAILED 
 304: le serveur dit que le browser a deja toutes les infos et pas besoin de renvoyer d'autres infos + code 200
 500: erreur interne du serveur
 503: Service unavailable
@@ -2576,7 +2658,7 @@ ou remote                       peute etre sur classe meme un webservice. Peut a
                   @ScheduleExpression   |
                   @Startup // a mettre sur une classe. s'execute au demarrage. marche qu'avec @Singleton  
                   @Remote ---> Bean de l'EJB peut être accede de l'exterieur de son classLoader   
-                  @WebService  // pour faire un webservice jax-ws marche qu'avec une classe ayant @Stateless et/ou? @Singleton
+                  @WebService  // pour faire un webservice jax-ws(donc soap) marche qu'avec une classe ayant @Stateless et/ou? @Singleton
                   @Path // pour faire un webservice jax-rs marche qu'avec une classe ayant @Stateless et/ou? @Singleton
                       
   Message Driver  @MessageDriven // on ne peut le joindre qu'avec des messages JMS à l'interieur du container (du serveur) par des Message Bus
@@ -2736,11 +2818,12 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                         ou voir LINKee"(çà)" si c'est multipart		 
                     (Il y a aussi: recuperer l'url du request 
                     request.getMethod() 
-                    request.getRequestURI() // pour connaitre l'url la page appelante. Exemple: /saml-landing
+                    request.getRequestURI() // pour connaitre l'url la page appelante incluant le contextPath. Exemple: toto/saml-landing ou /saml-landing si contexte="" 
                     request.getPathInfo() // recuperer le nom du fichier "/bip.wav"
                     request.getRequestURL() // renvoit tout l'URL: http://monespacerh-dev.idkidscommunity.com/saml-landing. attention si existe reverse proxy ca renvoit le bon port et le bon host.(je crois) pas l'url origine initiale du client SINON:parametrer apache avec http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#proxypreservehost
                     request.getQueryString() // retourne l'url mais uniquement après "?"
                     request.getScheme() // renvoit http ou https... attention si existe reverse proxy ca renvoit pas celui du reverseproxy mais celui du serveurMOI.(je crois)
+                    request.getServletPath() // pareil que getRequestURI() sans le contextPath?? pas vraiment on dirait qu'il prend le milieu du path! grrrr
                     request.getServerName() // renvoit le domaine: monespacerh-dev.idkidscommunity.com
                     ou bien   request.getHeader("referer") ;// si c'est un src= et qu'on souhaite vraiment connaitre la page appelante. Mais peut etre que c Referer(R maj)
                     request.getProtocol() ... bof...)
@@ -2881,6 +2964,7 @@ pour recuperer une variable d'environnement qui est declaree dans web.xml:
             response.setHeader("Content-Length",String.valueOf(file.length())); voir LINKcontentlengh
             response.setHeader("Content-Disposition","inline; filename=\""+file.getName()+"\"");
             Files.copy(file.toPath(),response.getOutputStream()); // pour copier ecrire le contenu d'un fichier dans un outputstream
+            Files.copy(unInputStream,Paths.get("path/vers/un/fichier.x"))); // pour copier un inputstream dans  un fichier Ca marche bien meme pour les wave. A la main j'y arrivais pas.
         avant:
     	 String header = "attachement;filename="+fileName.substring(0,fileName.lastIndexOf("."));
     				response.addHeader("content-disposition", header);
@@ -3567,7 +3651,7 @@ JSON-B :jsonb : pour binder java et json LINKjsonbnew
         AuthentMessage ret = jsonb.fromJson(dujson,AuthentMessage.class);
     Je peux personnaliser le mapping avec les annotations: (PAS FAIT AFAIRE)
         MaClasse
-            @JsonbDateFormat("yyyy.MM.dd")
+            @JsonbDateFormat("yyyy.MM.dd") // attention a la conversion Jsonb.toJson() il change l'heure de la date le con!
             private Date updateDate;
             @JsonbTransient
             un champ complettement ignoré lors du binding
@@ -3580,7 +3664,7 @@ utilise WSDL (le serveur donne au client un wsdl pour qu'il puisse appeller ses 
 pour generer le wsdl a la main:
           se placer dans le repertoire classes et faire:
           "C:\Program Files\Java\jdk1.6.0_24\bin\wsgen" -verbose -keep -cp . com.test.TestSessionBeanBean -wsdl // ou com.test.TestSessionBeanBean  est une classe contenant anotation @WebService(et @Statefull si c un EJB aussi) et @WebMethod au niveau des meths
-           cette classe doit implementer une interface qui est annotee de @WebService  et @WebMethod de la meme facon. 
+           cette classe doit implementer une interface qui est annotee de @WebService(facultatiftargetNamespace="http://xxx/wsdl")  et @WebMethod de la meme facon. 
           il va generer le wsdl et le xsd sous classes
 pour generer java a partir de wsdl mais beurk: 
       "C:\Program Files\Java\jdk1.6.0_24\bin\wsimport" TestWebServiceBeanService.wsdl -verbose -keep -d repertoireOuGenererLeCodeSource
@@ -5147,8 +5231,9 @@ pour centrer direct:
                                 queryselectorAll ramene tous les elements correspondants alors que queryselector ne ramene que le premier
                                #toto c'est pour les id, .toto c'est pour la classe toto c'est pour la balise? [unattribut=valeurattrut] c'est pour par exemple name. LINKcssselectors
                                > c'est fils direct; " "(espace) c'est fils indirect ou direct
-                               , (virgule)c'est pour "OU" et ;:first-child;:nth-child(2); element1+element2 cherche element2 precede par un element1;
-                               rien sans espace c'est ET: #font.creer: c'est pour <div id="font" class="creer">
+                               , (virgule)c'est pour "OU" donc a,b retourne a ET b
+                               ; (point-virgule):first-child;:nth-child(2); element1+element2 cherche element2 precede par un element1;
+                               rien sans espace c'est "ET": #font.creer: c'est pour <div id="font" class="creer">
                             element(div par ex...)[monatribut] tout element ayant un attribut "monattribut"; element[monattribut=toto] tout element ayant un atribut ayant valeur toto: donc on peut l'utiliser pour name!!!! hahaha!
                             [monatribut] tout court: tout element ayant cet attribut "monatribut"
                             element^[monattribut] tout element commençant par mon attribut $:finissant par... *:contenant
@@ -7360,8 +7445,8 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
     ouvrir console Hibernate et configurer une connection à une base
     Clic droit sur mon projet > JAP > faire le reverseEngeniring
     fichier resources/META-INF/persistence.xml marche bien. sinon ou mais pas sur dutout: WEB-INF/persistence.xml. Ce fichier DOIT etre dans le jar ou le war qui contient les @Entity
-    <persistence> 
-        <persistence-unit name="com.memoclap" transaction-type="RESOURCE_LOCAL(pour des testsunitaires) ou JTA(pour tapper dans LINKjta)"> // du coup applicativement je l'appelle comme ça : LINKentitym
+    <persistence> ou <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"> 
+        <persistence-unit name="com.memoclap" transaction-type="RESOURCE_LOCAL(pour des testsunitaires car c'est a moi de gerer les transactions) ou JTA(pour tapper dans LINKjta)"> // du coup applicativement je l'appelle comme ça : LINKentitym
             <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> // facultatif provider peut etre eclipselink ou hibernate. si on met rien.. sais pas. depend jars ?
             <description>EclipseLink EntityManager</description>                 // facultatif
             <exclude-unlisted-classes>false</exclude-unlisted-classes>
@@ -7558,6 +7643,7 @@ si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from col
       B extends A     C extends A                        
        @Entity
        @Cache(usage=CacheConcurrencyStrategy.READ_WRITE//existe quasi pas de cache: access concurent bien tolere .NONSTRICT_READ_WRITE si updates rares(bof, pas bien pige) .READ_ONLY(cache jamais invalide: tres performant mais updates pas possibles si cache est outOfdate (sur?))
+         @IdClass(ProjectId.class) // facultatif mais recommandé: quand ma classe à deux champs qui forment la cle primaire JPA demande de faire ça et dans la classe ProjectId  c'est juste une classe avec deux champs et aucune annotation. Meme pas besoin de getter et setters
        @Table(name="NonDeLaTableEnBDSIDifferenteQueNomClasseJava") // optionnel
             public class UserPermission implements DomainObject, Serializable 
             {
@@ -8373,7 +8459,7 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
     fichier resources/META-INF/persistence.xml marche bien. sinon ou mais pas sur dutout: WEB-INF/persistence.xml. Ce fichier DOIT etre dans le jar ou le war qui contient les @Entity
     <?xml version="1.0" encoding="UTF-8"?> // super important de mettre ça
     <persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"> // super important de mettre ça 
-        <persistence-unit name="com.memoclap"     transaction-type="RESOURCE_LOCAL(utilise le système de transaction du JDBC natif donc a utiliser pour les testsunitaires) ou JTA(pour utiliser la gestion de transaction du container donc d'un jndi LINKjta)"> // du coup applicativement je l'appelle comme ça : LINKentitym
+        <persistence-unit name="com.memoclap"     transaction-type="RESOURCE_LOCAL(utilise le système de transaction du JDBC natif donc a utiliser pour les testsunitaires LINKentitymlocal) ou JTA(pour utiliser la gestion de transaction du container donc d'un jndi LINKjta)"> // du coup applicativement je l'appelle comme ça : LINKentitym
             <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> // facultatif provider peut etre eclipselink ou hibernate. si on met rien.. sais pas. depend jars ?
             <description>EclipseLink EntityManager</description>                 // facultatif
             <exclude-unlisted-classes>false</exclude-unlisted-classes>
@@ -8413,7 +8499,7 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
             @PersistenceContext(name = "facultatifUtileDansLeJavaChaisPasTropEncoreCOmmentAFAIRE" unitName="LINKdkdkfjfjnomcorrespondantA<persistence-unit nameEstFacultatifSiYEnAQunDansLeXml) // est def ici LINKentitym . attention c'est une annotation ejb. Est Injectable dans Ejbs. Pour la rendre injectable dans cdi faire LINKlerendreinjectable (heu je crois que ca marche quand meme l'injection sans ça.)
             EntityManager em;
         ou
-            EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.memoclap"); //est def ici LINKentitym. dans persistence.xml mettre <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> sinon ca ne marche pas 
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.memoclap"); //est def ici LINKentitymlocal(jecrois voir doc tomee). dans persistence.xml mettre <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> sinon ca ne marche pas 
             et
             public static EntityManager getEntityManager() {
             return emf.createEntityManager();
@@ -10587,7 +10673,8 @@ ren %WEB-INF-PAE%\classes\_integr.log4j.properties.template log4j.properties.tem
 
 
 
-MAVEN : attention: artifactid ne doit pas contenir des points
+MAVEN : super pour trouver un maven à partir de package ou meme classe: https://search.maven.org/
+ attention: artifactid ne doit pas contenir des points
 versionning : versioning :
 v.x.y.z_u (x=evol maj; y=evolmin; z=ano; u=ano du build)
   pour verifier la securite des dependances voir LINKfkjOwasplkjsg
@@ -10989,7 +11076,7 @@ utilisation du plugin assembly pour créer un zip:
                     </execution>
                 </executions>
             </plugin>
-            le fichier assembly.xml:
+            le fichier assembly.xml: 
             <assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
                             <id>zip</id> // ce nom à la con Linksljfggg
                             <formats><format>zip</format></formats>
@@ -11017,9 +11104,9 @@ utilisation du plugin assembly pour créer un zip:
                       			<outputDirectory>/ ou un/path</outputDirectory>
                       		</fileSet>
                       		<fileSet>(...)		
-                                                        
+                                                          //si j'ai l'erreur You must set at least one file c'est parce que je ne mets rien dans mon zip a cause de path mal configurés ici.
                         </assembly>
-            pour executer l'assembly: mvn assembly:single 
+            pour executer l'assembly: mvn assembly:single  
                                                           
 pour connaitre les profiles: 
   %M3%/mvn help:active-profiles (et si c sur eclipse mettre de quel profile il s'agit quand on run: profile=env_dev ou mettre direct env_dev si le champ s'appelle profile (valeur de <id>))
@@ -11629,7 +11716,7 @@ enchainement des actions p93:
 								actionForward = mapping.findForward(Constants.ECHEC);
 							}
 							filterRealiseForm.setActionId("");
-							if(!messages.isEmpty()){
+							if(!messages.isEmpty()){ 
 								saveErrors(request, messages);
 							}
 							return actionForward;
@@ -12487,6 +12574,9 @@ pomme suppr pour supprimer
 emc: documentum:
 http://softwaresupport.emc.com user: duverge pass: QEUl3PHE
 
+homebrew : ou brew :// pour installer des applications. C'est le aptitude de apple.
+    brew install jenkins-lts // installe jenkins lts
+    et on peut directement en ligne de commande executer jenkins-lts ca demarre jenkins
 ----------------------------------
 
 
@@ -12924,6 +13014,7 @@ Curl : voir aussi wget : pour faire une requette request http doc:https://ec.hax
     sur cygwin (installer dans cygwin. voir cygwin) (sous categorie Net)
 
     get telecharger: (option -A ou -a maj min importent pas. sauf cas exceptionel comme -o et -O, -X et -x) // ordre option importe peu et existe -A (version courte) equivalent à -ablabla : version longue
+    voir la version : curl --version
             -v ou -V ou --verbose// verbose a utiliser quand ça ne marche pas. attention! 
    	A faire sur une seule ligne et pas sur plusieurs car marche pas. et echapper les caractères spéciaux & ; par \
     curl -O https://index.taskcluster/artifacts/public/deepspeech-0.1.0nux1_x86_64.whl // -O ne marche qu'avec des url qui renvoient un fichier dowload. ne pas mettre de param avec, il telecharge le contenu de la reponse et le depose la ou je suis direct. si -o unNomDeFichier url il recupère la reponse et la met dans unNomDeFichier 
@@ -13126,6 +13217,8 @@ fin c ca que j'ai fait qui marche PAS jusqu'au bout.
                   Il n'est possible de signer que de petits documents. Pour signer un gros document on calcule d'abord une empreinte de ce document. La commande dgst permet de le faire.
                     pour hasher un document:(md5...)
                     openssl dgst <hachage: -md5 ou -sha1 ou -ripemd160> −out <empreinte> <fichier_entree>
+                        donc pour verifier l'integrite d'un fichier:
+                            openssl dgst -sha512 apache-tomee-8.0.0-webprofile.zip
                     exemple:openssl dgst -sha1 -out hashashge.txt SYE.opc
                             C:\OPENSSL\bin>openssl.exe dgst -md5 D:\Profiles\lduverge\Downloads\mysql-5.7.17-winx64.zip
                     pour signer le hashage du document ca se fait avec une cle privee:
@@ -13187,7 +13280,7 @@ fin c ca que j'ai fait qui marche PAS jusqu'au bout.
                           D:\Java\jdk1.7.0_03-32b\bin\keytool -certreq -alias "aliasDunDesCertificatDansMonTrousseau" -file mycertreqEnSortie.csr -keystore mon.keystore.jks ou .p12
                           ce fichier .csr c'est du texte à transmettre a une Certificate Authority
                       L'Autorite me renvoie tototo.crt (oubien certif.cer?) (on peut prendre le parent d'un certif ca marche aussi) C'est un certificat. Pour l'importer ajouter dans mon trousseau truststore je fais:
-                          D:\Java\jdk1.7.0_03-32b\bin\keytool -import -alias "aliasDuCertifAImporterDansMonTrousseau" -file tototo.crt -keystore mon.keystore.jks (ou java/jre/lib/security/cacerts si je veux le mettre dans le trousseau de Java) -storetype JKS (facultatif) (si erreur "java.util.IllegalFormatConversionException: d != java.lang.String" rajouter -J-Duser.language=en: ca se produit pour java>7)
+                          D:\Java\jdk1.7.0_03-32b\bin\keytool -import -alias "aliasDuCertifAImporterDansMonTrousseau" -file tototo.crt -keystore mon.keystore.jks (ou java/jre/lib/security/cacerts si je veux le mettre dans le trousseau de Java. mot de passe par defaut=changeit) -storetype JKS (facultatif) (si erreur "java.util.IllegalFormatConversionException: d != java.lang.String" rajouter -J-Duser.language=en: ca se produit pour java>7)
                       Importer mon certif prive en tant que certif public publique dans un keystore (si le certif existe deja, même avec un autre alias il le detecte et refuse l'import mais on peut forcer )
                           D:\Java\jdk1.7.0_03-32b\bin\keytool -import(ou -importcert c pareil apparemment) -alias "nouvelAliasDuCertifQuonVeutDefinirDansMonTrousseau" -file tototo.crtOU.p7bMAISCANAPASLAIRDEMARCHERERRURX509 -keystore mon.keystore.jks (si erreur "java.util.IllegalFormatConversionException: d != java.lang.String" rajouter -J-Duser.language=en: ca se produit pour java>7)
                       Supprimer un certificat du keystore:
@@ -15606,7 +15699,7 @@ junit5 : junit 5 :  version 5: // https://stackify.com/junit-5/ tests repetees, 
           
           import org.junit.jupiter.api.Nested;
           import org.junit.jupiter.api.Test;
-        public class TestUtilsTest { // les classes de test doivent toujours se terminer par Test ou Tests
+        public class TestUtilsTest { // les classes de test doivent toujours se terminer par Test ou Tests sinon j'ai message d'erreur java.lang.Exception: No runnable methods
         @Rule public TestName name = new TestName(); // sert à savoir quel test est lancé voir (pas sur que ce soit ca sur junit5) LINKjgjgjgiiiii
           @BeforeAll(...) //remplace @BeforeClass.
           public static void xxxx()....
@@ -17089,7 +17182,7 @@ logs :logguer : logger :tracer :
                                         LOGGER.config("Configuration Generals log done.");
                                         LOGGER.log(Level.FINE, "Finer logged");
                                         }
-                                      catch(IOException exception) {
+                                      catch(IOException exception) {  // pour catcher different type d'exception : catch(IOException | FileNotFoundException e)
                                           LOGGER.log(Level.SEVERE, "Error occur in FileHandler.", exception);
                                       }
                 Utilisation:
@@ -19516,7 +19609,7 @@ pour tester la performance : perfs : perf : performances : performences :
             si j'ai exception outofmemory error heap space faire ca: 
             Xms: espace alloue à l'init pour les objets(instances)                         |_heap
             Xmx: espace alloue max pour les objets(instances) si depasse: heapoutofmemory  |
-            MaxPermSize: espace pour les CLASSES (pas les instances mais tout ce qui est static) par defaut 64MegaByte. A partir de java8 c'est stocké dans le metaspace oùy a plus de limites         
+            MaxPermSize: espace pour les CLASSES (pas les instances mais tout ce qui est static) par defaut 64MegaByte. A partir de java8 c'est stocké dans le metaspace où y a plus de limites         
     				JAVA_OPTIONS="-Xms64m -Xmx256m"----> Xmx512m ou Xmx1024m ou Xmx1800m ou Xmx2048(!!ennorme) pour avoir à disposition 1Go de memoire sur le heap. En general on met 700m Meg sur les applis Renault
     				en theorie: Xms=1/4 de Xmx
     				sur eclipse on peut dans "executer" ecrire dans Arguments VM: -Xmx1024m OU -XX:MaxPermSize=1024m
@@ -20063,7 +20156,7 @@ mapping :mapper :mappage :d'une classe A en une classe B (si c'est pour les DTO 
 pour recuperer les proprietes (methodes d'acces getset) d'une classe dans un tableau (utilie pour faire un binder)
         PropertyDescriptor origDescriptors[] = PropertyUtils.getPropertyDescriptors(theSource);
 pour copier les proprietes d'un bean formulaire vers un autre bean de type info par exemple faire: convertir mapper maper un objet java transformer en un autre bean  
-						org.apache.commons.beanutils.BeanUtils.copyProperties(Object dest, Object orig) // ModelMapper c'est de la merde faut pas l'utiliser. le plus performant c'est mapstruct (il genere les classes de mapping au compile time par maven.)
+						org.apache.commons.beanutils.BeanUtils.copyProperties(Object dest, Object orig,String[] ignoreFieldsFacultatifNomDesChampsEnTouteLettre) // ModelMapper c'est de la merde faut pas l'utiliser. le plus performant c'est mapstruct (il genere les classes de mapping au compile time par maven.)
                      avec ModelMapper: // de la merde oublie!!!! parce que je voulais transormer un string en Method: ca c pas évidant à faire.
                              ModelMapper modelMapper = new ModelMapper();
                       		PropertyMap<ClasseSource, ClasseDestinataire> surclasse new PropertyMap<ClasseSource, ClasseDestinataire>() { // pour personnaliser le mapping au plus fin
@@ -20142,7 +20235,7 @@ detecter determiner voir l'encodage encode d'un fichier:
                 }
     url decoder: 
     java.net.URLDecoder.decode(url, "UTF-8");
-    pointvirgule point virgule : %3B%0A
+    pointvirgule point virgule : %3B et %0A
   
 pour deflateandencode : 
       import java.util.zip.Deflater;
@@ -20949,7 +21042,7 @@ delta entre deux chaines de caracteres characters strings:
                 });
             }
 
-pour savoir si un string chaine est vide empty, ou null:
+pour savoir si un string chaine est vide empty, ou null en java:
             if(monstring != null && !monstring.isEmpty()) 
             ou
               org.apache.commons.lang.StringUtils.isEmpty(this.url_redirect)
@@ -21990,7 +22083,7 @@ erreurs exception java: faire un e.printStackTrace() linkgetStringStackTrace pou
 	}
 ---------------------------
 	/**
-	 * Copy a file from srcPath to dstPath. 
+	 * Copy copier fichier a file from srcPath to dstPath. 
 	 * 
 	 * @param srcPath
 	 * @param dstPath
@@ -22139,7 +22232,7 @@ pour creer des repertoires: create directories creer un repertoire create a dire
     }
 -----------------------
 traitement de fichiers : fichier :
-pour creer un fichier temporaire de travail: 
+pour creer un nouveau fichier temporaire de travail: 
   nomFichierTemporaireCourant = File.createTempFile super pratique car genere lui meme le nom du fichier aleatoires
   nomFichierTemporaireCourant.deleteOnExit(); // supprime le fichier quand la JVM a fini le process
 
@@ -22231,8 +22324,7 @@ pour copier un fichier:
                       java.io.FileInputStream sourceFile=null; 
                       java.io.FileOutputStream destinationFile=null; 
                       try { 
-                      // Creation du fichier: 
-                      destination.createNewFile(); 
+                       destination.createNewFile(); // pour creer creation fichier en java: creer un nouveau fichier vide (destination est un File) 
                       // Ouverture des flux 
                       sourceFile = new java.io.FileInputStream(source); 
                       destinationFile = new java.io.FileOutputStream(destination); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true 
@@ -22311,7 +22403,7 @@ pour recuperer le string d'un fichier lire un fichier
                     final byte[] bytes = inputStream.readAllBytes();
                     String sql = new String(bytes);
           Path resPath = Paths.get(this.getClass()).getResource("/chemin/unfichier.son").toURI());
-          String jsonContent = new String(java.nio.file.Files.readAllBytes(resPath),"UTF8");  
+          String jsonContent = new String(java.nio.file.Files.readAllBytes(resPath ou new File(stringChemin).toPath(),"UTF8");  
         public String getStringFromFile(File file) throws Exception
         	{
         		ByteArrayOutputStream  lByteOut = new ByteArrayOutputStream();
@@ -23314,7 +23406,7 @@ DEVOPS :
  Run tests auto à chaque commit (et non pas periodiquement)
  les environnements aussi doivent être dans versionControlGit-svn. Sont versionnés.
  Si pb detecté pendant livraison: feedback(a chaque livr) info a transmettre à tous.(pas blamer mais informer)
- Chaque jour meeting(avec les devs+ops): ce que j'ai fait hier, ce que je fais aujourd'hui, ce qui m'empêche d'avancer
+ Chaque jourou chaque soir ou lors meeting(avec les devs+ops): ce que j'ai fait hier, ce que je fais aujourd'hui, ce qui m'empêche d'avancer
  meeting fin d'un cycle de dev: ce qui a fonctionné, ce qui peut etre amélioré
   Tout le monde (Dev et Ops) utilisent le meme mantis
   chat avec historique et possible à plusieurs. 
@@ -23340,7 +23432,10 @@ DEVOPS :
     logs: sur: authent et logout, accessdata, updates des droits, modifs niveau crud, invalid input, ram et cpu dispo, service repond? erreurs, delais,SAVok ou ko, valeurs business(nbventes...) durees transactions requettes
     alertes: alerts: alert: qd existe ko quels logs avant? les rajouter dans les alertes.
 
-
+teamcity :
+    modifier les settings d'un projet:
+        projects> choisir son projet > en haut a droite :"edit project settings"
+    
 jenkins :
   jenkins home directory contient: // parametrable dans l'admin web. Existe commandes CLI plus rapides que ihm  
         /etc/...
@@ -24033,10 +24128,14 @@ pour parametrer ce qui doit se lancer automatiquement au demarrage
 pour savoir ce qui tourne:
 (ps -fu ? ou)ps -ef | grep monnomutilisateur pour voir quelles instances que j'ai lance tournent (affiche les ports) ps -ef donne aussi la date de debut d'execution du process
 on peut ensuite faire un kill -15 (soft) ou -9 (hard) sur l'id qu'on veut killer ( premiere colonne en chiffres (PID)) ferme aussi le port du service du coup
+pour killer en une seule ligne de commande
+    pkill nomdutrucquejeveuxkillerCeNomEstparExempleJavaOuPayaraVoirPs-ef
 ps -ef donne aussi la date de debut d'execution du process
 ps -ef | grep whatever pour voir si whatever tournent
 renvoit le nombre de process qui repondent a la recherche:
       ps -ef | grep whatever | wc -l 
+pour recuperer que le pid:
+    pgrep -f java
 pour localiser une commande grace au path: which nomdelacommande
 pour connaitre voir l'heure: date
 pour mettre à jour update modifier la date et l'heure:
@@ -24190,10 +24289,12 @@ ssh : se logger sur une machine a distance
                 editer dans mon home ~/ le fichier .bash_profile et rajouter
                       ## only ask for my SSH key passphrase once!
                       #use existing ssh-agent if possible
-                      if [ -f ${HOME}/.ssh-agent ]; then
+                      if [ -f ${HOME}/.ssh-agent ];
+                       then
                          . ${HOME}/.ssh-agent > /dev/null
                       fi
-                      if [ -z "$SSH_AGENT_PID" -o -z "`/usr/bin/ps -a|/usr/bin/egrep \"^[ ]+$SSH_AGENT_PID\"`" ]; then
+                      if [ -z "$SSH_AGENT_PID" -o -z "`/usr/bin/ps -a|/usr/bin/egrep \"^[ ]+$SSH_AGENT_PID\"`" ]; 
+                      then
                          /usr/bin/ssh-agent > ${HOME}/.ssh-agent
                          . ${HOME}/.ssh-agent > /dev/null
                       fi
@@ -24421,6 +24522,22 @@ sur sed :
  où ma_commande = num_premiere_ligne,num_derniere_ligne/expression reguliere/remplacee par/flag
  où flag=... 
 sed -e "s/4095,4095/\([0-9][0-9]*\)/**\1**/" fichier
+ -i insert du texte après un truc: exemple:
+        sed -i '' '/blablablaTexteJusteApresblabla/i \
+        \                                         // ca c'est un retour chariot
+        \  blibliblibliJ'insèrecaBlibli\
+        \  blibliblibliJ'insèreciBlibli\
+        \
+        '    /path/fichier/destination.txt 
+       ainsi juste avant blablablaTexteJusteApresblabla
+       on va avoir   
+          blibliblibliJ'insèrecaBlibli
+          blibliblibliJ'insèreciBlibli
+ 
+ 
+ 
+ 
+ 
 raccourcis shortcut commandes:
 	Ctrl+a debut ligne
 	Ctrl+e fin ligne
@@ -24554,8 +24671,18 @@ parser du json avec unix: installer jq
                       ./Update*
               fi
       conditions: 
-                  if [ -z $REPLY ] // si $REPLY est vide 
-                  if [ !-z $REPLY ] pour l'inverse
+                  - if [ -z $REPLY -aOu-o autrecondition ] // si $REPLY est vide // -a:and -o:or toujours mettre un espace [ici et là] 
+                  - if [ !-z $REPLY ] pour l'inverse
+                  - if [ !-z $REPLY ]
+                      then
+                        blablabla
+                       fi
+                  - if [ !-z $REPLY ]
+                       then 
+                       bliblibli
+                       else
+                       blobloblo
+                     fi                  
       si j'ai ': not a valid identifier c'est parce que mon fichier de script est en mode windows avec des retours chario CR au lieu de LF.                             
       pour faire une methode dans un ksh:
             MaMethode ()
@@ -25253,7 +25380,11 @@ pour utiliser le plugin maven tomcat: Si ça marche:-). voir dessous: pas reussi
                         factory="org.apache.commons.dbcp.BasicDataSourceFactory"
                         type="javax.sql.DataSource" username="JETSPEED" password="JETSPEED"
                         driverClassName="oracle.jdbc.driver.OracleDriver ou com.microsoft.sqlserver.jdbc.SQLServerDriver" url="jdbc:oracle:thin:@localhost:1521:HRBAC92"
-                        maxActive="100" maxIdle="30" maxWait="10000" validationQuery="SELECT CLIENT_ID FROM CLIENT"/>                                                                                      
+                        maxActive="100" maxIdle="30" maxWait="10000" validationQuery="SELECT CLIENT_ID FROM CLIENT"/>
+                        
+catalina.bat catalina.sh  c'est pour demarrer tomcat dans le fenetre courante. startup.bat c'est pour démarrer en bg a part
+    catalina.bat run demarre au premier plan
+    catalina.bat start demarre dans une nouvelle fenetre                                                                                          
                                  
 jetty :
 definir le contexte pour les images avec maven: LINKlrroqlkjqdflmh 
@@ -25693,6 +25824,8 @@ faire un speech input:
               input.addEventListener('webkitspeechchange', inputChange, false);
 pour faire un ancre: 
         <a href="#x" // x c'est en fait l'identifant de l'element vers lequel je veux que mon scroll pointe. exemple: href= "#3"
+pour faire un lien de telechargement download:
+     <a href="/images/myw3schoolsimage.jpg" download="nouveauNomDuFichier"> 
 email:<a href="mailto:webmaster@example.com">
 pour faire les icones des boutons bouttons c mieux de les faire en vectoriel avec fontawesome (LINKfontaw)
 faire un separateur hr personnalise avec label titre
@@ -25736,7 +25869,7 @@ pour mettre un retour chario dans la value d'un bouton:
 pour faire un enregistrement audio ou video en html5:
    function onBtnRecordClicked ()
    {
-       if (typeof MediaRecorder === 'undefined' || !navigator.getUserMedia) {
+       if (typeof MediaRecorder === 'undefined' || !navigator.getUserMedia) { // tester qu'une variable est undefined: if (!typeof mavariable===undefined) ou sans le "!"pour l'affirmation 
           alert('Sorry! This demo requires Firefox 30 and up or Chrome 47 and up.');
         }else {
           navigator.getUserMedia({"audio": false, "video": { "mandatory": { "minWidth": 320, "maxWidth": 320, "minHeight": 240,"maxHeight": 240 }, "optional": [] }}, startRecording, errorCallback);
@@ -26191,6 +26324,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                             formData.append('ans', ans); // Append extra data before send.
                             formData.append('idp', idprojetEnCours); // Append extra data before send.
                             formData.append('fs', askValidator.fs); // Append extra data before send.
+                            pour recuperer une valeur  :formData.get("fs")
                       var xhr = new XMLHttpRequest();
                               xhr.setRequestHeader("Content-Type", "multipart/form-data"); // c'est ca par défaut si j'utilise FormData()! pour le gerer sur une servlet sans avoir a regarder dans le payload mettre LINKmultilkjfqsdf 
                               ou
@@ -26219,7 +26353,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                       printStacktrace(req.name);
                       // quand le chargement a demarre
                     };
-                    xhr.onload = function(e) { // retour du serveur: "e" c'est progressEvent et "this" c'est la reponse du serveur
+                    xhr.onload = function(e) { // retour du serveur: "e" c'est progressEvent et "this" c'est la reponse du serveur. SI j'ai besoin de this pour une classe faire LINKbindthisclasseresponse ou bien utiliser le e comme ça: e.target.response
                             printStacktrace(req.name);
                             askValidator.class_AskValidator.record.call(this);
                                if(this.getResponseHeader("Content-type").indexOf("text/html")!=-1) on peut recuperer ça et autre...
@@ -26238,7 +26372,9 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                                 {
                                   console.log(this.response);
                                   console.log(e);
-                                  ...
+                                }
+                        }
+                        LINKbindthisclasseresponse: dans ajax, si besoin de this dans la fonction xhr.onload faire }.bind(this) et pour this.status remplacer par xhr.status
                      xhr.onComplete = function(transport) // je ne sais pas si ca sert vraiment 
                       {
                          if (200 == transport.status) 
@@ -26327,6 +26463,8 @@ jouer un fichier audio sans objet audio
         sendMessageDisappear("messageAudio", "OK");
         source.noteOn(0);                          // play the source now
       }
+savoir si un element audio joue:
+    if(document.getElementById(lecteur).paused
     possible de mettre a jour le texte du css avec du javascript mais tout d'un coup pas possible (pas trouvé) de façon chirurgicale
         document.getElementById("identifiantDeMaBaliseStyle").innerHTML
   pour savoir si une variable est un chiffre: 
@@ -26365,10 +26503,11 @@ jouer un fichier audio sans objet audio
               };
             
             }
-tester avec jest : le meilleur d'apres sylvain
-    npm install --save-dev jest
-    les fichiers de tests doivent s'appeler xxxx.test.js            
-tester le javascript avec Jasmine : et testem : (sinon utiliser https://jsfiddle.net/)
+tester le javascript
+    tester avec jest : le meilleur d'apres sylvain
+        npm install --save-dev jest
+        les fichiers de tests doivent s'appeler xxxx.test.js            
+    avec Jasmine : et testem : (sinon utiliser https://jsfiddle.net/)
       installer testem: (pas besoin d'installer jasmine)
           npm install testem -g (installe testem globalement sur mon systeme)
           ensuite je peux executer en ligne de commande >testem là où se trouve mon javascript ou un fichier testem.json qui contient: 
@@ -26567,7 +26706,9 @@ pour filtrer un array tableau:
             return !todo.completed; // renvoyer true inclu ce record
           });
 setter plusieurs variables:
-    mavar1 = mavar2 = moncalcul; // on set les 2 variables en mm temps     
+    mavar1 = mavar2 = moncalcul; // on set les 2 variables en mm temps
+convertir un string en boolean 
+    JSON.parse("true") ou ("false") renvoit true ou false     
 convertir un tableau en string: 
             var tab = ['5', '6', '12', '22', '20', '11', '9', '1', '8', '7', '11' ]
             var monstring = tab.join(); // join 
@@ -27363,7 +27504,7 @@ pour faire un paint avec canvas: Attention ne jamais donner un style a un canvas
                             // Pencil tool instance.
                             tool = new tool_ecrire();
                             // Attach the mousedown, mousemove and mouseup event listeners.
-                            canvas.removeEventListener('mousedown', ev_canvas, false); // removeEventListner des fois ne marche pas parce que c'est chiant faut etre super precis. Du coup faire comme ca LINKrmvEvntListner
+                            canvas.removeEventListener('mousedown', ev_canvas, false); // removeEventListner des fois ne marche pas parce que c'est chiant faut etre super precis. Du coup faire comme ca pour supprimer effacer les eventlisteners LINKrmvEvntListner
                             canvas.removeEventListener('mousemove', ev_canvas, false);
                             canvas.addEventListener('mouseup',   ev_canvas, false);
                             canvas.classList.add('ecrire');
@@ -27529,7 +27670,7 @@ ou
                                             }
                                             
 pour supprimer tous all les eventlisnter LINKrmvEvntListner
-    l'idée est de clonner l'element que je veux nettoyer et que le clone remplace celui qui contient les eventlisnter. Tout est dupliqué sauf les eventlistners:
+    l'idée est de clonner l'element que je veux nettoyer et que le clone remplace celui qui contient les eventlistener. Tout est dupliqué sauf les eventlistners:
             elementANettoyer.parentNode.replaceChild(elementANettoyer.cloneNode(false), elementANettoyer); // elementquiremplace,elementaremplacer 
 
                                                      
@@ -27541,7 +27682,7 @@ dessiner un cercle dans un canvas:
       context.lineWidth = 5;
       context.strokeStyle = '#003300';
       context.stroke();         
-pour faire des graphs 
+pour faire des graphs graphiques 
     interactifs avec canvas prendre exemple sur memoclap diagram.php
     utiliser superbe librairie data-driver-documents d3 : 
                 <canvas></canvas>
@@ -28593,7 +28734,7 @@ requirejs : require.js : require : approximatif: a bien améliorer
           }
          </script>         
   
-webcomponents : web-components : web components : custom elements : customelements : customelement :
+webcomponent :webcomponents : web-components : web components : custom elements : customelements : customelement :
 https://developers.google.com/web/fundamentals/web-components/customelements#attrchanges
  au final dans mon html j'aurais:
  <script src="laurent-moncomponent1.js"/>  
@@ -28619,7 +28760,7 @@ https://developers.google.com/web/fundamentals/web-components/customelements#att
           du dom (balises html..ne pas mettre d'appel a des methodes dedans. Marche pas (onclick..marche que si on utilise le javascript direct dedans sans faire appel à des methodes. Si besoin appeler methodes alors faire LINKlkjsdflh)
           `; // ` ` marche partout pour faire des strings qui vont a la ligne ! 
 METHODE CLASS: THEBEST? classes es6
-                                                class MonElement extends HTMLElement ou un autre element webcomponent (avec de l'animation par exemple)
+                                                class MonElement extends HTMLElement ou un autre element webcomponent (avec de l'animation par exemple) du coup pour que le fils appelle une methode du parent il doit faire super.methodeDuParent()
                                                  {
                                                  // attention les alerts ne marchent dans un webcomponent faire console.log (si j'en ai besoin chercher sur internet)
                                           2)            constructor() // execute en premier à la creation MAIS n'est pas encore dans le DOM. // declarer mes proprietes ici pas au dessus
@@ -28635,6 +28776,7 @@ METHODE CLASS: THEBEST? classes es6
                                                          var monTemplate = templatexxx; ou voir LINKCustomTemplate=`du contenu
                                                                                               <span>SSSS<slot name(facultatif)='aaa'>bBBBB</slot><slot name='bbb'/>CCCC</span>   //se remplira avec par defaut le HTML qui est dans la page dans ma balise custom element sinon si name existe alors avec le HTML de base qui est comme ça:<mon-customelement><h1 slot='aaa'>bla</h1><div slot='bbb'></div></mon-customelement>
                                                                                              html${this.variable}html` // pour que ${this.variable} marche il faut mettre tout ce bloc non pas dans constructor mais dans connectedcallback en ayant préalablement défini MaCLasse.variabl=xx
+                                                                                             `${super.gui()}` //pour appeler dans le template un autre template retourne dans la classe parente
                                                                                         ou autre facon de definir un template: <template id="x">lkjsdf</template>
                                                          var cloneDuTemplate = monTemplate.content.cloneNode(true);  // true: il est recursif dans le dom
                                                         this.shadowRoot.appendChild(cloneDuTemplate); ou root.appendChild(cloneDuTemplate); ou root.appendChild(document.importNode(cloneDuTemplate,true)); ou root.innerHtml=... ou ou this.shadowRoot.innerHTML=""; ou this.shadowRoot.querySelector.....
@@ -30577,7 +30719,9 @@ attention si nouveau compte première fois logguer bien d'abord supprimer tous l
         (standard) controllers 190
      
 
-JWT :  
+JWT : JSON Web Token  
+    JWS : JSON Web Signature
+    JWE : JSON Web Encryption  
         <dependency>
                     <groupId>io.jsonwebtoken</groupId>
                     <artifactId>jjwt</artifactId>
@@ -30588,21 +30732,37 @@ JWT :
     le tooken n'est pas sensé etre stocké dans les cookies ou dans le localstorage du browser.
     stateless: pas besoin de session ni de base de donnée avec l'utilisateur dedans. Le token suffit a valider que je suis Laurent !=cookie de session ou le serveur conserve une table des sessions.
     bonne pratique: ajouter dans le payload sub:9830984,exp:0938098Z: subscribe et expire date shortlife: duree de vie courte.: du coup necesite background authentication a chaque requette: pour ça utiliser librairies.
-                        toujour mettre aud: = audience = pour quel service/serveur uniquement sert ce token?
                         toujours utiliser secret!= ou cle publique!= par service/serveur
                         toujours refuser les token avec algo:null. il faut qu'il y ait un algo. UN ALGO ET UN SEUL
+                        LINKjwwijge
+                                    [active ]{true|false} SEUL TRUC OBLIGATOIRE DU JSON. true=valid et actif. false=invalide car a expiré ou n'est pas dans le scope.
+                                    [ scope ] {string} The scope values for the token.
+                                    [ client_id ] {string} The identifier of the OAuth 2.0 client to which the token was issued.
+                                    [ username ] {string} Username of the resource owner who authorised the token.
+                                    [ token_type ] {string} Type of the token, set to Bearer.
+                                    [ exp ] {number} date d'expiration (future) en secondes depuis 1970-01-01T0:0:0Z
+                                    [ iat ] {number} date de délivration (maintenant) en secondes depuis 1970-01-01T0:0:0Z
+                                    [ nbf ] {number} date avant laquelle le token ne fonctionnera pas encore en secondes depuis 1970-01-01T0:0:0Z
+                                    [ sub ] {string} pseudo de l'utilisateur qui s'est connecté
+                                    [ aud ] {string array} Audience values for the token. pour quel service/serveur uniquement sert ce token? Recommandé de toujours le mettre. Has the same semantics as the standard JWT claim name. If the token has an explicit audience only the client_id of the calling resource server will be included; any other identifiers will be omitted.
+                                    [ iss ] {string} The token issuer (the OpenID Provider / Authorisation Server issuer URI). Has the same semantics as the standard JWT claim name.
+                                    [ jti ] {string} Identifier for the token. Has the same semantics as the standard JWT claim name. Always included for identifier-based access tokens and a JWT-secured response.
+                                    [ cnf.x5t#S256 ] {string} Client X.509 certificate confirmation, represented by a SHA-256 thumbprint of the certificate.
+                                    [ act ] {object} The actor, in impersonation and delegation scenarios.
+                                    [ dat ] {object} Optional custom authorisation data.
      archi: [1Client(Mon Browser)]<----1-------->[1Authentificationservice pour tous: il a 1 clé privée differente pour chaque RessourceService a qui il donne la cle publique correspondante.]
                                    \___2_______>[xRessourcesServices: chacune a une clé publique.] 
     algoritmes recommandés: ES256(cle publique pour verifier et cle privee pour signer mais plus rapide que RS256)  puis RS256(cle publique pour verifier et cle privee pour signer) puis HS256(ce n'est que un secret=chaine de caractère a garder privée. Attention danger avec ça car dans ce cas le client pourra hacker: Client    Service1JWTOuJeSuisAdmin,    Service2JWTOuJeNeSUisPasAdmin)
-OAuth : OAuth2 : (oltu : https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Client+Quickstart et https://github.com/apache/oltu)
-est fait pour gerer que authorization à la base. Pas pour Authentification: On a rajouté openidConnect : pour l'authentification (https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata)
+OAuth : OAuth2 : (https://medium.com/@darutk/diagrams-of-all-the-openid-connect-flows-6968e3990660)
+                (oltu : https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Client+Quickstart et https://github.com/apache/oltu)
+est fait pour gerer que authorization à la base. Pas pour Authentification: On a rajouté openidConnect1.0 par dessus oauth2 : pour l'authentification (https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata)
     USER = RessourceOwner = homme = moi 
-    EDSN = Client = l'application qui demande une autorisation pour faire une action dans le ResourceServer.
-    FID = AuthenticationServer=authorization server: accepte de donner le ticket (Access Tocken)
+    EDSN = Client = l'application =RelayingParty=RP qui demande une autorisation pour faire une action dans le ResourceServer.
+    FID = AuthenticationServer=authorization server=OpenIdProvider=OP: accepte de donner le ticket (Access Tocken)   l'OP doit rendre dispo cet URL /.well-known/openid-configuration qui renvoit un json contenant: LINKopeniddconf
     FIDx = ResourceServer(API contenant les resources)
     En amont: 
     créer un abonnement
-    FID transmet à EDSN: -id applicatif = client_id
+    FID transmet à EDSN: -idApplicatif = client_id
     FID transmet à EDSN: -client_secret = secret_key = ne doit pas passer par le frontchannel et doit rester sur le serveur du Client.
     FID transmet à EDSN: -url de la fid de dev,recette,prod
     EDSN transmet à FID: -nomapplication
@@ -30619,10 +30779,10 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
       (facultatif)EDSN presente un bouton pour rediriger vers FID(AuthenticationServer). Si clique 
       EDSN redirige vers FID(facebook par ex) ; // FID et FIDx pourraient être une seule app.
                 Requete http frontchannel:
-                .setResponseType(ResponseType.CODE.toString())(c a d demande un access code) ou AccessToken(SiJeVeuxFaireDel'ImplicitMode) ET Token_ID=JWS(=JWTSigné)(SiJeVeuxFaireDeL'OpenIdConnectEnImplicitMode)
+                .setResponseType(ResponseType.CODE.toString() ou .... voir LINKResponseType)
                 .setRedirectURI(oauthParams.getRedirectUri())=url de retour vers EDSN(Client)
                 .setScope(oauthParams.getScope()=cequejeveuxfaire=monprofile(espace)listecontacts x y openid(sijeveuxUtiliserOpenIdConnectPourM'authentifier)
-                .setClientId(oauthParams.getClientId())  
+                .setClientId(oauthParams.getClientId()=idApplicatif)  
                 .authorizationLocation(oauthParams.getAuthzEndpoint())
                 .setState(oauthParams.getState()) // juste un texte "tatatoto"
                 // nounce=qsfqmkjg
@@ -30631,25 +30791,22 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
                 return new ModelAndView(new RedirectView(request.getLocationUri()));
                                 -------------------------------------frontchannel---------------------->>>>>>>FID(AuthenticationServer) présente le prompt d'authentification. USER s'authentifie
                                                                                                               FID présente le consent Screen/scope. USER approuve. SI User n'approuve pas FID retournera ?error=x&error_description=y
-                                <<<<<<<<<<<<<<<<<<<<<<---------------frontchannel-----------------------------FID retourne AuthorizationCode=code=AuthorizationGrant(Dans les en-tête http.)+Token_ID si ImpliciteMode + renvoit le meme state qu'il a reçu ("tatatoto")                
+                                <<<<<<<<<<<<<<<<<<<<<<---------------frontchannel-----------------------------FID retourne AuthorizationCode=code=AuthorizationGrant(Dans les en-tête http.)(+Token_ID si ImpliciteMode(c.a.d LINKResponseType=token ou token_id) + renvoit le meme state qu'il a reçu ("tatatoto")                
                                                                     url = redirectURI = callback                        
     
-    EDSN renvoit l’AuthorisationCode + idApplicatif + client_secret à FID--------backchannel------------>>>>>
+    EDSN renvoit l’AuthorizationCode + idApplicatif + client_secret à FID--------backchannel------------>>>>>
                                      + GrantType=Authorization_code
                                      POST
                                      Content-Type:application/x-www-form-urlencoded
-                                     code=l’AuthorisationCode
+                                     code=l’AuthorizationCode comme ça:
                                      &client_id=1234
                                      &client_secret=456
                                      &grant_type=authorization_code
- OU BIEN                             
-    EDSN envoit ResponseType=Token ou =Token_ID ---------------------------------frontchannel------------>>>>>
-    =1ere étape si ImplicitMode                                                                                             
-                                                                                                              FID vérifie que code n'est pas l'AuthorisationCode n'a pas été hacké grâce à client_secret
-                                 <<<<<<<<<<<<<<<<<<<<<<<<<-----------backchannel/frontSiImplicitMode--------- FID renvoit l’AccessToken(scopé&expirable)   +                Token_ID si OpenID =JWTSigné=JWS (AuthenticationServer doit supporter)
-                                                               HTTPS-SSL si Bearer                                        expires_in=xms(stokéDsDBSaufSi) +TokenType=      								 Signature avec SecretKey 
-                                                                                                                          stocké en base sauf si durée            bearer                       ou
-                                                                                                                          vie tres courte                                                  Signature avec paire de clé assymetriques (donc clé privée)
+                                                                                                              FID vérifie que AuthorizationCode n'a pas été hacké à l'aide du client_secret
+                                 <<<<<<<<<<<<<<<<<<<<<<<<<-----------backchannel/frontSiImplicitMode--------- FID renvoit l’AccessToken peut être un JWT(scopé&expirable)(n'envoit que ça si response_type=code)   +     Token_ID si OpenID(de OpenIdConnect1.0 c.a.d response_type=openid) =JWTSigné=JWS (AuthenticationServer doit supporter)
+                                                               HTTPS-SSL si Bearer                                        expires_in=xms(stokéDsDBSaufSi) +TokenType=      				             				 Signature avec SecretKey 
+                                                                                                                          stocké en base sauf si durée            bearer                                                ou
+                                                                                                                          vie tres courte                                                                            Signature avec paire de clé assymetriques (donc clé privée)
                                                                                                                                                                    ou
                                                                  pasBesoin si Mac                                           utilisation unique                      mac                          
                                                                                                                             chaque fois
@@ -30658,19 +30815,98 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
     EDSN demande une authorisation                                                                                                                                                              
                    --->GET                                                                                                                
                    --->GET  plusieurs fois tant que expir OK.
-                   --->GET----------backchannel/frontSiImplicitMode-----renvoit l'AccessToken qui contient le scope----------->>>>>>FIDx(Ressource) Vérifie que l'AccessToken est valide Puis Execute l'action ou                                                                                            
-                                                  |                       GET url.FIDx/toto/endpoint                                                                            |
+                   --->GET----------backchannel/frontSiImplicitMode-----renvoit l'AccessToken qui contient le scope----------->>>>>>FIDx(Ressource) Vérifie que l'AccessToken est valide Puis Execute l'action ou LINKrevokeneje                                                                                           
+                                                  |                       GET url.FIDx/toto/endpoint ou plutot /token/introspect                                                |
                                                   |                  Authorization:Bearer ou Mac blaMonAccessTockenblabla // dans le cookies httponly de preference sinon       | 
                                                   |                         OU renvoit                                     dans le header(bearer pour dire que c du oauth2.0)   |
                                                   |                       getUserInfo si a reçu l'Token_ID                                                                      |
                                            s'assurer que le token ne peut pas                                                                                                   | 
                                            être pompé hors du browser                                                                                                           |
-                                                                                                                                                                                |
+          ou
+          client username/password->---------------------------------------------------------------------------------------------------------------------------------------->>>>>>>>>>>> si Bearer,capable revoquer son access token (stoké en base) LINKrevokeneje                                                                                                                                                                                |
+            POST "grant-type":"client_credentials"
+            et facultatif Authorization: Bearer blaMonAccessTockenblabla 
+          
                           <<<<<<<<<<<<<<<<<<<<---------------------info demandée(restreinte au scope) backchannel---------------------------------------------------------------------retourne------FID(AuthenticationServer) renvoit un RefreshToken à EDSN(Client)
-                          
-                          
-                   client username/password->---------------------------------------------------------------------------------------------------------------------------------------->>>>>>>>>>>> si Bearer,capable revoquer son access token (stoké en base) 
-                          
+                                                                                                                                                                                                                                       ou
+                                                                                                                                                                                                                                objet JSON voir LINKjwwijge
+
+
+
+un OpenIdProvider doit renvoyer ces infos via l'URL unDomaine.com/.well-known/openid-configuration avec un content-type=application/json pour du Get seulement. doit retourner 200 OK HTTP
+ LINKopeniddconf:                                                                                                                                                                                                                                
+    "issuer":xxx
+        REQUIRED. URL using the https scheme with no query or fragment component that the OP asserts as its Issuer Identifier. If Issuer discovery is supported (see Section 2), this value MUST be identical to the issuer value returned by WebFinger. This also MUST be identical to the iss Claim value in ID Tokens issued from this Issuer. 
+    "authorization_endpoint":"xxx"
+        REQUIRED. URL of the OP's OAuth 2.0 Authorization Endpoint [OpenID.Core]. 
+    "token_endpoint":xxx
+        URL of the OP's OAuth 2.0 Token Endpoint [OpenID.Core]. This is REQUIRED unless only the Implicit Flow is used. 
+    "userinfo_endpoint":xxx
+        RECOMMENDED. URL of the OP's UserInfo Endpoint [OpenID.Core]. This URL MUST use the https scheme and MAY contain port, path, and query parameter components. 
+    "jwks_uri":xxx              
+        REQUIRED. URL of the OP's JSON Web Key Set [JWK] document. This contains the signing key(s) the RP uses to validate signatures from the OP. The JWK Set MAY also contain the Server's encryption key(s), which are used by RPs to encrypt requests to the Server. When both signing and encryption keys are made available, a use (Key Use) parameter value is REQUIRED for all keys in the referenced JWK Set to indicate each key's intended usage. Although some algorithms allow the same key to be used for both signatures and encryption, doing so is NOT RECOMMENDED, as it is less secure. The JWK x5c parameter MAY be used to provide X.509 representations of keys provided. When used, the bare key values MUST still be present and MUST match those in the certificate. 
+    "registration_endpoint":xxx             
+        RECOMMENDED. URL of the OP's Dynamic Client Registration Endpoint [OpenID.Registration]. 
+    "scopes_supported":xxx              
+        RECOMMENDED. JSON array containing a list of the OAuth 2.0 [RFC6749] scope values that this server supports. The server MUST support the openid scope value (d'autant plus si je mets LINKozero). Servers MAY choose not to advertise some supported scope values even when this parameter is used, although those defined in [OpenID.Core] SHOULD be listed, if supported. 
+    "response_types_supported":xxx  LINKResponseType            
+        REQUIRED. JSON array containing a list of the OAuth 2.0 response_type(obligatoire) values that this OP supports. Dynamic OpenID Providers MUST support the "code", "id_token", and the "token id_token" Response Type values.
+                                                                    sur Oauth2 response_type peut etre "code" ou "token"(=implicitMode). OpenIdConnect1.0 a rajouté "id_token"LINKozero et "none" du coup on peut combiner: "id_token token" ou "code id_token" etc etc... 
+    "response_modes_supported":xxx              
+        OPTIONAL. JSON array containing a list of the OAuth 2.0 response_mode values that this OP supports, as specified in OAuth 2.0 Multiple Response Type Encoding Practices [OAuth.Responses]. If omitted, the default for Dynamic OpenID Providers is ["query", "fragment"]. 
+    "grant_types_supported":xxx             
+        OPTIONAL. JSON array containing a list of the OAuth 2.0 Grant Type values that this OP supports. Dynamic OpenID Providers MUST support the authorization_code and implicit Grant Type values and MAY support other Grant Types. If omitted, the default value is ["authorization_code", "implicit"]. 
+    "acr_values_supported":xxx              
+        OPTIONAL. JSON array containing a list of the Authentication Context Class References that this OP supports. 
+    "subject_types_supported":xxx               
+        REQUIRED. JSON array containing a list of the Subject Identifier types that this OP supports. Valid types include pairwise and public. 
+    "id_token_signing_alg_values_supported":xxx             
+        REQUIRED. JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for the ID Token to encode the Claims in a JWT [JWT]. The algorithm RS256 MUST be included. The value none MAY be supported, but MUST NOT be used unless the Response Type used returns no ID Token from the Authorization Endpoint (such as when using the Authorization Code Flow). 
+    "id_token_encryption_alg_values_supported":xxx              
+        OPTIONAL. JSON array containing a list of the JWE encryption algorithms (alg values) supported by the OP for the ID Token to encode the Claims in a JWT [JWT]. 
+    "id_token_encryption_enc_values_supported":xxx              
+        OPTIONAL. JSON array containing a list of the JWE encryption algorithms (enc values) supported by the OP for the ID Token to encode the Claims in a JWT [JWT]. 
+    "userinfo_signing_alg_values_supported":xxx             
+        OPTIONAL. JSON array containing a list of the JWS [JWS] signing algorithms (alg values) [JWA] supported by the UserInfo Endpoint to encode the Claims in a JWT [JWT]. The value none MAY be included. 
+    "userinfo_encryption_alg_values_supported":xxx              
+        OPTIONAL. JSON array containing a list of the JWE [JWE] encryption algorithms (alg values) [JWA] supported by the UserInfo Endpoint to encode the Claims in a JWT [JWT]. 
+    "userinfo_encryption_enc_values_supported":xxx              
+        OPTIONAL. JSON array containing a list of the JWE encryption algorithms (enc values) [JWA] supported by the UserInfo Endpoint to encode the Claims in a JWT [JWT]. 
+    "request_object_signing_alg_values_supported":xxx               
+        OPTIONAL. JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for Request Objects, which are described in Section 6.1 of OpenID Connect Core 1.0 [OpenID.Core]. These algorithms are used both when the Request Object is passed by value (using the request parameter) and when it is passed by reference (using the request_uri parameter). Servers SHOULD support none and RS256. 
+    "request_object_encryption_alg_values_supported":xxx                
+        OPTIONAL. JSON array containing a list of the JWE encryption algorithms (alg values) supported by the OP for Request Objects. These algorithms are used both when the Request Object is passed by value and when it is passed by reference. 
+    "request_object_encryption_enc_values_supported":xxx                
+        OPTIONAL. JSON array containing a list of the JWE encryption algorithms (enc values) supported by the OP for Request Objects. These algorithms are used both when the Request Object is passed by value and when it is passed by reference. 
+    "token_endpoint_auth_methods_supported":xxx             
+        OPTIONAL. JSON array containing a list of Client Authentication methods supported by this Token Endpoint. The options are client_secret_post, client_secret_basic, client_secret_jwt, and private_key_jwt, as described in Section 9 of OpenID Connect Core 1.0 [OpenID.Core]. Other authentication methods MAY be defined by extensions. If omitted, the default is client_secret_basic -- the HTTP Basic Authentication Scheme specified in Section 2.3.1 of OAuth 2.0 [RFC6749]. 
+    "token_endpoint_auth_signing_alg_values_supported":xxx              
+        OPTIONAL. JSON array containing a list of the JWS signing algorithms (alg values) supported by the Token Endpoint for the signature on the JWT [JWT] used to authenticate the Client at the Token Endpoint for the private_key_jwt and client_secret_jwt authentication methods. Servers SHOULD support RS256. The value none MUST NOT be used. 
+    "display_values_supported":xxx              
+        OPTIONAL. JSON array containing a list of the display parameter values that the OpenID Provider supports. These values are described in Section 3.1.2.1 of OpenID Connect Core 1.0 [OpenID.Core]. 
+    "claim_types_supported":xxx             
+        OPTIONAL. JSON array containing a list of the Claim Types that the OpenID Provider supports. These Claim Types are described in Section 5.6 of OpenID Connect Core 1.0 [OpenID.Core]. Values defined by this specification are normal, aggregated, and distributed. If omitted, the implementation supports only normal Claims. 
+    "claims_supported":[xxx,yyy,zzzz]              
+        RECOMMENDED. JSON array containing a list of the Claim Names of the Claims that the OpenID Provider MAY be able to supply values for. Note that for privacy or other reasons, this might not be an exhaustive list. 
+    "service_documentation":xxx             
+        OPTIONAL. URL of a page containing human-readable information that developers might want or need to know when using the OpenID Provider. In particular, if the OpenID Provider does not support Dynamic Client Registration, then information on how to register Clients needs to be provided in this documentation. 
+    "claims_locales_supported":xxx              
+        OPTIONAL. Languages and scripts supported for values in Claims being returned, represented as a JSON array of BCP47 [RFC5646] language tag values. Not all languages and scripts are necessarily supported for all Claim values. 
+    "ui_locales_supported":xxx              
+        OPTIONAL. Languages and scripts supported for the user interface, represented as a JSON array of BCP47 [RFC5646] language tag values. 
+    "claims_parameter_supported":xxx                
+        OPTIONAL. Boolean value specifying whether the OP supports use of the claims parameter, with true indicating support. If omitted, the default value is false. 
+    "request_parameter_supported":xxx               
+        OPTIONAL. Boolean value specifying whether the OP supports use of the request parameter, with true indicating support. If omitted, the default value is false. 
+    "request_uri_parameter_supported":xxx               
+        OPTIONAL. Boolean value specifying whether the OP supports use of the request_uri parameter, with true indicating support. If omitted, the default value is true. 
+    "require_request_uri_registration":xxx              
+        OPTIONAL. Boolean value specifying whether the OP requires any request_uri values used to be pre-registered using the request_uris registration parameter. Pre-registration is REQUIRED when the value is true. If omitted, the default value is false. 
+    "op_policy_uri":xxx             
+        OPTIONAL. URL that the OpenID Provider provides to the person registering the Client to read about the OP's requirements on how the Relying Party can use the data provided by the OP. The registration process SHOULD display this URL to the person registering the Client if it is given. 
+    "op_tos_uri":xxx                
+        OPTIONAL. URL that the OpenID Provider provides to the person registering the Client to read about OpenID Provider's terms of service. The registration process SHOULD display this URL to the person registering the Client if it is given. 
+    
 
 Kerberos : 
     utilisation de d'apache mod_auth_kerb: 
@@ -31473,7 +31709,12 @@ pour recuperer les rôles de l'utilisateur qui s'est connecté côté IDP:
         }                
         
 windows : (commande dos :)
-renommer un repertoire fichier en un autre : 
+pour effacer supprimer delete un fichier:
+    del /f C:\Users\lduverge\apache-tomee-plume-8.0.0\webapps\memoclap.front.war // /f pour forcer
+pour effacer un repertoire directory:
+    rmDir C:\path\vers\repertoire // rajouter <espace>/Q/S après rmDir pour effacer de facon recursive 
+        
+renommer un repertoire fichier en un autre: 
     rename dir1 dir2
     commande dos pour voir les ports utilises sur mon ordi: netstat (voir netstat plus haut)
     les alias: c a d le nom des serveurs et adresse ip sont a definir dans C:/WINNT/system32/drivers/etc/hosts: a la modif il prend en compte tout de suite. LINKàç<çç_à
@@ -31632,8 +31873,9 @@ pour avoir la liste des taches (control alt suppr; ctrl alt suppr):
         del /s *.MF (il supprime tous les fichiers *.MF recursivement) /Q pour qu'il ne demande pas de confirmation
         rmdir /S repertoire // pour supprimer un repertoire. /S c'est pour forcer meme si repertoires non vides
             
-      pour copier le nom de plusieurs fichiers: nom des fichiers
+      pour copier copy le nom de plusieurs fichiers: nom des fichiers en dos
           aller en commande dos
+                copy ..\MemOclapFront\target\memoclap.front.war C:\Users\lduverge\apache-tomee-plume-8.0.0\webapps\
       raccourcis clavier: http://www.infoprat.net/astuces/windows9x/astuces/raccourcis_015.php
       demarrer une application de la barre des taches: Windows + T
       Acceder à une application: Alt+Tab puis les fleches
@@ -32183,6 +32425,7 @@ curl -X GET \
                 
          
 navitia :
+    les coordonnées gps de navitia sont inversées par rapport à googlemaps et navitia utilise des ";" point-virgule alors que google des "," virgules 
 90 000 appels gratuits/mois
 https://www.navitia.io:
 doc:
@@ -32248,7 +32491,12 @@ pour tester les urls ci dessous
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/journeys?from=2.33245;48.77469&to=3.30139;48.21735 idf vers droite hors idf   KO Status: Message: cannot find a region with 2.33245;48.77469 and 3.30139;48.21735 in the same time. You have requested this URI [/v1/journeys] but did you mean /v1/journeys or /v1/vehicle_journeys or /v1/routes ? (404), duration of the request: 414ms
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.64788;48.31951&to=3.30139;48.21735 limiteDansIdf vers DroiteHorsIdf KO  cannot find a region with 2.64788;48.31951 and 3.30139;48.21735 in the same time. You have requested this URI [/v1/journeys] but did you mean /v1/journeys or /v1/vehicle_journeys or /v1/routes ? (404), duration of the request: 338ms
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1//journeys?from=2.33245;48.77469&to=-0.56730;44.83589 idf-bordeaux KO  cannot find a region with 2.33245;48.77469 and -0.56730;44.83589 in the same time. You have requested this URI [/v1/journeys] but did you mean /v1/journeys or /v1/vehicle_journeys or /v1/routes ? (404), duration of the request: 578ms
+    
+      si navitia renvoit une erreur qu'il ne trouve pas la coordonnée gps c'est parce que ce point est loin de tout transport. Solution: lui dire qu'on utilise au moins un vélo pour atteindre ce point:
+            last_section_mode%5B%5D=bike&min_bike=0& // si j'ai l'erreur Error: no destination point 
+            first_section_mode%5B%5D=bike&min_bike=0 // si j'ai l'erreur Error: no origin point
 
+        
 api sncf :
      https://api.sncf.com/v1 
      pour tester les URLS : voir LINKNavitiaPlayground ca marche aussi!
