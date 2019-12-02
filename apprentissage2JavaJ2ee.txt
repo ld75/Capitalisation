@@ -1,4 +1,4 @@
-(?=.*int)(?=.*long)(?=.*convert)
+(?=.*lire)(?=.*fichier)
 AFAIRE :
         voir vert.x; kubernetes elastisearch, vuejs reacx
         Afaire go, play, ngix 
@@ -3618,43 +3618,7 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
                             }
                         } 
                                            
-JSON-B :jsonb : pour binder java et json LINKjsonbnew
-          <!-- jsonb -->
-            <!-- JSON-P -->
-            <dependency>
-                <groupId>org.glassfish</groupId>
-                <artifactId>jakarta.json</artifactId>
-                <version>1.1.5</version>
-                <scope>runtime</scope>
-            </dependency>
-
-            <!-- JSON-B API -->
-            <dependency>
-                <groupId>jakarta.json.bind</groupId>
-                <artifactId>jakarta.json.bind-api</artifactId>
-                <version>1.0.1</version>
-            </dependency>
-
-            <!-- Yasson (JSON-B implementation) -->
-            <dependency>
-                <groupId>org.eclipse</groupId>
-                <artifactId>yasson</artifactId>
-                <version>1.0.3</version>
-                <scope>runtime</scope>
-            </dependency>
-    de java vers json: java en json:
-      AuthentMessage ret = new AuthentMessage("Mauvais identitiants");
-                    Jsonb jsonb = JsonbBuilder.create();
-                    String dujson = jsonb.toJson(ret);
-    de json vers java: json en java:
-        AuthentMessage ret = jsonb.fromJson(dujson,AuthentMessage.class);
-    Je peux personnaliser le mapping avec les annotations: (PAS FAIT AFAIRE)
-        MaClasse
-            @JsonbDateFormat("yyyy.MM.dd") // attention a la conversion Jsonb.toJson() il change l'heure de la date le con!
-            private Date updateDate;
-            @JsonbTransient
-            un champ complettement ignoré lors du binding
-                    
+        
 JSON-P : jsonp : pour manipuler json: json processing                       
 SOAP : webservice : webservices :
 http://ws.apache.org/axis/java/user-guide.html
@@ -4216,7 +4180,7 @@ web.xml : webxml :
             						      filterConfig.getInitParameter("cle du parametre init").indexOf("toto)>-1 // recupertion du parametre init-parameter LINKFiltrelksjdf
             									HttpServletRequest req = (HttpServletRequest)request;
             									if (req.getSession(false)==null) throw new ServletException("timeout");// attention recree une  nouvelle session si on met true dans la methode.
-            									chain.doFilter(request,response); // attention il ouvre un autre thread et continue le code si il y en a a la suite (sauf je crois si on met juste en dessous return;)
+            									chain.doFilter(request,response); // attention il ouvre un autre thread et continue le code si il y en a a la suite (sauf je crois si on met juste en dessous return;) Enfin quoi qu'il en soit ca wrap l'execution cote serveur donc je peux mettre du code avant et apres
             						}
             							public void init(FilterConfig arg0) throws ServletException 
             						{
@@ -17677,7 +17641,48 @@ pour imposer qu'il ya  qu'une seule instance de mon batch java qui tourne:
        
 
 
-parser convertir json : tout ca est vieux ci dessous. Voir LINKjsonbnew
+parser convertir json : 
+JSON-B :jsonb : pour binder java et json LINKjsonbnew
+          <!-- jsonb -->
+            <!-- JSON-P -->
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>jakarta.json</artifactId>
+                <version>1.1.5</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <!-- JSON-B API -->
+            <dependency>
+                <groupId>jakarta.json.bind</groupId>
+                <artifactId>jakarta.json.bind-api</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+
+            <!-- Yasson (JSON-B implementation) -->
+            <dependency>
+                <groupId>org.eclipse</groupId>
+                <artifactId>yasson</artifactId>      
+                <version>1.0.3</version>
+                <scope>runtime</scope>
+            </dependency>
+    de java vers json: java en json:
+      AuthentMessage ret = new AuthentMessage("Mauvais identitiants");
+                    Jsonb jsonb = JsonbBuilder.create();
+                    String dujson = jsonb.toJson(ret);
+    de json vers java: json en java:
+        AuthentMessage ret = jsonb.fromJson(dujson,AuthentMessage.class);
+    Je peux personnaliser le mapping avec les annotations: (PAS FAIT AFAIRE)
+        MaClasse
+            @JsonbDateFormat("yyyy.MM.dd") // attention a la conversion Jsonb.toJson() il change l'heure de la date le con!
+            private Date updateDate;
+            @JsonbTransient
+            un champ complettement ignoré lors du binding
+            @JsonbProperty(value="sonNameNomSiJeVeuxLeForcerParRapportAuGeter") 
+            String getUnGetterAvecUnNomJava(){} //SUPER IMPORTANT: il se base sur les getters pour genrer le json donc ne pas les oublier
+             
+        public class AskReponseJson implements JsonString // pour faire qu'un objet est un string json.
+tout ca est vieux ci dessous. Voir LINKjsonbnew
 pour convertir un string objet java en array json meme si l'array a plusieurs niveau:
                 avec jackson avec controle du mapping
                 classe ObjetclasseJava->Json
@@ -22393,7 +22398,7 @@ pour recuperer les bytes d'un fichier:
 				lByteOut.write(bytes, 0, i);
 			}
 			lire.close();
-pour recuperer le string d'un fichier lire un fichier
+pour recuperer le string d'un fichier lire contenu d'un fichier
         depuis java10 je crois:
                 new FileInputStream("path/fichier.txt").transferTo(System.out)
         java7 et plus:
