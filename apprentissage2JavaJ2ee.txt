@@ -1,4 +1,4 @@
-(?=.*<)(?=.*implement)
+(?=.*secur)(?=.*html)
 
 AFAIRE :
         voir vert.x; kubernetes elastisearch, vuejs reacx
@@ -15057,6 +15057,7 @@ hacking : haking : hack :
         x-frame-options header not set // en-tête header http de response permettant d'eviter qu'un site s'affiche dans un autre site (iframe i-frame object).(clickjacking: quand je clique ça clique sur un autre bouton invisible)
         xss ://crosssitescripting // ma servlet vulnerable fait executer au navigateur du javascript passé en parametre de ma requete. ce javascript pourrait lire mes cookies (de session!): LINKcooklskjhh LINKc.s.r.f  et le pirate de se connecter à ma place
                     pour s'en premunire faire du @safeHTML ou faire  org.jsoup.Jsoup.isValid(lechampatester); sur les champs pour que du javascript ne puisse pas etre injecté dedans. aussi empecher le javascript d'acceder aux cookies.
+                    ou faire dans la jsp: <c:out value="${une_variable_renvoiee_par_la_servlet}"/> // du coup une_variable_renvoiee_par_la_servlet ne peut plus executer du javascript 
         pathtraversal// une servlet renvoit n'importe quel fichier ! ex: monsite/maservlet?vachercher=/unpath/unfichierANeSurtoutPasMontrer !affiche le fichier!    
         redirectionexterne // une servlet redirige vers un autre site! http://monsite?maservletTresConne?forward=http://un_autre_site
         CSRF :=XSRF :(CrossSiteRequestForgery :) LINKc.s.r.f (Cross-site scripting appartient à csrf) 
@@ -15141,6 +15142,23 @@ letsencrypt :
                       echo "############"
                       echo " "
 letsencrypt en shell avec dehydrated :  
+    les fichiers de conf doivent etre mis sous: (a l'execution dehydrated cherche du haut vers le bas)
+        /etc/dehydrated/config //config c'est le nom du fichier!
+        ou
+        /usr/local/etc/dehydrated/config //config c'est le nom du fichier!
+        ou
+        The directory from which dehydrated was run: dedans ya un fichier config a ecrire.
+    dans fichier config mettre https://github.com/lukas2511/dehydrated/blob/master/docs/examples/config
+    renseigner dedans:
+            WELLKNOWN=path/vers/le/repertoire/.well-known/acme-challenge  // dans ce repertoire je dépose le fichier texte token de preuve que j'ai la maitrise du serveur (je peux utiliser un alias apache si besoin LINKaliasdlkjsdfapche)
+            CA="https://acme-staging.api.letsencrypt.org/directory" // url de test ACMEv1 (pour ne pas utiliser directement la prod letsencrypt)
+            CA="https://acme-staging-v02.api.letsencrypt.org/directory" // url de test ACMEv2      
+    domains.txt contient:
+        unautredomaine.net www.unautredomaine.net bidule.unautredomaine.net > aliasducertificatassocieacestroisdomaines // le certificat est stocké sous CERTDIR/aliasducertificatassocieacestroisdomaines
+        *.jepeuxutiliserwildcardsurnomdedomaine.com > aliascertificat
+        mondomaine.org >aliascertificat // exemple le plus simple
+   enfin executer dehydrated:
+    ./dehydrated -c // voir la doc:https://github.com/lukas2511/dehydrated#usage                                                                                                                                               
     
    
 SSL : TLS : https :
@@ -25549,7 +25567,7 @@ a l'inverse pour le desactiver: a2dissite www.memoclap.com
   ServerAlias *.memoclap.com
   DocumentRoot "C:/wamp/www/sf_sandbox/web"
   DirectoryIndex index.php
-  Alias /acceuil C:/wamp/www/sf_sandbox/web/sf
+  Alias /acceuil C:/wamp/www/sf_sandbox/web/sf  // ca veut dire que toutes les requetes qui vont vers /accueil servent en fait C:/wamp/www/sf_sandbox/web/sf sur le serveur LINKaliasdlkjsdfapche 
   SSLEngine on // si erreur a cause de ça activer le mod ssl avec:sudo a2enmod ssl
   SSLCertificateFile /etc/letsencrypt/live/memoclap.com/cert.pem
   SSLCertificateKeyFile /etc/letsencrypt/live/memoclap.com/privkey.pem
