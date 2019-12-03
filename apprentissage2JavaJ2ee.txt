@@ -1,4 +1,4 @@
-(?=.*p12)(?=.*store)
+(?=.*envoi)(?=.*mail)
 AFAIRE :
         voir vert.x; kubernetes elastisearch, vuejs reacx
         Afaire go, play, ngix 
@@ -21993,7 +21993,7 @@ pour envoyer un mail simple avec javax.mail et qu'on a eu un message d'erreur de
           			props.put ("mail.smtp.auth","true");
           			props.put("mail.smtp.host", mailSmtp); // ou wsmtp.renault.fr ou smtp.googlemail.com
                     props.put("mail.smtp.port", "25");
-                    props.put("mail.smtp.ssl.trust", "smtp.mailtrap.io");            
+                    props.put("mail.smtp.ssl.trust", "smtp.mailtrap.io"); // si j'ai défini un truststore avec -Djavax.net.ssl.trustStore=xxx.jks et que dedans il n'y a pas le trustore du serveur de mail je dois ici indiquer quel serveur smtp je trust pour que mon serveur puisse faire le handshake avec le serveur smtp            
           			props.put("mail.debug", "true"); // si besoin quand ca marche pas
            		    props.put("mail.user", "kanailaurent@gmail.com");
           			props.put("mail.password", "calottezoclos");
@@ -22027,6 +22027,10 @@ pour envoyer un mail simple avec apache mail: librairie dispo ici: http://common
       email.setMsg("This is a test mail ...:-)");
       email.addTo("foo@bar.com");
       email.send();
+      
+si j'ai l'erreur:  
+    javax.mail.MessagingException: Could not convert socket to TLS;      
+      
 --------------------------------
 Pour formater un chiffre: taille zeros string 
 numberTest = 1;
@@ -24157,6 +24161,7 @@ pour savoir ce qui tourne:
 (ps -fu ? ou)ps -ef | grep monnomutilisateur pour voir quelles instances que j'ai lance tournent (affiche les ports) ps -ef donne aussi la date de debut d'execution du process
 on peut ensuite faire un kill -15 (soft) ou -9 (hard) sur l'id qu'on veut killer ( premiere colonne en chiffres (PID)) ferme aussi le port du service du coup
 pour killer en une seule ligne de commande
+    pkill -f 'java.*payara-micro' (on peut utiliser les wildcards .* grace à -f je crois)
     pkill nomdutrucquejeveuxkillerCeNomEstparExempleJavaOuPayaraVoirPs-ef
 ps -ef donne aussi la date de debut d'execution du process
 ps -ef | grep whatever pour voir si whatever tournent
@@ -24244,7 +24249,7 @@ pour compter le nombre de lignes renvoyees par un find par exemple: find . -name
 uname -a nom machine etc...
 stty: (config clavier)
 xterm (x terminal) (peut etre besoin faire un export display avant?)
-si je veux  voir ce qui a dans un .jar: jar -tvf nomdujar.jar | more
+si je veux  voir contient contenu zip ce qui a dans un .jar: jar -tvf nomdujar.jar | more
 pour extraire tout le jar: jar -xvf nodujar.jar (je pense: xvf)
 sous unix on peut faire une liste de commandes separees par un ";"
 pour tarer: tar -cvf nouveau.tar * ( quand il y a des espaces il faut mettre des guillemets: tar -cvf "2006101BABABAA-1000300_titre en francaisIncorrect.tar" "2006101BABABAA-1000300_titre en francaisIncorrect"
