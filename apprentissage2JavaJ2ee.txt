@@ -1,4 +1,4 @@
-(?=.*lire)(?=.*fichier)
+(?=.*p12)(?=.*store)
 AFAIRE :
         voir vert.x; kubernetes elastisearch, vuejs reacx
         Afaire go, play, ngix 
@@ -247,6 +247,10 @@ cleancoding : clean coding :LA SEULE FACON D ALLER VITE C EST D ALLER CLEAN igno
 8. I will produce estimates that are honest both in magnitude and precision, I will not make promises without certainty
 9. I will never stop learning and improving my craft (I learn by myself). Ignorance is no excuse
 
+    faire des estimations : 
+        on en donne plusieurs : - si tout se passe bien
+                                - si il y a quelques imprévus
+                                - si c'est le chaos
 
 
 
@@ -464,9 +468,9 @@ chocolatey :
 
   
 nodejs : node.js : node : npm :  (https://www.npmjs.com/package tous les programmes sont là): c'est le maven du javascript. A remplacé bower. Yarn fait pareil mais s'appuye sur npm. npm etait fait pour nodejs à la base
-      defs: browserify : permet à des applis nodes (contiennent "require" car cote serveur require est comme import. mais browser interdit acces au filesystem) d'etres comprises par les browsers: il remplace "require par la concatenation des fichiers js dans un seul
+      defs: browserify(obsolete) : permet à des applis nodes (contiennent "require" car cote serveur require est comme import. mais browser interdit acces au filesystem) d'etres comprises par les browsers: il remplace "require par la concatenation des fichiers js dans un seul
             webpack fait comme browserify mais en plus avec plus de choses. voir LINKWPKCS
-            babel converti du javascript recent pour les vieux navigateurs voir LINKBBLE
+            babel converti du javascript recent pour les vieux navigateurs(ES5:vieux) voir LINKBBLE
 si problemes dans npm: https://github.com/npm/npm/wiki/Troubleshooting
   installer npm:
    aller sur https://nodejs.org/en/download/ (downloader npm: sur internet)
@@ -838,7 +842,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
     git config --global alias.add 'add -v' // a tester.          
     git clone:
       dupliquer/copier/recuperer un repository present sur le web en local. (en general c'est un fork que je clone si je me greffe à un projet existant)
-        git clone https://username(facultatif):motdepasse(facultatifLesguillemetsdoiventEtreEchappeesPar\)@githubSuiteUrl.com/spring-projects/spring-security-oauth-javaconfig.git // le copie dans le repertoireLocal ou je suis tout le projet son histoire ses vieilles branches commitees.
+        git clone https://username(facultatif):motdepasse(facultatifLesguillemetsdoiventEtreEchappeesPar\)@githubSuiteUrl.com/spring-projects/spring-security-oauth-javaconfig.git // le copie dans le repertoireLocal ou je suis tout le projet son histoire ses vieilles branches commitees. Mettre username et password si j'ai le message dépot non trouvé depot ou repository not found
         git clone https://scm.soprahr.com/scm/su/sample-edsn-usermanager.git nomdefacultatifmonprojetRepertoireQueJeLuiDemandeDeCreer
         git clone unUserNameSur?@ungithubUrl:un/path/vers/un/.git
         git clone --bare ....etc... fait pareil mais c'est un bare 
@@ -1343,9 +1347,11 @@ payara :payaramicro : // executeur direct d'un microservice.
             clustering: deux instances indentiques déployées sur des ports differents sont automatiquement clusterisees (partagent les memes sessions users)
             --nocluster // marche pas! pour ne pas qu'il cherche d'autres instances pour clutoriser. Ca prend du temps quand il cherche
         --autobindhttp // determine le port automatiquement.
+        --startPort 888// fonctionne avec autobindhttp. 888: port à partir duquel commencer à incrementer numero de port
+        --sslport 8081        
         --logtofile <file-path> // attention si j'utilise --logProperties ca remplace logtofile
         --verbose 
-        --startPort 888// fonctionne avec autobindhttp. 888: port à partir duquel commencer à incrementer numero de port
+        --sslcert aliasdanslecertificat qui se trouve dans le chemin retourne par javax.net.ssl.trustStore je crois
         --mcAdress // facultatif sert à placer mon instance dans un multicast en particulier   
         --mcPort // facultatif sert à forcer le port de mon multicast (???)
         -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n // pour debugger en remote
@@ -1368,53 +1374,15 @@ executer de la configuration post demarrage: LINKasadmdfirez
             set configs.config.server-config.network-config.protocols.protocol.http-listener-1.security-enabled=${ENV=security-enabled}
             #Augmenter la limite du nombre de headers des httpresponses
             set configs.config.server-config.network-config.protocols.protocol.http-listener-1.http.max-response-headers=1000 // correspond à la configuration Grizzly sous jaceante maxResponseHeaders (en camelcase côté Grizzly (voir leur doc :https://javaee.github.io/grizzly/httpserverframework.html#HTTP_Server_Configuration)
-            
-Apache renvoit avec de l'audio    
-    Requete GET:
-            Host: www.memoclap.com
-            User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101 Firefox/68.0
-            Accept: audio/webm,audio/ogg,audio/wav,audio/*;q=0.9,application/ogg;q=0.7,video/*;q=0.6,*/*;q=0.5
-            Accept-Language: fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3
-            Referer: https://www.memoclap.com/indexPro.php?projet=20130608702591370701150964&acteur=0
-            Range: bytes=0-
-            Connection: keep-alive
-            Cookie: memoclap=kfp8cui1usqugu4e8d8g61ma2i
-            Pragma: no-cache
-            Cache-Control: no-cache
-    Reponse
-            HTTP/1.1 206 Partial Content
-            Date: Wed, 20 Nov 2019 15:11:07 GMT
-            Server: Apache/2.4.29 (Ubuntu)
-            Last-Modified: Fri, 21 Mar 2014 13:36:22 GMT
-            ETag: "d72fc-4f51df8b04180"
-            Accept-Ranges: bytes
-            Content-Length: 881404
-            Content-Range: bytes 0-881403/881404
-            Keep-Alive: timeout=5, max=70
-            Connection: Keep-Alive
-            Content-Type: audio/mpeg
-payara renvoit:
-    Requete GET
-            Host: localhost:8080
-            User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0
-            Accept: */*
-            Accept-Encoding: identity;q=1, *;q=0
-            Accept-Language: fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7
-            Referer: http://localhost:8080/memoclaptest/resources/auth/indexPro
-            Range: bytes=0-
-            Connection: keep-alive
-            Cookie: JSESSIONID=964d92ef42790c41256234dfcff7; JSESSIONID=0bef676170f3a1a684db137635a4
-    Reponse
-            HTTP/1.1 200 OK
-            Server: Payara Micro #badassfish
-            Content-Disposition: inline; filename="toto=toto.mp3"
-            Content-Type: audio/mpeg;charset=UTF-8
-            Content-Length: 1104068
-            X-Frame-Options: SAMEORIGIN
-                
-            
-            
-            
+    pour avoir la liste des confs possible faire: (je crois)
+                                                 ~ /opt/payara/server/171.1/bin/asadmin get "*" | grep server-header  
+                                                  configs.config.default-config.network-config.protocols.protocol.http-listener-2.http.server-header=true
+                                                  configs.config.default-config.network-config.protocols.protocol.http-listener-1.http.server-header=true
+                                                  configs.config.default-config.network-config.protocols.protocol.admin-listener.http.server-header=true
+                                                  configs.config.server-config.network-config.protocols.protocol.admin-listener.http.server-header=true
+                                                  configs.config.default-config.network-config.protocols.protocol.sec-admin-listener.http.server-header=true
+                                                  configs.config.server-config.network-config.protocols.protocol.http-listener-1.http.server-header=true
+                                                  configs.config.server-config.network-config.protocols.protocol.http-listener-2.http.server-header=true
              
     payaramicro maven plugin pluggin: mais bof pas super efficace ou j'ai pas trouvé.
     <plugin>
@@ -2517,7 +2485,7 @@ try (SeContainer container = initializer.disableDiscovery().initialize()) { cont
         public void processQualifiedPayload(@Observes @Named("tutu") Payload event) {} // ne sont executés que si LINKkfkgggg
         public void processQualifiedObject(@Observes @Named("tutu") Object event) {} // ne sont executés que si LINKkfkgggg
         		
-securite : security :(JSR375) plus besoin d'utiliser web.xml: les annotations font pareil.
+securite : security :(JSR375 implémenté par soteria qui est la reference) plus besoin d'utiliser web.xml: les annotations font pareil.
        AFAIRE
        https://javaee.github.io/tutorial/security-api004.html
        https://javaee.github.io/tutorial/security-intro003.html#BNBXE->https://javaee.github.io/tutorial/security-javaee002.html#GJGDI
@@ -3202,7 +3170,31 @@ freemaker :
                                         //------------------ CLIENT REQUEST
                                         FileInputStream fileInputStream = new FileInputStream(toSend);
                                         // open a URL connection to the Servlet
-                      
+                                Quand le serveur peut repondre avec de l'audio découpé pour pouvoir naviguer dessus    
+                                      Requete GET:
+                                              Host: www.memoclap.com
+                                              User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101 Firefox/68.0
+                                              Accept: audio/webm,audio/ogg,audio/wav,audio/*;q=0.9,application/ogg;q=0.7,video/*;q=0.6,*/*;q=0.5
+                                              Accept-Language: fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3
+                                              Referer: https://www.memoclap.com/indexPro.php?projet=20130608702591370701150964&acteur=0
+                                              Range: bytes=0-
+                                              Connection: keep-alive
+                                              Cookie: memoclap=kfp8cui1usqugu4e8d8g61ma2i
+                                              Pragma: no-cache
+                                              Cache-Control: no-cache
+                                      Reponse
+                                              HTTP/1.1 206 Partial Content
+                                              Date: Wed, 20 Nov 2019 15:11:07 GMT
+                                              Server: Apache/2.4.29 (Ubuntu)
+                                              Last-Modified: Fri, 21 Mar 2014 13:36:22 GMT
+                                              ETag: "d72fc-4f51df8b04180"
+                                              Accept-Ranges: bytes
+                                              Content-Length: 881404
+                                              Content-Range: bytes 0-881403/881404
+                                              Keep-Alive: timeout=5, max=70
+                                              Connection: Keep-Alive
+                                              Content-Type: audio/mpeg
+
                         Methode1: faire envoyer faire une requette request requete get ou post http LINKrequ939302
                                         URL url = new URL(urlString);
                                         // Open a HTTP connection to the URL
@@ -6499,7 +6491,7 @@ Spring : XML STYLE
                               leNomDeMaJsp.jsp
                               <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%> // pour la balise <form:errors
                               <html>
-                              <form:errors path="student1.*">   // fonctionne avec le BindingResult
+                              <form:errors path="student1.*">   // fonctionne avec le BindingResult: si bindingResult.hasErrors() automatiquement spring va mettre dans "student1" le contenu de @Valid UnForm unForm.student1 son annotation @Pattern(regexp = "ca!")
                               <h2>${monMessage}</h2>
                               <h2>${monObjet.unGetterDeMonObjet}</h2>  
                               </html>
@@ -7740,7 +7732,7 @@ hsqldb : LINKldkjgieieioruz
                 }
                 Assertions.assertEquals(3, ret);
             }
-=======
+
 GWT :
 pour lancer en dev sur jetty gwt mais ca ne marche pas  sur mon pom
       %M3%/mvn gwt:run -Denv=dev -DrunTarget=WecApp.html
@@ -7916,7 +7908,7 @@ public class Groupe
     Set<Eleve> eleves;  Attention plutot utiliser ArrayList à Set car ArrayList est est serialisable!
 }
 
-=======
+??? :
     (...)
      logginService.getStudentById(st, new AsyncCallback<VPA01_STUDENT>()
 				{
@@ -10645,13 +10637,17 @@ v.x.y.z_u (x=evol maj; y=evolmin; z=ano; u=ano du build)
     mvn -v
 si j'ai l'erreur [ERROR] Failed to execute goal org.apache.maven.plugins:maven-enforcer-plugin:1.4.1:enforce (enforce) on project com.soprahr.hub.bc.usermgt.service: Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed. -> [Help 1]
     regarder les warnings au dessus
+si j'ai erreur
+     Could not find artifact  // la dépendance que je mets dans mon pom ne doit pas être un projet de type pom mais doit contenir des jars
 si erreur The packaging for this project did not assign a file to the build artifact
     il faut pas faire mvn:install:install mais mvn install car install:install est un goal d'un plugin install
-liaison avec git: // a documenter je ne sais pas trop ce que ça fait
+liaison avec git: // jenkins peut exectuer les commandes maven scm sur un projet 
         <scm>
-        <connection>scm:git:git@github.com:AdamBien/ping.git</connection>
+        <connection>scm:git:git@github.com:AdamBien/ping.git</connection>          mvn -Dmessage="<commit_log_here>" scm:checkin // permet de faire un commit et   mvn scm:update permet de faire un update
         <url>scm:git:git@github.com:AdamBien/ping.git</url>
+        <connection>scm:svn:https://subv.ca-sa.credit-agricole.fr/edcmp5/MyCampus/trunk/v3-parent/</connection>  // deux types de connexion sont possibles. "connection" et "developerConnection"
         <developerConnection>scm:git:git@github.com:AdamBien/ping.git</developerConnection>
+        
         <tag>HEAD</tag>
     </scm>    
 si un plugin n'est pas exectute peut etre c parce que dans le pom les pluggins sont entoures par pluginManagement. Virer ces balises
@@ -10682,7 +10678,7 @@ possible d'overrider dans le pom lurl du repository: AH... n'a pas l'air de pren
        			<url>https://url d'un repository</url>         (dans https://mvnrepository.com quand on cherche une librairie, pour connaitre l'url du repository ou elle est, chercher "Note: this artifact it located at...")
        		</mirror>
        		..plusieurs mirrors possible // mais en fait jamais reussi a comprendre et a faire marcher l'utilisation de plusieurs repository repositories avec mirrors: utiliser plutot dans settings les profiles
-      </mirrors>                                             comme ca dans settings.xml (activer le profil all lors de l'execution)
+      </mirrors>                                             comme ca dans settings.xml (activer le profile all lors de l'execution)
                                                                 <profile>
                                                                 <id>all</id>
                                                                 <activation>
@@ -10765,7 +10761,7 @@ exemple de pom racine
 	<name>AudioLoop</name> // utilisé dans intellij dans le paneau maven pour: name est affiché là
 	<version>1.0.0</version>
 	
-	// si il a un parent:
+	// si il a un parent: du coup il voit le parent et herite de ses trucs
 	 <parent>
       <groupId>net.nanthrax.examples</groupId>
       <artifactId>jaxrs-blueprint</artifactId>
@@ -10849,7 +10845,7 @@ exemple de pom racine
           
     </plugins>
 	</build>
-	<modules>
+	<modules> // du coup le parent voit ses fils et les execute les uns à la suite des autres
 		<!-- <module>../tmt_Enterprise</module>
 		<module>../tmt_Application</module> //artifactid du pom.xml du repertoire au meme niveau je crois
 		<module>../tmt_Client</module>        -->
@@ -13003,10 +12999,9 @@ Curl : voir aussi wget : pour faire une requette request http doc:https://ec.hax
      
      -w "totocequejeveux %{unevariablequi m'estrenvoyéeparleserveur (voir la doc pour la liste des variables)}" > jepeuxecrireleresultatdansunfichier.txt mettre -w "" >unlog.log ecrit le payload body contenu de la reponse        
 certificats : certificat : formats: types
-                              Échange d’informations personnelles (PKCS #12)  (.pfx ou .p12) contient la clé publique(pour encrypter vers...) de la machine que je veux joindre et ma clé privée facultatif(pour décrypter ce que je reçois) c'est un certificat
-                                    Le format d’échange d’informations personnelles (PFX, également appelé P12) prend en charge le stockage sécurisé des certificats, des clés privées et de tous les certificats d’un chemin d’accès de certification.
+                              Échange d’informations personnelles (PKCS #12 ou P12 ou PFX)  (.pfx ou .p12) contient la clé publique sous forme de certificat qui remonte jusqu'au certif root (pour encrypter vers...) de la machine que je veux joindre et ma clé privée facultatif(pour décrypter ce que je reçois)
                                     Le format PKCS #12 est le seul format de fichier utilisable pour l’exportation d’un certificat et de sa clé privée.
-                                    peut etre transcode en .pem (contenant le certif et la cle privee) 
+                                    peut etre transcode en .pem (contenant le certif et la cle privee.) 
                               Le format PKCS #7 ou P7B  (.p7b ou .p7c ou .keystore) Chiffré en Base64 ASCII Standard de syntaxe de message de chiffrement
                               _     prend en charge le stockage des certificats et de tous les certificats du chemin d’accès de certification. (keytool utilise ce format) 
                              | DER X.509 (.cer ou .der) (PKCS #8) La version binaire(!=bas64) de PEM. Tout le monde peut devenir un DER. Ne contiennent "BEGIN CERTIFICATE / END CERTIFICATE"
@@ -13102,7 +13097,7 @@ c ca que j'ai fait qui marche jusqu'au bout
           redemarrer le client.
 fin c ca que j'ai fait qui marche jusqu'au bout
 c ca qui marche jusqu'au bout 
-      pour importer un .p12 dans un jks vierge (que l'on cree) (un .p12 peut contenir ou pas une cle privée dedans)
+      pour importer un .p12 dans un store jks vierge (que l'on cree) (un .p12 peut contenir ou pas une cle privée dedans)
       creer le .p12 (optionnel: on pourrait me le donner mais dans ce cas je DOIS connaitre le mdp)
       >>>>      openssl req -x509 -nodes -days 365 -newkey rsa:4096 -keyout lola.key -out lola.pem
       >>>>      openssl pkcs12 -export -in lola.pem -inkey lola.key -name deviendraAliasDansJksFinal -out lola.p12 (mot de passe à retenir)
@@ -15027,6 +15022,7 @@ hacking : haking : hack :
         x-frame-options header not set // en-tête header http de response permettant d'eviter qu'un site s'affiche dans un autre site (iframe i-frame object).(clickjacking: quand je clique ça clique sur un autre bouton invisible)
         xss ://crosssitescripting // ma servlet vulnerable fait executer au navigateur du javascript passé en parametre de ma requete. ce javascript pourrait lire mes cookies (de session!): LINKcooklskjhh LINKc.s.r.f  et le pirate de se connecter à ma place
                     pour s'en premunire faire du @safeHTML ou faire  org.jsoup.Jsoup.isValid(lechampatester); sur les champs pour que du javascript ne puisse pas etre injecté dedans. aussi empecher le javascript d'acceder aux cookies.
+                    ou faire dans la jsp: <c:out value="${une_variable_renvoiee_par_la_servlet}"/> // du coup une_variable_renvoiee_par_la_servlet ne peut plus executer du javascript 
         pathtraversal// une servlet renvoit n'importe quel fichier ! ex: monsite/maservlet?vachercher=/unpath/unfichierANeSurtoutPasMontrer !affiche le fichier!    
         redirectionexterne // une servlet redirige vers un autre site! http://monsite?maservletTresConne?forward=http://un_autre_site
         CSRF :=XSRF :(CrossSiteRequestForgery :) LINKc.s.r.f (Cross-site scripting appartient à csrf) 
@@ -15110,7 +15106,25 @@ letsencrypt :
                       fi
                       echo "############"
                       echo " "
-                      
+letsencrypt en shell avec dehydrated :  
+    les fichiers de conf doivent etre mis sous: (a l'execution dehydrated cherche du haut vers le bas)
+        /etc/dehydrated/config //config c'est le nom du fichier!
+        ou
+        /usr/local/etc/dehydrated/config //config c'est le nom du fichier!
+        ou
+        The directory from which dehydrated was run: dedans ya un fichier config a ecrire.
+    dans fichier config mettre https://github.com/lukas2511/dehydrated/blob/master/docs/examples/config
+    renseigner dedans:
+            WELLKNOWN=path/vers/le/repertoire/.well-known/acme-challenge  // dans ce repertoire je dépose le fichier texte token de preuve que j'ai la maitrise du serveur (je peux utiliser un alias apache si besoin LINKaliasdlkjsdfapche)
+            CA="https://acme-staging.api.letsencrypt.org/directory" // url de test ACMEv1 (pour ne pas utiliser directement la prod letsencrypt)
+            CA="https://acme-staging-v02.api.letsencrypt.org/directory" // url de test ACMEv2      
+    domains.txt contient:
+        unautredomaine.net www.unautredomaine.net bidule.unautredomaine.net > aliasducertificatassocieacestroisdomaines // le certificat est stocké sous CERTDIR/aliasducertificatassocieacestroisdomaines
+        *.jepeuxutiliserwildcardsurnomdedomaine.com > aliascertificat
+        mondomaine.org >aliascertificat // exemple le plus simple
+   enfin executer dehydrated:
+    ./dehydrated -c // voir la doc:https://github.com/lukas2511/dehydrated#usage                                                                                                                                               
+    
    
 SSL : TLS : https :
 condidentialite/authenticite/non-repudiation=integrite(non modifie sur reseau) HTTPS: repond à tout ça LINK94949494
@@ -15549,7 +15563,7 @@ pour faire du ldaps :
     
                                                             duplusprecis---->>>>>au plushaut
 
-SELENIUM :(mettre les -D avant le -jar) (pour les tests d'integration: utilisation de failsafe) Autre solution: Katalon Recorder
+SELENIUM :(mettre les -D avant le -jar) (pour les tests d'integration: utilisation de failsafe) Autre solution: Jest / Pupetter ou Cypress ou Katalon Recorder
 "%JAVA_HOME%\bin\java" -Dhttp.proxyHost=172.26.80.141 -Dhttp.proxyPort=3128 -Dhttp.proxyUser=p036782 -Dhttp.proxyPassword=rcwkdr2 -jar selenium-server.jar -interactive -multiWindow
 "%JAVA_HOME%\bin\java" -jar selenium-server.jar -interactive -multiWindow
 	cmd=getNewBrowserSession&1=*iexplore&2=http://su423ads.mc2.renault.fr:12051/doa/
@@ -19562,7 +19576,9 @@ pour recuperer le nom d'une classe:
 		                if (methodName.startsWith("set")) {(...)
 									java.lang.reflect.Method methodExecute = obj.getMethod("execute", new Class[] {});
 									methodExecute.invoke(obj, new Class[] {});
-
+        recuperer la valeur d'un champ d'une classe:
+            Field[] fields = form.getClass().getFields();
+            String value = (String) fields[i].get(objetQueJintrospecte);
 fonctionnement des annotations :
                 @MonValidateurBean(LINKvariablealacon=999) // customise, voir ci-dessous
                 public String maPropriete; ou bien public class UneClasseAnnotee{
@@ -23452,7 +23468,14 @@ jenkins :
     
     quietPeriod: laisser une valeur >=5 sec
     pollSCM: c a d executer le run quand qqun commit         
-      
+ si j'ai l'erreur You don't have a SNAPSHOT project in the reactor projects list.
+        il faut juste que dans mon trunk je versionalise les poms avec "-SNAPSHOT"
+        car
+        trunk:                  tags            un maven-realase fait trunk:                tags
+        vx.x.x-SNAPSHOT         vx.x.x-1                                vx.x.x+1-SNAPSHOT   vx.x.x         
+                                vx.x.x-2                                                    vx.x.x-1
+                                                                                            vx.x.x-2
+                                                                                            
 visual studio :(preferer vs code):= vs full version: un peu comme intellij. vs free express = vs full mais seulement pour une techno au choix: js, java, c#. vs free community= full version simplifié.
 vs code : marche sur tout OS et est vide mais a un système de pluggins
     zoom et dezoom: ctrl+"+" ou "-" du pavé numérique
@@ -25550,7 +25573,7 @@ a l'inverse pour le desactiver: a2dissite www.memoclap.com
   ServerAlias *.memoclap.com
   DocumentRoot "C:/wamp/www/sf_sandbox/web"
   DirectoryIndex index.php
-  Alias /acceuil C:/wamp/www/sf_sandbox/web/sf
+  Alias /acceuil C:/wamp/www/sf_sandbox/web/sf  // ca veut dire que toutes les requetes qui vont vers /accueil servent en fait C:/wamp/www/sf_sandbox/web/sf sur le serveur LINKaliasdlkjsdfapche 
   SSLEngine on // si erreur a cause de ça activer le mod ssl avec:sudo a2enmod ssl
   SSLCertificateFile /etc/letsencrypt/live/memoclap.com/cert.pem
   SSLCertificateKeyFile /etc/letsencrypt/live/memoclap.com/privkey.pem
@@ -25599,7 +25622,7 @@ Pour rediriger les requetes du port 8080 de apache vers jetty:
         # Toutes les requêtes sont redirigees vers le serveur jetty sauf le repertoire shop qui doit être servi normalement (php)
                             ProxyPass /shop/ ! (execution de haut en bas voir ligne en dessous) (ProxyPass est une commande de reverseproxy) // laisse /shop tel qu'il est.                          	
                           	ProxyPass / http://localNOMDUSERVEURhost:8080/    // c'est ca qui va rediriger toutes les requetes du domaine www.mondomainepourjetty.com vers le port 8080 de jetty (voir ligne du dessus sauf celles qui finissent par shop/) // peut etre utilisé pour supprimer des termes de l'URL
-                          	ProxyPassReverse ... // ca je pense que c'est pour quand mon serveur s'envoie une requête à lui-même.(redirection par ex) ATTENTION à l'ordre LINKpppassorder: mettre les plus specifique en haut.
+                          	ProxyPassReverse  /unContextRootParExempleOuJusteSlash http://0.0.0.0:8080/unContextRootParExempleOuJusteSlash // ca je pense que c'est pour quand mon serveur s'envoie une requête à lui-même.(redirection par ex) ATTENTION à l'ordre LINKpppassorder: mettre les plus specifique en haut.
                           	ProxyPreserveHost On
                           	DocumentRoot /var/www/suivi.booster-france.com/           //bof pas sur d'avoir besoin de ca
           pour rediriger les requetes de façon conditionnelle: 
@@ -30832,58 +30855,81 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
 un OpenIdProvider doit renvoyer ces infos via l'URL unDomaine.com/.well-known/openid-configuration avec un content-type=application/json pour du Get seulement. doit retourner 200 OK HTTP
  LINKopeniddconf:                                                                                                                                                                                                                                
     "issuer":xxx
-        REQUIRED. URL using the https scheme with no query or fragment component that the OP asserts as its Issuer Identifier. If Issuer discovery is supported (see Section 2), this value MUST be identical to the issuer value returned by WebFinger. This also MUST be identical to the iss Claim value in ID Tokens issued from this Issuer. 
+        REQUIRED. URL using the https scheme with no query or fragment component that the OP asserts as its Issuer Identifier. If Issuer discovery is supported (see Section 2), this value MUST be identical to the issuer value returned by WebFinger. This also MUST be identical to the iss Claim value in ID Tokens issued from this Issuer.
+        	@Value("${oidc.issuer}")
+	        private String issuer = "https://authweb.credit-agricole.com"; 
     "authorization_endpoint":"xxx"
         REQUIRED. URL of the OP's OAuth 2.0 Authorization Endpoint [OpenID.Core]. 
     "token_endpoint":xxx
-        URL of the OP's OAuth 2.0 Token Endpoint [OpenID.Core]. This is REQUIRED unless only the Implicit Flow is used. 
+        URL of the OP's OAuth 2.0 Token Endpoint [OpenID.Core]. This is REQUIRED unless only the Implicit Flow is used.
+        @Value("${oidc.issuer}/oidc/oauth/token")
+	    private String token_endpoint = "https://authweb.credit-agricole.com/oidc/oauth/token";
+    "revoke je ne l'ai pas vu dans la doc"
+        @Value("${oidc.issuer}/oidc/oauth/revoke")
+	   private String revoke_token_endpoint = "https://authweb.credit-agricole.com/oidc/oauth/revoke"; 
     "userinfo_endpoint":xxx
         RECOMMENDED. URL of the OP's UserInfo Endpoint [OpenID.Core]. This URL MUST use the https scheme and MAY contain port, path, and query parameter components. 
     "jwks_uri":xxx              
-        REQUIRED. URL of the OP's JSON Web Key Set [JWK] document. This contains the signing key(s) the RP uses to validate signatures from the OP. The JWK Set MAY also contain the Server's encryption key(s), which are used by RPs to encrypt requests to the Server. When both signing and encryption keys are made available, a use (Key Use) parameter value is REQUIRED for all keys in the referenced JWK Set to indicate each key's intended usage. Although some algorithms allow the same key to be used for both signatures and encryption, doing so is NOT RECOMMENDED, as it is less secure. The JWK x5c parameter MAY be used to provide X.509 representations of keys provided. When used, the bare key values MUST still be present and MUST match those in the certificate. 
+        REQUIRED. URL of the OP's JSON Web Key Set [JWK] document. This contains the signing key(s) the RP uses to validate signatures from the OP. The JWK Set MAY also contain the Server's encryption key(s), which are used by RPs to encrypt requests to the Server. When both signing and encryption keys are made available, a use (Key Use) parameter value is REQUIRED for all keys in the referenced JWK Set to indicate each key's intended usage. Although some algorithms allow the same key to be used for both signatures and encryption, doing so is NOT RECOMMENDED, as it is less secure. The JWK x5c parameter MAY be used to provide X.509 representations of keys provided. When used, the bare key values MUST still be present and MUST match those in the certificate.
+        @Value("${oidc.issuer}/oidc/certs/jwks.json")
+	    private String jwks_uri = "https://authweb.credit-agricole.com/oidc/certs/jwks.json";
+            cet url retourne
+                JSONObject jsonObject = new JSONObject();
+		        jsonObject.appendField("keys", Arrays.asList(unObjet com.nimbusds.jose.jwk.RSAKey.toPublicJWK().toJSONObject(), unObjet com.nimbusds.jose.jwk.RSAKey.toPublicJWK().toJSONObject())); 
     "registration_endpoint":xxx             
         RECOMMENDED. URL of the OP's Dynamic Client Registration Endpoint [OpenID.Registration]. 
     "scopes_supported":xxx              
-        RECOMMENDED. JSON array containing a list of the OAuth 2.0 [RFC6749] scope values that this server supports. The server MUST support the openid scope value (d'autant plus si je mets LINKozero). Servers MAY choose not to advertise some supported scope values even when this parameter is used, although those defined in [OpenID.Core] SHOULD be listed, if supported. 
+        RECOMMENDED. JSON array containing a list of the OAuth 2.0 [RFC6749] scope values that this server supports. The server MUST support the openid scope value (d'autant plus si je mets LINKozero). Servers MAY choose not to advertise some supported scope values even when this parameter is used, although those defined in [OpenID.Core] SHOULD be listed, if supported.
+        private String[] scopes_supported = { "profile", "email" }; 
     "response_types_supported":xxx  LINKResponseType            
         REQUIRED. JSON array containing a list of the OAuth 2.0 response_type(obligatoire) values that this OP supports. Dynamic OpenID Providers MUST support the "code", "id_token", and the "token id_token" Response Type values.
                                                                     sur Oauth2 response_type peut etre "code" ou "token"(=implicitMode). OpenIdConnect1.0 a rajouté "id_token"LINKozero et "none" du coup on peut combiner: "id_token token" ou "code id_token" etc etc... 
     "response_modes_supported":xxx              
-        OPTIONAL. JSON array containing a list of the OAuth 2.0 response_mode values that this OP supports, as specified in OAuth 2.0 Multiple Response Type Encoding Practices [OAuth.Responses]. If omitted, the default for Dynamic OpenID Providers is ["query", "fragment"]. 
+        OPTIONAL. JSON array containing a list of the OAuth 2.0 response_mode values that this OP supports, as specified in OAuth 2.0 Multiple Response Type Encoding Practices [OAuth.Responses]. If omitted, the default for Dynamic OpenID Providers is ["query", "fragment"].
+        private String[] response_modes_supported = { "query", "fragment", "form_post" }; 
     "grant_types_supported":xxx             
-        OPTIONAL. JSON array containing a list of the OAuth 2.0 Grant Type values that this OP supports. Dynamic OpenID Providers MUST support the authorization_code and implicit Grant Type values and MAY support other Grant Types. If omitted, the default value is ["authorization_code", "implicit"]. 
+        OPTIONAL. JSON array containing a list of the OAuth 2.0 Grant Type values that this OP supports. Dynamic OpenID Providers MUST support the authorization_code and implicit Grant Type values and MAY support other Grant Types. If omitted, the default value is ["authorization_code", "implicit"].
+        private String[] grant_types_supported = { "refresh_token", "password" }; 
     "acr_values_supported":xxx              
         OPTIONAL. JSON array containing a list of the Authentication Context Class References that this OP supports. 
     "subject_types_supported":xxx               
-        REQUIRED. JSON array containing a list of the Subject Identifier types that this OP supports. Valid types include pairwise and public. 
+        REQUIRED. JSON array containing a list of the Subject Identifier types that this OP supports. Valid types include pairwise and public.
+        private String[] subject_types_supported = { "public", "pairwise" }; 
     "id_token_signing_alg_values_supported":xxx             
-        REQUIRED. JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for the ID Token to encode the Claims in a JWT [JWT]. The algorithm RS256 MUST be included. The value none MAY be supported, but MUST NOT be used unless the Response Type used returns no ID Token from the Authorization Endpoint (such as when using the Authorization Code Flow). 
+        REQUIRED. JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for the ID Token to encode the Claims in a JWT [JWT]. The algorithm RS256 MUST be included. The value none MAY be supported, but MUST NOT be used unless the Response Type used returns no ID Token from the Authorization Endpoint (such as when using the Authorization Code Flow).
+        private String[] id_token_signing_alg_values_supported = { "RS256" }; 
     "id_token_encryption_alg_values_supported":xxx              
-        OPTIONAL. JSON array containing a list of the JWE encryption algorithms (alg values) supported by the OP for the ID Token to encode the Claims in a JWT [JWT]. 
+        OPTIONAL. JSON array containing a list of the JWE encryption algorithms (alg values) supported by the OP for the ID Token to encode the Claims in a JWT [JWT].
     "id_token_encryption_enc_values_supported":xxx              
         OPTIONAL. JSON array containing a list of the JWE encryption algorithms (enc values) supported by the OP for the ID Token to encode the Claims in a JWT [JWT]. 
     "userinfo_signing_alg_values_supported":xxx             
-        OPTIONAL. JSON array containing a list of the JWS [JWS] signing algorithms (alg values) [JWA] supported by the UserInfo Endpoint to encode the Claims in a JWT [JWT]. The value none MAY be included. 
+        OPTIONAL. JSON array containing a list of the JWS [JWS] signing algorithms (alg values) [JWA] supported by the UserInfo Endpoint to encode the Claims in a JWT [JWT]. The value none MAY be included.
+        private String[] userinfo_signing_alg_values_supported = { "RS256" }; 
     "userinfo_encryption_alg_values_supported":xxx              
-        OPTIONAL. JSON array containing a list of the JWE [JWE] encryption algorithms (alg values) [JWA] supported by the UserInfo Endpoint to encode the Claims in a JWT [JWT]. 
+        OPTIONAL. JSON array containing a list of the JWE [JWE] encryption algorithms (alg values) [JWA] supported by the UserInfo Endpoint to encode the Claims in a JWT [JWT].
     "userinfo_encryption_enc_values_supported":xxx              
         OPTIONAL. JSON array containing a list of the JWE encryption algorithms (enc values) [JWA] supported by the UserInfo Endpoint to encode the Claims in a JWT [JWT]. 
     "request_object_signing_alg_values_supported":xxx               
-        OPTIONAL. JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for Request Objects, which are described in Section 6.1 of OpenID Connect Core 1.0 [OpenID.Core]. These algorithms are used both when the Request Object is passed by value (using the request parameter) and when it is passed by reference (using the request_uri parameter). Servers SHOULD support none and RS256. 
+        OPTIONAL. JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for Request Objects, which are described in Section 6.1 of OpenID Connect Core 1.0 [OpenID.Core]. These algorithms are used both when the Request Object is passed by value (using the request parameter) and when it is passed by reference (using the request_uri parameter). Servers SHOULD support none and RS256.
+        private String[] request_object_signing_alg_values_supported = { "none", "RS256" }; 
     "request_object_encryption_alg_values_supported":xxx                
         OPTIONAL. JSON array containing a list of the JWE encryption algorithms (alg values) supported by the OP for Request Objects. These algorithms are used both when the Request Object is passed by value and when it is passed by reference. 
     "request_object_encryption_enc_values_supported":xxx                
         OPTIONAL. JSON array containing a list of the JWE encryption algorithms (enc values) supported by the OP for Request Objects. These algorithms are used both when the Request Object is passed by value and when it is passed by reference. 
     "token_endpoint_auth_methods_supported":xxx             
-        OPTIONAL. JSON array containing a list of Client Authentication methods supported by this Token Endpoint. The options are client_secret_post, client_secret_basic, client_secret_jwt, and private_key_jwt, as described in Section 9 of OpenID Connect Core 1.0 [OpenID.Core]. Other authentication methods MAY be defined by extensions. If omitted, the default is client_secret_basic -- the HTTP Basic Authentication Scheme specified in Section 2.3.1 of OAuth 2.0 [RFC6749]. 
+        OPTIONAL. JSON array containing a list of Client Authentication methods supported by this Token Endpoint. The options are client_secret_post, client_secret_basic, client_secret_jwt, and private_key_jwt, as described in Section 9 of OpenID Connect Core 1.0 [OpenID.Core]. Other authentication methods MAY be defined by extensions. If omitted, the default is client_secret_basic -- the HTTP Basic Authentication Scheme specified in Section 2.3.1 of OAuth 2.0 [RFC6749].
+        private String[] token_endpoint_auth_methods_supported = { "client_secret_basic", "client_secret_post" }; 
     "token_endpoint_auth_signing_alg_values_supported":xxx              
-        OPTIONAL. JSON array containing a list of the JWS signing algorithms (alg values) supported by the Token Endpoint for the signature on the JWT [JWT] used to authenticate the Client at the Token Endpoint for the private_key_jwt and client_secret_jwt authentication methods. Servers SHOULD support RS256. The value none MUST NOT be used. 
+        OPTIONAL. JSON array containing a list of the JWS signing algorithms (alg values) supported by the Token Endpoint for the signature on the JWT [JWT] used to authenticate the Client at the Token Endpoint for the private_key_jwt and client_secret_jwt authentication methods. Servers SHOULD support RS256. The value none MUST NOT be used.
+        private String[] token_endpoint_auth_signing_alg_values_supported = { "RS256" }; 
     "display_values_supported":xxx              
         OPTIONAL. JSON array containing a list of the display parameter values that the OpenID Provider supports. These values are described in Section 3.1.2.1 of OpenID Connect Core 1.0 [OpenID.Core]. 
     "claim_types_supported":xxx             
-        OPTIONAL. JSON array containing a list of the Claim Types that the OpenID Provider supports. These Claim Types are described in Section 5.6 of OpenID Connect Core 1.0 [OpenID.Core]. Values defined by this specification are normal, aggregated, and distributed. If omitted, the implementation supports only normal Claims. 
+        OPTIONAL. JSON array containing a list of the Claim Types that the OpenID Provider supports. These Claim Types are described in Section 5.6 of OpenID Connect Core 1.0 [OpenID.Core]. Values defined by this specification are normal, aggregated, and distributed. If omitted, the implementation supports only normal Claims.
+        private String[] claim_types_supported = { "normal" }; 
     "claims_supported":[xxx,yyy,zzzz]              
-        RECOMMENDED. JSON array containing a list of the Claim Names of the Claims that the OpenID Provider MAY be able to supply values for. Note that for privacy or other reasons, this might not be an exhaustive list. 
+        RECOMMENDED. JSON array containing a list of the Claim Names of the Claims that the OpenID Provider MAY be able to supply values for. Note that for privacy or other reasons, this might not be an exhaustive list.
+        private String[] claims_supported = { "sub", "exp", "nbf", "iat", "iss", "acr", "name", "given_name", "family_name", "email","email_verified", "typ"}; 
     "service_documentation":xxx             
         OPTIONAL. URL of a page containing human-readable information that developers might want or need to know when using the OpenID Provider. In particular, if the OpenID Provider does not support Dynamic Client Registration, then information on how to register Clients needs to be provided in this documentation. 
     "claims_locales_supported":xxx              
@@ -30891,18 +30937,24 @@ un OpenIdProvider doit renvoyer ces infos via l'URL unDomaine.com/.well-known/op
     "ui_locales_supported":xxx              
         OPTIONAL. Languages and scripts supported for the user interface, represented as a JSON array of BCP47 [RFC5646] language tag values. 
     "claims_parameter_supported":xxx                
-        OPTIONAL. Boolean value specifying whether the OP supports use of the claims parameter, with true indicating support. If omitted, the default value is false. 
+        OPTIONAL. Boolean value specifying whether the OP supports use of the claims parameter, with true indicating support. If omitted, the default value is false.
+        private Boolean claims_parameter_supported = false; 
     "request_parameter_supported":xxx               
-        OPTIONAL. Boolean value specifying whether the OP supports use of the request parameter, with true indicating support. If omitted, the default value is false. 
+        OPTIONAL. Boolean value specifying whether the OP supports use of the request parameter, with true indicating support. If omitted, the default value is false.
+        private Boolean request_parameter_supported = true; 
     "request_uri_parameter_supported":xxx               
-        OPTIONAL. Boolean value specifying whether the OP supports use of the request_uri parameter, with true indicating support. If omitted, the default value is true. 
+        OPTIONAL. Boolean value specifying whether the OP supports use of the request_uri parameter, with true indicating support. If omitted, the default value is true.
+        private Boolean request_uri_parameter_supported = true; 
     "require_request_uri_registration":xxx              
         OPTIONAL. Boolean value specifying whether the OP requires any request_uri values used to be pre-registered using the request_uris registration parameter. Pre-registration is REQUIRED when the value is true. If omitted, the default value is false. 
     "op_policy_uri":xxx             
         OPTIONAL. URL that the OpenID Provider provides to the person registering the Client to read about the OP's requirements on how the Relying Party can use the data provided by the OP. The registration process SHOULD display this URL to the person registering the Client if it is given. 
     "op_tos_uri":xxx                
         OPTIONAL. URL that the OpenID Provider provides to the person registering the Client to read about OpenID Provider's terms of service. The registration process SHOULD display this URL to the person registering the Client if it is given. 
-    
+    "code_challenge_methods_supported": pas vu dans la doc
+        private String[] code_challenge_methods_supported = { "plain", "S256" };
+    "tls_client_certificate_bound_access_tokens": pas vu dans la doc
+        private Boolean tls_client_certificate_bound_access_tokens = true;    
 
 Kerberos : 
     utilisation de d'apache mod_auth_kerb: 
@@ -32742,7 +32794,7 @@ seo :
   si je change de nom de domaine [A EVITER](parce que google nous a puni gravement) ou parce que changement de marque: prevenir google de ce changement sinon rank est perdu:webmastertools>engrenage>changementd'adresse
       toujours conserver un temps l'ancien nom de domaine pour rediriger redirection 301 les utilisateurs perdus
         >>>atteindre un rank de 4/10 c'est déjà top
-virtualbox : virtuabox :virtual box : virtual machine
+virtualbox : virtuabox :virtual box : virtual machine virtuel
     les .iso sont sur les sites ubuntu,debian... etc...
   lancer vbox> nouveau> creer un disque dur virtuel now > creer > config > stockage > ide > choisir un fichier .iso super important de faire ca avant pour toute installation de vm sinon la vm n'a pas de reseau      
 	
