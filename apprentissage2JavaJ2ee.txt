@@ -26267,7 +26267,7 @@ svg :
 
 pour empecher le cache :
       <meta http-equiv="cache-control" content="max-age=0" /> max-age est une durée de secondes. request et response utilisent cache-control voir developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control 
-      <meta http-equiv="cache-control" content="no-cache" /> no-store=0 cache; no-cache=existe un cache mais a chaque requete client demande au serveur si le cache est toujours valable
+      <meta http-equiv="cache-control" content="no-cache" /> no-store=zero cache; no-cache=existe un cache mais a chaque requete client demande au serveur si le cache est toujours valable
       <meta http-equiv="expires" content="0" />content doit etre une date. Si on met 0 ca veut dire que c'est passé
       ou
       <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
@@ -26688,11 +26688,13 @@ promesses : promese :promeses :Promises :promise : ne plus utiliser les callback
                             ).catch(function(err){.return UnTruc..});                              
         
         utilisation2:     Promise.all(unearraydepromesse) // ca ca renvoie normalement les datas. Pas les promesses. converti array de promesses en data
-        Promise.all([
+        Promise.all(
+        [
           unefonction(1), doit retourner une promesse
           unefonction(2),
-          unefonction(3)])
-          .then(recu=>recu.renvoituntruc) // ca ca renvoit une promesse.
+          unefonction(3)
+        ]
+        ).then(recu=>recu.renvoituntruc) // ca ca renvoit une promesse.(pas bien pigé..?..)
           .then(res)=>{ // res est en fait une liste sur laquel on peut mettre foreach
           res.forEach(iteration=>unemethode(iteration.qqch))
           },(err)=>console.log(err)
