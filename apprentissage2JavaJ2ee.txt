@@ -1,5 +1,4 @@
-(?=.*json)(?=.*java)
-
+(?=.*envoi)(?=.*mail)
 AFAIRE :
     Entretien:
         qu'est ce que rest, architecture ntiers, polymorphisme, mvc, dto, bdd: gerkin  
@@ -1350,9 +1349,11 @@ payara :payaramicro : // executeur direct d'un microservice.
             clustering: deux instances indentiques déployées sur des ports differents sont automatiquement clusterisees (partagent les memes sessions users)
             --nocluster // marche pas! pour ne pas qu'il cherche d'autres instances pour clutoriser. Ca prend du temps quand il cherche
         --autobindhttp // determine le port automatiquement.
+        --startPort 888// fonctionne avec autobindhttp. 888: port à partir duquel commencer à incrementer numero de port
+        --sslport 8081        
         --logtofile <file-path> // attention si j'utilise --logProperties ca remplace logtofile
         --verbose 
-        --startPort 888// fonctionne avec autobindhttp. 888: port à partir duquel commencer à incrementer numero de port
+        --sslcert aliasdanslecertificat qui se trouve dans le chemin retourne par javax.net.ssl.trustStore je crois
         --mcAdress // facultatif sert à placer mon instance dans un multicast en particulier   
         --mcPort // facultatif sert à forcer le port de mon multicast (???)
         -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n // pour debugger en remote
@@ -3611,43 +3612,7 @@ pour utiliser jersey avec maven pour les webservices: (utilise annotation. Facil
                             }
                         } 
                                            
-JSON-B :jsonb : pour binder java et json LINKjsonbnew
-          <!-- jsonb -->
-            <!-- JSON-P -->
-            <dependency>
-                <groupId>org.glassfish</groupId>
-                <artifactId>jakarta.json</artifactId>
-                <version>1.1.5</version>
-                <scope>runtime</scope>
-            </dependency>
-
-            <!-- JSON-B API -->
-            <dependency>
-                <groupId>jakarta.json.bind</groupId>
-                <artifactId>jakarta.json.bind-api</artifactId>
-                <version>1.0.1</version>
-            </dependency>
-
-            <!-- Yasson (JSON-B implementation) -->
-            <dependency>
-                <groupId>org.eclipse</groupId>
-                <artifactId>yasson</artifactId>
-                <version>1.0.3</version>
-                <scope>runtime</scope>
-            </dependency>
-    de java vers json: java en json:
-      AuthentMessage ret = new AuthentMessage("Mauvais identitiants");
-                    Jsonb jsonb = JsonbBuilder.create();
-                    String dujson = jsonb.toJson(ret);
-    de json vers java: json en java:
-        AuthentMessage ret = jsonb.fromJson(dujson,AuthentMessage.class);
-    Je peux personnaliser le mapping avec les annotations: (PAS FAIT AFAIRE)
-        MaClasse
-            @JsonbDateFormat("yyyy.MM.dd") // attention a la conversion Jsonb.toJson() il change l'heure de la date le con!
-            private Date updateDate;
-            @JsonbTransient
-            un champ complettement ignoré lors du binding
-                    
+        
 JSON-P : jsonp : pour manipuler json: json processing                       
 SOAP : webservice : webservices :
 http://ws.apache.org/axis/java/user-guide.html
@@ -4222,7 +4187,7 @@ web.xml : webxml :
             						      filterConfig.getInitParameter("cle du parametre init").indexOf("toto)>-1 // recupertion du parametre init-parameter LINKFiltrelksjdf
             									HttpServletRequest req = (HttpServletRequest)request;
             									if (req.getSession(false)==null) throw new ServletException("timeout");// attention recree une  nouvelle session si on met true dans la methode.
-            									chain.doFilter(request,response); // attention il ouvre un autre thread et continue le code si il y en a a la suite (sauf je crois si on met juste en dessous return;)
+            									chain.doFilter(request,response); // attention il ouvre un autre thread et continue le code si il y en a a la suite (sauf je crois si on met juste en dessous return;) Enfin quoi qu'il en soit ca wrap l'execution cote serveur donc je peux mettre du code avant et apres
             						}
             							public void init(FilterConfig arg0) throws ServletException 
             						{
@@ -7958,7 +7923,7 @@ public class Groupe
     Set<Eleve> eleves;  Attention plutot utiliser ArrayList à Set car ArrayList est est serialisable!
 }
 
-=======
+??? :
     (...)
      logginService.getStudentById(st, new AsyncCallback<VPA01_STUDENT>()
 				{
@@ -13147,7 +13112,7 @@ c ca que j'ai fait qui marche jusqu'au bout
           redemarrer le client.
 fin c ca que j'ai fait qui marche jusqu'au bout
 c ca qui marche jusqu'au bout 
-      pour importer un .p12 dans un jks vierge (que l'on cree) (un .p12 peut contenir ou pas une cle privée dedans)
+      pour importer un .p12 dans un store jks vierge (que l'on cree) (un .p12 peut contenir ou pas une cle privée dedans)
       creer le .p12 (optionnel: on pourrait me le donner mais dans ce cas je DOIS connaitre le mdp)
       >>>>      openssl req -x509 -nodes -days 365 -newkey rsa:4096 -keyout lola.key -out lola.pem
       >>>>      openssl pkcs12 -export -in lola.pem -inkey lola.key -name deviendraAliasDansJksFinal -out lola.p12 (mot de passe à retenir)
@@ -17710,7 +17675,48 @@ pour imposer qu'il ya  qu'une seule instance de mon batch java qui tourne:
        
 
 
-parser convertir json : tout ca est vieux ci dessous. Voir LINKjsonbnew
+parser convertir json : 
+JSON-B :jsonb : pour binder java et json LINKjsonbnew
+          <!-- jsonb -->
+            <!-- JSON-P -->
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>jakarta.json</artifactId>
+                <version>1.1.5</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <!-- JSON-B API -->
+            <dependency>
+                <groupId>jakarta.json.bind</groupId>
+                <artifactId>jakarta.json.bind-api</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+
+            <!-- Yasson (JSON-B implementation) -->
+            <dependency>
+                <groupId>org.eclipse</groupId>
+                <artifactId>yasson</artifactId>      
+                <version>1.0.3</version>
+                <scope>runtime</scope>
+            </dependency>
+    de java vers json: java en json:
+      AuthentMessage ret = new AuthentMessage("Mauvais identitiants");
+                    Jsonb jsonb = JsonbBuilder.create();
+                    String dujson = jsonb.toJson(ret);
+    de json vers java: json en java:
+        AuthentMessage ret = jsonb.fromJson(dujson,AuthentMessage.class);
+    Je peux personnaliser le mapping avec les annotations: (PAS FAIT AFAIRE)
+        MaClasse
+            @JsonbDateFormat("yyyy.MM.dd") // attention a la conversion Jsonb.toJson() il change l'heure de la date le con!
+            private Date updateDate;
+            @JsonbTransient
+            un champ complettement ignoré lors du binding
+            @JsonbProperty(value="sonNameNomSiJeVeuxLeForcerParRapportAuGeter") 
+            String getUnGetterAvecUnNomJava(){} //SUPER IMPORTANT: il se base sur les getters pour genrer le json donc ne pas les oublier
+             
+        public class AskReponseJson implements JsonString // pour faire qu'un objet est un string json.
+tout ca est vieux ci dessous. Voir LINKjsonbnew
 pour convertir un string objet java en array json meme si l'array a plusieurs niveau:
                 avec jackson avec controle du mapping
                 classe ObjetclasseJava->Json
@@ -22007,7 +22013,7 @@ pour envoyer un mail simple avec javax.mail et qu'on a eu un message d'erreur de
           			props.put ("mail.smtp.auth","true");
           			props.put("mail.smtp.host", mailSmtp); // ou wsmtp.renault.fr ou smtp.googlemail.com
                     props.put("mail.smtp.port", "25");
-                    props.put("mail.smtp.ssl.trust", "smtp.mailtrap.io");            
+                    props.put("mail.smtp.ssl.trust", "smtp.mailtrap.io"); // si j'ai défini un truststore avec -Djavax.net.ssl.trustStore=xxx.jks et que dedans il n'y a pas le trustore du serveur de mail je dois ici indiquer quel serveur smtp je trust pour que mon serveur puisse faire le handshake avec le serveur smtp            
           			props.put("mail.debug", "true"); // si besoin quand ca marche pas
            		    props.put("mail.user", "kanailaurent@gmail.com");
           			props.put("mail.password", "calottezoclos");
@@ -22041,6 +22047,10 @@ pour envoyer un mail simple avec apache mail: librairie dispo ici: http://common
       email.setMsg("This is a test mail ...:-)");
       email.addTo("foo@bar.com");
       email.send();
+      
+si j'ai l'erreur:  
+    javax.mail.MessagingException: Could not convert socket to TLS;      
+      
 --------------------------------
 Pour formater un chiffre: taille zeros string 
 numberTest = 1;
@@ -22428,7 +22438,7 @@ pour recuperer les bytes d'un fichier:
 				lByteOut.write(bytes, 0, i);
 			}
 			lire.close();
-pour recuperer le string d'un fichier lire un fichier
+pour recuperer le string d'un fichier lire contenu d'un fichier
         depuis java10 je crois:
                 new FileInputStream("path/fichier.txt").transferTo(System.out)
         java7 et plus:
@@ -24171,6 +24181,7 @@ pour savoir ce qui tourne:
 (ps -fu ? ou)ps -ef | grep monnomutilisateur pour voir quelles instances que j'ai lance tournent (affiche les ports) ps -ef donne aussi la date de debut d'execution du process
 on peut ensuite faire un kill -15 (soft) ou -9 (hard) sur l'id qu'on veut killer ( premiere colonne en chiffres (PID)) ferme aussi le port du service du coup
 pour killer en une seule ligne de commande
+    pkill -f 'java.*payara-micro' (on peut utiliser les wildcards .* grace à -f je crois)
     pkill nomdutrucquejeveuxkillerCeNomEstparExempleJavaOuPayaraVoirPs-ef
 ps -ef donne aussi la date de debut d'execution du process
 ps -ef | grep whatever pour voir si whatever tournent
@@ -24258,7 +24269,7 @@ pour compter le nombre de lignes renvoyees par un find par exemple: find . -name
 uname -a nom machine etc...
 stty: (config clavier)
 xterm (x terminal) (peut etre besoin faire un export display avant?)
-si je veux  voir ce qui a dans un .jar: jar -tvf nomdujar.jar | more
+si je veux  voir contient contenu zip ce qui a dans un .jar: jar -tvf nomdujar.jar | more
 pour extraire tout le jar: jar -xvf nodujar.jar (je pense: xvf)
 sous unix on peut faire une liste de commandes separees par un ";"
 pour tarer: tar -cvf nouveau.tar * ( quand il y a des espaces il faut mettre des guillemets: tar -cvf "2006101BABABAA-1000300_titre en francaisIncorrect.tar" "2006101BABABAA-1000300_titre en francaisIncorrect"
@@ -26279,7 +26290,7 @@ svg :
 
 pour empecher le cache :
       <meta http-equiv="cache-control" content="max-age=0" /> max-age est une durée de secondes. request et response utilisent cache-control voir developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control 
-      <meta http-equiv="cache-control" content="no-cache" /> no-store=0 cache; no-cache=existe un cache mais a chaque requete client demande au serveur si le cache est toujours valable
+      <meta http-equiv="cache-control" content="no-cache" /> no-store=zero cache; no-cache=existe un cache mais a chaque requete client demande au serveur si le cache est toujours valable
       <meta http-equiv="expires" content="0" />content doit etre une date. Si on met 0 ca veut dire que c'est passé
       ou
       <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
@@ -26700,11 +26711,13 @@ promesses : promese :promeses :Promises :promise : ne plus utiliser les callback
                             ).catch(function(err){.return UnTruc..});                              
         
         utilisation2:     Promise.all(unearraydepromesse) // ca ca renvoie normalement les datas. Pas les promesses. converti array de promesses en data
-        Promise.all([
+        Promise.all(
+        [
           unefonction(1), doit retourner une promesse
           unefonction(2),
-          unefonction(3)])
-          .then(recu=>recu.renvoituntruc) // ca ca renvoit une promesse.
+          unefonction(3)
+        ]
+        ).then(recu=>recu.renvoituntruc) // ca ca renvoit une promesse.(pas bien pigé..?..)
           .then(res)=>{ // res est en fait une liste sur laquel on peut mettre foreach
           res.forEach(iteration=>unemethode(iteration.qqch))
           },(err)=>console.log(err)
