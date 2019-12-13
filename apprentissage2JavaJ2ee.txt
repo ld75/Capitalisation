@@ -1,4 +1,4 @@
-(?=.*envoi)(?=.*mail)
+(?=.*eval)(?=.*agent)
 AFAIRE :
         voir vert.x; kubernetes elastisearch, vuejs reacx
         Afaire go, play, ngix 
@@ -1120,7 +1120,7 @@ Adobe illustrator :
   
 intelliji : intellij : Afaire: utiliser le git et l'apprendre.(dixit christophe)
 shortcut pour deplacer le splitpannel du projet: Ctrl+Shift+fleches droite et gauche 
-si j'ai unexpected end of file: c parce que j'ai des retours chario crlf au lieu de lf: faire file > line separator
+si j'ai unexpected end of file ou fin de fichier premature: c parce que j'ai des retours chario crlf au lieu de lf: faire file > line separator
 Changer la couleur des instances selectionnées: settings>(editor>color scheme>general pas obligéToutCaEntreParentheses)> chercher "identifier under caret" // j'ai du faire ça car le bleu de fond était trop pale et non visible
 pour voir les dependances depandenc dependency dependencies le diagrame c pourri et en plus c'est que sur ultimate. mieux vaut faire Analyze>Analyze Dependencies....
 ajouter une dependence un pluggin dans le pom: alt+insert
@@ -1713,7 +1713,7 @@ recuperer le mail de l'utilisateur
         }
         return ret;
     }
- si je fais en html: mettre ca absolument: <meta name="viewport" content="width=device-width, initial-scale=1.0">: pour eviter le zoom automatique
+ si je fais en html: mettre ca absolument: <meta name="viewport" content="width=device-width, initial-scale=1.0">: pour eviter le zoom automatique et aussi pour que les requetes @media fonctionnent LINKlksdflqa
 pour que quand on clique sur un bouton il ne devienne pas orange: 
       *{
       -webkit-tap-highlight-color: rgba(0, 0, 0, 0); 
@@ -2541,7 +2541,7 @@ securite : security :(JSR375 implémenté par soteria qui est la reference) plus
             @WebServlet(urlPatterns="/un/path) .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention bien mettre urlPatterns sinon il se comporte comme si j'avais mis "un/path/*"
             @ServletSecurity(
                             value= @HttpConstraint(
-                                rolesAllowed = {"foo","supervisor"}), //limite cet acces aux utilisateurs qui ont ces roles. SI n'ont pas ses roles ca renvoie direct http200 sans passer dans le code
+                                rolesAllowed = {"foo","supervisor"}), //limite cet acces aux utilisateurs qui ont ces roles. SI n'ont pas ses roles ca renvoie direct http200 sans passer dans le code sans meme pas passer par les filtres! uniquement l'authenticationmecanism
                                 transportGuarantee= TransportGuarantee.CONFIDENTIAL, // facultatif: bloque l'accès ici si on est pas en https equivaut à LINKglkdlkflglglg                                
                                 httpMethodConstraints={
                                         @HttpMethodConstraint(
@@ -4802,7 +4802,7 @@ pour empecher le body de scroller lui attribuer la classe:
 adapter le css au mobile ecran plus petit switcher entre css en fonction taille ecran ou taille fenetre responsive
 Utiliser dans chrome "Responsive...." pas les differentes marques de phone: c trop long. avec responsive je bouge la fenetre à 30% de zoom et je teste tout comme ca d'un coup
       directement dans un css
-            @media
+            @media attention voir LINKlksdflqa
             [not, only] [all, print, screen] and (min-width: 401px) and (max-width: 600px)   // taille fenetre option.
             // only c'est compreensible que pour les vieux browsers: n'applique pas ce  @media là si tu ne comprends rien.
             je suis obligé de definir all ou print ou screen si j'utilise not ou only sinon pas obligé 
@@ -10908,7 +10908,7 @@ exemple de pom racine
                               </executions>
                               FIN si il ne compile pas mon code java , peut etre besoin mettre ca-->
                               <configuration>
-                                  <outputDirectory>${basedir}/../../batchs/lib</outputDirectory>
+                                  <outputDirectory>${basedir}/../../batchs/lib</outputDirectory> // attention si c'est pour qu'il finisse dans le classpath du war faire ca plutot:LINK**$**
                                   ou 
                                   <outputDirectory>${basedir}/target/tomcat/conf/mdl</outputDirectory> // si c'est un tomcat embedded et que dans une config de spring je mets: <context:property-placeholder location="file:///${catalina.base}/conf/mdl/import_excel.properties" /> 
                                   <resources>          
@@ -18698,7 +18698,7 @@ Et FTPBean c'est:
                                             			} else if (withDirectory && ftpFile.isDirectory()) {
                                             				File newFile = new File(destFile.getAbsoluteFile()
                                             						+ File.separator + ftpFile.getName());
-                                            				newFile.mkdir(); // pour creer un repertoire en java
+                                            				newFile.mkdir(); // pour creer un repertoire en java. directory on peut creer aussi de manière recursive: fichier.mkdirs();// fichier c'est hoho/itit/tata.txt il cree alors un repertoire tata.txt à la fin
                                             				receiveFiles(ftpFile.getName(), newFile, withDirectory);
                                             				changeToParentDirectory();
                                             			}
@@ -23988,7 +23988,7 @@ tail et head exemples:
 pour quitter un manuel man: 
 		faire q
 si a l'execution d'un script sh j'ai ca: cannot execute binary file
-		faire: file mon_fichier
+		faire: file mon_fichier // connaitre le format du fichier si il est en dos ou unix 
 		il va donner l'encodage de mon fichier.
 on peut voir les hosts sous /etc/hosts
 les droits utilisateurs sous /etc/hosts.allow
@@ -25262,7 +25262,7 @@ ADMIN_URL=http://130.98.232.97:7001
     
      il faut essayer ca: 
      java -Djava.awt.headless=true -classpath JimiProClasses.jar:. convertisseur.Main
-xfce : // bureautique debian
+xfce : // bureautique debian :
 	modifier les shortcuts raccourcis clavier: xfce>parametres>gestionnaire de parametres > gestionnaire de fenetre > clavier
 PHP :     
 pour faire marcher php avec oracle: (wamp) il faut que j'utilise l'utilitaire de wamp pour activer les extensions dll et decommenter aussi les lignes dans php.ini( deux lignes.. ora et oci un truc comme ca)
@@ -25975,6 +25975,7 @@ pour manipuler le css directement:
               document.styleSheets[0].insertRule(".have-border { border: 1px solid black;}", 0);
           ensuite y supprimer un style:
                 document.styleSheets[0].deleteRule(index),  // index peut etre recupere par: document.styleSheets[0].cssRules
+                unelement.style.height=null
     pour creer un style 
             var sheet = document.createElement('style');
             sheet.innerHTML = "div {border: 2px solid black; background-color: blue;}";
@@ -26685,19 +26686,20 @@ promesses : promese :promeses :Promises :promise : ne plus utiliser les callback
                             equivalent de 
                             ).catch(err=>unemethode(err));
                             equivalent de 
-                            ).catch(function(err){.return UnTruc..});                              
+                            ).catch(function(err){.return UnTruc..})
+                            .finally(x=>{...}); // finally existe (x est udefined. AFAIRE syntaxe exacte/x =?)                              
         
-        utilisation2:     Promise.all(unearraydepromesse) // ca ca renvoie normalement les datas. Pas les promesses. converti array de promesses en data
+        utilisation2:     Promise.all([unearray,depromesses]).then(datasRenvoyees=>{ ...etc avec datasRenvoyees.. }).catch(err=>console.log(err)); converti array de promesses en dataRenvoyees qui est un tableau de datas.
         Promise.all(
         [
           unefonction(1), doit retourner une promesse
           unefonction(2),
           unefonction(3)
         ]
-        ).then(recu=>recu.renvoituntruc) // ca ca renvoit une promesse.(pas bien pigé..?..)
-          .then(res)=>{ // res est en fait une liste sur laquel on peut mettre foreach
+        ).then(recu=>recu) // recu c'est un tableau de datas
+          .then(res)=>{ // res est aussi  une liste sur laquel on peut mettre foreach
           res.forEach(iteration=>unemethode(iteration.qqch))
-          },(err)=>console.log(err)
+          },(err)=>console.log(err) // pas sur de la synthaxe ici
 pour recuperer le jour du mois month sur deux chiffre d'un objet Date                                                                                          
       utiliser moment.js:                                                                                                                                     
             var d = new Date();
@@ -28760,7 +28762,7 @@ requirejs : require.js : require : approximatif: a bien améliorer
           }
          </script>         
   
-webcomponent :webcomponents : web-components : web components : custom elements : customelements : customelement :
+webcomponent :webcomponents : web-components : web components : custom elements : custom-elements :customelements : customelement :
 https://developers.google.com/web/fundamentals/web-components/customelements#attrchanges
  au final dans mon html j'aurais:
  <script src="laurent-moncomponent1.js"/>  
