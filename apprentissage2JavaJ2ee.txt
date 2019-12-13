@@ -1,5 +1,7 @@
-(?=.*eval)(?=.*agent)
+(?=.*npm)(?=.*proxy)
 AFAIRE :
+    Entretien:
+        qu'est ce que rest, architecture ntiers, polymorphisme, mvc, dto, bdd: gerkin  
         voir vert.x; kubernetes elastisearch, vuejs reacx
         Afaire go, play, ngix 
         bootstrap=tweeter; materialUI
@@ -481,8 +483,8 @@ si problemes dans npm: https://github.com/npm/npm/wiki/Troubleshooting
         ou 
         npm config ls -l
   setter une config: pour les proxy:
-        npm config set https-proxy http://ut2sn0:lskdfjs@proxy.par.emea.cib:8080
-        npm config set http-proxy http://ut2sn0:lskdfjs@proxy.par.emea.cib:8080
+        npm config set https-proxy http://ut2sn0:Arreter123Arreter@proxy.par.emea.cib:8080
+        npm config set http-proxy http://ut2sn0:Arreter123Arreter@proxy.par.emea.cib:8080
     reinitialiser une conf de proxy:
             npm config rm proxy
             npm config rm http-proxy
@@ -1015,7 +1017,7 @@ Nativescript :
                                              
                         
 
-Messagerie email :
+Messagerie email : difference pop et imap
     IMAP synchronise toujours serveur et client lourd (demande aussi plus de bande passante)
     POP non. les deux vivent independamment 
 
@@ -4097,13 +4099,26 @@ jstl :(GENIAL CE TRUC POUR STANDARD OU SPRING)
       xmlns:c="http://java.sun.com/jsp/jstl/core"
       <c:forEach items="${ideaBean.columns}" var="col">
       		<tr><td>		<h:outputText value="#{col}" /></td><td>  <p:selectBooleanCheckbox value="value="#{userBean.value2}" /></td></tr>
-     		</c:forEach>
+     		</c:forEach>            
   formater pattern dans les jsp: 
       <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
       <fmt:formatNumber value="${result.priceReduced}" type="currency"/>
 test if: condition:
 <c:if test="${results.size()==0}"> il n'y a pas de else.
 <c:if test="${result.nbComments>0}">!!!!</c:if>
+    autre facon de faire des conditions:
+    <c:choose>
+         <c:when test = "${salary <= 0}">
+            Salary is very low to survive.
+         </c:when>
+         <c:when test = "${salary > 1000}">
+            Salary is very good.
+         </c:when>
+         <c:otherwise>
+            No comment sir...
+         </c:otherwise>
+      </c:choose>
+    
 egalitee de string: 
     <option value="${imgoption}"<c:if test="${imgoption==departure.imageName}">selected="selected"</c:if>>${imgoption}</option>
 un string est null ou vide:
@@ -4114,7 +4129,7 @@ web.xml : webxml :
                 si erreur 
                         Exception while preparing the app : Unable to load the EJB module. DeploymentContext does not contain any EJB. Check the archive to ensure correct packaging for C:\Users\lduverge\Desktop\memoclap\memoclap\java\MemOclapFront\target\authentication.If you use EJB component annotations to define the EJB, and an ejb or web deployment descriptor is also used, please make sure that the deployment descriptor references a Java EE 5 or higher version schema, and that the metadata-complete attribute is not set to true, so the component annotations can be processed as expected
                         je dois virer metadata-complete=true
-<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" version="4.0">
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" version="4.0">
             icon Le chemin d'accès a une icône qui peut être employee par un outil graphique pour representer l'application Web. 
             display-name Un nom qui peut être employe par un outil de gestion d'applications pour representer l'application Web. 
             description Une description de l'application. 
@@ -6680,7 +6695,7 @@ Spring-batch :
                                         TestRestTemplate rest = new RestTemplate();  
                                          @Test
                                           public void availableTest() {
-                                              MockRestServiceServer mockServer=MockRestServiceServer.createServer(rest);
+                                              MockRestServiceServer mockServer=MockRestServiceServer.createServer(rest); // simule un webservice serveur. Grace a ca, quand je vais appeler dans le programme rest.exchange, automatiquement ça va va repondre ce que je veux ci dessous 
                                               mockServer.expect(requestTo("/available")).andRespond(withSuccess("bla","text/plain"));
                                               mockServer.verify();
                                         ou bien tester un webservice Avant  
@@ -13250,15 +13265,18 @@ fin c ca que j'ai fait qui marche PAS jusqu'au bout.
                       Then I have edited the file 
                       C:\jbdevstudio4\jboss-eap\jboss-as\server\default\deploy\jbossweb.sar\server.xml
                       And I have placed this where it should be (find the commented lines): 
-                      <!-- SSL/TLS serveur faire du https Connector configuration using the admin devl guide keystore -->
-                            <Connector protocol="HTTP/1.1" SSLEnabled="true" 
-                                 port="8443" address="${jboss.bind.address}" // port https =443 d'habitude
-                                 scheme="https" secure="true" clientAuth="false" 
-                                 keystoreFile="${jboss.server.home.dir}/conf/laurentkeystore.jks"
-                                 keystorePass="password" sslProtocol = "TLS" />
-                      stop and restart the jboss server and go to 
-                      https://localhost:8443/yourapplication
-                      Si l'appli web ne marche pas,  dans web.xml tenter ca: (voir LINKsecurity-web) 
+                            <!-- SSL/TLS serveur faire du https Connector configuration using the admin devl guide keystore -->
+                                  <Connector protocol="HTTP/1.1" SSLEnabled="true" 
+                                       port="8443" address="${jboss.bind.address}" // port https =443 d'habitude
+                                       scheme="https" secure="true" clientAuth="false" 
+                                       keystoreFile="${jboss.server.home.dir}/conf/laurentkeystore.jks"
+                                       keystorePass="password" sslProtocol = "TLS" />
+                            stop and restart the jboss server and go to 
+                            https://localhost:8443/yourapplication
+                            Si l'appli web ne marche pas,  dans web.xml tenter ca: (voir LINKsecurity-web)
+                        pour signer un jar, un apk, un zip avec un certificat qui est dans un .jks
+                            path/java/facultatif/si/env/dejadef/jarsigner -verbose -sigalg MD5withRSA -digestalg SHA1 -keystore leKeystoreQuiContientUnCertificatAvecClePriveePourSigner.jks pathVers/zipOuJarOuApkASigner aliasdeLaClePriveeOuDuCertifChaisPas //du coup dans le zip ca rajoute à la racine:META-INF/UNNOM.RSA et UNNOM.SF 
+                      
 Securite :java
 PARFOIS IL FAUT DEFINIR DES LIBRAIRIES SUR LA MACHINE VIRTUELLE JAVA: dans: D:\Program Files\jdk1.2.2\jre\lib\security\java.security (par ex) il a fallu rajoutter la ligne: security.provider.2=com.sun.crypto.provider.SunJCE
 Pour recuperer le user utilisateur connecte à travers un certificat
@@ -14979,8 +14997,10 @@ hacking : haking : hack :
         IDS = système de detection d'intrusion
             
   pour proteger e-mail: https://protonmail.com
+  A la base SMTP ne prévoit pas de mecanisme d'authentification et tout le monde peut envoyer un mail au nom de tout le monde. pour regler ça:
   SPF // Sending policy Framework (pour proteger les mails) Verifie l'identite de ceux qui envoient des mails
-  DKIM // domain key Identify mail: pour signer les e-mails
+  DKIM // domain key Identify mail: cle pour signer les e-mails
+  DMARC // permet de savoir precisement pourquoi mes mails ne parviennent pas si c'est le cas
   Sur kali: (root/root ou root/toor)
       nMap :   (complements sur windows: superscan) // pour savoir quels ports sont disponibles et avoir plus d'infos
         nmap -sP regexpD'adresse_ip: faire un ping. exemple 11.22.33/24 (de 11.22.0 à 11.22.255); 11.22.10-30 (de 11.22.10 à 30)
@@ -15055,15 +15075,15 @@ cookies :
     dans le serveur setter le httponly: LINKcooklskjhh
                         NewCookie hraCookie= new NewCookie(UserManagementConstants.CONNECTION_ID, getDatasourceSessionIdFromContext(), "/", getCookieDomain(), null, -1, httpRequest.isSecure());
                         return javax.ws.rs.core.Response.seeOther(go).header("Set-Cookie",hraCookie.toString()+"; Secure; HttpOnly").build();                                              |_revoit true si on est en https
-                        ou en spring :Cookie cookie = WebUtils.getCookie(request, "JSESSIONID"); response.addCookie(new Cookie("JSESSIONID", cookie.getValue()+"; Secure; HttpOnly"));
-                                                                                                                                                                    |_bien, que des strings. KISS.
+                        ou en spring :Cookie cookie = WebUtils.getCookie(request, "JSESSIONID"); response.addCookie(new Cookie("JSESSIONID", cookie.getValue()+"; Secure; HttpOnly")); sur les browsers plus recents, secure est viré du cookie automatiquement si je suis en http.
+                                                                                                                                                                    |_bien, que des strings. KISS. car la methode .setSecure() des fois marche po bien: si on a une passerelle http puis https
                           ou
                                         	final String cookiePath = "/";
                                       		final String cookieDomain = getCookieDomain();
                                       		Cookie cookie = new Cookie(name, value); //exemple: ("bla,"bli");
                                       		cookie.setPath(cookiePath);
                                       		//cookie.setSecure(httpRequest.isSecure()); //.isSecure() renvoit true si on est en https. setsecure n'envoie le cookie a travers le reseau que si on est en https 
-                                      		cookie.setSecure(true); //setSecure: le cookie n'est transmis sur le reseau que si on est en https LINKlizifoizf
+                                      		cookie.setSecure(true); //setSecure: le cookie n'est transmis sur le reseau que si on est en https marche bof bof par rapport à LINKcooklskjhh. on peut aussi faire comme ça: LINKlizifoizf 
                                       		cookie.setHttpOnly(httpOnly); //javascript n'a pas acces au cookies LINKlkgjkljkjgjgjgjgj
 letsencrypt :
       les logs sont sous /var/log/letsencrypt/letsencrypt.log
@@ -15563,7 +15583,7 @@ pour faire du ldaps :
     
                                                             duplusprecis---->>>>>au plushaut
 
-SELENIUM :(mettre les -D avant le -jar) (pour les tests d'integration: utilisation de failsafe) Autre solution: Jest / Pupetter ou Cypress ou Katalon Recorder
+SELENIUM :(mettre les -D avant le -jar) (pour les tests d'integration: utilisation de failsafe) Autre solution: Jest / Pupetter puppetter puppeter ou Cypress ou Katalon Recorder
 "%JAVA_HOME%\bin\java" -Dhttp.proxyHost=172.26.80.141 -Dhttp.proxyPort=3128 -Dhttp.proxyUser=p036782 -Dhttp.proxyPassword=rcwkdr2 -jar selenium-server.jar -interactive -multiWindow
 "%JAVA_HOME%\bin\java" -jar selenium-server.jar -interactive -multiWindow
 	cmd=getNewBrowserSession&1=*iexplore&2=http://su423ads.mc2.renault.fr:12051/doa/
@@ -24418,7 +24438,9 @@ smtp :
 copy Ctlr+ins ; paste Shift+ins
 2)
 saisir les commandes suivantes pour commander le serveur smtp (pas reçu le mail pourtant....)
-          www-data@kanail:~$ telnet localhost smtp
+          www-data@kanail:~$ telnet localhost smtp 
+                    oubien 
+                            telnet contact.authweb@ca-cib.com 25
           Trying::1...
           Connected to localhost.
           Escape character is '^]'.
@@ -24562,7 +24584,8 @@ sed -e "s/4095,4095/\([0-9][0-9]*\)/**\1**/" fichier
  
  
  
-raccourcis shortcut commandes:
+raccourcis shortcut commandes: deplacer le curseur mot a mot dessus
+    quand on saisi une commande, pour se deplacer le curseur bouget mot à mot: ctrl+fleches
 	Ctrl+a debut ligne
 	Ctrl+e fin ligne
 	Alt+b arriere
@@ -26530,8 +26553,70 @@ savoir si un element audio joue:
             }
 tester le javascript
     tester avec jest : le meilleur d'apres sylvain
-        npm install --save-dev jest
-        les fichiers de tests doivent s'appeler xxxx.test.js            
+                    npm install --save-dev jest
+                    jest --init // il crée le fichier jest.config.js
+                 faire ca pour que jest comprenne ES6 imports exports
+                    npm i --save-dev babel-jest @babel/core @babel/preset-env
+                    dans un fichier babel.config.js mettre
+                                          module.exports = {
+                                              presets: [
+                                                  [
+                                                      '@babel/preset-env',
+                                                      {
+                                                          targets: {
+                                                              browsers: '>2%',
+                                                          },
+                                                      },
+                                                  ],
+                                              ],
+                                          };
+                                          
+                    les fichiers de tests doivent s'appeler xxxx.test.js
+                    dans xxxx.test.js:
+                        dedans on peut utiliser document: document.createElement('div' etc etc... c'est un dom virtuel
+                            beforeAll(() => {
+                            return initializeCityDatabase();
+                          });
+                           beforeEach(() => {
+                            initializeCityDatabase();
+                          });
+                          describe('nom du test suite', () => {
+                              	it('nom du test', () => {
+                              		    expect(bidule)(.not).toEqual({one: 1, two: 2}); //.not est facultatif. // toEqual regarde l'egalité en profondeur
+                                                   toBe                        //toBe egalité simple
+                                                   toBeNull
+                                                   toBeUndefined!=toBeDefined
+                                                   toBeTruthy // equivalent de isTrue
+                                                   toBeFalsy // equivalent de isFalse
+                                                   toContain // regarde si une liste contient un truc
+                                  })
+                              })
+                      afterEach(() => {
+                            clearCityDatabase();
+                          });
+                      afterAll(() => {
+                        return clearCityDatabase();
+                      });
+           jest+puppeter : pupetter : pupeter : puppetter :
+                faire 
+                npm i --save-dev puppeteer // pour utiliser pupetter au moins.
+                npm install --save-dev jest-puppeteer // pour pouvoir pilotter pupeter depuis jest woaou
+                a la fin de jest.config.js ajouter ça:
+                        module.exports = {
+                          preset: 'jest-puppeteer',
+                        }
+                dans montest.js mettre:
+                    const puppeteer = require('puppeteer');
+                    (async () => {
+                      const browser = await puppeteer.launch(); // toules les methodes de puppeter sont asnyc donc faut mettre await partout
+                      await puppeteer.launch({headless: false}); // si je veux le voir jouer dans un navigateur
+                      const page = await browser.newPage();
+                      await page.goto('https://michelenasti.com');
+                      await page.screenshot({path: 'example.png'});
+                    
+                      await browser.close();
+                    })();
+                                            
     avec Jasmine : et testem : (sinon utiliser https://jsfiddle.net/)
       installer testem: (pas besoin d'installer jasmine)
           npm install testem -g (installe testem globalement sur mon systeme)
@@ -28216,7 +28301,8 @@ faire disparaitre un div layer au premier plan pour agir derriere:
           </div>
 pour ajouter ou supprimer une classe dans une liste de classe: 
     this.classList.add('over');
-    this.classList.remove('over'); 
+    this.classList.remove('over');
+    ou bien this.classList.toggle('over'); // l'ajoute si elle n'existe pas et le supprime si elle existe. Interrupteur.  
     document.getElementById("theID").removeAttribute("class"); //pour les effacer toutes les classes tous remove all      
 changer une classe en javascript:
   document.getElementById("btnTest").className= "buttonType2"
@@ -32503,15 +32589,19 @@ pour tester les urls ci dessous
       fr-nw-caen
       fr-nor
       fr-idf
-      recup un coverage depuis une coordonnée gps 
-      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.33245;48.77469: idf
-      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.3749036;48.8467927: idf
-      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.39107;48.65775: idf
-      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.2922926;48.8583736: idf
-      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.64788;48.31951 limiteDansIdf
-      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/3.30139;48.21735 droiteHorsIdf
-      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/-0.57215;44.83792 bordeaux
-      https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/-0.56730;44.83589 bordeaux
+      recup un coverage depuis une coordonnée gps
+      MERDE on ne peut plus utiliser le Go du playground. Il faut faire les requetes à la main avec le formulaire :-(
+        https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/fr-se/coord/6.09502%3B45.55405 
+      Marche que sur url de browser
+        https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.33245;48.77469: idf
+        https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.33245;48.77469: idf
+        https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.3749036;48.8467927: idf
+        https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.39107;48.65775: idf
+        https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.2922926;48.8583736: idf
+        https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/2.64788;48.31951 limiteDansIdf
+        https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/3.30139;48.21735 droiteHorsIdf
+        https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/-0.57215;44.83792 bordeaux
+        https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/-0.56730;44.83589 bordeaux
       
       recup coverage depuis la region_id
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/fr-idf
@@ -32525,7 +32615,7 @@ pour tester les urls ci dessous
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coverage/fr-nor
       
       
-      trouve transports a cote 
+      trouve transports a cote                                                             
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coord/2.64788;48.31951/places_nearby limiteDansIdf  10 reponse  OK
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coord/3.30139;48.21735/places_nearby droiteHorsIdf  10 reponse  OK
       https://f29788f3-a3ac-41ed-a476-5145b5d7583f@api.navitia.io/v1/coord/-0.57215;44.83792/places_nearby bordeaux  10 reponses OK
