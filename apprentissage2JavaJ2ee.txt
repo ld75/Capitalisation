@@ -1188,7 +1188,7 @@ gradle: pour tout builder:
 taille des logs dans la console: settings>console>overrideconsolebuffersize
 pom voir arbre des dependances hierarchie > dans la vue maven: clique droit sur projet > show effective pom ATTENTION A RAFRAICHIR refresh dans vue maven sinon la hierarchie est obsolete
         encore mieux: charger https://plugins.jetbrains.com/plugin/7179-maven-helper et installer le plugin: installe le directement depuis settings>plugins>il est là
-        permet aussi d'afficher menu contextuel maven run debug dans projets projectst (si inactif  appuyer sur "+" a droite pannel maven)
+        permet aussi d'afficher menu contextuel maven run debug dans projets project (si inactif  appuyer sur "+" a droite pannel maven)
         dans onglet dependency analyser à gauche on y voit les artifactID:version
 si le pom.xml maven est en erreur: rafraichir refresh dans la vue maven +  faire une mvn:compilation pour le forcer à charger les dependances et montrer les vraies erreurs
 gradle: creer si j'ai Could not find GradleWrapperMain il faut creer projet\gradle\wrapper\gradle-wrapper.jar
@@ -1334,7 +1334,7 @@ microprofile : microprofiles : microprofile : pannels d'outils en plus facultati
       public String unemethode(){...}
 payara :payaramicro : // executeur direct d'un microservice.
     java -jar payara-micro.jar                      // créé un payara serveur
-        --rootDir repertoire/de/travail/cree/auto/si/existepas // pour y mettre sous lib les jars qu'il n'arrive pas à trouver au demarrage: les drivers par exemple. il y met automatiquement des trucs. ca se rempli beaucoup donc il faut mettre ce parametre pour avoir un control de la ou il ecrit tout son fatras
+        --rootDir repertoire/de/travail/cree/auto/si/existepas // pour y mettre sous lib les jars qu'il n'arrive pas à trouver au demarrage: les drivers par exemple. il y met automatiquement des trucs. ca se rempli beaucoup donc il faut mettre ce parametre pour avoir un control de la ou il ecrit tout son fatras. Attention si je suis en ssl il y ecrit des trucs dedans qui ne me permettent plus ensuite de ne plus être en ssl donc utiliser plusieurs rootDir differents par environnement
         --deploy /home/user/example.war ou le repertoire root du war exploaded(dans target)// mettre un .reload sous la racine de mon war exploded et le modifier/toucher recharge le war exploded automatiquement (faire mvn package)(sauf si le war ne s'est pas déployé la fois précédente)
                  possible faire plusieurs --deploy dans une meme commande seront sur le meme port
         --contextroot contextrootquiremplacelenomdemonwarcommecontextroot (avec / au debut, sans / à la fin) //ou faire --deploy /x/y:contextroot
@@ -1344,6 +1344,7 @@ payara :payaramicro : // executeur direct d'un microservice.
             clustering: deux instances indentiques déployées sur des ports differents sont automatiquement clusterisees (partagent les memes sessions users)
             --nocluster // marche pas! pour ne pas qu'il cherche d'autres instances pour clutoriser. Ca prend du temps quand il cherche
         --autobindhttp // determine le port automatiquement.
+	--port 8080 // forcer le port http à 8080
         --logtofile <file-path> // attention si j'utilise --logProperties ca remplace logtofile
         --verbose 
         --startPort 888// fonctionne avec autobindhttp. 888: port à partir duquel commencer à incrementer numero de port
@@ -1453,7 +1454,9 @@ payara renvoit:
             </plugin>
 rajouter une base de LINKlskjdfqm  donnée jta au serveur payara
     jai mis un domain.xml  a coté de payara.jar et j'ai rajouté dedans 
-        <jdbc-connection-pool is-isolation-level-guaranteed="false" name="H2Pool" datasource-classname="com.mysql.cj.jdbc.MysqlConnectionPoolDataSource" res-type="javax.sql.DataSource">
+          <resources>
+        <jdbc-resource pool-name="H2Pool" jndi-name="jdbc/__default" object-type="system-all"/>
+	<jdbc-connection-pool is-isolation-level-guaranteed="false" name="H2Pool" datasource-classname="com.mysql.cj.jdbc.MysqlConnectionPoolDataSource" res-type="javax.sql.DataSource">
             <property name="URL" value="jdbc:mysql://127.0.0.1:3306/memoclap"/>
             <property name="user" value="root"/>
             <property name="password" value="foulurecalotte"/>
@@ -2553,7 +2556,7 @@ securite : security :(JSR375) plus besoin d'utiliser web.xml: les annotations fo
                                        }
                                        else
                                        {
-                                        httpMessageContext.notifyContainerAboutLogin(result.getCallerPrincipal(), result.getCallerGroups()); // permet d'utiliser @RolesAllowed({"connected"}) voir LINKdeclarereor
+                                        httpMessageContext.notifyContainerAboutLogin(result.getCallerPrincipal(), result.getCallerGroups()qui equivaudrait a un new HashSet<String>(asList("connected") ); //du coup partout on a (CallerPrincipal)request.getUserPrincipal();. Permet d'utiliser @RolesAllowed({"connected"}) voir LINKdeclarereor
                                        }
                                     }
                                     else return httpMessageContext.doNothing();
@@ -4190,7 +4193,29 @@ web.xml : webxml :
                             There are many more uses cases where we can use Servlet filters. 
                                 A traditional web application is composed of couple of Business classes & data (model), JSP (views), controllers/servlets and few other resources like css, images etc. All these components are packaged as a WAR file and we deploy it on a web/application server. To add/configure a servlet filter in traditional web application we user web.xml configuration file and tag as:
                     filter Definit une classe de filtre qui sera aplliquee avant la servlet. (voir http://manu.e3b.org/Java/Tutoriels/J2EE/Descripteur.htm ou http://74.125.39.104/search?q=cache:_3YFpOityV4J:manu.e3b.org/Java/Tutoriels/J2EE/Descripteur.htm+description+web.xml+descripteur+de+deploiement+%3Cfilter%3E&hl=fr&ct=clnk&cd=1&gl=fr)
-            			exemple: 
+			exemple avec annotation:
+			@WebFilter(urlPatterns = "/indexPro" ou "/*")
+			class SecurityFilter implements Filter 
+			{
+			    @Inject
+			    UserSession userSession;
+			    @Override
+			    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException
+			    {
+				final HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
+				final HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
+				(...)
+				filterChain.doFilter(servletRequest,servletResponse);
+			    }
+			    @Override
+			    public void init(FilterConfig filterConfig) throws ServletException {
+			    }
+
+			    @Override
+			    public void destroy()
+			    {
+			    }
+			exemple Sans annotation: 
             			<filter>
             		<filter-name>SessionCountFilter</filter-name>
             		<filter-class>renault.rad.util.filter.SessionCountFilter</filter-class>
@@ -4981,18 +5006,17 @@ pour centrer un tableau une table dans un div lui mettre:
   pas text-align:center mais margin: 0 auto;
 pour faire une animation en boucle sur une image par exemple avec css. (l'ere des gif annimes est revolue!) panorama defile
         ATTENTION pour les animations annimations en css utiliser en priorite opacity et transition ou transform 
-        mettre les prefix devant chaque animation et keyframe: -webkit-, -moz-, -o-, -ms-
           /* première etape */
           p#doigt a:hover, p#doigt a:focus {
           background-color:#ff8c00; /* pour les vieux navigateurs */
           color: black;
-          (-webkit-; -moz-; -o-; -ms-)animation-name: doigt; /* nom de l'animation */
-          (-webkit-; -moz-; -o-; -ms-)animation-duration: 4s; /* temps de l'animation (4s) */
-          (-webkit-; -moz-; -o-; -ms-)animation-iteration-count: infinite; /* nombre de boucles (infinie) */
-          (-webkit-; -moz-; -o-; -ms-)animation-timing-function: linear; /* acceleration de l'animation (constant) */ease-in; ease-out
+          animation-name: doigt; /* nom de l'animation */
+          animation-duration: 4s; /* temps de l'animation (4s) */
+          animation-iteration-count: infinite; /* nombre de boucles (infinie) */
+          animation-timing-function: linear; /* acceleration de l'animation (constant) */ease-in; ease-out
           }
           /* deuxième etape */
-          @(-webkit-; -moz-; -o-; -ms-)keyframes doigt {
+          @keyframes doigt {
           0% {background:rgba(255,140,0,0.4) url(/images/main.png) no-repeat 5px 10px;}
           50% {background:rgba(255,140,0,1) url(/images/main.png) no-repeat 50px 10px;}
           100% {background:rgba(255,140,0,0.4) url(/images/main.png) no-repeat 5px 10px;}
@@ -5161,7 +5185,7 @@ un effet d'ombre:
                 gauche  droite blur taille(opt) couleur
 pour faire une bordure de texte contour:
     text-shadow: #FFFFFF 1px 1px,#FFFFFF -1px 1px,#FFFFFF -1px -1px,#FFFFFF 1px -1px;
-faire une transition, transformation animation:
+faire une transition, transformation animation annimation:
         #masqueActeurs{
         autant faire direct transition: all 0.2s ease 0.1s;
           transition: opacity ou translate(3em,0) ou all 2s, (PUIS) height 3s ease; ou linear ou ease-out ou ease-in ou vitesse customisee: cubic-bezier(1.000, -0.530, 0.405, 1.425) // negatif revient en arriere
@@ -7513,7 +7537,6 @@ generiques : generic : pour eviter de caster et d'avoir a utiliser object
         interface MonObjetRepository extends JpaRepository<MonObjet, Long>{
         }
         tout y est!!
-        
 
 kafka : A_COMPLETER voir aussi https://github.com/akka/alpakka-kafka qui fait de reactive streaming c a d backpressure c a d si consummer sont debordes par vitesse ils disent au producer de ralentire. voir aussi du code source sur github/jamesward/koober(demo de la voiture et du gars sur le map) 
         producer1-   kafka
@@ -7652,7 +7675,7 @@ si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from col
             	private Integer id;
 
               @ManyToOne //1ici a n labas(passur?)
-              @Column(name="NonDeLaColonneEnBDSIDifferenteQueNomProprieteJava") // optionnel
+              @Column(name="NonDeLaColonneEnBDSIDifferenteQueNomProprieteJava") // optionnel. si j'ai erreur "during the execution of the query was detected to be null. Primary keys must not contain null" c'est parce que le name ne correspond pas exactement à celui de la colonne sql. Attention les espaces comptent
               @Column(name="price", columnDefinition="Decimal(10,2) default '0.0'") // si on veut une valeur par defaut DANS LA BASE de donnée seulement; renvoit qd meme null en java si ce champ est déjà null dans la base
               @Cache peut etre aussi mis au niveau d'une propriete
               @NotNull // si je veux valider que le champ ne soit pas null
@@ -24129,7 +24152,8 @@ pour savoir ce qui tourne:
 (ps -fu ? ou)ps -ef | grep monnomutilisateur pour voir quelles instances que j'ai lance tournent (affiche les ports) ps -ef donne aussi la date de debut d'execution du process
 on peut ensuite faire un kill -15 (soft) ou -9 (hard) sur l'id qu'on veut killer ( premiere colonne en chiffres (PID)) ferme aussi le port du service du coup
 pour killer en une seule ligne de commande
-    pkill nomdutrucquejeveuxkillerCeNomEstparExempleJavaOuPayaraVoirPs-ef
+	pkill -f 'java.*payara' // plus précis (point etoile pour le wildcard regexp)
+    pkill nomdutrucquejeveuxkillerCeNomEstparExempleJavaOuPayaraVoirPs-ef // pas très precis
 ps -ef donne aussi la date de debut d'execution du process
 ps -ef | grep whatever pour voir si whatever tournent
 renvoit le nombre de process qui repondent a la recherche:
@@ -24544,6 +24568,7 @@ raccourcis shortcut commandes:
 	Alt+b arriere
 	Alt+f avant
 sur vi : 
+pour indenter: > voire >>
 pour affichier avec des fonts colorees couleurs: aptitude: charger vim
 view nomfichier pour afficher en lecture seule
 http://www.ledman.ch/eti_linux/08vi.html
@@ -24605,7 +24630,7 @@ yy: copier ligne puis P: coller ligne
 4yy puis P: le faire pour 4 lgines
 copier-coller bouts:
   v puis bouger fleche pour selectionner puis d pour couper ou y pour copier puis P pour coller ce que j'avais selectionne
-faire une recherche find: :set ignorecase puis :set smartcase puis /blabla // si j'ai pas fait les set alors faire /blabla\c pour une recherche case noncasesensitive majuscule minuscule
+faire une recherche find: :set ignorecase puis :set smartcase puis /blabla // si j'ai pas fait les set alors faire /blabla\c pour une recherche case noncasesensitive majuscule minuscule. Pour revenir à une recherche casesensitive faire: :set noic
 		ou /bla\c exemple: /motcherche\c pour case insensitive ignorer majuscule minuscules.\c peut apparaitre partout debut ou fin et tapper. pour faire next, wildcard faire .*, tapper n (pour echapper les / slash faire un backslash) pour rechercher en arrière: N
 ?: recherche de bas en haut
 u: undo si multiple undo ne marche pas: aptitude et charger vim
@@ -24619,7 +24644,7 @@ u: undo si multiple undo ne marche pas: aptitude et charger vim
 :r ! MaCommande faire une commande unix et le resultat de la commande rentre dans le texte
 shift G pour aller en bas du fichier
 Remplacement de chaine1 (toutes les occurrences de chaine1) ,par chaine2 depuis la ligne n1 jusqu'à  la ligne n2  
-		:n1,n2 s/chaine1/chaine2/g
+		:n1,n2 s/chaine1/chaine2/g   // echappement des caractères / se fait par \/
     ou bien avec confirmation: on definit pas les lignes mais il ya confirmation a chaque fois: 
     >:%s/chaineARemmpacer/ChaineQuiRemplace/gc
     >:%s/e1/e2/gc 
@@ -25240,6 +25265,7 @@ ADMIN_URL=http://130.98.232.97:7001
      java -Djava.awt.headless=true -classpath JimiProClasses.jar:. convertisseur.Main
 xfce : // bureautique debian
 	modifier les shortcuts raccourcis clavier: xfce>parametres>gestionnaire de parametres > gestionnaire de fenetre > clavier
+	raccourci shortcut pour demarrer un programme: alt+f2
 PHP :     
 pour faire marcher php avec oracle: (wamp) il faut que j'utilise l'utilitaire de wamp pour activer les extensions dll et decommenter aussi les lignes dans php.ini( deux lignes.. ora et oci un truc comme ca)
 ORACLE_HOME 
@@ -26505,7 +26531,7 @@ savoir si un element audio joue:
             }
 tester le javascript
     tester avec jest : le meilleur d'apres sylvain
-        npm install --save-dev jest
+        npm install --save-dev jest //--save-dest voir npm.
         les fichiers de tests doivent s'appeler xxxx.test.js            
     avec Jasmine : et testem : (sinon utiliser https://jsfiddle.net/)
       installer testem: (pas besoin d'installer jasmine)
@@ -26813,7 +26839,7 @@ rediriger vers une page pour mobile si ecran plus petit:     attention screen.wi
 connaitre l'URL de la page actuelle:
   document.URL
 connaitre les bouts de l'URL: 
-var newURL = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname;
+var newURL = window.location.protocol + "//" + window.location.host +(window.location.port?':'+location.port:'') "/" + window.location.pathname; // le scheme le domaine le port le path
 pour modifier la duree et son accelleration d'une animation css: 
         document.getElementById("animantisechegen").style.webkitTransitionTimingFunction ="linear";
         document.getElementById("animantisechegen").style.webkitTransitionDuration="0s";
