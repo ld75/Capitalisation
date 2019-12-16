@@ -11496,9 +11496,13 @@ SmartSVN :
     |
     tag 0v1.0  ---> les tags sont en realite des pointeurs vers des revisions de fichier. Pas les fichiers en soit
     
-    trouver chercher lister tout ce que j'ai dans un repository svn 
-          sur cygwin ou unix je peux lister trouver chercher tous les documents dans un repository svn en ligne de commande sans client: 
-          svn list -R https://svn.ptx.fr.sopra/svnhrasvc/hrasvc > todelete.txt
+    lignes de commande:
+        trouver chercher lister tout ce que j'ai dans un repository svn 
+              sur cygwin ou unix je peux lister trouver chercher tous les documents dans un repository svn en ligne de commande sans client: 
+              svn list -R https://svn.ptx.fr.sopra/svnhrasvc/hrasvc > todelete.txt
+              faire un checkout:
+                    svn --username DUVERGE --password '*****' --no-auth-cache --non-interactive checkout https://path.vers.ou.chercher.le.code.dans.svn/v3-parent-1.16.9 /path/filesystem/local/ou/deposer
+          
              
       pour commiter un nouveau projet premiere fois: share project... (voir intellij)
     si j'ai le message: is already under version control quand je commit
