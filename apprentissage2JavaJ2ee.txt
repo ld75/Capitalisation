@@ -1,4 +1,5 @@
-(?=.*list)(?=.*lamda)
+(?=.*format)(?=.*json)
+
 AFAIRE :
     Entretien:
         qu'est ce que rest, architecture ntiers, polymorphisme, mvc, dto, bdd: gerkin  
@@ -4812,7 +4813,15 @@ compatibilite:
                       padding-right: 2%;
               }
         }
-        
+utilisation de variables customisées reutilisables réutilisables ailleurs:
+    xxxx{
+        widh:20px;
+        --un-nom-qui-commence-par-deux-tirets:unevaleur 2px par exemple sans les guillements je crois //declaration
+    }        
+    //utilisation ailleurs:
+        yyyy{        
+             width:var(--un-nom-qui-commence-par-deux-tirets, 500QuiEstLaValeurParDefautAuCasOuLaVariableNestPasTrouvee);
+        }
 selecteur: LINKcsslkhkhkhkhkh
   !important // signifie qu'il est prioritire il prend la precedence override tout exemple: display:none !important;
   espacement des caractères
@@ -11520,9 +11529,13 @@ SmartSVN :
     |
     tag 0v1.0  ---> les tags sont en realite des pointeurs vers des revisions de fichier. Pas les fichiers en soit
     
-    trouver chercher lister tout ce que j'ai dans un repository svn 
-          sur cygwin ou unix je peux lister trouver chercher tous les documents dans un repository svn en ligne de commande sans client: 
-          svn list -R https://svn.ptx.fr.sopra/svnhrasvc/hrasvc > todelete.txt
+    lignes de commande:
+        trouver chercher lister tout ce que j'ai dans un repository svn 
+              sur cygwin ou unix je peux lister trouver chercher tous les documents dans un repository svn en ligne de commande sans client: 
+              svn list -R https://svn.ptx.fr.sopra/svnhrasvc/hrasvc > todelete.txt
+              faire un checkout:
+                    svn --username DUVERGE --password '*****' --no-auth-cache --non-interactive checkout https://path.vers.ou.chercher.le.code.dans.svn/v3-parent-1.16.9 /path/filesystem/local/ou/deposer
+          
              
       pour commiter un nouveau projet premiere fois: share project... (voir intellij)
     si j'ai le message: is already under version control quand je commit
@@ -30931,7 +30944,7 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
     EDSN transmet à FID: -champs à récupérer
     EDSN transmet à FID: -scope // droits necessaires
     autres modes :
-        ImplicitMode: ne passe que par le frontchanell: on bypasse la partie "ask code"-"recieve code": on obtien direct l'accessToken (pour les apps qui sont pure javascript)
+        ImplicitMode(deconseille): ne passe que par le frontchanell: on bypasse la partie "ask code"-"recieve code": on obtien direct l'accessToken (pour les apps qui sont pure javascript)
         Resource Owner password[credential] flow mode : ne passe que par back (pour la compat des vieilles applis et de confiance    |
                                                    homme envoit user/password au client EDSN(prd la place du client_secret je crois) |_client demande à l'authorizationServer un accessToken direct+ recommandé:un refreshtoken
              Client credientials flow : ne passe que par back(pour les échanges entre machines uniquement)                           |
@@ -30950,25 +30963,25 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
                 // nounce=qsfqmkjg
                 // response_mode=query
                 .buildQueryMessage();
-                return new ModelAndView(new RedirectView(request.getLocationUri()));
+                return new ModelAndView(new RedirectView(request.getLocationUri()));                            dit le "authorization endpoint"
                                 -------------------------------------frontchannel---------------------->>>>>>>FID(AuthenticationServer) présente le prompt d'authentification. USER s'authentifie
                                                                                                               FID présente le consent Screen/scope. USER approuve. SI User n'approuve pas FID retournera ?error=x&error_description=y
-                                <<<<<<<<<<<<<<<<<<<<<<---------------frontchannel-----------------------------FID retourne AuthorizationCode=code=AuthorizationGrant(Dans les en-tête http.)(+Token_ID si ImpliciteMode(c.a.d LINKResponseType=token ou token_id) + renvoit le meme state qu'il a reçu ("tatatoto")                
-                                                                    url = redirectURI = callback                        
+                                <<<<<<<<<<<<<<<<<<<<<<---------------frontchannel-----------------------------FID retourne AuthorizationCode=code=AuthorizationGrant(Dans les en-tête http.)(+Token_ID si ImpliciteMode(deconseille)(c.a.d LINKResponseType=token ou token_id) + renvoit le meme state qu'il a reçu ("tatatoto")                
+                                                                    url = redirectURI = callback                                                   |_ce dernier est stocker en base en tuple client_id/authorizationCode/state(je crois)   
     
-    EDSN renvoit l’AuthorizationCode + idApplicatif + client_secret à FID--------backchannel------------>>>>>
-                                     + GrantType=Authorization_code
-                                     POST
-                                     Content-Type:application/x-www-form-urlencoded
-                                     code=l’AuthorizationCode comme ça:
-                                     &client_id=1234
-                                     &client_secret=456
-                                     &grant_type=authorization_code
-                                                                                                              FID vérifie que AuthorizationCode n'a pas été hacké à l'aide du client_secret
-                                 <<<<<<<<<<<<<<<<<<<<<<<<<-----------backchannel/frontSiImplicitMode--------- FID renvoit l’AccessToken peut être un JWT(scopé&expirable)(n'envoit que ça si response_type=code)   +     Token_ID si OpenID(de OpenIdConnect1.0 c.a.d response_type=openid) =JWTSigné=JWS (AuthenticationServer doit supporter)
-                                                               HTTPS-SSL si Bearer                                        expires_in=xms(stokéDsDBSaufSi) +TokenType=      				             				 Signature avec SecretKey 
-                                                                                                                          stocké en base sauf si durée            bearer                                                ou
-                                                                                                                          vie tres courte                                                                            Signature avec paire de clé assymetriques (donc clé privée)
+    EDSN renvoit l’AuthorizationCode + idApplicatif + client_secret à FID--------backchannel------------>>>>>  vers le "token endpoint"
+                                     + GrantType=Authorization_code                                                                   |
+                                     POST                                                                                             |
+                                     Content-Type:application/x-www-form-urlencoded                                                   |
+                                     code=l’AuthorizationCode comme ça:                                                               v
+                                     &client_id=1234                                                                                  |
+                                     &client_secret=456                                                                               |
+                                     &grant_type=authorization_code                                                                   |
+                                                                                                              FID vérifie que AuthorizationCode n'a pas été hacké à l'aide du triplet client_secret/client_id/authorizationCode (je crois)
+     valide que le state=state initial<<<<<<<<<<<<<<<<<<<<<<<<<-----------backchannel/frontSiImplicitMode--------- FID renvoit l’AccessToken peut être un JWT(scopé&expirable)(n'envoit que ça si response_type=code)+ state +     Token_ID si OpenID(de OpenIdConnect1.0 c.a.d response_type=openid) =JWTSigné=JWS (AuthenticationServer doit supporter)
+                                                               HTTPS-SSL si Bearer                                        expires_in=xms(stokéDsDBSaufSi) +TokenType=      				             				             Signature avec SecretKey 
+                                                                                                                          stocké en base sauf si durée            bearer                                                            ou
+                                                                                                                          vie tres courte                                                                                       Signature avec paire de clé assymetriques (donc clé privée)
                                                                                                                                                                    ou
                                                                  pasBesoin si Mac                                           utilisation unique                      mac                          
                                                                                                                             chaque fois
@@ -31022,8 +31035,8 @@ un OpenIdProvider doit renvoyer ces infos via l'URL unDomaine.com/.well-known/op
     "registration_endpoint":xxx             
         RECOMMENDED. URL of the OP's Dynamic Client Registration Endpoint [OpenID.Registration]. 
     "scopes_supported":xxx              
-        RECOMMENDED. JSON array containing a list of the OAuth 2.0 [RFC6749] scope values that this server supports. The server MUST support the openid scope value (d'autant plus si je mets LINKozero). Servers MAY choose not to advertise some supported scope values even when this parameter is used, although those defined in [OpenID.Core] SHOULD be listed, if supported.
-        private String[] scopes_supported = { "profile", "email" }; 
+        RECOMMENDED. JSON array containing a list of the OAuth 2.0 [RFC6749] scope values that this server supports. The server MUST support the "openid" scope value (d'autant plus si je mets LINKozero). Servers MAY choose not to advertise some supported scope values even when this parameter is used, although those defined in [OpenID.Core] SHOULD be listed, if supported.
+        private String[] scopes_supported = { "profile", "email", "openid" }; // profile: authorise la recup du nom de l'utilisateur; email: authorise la recup de l'email de l'utilisateur 
     "response_types_supported":xxx  LINKResponseType            
         REQUIRED. JSON array containing a list of the OAuth 2.0 response_type(obligatoire) values that this OP supports. Dynamic OpenID Providers MUST support the "code", "id_token", and the "token id_token" Response Type values.
                                                                     sur Oauth2 response_type peut etre "code" ou "token"(=implicitMode). OpenIdConnect1.0 a rajouté "id_token"LINKozero et "none" du coup on peut combiner: "id_token token" ou "code id_token" etc etc... 
@@ -31031,7 +31044,7 @@ un OpenIdProvider doit renvoyer ces infos via l'URL unDomaine.com/.well-known/op
         OPTIONAL. JSON array containing a list of the OAuth 2.0 response_mode values that this OP supports, as specified in OAuth 2.0 Multiple Response Type Encoding Practices [OAuth.Responses]. If omitted, the default for Dynamic OpenID Providers is ["query", "fragment"].
         private String[] response_modes_supported = { "query", "fragment", "form_post" }; 
     "grant_types_supported":xxx             
-        OPTIONAL. JSON array containing a list of the OAuth 2.0 Grant Type values that this OP supports. Dynamic OpenID Providers MUST support the authorization_code and implicit Grant Type values and MAY support other Grant Types. If omitted, the default value is ["authorization_code", "implicit"].
+        OPTIONAL. JSON array containing a list of the OAuth 2.0 Grant Type values that this OP supports. Dynamic OpenID Providers MUST support the authorization_code and implicit Grant Type values and MAY support other Grant Types. If omitted, the default value is ["authorization_code", "implicit(deconseille)"].
         private String[] grant_types_supported = { "refresh_token", "password" }; 
     "acr_values_supported":xxx              
         OPTIONAL. JSON array containing a list of the Authentication Context Class References that this OP supports. 
