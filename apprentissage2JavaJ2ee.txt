@@ -479,6 +479,8 @@ si problemes dans npm: https://github.com/npm/npm/wiki/Troubleshooting
    aller sur https://nodejs.org/en/download/ (downloader npm: sur internet)
   dans un repertoire faire
   (path/vers/npm)npm init // cree package.json là ou je suis// il me pause des questions pour bien le remplir ATTENTION pas d'espace dans le nom. l'important c'est le entry-point: indiquernomfichier.js qui est le point d'entree. je peux l'executer en faisant node indiquernomfichier.js
+  voir l'arbre des dependances:
+    npm list <optionel:module>
   voir la config:
         npm config list
         ou 
@@ -9488,6 +9490,10 @@ ALTER TABLE VPA01_STUDENT ADD VPA01_PHOTO VARCHAR(20) CHARACTER SET latin1 COLLA
 ALTER TABLE VPA01_STUDENT MODIFY VPA01_PHOTO VARCHAR(20);
 affacer supprimer une colonne:
     ALTER TABLE userweb DROP COLUMN lostPasswordMailToken;
+les champs dates:
+    DATETIME c'est au format 2018-12-12 07:01:42 
+    DATETIME(3) c'est au format 2018-12-12 07:01:42.000 // avec des millisecondes
+    DATETIME(6) c'est au format AFAIRE // avec des microsecondes
 pour supprimer suprimer les retours chariot du resultat:
     select ... REPLACE(ps_product_lang.description_short, '\n','') descr ....
 pour concatener plusieurs lignes en une seule: (equivalent de listagg sur oracle): group_concat
@@ -26420,7 +26426,7 @@ fetch : LINKsljqffetch
 
 
 ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch)
-                        ans = canvas.toDataURL("image/png");  //Pour sauver un canvas sur le serveur en image png ou jpg il faut obligatoirement envoyer les donnees en POST sinon le fichier genere est pourri:
+                        ans = canvas.toDataURL("image/png");  // converti l'image en base64. Pour sauver un canvas sur le serveur en image png ou jpg il faut obligatoirement envoyer les donnees en POST sinon le fichier genere est pourri:
             	    		var formData = new FormData(); ou new FormData(document.getElementById("forText")); // forText est juste un form html recuperable avec document.getElement...ATTENTION les champs de mon formulaire doivent avoir un name sinon ils ne sont pas ajoute dans les formdata 
                             formData.append('ans', ans); // Append extra data before send.
                             formData.append('idp', idprojetEnCours); // Append extra data before send.
@@ -26512,14 +26518,18 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                                         a.download = "";
                                         a.click();
                                     }
-                                    };                                              	    		
+                                    };
+                       xhr.onerror = function(e) LINKlkjsdfmlqkjgjgjgj
+                       {
+                       console.log(e)
+                       }                                              	    		
                       xhr.send(file); // marche pas.. plutot envoyer le formulaire comme ci-dessous            	    		
             	    		xhr.send(formData); // on utilise ça que pour du multipart: envoi de fichier ou canvas voir côte servlet là:LINKee"(çà)"
             	    		xhr.send(txt); // ou txt = "file=" + url +  "&content=" + content; // on utilise ça en Post. pour Get voir plus haut. Alors request.getParameter marche (je crois)
             	    		ou 
    		      	    		xhr.send(json); // ou json = JSON.stringify(jsonobject) du coup mon json est dans le payload. Pour le recuperer cote serveur:LINK564894. voir comment je construit ce json avec un formulaire html:LINKç'ç'ç"_() 
                       ou 
-2                      xhr.send(null); xhr.send(); // si c'est du GET voir plus haut
+2                      xhr.send(null); xhr.send(); // si c'est du GET voir plus haut // pour catcher ca on ne peut pas faire try catch. utiliser LINKlkjsdfmlqkjgjgjgj
                         event.preventDefault(); // Prevent page from submitting. 
                         return false;           // Prevent page from submitting.   
                 	    }
@@ -27569,7 +27579,7 @@ pour mettre une image dans un canvas:
                     ctx.strokeStyle = "#0000ff";
                     	ctx.strokeRect(this.xT,this.yT,this.wT,this.hT);
 Pour sauver un canvas sur le serveur en image png ou jpg il faut obligatoirement envoyer les donnees en POST sinon le fichier genere est pourri: 
-              	    if (canvas.toDataURL().length>0)
+              	    if (canvas.toDataURL().length>0)// toDataURL converti l'image en base64
             	    {
             	    		ans = canvas.toDataURL("image/png");
             	    		askValidator.ans=ans;
@@ -27659,7 +27669,7 @@ pour faire un paint avec canvas: Attention ne jamais donner un style a un canvas
                           {
                           canvas = document.getElementById('imageView');
                           
-                           var dataURL = canvas.toDataURL();
+                           var dataURL = canvas.toDataURL(); // converti l'image en base64
                            numFichierDraw[numfichierEnCours]=dataURL;
                            sendMessage("messageAudio","C'est sauv&eacute;.", "50%", "50%");
                            
@@ -27841,7 +27851,7 @@ ou
                                             
 pour supprimer tous all les eventlisnter LINKrmvEvntListner
     l'idée est de clonner l'element que je veux nettoyer et que le clone remplace celui qui contient les eventlistener. Tout est dupliqué sauf les eventlistners:
-            elementANettoyer.parentNode.replaceChild(elementANettoyer.cloneNode(false), elementANettoyer); // elementquiremplace,elementaremplacer 
+             elementANettoyer.parentNode.replaceChild(elementANettoyer.cloneNode(false), elementANettoyer); // elementquiremplace,elementaremplacer // pour remplacer un element dom par un autre 
 
                                                      
 dessiner un cercle dans un canvas:
@@ -28191,7 +28201,7 @@ endsWith en javascript: (se termine par)
 startsWith:
     monString.indexOf("bla")==0
 pour avoir les fils d'un element:  queryselector
-      utiliser soit .children soit .childNodes (na pas marche une fois) > fils direct(premier fils); " " fils indirect; a (balise de type a); a[toto] balise de type a avec un attribut toto; a[toto=titi] balise de type a avec un attribut toto = titi; a,b a ou b; a.toto a avec une classe=toto; #hehe  id=hehe
+      utiliser soit .children soit .childNodes (na pas marche une fois) > fils direct(premier fils); " "(espace) fils indirect; a (balise de type a); a[toto] balise de type a avec un attribut toto; a[toto=titi] balise de type a avec un attribut toto = titi; a,b a ou b; a.toto a avec une classe=toto; #hehe  id=hehe
       document.querySelector("#prompt>#prompt1>div").children;// c'est un tableau donc on peut faire document.querySelector("#prompt>#prompt1>div").children[0];
 pour avoir tous les elements fils de manière recursive: 
           myDiv.getElementsByTagName("*")
