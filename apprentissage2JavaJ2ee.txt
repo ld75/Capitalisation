@@ -1,4 +1,4 @@
-(?=.*format)(?=.*json)
+(?=.*ports)(?=.*disponib)
 
 AFAIRE :
     Entretien:
@@ -632,7 +632,7 @@ reactjs : react.js + redux :
       );
 
 docker : créer une image (executable)-> builder ->image(classe) devient container(instance tourne par defaut en vase clos/fichiers et /ports) qd est runné(!=VM. Une VM virtual machine contient un OS. Un container est executé dans un OS: plusieurs containers peuvent s'executer dans un meme OS) quand est executee alors des config s'appliquent à lui-> déposer dans machine
-                    |_populaires: le registry https://hub.docker.com/search?q=&type=image du coup faire run payara/micro par exemple
+                    |_populaires: le registry https://hub.docker.com/search?q=&type=image du coup faire docker pull une/image/a/charger  puis docker run payara/micro par exemple
   continuer à lire https://docs.docker.com/get-started/part2/#share-your-image
   installer docker: sudo apt-get update puis 
     avoir docker CE(community edition) ou EE(entreprise edition) recuperable sur store.docker.com
@@ -677,7 +677,7 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
             command: npm run // overrite CMD ci dessus: en general la commande ici sert à demarrer un serveur
           postgres: // deuxieme service = 1 container
   docker build -t(pour tag) unnomquejedonneamoncontainer:untag /pathOuEstDockerfile(. par ex si j'y suis et -f DocerfileToto si j'y su is mais que le nom n'est pas "Dockerfile")// Creer mon container docker qui rentre dans la liste repository d'images. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto
-  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e"nomDuneSystem.PropertySiJeVeux=savaeleur" --name=facultatifUnAutreNomQueJeDonneAMonContainer -d (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement) -v $(pwd)(ou un repertoire du host os. S'il n'existe pas il est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container) nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container
+  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e"nomDuneSystem.PropertySiJeVeux=savaeleur" --name=facultatifUnAutreNomQueJeDonneAMonContainer -d (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement) -v $(pwd)(ou un repertoire du host os. S'il n'existe pas il est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container) nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) OU identifiantDeLImage LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
                                   -p portdeOS:portOuvertduContainer(je peux en mettre plusieurs)                                                                                                                                                                                                                                                             |_ce nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con                                                                                                                                                                                      
@@ -2301,7 +2301,9 @@ erreurs codes http: LINKcodesHttp
 202: Confirmation que changement accepté mais pas encore terminé. Lien vers l'objet qui sera crée/modifié figure dans le header "Location"
 204: OK mais je reste sur la meme page
 301: redirection permanante et definitive
-302: redirection temporaire. Google n'aimepas il faut faire des redirections permanantes 301 quand on veut faire http -> vers https.
+302: redirection temporaire. quand je fais cette redirection mettre dans l'entete header Location=urlversoujeredirige. Avec non conservation de la méthode POST ou autre qui passe à GET et le corp peut aussi changer. Google n'aimepas il faut faire des redirections permanantes 301 quand on veut faire http -> vers https.
+303: redireciton temporaire.
+307: redirection temporaire. quand je fais cette redirection mettre dans l'entete header Location=urlversoujeredirige. La methode et le corp sont conservés. Est préférable à une redirection 302  
 400: erreur de synthaxe:protocole http non respecte
 401: non authorise (manque login/password): n'a pas encore été authentifé et le navigateur doit maintenant chercher à s'authentifier. En récupérent dans la résponse envoyée par le serveur le header  WWW-Authenticate et son( ou ses séparés par des virgules) challenge associé et doit renvoyer une requete avec en général le header WWW-Authenticate rempli mais ça peut etre autrechose.
 403 : interdit (login/password incorrect) authentification a bien été comprise mais elle est fausse
@@ -6656,7 +6658,7 @@ Spring-batch :
                                       {
                                             MockitoAnnotations.initMocks(this);
 											this.mockMvc= MockMvcBuilders.standaloneSetup(realTimePathCoverageController).build(); LINKpourquecamarcheFairemokito
->>>                                         this.mockMvc=MockMvcBuilders.webApplicationContextSetupOuwebAppContextSetup(this.wac).addFilter(this.springSecurityFilterChain).build();
+>>>                                         this.mockMvc=MockMvcBuilders.webApplicationContextSetupOuwebAppContextSetup(this.wac).addFilter(this.springSecurityFilterChain).build(); // si j'ai l'erreur WebApplicationContext is required c'est soit parce que j'ai pas mis @RunWith(Spring... soit j'ai pas mis @WebAppConfiguration
                                             ou
                                             this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build(); // inutile si LINKmockmvc ?
                                             ou
@@ -6684,7 +6686,7 @@ Spring-batch :
                                       pour recuperer un fichier des resources sous src\test\resources\json\request.json properties                                      
                                       String request = new Scanner(new ClassPathResource("json/request.json").getFile()).useDelimiter("\\Z").next(); //voir regexp LINKçeeçeeçregexpçeeçeeç
                                       executer un controlleur : LINKmockmvc pour test unitaire
-                                            MvcResult result = this.mockMvc.perform(get("/show") ou post("/sirh/user"))*** //necessite import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+                                            MvcResult result = this.mockMvc.perform(get("/show") ou post("/sirh/user")*** //necessite import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
                                                                                                .header("Api-key", apiKey)
                                                                                                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                                                                                                .contentType(MediaType.APPLICATION_JSON) ou contentType(MediaType.TEXT_HTML)
@@ -6694,13 +6696,16 @@ Spring-batch :
                                                                                              )***    
                                   			  ).andExpect(status().isOk()) // necessite import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
                                   			  .andExpect(content().contentType("application/json" ou "application/json;charset=UTF-8"))
+                                              .andExpect(header().string("AuthorizationCode", new IsNot<String>(new IsNull<String>()))) (avec hamcrest)
                                   			  .andExpect(jsonPath("$.name").value("Lee"));
                                               .andExpect(jsonPath("nom").value("toto")); // pour verifier que le contenu renvoyé contient ce json. De org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-                                              ou
+                                              .andExpect(header().string("AuthorizationCode","x")
+                                              ou                                
+                                              
                                               .andExpect(status().isForbidden());                
                                               .andDo(print())
                                               .andReturn());  
-                                                String content = result.getResponse() //ou getRequest() ou getModelAndView()
+                                                String content = result.getResponse().getContentAsString(); //ou getRequest() ou getModelAndView()
                                                     .getContentAsString();
                                                 org.junit.Assert.assertNotNull(content);
 
@@ -9938,14 +9943,14 @@ avec sqldeveloppeur sqldeveloper sqldevelopper dans menu outils>surveiller les s
         left join TB0005_ENV_LOT on TB0001_LOT.IDLOT = TB0005_ENV_LOT.IDLOT    
         where  IDTYPEENVIRONNEMENT = 1
          
-pour faire un order by avec des varchar qui contiennent des numeros :
+pour faire un order by avec des varchar qui contiennent des numeros:
       ce truc là marche bien 
             to_number(SCORE,'9999.9') ou to_float mais on dirait que ca marche moins bien
 si j'ai l'erreur java.sql.SQLException: Before start of result set
 		c'est parce que il faut faire resultSet.next() pour te positionner sur le premier enregistrement.
 		(par la suite, cela te permet de te deplacer sur les enregistrements suivants. 
 
-ATTENTION : faire un test avant du genre if(resultSet.hasNext()) 
+ATTENTION: faire un test avant du genre if(resultSet.hasNext()) 
 pour creer un tableau (create)
 		utiliser pour les dates le format datetime
 		
@@ -13058,7 +13063,7 @@ certificats : certificat : formats: types
                               _     prend en charge le stockage des certificats et de tous les certificats du chemin d’accès de certification. (keytool utilise ce format) 
                              | DER X.509 (.cer ou .der) (PKCS #8) La version binaire(!=bas64) de PEM. Tout le monde peut devenir un DER. Ne contiennent "BEGIN CERTIFICATE / END CERTIFICATE"
                              |       Le format DER (Distinguished Encoding Rules) prend en charge le stockage d’un seul certificat. Ce format ne prend pas en charge le stockage de la clé privée ou du chemin d’accès de certification.
-  un.cer .crt peut etre soit | PEM (.pem) format texte. version Base64 de DER Chiffré en Base64 X.509 (commence par ----BEGIN fini par END---) pour en crée une avec mobaxterm faire Conversion>ExportSSH key
+  un.cer .crt peut etre soit | PEM (.pem) format texte. version Base64 de DER Chiffré en Base64 X.509 x509 (commence par ----BEGIN fini par END---) pour en crée une avec mobaxterm faire Conversion>ExportSSH key
   importable dans browser    |       Le format Base64 ASCII prend en charge le stockage d’un seul certificat. Peut etre un csr.
                              |_      Possible y stocker la chaine de certifs et possible la cle privee.
                              KEY (.key) est un PEM ne contenant que la cle privee. il est aussi au format texte Base64 ASCII
@@ -20685,7 +20690,8 @@ tuple :bean couple paire deux :
         depuis java10: 
             var x = new Object() {int a = 1; int b =2;}
             toto = x.a; // toto=1
-        utiliser AbstractMap.SimpleEntry ou bien faire la classe
+        utiliser AbstractMap.SimpleEntry comme ca:new AbstractMap.SimpleEntry(clientId, state); 
+        ou bien faire la classe
         public class Tuple<X, Y>
                   {
                       private X x;
@@ -30894,40 +30900,6 @@ attention si nouveau compte première fois logguer bien d'abord supprimer tous l
         (standard) controllers 190
      
 
-JWT : JSON Web Token  
-    JWS : JSON Web Signature
-    JWE : JSON Web Encryption  
-        <dependency>
-                    <groupId>io.jsonwebtoken</groupId>
-                    <artifactId>jjwt</artifactId>
-                    <version>0.6.0</version>
-                </dependency>
-                
-    voir https://jwt.io/ a gauche c'est juste ce qu'il ya a droite en base64. Je peux m'amuser a changer le secret ça change la signature
-    le tooken n'est pas sensé etre stocké dans les cookies ou dans le localstorage du browser.
-    stateless: pas besoin de session ni de base de donnée avec l'utilisateur dedans. Le token suffit a valider que je suis Laurent !=cookie de session ou le serveur conserve une table des sessions.
-    bonne pratique: ajouter dans le payload sub:9830984,exp:0938098Z: subscribe et expire date shortlife: duree de vie courte.: du coup necesite background authentication a chaque requette: pour ça utiliser librairies.
-                        toujours utiliser secret!= ou cle publique!= par service/serveur
-                        toujours refuser les token avec algo:null. il faut qu'il y ait un algo. UN ALGO ET UN SEUL
-                        LINKjwwijge
-                                    [active ]{true|false} SEUL TRUC OBLIGATOIRE DU JSON. true=valid et actif. false=invalide car a expiré ou n'est pas dans le scope.
-                                    [ scope ] {string} The scope values for the token.
-                                    [ client_id ] {string} The identifier of the OAuth 2.0 client to which the token was issued.
-                                    [ username ] {string} Username of the resource owner who authorised the token.
-                                    [ token_type ] {string} Type of the token, set to Bearer.
-                                    [ exp ] {number} date d'expiration (future) en secondes depuis 1970-01-01T0:0:0Z
-                                    [ iat ] {number} date de délivration (maintenant) en secondes depuis 1970-01-01T0:0:0Z
-                                    [ nbf ] {number} date avant laquelle le token ne fonctionnera pas encore en secondes depuis 1970-01-01T0:0:0Z
-                                    [ sub ] {string} pseudo de l'utilisateur qui s'est connecté
-                                    [ aud ] {string array} Audience values for the token. pour quel service/serveur uniquement sert ce token? Recommandé de toujours le mettre. Has the same semantics as the standard JWT claim name. If the token has an explicit audience only the client_id of the calling resource server will be included; any other identifiers will be omitted.
-                                    [ iss ] {string} The token issuer (the OpenID Provider / Authorisation Server issuer URI). Has the same semantics as the standard JWT claim name.
-                                    [ jti ] {string} Identifier for the token. Has the same semantics as the standard JWT claim name. Always included for identifier-based access tokens and a JWT-secured response.
-                                    [ cnf.x5t#S256 ] {string} Client X.509 certificate confirmation, represented by a SHA-256 thumbprint of the certificate.
-                                    [ act ] {object} The actor, in impersonation and delegation scenarios.
-                                    [ dat ] {object} Optional custom authorisation data.
-     archi: [1Client(Mon Browser)]<----1-------->[1Authentificationservice pour tous: il a 1 clé privée differente pour chaque RessourceService a qui il donne la cle publique correspondante.]
-                                   \___2_______>[xRessourcesServices: chacune a une clé publique.] 
-    algoritmes recommandés: ES256(cle publique pour verifier et cle privee pour signer mais plus rapide que RS256)  puis RS256(cle publique pour verifier et cle privee pour signer) puis HS256(ce n'est que un secret=chaine de caractère a garder privée. Attention danger avec ça car dans ce cas le client pourra hacker: Client    Service1JWTOuJeSuisAdmin,    Service2JWTOuJeNeSUisPasAdmin)
 OAuth : OAuth2 : (https://medium.com/@darutk/diagrams-of-all-the-openid-connect-flows-6968e3990660)
                 (oltu : https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Client+Quickstart et https://github.com/apache/oltu)
 est fait pour gerer que authorization à la base. Pas pour Authentification: On a rajouté openidConnect1.0 par dessus oauth2 : pour l'authentification (https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata)
@@ -30953,32 +30925,31 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
       USER va sur EDSN(Client)
       (facultatif)EDSN presente un bouton pour rediriger vers FID(AuthenticationServer). Si clique 
       EDSN redirige vers FID(facebook par ex) ; // FID et FIDx pourraient être une seule app.
-                Requete http frontchannel:
-                .setResponseType(ResponseType.CODE.toString() ou .... voir LINKResponseType)
-                .setRedirectURI(oauthParams.getRedirectUri())=url de retour vers EDSN(Client)
+                Requete http frontchannel:vers /oauth/authorize
+                .setResponseType(ResponseType.CODE.toString() ou .... voir LINKResponseType) &response_type=code
+                .setRedirectURI(oauthParams.getRedirectUri())=url de retour vers EDSN(Client)  &redirect_uri=https%3A%2F%2Fexample-app.com%2Fauth
                 .setScope(oauthParams.getScope()=cequejeveuxfaire=monprofile(espace)listecontacts x y openid(sijeveuxUtiliserOpenIdConnectPourM'authentifier)
-                .setClientId(oauthParams.getClientId()=idApplicatif)  
+                .setClientId(oauthParams.getClientId()=idApplicatif)  ?client_id=a17c21ed
                 .authorizationLocation(oauthParams.getAuthzEndpoint())
-                .setState(oauthParams.getState()) // juste un texte "tatatoto"
-                // nounce=qsfqmkjg
+                .setState(oauthParams.getState()) // juste un texte "tatatoto" &state=5ca75bd30 = nounce=qsfqmkjg
                 // response_mode=query
                 .buildQueryMessage();
                 return new ModelAndView(new RedirectView(request.getLocationUri()));                            dit le "authorization endpoint"
                                 -------------------------------------frontchannel---------------------->>>>>>>FID(AuthenticationServer) présente le prompt d'authentification. USER s'authentifie
                                                                                                               FID présente le consent Screen/scope. USER approuve. SI User n'approuve pas FID retournera ?error=x&error_description=y
-                                <<<<<<<<<<<<<<<<<<<<<<---------------frontchannel-----------------------------FID retourne AuthorizationCode=code=AuthorizationGrant(Dans les en-tête http.)(+Token_ID si ImpliciteMode(deconseille)(c.a.d LINKResponseType=token ou token_id) + renvoit le meme state qu'il a reçu ("tatatoto")                
-                                                                    url = redirectURI = callback                                                   |_ce dernier est stocker en base en tuple client_id/authorizationCode/state(je crois)   
+                                <<<<<<<<<<<<<<<<<<<<<<---------------frontchannel-----------------------------FID retourne AuthorizationCode=code=AuthorizationGrant(Dans les en-tête header http.) et si ImpliciteMode(deconseille) (c.a.d LINKResponseType=token ou token_id) renvoit en plus Token_ID  + renvoit le meme state qu'il a reçu ("tatatoto")                
+                                                                    url = redirectURI = callback                                                   |_ce dernier est stocke en base en tuple client_id/authorizationCode/state(je crois)   
     
-    EDSN renvoit l’AuthorizationCode + idApplicatif + client_secret à FID--------backchannel------------>>>>>  vers le "token endpoint"
-                                     + GrantType=Authorization_code                                                                   |
+    EDSN renvoit l’AuthorizationCode + idApplicatif(client_id=a17c21ed) + client_secret à FID--------backchannel------->>>>  vers le "token endpoint"
+                                     + GrantType=Authorization_code="code" comme param http                                           |
                                      POST                                                                                             |
                                      Content-Type:application/x-www-form-urlencoded                                                   |
                                      code=l’AuthorizationCode comme ça:                                                               v
                                      &client_id=1234                                                                                  |
                                      &client_secret=456                                                                               |
                                      &grant_type=authorization_code                                                                   |
-                                                                                                              FID vérifie que AuthorizationCode n'a pas été hacké à l'aide du triplet client_secret/client_id/authorizationCode (je crois)
-     valide que le state=state initial<<<<<<<<<<<<<<<<<<<<<<<<<-----------backchannel/frontSiImplicitMode--------- FID renvoit l’AccessToken peut être un JWT(scopé&expirable)(n'envoit que ça si response_type=code)+ state +     Token_ID si OpenID(de OpenIdConnect1.0 c.a.d response_type=openid) =JWTSigné=JWS (AuthenticationServer doit supporter)
+                                                                                                              FID vérifie que AuthorizationCode n'a pas été hacké à l'aide du triplet client_secret/client_id/authorizationCode (je crois)  verifie aussi le client_secret je crois
+     valide que le state=state initial<<<<<<<<<<<<<<<<<<<<<<<<<-----------backchannel/frontSiImplicitMode--------- FID renvoit l’AccessToken peut être un JWT(scopé&expirable)(n'envoit que ça si response_type=code)+ state +     Token_ID =JWTSigné=JWS si OpenID(de OpenIdConnect1.0 c.a.d response_type=openid)(AuthenticationServer doit supporter) + optionellement refreshToken
                                                                HTTPS-SSL si Bearer                                        expires_in=xms(stokéDsDBSaufSi) +TokenType=      				             				             Signature avec SecretKey 
                                                                                                                           stocké en base sauf si durée            bearer                                                            ou
                                                                                                                           vie tres courte                                                                                       Signature avec paire de clé assymetriques (donc clé privée)
@@ -31085,7 +31056,7 @@ un OpenIdProvider doit renvoyer ces infos via l'URL unDomaine.com/.well-known/op
         private String[] claim_types_supported = { "normal" }; 
     "claims_supported":[xxx,yyy,zzzz]              
         RECOMMENDED. JSON array containing a list of the Claim Names of the Claims that the OpenID Provider MAY be able to supply values for. Note that for privacy or other reasons, this might not be an exhaustive list.
-        private String[] claims_supported = { "sub", "exp", "nbf", "iat", "iss", "acr", "name", "given_name", "family_name", "email","email_verified", "typ"}; 
+        private String[] claims_supported = { "sub", "exp", "nbf", "iat", "iss", "acr", "name", "given_name", "family_name", "email","email_verified", "typ"}; LINKjwtclaims 
     "service_documentation":xxx             
         OPTIONAL. URL of a page containing human-readable information that developers might want or need to know when using the OpenID Provider. In particular, if the OpenID Provider does not support Dynamic Client Registration, then information on how to register Clients needs to be provided in this documentation. 
     "claims_locales_supported":xxx              
@@ -31111,6 +31082,56 @@ un OpenIdProvider doit renvoyer ces infos via l'URL unDomaine.com/.well-known/op
         private String[] code_challenge_methods_supported = { "plain", "S256" };
     "tls_client_certificate_bound_access_tokens": pas vu dans la doc
         private Boolean tls_client_certificate_bound_access_tokens = true;    
+
+JWT : JSON Web Token  
+    JWS : JSON Web Signature
+    JWE : JSON Web Encryption  
+        <dependency>
+                    <groupId>io.jsonwebtoken</groupId>
+                    <artifactId>jjwt</artifactId>
+                    <version>0.6.0</version>
+                </dependency>
+                verifier qu'un token jwt est digne de confiance avec cette librairie:
+                       jws = Jwts.parser()
+                    .setSigningKey(key)
+                    .parseClaimsJws(stringJson);
+                       // on peut faire confiance
+                    } catch (JwtException ex) {     
+                    // On ne peut pas faire confiance
+                    }           
+    voir https://jwt.io/ a gauche c'est juste ce qu'il ya a droite en base64. Je peux m'amuser a changer le secret ça change la signature
+    le tooken n'est pas sensé etre stocké dans les cookies ou dans le localstorage du browser.
+    stateless: pas besoin de session ni de base de donnée avec l'utilisateur dedans. Le token suffit a valider que je suis Laurent !=cookie de session ou le serveur conserve une table des sessions.
+    bonne pratique: ajouter dans le payload sub:9830984,exp:0938098Z: subscribe et expire date shortlife: duree de vie courte.: du coup necesite background authentication a chaque requette: pour ça utiliser librairies.
+                        toujours utiliser secret!= ou cle publique!= par service/serveur
+                        toujours refuser les token avec algo:null. il faut qu'il y ait un algo. UN ALGO ET UN SEUL
+                        LINKjwwijge
+                        {// header
+                            "alg": "HS256",
+                            "typ": "JWT"
+                         }
+                        {//payload
+                          "active":{true|false} SEUL TRUC OBLIGATOIRE DU JSON. true=valid et actif. false=invalide car a expiré ou n'est pas dans le scope.
+                          "scope": {string} The scope values for the token.
+                          "client_id": {string} The identifier of the OAuth 2.0 client to which the token was issued.
+                          "username": {string} Username of the resource owner who authorised the token.
+                          "token_type": {string} Type of the token, set to Bearer.
+                         DEBUT--font partie du claim: voir LINKjwtclaims 
+                          "iat": {number} date de délivration (maintenant) en secondes depuis 1970-01-01T0:0:0Z
+                          "nbf": {number} date avant laquelle le token ne fonctionnera pas encore en secondes depuis 1970-01-01T0:0:0Z
+                          "exp": {number} date d'expiration (future) en secondes depuis 1970-01-01T0:0:0Z
+                          "sub": {string} pseudo de l'utilisateur qui s'est connecté
+                          "aud": {string array} Audience values for the token. pour quel service/serveur uniquement sert ce token? Recommandé de toujours le mettre. Has the same semantics as the standard JWT claim name. If the token has an explicit audience only the client_id of the calling resource server will be included; any other identifiers will be omitted.
+                          "iss": {string} The token issuer (the OpenID Provider / Authorisation Server issuer URI). Has the same semantics as the standard JWT claim name.
+                          "jti": {string} Identifier for the token. Has the same semantics as the standard JWT claim name. Always included for identifier-based access tokens and a JWT-secured response.
+                         FIN--font partie du claim
+                          "cnf.x5t#S256": {string} Client X.509 certificate confirmation, represented by a SHA-256 thumbprint of the certificate.
+                          "act": {object} The actor, in impersonation and delegation scenarios.
+                          "dat": {object} Optional custom authorisation data.
+                        }
+     archi: [1Client(Mon Browser)]<----1-------->[1Authentificationservice pour tous: il a 1 clé privée differente pour chaque RessourceService a qui il donne la cle publique correspondante.]
+                                   \___2_______>[xRessourcesServices: chacune a une clé publique.] 
+    algoritmes recommandés: ES256(cle publique pour verifier et cle privee pour signer mais plus rapide que RS256)  puis RS256(cle publique pour verifier et cle privee pour signer) puis HS256(ce n'est que un secret=chaine de caractère a garder privée. Attention danger avec ça car dans ce cas le client pourra hacker: Client    Service1JWTOuJeSuisAdmin,    Service2JWTOuJeNeSUisPasAdmin)
 
 Kerberos : 
     utilisation de d'apache mod_auth_kerb: 
@@ -31164,7 +31185,8 @@ SAML :   A LIRE: https://research.aurainfosec.io/bypassing-saml20-SSO/
 
     superbes outils: https://www.samltool.com/online_tools.php (onelogin) 
     exemples d'assertions saml: https://www.samltool.com/generic_sso_res.php
-    pour decoder encoder une requete saml:(base64) online
+    pour decoder encoder une requete saml:(base64) online:
+            https://www.base64encode.net/
     SAMLResponse=PHNhbWxwOlJlc3BvbnNlIElEPSJfM2NiNzg3YTItNTg0Mi00OTdiLWEwZmQtNDNlZWFjNWNlYjMyIiBWZXJzaW9uPSIyLjAiIElzc3VlSW5zdGFudD0iMjAxNy0wOS0xOFQwOToyODowMi44NDFaIiBEZXN0aW5hdGlvbj0iaHR0cHM6Ly9xYS1hcHByZW50aXMtYXV0ZXVpbC5zb3ByYWhyb25saW5lLmNvbS9ocmEtc3BhY2Uvc2FtbC1sYW5kaW5nIiBDb25zZW50PSJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6Y29uc2VudDp1bnNwZWNpZmllZCIgSW5SZXNwb25zZVRvPSJhZmI4NDA4ZGQ5ZGdjMWE0YjVoOWg0YmppNmIyaWkiIHhtbG5zOnNhbWxwPSJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6cHJvdG9jb2wiPjxJc3N1ZXIgeG1sbnM9InVybjpvYXNpczpuYW1lczp0YzpTQU1MOjIuMDphc3NlcnRpb24iPmh0dHA6Ly9qYXVuZS5hcHByZW50aXMtYXV0ZXVpbC5vcmcvYWRmcy9zZXJ2aWNlcy90cnVzdDwvSXNzdWVyPjxzYW1scDpTdGF0dXM%2BPHNhbWxwOlN0YXR1c0NvZGUgVmFsdWU9InVybjpvYXNpczpuYW1lczp0YzpTQU1MOjIuMDpzdGF0dXM6U3VjY2VzcyIgLz48L3NhbWxwOlN0YXR1cz48QXNzZXJ0aW9uIElEPSJfYThiNTA2M2EtZTBhNi00YWFlLWE0MGItZTRlZDY4MmZjZGZjIiBJc3N1ZUluc3RhbnQ9IjIwMTctMDktMThUMDk6Mjg6MDIuODQxWiIgVmVyc2lvbj0iMi4wIiB4bWxucz0idXJuOm9hc2lzOm5hbWVzOnRjOlNBTUw6Mi4wOmFzc2VydGlvbiI%2BPElzc3Vlcj5odHRwOi8vamF1bmUuYXBwcmVudGlzLWF1dGV1aWwub3JnL2FkZnMvc2VydmljZXMvdHJ1c3Q8L0lzc3Vlcj48ZHM6U2lnbmF0dXJlIHhtbG5zOmRzPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwLzA5L3htbGRzaWcjIj48ZHM6U2lnbmVkSW5mbz48ZHM6Q2Fub25pY2FsaXphdGlvbk1ldGhvZCBBbGdvcml0aG09Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvMTAveG1sLWV4Yy1jMTRuIyIgLz48ZHM6U2lnbmF0dXJlTWV0aG9kIEFsZ29yaXRobT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS8wNC94bWxkc2lnLW1vcmUjcnNhLXNoYTI1NiIgLz48ZHM6UmVmZXJlbmNlIFVSST0iI19hOGI1MDYzYS1lMGE2LTRhYWUtYTQwYi1lNGVkNjgyZmNkZmMiPjxkczpUcmFuc2Zvcm1zPjxkczpUcmFuc2Zvcm0gQWxnb3JpdGhtPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwLzA5L3htbGRzaWcjZW52ZWxvcGVkLXNpZ25hdHVyZSIgLz48ZHM6VHJhbnNmb3JtIEFsZ29yaXRobT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS8xMC94bWwtZXhjLWMxNG4jIiAvPjwvZHM6VHJhbnNmb3Jtcz48ZHM6RGlnZXN0TWV0aG9kIEFsZ29yaXRobT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS8wNC94bWxlbmMjc2hhMjU2IiAvPjxkczpEaWdlc3RWYWx1ZT55eUxoM09LZHBZNGZJWU9ySGxuSGFjTEg4MjA4K0E0cjVDS2N2MzAwbDdVPTwvZHM6RGlnZXN0VmFsdWU%2BPC9kczpSZWZlcmVuY2U%2BPC9kczpTaWduZWRJbmZvPjxkczpTaWduYXR1cmVWYWx1ZT5LNjcxekJEeUNkNElQZEVKM2g3NXdBK0hoTDY2ZkxaUDZCaGYxVU5YWHVYTkFHcWRGSm10YlUyVTNtQzBGRlVVNkJCR0hPU1Voa1lla3pHdDJGdVZodHErZVd4SWZoUzVZSkRGS0lBdGFNU3c4Zk45a1dTQnltK3I0bzFqRm9wd0NKeHlVRmtUMFhINHo3UEJVcHZDRFhWZlRlSXU4UmlNdWkyYUxHSEZkODhIRHZ6TDBwOU1LWVh0MmpkZFN1YWtNUERoK2tXNFpQU0hzUUQxUTVRMndVdUpIZ3ZqSGRFN1BzTWlnNmFEUHZOQU5XbjM2aHg2YVc3UkQ0WGRJa2thR0hTMWRUbm5PeUNydEpadWtGeXJVeC9pclk4L1ZDbTF4R0s3RTBqZThEdTRhSVE4WVBkK3VQQ0Jjd0tjRzE2Q1RhNi8rN0lLRGdjS3kzVE54ZjlWUWc9PTwvZHM6U2lnbmF0dXJlVmFsdWU%2BPEtleUluZm8geG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvMDkveG1sZHNpZyMiPjxkczpYNTA5RGF0YT48ZHM6WDUwOUNlcnRpZmljYXRlPk1JSUM4akNDQWRxZ0F3SUJBZ0lRUW5Sa2l2WW5nN3RDZUdRdTNWODRXREFOQmdrcWhraUc5dzBCQVFzRkFEQTFNVE13TVFZRFZRUURFeXBCUkVaVElGTnBaMjVwYm1jZ0xTQnFZWFZ1WlM1aGNIQnlaVzUwYVhNdFlYVjBaWFZwYkM1dmNtY3dIaGNOTVRjd09UQXhNREl3TVRFNFdoY05NVGd3T1RBeE1ESXdNVEU0V2pBMU1UTXdNUVlEVlFRREV5cEJSRVpUSUZOcFoyNXBibWNnTFNCcVlYVnVaUzVoY0hCeVpXNTBhWE10WVhWMFpYVnBiQzV2Y21jd2dnRWlNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUJEd0F3Z2dFS0FvSUJBUUNpTVNjZ2o0NGI2ZWpEV0UreEtZSXFNWlYwOU1vMEdtcGxXQWtnTHpJWmRac0Z6cmhvUm9GUWI1MXMwNU83QmJOVG0zTitsakprSy84NzZ1USttR2R0N3doMFVvTllSazRmZFB0QWpva2RBcFhCM3E1RUhVRi8wbzZ1RzhtV1pCc0E0WlllcUpOQkpVaDYvR1U5MXVGaVVqS3l5eDhkUWdENm5CeVZWamtWeGtOYWVocDhob0pnNFNpL3pVWnYzKzk2blhnUGJxTmRGU1NsVk9Kczk4WkJGNW1lNlVBZ3ltMFRBWUdVcy95TnhzamxkUUx6dWdFdExhUEp5b3c5bndQWXRrNzRRZHZybHpQSWNXYmJrYW1lYUhDWndUbnRmOVZsZkNGcUtSUjV5S2RUN2p0VnJ0dmZCNHFJOEtZV0lPcENxVEM5ODdqVzFhdE5ERmE3Y2NhVEFnTUJBQUV3RFFZSktvWklodmNOQVFFTEJRQURnZ0VCQUJqNjEwMVAzdnN1ZlBEVHYxNW9VcTduc3ZIbjRDUnJtSnBrOTZZYjIrSEJYN2VZakFReXkyRkhNSWdHQTNMZXhVaVlFWVdVeGcyY2VBSlV2OFZBZmN5U3ZEZ0xFS0JDM3I2aXJWSXppVlk5b1JSRGI4VUdRSHlkaE0xbElEbWYzMzlacHB2VFBnd1hiOEgzbk45Q2dQWHdWMmhaenRHRkNKRGdWcXBNbytWcVZ3V1liMDUxMXRzVVNldHp2RTJNR2JLdTVDaGZFVEFCaGJIS1ZLQi9wd1M4MWxZeHZtTFhCTmpxVTlDYld4amlhaWJhU0oyVk5IdEpFYjFQTlJJUUViMEhZMkgrUFhqU0ppaXY1aDZiMDk5cjRRNkFLV2ZCMkliVVZZYkVOUUFqdTU4cFVRdDFoZzdUKy9YaWZ1NFp2WWMyNWNMa3lTZmZUb2N2SFh5Q1pXQT08L2RzOlg1MDlDZXJ0aWZpY2F0ZT48L2RzOlg1MDlEYXRhPjwvS2V5SW5mbz48L2RzOlNpZ25hdHVyZT48U3ViamVjdD48TmFtZUlEPmhlcnZlLmNoZXJlbDwvTmFtZUlEPjxTdWJqZWN0Q29uZmlybWF0aW9u
 1ldGhvZD0idXJuOm9hc2lzOm5hbWVzOnRjOlNBTUw6Mi4wOmNtOmJlYXJlciI%2BPFN1YmplY3RDb25maXJtYXRpb25EYXRhIEluUmVzcG9uc2VUbz0iYWZiODQwOGRkOWRnYzFhNGI1aDloNGJqaTZiMmlpIiBOb3RPbk9yQWZ0ZXI9IjIwMTctMDktMThUMDk6MzM6MDIuODQxWiIgUmVjaXBpZW50PSJodHRwczovL3FhLWFwcHJlbnRpcy1hdXRldWlsLnNvcHJhaHJvbmxpbmUuY29tL2hyYS1zcGFjZS9zYW1sLWxhbmRpbmciIC8%2BPC9TdWJqZWN0Q29uZmlybWF0aW9uPjwvU3ViamVjdD48Q29uZGl0aW9ucyBOb3RCZWZvcmU9IjIwMTctMDktMThUMDk6Mjg6MDIuODQxWiIgTm90T25PckFmdGVyPSIyMDE3LTA5LTE4VDEwOjI4OjAyLjg0MVoiPjxBdWRpZW5jZVJlc3RyaWN0aW9uPjxBdWRpZW5jZT5IUkFTLVNQLVFBPC9BdWRpZW5jZT48L0F1ZGllbmNlUmVzdHJpY3Rpb24%2BPC9Db25kaXRpb25zPjxBdXRoblN0YXRlbWVudCBBdXRobkluc3RhbnQ9IjIwMTctMDktMThUMDk6MjI6MjEuMTY3WiIgU2Vzc2lvbkluZGV4PSJfYThiNTA2M2EtZTBhNi00YWFlLWE0MGItZTRlZDY4MmZjZGZjIj48QXV0aG5Db250ZXh0PjxBdXRobkNvbnRleHRDbGFzc1JlZj51cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6YWM6Y2xhc3NlczpQYXNzd29yZFByb3RlY3RlZFRyYW5zcG9ydDwvQXV0aG5Db250ZXh0Q2xhc3NSZWY%2BPC9BdXRobkNvbnRleHQ%2BPC9BdXRoblN0YXRlbWVudD48L0Fzc2VydGlvbj48L3NhbWxwOlJlc3BvbnNlPg%3D%3D 
           https://www.ssocircle.com/en/1203/saml-request-online-decoder-encoder/
