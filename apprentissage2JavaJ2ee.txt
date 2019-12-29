@@ -901,6 +901,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
                 on peut aussi faire git commit --amend // pour redéfinir le dernier commit sans besoin de l'annuler
       git reset //LINKresetgit annuler le dernier add
       git reset --hard versionDuTag: ce tag revient dans le mon HEAD/branch + repertoire
+      git reset --hard // sans rien: pour annuler un pull qui vient d'etre fait
       git rebase //TROP GALERE!!!! ne pas utiliser avant une formation
       git rebase commitquinebougepasEtQuiVaRecevoirLaSuiteDeLHistoire commitQuiVaMettreSonHistoireALaSuiteDuPremierArgument // a la toute fin faire rebase DernierCommit master pour que le master se remette au bout
       git rebase -i identifiantCommitDuPassé // ouvre un editeur et je peux manipuler mes commits du passer pas a pas un par un jusqu'a aujourd'hui. J'ai du utiliser ca pour supprimer les indexs de fichiers trop gros qui m'empechaient de pusher sur le repo distant. 
@@ -26603,6 +26604,10 @@ tester le javascript
         les fichiers de tests doivent s'appeler xxxx.test.js            
         	    npm install --save-dev jest //--save-dest voir npm.
                     (./node_modules/.bin/)jest --init // il crée le fichier jest.config.js
+				dedans je peux mettre des variables globales pour tous les tests:
+						globals: {
+						   "pageContextRequestContextPath":"./"
+						   },
                  faire ca pour que jest comprenne ES6 imports exports
                     npm i --save-dev babel-jest @babel/core @babel/preset-env
                     dans un fichier babel.config.js mettre
@@ -26621,7 +26626,9 @@ tester le javascript
                                           
                     les fichiers de tests doivent s'appeler xxxx.test.js
                     dans xxxx.test.js:
-                        dedans on peut utiliser document: document.createElement('div' etc etc... c'est un dom virtuel
+                     dedans on peut utiliser document: var audioelt=document.createElement('div' etc etc... c'est un dom virtuel. mais pour que ça marche mettre dans jest.config.js testEnvironment: "jsdom",
+							puis document.body.appendChild(audioelt);
+			import {lecteurtimeupdate} from '../(toujours mettre au moins un "./")../webapp/js/memoclap-lecteurtimeupdate.js';
                             beforeAll(() => {
                             return initializeCityDatabase();
                           });
@@ -26630,12 +26637,17 @@ tester le javascript
                           });
                           describe('nom du test suite', () => {
                               	it(.skip pour ignorer)('nom du test', () => {
+			ou 	
+				test('nom du test,async()=>{
+					impossible de definir une variable globale pour un test. il faut raisonner en modules. et les modules ont leurs variables
+						console.log("xxx possible");
                               		    expect(bidule)(.not).toEqual({one: 1, two: 2}); //.not est facultatif. // toEqual regarde l'egalité en profondeur
                                                    toBe                        //toBe egalité simple
                                                    toBeNull
                                                    toBeUndefined!=toBeDefined
-                                                   toBeTruthy // equivalent de isTrue
-                                                   toBeFalsy // equivalent de isFalse
+						   toBeEqual // teste egalitee entre deux objets
+                                                   toBeTruthy() // equivalent de isTrue
+                                                   toBeFalsy() // equivalent de isFalse
                                                    toContain // regarde si une liste contient un truc
                                   })
                               })
@@ -26723,9 +26735,10 @@ ES6 :modules: une page html peut importer une page html qui importe aussi: le br
             mais 
             <script type="module" src="... 
         dans main.js: 
-              import {toto, // toujours mettre les accolades meme si il y a qu'un seul objet
+              import {toto, // toujours mettre les accolades meme si il y a qu'un seul objet. J'importe que ces deux objets de xxx.js qui doivent être exportes dans xxx.js
                       blabla
                      } from "./path/xxx.js"; // autant mettre le ".js" c'est normalement supporté partout
+		import * as memoclap from './memoclap.js'; //j'importe tous les exports de memoclap et ici ils sont prefixes par "memoclap."
         dans path/xxx.js:  
             export var toto =.... 
             export function() blabla(arg){...}
