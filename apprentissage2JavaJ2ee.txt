@@ -943,6 +943,8 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git stash pop applique le dernier stash de la liste en le mergeant avec ma branche en cours et supprime ce stash de la liste.
       git stash apply <idretourné> par la commande ci dessus: stash@(2) par exemple // applique à ma branche ce stash en le mergant avec ma branche mais ne le supprime pas de la liste
       git stash clear // supprime tous mes stash! attention.
+      si j'ai erreur Updates were rejected because the tip of your current branch is behind et que je veux quand meme pusher:
+            je peux faire git push -f      
     envoyer/recuperer des projets entre mon local et le github:
       fork: fait une copie de tout un projet (branches incluses) dans mon github. Je peux ensuite travailler dessus dans github ou en local(cloner) et à la fin je soumet mes modifs: pull request= merge request mergerequest. si accepte: ça fetch+merge+commit tout mon fork(je crois). SI il y en a plusieurs qui se suivent et que je dois accepter, ne prendre que le dernier et ignorer les precednets (je pense) car le dernier mergerequest resume tous les autres d'avant.
       binder avec un repository distant: LINKenvoiyer
@@ -10627,59 +10629,6 @@ kafka : A_COMPLETER voir aussi https://github.com/akka/alpakka-kafka qui fait de
         producer3/------->topic4                "
         logComppaction sert à convertir automatiquement les doublons-triplons... en un seul: gain de place dans le disque
         producers ont 3modes d'ecrtutre (async: donees pas garanties reçues. commited to leader: confirmation reception par le partition leader. commited to leader & quorum: confirmation reception par leader + une autre partition)
-
-scripts bat :
-    ATTENTION pour les variables 
-          Generations of batch file programmers have tripped over this one. Here it goes.
-          When the command processor interprets a batch file, it does it like this:
-          - Read a line of code.
-          - Perform whatever variable substitution is necessary.
-          - Execute it.
-          - Read the next line of code.
-          - etc.
-          And here comes the catch: When you use parenthesis in your code then everything within the parenthesis counts as one single line 
-exemple de script .bat LINKDevopslksjqgfvmlka
-@echo off
-  set /P version=Version ?
-  echo %version%
-rem ljsdflsdkjf// commentaire
-Set M3="C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2018.2.3\plugins\maven\lib\maven3\bin" (ne me demande pas pourquoi pour les guillemets!! c pas pareil que la ligne en dessous. Mais ça marche)
-Set "JAVA_HOME=C:\Program Files\Java\jdk1.8.0_181\jre"
-echo %M3%
-echo %JAVA_HOME%
-call %M3%\mvn versions:set // sur des commandes maven pour ne pas que le bat s'interrompe il faut mettre call avant (mais dans certains cas on dirait que ca marche sans avoir besoin de mettre call)
-pause
-echo PAE INT > actuel.txt
-set /P continue=Commit pulled and tested OK ? Y N   // prompt qui dit "Commit pulled and tested OK ? Y N" et set dans la variable continue le resultat 
-if %continue%==Y (              // if commence: parenthese = accolades
-                                if avec parenthese est traite en un seul bloc sans s'interrompre donc si on veut que les varaiables soient raffraichies: faire le if sur une seule ligne if..... goto xxxx et le flag goto c'est ":xxxx    "
-set /P version=Version ?
-%M3%\mvn versions:set
-echo %version%
-%M3%\mvn clean
-%M3%\mvn compile
-%M3%\mvn package
-if [[ "$?" -ne 0 ]] ; then // $? c'est le code que renvoit le programme precedent dernier code. -ne c'est pour "not equal" donc ici si code retour different de zero alors... si maven echoue rate erreur ko les tests interruption de la livraison devops 
-  echo 'could not perform tests'; exit $rc      // quitte le programme. exit $rc
-fi
-git add src
-git add pom.xml
-git add *.zip
-rem git commit -m "Automatic delivery of %version%"
-Set WEB-INF-PAE=D:\workspace\paeWeb\WebContent\WEB-INF
-echo ren %WEB-INF-PAE%\ibm-web-ext.xmi
-ren %WEB-INF-PAE%\ibm-web-ext.xmi dev_ibm-web-ext.xmi // pour renommer rename
-ren %WEB-INF-PAE%\_integr.ibm-web-ext.xmi ibm-web-ext.xmi
-echo ren %WEB-INF-PAE%\web.xml
-ren %WEB-INF-PAE%\web.xml dev_web.xml
-ren %WEB-INF-PAE%\_integr.web.xml web.xml
-echo ren %WEB-INF-PAE%\classes\log4j.properties.template
-ren %WEB-INF-PAE%\classes\log4j.properties.template _dev.log4j.properties.template
-ren %WEB-INF-PAE%\classes\_integr.log4j.properties.template log4j.properties.template
-) else (echo "exit")
-
-------------------
-
 
 
 MAVEN : super pour trouver un maven à partir de package ou meme classe: https://search.maven.org/
@@ -20419,6 +20368,11 @@ pour faire une expression reguliere: regexp:
 		String str=blabla;
 		if (str.matches("[^|]*[|][^|]*[|][^|]*[|][^|]*[|]")) etc etc... ici on cherche une chaine qui ressebmble à lqjsdf|lksdfj|sjklhf|kljsdf|
         pour remplacer dans les groupes qsdf(regexp1)qsdfl(regexp2)kljs on fait $1, $2...
+        pour remplacer une minuscule par une majuscule :
+            au depart j'ai blablazrooooo
+            champ TOREPLACE:blabla(.)rooooo 
+            champ BY: blabla\U$1rooooo
+                ce qui donne blablaZrooooo
 		il y a aussi une api qui s'appelle Perl5Compiler (org.apache.oro.text.regex.Perl5Compiler;)... c'est peut etre bien?
 		regexp majuscules avec accents: utiliser \\p{javaUpperCase}
       exemple: 
@@ -26706,20 +26660,30 @@ tester le javascript
                     expect(unobjetdom.text()).toEqual("blabli");
         pour executer ce test: 
           >testem ci --launch PhantomJS(obsolete)
-ES6 :modules: une page html peut importer une page html qui importe aussi: le browser gère les doublons si yen a // pas implemente dans firefox et safari?
+ES6 :modules: une page html/js peut importer une page html/js qui importe aussi: le browser gère les doublons si yen a // pas implemente dans firefox et safari?
     pour les tester il faut aubligatoirement un serveur: peux pas jouer en local
         Top pour faire du singleResponsabilityPrinciple
         pour que ca marche ne plus mettre 
             <script type="text/javascript" src="... 
             mais 
             <script type="module" src="... 
-        dans main.js: 
-              import {toto,
-                      blabla
-                     } from "./path/xxx.js"; // autant mettre le ".js" c'est normalement supporté partout
+        dans main.js: // attention toutes les variables primitives exportees sont readonly. Faire des setters si je veux les modifier 
+              import {toto,blabla} from "./path/xxx.js";                          AAA  // autant mettre le ".js" c'est normalement supporté partout
+             import {projectsMemeNom} from './js/memoclap-projectsFieldsets.js';  AAA                     
+             import projects from './js/memoclap-projectsFieldsets.js';    DDD  //du coup j'appellerais projects.unTrucDefiniPlusHaut.uneDeSesMethodes()
+             import UnComponentAttentionMemeNom from './js/alertmsg.js';    CCC
+             import * as bidule from './js/memoclap-projectsFieldsets.js'; BBB et CCC
+             on peut faire new unmodule.UnObjetDuModule();                     
         dans path/xxx.js:  
-            export var toto =.... 
-            export function() blabla(arg){...}
+            Exporter plusieurs trucs
+              export var projectsMemeNom =....                                          AAA et BBB   
+              export function() projectsMemeNom(arg){...}                               AAA et BBB
+            Exporter qu'un truc
+              export default class(ne marche que avec class) UnComponentAttentionMemeNom{....}                   CCC
+              export default {unTrucDefiniPlusHaut}; // a mettre a la fin du fichier   DDD
+         pour que les onclick html fonctionnent je dois pointer la methode du module que je veux depuis window: ca rend le module global visible par tous.
+                    window.setModeMenu=memoclap.setModeMenu; // ainsi je peux faire onclick="setModeMenu('hihi')"; mais attention la methode est totallement extraite de son contexte si elle est dans un objet
+                    window.memoclap=memoclap; // je peux faire onclick="memoclap.setModeMenu() tester aussi memoclap.memoclap.setModeMenu()" 
   avant dans un .js charger en ajax un autre .js et faire eval sur le retour pour executer. executer un javascript dans un tag script renvoyé par le serveur. ATTENTION impossible de eval de nouvelles fonctions elles ne seront pas visibles par le browser pour execution depuis la page principale
   avant: dans un .html creer un src et l'ajouter au document          
   avant: methode ancienne: <link rel="import" href="laurent-moncompoentn1.html">              
@@ -28919,6 +28883,7 @@ requirejs : require.js : require : approximatif: a bien améliorer
          </script>         
   
 webcomponent :webcomponents : web-components : web components : custom elements : custom-elements :customelements : customelement :
+        si j'ai erreur operation is not supported ca equivaut à indexPro:1 Uncaught DOMException: Failed to execute 'define' on 'CustomElementRegistry': the name "memoclap-progressionaudiorepere" has already been used with this registry
 https://developers.google.com/web/fundamentals/web-components/customelements#attrchanges
  au final dans mon html j'aurais:
  <script src="laurent-moncomponent1.js"/>  
@@ -29306,11 +29271,6 @@ vuejs :  https://vuejs.org/v2/guide/
 Typescript :
     tsc fichier.ts // commpile en .js
       Voici une documentation à jour sur l’utilisation de TypeScript au sein d’un projet 4YOU: 
-      http://hra-wiki.ptx.fr.sopra/display/NUXE/Utilisation+de+TypeScript
-      http://hra-wiki.ptx.fr.sopra/display/NUXE/Le+widget+Form
-      Cette documentation decrit la procedure d’installation ainsi que la configuration necessaire, via un code d’exemple.
-      
-      	CHANGEMENTS
       Au sein du widget Form, il est desormais possible de debugger son code dans le navigateur directement au format TypeScript 
       (debugger du code JavaScript transpile, utilisant les generateurs, decorateurs, … n’est pas chose facile !).
       Il n’y a rien à faire de special: la configuration TypeScript du composant à ete mise à jour afin de supporter le source mapping.
@@ -31921,6 +31881,57 @@ pour recuperer les rôles de l'utilisateur qui s'est connecté côté IDP:
         }
         }
         }                
+scripts bat : windows :
+    ATTENTION pour les variables 
+          Generations of batch file programmers have tripped over this one. Here it goes.
+          When the command processor interprets a batch file, it does it like this:
+          - Read a line of code.
+          - Perform whatever variable substitution is necessary.
+          - Execute it.
+          - Read the next line of code.
+          - etc.
+          And here comes the catch: When you use parenthesis in your code then everything within the parenthesis counts as one single line 
+exemple de script .bat LINKDevopslksjqgfvmlka
+@echo off
+  set /P version=Version ?
+  echo %version%
+rem ljsdflsdkjf// commentaire
+Set M3="C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2018.2.3\plugins\maven\lib\maven3\bin" (ne me demande pas pourquoi pour les guillemets!! c pas pareil que la ligne en dessous. Mais ça marche)
+Set "JAVA_HOME=C:\Program Files\Java\jdk1.8.0_181\jre"
+echo %M3%
+echo %JAVA_HOME%
+call %M3%\mvn versions:set // sur des commandes maven pour ne pas que le bat s'interrompe il faut mettre call avant (mais dans certains cas on dirait que ca marche sans avoir besoin de mettre call)
+pause
+echo PAE INT > actuel.txt
+set /P continue=Commit pulled and tested OK ? Y N   // prompt qui dit "Commit pulled and tested OK ? Y N" et set dans la variable continue le resultat 
+if %continue%==Y (              // if commence: parenthese = accolades
+                                if avec parenthese est traite en un seul bloc sans s'interrompre donc si on veut que les varaiables soient raffraichies: faire le if sur une seule ligne if..... goto xxxx et le flag goto c'est ":xxxx    "
+set /P version=Version ?
+%M3%\mvn versions:set
+echo %version%
+%M3%\mvn clean
+%M3%\mvn compile
+%M3%\mvn package
+if [[ "$?" -ne 0 ]] ; then // $? c'est le code que renvoit le programme precedent dernier code. -ne c'est pour "not equal" donc ici si code retour different de zero alors... si maven echoue rate erreur ko les tests interruption de la livraison devops 
+  echo 'could not perform tests'; exit $rc      // quitte le programme. exit $rc
+fi
+git add src
+git add pom.xml
+git add *.zip
+rem git commit -m "Automatic delivery of %version%"
+Set WEB-INF-PAE=D:\workspace\paeWeb\WebContent\WEB-INF
+echo ren %WEB-INF-PAE%\ibm-web-ext.xmi
+ren %WEB-INF-PAE%\ibm-web-ext.xmi dev_ibm-web-ext.xmi // pour renommer rename
+ren %WEB-INF-PAE%\_integr.ibm-web-ext.xmi ibm-web-ext.xmi
+echo ren %WEB-INF-PAE%\web.xml
+ren %WEB-INF-PAE%\web.xml dev_web.xml
+ren %WEB-INF-PAE%\_integr.web.xml web.xml
+echo ren %WEB-INF-PAE%\classes\log4j.properties.template
+ren %WEB-INF-PAE%\classes\log4j.properties.template _dev.log4j.properties.template
+ren %WEB-INF-PAE%\classes\_integr.log4j.properties.template log4j.properties.template
+) else (echo "exit")
+
+------------------
         
 windows : (commande dos :)
 pour effacer supprimer delete un fichier:
@@ -32082,6 +32093,8 @@ pour avoir la liste des taches (control alt suppr; ctrl alt suppr):
   lancer cmd puis tapper taskmgr
   pour touch metre à jour la date des fichiers *.jsp à la date du jour: 
 	         COPY /B *.jsp +,,
+    ecrire dans un fichier (ca fait aussi un touch)
+            @echo 245.67>> target\memoclap.front\.reload
   pour supprimer de facon recursive des fichiers avec une expression reguliere
     de là ou je suis il supprime: 
         del /s *.MF (il supprime tous les fichiers *.MF recursivement) /Q pour qu'il ne demande pas de confirmation
@@ -32090,6 +32103,8 @@ pour avoir la liste des taches (control alt suppr; ctrl alt suppr):
       pour copier copy le nom de plusieurs fichiers: nom des fichiers en dos
           aller en commande dos
                 copy ..\MemOclapFront\target\memoclap.front.war C:\Users\lduverge\apache-tomee-plume-8.0.0\webapps\
+        copier de facon recursive : 
+                xcopy src\main\webapp\js\* target\memoclap.front\js\ /s /e /Y  // /Y pour ne pas qu'il prompt: forcer
       raccourcis clavier: http://www.infoprat.net/astuces/windows9x/astuces/raccourcis_015.php
       demarrer une application de la barre des taches: Windows + T
       Acceder à une application: Alt+Tab puis les fleches
