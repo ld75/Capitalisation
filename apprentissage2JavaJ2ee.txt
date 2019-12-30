@@ -899,10 +899,11 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
           git difftool plutot qu'avec git diff
       git diff-tree --no-commit-id --name-only -r <numero de commit> // voir la liste des fichiers commités  d'un commit 
       git reset HEAD .OuNomFichier ou *.extensionfichier // opposé inverse de add pour retirer ce fichier de l'index added(voir LINKresetgit et Linkcheckout) annuler undo un delete MAIS: si j'ai déjà pushé alors faire:LINKrmgit 
-      git reset HEAD~ annule/undo le dernier commit. Ne pas le faire après que mon dernier commit ait ete pushe et merge avec l'origin car cela desynchronise mon local du distant. SI je veux quand même le faire par necessite alors faire git reverT: ça recommiT un snap d'avant le commit pourri.
-                on peut aussi faire git commit --amend // pour redéfinir le dernier commit sans besoin de l'annuler
+      git reset HEAD~ annule/undo le dernier commit. Ne pas le faire après que mon dernier commit ait ete pushe et merge avec l'origin(remote) car cela desynchronise mon local du distant. SI je veux quand même le faire par necessite alors faire git reverT: ça recommiT un snap d'avant le commit pourri.
+                on peut aussi faire git commit --amend // pour redéfinir le message du dernier commit sans besoin de l'annuler
       git reset //LINKresetgit annuler le dernier add
-      git reset --hard versionDuTag: ce tag revient dans le mon HEAD/branch + repertoire
+      git reset --hard <identifiantcommit>  revenir en arriere sur identifiantcommit et virer definitivement tous les trucs qui ont suivi
+      git reset --hard versionDuTag: ce tag revient dans le mon HEAD/branch + repertoire et vire tout ce qu'il y a eu après
       git rebase //TROP GALERE!!!! ne pas utiliser avant une formation
       git rebase commitquinebougepasEtQuiVaRecevoirLaSuiteDeLHistoire commitQuiVaMettreSonHistoireALaSuiteDuPremierArgument // a la toute fin faire rebase DernierCommit master pour que le master se remette au bout
       git rebase -i identifiantCommitDuPassé // ouvre un editeur et je peux manipuler mes commits du passer pas a pas un par un jusqu'a aujourd'hui. J'ai du utiliser ca pour supprimer les indexs de fichiers trop gros qui m'empechaient de pusher sur le repo distant. 
