@@ -479,6 +479,7 @@ si problemes dans npm: https://github.com/npm/npm/wiki/Troubleshooting
    aller sur https://nodejs.org/en/download/ (downloader npm: sur internet)
   dans un repertoire faire
   (path/vers/npm)npm init // cree package.json là ou je suis// il me pause des questions pour bien le remplir ATTENTION pas d'espace dans le nom. l'important c'est le entry-point: indiquernomfichier.js qui est le point d'entree. je peux l'executer en faisant node indiquernomfichier.js
+  pour executer un truc par npm soit je fais npm etc.. soit je fais path/vers/node_modules/.bin/trucquejeveuxexecuter (a faire si par ex j'ai le message "missing script etc.."
   voir l'arbre des dependances:
     npm list <optionel:module>
   voir la config:
@@ -498,7 +499,6 @@ si problemes dans npm: https://github.com/npm/npm/wiki/Troubleshooting
         va installer toutes les dependances necessaire du projet (grace a package.json) dans mon repository npm
 mettre à jour npm:// pour installer la derniere version update upgrade
       npm i npm ou npm install npm@latest -g
-il existe une commande pour passer par un proxy AFAIRE
 mettre à jour update upgrade node
   sur linux unix:
     node -v //pour voir la version
@@ -904,6 +904,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git reset //LINKresetgit annuler le dernier add
       git reset --hard <identifiantcommit>  revenir en arriere sur identifiantcommit et virer definitivement tous les trucs qui ont suivi
       git reset --hard versionDuTag: ce tag revient dans le mon HEAD/branch + repertoire et vire tout ce qu'il y a eu après
+      git reset --hard // sans rien: pour annuler un pull qui vient d'etre fait
       git rebase //TROP GALERE!!!! ne pas utiliser avant une formation
       git rebase commitquinebougepasEtQuiVaRecevoirLaSuiteDeLHistoire commitQuiVaMettreSonHistoireALaSuiteDuPremierArgument // a la toute fin faire rebase DernierCommit master pour que le master se remette au bout
       git rebase -i identifiantCommitDuPassé // ouvre un editeur et je peux manipuler mes commits du passer pas a pas un par un jusqu'a aujourd'hui. J'ai du utiliser ca pour supprimer les indexs de fichiers trop gros qui m'empechaient de pusher sur le repo distant. 
@@ -20037,7 +20038,7 @@ lambdas : lambda : lambdas expression :     (lire http://labs.excilys.com/2014/1
                             Integer totalvolume = allInnerDatas.stream().map(i -> i.volume).reduce((carry, innerdata) -> carry + innerdata).get();
                 exemple java8 recuperer le premier element d'une liste dont le field des elements match une valeur: 
                           Result toto = resultats.stream().filter(r -> r.getTransitPlace().equals("arriveplace")).findFirst().get(););                            						
-                exmeple java8 recuperer liste des fichiers les fichiers par leur nom dans un repertoire possible filtrer rapidement:
+                exmeple java8 recuperer liste des fichiers les fichiers par leur nom dans un repertoire possible filtrer rapidement: LINKlambcdfilttr
                                				File rootFolder = new File(Application.ROOT);
                                 				List<String> fileNames = Arrays.stream(rootFolder.listFiles())
                                 						.map(f -> f.getName())
@@ -21721,7 +21722,7 @@ traitment sur repertoires : repertoire :
     Pour recuperer la liste de fichiers d'un directory:
     File.list()
 -----------
-pour recuperer que certains fichiers selon leur nom: regexp de fichier: filtrer les fichiers d'un repertoire: liste des fichiers liste de fichiers !!!! java8 plus court!!! voirplus bas
+pour recuperer que certains fichiers selon leur nom: regexp de fichier: filtrer les fichiers d'un repertoire: liste des fichiers liste de fichiers !!!! java8 plus court!!! voirplus LINKlambcdfilttr
       (dans cet exemple on supprime les fichiers ayant un certain nom...)
         File dir = new File(path);
       			FilenameFilter filter = new FilenameFilter() {
@@ -24597,7 +24598,7 @@ raccourcis shortcut commandes: deplacer le curseur mot a mot dessus
 	Alt+b arriere
 	Alt+f avant
 sur vi : 
-pour indenter: > voire >>
+pour indenter: > voire >> puis . pour refaire autant de fois que necessaire. ce . sert à repeter action precedante precedente
 pour affichier avec des fonts colorees couleurs: aptitude: charger vim
 view nomfichier pour afficher en lecture seule
 http://www.ledman.ch/eti_linux/08vi.html
@@ -24679,7 +24680,7 @@ Remplacement de chaine1 (toutes les occurrences de chaine1) ,par chaine2 depuis 
     >:%s/e1/e2/gc 
 		ou bien 
 		remplace de ligne 1 à  dernière ligne: $. toto remplace par 0
-		>:1,$ s/toto /0/g  -- faut il entourer 0 de "" ?
+		>:1,$ s/toto/0/g  -- faut il entourer 0 de "" ?
 		ou
 		>:1,$ s/toto/titi/g (remplace tous les toto par des titi)
 		ou bien pour remplacer " par ':
@@ -25294,7 +25295,7 @@ ADMIN_URL=http://130.98.232.97:7001
      java -Djava.awt.headless=true -classpath JimiProClasses.jar:. convertisseur.Main
 xfce : // bureautique debian :
 	modifier les shortcuts raccourcis clavier: xfce>parametres>gestionnaire de parametres > gestionnaire de fenetre > clavier
-	raccourci shortcut pour demarrer un programme: alt+f2
+	raccourci shortcut pour demarrer un programme: alt+f2 puis faire fleche vers le bas puis commencer à saisir
 PHP :     
 pour faire marcher php avec oracle: (wamp) il faut que j'utilise l'utilitaire de wamp pour activer les extensions dll et decommenter aussi les lignes dans php.ini( deux lignes.. ora et oci un truc comme ca)
 ORACLE_HOME 
@@ -26564,10 +26565,14 @@ savoir si un element audio joue:
             
             }
 tester le javascript
-    tester avec jest : le meilleur d'apres sylvain
+    tester avec jest : le meilleur d'apres sylvain. Pas reussi a tester les custom elements car  ReferenceError: HTMLElement is not defined.
         les fichiers de tests doivent s'appeler xxxx.test.js            
         	    npm install --save-dev jest //--save-dest voir npm.
-                    jest --init // il crée le fichier jest.config.js
+                    (./node_modules/.bin/)jest --init // il crée le fichier jest.config.js
+				dedans je peux mettre des variables globales pour tous les tests:
+						globals: {
+						   "pageContextRequestContextPath":"./"
+						   },
                  faire ca pour que jest comprenne ES6 imports exports
                     npm i --save-dev babel-jest @babel/core @babel/preset-env
                     dans un fichier babel.config.js mettre
@@ -26586,7 +26591,9 @@ tester le javascript
                                           
                     les fichiers de tests doivent s'appeler xxxx.test.js
                     dans xxxx.test.js:
-                        dedans on peut utiliser document: document.createElement('div' etc etc... c'est un dom virtuel
+                     dedans on peut utiliser document: var audioelt=document.createElement('div' etc etc... c'est un dom virtuel. mais pour que ça marche mettre dans jest.config.js testEnvironment: "jsdom",
+							puis document.body.appendChild(audioelt);
+			import {lecteurtimeupdate} from '../(toujours mettre au moins un "./")../webapp/js/memoclap-lecteurtimeupdate.js';
                             beforeAll(() => {
                             return initializeCityDatabase();
                           });
@@ -26594,13 +26601,18 @@ tester le javascript
                             initializeCityDatabase();
                           });
                           describe('nom du test suite', () => {
-                              	it('nom du test', () => {
-                              		    expect(bidule)(.not).toEqual({one: 1, two: 2}); //.not est facultatif. // toEqual regarde l'egalité en profondeur
+                              	it(.skip pour ignorer)('nom du test', () => {
+			ou 	
+				test('nom du test,async()=>{
+					impossible de definir une variable globale pour un test. il faut raisonner en modules. et les modules ont leurs variables
+						console.log("xxx possible");
+                              		    expect(bidule)(.not).toEqual({one: 1, two: 2}); //.not est facultatif. // toEqual regarde l'egalité en profondeur Assertions
                                                    toBe                        //toBe egalité simple
                                                    toBeNull
                                                    toBeUndefined!=toBeDefined
-                                                   toBeTruthy // equivalent de isTrue
-                                                   toBeFalsy // equivalent de isFalse
+						   toBeEqual // teste egalitee entre deux objets
+                                                   toBeTruthy() // equivalent de isTrue
+                                                   toBeFalsy() // equivalent de isFalse
                                                    toContain // regarde si une liste contient un truc
                                   })
                               })
@@ -26610,6 +26622,7 @@ tester le javascript
                       afterAll(() => {
                         return clearCityDatabase();
                       });
+		execution: LINKjestexecute: ./node_modules/.bin/jest monfichierdetest.test.js
            jest+puppeter : pupetter : pupeter : puppetter :
                 faire 
                 npm i --save-dev puppeteer // pour utiliser pupetter au moins.
@@ -26619,17 +26632,35 @@ tester le javascript
                           preset: 'jest-puppeteer',
                         }
                 dans montest.js mettre:
-                    const puppeteer = require('puppeteer');
-                    (async () => {
-                      const browser = await puppeteer.launch(); // toules les methodes de puppeter sont asnyc donc faut mettre await partout
-                      await puppeteer.launch({headless: false}); // si je veux le voir jouer dans un navigateur
-                      const page = await browser.newPage();
-                      await page.goto('https://michelenasti.com');
-                      await page.screenshot({path: 'example.png'});
-                    
-                      await browser.close();
-                    })();
-                                            
+			  	   const puppeteer = require('puppeteer');
+				   let width=500;
+				   let height=500;
+			           beforeAll(async () => {
+				  	let browser = await puppeteer.launch({
+					  headless: false, //true: navigateur fantome. false: visible. LINKlgjozuaer
+					  slowMo: 80,
+					  args: [`--window-size=${width},${height}`]
+					});
+					page = await browser.newPage();
+					await page.setViewport({ width, height });
+			         });
+			        afterAll(() => {
+			         browser.close();
+			        });
+				describe("Contact form", () => {
+				  test("lead can submit a contact request", async () => {
+				    const validForwNext = jest.fn((mode)=>{page.alert("oui "+mode)});
+				    await page.goto("http://127.0.0.1:8080/webapp/js/widgets/drawerboardTEST.html");
+				    await page.waitForSelector("memoclap-drawerboard"); // attends l'apparition d'un element sur la page avant de poursuivre
+
+				    const tooltip = await page.$eval("#forwImg", el => el.getAttribute("tooltip")); // verifier qu'un truc dans le dom est correcte Assertion equal
+				    expect(tooltip).toEqual("Image/film suivant.");
+
+				    await page.click("#forwImg");
+				    await page.type("input[name=name]", "blabla");
+				  }, 16000); // c'est un timeout il faut le mettre si headless:false LINKlgjozuaer
+				});
+      pour executer voir LINKjestexecute
     avec Jasmine : et testem : (sinon utiliser https://jsfiddle.net/)
       installer testem: (pas besoin d'installer jasmine)
           npm install testem -g (installe testem globalement sur mon systeme)
@@ -26670,10 +26701,10 @@ ES6 :modules: une page html/js peut importer une page html/js qui importe aussi:
             <script type="module" src="... 
         dans main.js: // attention toutes les variables primitives exportees sont readonly. Faire des setters si je veux les modifier 
               import {toto,blabla} from "./path/xxx.js";                          AAA  // autant mettre le ".js" c'est normalement supporté partout
-             import {projectsMemeNom} from './js/memoclap-projectsFieldsets.js';  AAA                     
+             import {projectsMemeNom} from './js/memoclap-projectsFieldsets.js';  AAA  // toujours mettre accolades meme si qu'un seul objet
              import projects from './js/memoclap-projectsFieldsets.js';    DDD  //du coup j'appellerais projects.unTrucDefiniPlusHaut.uneDeSesMethodes()
              import UnComponentAttentionMemeNom from './js/alertmsg.js';    CCC
-             import * as bidule from './js/memoclap-projectsFieldsets.js'; BBB et CCC
+             import * as bidule from './js/memoclap-projectsFieldsets.js'; BBB et CCC  // j'importe tous les exports de bidule et ici ils sont prefixes par "bidule"
              on peut faire new unmodule.UnObjetDuModule();                     
         dans path/xxx.js:  
             Exporter plusieurs trucs
@@ -29089,7 +29120,7 @@ PWA : progressive webapps :
             dev>application>service workers>offline
             pluggin chrome "lighthouse"
     service-workers : serviceworkers : POUR SUPPRIMER TOUT CACHE POUR TESTER: 1)unregister dabord puis 2) reloader la page en faisant clic droit -> "vider le cache et faire une reactualisation forcee" 
-    pour faire un site qui marche offline avec les service workers: html5: P envoyer notifications meme quand navigateur est fermé car c'est un worker(thread) indépendant de tous les navigateurs.(un peu comme un programme nodejs) Peut travailler avec indexDB database
+    pour faire un site qui marche offline avec les service workers: html5: P envoyer notifications meme quand navigateur est fermé car c'est un worker(thread) indépendant de tous les navigateurs.(un peu comme un programme nodejs) Peut travailler avec indexDB database voir LINKpwanotif
     ça ne marche que en https ou en http://localhost
     serviceworker.js:
     if ('serviceWorker' in navigator) { // s'assurer que servicerworker est supporte par le navigateur
@@ -29268,6 +29299,20 @@ PWA : progressive webapps :
                 event.waitUntil(doSomeStuff());
               }
             });            
+	notifications LINKpwanotif
+			Notification.requestPermission(result => {
+			  if (result === 'granted') {
+
+			    if ('Notification' in window) { // s'assurer que le browser supporte les notifications 
+			    navigator.serviceWorker.ready. //donc enverra une notification chaque fois que le service worker est prêt.then(registration => {
+			      registration.showNotification('Vibration Sample', {
+				body: 'Buzz! Buzz!',
+				tag: 'vibration-sample'
+			      });
+			    });
+			  }
+			});
+
 vuejs :  https://vuejs.org/v2/guide/
 Typescript :
     tsc fichier.ts // commpile en .js
