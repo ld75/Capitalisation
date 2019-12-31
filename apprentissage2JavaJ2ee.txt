@@ -1,4 +1,4 @@
-(?=.*ports)(?=.*disponib)
+(?=.*ports)(?=.*disponibd)
 
 AFAIRE :
     Entretien:
@@ -638,6 +638,7 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
   continuer à lire https://docs.docker.com/get-started/part2/#share-your-image
   installer docker: sudo apt-get update puis 
     avoir docker CE(community edition) ou EE(entreprise edition) recuperable sur store.docker.com
+    sur linux conf dans docker.json
   docker --version ou docker run hello-world // verifier que docker est bien installe
   docker info // indique entre autre nombre combien j'ai de containers ? Un container (une image) ne doit contenir qu'une seule chose. (1 pyton ou 1 redis ou 1 mysql) pas plus!
     haut 
@@ -645,12 +646,13 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
     -Services // defini comment le container se comporte
     -Container // mon executable
     bas
+  docker pull unPackage/docker:version 
   docker images // liste des images du repository
   docker image ls // LINKdckrimgls liste les images que j'ai cree. Ajouter --all si je veux voir aussi les images qui run
   docker ps -a // pour voir la liste de tous les containers (en cours de run et pas)
   docker container ls // liste les containers qui tournent qui sont en cours d'execution 
   Dockerfile= bien l'appeler "Dockerfile" fichier docker: Défini une image à partir d'une image source. A ecrire apres avoir testé sur un container l'enchainement des commandes qui marchent grace à docker exec. puis ecrire ici les commandes pour builder mon image(mettre des trucs dedans):execution du haut vers le bas. haut:ce qui bouge le moins. Bas ce qui change le plus car docker utilise un cache.
-        FROM image:tag donc node:x.x.x-alpine OU python:2.7-slim OU...// image docker de base quel OS OU BIEN une image docker (couche 0 = layer 0 de l'image) si je veux l'etendre voir LINKxlxlx  
+        FROM nomdelimage:tag donc node:x.x.x-alpine OU python:2.7-slim OU...// image docker de base quel OS OU BIEN une image docker (couche 0 = layer 0 de l'image) si je veux l'etendre voir LINKxlxlx  
         WORKDIR /un/path/DANSMONContainerDocker/PASdans/monOS/ (couche 1 = layer 1 de l'image)
         ENV foo /bla // du coup en dessous quand je mets ${foo} c'est en fait "/bla"
         RUN apt-get update (couche 2 = layer 2 de l'image)
@@ -678,17 +680,17 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
             build: . (tu te buildera à la racine du container docker (?)
             command: npm run // overrite CMD ci dessus: en general la commande ici sert à demarrer un serveur
           postgres: // deuxieme service = 1 container
-  docker build -t(pour tag) unnomquejedonneamoncontainer:untag /pathOuEstDockerfile(. par ex si j'y suis et -f DocerfileToto si j'y su is mais que le nom n'est pas "Dockerfile")// Creer mon container docker qui rentre dans la liste repository d'images. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto
-  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e"nomDuneSystem.PropertySiJeVeux=savaeleur" --name=facultatifUnAutreNomQueJeDonneAMonContainer -d (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement) -v $(pwd)(ou un repertoire du host os. S'il n'existe pas il est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container) nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) OU identifiantDeLImage LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container
+  docker build -t(pour tag) unnomquejedonneamoncontainer:untag /pathOuEstDockerfile("." si j'y suis et -f DocerfileToto si j'y suis mais que le nom n'est pas "Dockerfile")// Creer mon container docker qui rentre dans la liste repository d'images. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto
+  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e"nomDuneSystem.PropertySiJeVeux=savaeleur" --name=facultatifUnAutreNomQueJeDonneAMonContainer -d (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement) -v $(pwd)(ou un repertoire du host os. S'il n'existe pas il est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container) nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) OU identifiantDeLImage LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container --env(facultatif) JAVA_OPS="-Dpropriete.java=yyyy nomdel'image -Dxxx=yyy"
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
                                   -p portdeOS:portOuvertduContainer(je peux en mettre plusieurs)                                                                                                                                                                                                                                                             |_ce nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con                                                                                                                                                                                      
-  docker start -ia(comme -it avec run) nomduconteneurARedemarrer // existe aussi docker stop nomduconteneur ou idduconteneur pour stopper un conteneur                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+  docker start -ia(comme -it avec run) nomduconteneurARedemarrer // existe aussi docker stop nomduconteneur ou idduconteneur pour stopper un conteneur
+  docker container stop IDDuContainer // pour stopper l'execution d'un container (par son ID ça marche mieux voir donc la liste.)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
   docker inspect nomduconteneur ou nomduneimage // pour avoir plein de details infos donnees exposedPorts sur mon conteneur ou mon image                                  
-  docker log( avec s ?) -f(comme tail -f)facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomD'uneImageAExecuter(en cours d'execution) // a faire apres avoir fait run pour afficher les logs
+  docker logs -f(comme tail -f)facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomD'uneImageAExecuter(en cours d'execution) // a faire apres avoir fait run pour afficher les logs
   docker attach nomduconteneur ou permierscharDuIdDuConteneur // pour se rattaché à un conteneur demarré en backgroud LINKlgkezoiur
   docker history facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomD'uneImageAExecuter(qui a un conteneur) // pour afficher l'historique d'ajout de ce conteneur 
-  docker container stop IDDuContainer // pour stopper l'execution d'un container (par son ID ça marche mieux voir donc la liste.)
   docker rm -f facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomD'uneImageAExecuter(qui est en cours d'execution dans un conteneur)// pour le supprimer.
   
   docker exec -it idp_jetty bash // LINKjgjgjgaba: execute une commande dans un conteneur déja actif. ici la commande bash est executée dans le container qui demarre en mode -it(interactif) donc du coup je vais avoir le prompt bash DANS mon container. De la si j'execute top je ne vois que les process qui tournent DANS le container
@@ -4246,7 +4248,7 @@ web.xml : webxml :
             		    sous <web-app>:<session-config>
                 	<session-timeout>15</session-timeout>
                 	   <cookie-config>
-                	       <secure>true</secure> // fait pareil que LINKlizifoizf  (a partir de servlet3.0)
+                	       <secure>true</secure> // fait pareil que LINKlizifoizf  (a partir de servlet3.0) attention du coup en http je ne peux peut etre plus me connecter
                            <http-only>true</http-only> // fait pareil que LINKlkgjkljkjgjgjgjgj
                 	  <cookie-config>
                 </session-config>
@@ -13067,7 +13069,7 @@ certificats : certificat : formats: types
                                     peut etre transcode en .pem (contenant le certif et la cle privee.) 
                               Le format PKCS #7 ou P7B  (.p7b ou .p7c ou .keystore) Chiffré en Base64 ASCII Standard de syntaxe de message de chiffrement
                               _     prend en charge le stockage des certificats et de tous les certificats du chemin d’accès de certification. (keytool utilise ce format) 
-                             | DER X.509 (.cer ou .der) (PKCS #8) La version binaire(!=bas64) de PEM. Tout le monde peut devenir un DER. Ne contiennent "BEGIN CERTIFICATE / END CERTIFICATE"
+                             | DER X.509 (.cer ou .der) (PKCS #8) La version binaire(!=bas64) de PEM. Tout le monde peut devenir un DER. Ne contiennent pas "BEGIN CERTIFICATE / END CERTIFICATE"
                              |       Le format DER (Distinguished Encoding Rules) prend en charge le stockage d’un seul certificat. Ce format ne prend pas en charge le stockage de la clé privée ou du chemin d’accès de certification.
   un.cer .crt peut etre soit | PEM (.pem) format texte. version Base64 de DER Chiffré en Base64 X.509 x509 (commence par ----BEGIN fini par END---) pour en crée une avec mobaxterm faire Conversion>ExportSSH key
   importable dans browser    |       Le format Base64 ASCII prend en charge le stockage d’un seul certificat. Peut etre un csr.
@@ -16053,7 +16055,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
     			@BeforeEach ou @Before // selon junit5 ou 4
     				public void setup()
     				{
-    					MockitoAnnotations.initMocks(this); // ca active les anotations @InjectMocks et @Mocks et @Spy // attention @Spy qui doit etre accompagné de par exemple @Autowired dans mon test car le bean doit exister avant que le spy s'applique: CA CA NE MARCHE PAS:mon objet spyé n'est pas toujours le meme que celui qui est injecté dans le runcode. LINKlkfjjgjgjgozo
+    					MockitoAnnotations.initMocks(this); //LINKlkfjjgjgjgozo ca active les anotations @InjectMocks et @Mocks et @Spy // attention @Spy qui doit etre accompagné de par exemple @Autowired dans mon test car le bean doit exister avant que le spy s'applique: CA CA NE MARCHE PAS:mon objet spyé n'est pas toujours le meme que celui qui est injecté dans le runcode. 
     				}
     				FilterConfig filterConfig = mock(FilterConfig.class); // c'est soit je fais comme ca, soit j'utilise les anotations ci dessus. les deux font la meme chose
     				ServletContext context = mock(ServletContext.class);
@@ -19693,7 +19695,7 @@ pour tester la performance : perfs : perf : performances : performences :
             logger.debug("1TestPerformance: "+new Date(System.currentTimeMillis()).toString());
             JAVA_OPTIONS=" -ms256m -mx256m -verbose:gc -XX:NewSize=64m -XX:MaxNewSize=64m " (a mettre juste apres la commande java et avant le reste: classpath...)
             il n'est pas normal d'avoir l'option -ms256m  et -mx256m
-            il faudrait basculer la première à  -ms64m et la deuxième à  priori à  -mx128m sauf si l'appli est vraiment consommatrice de memoire (à§a existe !) auquel cas -mx256m est pas mal
+            il faudrait basculer la première à  -ms64m et la deuxième à  priori à  -mx128m sauf si l'appli est vraiment consommatrice de memoire (ca existe !) auquel cas -mx256m est pas mal
             si j'ai exception outofmemory error heap space faire ca: 
             Xms: espace alloue à l'init pour les objets(instances)                         |_heap
             Xmx: espace alloue max pour les objets(instances) si depasse: heapoutofmemory  |
@@ -19707,13 +19709,13 @@ pour tester la performance : perfs : perf : performances : performences :
     				---->-Xmx3072m 3Giga sur une machine 64bits
     				pour que le dump se genere automatiquement au plantage: 
     				        -XX:+HeapDumpOnOutOfMemoryError
-    				        -XX:HeapDumpPath=/DumpJVM/ope/.../lkjsdflkj/toto
+    				        -XX:HeapDumpPath=/DumpJVM/ope/.../lkjsdflkj/toto // il ecrit le fichier de crash ici. ensuite on peut analyser ce fichier avec un programme=LINKghmlkrty
     				        -XX:+UseG1GC -XX:-UseAdaptiveSizePolicy \   // pour utiliser le garbage garbadge collecteur G1 qui d'après Rachid Asbai est plus intelligent
     				        -XX:+UseZGC (depuis java11 voir ci dessous)
     				        depuis java 11:java11: ZGC est super baleze comme garbadge collector. EpsilonGC est un GC de test qui ne garbadge jamais jusqu'à memoryexception
     				pour savoir combien mon poste en local a de mem: gestionnaire de taches windows: >memoire physique > disponible les trois premiers chiffres
             wikipedia francois foulon:http://collaboration2010.sharepoint.renault.fr/is/dsd/places/tec/Wiki%20Component/IBM%20Support%20Assistant%20at%20RENAULT.asp				
-            pour analyser les problemes de heap space java dump de memoire out of memory exception performance performence oom
+            pour analyser les problemes de heap space java dump de memoire out of memory exception performance performence oom LINKghmlkrty
                                     ps -ef | grep NOMDUPROCESSDEMONSERVEUR
                                     trouver l'id du process java (dessus est marque le heapdumpPath)
                                     Aller dans le heapdumpPath. Dans ce path, les logs de dump de memoire s'appellent: java_pidxxxx.hprof (le path est /jboss/logs/S07AS01/ chez Renault wec)
@@ -24102,7 +24104,7 @@ chown [-R] utilisateur:groupe fichierOuRepertoire (-R pour recursif)
 tar tvf ... pour visualiser le tar
 tar tvf ... | grep -i toto* pour afficher le fichier toto* dans le tar
 tar xvf ... pour extraire (attention parfois ne marche qu'avec un seul argument: pas mettre de chemin)
-tar cvf ... pour compresser ou cvzf pour compresser en gzip
+tar cvf ... pour tarer ziper compresser ou cvzf pour compresser en gzip
 tar -cvf aps95.tar aps95 compresse le REPERTOIRE aps95
 pour tarer en compressant: tar -zcvf repertroire.tar.z repertoire
 grep chainedecaracteres nomfichier
@@ -24401,8 +24403,6 @@ ssh : se logger sur une machine a distance
                       fi
                       ssh-add ~/.ssh/id_rsa
                     recharger ce fichier: . .bash_profile       
-    Pour transferer exporter des fichier donnees sur un autre serveur reseau remote(faire un backup)
-      tar cvzf - /etc | ssh root@lautreserveur.com -p2222 "cat >>/data/home/lduverge/etc.gz" //tar le repertoire etc et met le dans lautreserveur dans le repertoire data/... etc.gz: besoin connexion par cle peut etre pour que mot de passe n'empeche pas la connection.
     ssh user@machinedistante -i pathVersmaclepriveeFacultatifSiPasBesoin
     ssh www-data@www.memoclap.com
     executer directement une commande en ssh: 
@@ -24466,7 +24466,7 @@ ssh : se logger sur une machine a distance
                       	cat $1 >> .ssh/authorized_keys
                       	rm -f $1
 scp :commande
-  pour downloader recuperer telecharger transferer un fichier d'un serveur à un autre
+  pour downloader recuperer telecharger transferer un fichier d'un serveur à un autre voir aussi rsync
     -r pour recursif si c un repertoire.
     -vvv pour verbose (mode debug)
     pull: PUTAIN j'arrivaispas à faire marcher avec cle: toujours permission denied (publickey) meme apres avoir declare ma cle publique sur le serveur> il falait utiliser une cle privee de type .pem pour que ca marche et non pas .ppk (sur windows en tout cas)
@@ -24478,6 +24478,8 @@ scp :commande
       scp -p admddd\@su571ars.mc2.renault.fr:/data/documentum/applications/a_ddd/ExportPHX/jar/Exporter-0.0.1.jar . //-p pour preserver l'horodatage du fichier
       scp -p admddd\@su571ars.mc2.renault.fr:/data/documentum/applications/a_ddd/ExportPHX/sh/L.ksh .
       scp -p admddd\@sum50301:/data/documentum/applications/a_ddd/ExportPHX/tmp/pgn/*.xml .
+      Pour transferer exporter des fichier donnees sur un autre serveur reseau remote(faire un backup) et en tarrant
+      tar cvzf - /etc | ssh root@lautreserveur.com -p2222 "cat >>/data/home/lduverge/etc.gz" //tar le repertoire etc et met le dans lautreserveur dans le repertoire data/... etc.gz: besoin connexion par cle peut etre pour que mot de passe n'empeche pas la connection.
 smtp :
     tester que le serveur de mail marche bien
 1)  recuperer ssmtp sur aptitude (il est obsolete: utiliser msmtp)
