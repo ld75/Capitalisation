@@ -479,6 +479,7 @@ si problemes dans npm: https://github.com/npm/npm/wiki/Troubleshooting
    aller sur https://nodejs.org/en/download/ (downloader npm: sur internet)
   dans un repertoire faire
   (path/vers/npm)npm init // cree package.json là ou je suis// il me pause des questions pour bien le remplir ATTENTION pas d'espace dans le nom. l'important c'est le entry-point: indiquernomfichier.js qui est le point d'entree. je peux l'executer en faisant node indiquernomfichier.js
+  pour executer un truc par npm soit je fais npm etc.. soit je fais path/vers/node_modules/.bin/trucquejeveuxexecuter (a faire si par ex j'ai le message "missing script etc.."
   voir l'arbre des dependances:
     npm list <optionel:module>
   voir la config:
@@ -498,7 +499,6 @@ si problemes dans npm: https://github.com/npm/npm/wiki/Troubleshooting
         va installer toutes les dependances necessaire du projet (grace a package.json) dans mon repository npm
 mettre à jour npm:// pour installer la derniere version update upgrade
       npm i npm ou npm install npm@latest -g
-il existe une commande pour passer par un proxy AFAIRE
 mettre à jour update upgrade node
   sur linux unix:
     node -v //pour voir la version
@@ -901,10 +901,12 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
           git difftool plutot qu'avec git diff
       git diff-tree --no-commit-id --name-only -r <numero de commit> // voir la liste des fichiers commités  d'un commit 
       git reset HEAD .OuNomFichier ou *.extensionfichier // opposé inverse de add pour retirer ce fichier de l'index added(voir LINKresetgit et Linkcheckout) annuler undo un delete MAIS: si j'ai déjà pushé alors faire:LINKrmgit 
-      git reset HEAD~ annule/undo le dernier commit. Ne pas le faire après que mon dernier commit ait ete pushe et merge avec l'origin car cela desynchronise mon local du distant. SI je veux quand même le faire par necessite alors faire git reverT: ça recommiT un snap d'avant le commit pourri.
-                on peut aussi faire git commit --amend // pour redéfinir le dernier commit sans besoin de l'annuler
+      git reset HEAD~ annule/undo le dernier commit. Ne pas le faire après que mon dernier commit ait ete pushe et merge avec l'origin(remote) car cela desynchronise mon local du distant. SI je veux quand même le faire par necessite alors faire git reverT: ça recommiT un snap d'avant le commit pourri.
+                on peut aussi faire git commit --amend // pour redéfinir le message du dernier commit sans besoin de l'annuler
       git reset //LINKresetgit annuler le dernier add
-      git reset --hard versionDuTag: ce tag revient dans le mon HEAD/branch + repertoire
+      git reset --hard <identifiantcommit>  revenir en arriere sur identifiantcommit et virer definitivement tous les trucs qui ont suivi
+      git reset --hard versionDuTag: ce tag revient dans le mon HEAD/branch + repertoire et vire tout ce qu'il y a eu après
+      git reset --hard // sans rien: pour annuler un pull qui vient d'etre fait
       git rebase //TROP GALERE!!!! ne pas utiliser avant une formation
       git rebase commitquinebougepasEtQuiVaRecevoirLaSuiteDeLHistoire commitQuiVaMettreSonHistoireALaSuiteDuPremierArgument // a la toute fin faire rebase DernierCommit master pour que le master se remette au bout
       git rebase -i identifiantCommitDuPassé // ouvre un editeur et je peux manipuler mes commits du passer pas a pas un par un jusqu'a aujourd'hui. J'ai du utiliser ca pour supprimer les indexs de fichiers trop gros qui m'empechaient de pusher sur le repo distant. 
@@ -945,6 +947,8 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git stash pop applique le dernier stash de la liste en le mergeant avec ma branche en cours et supprime ce stash de la liste.
       git stash apply <idretourné> par la commande ci dessus: stash@(2) par exemple // applique à ma branche ce stash en le mergant avec ma branche mais ne le supprime pas de la liste
       git stash clear // supprime tous mes stash! attention.
+      si j'ai erreur Updates were rejected because the tip of your current branch is behind et que je veux quand meme pusher:
+            je peux faire git push -f      
     envoyer/recuperer des projets entre mon local et le github:
       fork: fait une copie de tout un projet (branches incluses) dans mon github. Je peux ensuite travailler dessus dans github ou en local(cloner) et à la fin je soumet mes modifs: pull request= merge request mergerequest. si accepte: ça fetch+merge+commit tout mon fork(je crois). SI il y en a plusieurs qui se suivent et que je dois accepter, ne prendre que le dernier et ignorer les precednets (je pense) car le dernier mergerequest resume tous les autres d'avant.
       binder avec un repository distant: LINKenvoiyer
@@ -10635,59 +10639,6 @@ kafka : A_COMPLETER voir aussi https://github.com/akka/alpakka-kafka qui fait de
         logComppaction sert à convertir automatiquement les doublons-triplons... en un seul: gain de place dans le disque
         producers ont 3modes d'ecrtutre (async: donees pas garanties reçues. commited to leader: confirmation reception par le partition leader. commited to leader & quorum: confirmation reception par leader + une autre partition)
 
-scripts bat :
-    ATTENTION pour les variables 
-          Generations of batch file programmers have tripped over this one. Here it goes.
-          When the command processor interprets a batch file, it does it like this:
-          - Read a line of code.
-          - Perform whatever variable substitution is necessary.
-          - Execute it.
-          - Read the next line of code.
-          - etc.
-          And here comes the catch: When you use parenthesis in your code then everything within the parenthesis counts as one single line 
-exemple de script .bat LINKDevopslksjqgfvmlka
-@echo off
-  set /P version=Version ?
-  echo %version%
-rem ljsdflsdkjf// commentaire
-Set M3="C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2018.2.3\plugins\maven\lib\maven3\bin" (ne me demande pas pourquoi pour les guillemets!! c pas pareil que la ligne en dessous. Mais ça marche)
-Set "JAVA_HOME=C:\Program Files\Java\jdk1.8.0_181\jre"
-echo %M3%
-echo %JAVA_HOME%
-call %M3%\mvn versions:set // sur des commandes maven pour ne pas que le bat s'interrompe il faut mettre call avant (mais dans certains cas on dirait que ca marche sans avoir besoin de mettre call)
-pause
-echo PAE INT > actuel.txt
-set /P continue=Commit pulled and tested OK ? Y N   // prompt qui dit "Commit pulled and tested OK ? Y N" et set dans la variable continue le resultat 
-if %continue%==Y (              // if commence: parenthese = accolades
-                                if avec parenthese est traite en un seul bloc sans s'interrompre donc si on veut que les varaiables soient raffraichies: faire le if sur une seule ligne if..... goto xxxx et le flag goto c'est ":xxxx    "
-set /P version=Version ?
-%M3%\mvn versions:set
-echo %version%
-%M3%\mvn clean
-%M3%\mvn compile
-%M3%\mvn package
-if [[ "$?" -ne 0 ]] ; then // $? c'est le code que renvoit le programme precedent dernier code. -ne c'est pour "not equal" donc ici si code retour different de zero alors... si maven echoue rate erreur ko les tests interruption de la livraison devops 
-  echo 'could not perform tests'; exit $rc      // quitte le programme. exit $rc
-fi
-git add src
-git add pom.xml
-git add *.zip
-rem git commit -m "Automatic delivery of %version%"
-Set WEB-INF-PAE=D:\workspace\paeWeb\WebContent\WEB-INF
-echo ren %WEB-INF-PAE%\ibm-web-ext.xmi
-ren %WEB-INF-PAE%\ibm-web-ext.xmi dev_ibm-web-ext.xmi // pour renommer rename
-ren %WEB-INF-PAE%\_integr.ibm-web-ext.xmi ibm-web-ext.xmi
-echo ren %WEB-INF-PAE%\web.xml
-ren %WEB-INF-PAE%\web.xml dev_web.xml
-ren %WEB-INF-PAE%\_integr.web.xml web.xml
-echo ren %WEB-INF-PAE%\classes\log4j.properties.template
-ren %WEB-INF-PAE%\classes\log4j.properties.template _dev.log4j.properties.template
-ren %WEB-INF-PAE%\classes\_integr.log4j.properties.template log4j.properties.template
-) else (echo "exit")
-
-------------------
-
-
 
 MAVEN : super pour trouver un maven à partir de package ou meme classe: https://search.maven.org/
  attention: artifactid ne doit pas contenir des points
@@ -20094,7 +20045,7 @@ lambdas : lambda : lambdas expression :     (lire http://labs.excilys.com/2014/1
                             Integer totalvolume = allInnerDatas.stream().map(i -> i.volume).reduce((carry, innerdata) -> carry + innerdata).get();
                 exemple java8 recuperer le premier element d'une liste dont le field des elements match une valeur: 
                           Result toto = resultats.stream().filter(r -> r.getTransitPlace().equals("arriveplace")).findFirst().get(););                            						
-                exmeple java8 recuperer liste des fichiers les fichiers par leur nom dans un repertoire possible filtrer rapidement:
+                exmeple java8 recuperer liste des fichiers les fichiers par leur nom dans un repertoire possible filtrer rapidement: LINKlambcdfilttr
                                				File rootFolder = new File(Application.ROOT);
                                 				List<String> fileNames = Arrays.stream(rootFolder.listFiles())
                                 						.map(f -> f.getName())
@@ -20426,6 +20377,11 @@ pour faire une expression reguliere: regexp:
 		String str=blabla;
 		if (str.matches("[^|]*[|][^|]*[|][^|]*[|][^|]*[|]")) etc etc... ici on cherche une chaine qui ressebmble à lqjsdf|lksdfj|sjklhf|kljsdf|
         pour remplacer dans les groupes qsdf(regexp1)qsdfl(regexp2)kljs on fait $1, $2...
+        pour remplacer une minuscule par une majuscule :
+            au depart j'ai blablazrooooo
+            champ TOREPLACE:blabla(.)rooooo 
+            champ BY: blabla\U$1rooooo
+                ce qui donne blablaZrooooo
 		il y a aussi une api qui s'appelle Perl5Compiler (org.apache.oro.text.regex.Perl5Compiler;)... c'est peut etre bien?
 		regexp majuscules avec accents: utiliser \\p{javaUpperCase}
       exemple: 
@@ -21774,7 +21730,7 @@ traitment sur repertoires : repertoire :
     Pour recuperer la liste de fichiers d'un directory:
     File.list()
 -----------
-pour recuperer que certains fichiers selon leur nom: regexp de fichier: filtrer les fichiers d'un repertoire: liste des fichiers liste de fichiers !!!! java8 plus court!!! voirplus bas
+pour recuperer que certains fichiers selon leur nom: regexp de fichier: filtrer les fichiers d'un repertoire: liste des fichiers liste de fichiers !!!! java8 plus court!!! voirplus LINKlambcdfilttr
       (dans cet exemple on supprime les fichiers ayant un certain nom...)
         File dir = new File(path);
       			FilenameFilter filter = new FilenameFilter() {
@@ -24650,7 +24606,7 @@ raccourcis shortcut commandes: deplacer le curseur mot a mot dessus
 	Alt+b arriere
 	Alt+f avant
 sur vi : 
-pour indenter: > voire >>
+pour indenter: > voire >> puis . pour refaire autant de fois que necessaire. ce . sert à repeter action precedante precedente
 pour affichier avec des fonts colorees couleurs: aptitude: charger vim
 view nomfichier pour afficher en lecture seule
 http://www.ledman.ch/eti_linux/08vi.html
@@ -24732,7 +24688,7 @@ Remplacement de chaine1 (toutes les occurrences de chaine1) ,par chaine2 depuis 
     >:%s/e1/e2/gc 
 		ou bien 
 		remplace de ligne 1 à  dernière ligne: $. toto remplace par 0
-		>:1,$ s/toto /0/g  -- faut il entourer 0 de "" ?
+		>:1,$ s/toto/0/g  -- faut il entourer 0 de "" ?
 		ou
 		>:1,$ s/toto/titi/g (remplace tous les toto par des titi)
 		ou bien pour remplacer " par ':
@@ -25347,7 +25303,7 @@ ADMIN_URL=http://130.98.232.97:7001
      java -Djava.awt.headless=true -classpath JimiProClasses.jar:. convertisseur.Main
 xfce : // bureautique debian :
 	modifier les shortcuts raccourcis clavier: xfce>parametres>gestionnaire de parametres > gestionnaire de fenetre > clavier
-	raccourci shortcut pour demarrer un programme: alt+f2
+	raccourci shortcut pour demarrer un programme: alt+f2 puis faire fleche vers le bas puis commencer à saisir
 PHP :     
 pour faire marcher php avec oracle: (wamp) il faut que j'utilise l'utilitaire de wamp pour activer les extensions dll et decommenter aussi les lignes dans php.ini( deux lignes.. ora et oci un truc comme ca)
 ORACLE_HOME 
@@ -26617,10 +26573,14 @@ savoir si un element audio joue:
             
             }
 tester le javascript
-    tester avec jest : le meilleur d'apres sylvain
+    tester avec jest : le meilleur d'apres sylvain. Pas reussi a tester les custom elements car  ReferenceError: HTMLElement is not defined.
         les fichiers de tests doivent s'appeler xxxx.test.js            
         	    npm install --save-dev jest //--save-dest voir npm.
-                    jest --init // il crée le fichier jest.config.js
+                    (./node_modules/.bin/)jest --init // il crée le fichier jest.config.js
+				dedans je peux mettre des variables globales pour tous les tests:
+						globals: {
+						   "pageContextRequestContextPath":"./"
+						   },
                  faire ca pour que jest comprenne ES6 imports exports
                     npm i --save-dev babel-jest @babel/core @babel/preset-env
                     dans un fichier babel.config.js mettre
@@ -26639,7 +26599,9 @@ tester le javascript
                                           
                     les fichiers de tests doivent s'appeler xxxx.test.js
                     dans xxxx.test.js:
-                        dedans on peut utiliser document: document.createElement('div' etc etc... c'est un dom virtuel
+                     dedans on peut utiliser document: var audioelt=document.createElement('div' etc etc... c'est un dom virtuel. mais pour que ça marche mettre dans jest.config.js testEnvironment: "jsdom",
+							puis document.body.appendChild(audioelt);
+			import {lecteurtimeupdate} from '../(toujours mettre au moins un "./")../webapp/js/memoclap-lecteurtimeupdate.js';
                             beforeAll(() => {
                             return initializeCityDatabase();
                           });
@@ -26647,13 +26609,18 @@ tester le javascript
                             initializeCityDatabase();
                           });
                           describe('nom du test suite', () => {
-                              	it('nom du test', () => {
-                              		    expect(bidule)(.not).toEqual({one: 1, two: 2}); //.not est facultatif. // toEqual regarde l'egalité en profondeur
+                              	it(.skip pour ignorer)('nom du test', () => {
+			ou 	
+				test('nom du test,async()=>{
+					impossible de definir une variable globale pour un test. il faut raisonner en modules. et les modules ont leurs variables
+						console.log("xxx possible");
+                              		    expect(bidule)(.not).toEqual({one: 1, two: 2}); //.not est facultatif. // toEqual regarde l'egalité en profondeur Assertions
                                                    toBe                        //toBe egalité simple
                                                    toBeNull
                                                    toBeUndefined!=toBeDefined
-                                                   toBeTruthy // equivalent de isTrue
-                                                   toBeFalsy // equivalent de isFalse
+						   toBeEqual // teste egalitee entre deux objets
+                                                   toBeTruthy() // equivalent de isTrue
+                                                   toBeFalsy() // equivalent de isFalse
                                                    toContain // regarde si une liste contient un truc
                                   })
                               })
@@ -26663,6 +26630,7 @@ tester le javascript
                       afterAll(() => {
                         return clearCityDatabase();
                       });
+		execution: LINKjestexecute: ./node_modules/.bin/jest monfichierdetest.test.js
            jest+puppeter : pupetter : pupeter : puppetter :
                 faire 
                 npm i --save-dev puppeteer // pour utiliser pupetter au moins.
@@ -26672,17 +26640,35 @@ tester le javascript
                           preset: 'jest-puppeteer',
                         }
                 dans montest.js mettre:
-                    const puppeteer = require('puppeteer');
-                    (async () => {
-                      const browser = await puppeteer.launch(); // toules les methodes de puppeter sont asnyc donc faut mettre await partout
-                      await puppeteer.launch({headless: false}); // si je veux le voir jouer dans un navigateur
-                      const page = await browser.newPage();
-                      await page.goto('https://michelenasti.com');
-                      await page.screenshot({path: 'example.png'});
-                    
-                      await browser.close();
-                    })();
-                                            
+			  	   const puppeteer = require('puppeteer');
+				   let width=500;
+				   let height=500;
+			           beforeAll(async () => {
+				  	let browser = await puppeteer.launch({
+					  headless: false, //true: navigateur fantome. false: visible. LINKlgjozuaer
+					  slowMo: 80,
+					  args: [`--window-size=${width},${height}`]
+					});
+					page = await browser.newPage();
+					await page.setViewport({ width, height });
+			         });
+			        afterAll(() => {
+			         browser.close();
+			        });
+				describe("Contact form", () => {
+				  test("lead can submit a contact request", async () => {
+				    const validForwNext = jest.fn((mode)=>{page.alert("oui "+mode)});
+				    await page.goto("http://127.0.0.1:8080/webapp/js/widgets/drawerboardTEST.html");
+				    await page.waitForSelector("memoclap-drawerboard"); // attends l'apparition d'un element sur la page avant de poursuivre
+
+				    const tooltip = await page.$eval("#forwImg", el => el.getAttribute("tooltip")); // verifier qu'un truc dans le dom est correcte Assertion equal
+				    expect(tooltip).toEqual("Image/film suivant.");
+
+				    await page.click("#forwImg");
+				    await page.type("input[name=name]", "blabla");
+				  }, 16000); // c'est un timeout il faut le mettre si headless:false LINKlgjozuaer
+				});
+      pour executer voir LINKjestexecute
     avec Jasmine : et testem : (sinon utiliser https://jsfiddle.net/)
       installer testem: (pas besoin d'installer jasmine)
           npm install testem -g (installe testem globalement sur mon systeme)
@@ -26714,20 +26700,30 @@ tester le javascript
                     expect(unobjetdom.text()).toEqual("blabli");
         pour executer ce test: 
           >testem ci --launch PhantomJS(obsolete)
-ES6 :modules: une page html peut importer une page html qui importe aussi: le browser gère les doublons si yen a // pas implemente dans firefox et safari?
+ES6 :modules: une page html/js peut importer une page html/js qui importe aussi: le browser gère les doublons si yen a // pas implemente dans firefox et safari?
     pour les tester il faut aubligatoirement un serveur: peux pas jouer en local
         Top pour faire du singleResponsabilityPrinciple
         pour que ca marche ne plus mettre 
             <script type="text/javascript" src="... 
             mais 
             <script type="module" src="... 
-        dans main.js: 
-              import {toto,
-                      blabla
-                     } from "./path/xxx.js"; // autant mettre le ".js" c'est normalement supporté partout
+        dans main.js: // attention toutes les variables primitives exportees sont readonly. Faire des setters si je veux les modifier 
+              import {toto,blabla} from "./path/xxx.js";                          AAA  // autant mettre le ".js" c'est normalement supporté partout
+             import {projectsMemeNom} from './js/memoclap-projectsFieldsets.js';  AAA  // toujours mettre accolades meme si qu'un seul objet
+             import projects from './js/memoclap-projectsFieldsets.js';    DDD  //du coup j'appellerais projects.unTrucDefiniPlusHaut.uneDeSesMethodes()
+             import UnComponentAttentionMemeNom from './js/alertmsg.js';    CCC
+             import * as bidule from './js/memoclap-projectsFieldsets.js'; BBB et CCC  // j'importe tous les exports de bidule et ici ils sont prefixes par "bidule"
+             on peut faire new unmodule.UnObjetDuModule();                     
         dans path/xxx.js:  
-            export var toto =.... 
-            export function() blabla(arg){...}
+            Exporter plusieurs trucs
+              export var projectsMemeNom =....                                          AAA et BBB   
+              export function() projectsMemeNom(arg){...}                               AAA et BBB
+            Exporter qu'un truc
+              export default class(ne marche que avec class) UnComponentAttentionMemeNom{....}                   CCC
+              export default {unTrucDefiniPlusHaut}; // a mettre a la fin du fichier   DDD
+         pour que les onclick html fonctionnent je dois pointer la methode du module que je veux depuis window: ca rend le module global visible par tous.
+                    window.setModeMenu=memoclap.setModeMenu; // ainsi je peux faire onclick="setModeMenu('hihi')"; mais attention la methode est totallement extraite de son contexte si elle est dans un objet
+                    window.memoclap=memoclap; // je peux faire onclick="memoclap.setModeMenu() tester aussi memoclap.memoclap.setModeMenu()" 
   avant dans un .js charger en ajax un autre .js et faire eval sur le retour pour executer. executer un javascript dans un tag script renvoyé par le serveur. ATTENTION impossible de eval de nouvelles fonctions elles ne seront pas visibles par le browser pour execution depuis la page principale
   avant: dans un .html creer un src et l'ajouter au document          
   avant: methode ancienne: <link rel="import" href="laurent-moncompoentn1.html">              
@@ -28927,6 +28923,7 @@ requirejs : require.js : require : approximatif: a bien améliorer
          </script>         
   
 webcomponent :webcomponents : web-components : web components : custom elements : custom-elements :customelements : customelement :
+        si j'ai erreur operation is not supported ca equivaut à indexPro:1 Uncaught DOMException: Failed to execute 'define' on 'CustomElementRegistry': the name "memoclap-progressionaudiorepere" has already been used with this registry
 https://developers.google.com/web/fundamentals/web-components/customelements#attrchanges
  au final dans mon html j'aurais:
  <script src="laurent-moncomponent1.js"/>  
@@ -29131,7 +29128,7 @@ PWA : progressive webapps :
             dev>application>service workers>offline
             pluggin chrome "lighthouse"
     service-workers : serviceworkers : POUR SUPPRIMER TOUT CACHE POUR TESTER: 1)unregister dabord puis 2) reloader la page en faisant clic droit -> "vider le cache et faire une reactualisation forcee" 
-    pour faire un site qui marche offline avec les service workers: html5: P envoyer notifications meme quand navigateur est fermé car c'est un worker(thread) indépendant de tous les navigateurs.(un peu comme un programme nodejs) Peut travailler avec indexDB database
+    pour faire un site qui marche offline avec les service workers: html5: P envoyer notifications meme quand navigateur est fermé car c'est un worker(thread) indépendant de tous les navigateurs.(un peu comme un programme nodejs) Peut travailler avec indexDB database voir LINKpwanotif
     ça ne marche que en https ou en http://localhost
     serviceworker.js:
     if ('serviceWorker' in navigator) { // s'assurer que servicerworker est supporte par le navigateur
@@ -29310,15 +29307,24 @@ PWA : progressive webapps :
                 event.waitUntil(doSomeStuff());
               }
             });            
+	notifications LINKpwanotif
+			Notification.requestPermission(result => {
+			  if (result === 'granted') {
+
+			    if ('Notification' in window) { // s'assurer que le browser supporte les notifications 
+			    navigator.serviceWorker.ready. //donc enverra une notification chaque fois que le service worker est prêt.then(registration => {
+			      registration.showNotification('Vibration Sample', {
+				body: 'Buzz! Buzz!',
+				tag: 'vibration-sample'
+			      });
+			    });
+			  }
+			});
+
 vuejs :  https://vuejs.org/v2/guide/
 Typescript :
     tsc fichier.ts // commpile en .js
       Voici une documentation à jour sur l’utilisation de TypeScript au sein d’un projet 4YOU: 
-      http://hra-wiki.ptx.fr.sopra/display/NUXE/Utilisation+de+TypeScript
-      http://hra-wiki.ptx.fr.sopra/display/NUXE/Le+widget+Form
-      Cette documentation decrit la procedure d’installation ainsi que la configuration necessaire, via un code d’exemple.
-      
-      	CHANGEMENTS
       Au sein du widget Form, il est desormais possible de debugger son code dans le navigateur directement au format TypeScript 
       (debugger du code JavaScript transpile, utilisant les generateurs, decorateurs, … n’est pas chose facile !).
       Il n’y a rien à faire de special: la configuration TypeScript du composant à ete mise à jour afin de supporter le source mapping.
@@ -31945,6 +31951,57 @@ pour recuperer les rôles de l'utilisateur qui s'est connecté côté IDP:
         }
         }
         }                
+scripts bat : windows :
+    ATTENTION pour les variables 
+          Generations of batch file programmers have tripped over this one. Here it goes.
+          When the command processor interprets a batch file, it does it like this:
+          - Read a line of code.
+          - Perform whatever variable substitution is necessary.
+          - Execute it.
+          - Read the next line of code.
+          - etc.
+          And here comes the catch: When you use parenthesis in your code then everything within the parenthesis counts as one single line 
+exemple de script .bat LINKDevopslksjqgfvmlka
+@echo off
+  set /P version=Version ?
+  echo %version%
+rem ljsdflsdkjf// commentaire
+Set M3="C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2018.2.3\plugins\maven\lib\maven3\bin" (ne me demande pas pourquoi pour les guillemets!! c pas pareil que la ligne en dessous. Mais ça marche)
+Set "JAVA_HOME=C:\Program Files\Java\jdk1.8.0_181\jre"
+echo %M3%
+echo %JAVA_HOME%
+call %M3%\mvn versions:set // sur des commandes maven pour ne pas que le bat s'interrompe il faut mettre call avant (mais dans certains cas on dirait que ca marche sans avoir besoin de mettre call)
+pause
+echo PAE INT > actuel.txt
+set /P continue=Commit pulled and tested OK ? Y N   // prompt qui dit "Commit pulled and tested OK ? Y N" et set dans la variable continue le resultat 
+if %continue%==Y (              // if commence: parenthese = accolades
+                                if avec parenthese est traite en un seul bloc sans s'interrompre donc si on veut que les varaiables soient raffraichies: faire le if sur une seule ligne if..... goto xxxx et le flag goto c'est ":xxxx    "
+set /P version=Version ?
+%M3%\mvn versions:set
+echo %version%
+%M3%\mvn clean
+%M3%\mvn compile
+%M3%\mvn package
+if [[ "$?" -ne 0 ]] ; then // $? c'est le code que renvoit le programme precedent dernier code. -ne c'est pour "not equal" donc ici si code retour different de zero alors... si maven echoue rate erreur ko les tests interruption de la livraison devops 
+  echo 'could not perform tests'; exit $rc      // quitte le programme. exit $rc
+fi
+git add src
+git add pom.xml
+git add *.zip
+rem git commit -m "Automatic delivery of %version%"
+Set WEB-INF-PAE=D:\workspace\paeWeb\WebContent\WEB-INF
+echo ren %WEB-INF-PAE%\ibm-web-ext.xmi
+ren %WEB-INF-PAE%\ibm-web-ext.xmi dev_ibm-web-ext.xmi // pour renommer rename
+ren %WEB-INF-PAE%\_integr.ibm-web-ext.xmi ibm-web-ext.xmi
+echo ren %WEB-INF-PAE%\web.xml
+ren %WEB-INF-PAE%\web.xml dev_web.xml
+ren %WEB-INF-PAE%\_integr.web.xml web.xml
+echo ren %WEB-INF-PAE%\classes\log4j.properties.template
+ren %WEB-INF-PAE%\classes\log4j.properties.template _dev.log4j.properties.template
+ren %WEB-INF-PAE%\classes\_integr.log4j.properties.template log4j.properties.template
+) else (echo "exit")
+
+------------------
         
 windows : (commande dos :)
 pour effacer supprimer delete un fichier:
@@ -32106,6 +32163,8 @@ pour avoir la liste des taches (control alt suppr; ctrl alt suppr):
   lancer cmd puis tapper taskmgr
   pour touch metre à jour la date des fichiers *.jsp à la date du jour: 
 	         COPY /B *.jsp +,,
+    ecrire dans un fichier (ca fait aussi un touch)
+            @echo 245.67>> target\memoclap.front\.reload
   pour supprimer de facon recursive des fichiers avec une expression reguliere
     de là ou je suis il supprime: 
         del /s *.MF (il supprime tous les fichiers *.MF recursivement) /Q pour qu'il ne demande pas de confirmation
@@ -32114,6 +32173,8 @@ pour avoir la liste des taches (control alt suppr; ctrl alt suppr):
       pour copier copy le nom de plusieurs fichiers: nom des fichiers en dos
           aller en commande dos
                 copy ..\MemOclapFront\target\memoclap.front.war C:\Users\lduverge\apache-tomee-plume-8.0.0\webapps\
+        copier de facon recursive : 
+                xcopy src\main\webapp\js\* target\memoclap.front\js\ /s /e /Y  // /Y pour ne pas qu'il prompt: forcer
       raccourcis clavier: http://www.infoprat.net/astuces/windows9x/astuces/raccourcis_015.php
       demarrer une application de la barre des taches: Windows + T
       Acceder à une application: Alt+Tab puis les fleches
