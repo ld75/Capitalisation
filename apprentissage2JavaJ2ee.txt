@@ -34151,3 +34151,105 @@ signer apk avec certificat:
     password:Sign4Bugdroid
     mypg password:mypyga
     jarsigner -verbose -sigalg MD5withRSA -digestalg SHA1 -keystore keystore_android.jks ../Livrables/MyPg/MYPGGaetan/MYPG/prod/apk/release/android-release-unsigned.apk mypg
+
+
+    ------------------
+    dockercompose
+    version: "3.7"
+
+services:
+  mysql:
+    image: mysql
+    hostname: or-mysql
+    container_name: or-mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+
+    volumes: 
+      - ../authweb/mysql/db-init.sql:/docker-entrypoint-initdb.d/db.sql    
+  devmail:
+    image: djfarrelly/maildev
+    container_name: devmail
+    ports:
+      - "25:25"
+      - "1080:80"
+  authweb:
+    image: tomcat:7-jdk8-openjdk
+    hostname: au-authweb
+    container_name: au-authweb
+    volumes: 
+      - ../authweb/authweb/authweb.war:/usr/local/tomcat/webapps/authWeb.war 
+      - ../authweb/authweb/appConf/:/usr/local/tomcat/appConf/ 
+      - ../authweb/authweb/apt.conf:/etc/apt/apt.conf 
+      - ../authweb/authweb/tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml 
+      - ../authweb/authweb/app_manager-context.xml:/usr/local/tomcat/webapps/manager/META-INF/context.xml 
+      - ../authweb/authweb/app_host_manager-context.xml:/usr/local/tomcat/webapps/host-manager/META-INF/context.xml 
+      - ../authweb/authweb/server.xml:/usr/local/tomcat/conf/server.xml
+      - ../authweb/authweb/keystore/client1:/root/.keystore/client
+    ports:
+      - "9094:8080"
+      - "9443:8443"
+  oicd:
+    image: tomcat:7-jdk8-openjdk
+    hostname: au-oicd
+    container_name: au-oicd
+    volumes: 
+      - ../authweb/oidc/oidc.war:/usr/local/tomcat/webapps/oidc.war
+      - ../authweb/oidc/appConf/:/usr/local/tomcat/appConf/ 
+      - ../authweb/oidc/apt.conf:/etc/apt/apt.conf 
+    ports:
+      - "9093:8080"
+  service:
+    hostname: or-service
+    image: tomcat:7-jdk8-openjdk
+    container_name: or-service
+    volumes: 
+      - ../authweb/service/ORService.war:/usr/local/tomcat/webapps/ORService.war 
+      - ../authweb/service/appConf/:/usr/local/tomcat/appConf/
+      - ../authweb/service/apt.conf:/etc/apt/apt.conf 
+    ports:
+      - "8083:8080"
+#or-mobile 2 instances      
+  or-mobile-1:
+    hostname: or-mobile-1
+    image: tomcat:7-jdk8-openjdk
+    container_name: or-mobile-1
+    environment:
+       JPDA_ADDRESS: 8001
+       JPDA_TRANSPORT: dt_socket 
+
+    volumes:
+      - ../authweb/or-mobile1/web.war:/usr/local/tomcat/webapps/web.war 
+      - ../authweb/or-mobile1/appConf/:/usr/local/tomcat/appConf/ 
+      - ../authweb/or-mobile1/apt.conf:/etc/apt/apt.conf 
+      - ../authweb/or-mobile1/apps:/data/casappsResources/
+    ports:
+      - "8091:8080"
+      - "8002:8001"
+
+#wope proxy 2 instance
+  or-wope1:
+    hostname: or-wope1
+    image: tomcat:7-jdk8-openjdk
+    container_name: or-wope1
+    volumes:
+      - ../authweb/wope1/conf/Catalina/localhost/ROOT.xml:/usr/local/tomcat/conf/Catalina/localhost/ROOT.xml
+      - ../authweb/wope1/wope.war:/temp/wope/wope.war 
+      - ../authweb/wope1/wope1.ini:/temp/wope/wope.ini
+      - ../authweb/wope1/apt.conf:/etc/apt/apt.conf
+      - ../authweb/wope1/tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml 
+      - ../authweb/wope1/webapps:/usr/local/tomcat/webapps/
+    ports:
+      - "8900:8080"
+       
+        
+  or-lb:
+    hostname: or-lb
+    image: httpd:2.4
+    container_name: or-lb
+    volumes:
+      - ../authweb/lb_httpd/my-httpd.conf:/usr/local/apache2/conf/httpd.conf
+    ports:
+      - "8100:80"        
