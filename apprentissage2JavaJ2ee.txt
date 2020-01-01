@@ -25127,14 +25127,14 @@ pour installer des programmes: applications: (le repository miroir local qui lui
       les touches 'haut', 'bas', 'gauche', 'droite' pour naviguer.
       la touche 'entree' pour deplier/replier
       Ctrl+u undo annuler : je peux annuler plusieurs fois jusqu'au debut de mes modifs si j'ai pas fait gg 
-      e si apptitude affiche un conflit appyer sur e pour voir plus de details et une solution proposee
+      SI ca devient rouge: Rechercher > voir ce qui est casse   ou faire b
+      e si apptitude affiche un conflit probleme erreur appyer sur e pour voir plus de details et une solution proposee
       . pour voir la solution suivante proposee
       r pour rejetter/ne plus rejetter une solution
       ! ou a pour accepter une solution
       u met à jour la liste des paquets disponibles   // raffraichit en fait que la liste de ce qui peut etre MAJ
       U (marque tous les paquets susceptibles d'être mis à jour pour être mis à jour); 
       + pour selectionner un packet à installer/mettre à jour
-      SI ca devient rouge: Rechercher > voir ce qui est casse   ou faire b
       - pour supprimer un paquet (NE JAMAIS FAIRE CA MAIS FAIRE: )
       _ pour supprimer un paquet et ses fichiers de configuration
       g  pour voir une simulation et on peut modifier après si besoin, faire: par ex pour annuler un truc. refaire g pour confirmer definitivement
