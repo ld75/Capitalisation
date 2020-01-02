@@ -1,4 +1,4 @@
-(?=.*format)(?=.*json)
+(?=.*stformat)(?=.*json)
 
 AFAIRE :
     Entretien:
@@ -867,7 +867,8 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git checkout numerodanciencommitdeMaBranche // pour aller en arriere dans le temps. ensuite pour revenir faire git checkout MaBranche
       git checkout -b nomBranche_vers_laquelle_aller_et_si_elle_n'existePasIlLaCreeDansLaFoulee
       git checkout master // reviens dans le master et le HEAD maintenant est dans le master
-      git checkout nomfichier // pour recuperer un fichier utile aussi si il dit "Your local changes to the following files would be overwritten by merge" sur des fichiers et que je m'en fous de mes modifs et que je veux les ecraser
+      git checkout nomfichier // pour recuperer un fichier (juste modifié mais que je veux annuler) utile aussi si il dit "Your local changes to the following files would be overwritten by merge" sur des fichiers et que je m'en fous de mes modifs et que je veux les ecraser
+      git checkout uneAutreBranche path/vers/un/fichier // pour dans ma branche actuelle ecraser un fichier par son équivalent dans une autre branche (il cree le fichier si dans ma branche actuelle il n'existe pas)
     merger ma branche avec mon master ATTENTION TOUJOURS COMMITER AVANT DE FAIRE UN MERGE
       se positionner dans là ou je veux tirer vers moi (le master en principe)
       git merge NomDeLaBranchequejeveuxTirerVersLaBranchDansLaquelleJeSuis(en principe le master) master<----tototo ATTENTION TOUJOURS COMMITER AVANT DE FAIRE UN MERGE
@@ -1350,7 +1351,7 @@ payara :payaramicro : // executeur direct d'un microservice.
         --rootDir repertoire/de/travail/cree/auto/si/existepas // pour y mettre sous lib les jars qu'il n'arrive pas à trouver au demarrage: les drivers par exemple. il y met automatiquement des trucs. ca se rempli beaucoup donc il faut mettre ce parametre pour avoir un control de la ou il ecrit tout son fatras. Attention si je suis en ssl il y ecrit des trucs dedans qui ne me permettent plus ensuite de ne plus être en ssl donc utiliser plusieurs rootDir differents par environnement
         --deploy /home/user/example.war ou le repertoire root du war exploaded(dans target)// mettre un .reload sous la racine de mon war exploded et le modifier/toucher recharge le war exploded automatiquement (faire mvn package)(sauf si le war ne s'est pas déployé la fois précédente)
                  possible faire plusieurs --deploy dans une meme commande seront sur le meme port
-        --contextroot contextrootquiremplacelenomdemonwarcommecontextroot (avec / au debut, sans / à la fin) //ou faire --deploy /x/y:contextroot
+        --contextroot contextrootquiremplacelenomdemonwarcommecontextroot (avec / au debut, sans / à la fin) on peut mettre / tout court. Si on pet pas ca le contextroot=nomDuWar //ou faire --deploy /x/y:contextroot
         --domainConfig fichierDomain.xml // situé au meme niveau. A recuperer dans payara.jar et à mettre au meme niveau si je veux declarer une base de donnee jta voir LINKlskjdfqm
         --name nomdemoninstancequejedeploie
             ssl: au déploiement automatiquement importe dans mon microprofile les keystores et password defini par les proprietes systèmes javax.net.ssl.xxxx
@@ -24176,7 +24177,7 @@ pour parametrer ce qui doit se lancer automatiquement au demarrage
   ls /etc/rc2.d dans ce repertoire on voit tout ce se lance automatiquement quand on rentre dans le runlevel 2 (etc pour 3 pareil...)
   pour mettre à jour la prog d'un demarrage d'un service lors du demarrage du serveur: update-rc.d mysql defaults (par exemple)
 pour savoir ce qui tourne:
-(ps -fu ? ou)ps -ef | grep monnomutilisateur pour voir quelles instances que j'ai lance tournent (affiche les ports) ps -ef donne aussi la date de debut d'execution du process
+(ps -fu ? ou)ps -ef | grep monnomutilisateur pour voir quelles instances que j'ai lance tournent (affiche les ports?non) ps -ef donne aussi la date de debut d'execution du process
 on peut ensuite faire un kill -15 (soft) ou -9 (hard) sur l'id qu'on veut killer ( premiere colonne en chiffres (PID)) ferme aussi le port du service du coup
 pour killer en une seule ligne de commande
     pkill -f 'java.*payara' // plus précis (point etoile pour le wildcard regexp grace a -f je crois)
@@ -25658,7 +25659,7 @@ Pour rediriger les requetes du port 8080 de apache vers jetty:
         #ServerAlias *.wenhuaduverge.com
         # Toutes les requêtes sont redirigees vers le serveur jetty sauf le repertoire shop qui doit être servi normalement (php)
                             ProxyPass /shop/ ! (execution de haut en bas voir ligne en dessous) (ProxyPass est une commande de reverseproxy) // laisse /shop tel qu'il est.                          	
-                          	ProxyPass / http://localNOMDUSERVEURhost:8080/    // c'est ca qui va rediriger toutes les requetes du domaine www.mondomainepourjetty.com vers le port 8080 de jetty (voir ligne du dessus sauf celles qui finissent par shop/) // peut etre utilisé pour supprimer des termes de l'URL
+                          	ProxyPass / http://localNOMDUSERVEURhost:8080/    // c'est ca qui va rediriger toutes les requetes du domaine www.mondomainepourjetty.com vers le port 8080 de jetty (voir ligne du dessus sauf celles qui finissent par shop/) // peut etre utilisé pour supprimer des termes de l'URL. Toujours finir par un / dans les 2 arguments
                           	ProxyPassReverse  /unContextRootParExempleOuJusteSlash http://0.0.0.0:8080/unContextRootParExempleOuJusteSlash // ca je pense que c'est pour quand mon serveur s'envoie une requête à lui-même.(redirection par ex) ATTENTION à l'ordre LINKpppassorder: mettre les plus specifique en haut.
                           	ProxyPreserveHost On
                           	DocumentRoot /var/www/suivi.booster-france.com/           //bof pas sur d'avoir besoin de ca
@@ -25674,7 +25675,7 @@ Pour rediriger les requetes du port 8080 de apache vers jetty:
         Order allow,deny
         Allow from all
       </Directory>
-                                  ErrorLog  "|cronolog --symlink=${APACHE_LOG_DIR}/suivi.booster-france.com/error.log   ${APACHE_LOG_DIR}/suivi.booster-france.com/%Y/%m/error.log"
+        1                          ErrorLog  "|cronolog --symlink=${APACHE_LOG_DIR}/suivi.booster-france.com/error.log   ${APACHE_LOG_DIR}/suivi.booster-france.com/%Y/%m/error.log"
                                   CustomLog "|cronolog --symlink=${APACHE_LOG_DIR}/suivi.booster-france.com/access.log   ${APACHE_LOG_DIR}/suivi.booster-france.com/%Y/%m/access.log" combined
                           	# Possible values include: debug, info, notice, warn, error, crit,
                           	# alert, emerg.
@@ -26546,7 +26547,7 @@ savoir si un element audio joue:
                 `duhtml
            	        ${versionPro?    // ou versionPro=="machin"
                         `duhtmlsioui`:// cette partie est a mettre obligatoirement pour que ca compile
-                        `duhtmlsinon` 
+                        `duhtmlsinon   ${ /* astuce pour mettre des commentaires */'' }  ` 
            	            }
            		suiteduhtml`;
     existe un moteur de template de type velocity: nom: mustache pourri regarder plutot template literals
@@ -26709,7 +26710,7 @@ ES6 :modules: une page html/js peut importer une page html/js qui importe aussi:
         dans path/xxx.js:  
             Exporter plusieurs trucs
               export var projectsMemeNom =....                                          AAA et BBB   
-              export function() projectsMemeNom(arg){...}                               AAA et BBB
+              export function projectsMemeNom(arg){...}                               AAA et BBB
             Exporter qu'un truc
               export default class(ne marche que avec class) UnComponentAttentionMemeNom{....}                   CCC
               export default {unTrucDefiniPlusHaut}; // a mettre a la fin du fichier   DDD
@@ -31785,7 +31786,7 @@ SAML :   A LIRE: https://research.aurainfosec.io/bypassing-saml20-SSO/
                 
                 
                 SSLEngine On
-                SSLProxyEngine On 
+                SSLProxyEngine On // si j'ai l'erreur  SSL Proxy requested for 443 but not enabled [Hint: SSLProxyEngine] c'est ca que je dois rajouter 
                 
                 SSLCertificateFile /etc/ssl/certs/solis.vinci-concessions.net.self.crt
                 SSLCertificateKeyFile /etc/ssl/private/solis.vinci-concessions.net.self.key
