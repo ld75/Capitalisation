@@ -1,4 +1,4 @@
-(?=.*ports)(?=.*disponibd)
+(?=.*lire)(?=.*fichie)
 
 
 AFAIRE :
@@ -495,7 +495,7 @@ si problemes dans npm: https://github.com/npm/npm/wiki/Troubleshooting
             npm config rm http-proxy
             npm config rm https-proxy        
   afficher un module dispo sur le net:
-      typings search --name react   ou typings search --name angular
+      npm search --name react   ou npm search --name angular
  si je suis sous mon repertoire projet et je fais npm install: //-g pour installer dans le repository(globalement sur mon systeme) et non pas dans le projet; --save alors il ajoute la dependance "dependencies" dans le package.json où je suis. avec --save-dev il ajoute la dependance dans le package.json dans "devDependencies" et dans le repertoire qu'il cree node_modules ou je suis: c'est un package que j'installe qui ne sera utile que pour les tests de dev et non pas la prod
         va installer toutes les dependances necessaire du projet (grace a package.json) dans mon repository npm
 mettre à jour npm:// pour installer la derniere version update upgrade
@@ -11058,7 +11058,7 @@ utilisation du plugin assembly pour créer un zip:
                             <includeSiteDirectory>false</includeSiteDirectory>
                             <files>
                                 <file>
-                                    <source>${project.build.directory}/diversitysimulator_v${project.version}.exe</source>
+                                    <source>${project.build.directory}/diversitysimulator_v${project.version}.exe</source>  // project.build.directory c'est target je crois
                                     <outputDirectory>/data</ouputDirectory> // facultatif: pour mettre le fichier source dans le repertoire monZip/data/. Si on le met pas il met le fichier direct a la racine dans le zip quelquesoit son path
                                 </file>
                                 <file>
@@ -11372,6 +11372,7 @@ ant : avec maven: pour par exemple renommer un fichier apres coup touch toucher 
         script antbuild.xml:
             <project>
     <target name="clean"> // c'est le nom LINKantslkjsdf
+        <delete file="${destpath}/service-worker-vxxx.js"/>
         <delete file="../../batchs/memoclap.copyproject-${version}.jar"/>
         <delete file="../../batchs/memoclap.filter-${version}.jar"/>
         <delete file="../../batchs/memoclap.parser-${version}.jar"/>
@@ -17059,7 +17060,17 @@ generer la javadoc :
                     exemple un package-info.java
                             @javax.xml.bind.annotation.XmlSchema(namespace = "http://search.service.core.rciw.sa.ca.fr/")
                             package fr.ca.sa.rciw.core.service.search;
-        
+executer du javascript à partir de java:
+        ScriptEngineManager manager = new ScriptEngineManager();
+        ScriptEngine engine = manager.getEngineByName("JavaScript");
+        puis
+        engine.eval(Files.newBufferedReader(Paths.get("C:/Scripts/Jsfunctions.js"), StandardCharsets.UTF_8));
+        ou        
+        String script1 = (String)"function nomDeLaMethode(name) {print ('Hello, ' + name);}";
+        engine.eval(script1);
+        puis
+        Invocable inv = (Invocable) engine;
+        inv.invokeFunction("nomDeLaMethode", "argumentName" );        
 decompiler :
       meilleur decompilateur:decode_java (java decompiler); Sinon utiliser Intellij qui peut aussi comparer des repertoires 
       fernflower pour decompiler tout un jar et exporter les sources dans un jar avec des .java à la place des .class (mettre ~1 pour les espaces)
@@ -17081,7 +17092,7 @@ decompiler :
     
  
 erreurs : messages : messages d'erreur :
-Si lors du deploiement vous avez cette erreur : 
+Si lors du deploiement vous avez cette erreur: 
       Unable to resolve resource reference 'jdbc/Datasource' (Could not find resource 'siaDatasource'.  Perhaps it has not yet been configured, or your application does not have a dependency declared for that resource module?)
       Assurez vous d’avoir declare vos dependances dans geronimo-web.xml ET geronimo-application.xml 
 Si une erreur avec LoginModule verifier que la case du realm est respectee dans web.xml (arca ou ARCA)
@@ -17182,7 +17193,7 @@ logs :logguer : logger :tracer :
                                         LOGGER.config("Configuration Generals log done.");
                                         LOGGER.log(Level.FINE, "Finer logged");
                                         }
-                                      catch(IOException exception) {  // pour catcher different type d'exception : catch(IOException | FileNotFoundException e)
+                                      catch(IOException exception) {  // pour catcher different type d'exception: catch(IOException | FileNotFoundException e)
                                           LOGGER.log(Level.SEVERE, "Error occur in FileHandler.", exception);
                                       }
                 Utilisation:
@@ -22471,7 +22482,11 @@ pour recuperer le string d'un fichier lire contenu d'un fichier
         		reader.close(); 
         	return lByteOut.toString();
         	}
-Pour lire les lignes d'un fichier: 
+Pour lire les lignes d'un fichier:
+depuis java11:
+    File contentFile = new File(pathFile);
+        var filePath = contentFile.toPath();
+        var content = Files.readString(filePath, Charset.forName(app.getProperty("ENCODING"))); 
 FileInputStream lire = new FileInputStream(fichier); // fichier est un File
 			BufferedReader reader = new BufferedReader(new InputStreamReader(lire));
 			NON!!! il faut utiliser les BufferedInputStream et output stream parce que buffered reader encode! // en fait si ca marche pour les fichiers UTF-8 à lire (utiliser mark et reset si besoin faire l'equivalent de pos de RandomAccessFile mais bon courage:-))
@@ -26575,7 +26590,7 @@ savoir si un element audio joue:
             
             }
 tester le javascript
-    tester avec jest : le meilleur d'apres sylvain. Pas reussi a tester les custom elements car  ReferenceError: HTMLElement is not defined.
+    tester avec jest : le meilleur d'apres sylvain. 
         les fichiers de tests doivent s'appeler xxxx.test.js            
         	    npm install --save-dev jest //--save-dest voir npm.
                     (./node_modules/.bin/)jest --init // il crée le fichier jest.config.js
@@ -26598,7 +26613,22 @@ tester le javascript
                                                   ],
                                               ],
                                           };
-                                          
+                  faire ca pour que jest et jsdom comprenne les webcomponents customelements custom-elements:
+                        dans mes fichiers de test mettre en  tête
+                            import 'document-register-element';
+                        et dans package.json mettre
+                          "devDependencies": {(...)
+                            "document-register-element": "^1.13.2"
+                            (...)}, 
+                            "jest": {
+                                            "setupFiles": [
+                                              "document-register-element"
+                                            ]
+                                          }
+                                        }
+                            et dans la classe de test pour utiliser un webcomponents customelements custom-elements faire ca:
+                            let progressionaudiorepere = new ProgressionAudioRepere(); document.body.appendChild(progressionaudiorepere); progressionaudiorepere.connectedCallback();
+                                                   
                     les fichiers de tests doivent s'appeler xxxx.test.js
                     dans xxxx.test.js:
                      dedans on peut utiliser document: var audioelt=document.createElement('div' etc etc... c'est un dom virtuel. mais pour que ça marche mettre dans jest.config.js testEnvironment: "jsdom",
@@ -26612,6 +26642,9 @@ tester le javascript
                           });
                           describe('nom du test suite', () => {
                               	it(.skip pour ignorer)('nom du test', () => {
+                                (...)
+                                });
+                                it("checkloop",()=>{...
 			ou 	
 				test('nom du test,async()=>{
 					impossible de definir une variable globale pour un test. il faut raisonner en modules. et les modules ont leurs variables
@@ -26711,17 +26744,17 @@ ES6 :modules: une page html/js peut importer une page html/js qui importe aussi:
             <script type="module" src="... 
         dans main.js: // attention toutes les variables primitives exportees sont readonly. Faire des setters si je veux les modifier 
               import {toto,blabla} from "./path/xxx.js";                          AAA  // autant mettre le ".js" c'est normalement supporté partout
-             import {projectsMemeNom} from './js/memoclap-projectsFieldsets.js';  AAA  // toujours mettre accolades meme si qu'un seul objet
+             import {projectsMEMENOM} from './js/memoclap-projectsFieldsets.js';  AAA  // toujours mettre accolades meme si qu'un seul objet
              import projects from './js/memoclap-projectsFieldsets.js';    DDD  //du coup j'appellerais projects.unTrucDefiniPlusHaut.uneDeSesMethodes()
              import UnComponentAttentionMemeNom from './js/alertmsg.js';    CCC
              import * as bidule from './js/memoclap-projectsFieldsets.js'; BBB et CCC  // j'importe tous les exports de bidule et ici ils sont prefixes par "bidule"
              on peut faire new unmodule.UnObjetDuModule();                     
         dans path/xxx.js:  
             Exporter plusieurs trucs
-              export var projectsMemeNom =....                                          AAA et BBB   
-              export function projectsMemeNom(arg){...}                               AAA et BBB
+              export var projectsMEMENOM =....                                          AAA et BBB   
+              export function projectsMEMENOM(arg){...}                               AAA et BBB
             Exporter qu'un truc
-              export default class(ne marche que avec class) UnComponentAttentionMemeNom{....}                   CCC
+              export default class(ne marche que avec class) UnComponentAttentionMEMENOM{....}                   CCC
               export default {unTrucDefiniPlusHaut}; // a mettre a la fin du fichier   DDD
          pour que les onclick html fonctionnent je dois pointer la methode du module que je veux depuis window: ca rend le module global visible par tous.
                     window.setModeMenu=memoclap.setModeMenu; // ainsi je peux faire onclick="setModeMenu('hihi')"; mais attention la methode est totallement extraite de son contexte si elle est dans un objet
