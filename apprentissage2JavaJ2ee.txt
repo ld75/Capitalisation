@@ -26641,7 +26641,7 @@ tester le javascript
                             import 'document-register-element';
                         et dans package.json mettre
                           "devDependencies": {(...)
-                            "document-register-element": "^1.13.2"
+                            "document-register-element": "^1.13.2" // si besoin l'installer: npm install--save-dev document-register-element
                             (...)}, 
                             "jest": {
                                             "setupFiles": [
@@ -26654,6 +26654,13 @@ tester le javascript
                                                    
                     les fichiers de tests doivent s'appeler xxxx.test.js
                     dans xxxx.test.js:
+			pour importer du html et l'integrer dans le document de mes tests:
+				const fs = require ("fs");
+				const path= require("path");
+				const html = fs.readFileSync(path.resolve(__dirname,'./resources/indexPro.html'),'utf8');
+				const htmltemplates = fs.readFileSync(path.resolve(__dirname,'./resources/memoclap-template.html'),'utf8');
+			   puis dans mon test:
+				document.documentElement.innerHTML="<html><body>"+htmltemplates.toString()+html.toString();		
                      dedans on peut utiliser document: var audioelt=document.createElement('div' etc etc... c'est un dom virtuel. mais pour que ça marche mettre dans jest.config.js testEnvironment: "jsdom",
 							puis document.body.appendChild(audioelt);
 			import {lecteurtimeupdate} from '../(toujours mettre au moins un "./")../webapp/js/memoclap-lecteurtimeupdate.js';
@@ -26726,7 +26733,8 @@ tester le javascript
 				    await page.type("input[name=name]", "blabla");
 				  }, 16000); // c'est un timeout il faut le mettre si headless:false LINKlgjozuaer
 				});
-      pour executer voir LINKjestexecute
+    
+  pour executer voir LINKjestexecute
     avec Jasmine : et testem : (sinon utiliser https://jsfiddle.net/)
       installer testem: (pas besoin d'installer jasmine)
           npm install testem -g (installe testem globalement sur mon systeme)
