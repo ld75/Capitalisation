@@ -1,6 +1,5 @@
-(?=.*lire)(?=.*fichie)
-
-
+(?=.*clone)(?=.*branch)
+ 
 AFAIRE :
     Entretien:
         qu'est ce que rest, architecture ntiers, polymorphisme, mvc, dto, bdd: gerkin  
@@ -8,9 +7,7 @@ AFAIRE :
         Afaire go, play, ngix 
         bootstrap=tweeter; materialUI
     base de donnée h2 pour les tests unitaires à capitaliser
- authweb :AFAIRE_ACONVERTIR_EN_CURL.png
- Envoyer à dorothé le script de synchro gitlab vers gitcacib
-capitaliser get spring
+ Capitaliser get spring
 lire : C:\Users\ut2sn0\My_IT_Applications\apprentissage\20190716_Kubernetes_Live_Demo_in_SQY.pdf
 comment eviter transitive pb maven
 svn tortoise: merger depuis 2.11 sur trunk en modifiant trunk:
@@ -481,7 +478,7 @@ si problemes dans npm: https://github.com/npm/npm/wiki/Troubleshooting
   dans un repertoire faire
   (path/vers/npm)npm init // cree package.json là ou je suis// il me pause des questions pour bien le remplir ATTENTION pas d'espace dans le nom. l'important c'est le entry-point: indiquernomfichier.js qui est le point d'entree. je peux l'executer en faisant node indiquernomfichier.js
   pour executer un truc par npm soit je fais npm etc.. soit je fais path/vers/node_modules/.bin/trucquejeveuxexecuter (a faire si par ex j'ai le message "missing script etc.."
-  voir l'arbre des dependances:
+  voir l'arbre des dependances: et la version
     npm list <optionel:module>
   voir la config:
         npm config list
@@ -851,7 +848,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
     git clone:
       dupliquer/copier/recuperer un repository present sur le web en local. (en general c'est un fork que je clone si je me greffe à un projet existant)
         git clone https://username(facultatif):motdepasse(facultatifLesguillemetsdoiventEtreEchappeesPar\)@githubSuiteUrl.com/spring-projects/spring-security-oauth-javaconfig.git // le copie dans le repertoireLocal ou je suis tout le projet son histoire ses vieilles branches commitees. Mettre username et password si j'ai le message dépot non trouvé depot ou repository not found
-        git clone https://scm.soprahr.com/scm/su/sample-edsn-usermanager.git nomdefacultatifmonprojetRepertoireQueJeLuiDemandeDeCreer
+        git clone https://scm.soprahr.com/scm/su/sample-edsn-usermanager.git nomdefacultatifmonprojetRepertoireQueJeLuiDemandeDeCreer (-b unebrancheFacultatifPourClonerJusteUneBranche)
         git clone unUserNameSur?@ungithubUrl:un/path/vers/un/.git
         git clone --bare ....etc... fait pareil mais c'est un bare 
       dupliquer/copier/recuperer un repertoire-repository local vers mon nouvel espace de travail
@@ -24186,12 +24183,12 @@ df -h . pour voir combien il reste de place espace restant disponible memoire di
 df -k pour voir si il y a de la place dans les systemes de fichiers. le pourcentage = espace utilise je suis sur. 1 Mo devrait suffire (1 xxx xxx)
   convertisseur: http://mon-ip.awardspace.com/convertisseur.php (ne pas mettre espaces)
     1 octet = 1 byte = 8 bits
-		Un kilooctet (ko) = 2^10 octets = 1024 octets
-    Un Megaoctet (Mo) = 2^20 octets = 1024 ko = 1048576 octets    = 1024 ko donc 252132=252Mega = 1024 ko
-    Un Gigaoctet (Go) = 2^30 octets = 1024 Mo = 1073741824 octets = 1024 Mo
-    Un Teraoctet (To) = 2^40 octets = 1024 Go = 1099511627776 octets 1024 Go
+	Un kilooctet (ko) = 2^10 octets            = 1.024 octets
+    Un Megaoctet (Mo) = 2^20 octets = 1.024 ko = 1.048.576 octets         = 1.024 ko donc 252.132 ko=252Mega = 1024 ko
+    Un Gigaoctet (Go) = 2^30 octets = 1.024 Mo = 1.073.741.824 octets     = 1.024 Mo
+    Un Teraoctet (To) = 2^40 octets = 1.024 Go = 1.099.511.627.776 octets = 1.024 Go
 			
-			1 Mo devrait suffire (1 xxx xxx)
+			1 Mo devrait suffire (1 xxx xxx)                               
 			1.000.000   = 1Giga Go
 			1.000 kilo = 1 Mega Mo
 si j'ai le message:quota_ufs: over hard disk limit (pid 8968, uid 2024, inum 24683, fs /appli01) sous les systemes de fichiers il y a des application et chacune a un quota
@@ -26566,7 +26563,7 @@ savoir si un element audio joue:
         donc element.style.margin-top=parseInt(element.style.margin-top,10)+5+"px"; marche:-)
     traitement des variables dans des strings type template:(template literals) 
     console.log(`aaaa ${supportsCustomElements}`); // plus besoin de faire "sldfkj"+xxx Pas supporte sur IE11. Pour que ca marche bien mettre `` et non pas des guillemets
-            exemple: `<div><img onclick="closeUpdateRecordBoucle('${fichiermixttemp}','${fichiermixttemp}');"/></div>` dans un template
+            exemple: `<div><img onclick="closeUpdateRecordBoucle('${fichiermixttemp}','${fichiermixttemp}');"/></div>` dans un template// pour echaper les dollars ${ si on est dans une jsp mettre \${
             on peut meme faire des conditions avec templates: gabarit:
                 `duhtml
            	        ${versionPro?    // ou versionPro=="machin"
@@ -26665,7 +26662,7 @@ tester le javascript
                       afterAll(() => {
                         return clearCityDatabase();
                       });
-		execution: LINKjestexecute: ./node_modules/.bin/jest monfichierdetest.test.js
+		execution: LINKjestexecute: sous mon projet avec package.json faire npm test cheminfichieratester ou  ./node_modules/.bin/jest monfichierdetest.test.js
            jest+puppeter : pupetter : pupeter : puppetter :
                 faire 
                 npm i --save-dev puppeteer // pour utiliser pupetter au moins.
@@ -26736,7 +26733,7 @@ tester le javascript
         pour executer ce test: 
           >testem ci --launch PhantomJS(obsolete)
 ES6 :modules: une page html/js peut importer une page html/js qui importe aussi: le browser gère les doublons si yen a // pas implemente dans firefox et safari?
-    pour les tester il faut aubligatoirement un serveur: peux pas jouer en local
+    pour les tester il faut aubligatoirement un serveur: peux pas jouer en local SI JE PEUX
         Top pour faire du singleResponsabilityPrinciple
         pour que ca marche ne plus mettre 
             <script type="text/javascript" src="... 
@@ -32039,6 +32036,7 @@ ren %WEB-INF-PAE%\classes\_integr.log4j.properties.template log4j.properties.tem
 ------------------
         
 windows : (commande dos :)
+explorer appdata est une variable d'environnement donc on peut mettre dans explorateur %AppData% et il va direct dans le repertoire AppData
 pour effacer supprimer delete un fichier:
     del /f C:\Users\lduverge\apache-tomee-plume-8.0.0\webapps\memoclap.front.war // /f pour forcer
 pour effacer un repertoire directory:
