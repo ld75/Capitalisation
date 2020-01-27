@@ -1,5 +1,4 @@
-(?=.*clone)(?=.*branch)
- 
+(?=.*template)(?=.*onclick)
 AFAIRE :
     Entretien:
         qu'est ce que rest, architecture ntiers, polymorphisme, mvc, dto, bdd: gerkin  
@@ -2453,7 +2452,9 @@ Cycle de vie du CDI bean:
               @Produces // de javax.enterprise.inject.Produces LINKfactoproduce 
               @MonQualifierAMoi //un Qualifier que j'ai crée voir LINKqualifsdlfk
               @UnPetitScope genre @Dependent pour que au cas ou on redeploie, weld arrive a rappeler cette methode                               
-              IApplicationConfiguration getApplicationConfiguration(){ ou LINKprodpara IApplicationConfiguration getApplicationConfiguration(ClasseA classea,ClasseB classb)// pas besoin de mettre @Inject ici dans un producer.
+              IApplicationConfiguration getApplicationConfiguration(){ 
+              ou 
+              LINKprodpara: IApplicationConfiguration getApplicationConfiguration(ClasseA classea,ClasseB classb)// pas besoin de mettre @Inject ici dans un producer.
                   if (machintruc)
                   {
                       return classeA;
@@ -3993,7 +3994,7 @@ pour afficher les erreurs dans la page d'erreur jsp:
 pour simuler un click sur un bouton parcourir ou un autre element upload file: 
         function openParcourir()
         {
-          //document.getElementById("files").click();
+          //document.getElementById("files").click(); // dechancher le click
         	//var evObj = document.createEvent('Events');
         	//evObj.initEvent("click", true, false);
         	//document.getElementById("files").dispatchEvent(evObj);
@@ -21115,7 +21116,7 @@ pour faire un message avec des {0}{1}{2}...  qui sont remplace par des strings: 
           MessageFormat form= new MessageFormat(  "The disk \"{1}\" contains {0} file(s).");
           String result = form.format(arguments);
 ou bien 
-   String toto = String.format("%4$-5S(PASDESPACEICI)%3$2s(PASDESPACEICI)%2$2s(PASDESPACEICI)%1$2s", "a","b","c","dd"); //%argumentNumeroCommenceParUn$-tailleMinARespecterAjouteEspaceSiPlusPetit (si l'argument est plus grand que -xS il ne le tronque pas) S ou s pour la casse
+   String toto = String.format("%4$-5S(PASDESPACEICI)%3$2s(PASDESPACEICI)%2$2s(PASDESPACEICI)%1$2s", "a","b","c","dd"); //%argumentNumeroCommenceParUn$-tailleMinARespecterAjouteEspaceSiPlusPetit (si l'argument est plus grand que -xS il ne le tronque pas) S ou s pour la casse case
    retourne DD     c  b  a                                                                                   |                                                                               |
    exemple:                                                                                                 (-): les espaces sont a droite. si rien les espaces sont a gauche                x doit etre superieur à 0 mais le nombre d'espace visible sera x+1 donc je dois mettre nombreDespaceVoulu-1 
    logger.warn("User "+String.format("%s %s %s", tPrincipal.getNom(),tPrincipal.getLogin(),tPrincipal.getEmail())+ "in webservice has no roles");
@@ -26639,7 +26640,22 @@ tester le javascript
                           });
                           describe('nom du test suite', () => {
                               	it(.skip pour ignorer)('nom du test', () => {
-                                (...)
+                                    // pour mocker un objet(xhr par exemple)
+                                            const mymock = ()=>({
+                                              send:jest.fn().mockImplementation(function(){
+                                                      this.onload();
+                                              }),
+                                              onload:jest.fn().mockImplementation(function(){
+                                              }),
+                                              open:jest.fn().mockImplementation(function(){
+                                                      this.status=200;
+                                                          }),
+                                              overrideMimeType:jest.fn().mockImplementation(function(){
+                                              }),
+                                  })
+                                      window.XMLHttpRequest = jest.fn().mockImplementation(mymock);
+                                
+                                (.. mes tests..)
                                 });
                                 it("checkloop",()=>{...
 			ou 	
@@ -26663,7 +26679,7 @@ tester le javascript
                         return clearCityDatabase();
                       });
 		execution: LINKjestexecute: sous mon projet avec package.json faire npm test cheminfichieratester ou  ./node_modules/.bin/jest monfichierdetest.test.js
-           jest+puppeter : pupetter : pupeter : puppetter :
+           jest+puppeter : pupetter : pupeter : puppetter : tests online facon selenium
                 faire 
                 npm i --save-dev puppeteer // pour utiliser pupetter au moins.
                 npm install --save-dev jest-puppeteer // pour pouvoir pilotter pupeter depuis jest woaou
@@ -26742,17 +26758,17 @@ ES6 :modules: une page html/js peut importer une page html/js qui importe aussi:
         dans main.js: // attention toutes les variables primitives exportees sont readonly. Faire des setters si je veux les modifier 
               import {toto,blabla} from "./path/xxx.js";                          AAA  // autant mettre le ".js" c'est normalement supporté partout
              import {projectsMEMENOM} from './js/memoclap-projectsFieldsets.js';  AAA  // toujours mettre accolades meme si qu'un seul objet
-             import projects from './js/memoclap-projectsFieldsets.js';    DDD  //du coup j'appellerais projects.unTrucDefiniPlusHaut.uneDeSesMethodes()
-             import UnComponentAttentionMemeNom from './js/alertmsg.js';    CCC
-             import * as bidule from './js/memoclap-projectsFieldsets.js'; BBB et CCC  // j'importe tous les exports de bidule et ici ils sont prefixes par "bidule"
+             import * as bidule from './js/memoclap-projectsFieldsets.js'; AAA et BBB  // j'importe tous les exports de bidule et ici ils sont prefixes par "bidule"             
+             import projects from './js/memoclap-projectsFieldsets.js';    CCC  //du coup j'appellerais projects.unTrucDefiniPlusHaut.uneDeSesMethodes()
+             import UnComponentAttentionMemeNom from './js/alertmsg.js';    BBB
              on peut faire new unmodule.UnObjetDuModule();                     
         dans path/xxx.js:  
             Exporter plusieurs trucs
-              export var projectsMEMENOM =....                                          AAA et BBB   
-              export function projectsMEMENOM(arg){...}                               AAA et BBB
+              export var projectsMEMENOM =....                                                 AAA   
+              export function projectsMEMENOM(arg){...}                                        AAA
             Exporter qu'un truc
-              export default class(ne marche que avec class) UnComponentAttentionMEMENOM{....}                   CCC
-              export default {unTrucDefiniPlusHaut}; // a mettre a la fin du fichier   DDD
+              export default class(ne marche que avec class) UnComponentAttentionMEMENOM{....} BBB
+              export default {unTrucDefiniPlusHaut}; // a mettre a la fin du fichier   CCC
          pour que les onclick html fonctionnent je dois pointer la methode du module que je veux depuis window: ca rend le module global visible par tous.
                     window.setModeMenu=memoclap.setModeMenu; // ainsi je peux faire onclick="setModeMenu('hihi')"; mais attention la methode est totallement extraite de son contexte si elle est dans un objet
                     window.memoclap=memoclap; // je peux faire onclick="memoclap.setModeMenu() tester aussi memoclap.memoclap.setModeMenu()" 
@@ -26843,13 +26859,14 @@ Composition=factoryfunctions tacobell taco bell Linkfactoryfnct: voir plus bas p
      }
 promesses : promese :promeses :Promises :promise : ne plus utiliser les callbacks
       function mamethodeQuiRetourneUnePromesseDoncDedansCestToujoursAsychrone(value) {  
-              let promesse= new Promise(function(resolve, reject) { // des lors quand new Promise est appelée, elle est executée (pas besoin de .then pour ça)
+              let promesse= new Promise((resolve,reject)=>{ ou function(resolve, reject) { // des lors quand new Promise est appelée, elle est executée (pas besoin de .then pour ça)
                                           // un truc asynchrone: genre ajax call
                                           let something=true;// ou false si reussi/echec
                                            alert("a");
                                            if(true)
                                            {
-                                              resolve(something à retourner); // toujours mettre au moins un truc (parce que une fois dans une requete ajax il allait dans le then avant meme de passer par le resolve. QUand j'ai mis un truc ça a fonctionné). ATTENTION!! reject n'est qu'un callback mais le code ici LINKjecontinue continue après execution du callback. Pour eviter faire "return resolve(something à retourner);" 
+                                              resolve(something à retourner); // toujours mettre au moins un truc (parce que une fois dans une requete ajax il allait dans le then avant meme de passer par le resolve. QUand j'ai mis un truc ça a fonctionné). ATTENTION!! resolve n'est qu'un callback mais le code ici LINKjecontinue continue après execution du callback. Pour eviter faire "return resolve(something à retourner);" qui permet l'utilisation de .then(somthingaretourner=>{somthingaretourner dispo ici})
+                                              du code ici peut continue a etre executé LINKjecontinue  
                                               }
                                               else
                                               {
@@ -26860,10 +26877,14 @@ promesses : promese :promeses :Promises :promise : ne plus utiliser les callback
                     return promesse;
               }
         utilisation1: il faut remonter la promesse le plus haut j->UI pour que l'utilisateur final voit les erreurs catchees. Ne pas les cacher dans des console.log (mouais...)
-              toto = mamethodeQuiRetourneUnePromesseDoncDedansCestToujoursAsychrone("dd")
-                                                                toto.then((res)=>{console.log(res); //res = unobjetarenvoyerici}  // then arrive a un moment on sait pas quand en asynchrone et retourne une promesse. 2 arguments=fonctions: 1ere: si ok 2eme si ko
-                                                                       ,function(err) {console.log(err); //err = l'objetderreurici}
-                                                                .then(x=> return Promise.resolve("tata") ou Promise.reject("titi")).then... // on peut meme enchainer donc sur d'autres promises then..then..then
+              totoEstObligatoirementUnePromese = mamethodeQuiRetourneUnePromesseDoncDedansCestToujoursAsychrone("dd")
+                                                                toto.then((resATOUJOURSMETTRE)=>{console.log(res); return ToujoursRetournerQqch ou throw new Exception(x)} //res = unobjetrenvoyéparLaPromessToto}  // then arrive a un moment on sait pas quand en asynchrone. 2 arguments=fonctions: 1ere: si ok 2eme si ko
+                                                                          ,(err)=>{console.log(err); //err = l'objetderreurici} // facultatif. est la resultante d'un return reject(x) de la promesse anterieure. preferer thrower des Exception et utiliser .catch
+                                                                .then((xATOUJOURSMETTRE)=> return Promise.resolve("toto") ou return Promise.reject("toto")).then... // on peut meme enchainer donc sur d'autres promises then..then..then
+                                                                .then(xATOUJOURSMETTRE=> return new Promise...(voir suite dessus) // permet aussi d'enchainer les then
+                                                                .then(xATOUJOURSMETTRE=> return unevalue; // ca equivaut a faire un return Promise.resolve(unevalue) le suivant .then(x=>{x sera egal à unevalue})
+                                                                .then(xATOUJOURSMETTRE=> throw new Error("xxx")// equivaut à return Promise.reject("xxx") 
+                                                                
                             ).catch(err=>{return unemethode(err)}) LINKtootot
                             equivalent de 
                             ).catch(err=>unemethode(err));
@@ -26871,15 +26892,15 @@ promesses : promese :promeses :Promises :promise : ne plus utiliser les callback
                             ).catch(function(err){.return UnTruc..})
                             .finally(x=>{...}); // finally existe (x est udefined. AFAIRE syntaxe exacte/x =?)                              
         
-        utilisation2:     Promise.all([unearray,depromesses]).then(datasRenvoyees=>{ ...etc avec datasRenvoyees.. }).catch(err=>console.log(err)); converti array de promesses en dataRenvoyees qui est un tableau de datas.
+        utilisation2:     Promise.all([unearray,depromesses]).then(datasRenvoyeesATOUJOURSMETTRE=>{ ...etc avec datasRenvoyees.. }).catch(errATOUJOURSMETTRE=>console.log(err)); converti array de promesses en dataRenvoyees qui est un tableau de datas.
         Promise.all(
         [
           unefonction(1), doit retourner une promesse
           unefonction(2),
           unefonction(3)
         ]
-        ).then(recu=>recu) // recu c'est un tableau de datas
-          .then(res)=>{ // res est aussi  une liste sur laquel on peut mettre foreach
+        ).then(recuATOUJOURSMETTRE=>recu) // recu c'est un tableau de datas
+          .then(resATOUJOURSMETTRE)=>{ // res est aussi  une liste sur laquel on peut mettre foreach
           res.forEach(iteration=>unemethode(iteration.qqch))
           },(err)=>console.log(err) // pas sur de la synthaxe ici
 pour recuperer le jour du mois month sur deux chiffre d'un objet Date                                                                                          
@@ -34141,7 +34162,7 @@ wenhuaduverge :
     admin000zswwkb
 conges :altran:
 https://smartrh.altran.com
-laurent.duverge@altran.com/Federas123Federas
+laurent.duverge@altran.com/Arreter123Arreter avant: Federas123Federas
     
 mac :apple:
           developpeur/DigiTeamSQY
