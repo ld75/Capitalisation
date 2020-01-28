@@ -26611,7 +26611,7 @@ tester le javascript
                                                   ],
                                               ],
                                           };
-                  faire ca pour que jest et jsdom comprenne les webcomponents customelements custom-elements:
+                  faire ca pour que jest et jsdom comprenne les webcomponents customelements custom-elements: (qu'il ne plante pas à "customElement.define")
                         dans mes fichiers de test mettre en  tête
                             import 'document-register-element';
                         et dans package.json mettre
@@ -26631,6 +26631,14 @@ tester le javascript
                     dans xxxx.test.js:
                      dedans on peut utiliser document: var audioelt=document.createElement('div' etc etc... c'est un dom virtuel. mais pour que ça marche mettre dans jest.config.js testEnvironment: "jsdom",
 							puis document.body.appendChild(audioelt);
+                on peut aussi charger du dom html:
+                    const html = fs.readFileSync(path.resolve(__dirname,'./resources/indexPro.html'),'utf8');
+                    const htmltemplates = fs.readFileSync(path.resolve(__dirname,'./resources/memoclap-template.html'),'utf8');
+                    puis 
+                         beforeAll(async () => {
+                          document.documentElement.innerHTML="<html><body>"+htmltemplates+html;
+                          ou
+                          document.body.innerHTML="htmltemplate+html";
 			import {lecteurtimeupdate} from '../(toujours mettre au moins un "./")../webapp/js/memoclap-lecteurtimeupdate.js';
                             beforeAll(() => {
                             return initializeCityDatabase();
@@ -26878,7 +26886,7 @@ promesses : promese :promeses :Promises :promise : ne plus utiliser les callback
               }
         utilisation1: il faut remonter la promesse le plus haut j->UI pour que l'utilisateur final voit les erreurs catchees. Ne pas les cacher dans des console.log (mouais...)
               totoEstObligatoirementUnePromese = mamethodeQuiRetourneUnePromesseDoncDedansCestToujoursAsychrone("dd")
-                                                                toto.then((resATOUJOURSMETTRE)=>{console.log(res); return ToujoursRetournerQqch ou throw new Exception(x)} //res = unobjetrenvoyéparLaPromessToto}  // then arrive a un moment on sait pas quand en asynchrone. 2 arguments=fonctions: 1ere: si ok 2eme si ko
+                                                                toto.then((resATOUJOURSMETTRE)=>{console.log(res); return ToujoursRetournerQqch ou throw new Error(x)} //res = unobjetrenvoyéparLaPromessToto}  // then arrive a un moment on sait pas quand en asynchrone. 2 arguments=fonctions: 1ere: si ok 2eme si ko
                                                                           ,(err)=>{console.log(err); //err = l'objetderreurici} // facultatif. est la resultante d'un return reject(x) de la promesse anterieure. preferer thrower des Exception et utiliser .catch
                                                                 .then((xATOUJOURSMETTRE)=> return Promise.resolve("toto") ou return Promise.reject("toto")).then... // on peut meme enchainer donc sur d'autres promises then..then..then
                                                                 .then(xATOUJOURSMETTRE=> return new Promise...(voir suite dessus) // permet aussi d'enchainer les then
@@ -29180,7 +29188,7 @@ PWA : progressive webapps :
        tester mon pwa avec chrome:
             dev>application>service workers>offline
             pluggin chrome "lighthouse"
-    service-workers : serviceworkers : POUR SUPPRIMER TOUT CACHE POUR TESTER: 1)unregister dabord puis 2) reloader la page en faisant clic droit -> "vider le cache et faire une reactualisation forcee" 
+    service-workers : serviceworkers : POUR SUPPRIMER TOUT CACHE POUR TESTER: 1)debugger chrome>onglet application > clearstorage> bouton clear site data 
     pour faire un site qui marche offline avec les service workers: html5: P envoyer notifications meme quand navigateur est fermé car c'est un worker(thread) indépendant de tous les navigateurs.(un peu comme un programme nodejs) Peut travailler avec indexDB database voir LINKpwanotif
     ça ne marche que en https ou en http://localhost
     serviceworker.js:
