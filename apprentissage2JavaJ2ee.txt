@@ -1,6 +1,4 @@
-(?=.*lire)(?=.*fichie)
-
-
+(?=.*template)(?=.*onclick)
 AFAIRE :
     Entretien:
         qu'est ce que rest, architecture ntiers, polymorphisme, mvc, dto, bdd: gerkin  
@@ -8,9 +6,7 @@ AFAIRE :
         Afaire go, play, ngix 
         bootstrap=tweeter; materialUI
     base de donnée h2 pour les tests unitaires à capitaliser
- authweb :AFAIRE_ACONVERTIR_EN_CURL.png
- Envoyer à dorothé le script de synchro gitlab vers gitcacib
-capitaliser get spring
+ Capitaliser get spring
 lire : C:\Users\ut2sn0\My_IT_Applications\apprentissage\20190716_Kubernetes_Live_Demo_in_SQY.pdf
 comment eviter transitive pb maven
 svn tortoise: merger depuis 2.11 sur trunk en modifiant trunk:
@@ -853,7 +849,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
     git clone:
       dupliquer/copier/recuperer un repository present sur le web en local. (en general c'est un fork que je clone si je me greffe à un projet existant)
         git clone https://username(facultatif):motdepasse(facultatifLesguillemetsdoiventEtreEchappeesPar\)@githubSuiteUrl.com/spring-projects/spring-security-oauth-javaconfig.git // le copie dans le repertoireLocal ou je suis tout le projet son histoire ses vieilles branches commitees. Mettre username et password si j'ai le message dépot non trouvé depot ou repository not found
-        git clone https://scm.soprahr.com/scm/su/sample-edsn-usermanager.git nomdefacultatifmonprojetRepertoireQueJeLuiDemandeDeCreer
+        git clone https://scm.soprahr.com/scm/su/sample-edsn-usermanager.git nomdefacultatifmonprojetRepertoireQueJeLuiDemandeDeCreer (-b unebrancheFacultatifPourClonerJusteUneBranche)
         git clone unUserNameSur?@ungithubUrl:un/path/vers/un/.git
         git clone --bare ....etc... fait pareil mais c'est un bare 
       dupliquer/copier/recuperer un repertoire-repository local vers mon nouvel espace de travail
@@ -2459,7 +2455,9 @@ Cycle de vie du CDI bean:
               @Produces // de javax.enterprise.inject.Produces LINKfactoproduce 
               @MonQualifierAMoi //un Qualifier que j'ai crée voir LINKqualifsdlfk
               @UnPetitScope genre @Dependent pour que au cas ou on redeploie, weld arrive a rappeler cette methode                               
-              IApplicationConfiguration getApplicationConfiguration(){ ou LINKprodpara IApplicationConfiguration getApplicationConfiguration(ClasseA classea,ClasseB classb)// pas besoin de mettre @Inject ici dans un producer.
+              IApplicationConfiguration getApplicationConfiguration(){ 
+              ou 
+              LINKprodpara: IApplicationConfiguration getApplicationConfiguration(ClasseA classea,ClasseB classb)// pas besoin de mettre @Inject ici dans un producer.
                   if (machintruc)
                   {
                       return classeA;
@@ -4000,7 +3998,7 @@ pour afficher les erreurs dans la page d'erreur jsp:
 pour simuler un click sur un bouton parcourir ou un autre element upload file: 
         function openParcourir()
         {
-          //document.getElementById("files").click();
+          //document.getElementById("files").click(); // dechancher le click
         	//var evObj = document.createEvent('Events');
         	//evObj.initEvent("click", true, false);
         	//document.getElementById("files").dispatchEvent(evObj);
@@ -21030,7 +21028,7 @@ pour faire un message avec des {0}{1}{2}...  qui sont remplace par des strings: 
           MessageFormat form= new MessageFormat(  "The disk \"{1}\" contains {0} file(s).");
           String result = form.format(arguments);
 ou bien 
-   String toto = String.format("%4$-5S(PASDESPACEICI)%3$2s(PASDESPACEICI)%2$2s(PASDESPACEICI)%1$2s", "a","b","c","dd"); //%argumentNumeroCommenceParUn$-tailleMinARespecterAjouteEspaceSiPlusPetitObligatoire (si l'argument est plus grand que -xS il ne le tronque pas) S pour convertir tout en uppercase ou s pour respecter la casse
+   String toto = String.format("%4$-5S(PASDESPACEICI)%3$2s(PASDESPACEICI)%2$2s(PASDESPACEICI)%1$2s", "a","b","c","dd"); //%argumentNumeroCommenceParUn$-tailleMinARespecterAjouteEspaceSiPlusPetitObligatoire (si l'argument est plus grand que -xS il ne le tronque pas) S pour convertir tout en uppercase ou s pour respecter la case casse
    retourne DD     c  b  a                                                                                   |                                                                               |
    exemple:                                                                                                 (-): les espaces sont a droite. si rien les espaces sont a gauche                x doit etre superieur à 0 mais le nombre d'espace visible sera x+1 donc je dois mettre nombreDespaceVoulu-1 
    logger.warn("User "+String.format("%s %s %s", tPrincipal.getNom(),tPrincipal.getLogin(),tPrincipal.getEmail())+ "in webservice has no roles");
@@ -24118,12 +24116,12 @@ df -h . pour voir combien il reste de place espace restant disponible memoire di
 df -k pour voir si il y a de la place dans les systemes de fichiers. le pourcentage = espace utilise je suis sur. 1 Mo devrait suffire (1 xxx xxx)
   convertisseur: http://mon-ip.awardspace.com/convertisseur.php (ne pas mettre espaces)
     1 octet = 1 byte = 8 bits
-		Un kilooctet (ko) = 2^10 octets = 1024 octets
-    Un Megaoctet (Mo) = 2^20 octets = 1024 ko = 1048576 octets    = 1024 ko donc 252132=252Mega = 1024 ko
-    Un Gigaoctet (Go) = 2^30 octets = 1024 Mo = 1073741824 octets = 1024 Mo
-    Un Teraoctet (To) = 2^40 octets = 1024 Go = 1099511627776 octets 1024 Go
+	Un kilooctet (ko) = 2^10 octets            = 1.024 octets
+    Un Megaoctet (Mo) = 2^20 octets = 1.024 ko = 1.048.576 octets         = 1.024 ko donc 252.132 ko=252Mega = 1024 ko
+    Un Gigaoctet (Go) = 2^30 octets = 1.024 Mo = 1.073.741.824 octets     = 1.024 Mo
+    Un Teraoctet (To) = 2^40 octets = 1.024 Go = 1.099.511.627.776 octets = 1.024 Go
 			
-			1 Mo devrait suffire (1 xxx xxx)
+			1 Mo devrait suffire (1 xxx xxx)                               
 			1.000.000   = 1Giga Go
 			1.000 kilo = 1 Mega Mo
 si j'ai le message:quota_ufs: over hard disk limit (pid 8968, uid 2024, inum 24683, fs /appli01) sous les systemes de fichiers il y a des application et chacune a un quota
@@ -26507,7 +26505,7 @@ savoir si un element audio joue:
         donc element.style.margin-top=parseInt(element.style.margin-top,10)+5+"px"; marche:-)
     traitement des variables dans des strings type template:(template literals) 
     console.log(`aaaa ${supportsCustomElements}`); // plus besoin de faire "sldfkj"+xxx Pas supporte sur IE11. Pour que ca marche bien mettre `` et non pas des guillemets
-            exemple: `<div><img onclick="closeUpdateRecordBoucle('${fichiermixttemp}','${fichiermixttemp}');"/></div>` dans un template
+            exemple: `<div><img onclick="closeUpdateRecordBoucle('${fichiermixttemp}','${fichiermixttemp}');"/></div>` dans un template// pour echaper les dollars ${ si on est dans une jsp mettre \${
             on peut meme faire des conditions avec templates: gabarit:
                 `duhtml
            	        ${versionPro?    // ou versionPro=="machin"
@@ -26554,7 +26552,7 @@ tester le javascript
                                                   ],
                                               ],
                                           };
-                  faire ca pour que jest et jsdom comprenne les webcomponents customelements custom-elements:
+                  faire ca pour que jest et jsdom comprenne les webcomponents customelements custom-elements: (qu'il ne plante pas à "customElement.define")
                         dans mes fichiers de test mettre en  tête
                             import 'document-register-element';
                         et dans package.json mettre
@@ -26581,6 +26579,14 @@ tester le javascript
 				document.documentElement.innerHTML="<html><body>"+htmltemplates.toString()+html.toString();		
                      dedans on peut utiliser document: var audioelt=document.createElement('div' etc etc... c'est un dom virtuel. mais pour que ça marche mettre dans jest.config.js testEnvironment: "jsdom",
 							puis document.body.appendChild(audioelt);
+                on peut aussi charger du dom html:
+                    const html = fs.readFileSync(path.resolve(__dirname,'./resources/indexPro.html'),'utf8');
+                    const htmltemplates = fs.readFileSync(path.resolve(__dirname,'./resources/memoclap-template.html'),'utf8');
+                    puis 
+                         beforeAll(async () => {
+                          document.documentElement.innerHTML="<html><body>"+htmltemplates+html; // attention erreur si html contient je ne sais quoi
+                          ou
+                          document.body.innerHTML="htmltemplate+html";
 			import {lecteurtimeupdate} from '../(toujours mettre au moins un "./")../webapp/js/memoclap-lecteurtimeupdate.js';
                             beforeAll(() => {
                             return initializeCityDatabase();
@@ -26590,7 +26596,20 @@ tester le javascript
                           });
                           describe('nom du test suite', () => {
                               	it(.skip pour ignorer)('nom du test', () => {
-                                (...)
+                                    // pour mocker un objet(xhr par exemple)
+                                         const mockMonObjet = ()=> ({// toujours nommer cet objet en commencant par "mock"
+                                         ou
+                                         const mockMonObjet={
+                                                send:jest.fn().mockImplementation(function(){this.onload();}),
+                                                ou
+                                                send:jest.fn(), // si on veut rien faire.
+                                                onload:jest.fn().mockImplementation(function(){}),
+                                                open:jest.fn().mockImplementation(function(){this.status=200;}),
+                                                overrideMimeType:jest.fn().mockImplementation(function(){}),
+                                         })
+                                      window.XMLHttpRequest = jest.fn().mockImplementation(mymock);
+                                
+                                (.. mes tests..)
                                 });
                                 it("checkloop",()=>{...
 			ou 	
@@ -26613,8 +26632,8 @@ tester le javascript
                       afterAll(() => {
                         return clearCityDatabase();
                       });
-		execution: LINKjestexecute: ./node_modules/.bin/jest monfichierdetest.test.js
-           jest+puppeter : pupetter : pupeter : puppetter :
+		execution: LINKjestexecute: sous mon projet avec package.json faire npm test cheminfichieratester ou  ./node_modules/.bin/jest monfichierdetest.test.js
+           jest+puppeter : pupetter : pupeter : puppetter : tests online facon selenium
                 faire 
                 npm i --save-dev puppeteer // pour utiliser pupetter au moins.
                 npm install --save-dev jest-puppeteer // pour pouvoir pilotter pupeter depuis jest woaou
@@ -26685,7 +26704,7 @@ tester le javascript
         pour executer ce test: 
           >testem ci --launch PhantomJS(obsolete)
 ES6 :modules: une page html/js peut importer une page html/js qui importe aussi: le browser gère les doublons si yen a // pas implemente dans firefox et safari?
-    pour les tester il faut aubligatoirement un serveur: peux pas jouer en local
+    pour les tester il faut aubligatoirement un serveur: peux pas jouer en local SI JE PEUX
         Top pour faire du singleResponsabilityPrinciple
         pour que ca marche ne plus mettre 
             <script type="text/javascript" src="... 
@@ -26694,17 +26713,17 @@ ES6 :modules: une page html/js peut importer une page html/js qui importe aussi:
         dans main.js: // attention toutes les variables primitives exportees sont readonly. Faire des setters si je veux les modifier 
               import {toto,blabla} from "./path/xxx.js";                          AAA  // autant mettre le ".js" c'est normalement supporté partout
              import {projectsMEMENOM} from './js/memoclap-projectsFieldsets.js';  AAA  // toujours mettre accolades meme si qu'un seul objet
-             import projects from './js/memoclap-projectsFieldsets.js';    DDD  //du coup j'appellerais projects.unTrucDefiniPlusHaut.uneDeSesMethodes()
-             import UnComponentAttentionMemeNom from './js/alertmsg.js';    CCC
-             import * as bidule from './js/memoclap-projectsFieldsets.js'; BBB et CCC  // j'importe tous les exports de bidule et ici ils sont prefixes par "bidule"
+             import * as bidule from './js/memoclap-projectsFieldsets.js'; AAA et BBB  // j'importe tous les exports de bidule et ici ils sont prefixes par "bidule"             
+             import projects from './js/memoclap-projectsFieldsets.js';    CCC  //du coup j'appellerais projects.unTrucDefiniPlusHaut.uneDeSesMethodes()
+             import UnComponentAttentionMemeNom from './js/alertmsg.js';    BBB
              on peut faire new unmodule.UnObjetDuModule();                     
         dans path/xxx.js:  
             Exporter plusieurs trucs
-              export var projectsMEMENOM =....                                          AAA et BBB   
-              export function projectsMEMENOM(arg){...}                               AAA et BBB
+              export var projectsMEMENOM =....                                                 AAA   
+              export function projectsMEMENOM(arg){...}                                        AAA
             Exporter qu'un truc
-              export default class(ne marche que avec class) UnComponentAttentionMEMENOM{....}                   CCC
-              export default {unTrucDefiniPlusHaut}; // a mettre a la fin du fichier   DDD
+              export default class(ne marche que avec class) UnComponentAttentionMEMENOM{....} BBB
+              export default {unTrucDefiniPlusHaut}; // a mettre a la fin du fichier   CCC
          pour que les onclick html fonctionnent je dois pointer la methode du module que je veux depuis window: ca rend le module global visible par tous.
                     window.setModeMenu=memoclap.setModeMenu; // ainsi je peux faire onclick="setModeMenu('hihi')"; mais attention la methode est totallement extraite de son contexte si elle est dans un objet
                     window.memoclap=memoclap; // je peux faire onclick="memoclap.setModeMenu() tester aussi memoclap.memoclap.setModeMenu()" 
@@ -26777,7 +26796,11 @@ erreur: (intermediate value)(...) is not a function
       let reste cloisonne dans les {} dans lesquels ils sont declares.
       const c comme let sauf qu'on ne peut pas reassigner. on peut le modifie mais si on le reassigne ca fait une erreur
       bonne pratique reduire le nombre de variable modifiees: utiliser de preference const>let>:-( var
-      
+  traiter des elements nodes en masse par exemple pour faire du i18n cote front balise data:
+    <div data-machin="truc"></div>
+    on les trouve en javascript par
+    let elts = querySelectorAll("[data-machin]");
+    elts.forEach(el=> ....);    
 Composition=factoryfunctions tacobell taco bell Linkfactoryfnct: voir plus bas prototype fonctionnal programming functionnal programming LINKpptypeksdf
     creer ma methode de composition: 
          export function compose (...funcs){
@@ -26795,13 +26818,14 @@ Composition=factoryfunctions tacobell taco bell Linkfactoryfnct: voir plus bas p
      }
 promesses : promese :promeses :Promises :promise : ne plus utiliser les callbacks
       function mamethodeQuiRetourneUnePromesseDoncDedansCestToujoursAsychrone(value) {  
-              let promesse= new Promise(function(resolve, reject) { // des lors quand new Promise est appelée, elle est executée (pas besoin de .then pour ça)
+              let promesse= new Promise((resolve,reject)=>{ ou function(resolve, reject) { // des lors quand new Promise est appelée, elle est executée (pas besoin de .then pour ça)
                                           // un truc asynchrone: genre ajax call
                                           let something=true;// ou false si reussi/echec
                                            alert("a");
                                            if(true)
                                            {
-                                              resolve(something à retourner); // toujours mettre au moins un truc (parce que une fois dans une requete ajax il allait dans le then avant meme de passer par le resolve. QUand j'ai mis un truc ça a fonctionné). ATTENTION!! reject n'est qu'un callback mais le code ici LINKjecontinue continue après execution du callback. Pour eviter faire "return resolve(something à retourner);" 
+                                              resolve(something à retourner); // toujours mettre au moins un truc (parce que une fois dans une requete ajax il allait dans le then avant meme de passer par le resolve. QUand j'ai mis un truc ça a fonctionné). ATTENTION!! resolve n'est qu'un callback mais le code ici LINKjecontinue continue après execution du callback. Pour eviter faire "return resolve(something à retourner);" qui permet l'utilisation de .then(somthingaretourner=>{somthingaretourner dispo ici})
+                                              du code ici peut continue a etre executé LINKjecontinue  
                                               }
                                               else
                                               {
@@ -26812,10 +26836,14 @@ promesses : promese :promeses :Promises :promise : ne plus utiliser les callback
                     return promesse;
               }
         utilisation1: il faut remonter la promesse le plus haut j->UI pour que l'utilisateur final voit les erreurs catchees. Ne pas les cacher dans des console.log (mouais...)
-              toto = mamethodeQuiRetourneUnePromesseDoncDedansCestToujoursAsychrone("dd")
-                                                                toto.then((res)=>{console.log(res); //res = unobjetarenvoyerici}  // then arrive a un moment on sait pas quand en asynchrone et retourne une promesse. 2 arguments=fonctions: 1ere: si ok 2eme si ko
-                                                                       ,function(err) {console.log(err); //err = l'objetderreurici}
-                                                                .then(x=> return Promise.resolve("tata") ou Promise.reject("titi")).then... // on peut meme enchainer donc sur d'autres promises then..then..then
+              totoEstObligatoirementUnePromese = mamethodeQuiRetourneUnePromesseDoncDedansCestToujoursAsychrone("dd")
+                                                                toto.then((resATOUJOURSMETTRE)=>{console.log(res); return ToujoursRetournerQqch ou throw new Error(x)} //res = unobjetrenvoyéparLaPromessToto}  // then arrive a un moment on sait pas quand en asynchrone. 2 arguments=fonctions: 1ere: si ok 2eme si ko
+                                                                          ,(err)=>{console.log(err); //err = l'objetderreurici} // facultatif. est la resultante d'un return reject(x) de la promesse anterieure. preferer thrower des Exception et utiliser .catch
+                                                                .then((xATOUJOURSMETTRE)=> return Promise.resolve("toto") ou return Promise.reject("toto")).then... // on peut meme enchainer donc sur d'autres promises then..then..then
+                                                                .then(xATOUJOURSMETTRE=> return new Promise...(voir suite dessus) // permet aussi d'enchainer les then
+                                                                .then(xATOUJOURSMETTRE=> return unevalue; // ca equivaut a faire un return Promise.resolve(unevalue) le suivant .then(x=>{x sera egal à unevalue})
+                                                                .then(xATOUJOURSMETTRE=> throw new Error("xxx")// equivaut à return Promise.reject("xxx") 
+                                                                
                             ).catch(err=>{return unemethode(err)}) LINKtootot
                             equivalent de 
                             ).catch(err=>unemethode(err));
@@ -26823,15 +26851,15 @@ promesses : promese :promeses :Promises :promise : ne plus utiliser les callback
                             ).catch(function(err){.return UnTruc..})
                             .finally(x=>{...}); // finally existe (x est udefined. AFAIRE syntaxe exacte/x =?)                              
         
-        utilisation2:     Promise.all([unearray,depromesses]).then(datasRenvoyees=>{ ...etc avec datasRenvoyees.. }).catch(err=>console.log(err)); converti array de promesses en dataRenvoyees qui est un tableau de datas.
+        utilisation2:     Promise.all([unearray,depromesses]).then(datasRenvoyeesATOUJOURSMETTRE=>{ ...etc avec datasRenvoyees.. }).catch(errATOUJOURSMETTRE=>console.log(err)); converti array de promesses en dataRenvoyees qui est un tableau de datas.
         Promise.all(
         [
           unefonction(1), doit retourner une promesse
           unefonction(2),
           unefonction(3)
         ]
-        ).then(recu=>recu) // recu c'est un tableau de datas
-          .then(res)=>{ // res est aussi  une liste sur laquel on peut mettre foreach
+        ).then(recuATOUJOURSMETTRE=>recu) // recu c'est un tableau de datas
+          .then(resATOUJOURSMETTRE)=>{ // res est aussi  une liste sur laquel on peut mettre foreach
           res.forEach(iteration=>unemethode(iteration.qqch))
           },(err)=>console.log(err) // pas sur de la synthaxe ici
 pour recuperer le jour du mois month sur deux chiffre d'un objet Date                                                                                          
@@ -29112,7 +29140,7 @@ PWA : progressive webapps :
        tester mon pwa avec chrome:
             dev>application>service workers>offline
             pluggin chrome "lighthouse"
-    service-workers : serviceworkers : POUR SUPPRIMER TOUT CACHE POUR TESTER: 1)unregister dabord puis 2) reloader la page en faisant clic droit -> "vider le cache et faire une reactualisation forcee" 
+    service-workers : serviceworkers : POUR SUPPRIMER TOUT CACHE POUR TESTER: 1)debugger chrome>onglet application > clearstorage> bouton clear site data 
     pour faire un site qui marche offline avec les service workers: html5: P envoyer notifications meme quand navigateur est fermé car c'est un worker(thread) indépendant de tous les navigateurs.(un peu comme un programme nodejs) Peut travailler avec indexDB database voir LINKpwanotif
     ça ne marche que en https ou en http://localhost
     serviceworker.js:
@@ -30927,7 +30955,7 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
     Run:
       USER va sur EDSN(Client)
       (facultatif)EDSN presente un bouton pour rediriger vers FID(AuthenticationServer). Si clique 
-      EDSN redirige vers FID(facebook par ex) ; // FID et FIDx pourraient être une seule app.
+      EDSN redirige en 302 vers FID(facebook par ex) ; // FID et FIDx pourraient être une seule app.
                 Requete http frontchannel:vers /oauth/authorize
                 .setResponseType(ResponseType.CODE.toString() ou .... voir LINKResponseType) &response_type=code
                 .setRedirectURI(oauthParams.getRedirectUri())=url de retour vers EDSN(Client)  &redirect_uri=https%3A%2F%2Fexample-app.com%2Fauth
@@ -30938,9 +30966,9 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
                 // response_mode=query
                 .buildQueryMessage();
                 return new ModelAndView(new RedirectView(request.getLocationUri()));                            dit le "authorization endpoint"
-                                -------------------------------------frontchannel---------------------->>>>>>>FID(AuthenticationServer) présente le prompt d'authentification. USER s'authentifie
+                                -------------------------------frontchannel-(browser)--------------------->>>>>>>FID(AuthenticationServer) présente le prompt d'authentification. USER s'authentifie
                                                                                                               FID présente le consent Screen/scope. USER approuve. SI User n'approuve pas FID retournera ?error=x&error_description=y
-                                <<<<<<<<<<<<<<<<<<<<<<---------------frontchannel-----------------------------FID retourne AuthorizationCode=code=AuthorizationGrant(Dans les en-tête header http.) et si ImpliciteMode(deconseille) (c.a.d LINKResponseType=token ou token_id) renvoit en plus Token_ID  + renvoit le meme state qu'il a reçu ("tatatoto")                
+                                <<<<<<<<<<<<<<<<<<<<<<---------frontchannel-(browser)----------------------------FID retourne AuthorizationCode=code=AuthorizationGrant(Dans les en-tête header http.) et si ImpliciteMode(deconseille) (c.a.d LINKResponseType=token ou token_id ou id_token) renvoit en plus Token_ID  + renvoit le meme state qu'il a reçu ("tatatoto")                
                                                                     url = redirectURI = callback                                                   |_ce dernier est stocke en base en tuple client_id/authorizationCode/state(je crois)   
     
     EDSN renvoit l’AuthorizationCode + idApplicatif(client_id=a17c21ed) + client_secret à FID--------backchannel------->>>>  vers le "token endpoint"
@@ -31135,7 +31163,277 @@ JWT : JSON Web Token
      archi: [1Client(Mon Browser)]<----1-------->[1Authentificationservice pour tous: il a 1 clé privée differente pour chaque RessourceService a qui il donne la cle publique correspondante.]
                                    \___2_______>[xRessourcesServices: chacune a une clé publique.] 
     algoritmes recommandés: ES256(cle publique pour verifier et cle privee pour signer mais plus rapide que RS256)  puis RS256(cle publique pour verifier et cle privee pour signer) puis HS256(ce n'est que un secret=chaine de caractère a garder privée. Attention danger avec ça car dans ce cas le client pourra hacker: Client    Service1JWTOuJeSuisAdmin,    Service2JWTOuJeNeSUisPasAdmin)
+	exemple de classe openidconnect à améliorer:
+			openid
+			package fr.ca.sa.au.oidc.controller;
 
+			import fr.ca.sa.au.oidc.form.AuthorizationCodeRequest;
+			import fr.ca.sa.au.oidc.storage.IAuthorizationCodeStorage;
+			import io.jsonwebtoken.Claims;
+			import io.jsonwebtoken.Jws;
+			import io.jsonwebtoken.JwtException;
+			import io.jsonwebtoken.Jwts;
+			import org.apache.commons.codec.binary.Base64;
+			import org.hamcrest.core.IsNot;
+			import org.hamcrest.core.IsNull;
+			import org.junit.Assert;
+			import org.junit.Before;
+			import org.junit.Ignore;
+			import org.junit.Test;
+			import org.junit.runner.RunWith;
+			import org.mockito.InjectMocks;
+			import org.mockito.Mock;
+			import org.mockito.MockitoAnnotations;
+			import org.mockito.Spy;
+			import org.springframework.beans.factory.annotation.Autowired;
+			import org.springframework.http.MediaType;
+			import org.springframework.test.context.ContextConfiguration;
+			import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+			import org.springframework.test.context.web.WebAppConfiguration;
+			import org.springframework.test.web.servlet.MockMvc;
+			import org.springframework.test.web.servlet.MvcResult;
+			import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+			import org.springframework.web.context.WebApplicationContext;
+
+			import javax.servlet.http.HttpServletResponse;
+			import java.io.BufferedInputStream;
+			import java.io.FileInputStream;
+			import java.io.IOException;
+			import java.security.PublicKey;
+			import java.security.cert.CertificateException;
+			import java.security.cert.CertificateFactory;
+			import java.security.cert.X509Certificate;
+
+			import static org.mockito.Matchers.any;
+			import static org.mockito.Matchers.eq;
+			import static org.mockito.Mockito.times;
+			import static org.mockito.Mockito.verify;
+			import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+			import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+			import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+			@RunWith(SpringJUnit4ClassRunner.class)
+			@WebAppConfiguration
+			@ContextConfiguration(locations={"file:src/main/webapp/WEB-INF/spring/messages-context.xml","file:src/main/webapp/WEB-INF/spring/appServlet/servlet-context.xml", "file:src/main/webapp/WEB-INF/spring/root-context.xml"})
+			public class OpenIdConnectControllerTest {
+			    //@Autowired // inutile si MockMvcBuilder ci-dessous
+			    private MockMvc mockMvc; //LINKmockmvc
+			    @Autowired
+			    WebApplicationContext wac;
+			    @Mock
+			    HttpServletResponse httpServletResponse;
+
+			    @InjectMocks
+			    OpenIdConnectController openIdConnectController = new OpenIdConnectController();
+
+
+			    @Autowired
+			    @Spy
+			    IAuthorizationCodeStorage authorizationCodeStorage;
+
+			    @Before
+			    public void setup() {
+				MockitoAnnotations.initMocks(this);
+
+			//        this.mockMvc = MockMvcBuilders.standaloneSetup(openIdConnectTokenController).build();
+				this.mockMvc=MockMvcBuilders.webAppContextSetup(this.wac).build();
+
+			    }
+			    @Test
+			     public void SendAutorizationCodeRequestToAuthorizationEndPoint_AuthorizationEndPointReturnNewCode() throws Exception
+			    {
+				MvcResult result = this.mockMvc.perform(post("/oauth/authorize/code")
+					.param("response_type", "code")
+					.param("redirect_uri", "http://www.client.com")
+					.param("scope", "Authorization_code")
+					.param("client_id", "un client id")
+					.param("state", "blabla")
+				)
+					.andExpect(status().isTemporaryRedirect())
+					.andExpect(redirectedUrl("http://www.client.com"))
+					.andExpect(header().string("AuthorizationCode", new IsNot<String>(new IsNull<String>())))
+					.andDo(print())
+					.andReturn();
+				String content = result.getResponse().getContentAsString();
+				System.out.println(content);
+				org.junit.Assert.assertNotNull(content);
+
+			    }
+			    @Test
+			    public void SendAutorizationCodeRequestToAuthorizationEndPoint_AuthorizationEndPointStoreClientIdAndStateAndCode() throws Exception
+			    {
+
+				AuthorizationCodeRequest codeRequest= new AuthorizationCodeRequest();
+				codeRequest.setResponse_type("code");
+				codeRequest.setRedirect_uri("http://www.client.com");
+				codeRequest.setScope("Authorization_code");
+				codeRequest.setClient_id("un client id");
+				codeRequest.setState("blabla");
+				openIdConnectController.authorize(codeRequest,httpServletResponse);
+				verify(authorizationCodeStorage, times(1)).store(any(String.class),eq("un client id"), eq("blabla"));
+				//Assert.assertEquals(authorizationCodeStorage.findCode(any(String))); // comment tester que le code stocké est bien celui généré?
+			    }
+
+
+			    @Test
+			    @Ignore
+			    public void testTokenEndPoint_AutorizationCodeAndClientIDAndClientSecretAreRight_sendsBackAccessToken() throws Exception
+			    {
+				//TODO: TDD a terminer
+				MvcResult result = this.mockMvc.perform(post("/oauth/authorize/token")
+					.param("grantType", "Authorization_code")
+					.param("code", "mlkqsdjfmljk")
+					.param("client_id", "un client id")
+					.param("client_secret", "un client secret")
+					.param("scope", "Authorization_code")
+					.param("state", "blabla")
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				)
+				.andExpect(status().isOk())
+					.andDo(print())
+					.andReturn();
+				String content = result.getResponse().getContentAsString();
+				String jsonStr = new String(Base64.decodeBase64(content.getBytes()));
+				Assert.assertNotNull(jsonStr);
+				Assert.assertFalse(jsonStr.isEmpty());
+				String certificatePath= OpenIdConnectControllerTest.class.getClassLoader().getResource("jwt_self-signed.pem").getPath();
+				X509Certificate x509certificate = getX509CertificateFromFilePath(certificatePath);
+				PublicKey publicKey = x509certificate.getPublicKey();
+				Jws<Claims> jws;
+				try {
+				    jws = Jwts.parser().setSigningKey(publicKey).parseClaimsJws(jsonStr);
+				    // we can safely trust the JWT
+				} catch (JwtException ex) {
+
+				    // we *cannot* use the JWT as intended by its creator
+				}
+
+			    }
+			    public X509Certificate  getX509CertificateFromFilePath(String filepath) throws CertificateException, IOException {
+			    X509Certificate cert = null;
+			    BufferedInputStream bis = new BufferedInputStream(new FileInputStream(filepath));
+			    final CertificateFactory cf = CertificateFactory.getInstance("X.509");
+				    while (bis.available() > 0) {
+				cert = (X509Certificate) cf.generateCertificate(bis);
+			    }
+				return cert;
+			}
+
+
+			}
+
+
+
+			---------
+			package fr.ca.sa.au.oidc.controller;
+
+			import java.io.IOException;
+			import java.io.Serializable;
+			import java.util.AbstractMap;
+			import java.util.UUID;
+
+			import javax.servlet.http.HttpServletResponse;
+			import javax.validation.Valid;
+
+			import fr.ca.sa.au.oidc.form.TokenAuthorizationCodeRequest;
+			import fr.ca.sa.au.oidc.storage.IAuthorizationCodeStorage;
+			import lombok.extern.slf4j.Slf4j;
+
+			import org.springframework.beans.factory.annotation.Autowired;
+			import org.springframework.http.HttpStatus;
+			import org.springframework.http.ResponseEntity;
+			import org.springframework.stereotype.Controller;
+			import org.springframework.ui.ModelMap;
+			import org.springframework.validation.BindingResult;
+			import org.springframework.web.bind.annotation.RequestMapping;
+			import org.springframework.web.bind.annotation.RequestParam;
+			import org.springframework.web.bind.annotation.ResponseBody;
+			import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+			import fr.ca.sa.au.oidc.form.AuthorizationCodeRequest;
+
+			@Slf4j
+			@Controller
+			@RequestMapping("/oauth/authorize")
+			public class OpenIdConnectController {
+
+				@Autowired
+				IAuthorizationCodeStorage authorizationCodeStorage;
+
+				@ResponseBody
+				@RequestMapping("/code")
+				public void authorize(@Valid AuthorizationCodeRequest authorizationCodeRequest, HttpServletResponse response) throws IOException {
+					String autorizationCode = UUID.randomUUID().toString();
+					authorizationCodeStorage.store(autorizationCode,authorizationCodeRequest.getClient_id(),authorizationCodeRequest.getState());
+					response.setHeader("AuthorizationCode",autorizationCode);
+					response.sendRedirect(authorizationCodeRequest.getRedirect_uri());
+					response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
+				}
+
+
+				// @RequestMapping(value = "", params = { "response_type=token" })
+				public String authorizeToken(@Valid AuthorizationCodeRequest param, BindingResult result, ModelMap model, RedirectAttributes redirectAttributes) {
+					redirectAttributes.addFlashAttribute("param", param);
+					model.addAttribute("param", param);
+					log.debug("param {}", param);
+					return "redirect:/oauth/login.html";
+				}
+
+				@RequestMapping("/token")
+				public String authorizeCode(@Valid TokenAuthorizationCodeRequest tokenAuthorizationCodeRequest) {
+					try {
+						AbstractMap.SimpleEntry clientIdAndState = authorizationCodeStorage.findCode(tokenAuthorizationCodeRequest.getCode());
+						if (!clientIdAndState.getKey().equals(tokenAuthorizationCodeRequest.getClient_id())) throw new Exception("client id dont match");
+						if (!clientIdAndState.getValue().equals(tokenAuthorizationCodeRequest.getScope()))  throw new Exception("scope dont match");
+
+					}
+					catch(Exception ex)
+					{
+
+					}
+					return "authorizeCode";
+				}
+
+				// @RequestMapping(params = { "response_type=id_token" })
+				public String authorizeIdToken(@RequestParam("response_type") String responseType) {
+
+					System.out.println("3");
+					return "authorizeIdToken";
+				}
+
+				// @RequestMapping(value = "", params = { "response_type=id_token token" })
+				public String authorizeIdTokenToken(@RequestParam("response_type") String responseType) {
+					System.out.println("4");
+					return "authorizeIdTokenToken";
+				}
+
+				// @RequestMapping(value = "", params = { "response_type=code id_token" })
+				public String authorizeCodeIdToken(@RequestParam("response_type") String responseType) {
+					System.out.println("5");
+					return "authorizeCodeIdToken";
+				}
+
+				// @RequestMapping(value = "", params = { "response_type=code token" })
+				public String authorizeCodeToken(@RequestParam("response_type") String responseType) {
+					System.out.println("6");
+					return "authorizeCodeToken";
+				}
+
+				// @RequestMapping(value = "", params = { "response_type=code id_token token" })
+				public String authorizeCodeIdTokenToken(@RequestParam("response_type") String responseType) {
+					System.out.println("7");
+					return "authorizeCodeIdTokenToken";
+				}
+
+				@RequestMapping(value = "", params = { "response_type=none" })
+				public ResponseEntity<Serializable> authorizeNone(@RequestParam("response_type") String responseType) {
+					System.out.println("8");
+					return new ResponseEntity<>(HttpStatus.ACCEPTED);
+				}
+
+
+			}
+P
 Kerberos : 
     utilisation de d'apache mod_auth_kerb: 
                     L'authentification kerberos est en place pour l'environnement hr9for.
@@ -31989,6 +32287,7 @@ ren %WEB-INF-PAE%\classes\_integr.log4j.properties.template log4j.properties.tem
 ------------------
         
 windows : (commande dos :)
+explorer appdata est une variable d'environnement donc on peut mettre dans explorateur %AppData% et il va direct dans le repertoire AppData
 pour effacer supprimer delete un fichier:
     del /f C:\Users\lduverge\apache-tomee-plume-8.0.0\webapps\memoclap.front.war // /f pour forcer
 pour effacer un repertoire directory:
@@ -33037,6 +33336,5 @@ seo :
 virtualbox : virtuabox :virtual box : virtual machine virtuel
     les .iso sont sur les sites ubuntu,debian... etc...
   lancer vbox> nouveau> creer un disque dur virtuel now > creer > config > stockage > ide > choisir un fichier .iso super important de faire ca avant pour toute installation de vm sinon la vm n'a pas de reseau      
-	
 
 
