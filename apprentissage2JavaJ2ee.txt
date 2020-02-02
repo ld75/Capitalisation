@@ -481,7 +481,7 @@ si problemes dans npm: https://github.com/npm/npm/wiki/Troubleshooting
   dans un repertoire faire
   (path/vers/npm)npm init // cree package.json là ou je suis// il me pause des questions pour bien le remplir ATTENTION pas d'espace dans le nom. l'important c'est le entry-point: indiquernomfichier.js qui est le point d'entree. je peux l'executer en faisant node indiquernomfichier.js
   pour executer un truc par npm soit je fais npm etc.. soit je fais path/vers/node_modules/.bin/trucquejeveuxexecuter (a faire si par ex j'ai le message "missing script etc.."
-  voir l'arbre des dependances:
+  voir l'arbre des dependances: depandences: et des versions
     npm list <optionel:module>
   voir la config:
         npm config list
@@ -510,6 +510,8 @@ mettre à jour update upgrade node
     n stable ou n latest // selon si je veux le dernier stable ou le dernier
     puis
     ln -sf /usr/local/n/versions/node/11.8.0/bin/node usr/bin/node
+   mettre à jour les packages suite à modif de package.json (je crois)
+	npm update (pas sur dutout)
   sur windows:
          reexecuter node.msi.
 installer un autre programme dans mon repository npm (en ajoutant -g)      
@@ -637,7 +639,7 @@ reactjs : react.js + redux :
 docker : créer une image (executable)-> builder ->image(classe) devient container(instance tourne par defaut en vase clos/fichiers et /ports) qd est runné(!=VM. Une VM virtual machine contient un OS. Un container est executé dans un OS: plusieurs containers peuvent s'executer dans un meme OS) quand est executee alors des config s'appliquent à lui-> déposer dans machine
                     |_populaires: le registry https://hub.docker.com/search?q=&type=image du coup faire docker pull une/image/a/charger  puis docker run payara/micro par exemple
   continuer à lire https://docs.docker.com/get-started/part2/#share-your-image
-  installer docker: sudo apt-get update puis 
+  installer docker: sudo apt-get update puis installer docker.io
     avoir docker CE(community edition) ou EE(entreprise edition) recuperable sur store.docker.com
     sur linux conf dans docker.json
   docker --version ou docker run hello-world // verifier que docker est bien installe
@@ -2256,7 +2258,7 @@ pour recuperer un string et le parser en objet javascript:
         <java>
         on a plusieurs parseur JSON: 
         JSONObject, JSONArray, JSONSTring etc etc...
-                JSONObject jso = new JSONObject("{\"SOLUTION_APPLICATION_DATE\":\"null\",\"LUA_UPDATE_DATE\":\"2010-10-09 11:31:50.0\",\"LUP_QUESTION_ID\":\"null\",\"IC_ANS_LAST_MODIF\":\"null\",\"VEH_PLANT\":\"FLINS\",\"FUNC_WORDING\":\"null\",\"GBOX_PLANT\":\"SEVILLE\",\"L2INCIDENT_WORDING\":\"null\",\"FIRST_DETECTION_DATE\":\"2010-10-09 09:27:04.0\",\"ASS_ALERT_SOL_DATE\":\"null\",\"ENG_AXIS\":\"null\",\"MAIN_NITG\":\"null\",\"PRODUCTION_DATE\":\"2007-08-01 00:00:00.0\",\"ENG_SUBCLASS\":\"null\",\"ENG_PLANT\":\"VALLADOLID\",\"RNUM\":\"1\",\"VEHICLE_PROJECT\":\"null\",\"WITHOUT_LUP\":\"null\",\"CS_WORDING\":\"null\",\"UPDATED_CASE_NUMBER\":\"null\",\"ORIGIN\":\"ACTIS\",\"STATUS_WORDING\":\"To Document\",\"WOR_ALGORITHM_NAME\":\"FIC Keyword\",\"TRIGGER_INC_DATE\":\"2010-01-11 00:00:00.0\",\"GBX_TYPE\":\"TL4\",\"ECR\":\"0575\",\"MAIN_DELIVERY_CTRY\":\"DE\",\"ALREADY_DETECTED\":\"1\",\"ECR2_WORDING\":\"Engine: High fuel consumption\",\"STATUS\":\"3\",\"COST_BY_VEH\":\"0\",\"METH_NAME\":\"Test FIC Keyword\",\"RC_CODE\":\"null\",\"MIS\":\"null\",\"INCIDENTOLOG_COM\":\"null\",\"CASE_NUMBER\":\"1\",\"RC_WORDING\":\"null\",\"KEY_MESH\":\"null\",\"PROJECT_CODE\":\"null\",\"FLEET_NAME\":\"null\",\"TO_DATE(T_ALG_ALERT.PRODUCTION_QUARTER,DD/MM/YYYY)\":\"2007-07-01 00:00:00.0\",\"SUB_FUNC_WORDING\":\"null\",\"ALGORITHM_ID\":\"9\",\"STATUS_CODE\":\"D\",\"MAILING_DATE\":\"2010-10-09 11:31:50.0\",\"PRIORITY\":\"1\",\"NITG_WORDING\":\"null\",\"INITIAL_CASE_NUMBER\":\"1\",\"SYMPTOM_CODE\":\"null\",\"ID_ALERT_LUA\":\"null\",\"GBX_AXIS\":\"null\",\"ALERT_ID\":\"A000000033\",\"DTC_WORDING\":\"null\",\"UCR_WORDING\":\"null\",\"GBX_SUBCLASS\":\"null\",\"TYPE_ID\":\"5\",\"ENG_TYPE\":\"K9K\",\"DETECTED_CODE\":\"No\"}");
+                JSONObject jso = new JSONObject("{\"SOLUTGBX_SUBCLASS\":\"null\",\"TYPE_ID\":\"5\",\"ENG_TYPE\":\"K9K\",\"DETECTED_CODE\":\"No\"}");
                 ou bien 
                 return new JSONObject(new JSONTokener("{\"ZY05\":[\"N05TRI\",\"NOMPAT\"],\"ZY06\":[\"PRENOM\"],\"ZY07\":[\"N07TRI\",\"N07NOMUSE\"],\"ZY0F\":[\"ZONADB\",\"ZONADC\"],\"ZY10\":[\"VILNAI\"],\"ZY3\":[\"BLBEMPL\",\"NMPRES\"]}"));
                 ou bien 
@@ -7444,97 +7446,6 @@ Bouton submit non ajax:
         <h:outputText value="#{myBean.myProperty}" id="resultId"/>.
 ------------FIN BEURK 
 
-MCD/MPD :
-      forte faible
-    esclav    maitre  
-     jai n   j'ai un
-      X,n -> 0,1
-      0,1 -> 1,1
-      1,1 <-> 1,1 faire une seule table
-        exequo
-      X,n-><-X,n
-      
-  bonne pratique gestion des rôles droits etc... LINKsecurlsjfg
-      voici les tables a creer:  USER    GROUPE                              PERMISSION(role)     USER-GROUPE      USER-PERMISSION(role)   GROUPE-PERMISSION(role)     
-                                  |       |                                         |              |                         |
-                               sont def ds le realm(genre login-config.xml)         |             ce mapping se defini au niveau du serveur (genre dans glassfish-web.xml)
-                                                                                se retrouvent dans web.xml>security-role
-JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
-    pour faire du reverse engineering java vers base de donnee java2db
-    monProjet>Properties>Ajouter Facelets JPA; //bof 
-    Recuperer dans ecolipse Help>Update>Plugin Hibernate tools (http://download.jboss.org/jbosstools/updates/stable/indigo)
-    ouvrir console Hibernate et configurer une connection à une base
-    Clic droit sur mon projet > JAP > faire le reverseEngeniring
-    fichier resources/META-INF/persistence.xml marche bien. sinon ou mais pas sur dutout: WEB-INF/persistence.xml. Ce fichier DOIT etre dans le jar ou le war qui contient les @Entity
-    <persistence> ou <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"> 
-        <persistence-unit name="com.memoclap" transaction-type="RESOURCE_LOCAL(pour des testsunitaires car c'est a moi de gerer les transactions) ou JTA(pour tapper dans LINKjta)"> // du coup applicativement je l'appelle comme ça : LINKentitym
-            <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> // facultatif provider peut etre eclipselink ou hibernate. si on met rien.. sais pas. depend jars ?
-            <description>EclipseLink EntityManager</description>                 // facultatif
-            <exclude-unlisted-classes>false</exclude-unlisted-classes>
-             <jta-data-source>java:app/MemOclapDataSource</jta-data-source> //LINKjta: mettre la valeur de @DataSourceDefinition(name="java:app/MemOclapDataSource" pour aller cherche un datasource deja defini applicativement
-             ou
-            <properties> // parametres envoyés au persistenceprovider. On peut définir la base de donnée ici mais je prefere LINKjta  
-                <property name="eclipselink.logging.level" value="FINE"/>
-                <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
-                <property name="javax.persistence.jdbc.url" value="jdbc:mysql://127.0.0.1:3306/moviecatalog"/>
-                <property name="javax.persistence.jdbc.user" value="root"/>
-                <property name="javax.persistence.jdbc.password" value="root"/>
-            </properties>
-       </persistence-unit>
-     </persistence>   
-  FORMS ----> envoie des DTO---ne plus les utiliser et passer direct par les entities voir LINKemdlksqj sauf si ils ont pas la meme structure que les Entities
-                           |                               |
-                           vers                            |
-                    CMD     |                              |
-                      update(monDTO)                       |
-                      {                                    |
-                        converti DTO->BO                   |
-                        et appelle EntityManager(avant:DAO)|
-                      }                                    |
-  EntityManager remplaceDAO = methodes crud LINKemdlksqj   |
-      methode(fait appel à ENTITY)------------------(BO=MODEL)ENTITIES connectees à la base
-    //recuperer l'entitymanager applicativement: 
-            @PersistenceContext(name = "com.memoclap") // est def ici LINKentitym
-            EntityManager em;
-        ou
-            EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.memoclap"); //est def ici LINKentitym 
-            et
-            public static EntityManager getEntityManager() {
-            return emf.createEntityManager();
-            }
-    recuperer la connection jdbc depuis un entitymanager :
-        Connection conn = entityManager.unwrap(Session.class).getJDBCConnection();
-     utilisation de entitymanager: JPQL (sql en string) 2.0 contient JPA_API(criterias) preferer criteria api si besoin validation requettes à la compilation et requetes à la synthaxe dynamique
-                JPQL :
-                      - List cat = entityManager.createQuery("SELECT cat FROM nomDeMonObjetJAVA cat LEFT JOIN FETCH cat.nomDeMonFieldJAVA WHERE toto.nomDunFieldJAVA like '%M%' AND cat.unFieldJava=:totocestmoi")
-                                .setParameter("totocestmoi",projectId).setFirstResult(0) ou .getResultList(); //overrite lazy default behaviour at runtime
-                      - List<MonEntite> cat = entityManager.createQuery("SELECT cat FROM category cat LEFT JOIN FETCH cat.art WHERE cat.id=:id",MonEntite.class).getResultList(); //overrite lazy default behaviour at runtime
-                      - String query = "select distinct(alo_project.id), alo_project.nam......from alo_usr alo_usr left join alo_usrcrea alo_usrcrea on alo_usr.usr_id=alo_usrcrea.usrcrea_idusr where alo_usrcrea.usrcrea_idusr is not null and alo_usr.usr_id='"+uid+"' order by alo_project.name";
-                        return em.createNativeQuery(query,Project.class).getResultList(); // pour les selects natifs
-                        em.createNativeQuery(sql).executeUpdate(); // pour les updates natifs
-                JPA_API_CRITERIA : Cest trop de la merde!!!!!!!!!
-                        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-                        CriteriaQuery<MonEntite> query = cb.createQuery(MonEntite.class);
-                      Root<MonEntite> criteria = query.from(MonEntite.class); //Root c'est le FROM
-                               List<MonEntite> = query.select(criteria); // il renvoit tous les champs
-DAO : design pattern bonne pratique est mort remplacé par entitymanager voir LINKemdlksqj
-un @Repository se base sur les DAO pour faire des find, get etc sur plusieurs tables. Le DAO lui sert aux updates sur une seule table
-  Besoin que MonObjet extends BaseEntity.
-  IMonObjetDao ----------extends-------->IGenericDao (contient toutes les methodes CRUD basiques) public interface IGenericDao<T extends BaseEntity> { public T getBook(long id);}
-    |  extends IGenericDao<Codecast>{       |  
-    |                                       |   
-    |                                       |
-  class MonObjetDao ----------extends-------->class GenericDao (chaque MonObjetDao a son instance) (doit contenir toutes les methodes communes en entier.)
-        ||                              public class GenericDao<T extends BaseEntity> implements IGenericDao<T>{...}
-  public class MonObjetDao extends GenericDao<MonObjet> implements IMonObjetDao {...}   
-  ne contient que les methods specifiques                                        
-generiques : generic : pour eviter de caster et d'avoir a utiliser object  
-  pour ne pas avoir a tapper les requetes basiques les requetes de base select * from toto etc etc...
-        @RepositoryRestResource
-        interface MonObjetRepository extends JpaRepository<MonObjet, Long>{
-        }
-        tout y est!!
-
 kafka : A_COMPLETER voir aussi https://github.com/akka/alpakka-kafka qui fait de reactive streaming c a d backpressure c a d si consummer sont debordes par vitesse ils disent au producer de ralentire. voir aussi du code source sur github/jamesward/koober(demo de la voiture et du gars sur le map) 
         producer1-   kafka
                   --\---->topic1(copié sur partition1, partition2, partition3)  // 1 partition leader et les autres partitions sont juste des replicats de securité pour eviter perte données
@@ -8513,11 +8424,10 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
   EntityManager remplaceDAO = methodes crud LINKemdlksqj   |
       methode(fait appel à ENTITY)------------------(BO=MODEL)ENTITIES connectees à la base
     //recuperer l'entitymanager applicativement:
-          "EntityManager gère le lifecycle de persistenceContexts //ATERMINER
           Persistencecontext a une duree de vie dependante de celle de la transaction.
           Une transaction peut contenir un ou plusieurs persistencecontext" 
             @PersistenceContext(name = "facultatifUtileDansLeJavaChaisPasTropEncoreCOmmentAFAIRE" unitName="LINKdkdkfjfjnomcorrespondantA<persistence-unit nameEstFacultatifSiYEnAQunDansLeXml) // est def ici LINKentitym . attention c'est une annotation ejb. Est Injectable dans Ejbs. Pour la rendre injectable dans cdi faire LINKlerendreinjectable (heu je crois que ca marche quand meme l'injection sans ça.)
-            EntityManager em;
+            EntityManager em; "EntityManager gère le lifecycle de persistenceContexts 
         ou
             EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.memoclap"); //est def ici LINKentitymlocal(jecrois voir doc tomee). dans persistence.xml mettre <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> sinon ca ne marche pas 
             et
@@ -24645,6 +24555,14 @@ raccourcis shortcut commandes: deplacer le curseur mot a mot dessus
 	Alt+b arriere
 	Alt+f avant
 sur vi : 
+diviser split ecran CTRL+w puis
+	k:passe a l'ecran au dessus
+	j: passe a l'ecran en dessous
+	q: ferme l'ecran en cours
+	v: cree un nouveau split vertical
+	h: cree un nouveau split horizontal
+	l: passe à l'ecran à droite
+	s: cree un nouveau split
 pour indenter: > voire >> puis . pour refaire autant de fois que necessaire. ce . sert à repeter action precedante precedente
 pour affichier avec des fonts colorees couleurs: aptitude: charger vim
 view nomfichier pour afficher en lecture seule
@@ -26363,7 +26281,7 @@ copyright:
       (voir http://appstv.com/faq/2132-comment-faire-des-e-majuscules-avec-accent-sur-iphone-android-ordinateur )
 c cedille:
     &ccedil;
-    majuscule: &Ccedil;
+    majuscule: &Ccedil; Alt+128
     e accentaigu majuscule &Eacute;
 u accent: 
     &ugrave;
@@ -29015,7 +28933,7 @@ https://developers.google.com/web/fundamentals/web-components/customelements#att
           du dom (balises html..ne pas mettre d'appel a des methodes dedans. Marche pas (onclick..marche que si on utilise le javascript direct dedans sans faire appel à des methodes. Si besoin appeler methodes alors faire LINKlkjsdflh)
           `; // ` ` marche partout pour faire des strings qui vont a la ligne ! 
 METHODE CLASS: THEBEST? classes es6
-                                                class MonElement extends HTMLElement ou un autre element webcomponent (avec de l'animation par exemple) du coup pour que le fils appelle une methode du parent il doit faire super.methodeDuParent()
+                        			(export default A METTRE SI ES6) class MonElement extends HTMLElement ou un autre element webcomponent (avec de l'animation par exemple) du coup pour que le fils appelle une methode du parent il doit faire super.methodeDuParent()
                                                  {
                                                  // attention les alerts ne marchent dans un webcomponent faire console.log (si j'en ai besoin chercher sur internet)
                                           2)            constructor() // execute en premier à la creation MAIS n'est pas encore dans le DOM. // declarer mes proprietes ici pas au dessus
@@ -29167,12 +29085,13 @@ PWA : progressive webapps :
             <meta name="theme-color" content="#009688">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
           </head>            
-        racineprojet/manifest.json // voir https://app-manifest.firebaseapp.com 
+        racineprojet/manifest.webmanifest ou manifest.json // voir https://app-manifest.firebaseapp.com 
             {
             "name":"nom de mon appli",
             "short_name": "petit nom",
+	    "description": "une description",
             "lang":"fr",
-            "start_url":"/", // une seule partie de mon site web seulement peut etre en pwa si je met un chemin plus profond FINIR PAR UN SLASH
+            "start_url":"/", // une seule partie de mon site web seulement peut etre en pwa si je met un chemin plus profond FINIR PAR UN SLASH et après on pourrait si on veut rajouter ?toto=titi exemple "start_url":"/?toto=titi",
             "display":"standalone", // ou fullscreeen, ou minimal-ui A COMPRENDRE je pense que c pour la facon d'afficher sur mobile: on affiche pas les contours du webkit
             "theme_color":"#009888",
             "background_color":"#009588",
