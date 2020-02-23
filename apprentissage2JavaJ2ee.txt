@@ -1,4 +1,4 @@
-(?=.*template)(?=.*onclick)
+(?=.*hashmap)(?=.*initia)
 AFAIRE :
     Entretien:
         qu'est ce que rest, architecture ntiers, polymorphisme, mvc, dto, bdd: gerkin  
@@ -1207,7 +1207,7 @@ gradle: pour tout builder:
     view > gradle > projet > tasks >build > assemble
       ca build sous \projet\build\libs\springboot-deployment-1.0.0-SNAPSHOT.jar 
 taille des logs dans la console: settings>console>overrideconsolebuffersize
-pom voir arbre des dependances hierarchie > dans la vue maven: clique droit sur projet > show effective pom ATTENTION A RAFRAICHIR refresh dans vue maven sinon la hierarchie est obsolete
+pom voir arbre des dependances hierarchie transitive > dans la vue maven: clique droit sur projet > show effective pom ATTENTION A RAFRAICHIR refresh dans vue maven sinon la hierarchie est obsolete
         encore mieux: charger https://plugins.jetbrains.com/plugin/7179-maven-helper et installer le plugin: installe le directement depuis settings>plugins>il est là
         permet aussi d'afficher menu contextuel maven run debug dans projets project (si inactif  appuyer sur "+" a droite pannel maven)
         dans onglet dependency analyser à gauche on y voit les artifactID:version
@@ -2241,6 +2241,8 @@ culture = country_LANGUAGE
                 -description
 
 JSON :
+custom element customelement webcomponent pour afficher joliement le json
+    https://github.com/cris-l/x-json
 Attention au sein de json tout est en UTF8 parse accepte que utf8(jecrois) et stringify envoie des charactères caractères en utf8
 super site pour convertir editer visualiser voir du json array en objet object conversion 
     https://jsoneditoronline.org/
@@ -3824,6 +3826,8 @@ pour generer java a partir de wsdl mais beurk:
              } finally {
                  if (reader != null) try { reader.close(); } catch (IOException logOrIgnore) {}
              }
+postman :
+    generation automatique d'identifiant {{$guid}}
 swagger : pour qu'un webservice rest(je pense) exposer ses methodes dans une page html wsdl LINKSWAGGER
         concurrent = raml. Voir LINKsqlkfjjjhjhjhjhjhjhj
         pour SPRING: 
@@ -7569,17 +7573,58 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
             db.help()            
         statistiques: (etre connecté à une base d'abord)
             db.stats()            
-        rentrer dans une base:
+        rentrer dans une base:(sur ? ou plutot se connecter ? use admin)
             use nomdelabase
+        pour se connecter avec un utilisateur user
+            db.auth("AribaSystem","xxxx");            
         pour voir la liste des bases
             show dbs (faut etre connecté avec un compte pour pouvoir le faire)
         pour voir dans quelle base je suis ?
             db
-        exemples de requetes. Une collection = une table relationelle
-            var doc = db.uneCollection.findOne({ _id: 1 })// trouver par id (du coup doc est une variable) 
-            db.uneCollection.remove({ _id: 1 })  
+        pour creer un user et lui attribuer des droits sur les bases
+            db.createUser(
+                {
+                    user:"sonNom",
+                    pwd:"xxxxx",
+                    roles:[
+                    {role:"readWrite", db: "unebase1"},
+                    {role:"readWrite", db: "unebase2"},                    
+                    {role:"readWrite", db: "unebase3"},
+                    ]
+                }
+            )    
+        pour modifier les droits d'un user sur les bases:
+            db.grantRolesToUser("AribaSystem",
+                [
+                    {role:"readWrite", db: "unebase1"},
+                    {role:"readWrite", db: "unebase2"},                    
+                    {role:"readWrite", db: "unebase3"},
+                ]
+            )
+        pour supprimer les droits d'un user sur les bases:
+            db.revokeRolesFromUser("AribaSystem", [
+                    {role:"readWrite", db: "unebase1"},
+                    {role:"readWrite", db: "unebase2"},                    
+                    {role:"readWrite", db: "unebase3"},
+                ]
+            )
+        pour voir la liste des collections d'une base:
+            show collections
+          
+        exemples de rechercher requetes. Une collection = une table relationelle
+                    db.uneCollection.find() // pour trouver tout (sur ?)
+            var doc = db.uneCollection.findOne ou find({ _id: 1 unjsonquimatchquoi })// trouver par id (du coup doc est une variable) // findOne retourne le 1er resultat
+        count compter nombre de lignes:
+            db.nomdelacollection.count({duJson});
+        autres operations:             
+            db.uneCollection.remove({ _id: 1 }) //pour supprimer ce qui match. Comment faire pour tout supprimer de la collection ?  
             db.uneCollection.insert({ _id: 1, jsFunc: function(){ print("hello") } } ) // si uneCollection n'existe pas elle est automatiquement créee
             db.myNewCollection3.createIndex( { y: 1 } ) // ajoute un indexe dans la collection
+        pour me connecter à mongodb en java standard:
+            avec la librairie mongo-java-driver-3.10.2.jar
+                MongoCredential credential = MongoCredential.createCredential(usr,"admin",password.toCharArray());
+                MongoClient mongoClient = new MongoClient(new ServerAddress("localhost",27017),credential,MongoCLientOptions.builder().build());
+                return mongoClient.getDatabase("dbName").getCollection("collectionName");
                           
   DM 
    ^ 
@@ -8430,7 +8475,8 @@ MCD/MPD :
       1,1 <-> 1,1 faire une seule table
         exequo
       X,n-><-X,n
-      
+    normaliser=faire plein de tables
+    denormaliser=regrouper les tables      
   bonne pratique gestion des rôles droits etc... LINKsecurlsjfg
       voici les tables a creer:  USER    GROUPE                              PERMISSION(role)     USER-GROUPE      USER-PERMISSION(role)   GROUPE-PERMISSION(role)     
                                   |       |                                         |              |                         |
@@ -12356,6 +12402,8 @@ Toutes les modifications sont faites dans le mode ECRASEMENT.  Pour inserer ou e
 notepad++ :
     accolade correspondante: Ctrl+B
     pour faire des recherches loop à partir du debut automatiquement cocher wraparound
+    column colonne editing
+        alt+shift+fleches
     
 PSPAD :
 indenter automatiquement autoindent 
@@ -19544,6 +19592,8 @@ pour connaitre savoir le type d'une classe: LINKkgjhjhjhjhjhjc
           if (maclasse instanceof Command)...
     	ou bien:
     	e.getClass().getName()// class.getName() renvoit package+.+nomclasse
+pour savoir par introspection si une classe est une sousclasse d'une autre classe extend etent:
+    if(LaSuperClasse.class.isAssignableFrom(lasousclasse.getClass()))
 pour recuperer le nom d'une classe: 
 	maclasseinconue.getClass().getCanonicalName(); // class.getCanonicalName() renvoit package+.+nomclasse
 	.getEnclosingClass() recupere le nom de la superclasse je crois
@@ -21517,12 +21567,18 @@ attention une hashmap n'a pas d'ordre.. et pas de doublons non plus d'apres Port
   utiliser LinkedHashMap qui conserve l'ordre dans lequel on a insere les donnees.
   utiliser TreeMap qui est capable de reordoner apres des insertions comme on veut 
   remarque (attention: jsonobject n'utilise que des hashmap)
-pour initialiser une map: (depuis java9) 
+pour initialiser instancier une map: 
+avant java9:
+    private HashMap<String,String> blah=new HashMap<String,String>(){{
+            put("ariba.common.core.User","commontruc");
+            put("ariba.common.core.User2","2commontruc");
+        }}
+    (depuis java9) 
   Map<String, String> test2 = Map.ofEntries(
     entry("a", "b"),
     entry("c", "d")
   );
-pour initialiser un autre type de map ou une linkedhashmap: (depuis java9)
+pour initialiser instancier un autre type de map ou une linkedhashmap: (depuis java9)
  LinkedHashMap<Double,String> totoSil = new LinkedHashMap<>(Map.ofEntries(
         entry(0.0, "b"),
         entry(1.0, "d")
@@ -32557,6 +32613,10 @@ paint :
     pour que la selection soit transparente transparante
         bouton selectionner> choisir transparant
 Excell : excel :
+    taille size length longueur
+        NBCHAR()
+    indexOf:
+        TROUVE()
     inserrer la date: ctrl+;
     si sur exell il me marque toujours #VALEUR! verifier qu'il n'y a pas d'espace dans les cases que j'ai selectionne pour faire mon calcul.
   figer les volets Affichage > figer les volets
