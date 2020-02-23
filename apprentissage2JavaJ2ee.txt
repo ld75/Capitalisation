@@ -524,7 +524,7 @@ installer un autre programme dans mon repository npm (en ajoutant -g)
                 npm install -g angular-cli
 faire rapidos un serveur http: 
       npm install -g live-server //(avant pourri: http-server) si pas deja fait: installe un ptit serveur sous repertoire de npm (watch- (pas reussi à le faire marcher)pour que ca rafraichit le cache du browser. sinon l'effacer  à la main. Est facultatif) Attention LINKlkjdfgkhkghkhk
-      puis:live-server ou npm run live-server // demarre un ptit serveur http pour servir là ou je suis (watch- pour que ca rafraichit à chaud. Est facultatif) Attention LINKlkjdfgkhkghkhk   
+      puis:live-server ou npm run live-server --port=8081facultatifpourchangerportpardefaut // demarre un ptit serveur http pour servir là ou je suis (watch- pour que ca rafraichit à chaud. Est facultatif) Attention LINKlkjdfgkhkghkhk   
   ancienne methode compiler le typescript:
       npm run tsc:w (compile en mode watch: si je modif le typescript il recompile à la volee)
       tsc nomfichier.ts compile un fichier typescript en fichier javascript// meme si il ya des erreurs il les ecrit mais cree un .js
@@ -2576,7 +2576,7 @@ securite : security :(JSR375 implémenté par soteria qui est la reference) plus
        MaCustomClasse implements HttpAuthenticationMechanism SEUL TRUC QUE JE REUSSI A FAIRE MARCHER. MAIS PAS CEUX CI DESSUS                                                                                                                                                                                                             
               @Inject 
               private IdentityStoreHandler identityStoreHandler; // doit avoir ca ou peut directement injecter un IdentityStore
-       METHODE Importante: validateRequest() que je dois implémenter Les 2 autres c facultatif. S'execute à chaque requete avant les filters si user n'a pas de session
+       METHODE Importante: validateRequest() que je dois implémenter Les 2 autres c facultatif. S'execute à chaque requete avant les filters si user n'a pas de session et s'il arrive dans une servlet LINKservletsecurity
                               Fait appel à->IdentityStoreHandler(Je peux le reecrire moi même)
                                 puis
                                     if(les parametres d'authent existent)
@@ -2606,8 +2606,8 @@ securite : security :(JSR375 implémenté par soteria qui est la reference) plus
        **CredentialValidationResult contient le principal et ces roles: return new CredentialValidationResult("Duke",new HashSet<>(asList("foo", "bar")));
         necessaire de parametrer web.xml voir LINKlkjsqgeegege:<security-constraint> et <security-role>       
        pour securiser securite une servlet: servlet :// pour ouvrir à tous ne pas mettre l'anotation @ServletSecurity ou bien mettre je crois @PermitAll. Mais ne rien mettre dutout marche.  
-            @WebServlet(urlPatterns="/un/path) .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention bien mettre urlPatterns sinon il se comporte comme si j'avais mis "un/path/*"
-            @ServletSecurity(
+            @WebServlet(urlPatterns="/un/path") ou @WebServlet("/un/path")  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention bien mettre urlPatterns sinon il se comporte comme si j'avais mis "un/path/*"
+            @ServletSecurity( LINKservletsecurity
                             value= @HttpConstraint(
                                 rolesAllowed = {"foo","supervisor"}), //limite cet acces aux utilisateurs qui ont ces roles. SI n'ont pas ses roles ca renvoie direct http200 sans passer dans le code sans meme pas passer par les filtres! uniquement l'authenticationmecanism
                                 transportGuarantee= TransportGuarantee.CONFIDENTIAL, // facultatif: bloque l'accès ici si on est pas en https equivaut à LINKglkdlkflglglg                                
@@ -26438,7 +26438,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                     };
                     xhr.onload = function(e) { // retour du serveur: "e" c'est progressEvent et "this" c'est la reponse du serveur. SI j'ai besoin de this pour une classe faire LINKbindthisclasseresponse ou bien utiliser le e comme ça: e.target.response
                             printStacktrace(req.name);
-                            askValidator.class_AskValidator.record.call(this);
+                             askValidator.class_AskValidator.record.call(this);
                                if(this.getResponseHeader("Content-type").indexOf("text/html")!=-1) on peut recuperer ça et autre...
                               if (this.status == 200) {
                               try
@@ -30993,7 +30993,7 @@ attention si nouveau compte première fois logguer bien d'abord supprimer tous l
         (standard) controllers 190
      
 
-OAuth : OAuth2 : (https://medium.com/@darutk/diagrams-of-all-the-openid-connect-flows-6968e3990660)
+openidconnect :OAuth : OAuth2 : (https://medium.com/@darutk/diagrams-of-all-the-openid-connect-flows-6968e3990660)
                 (oltu : https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Client+Quickstart et https://github.com/apache/oltu)
 est fait pour gerer que authorization à la base. Pas pour Authentification: On a rajouté openidConnect1.0 par dessus oauth2 : pour l'authentification (https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata)
     USER = RessourceOwner = homme = moi 
