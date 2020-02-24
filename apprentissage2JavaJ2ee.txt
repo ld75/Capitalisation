@@ -1,4 +1,4 @@
-(?=.*hashmap)(?=.*initia)
+(?=.*enchainer)(?=.*foreach)
 AFAIRE :
     Entretien:
         qu'est ce que rest, architecture ntiers, polymorphisme, mvc, dto, bdd: gerkin  
@@ -2241,13 +2241,13 @@ culture = country_LANGUAGE
                 -description
 
 JSON :
-custom element customelement webcomponent pour afficher joliement le json
-    https://github.com/cris-l/x-json
 Attention au sein de json tout est en UTF8 parse accepte que utf8(jecrois) et stringify envoie des charactères caractères en utf8
 super site pour convertir editer visualiser voir du json array en objet object conversion 
     https://jsoneditoronline.org/
 tester testeur de variable json:
   http://jsonformatter.curiousconcept.com/
+custom element customelement webcomponent pour afficher joliement le json
+    https://github.com/cris-l/x-json  
       un objet:
             {"libelleValeur1DeMonObjet":valeur1DeMonObjet, "libelleValeur2DeMonObjet":valeur2DeMonObjet, "libelleValeur3DeMonObjet":valeur3DeMonObjet}
       un tableau: 
@@ -16039,6 +16039,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
     				ou                                   anyString()//tout string
     				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça . si je met des variables direct alors j'ai l'erreur InvalidUseOfMatchersException
                                                         ,anyList() // ne pas utiliser anyObject si j'ai une liste
+                                                        ,isNull() // si c'est null
     													,ArgumentMatchers.any(UneClasse.class) avant: Matchers.any(UneClasse.class) avant: anyObject(UneClasse.class)
     													).thenReturn(untruclapremierefois,unautretruclasecondefois...).getMock();
                                                         ou
@@ -16057,7 +16058,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
                             Mockito.doThrow(new HibernateException("err")).when(userWebDAO).create(Matchers.any(UserWebEntity.class)); 
     				WelcomeController wc = new WelcomeController(rd);
     				wc.getDisplayResult("1", "1","10:00", "10/10/2016");
-                    validation verifier qu'un mock a été appelé invoké invoquée par une methode x fois nombre compter combien:
+                    validation verifier qu'un mock(pasUnSpy) a été appelé invoké invoquée par une methode x fois nombre compter combien:
                             verify(userDetailDAOMock, times(2)).laMathodeDuMock(any(UserDetailsEntity.class));
 cucumber : il fait ce que fait junit mais permet à des non techniciens de comprendre les tests.LINKcucumberldfj 
       Feature: action globale
@@ -20658,6 +20659,7 @@ pour convertir un int en string
 		convertir un long en string: String.valueOf(long)
         convertir un long en string: long.toString() //mais attention je crois qu'il insert des espaces dans le string a chaque centaines et milliers: donc passer par int plutot(intValue())
         convertir un string en long: Long a = Long.parseLong(string2);
+        convertir un long en int: depuis java8: Math.toIntExact(monlong); avant: int leint = (int) lelong;// attention si chiffre depasse+-2147483647 on perd de la data
 		convertir un long en date puis en string: new Date(long).toString();
 		convertir un int en bigdecimal: int i=125; BigDecimal j = new BigDecimal(i);
 		convertir un big decimal en int: ((BigDecimal) ht.get("ISFORONEFILE")).intValue()
@@ -22832,7 +22834,7 @@ pour convertire un wav foireux en bon wave
 pour mixer deux sons ou meme plus:
 	      AudioInputStream clip1 = AudioSystem.getAudioInputStream(new File("C:/wamp/www/kanail/AudioLoopOnline/sons/20121107963241352287465954/1531352287502673=Lovely0.wav"));
         AudioInputStream clip2 = AudioSystem.getAudioInputStream(new File("C:/wamp/www/kanail/AudioLoopOnline/sons/20121107963241352287465954/1531352287502673=Lovely1.wav"));
-        pour initialiser rapidement une arraylist: shortcut:
+        pour initialiser instancier rapidement une arraylist: shortcut:
               List<Price> lp =  new ArrayList<Price>(Arrays.asList(p,d,a,e)); // pour creer une liste rapidement
         List<AudioInputStream> audio = new ArrayList<AudioInputStream>();
         audio.add(clip1);
