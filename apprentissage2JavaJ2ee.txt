@@ -1,4 +1,4 @@
-(?=.*enchainer)(?=.*foreach)
+ (?=.*string)(?=.*plusieurs)(?=.*lignes)
 AFAIRE :
     Entretien:
         qu'est ce que rest, architecture ntiers, polymorphisme, mvc, dto, bdd: gerkin  
@@ -191,7 +191,7 @@ plannification :planning :conseils Erwin:
     GELER DES JOURS ET MY TENIR (+LE JOUR DE CAPIT)
     CAPITALISER SUR LE WIKI LES VENDREDIS
 
-Design patterns : Gof est mort remplacé par CDI: A FAIRE voir @Specializes, @Decorator, @Interceptor. Pattern Command est remplacé par MessageDrivenBeans et CDI Events, pattern factory remplacé par @Produces sauf que @Produces renvoit des instances deja crées LINKfactoproduce 
+Design patterns : Gof est mort remplacé par CDI: A FAIRE voir @Specializes, @Decorator, @Interceptor(voir LINKinterceptor). Pattern Command est remplacé par MessageDrivenBeans et CDI Events, pattern factory remplacé par @Produces sauf que @Produces renvoit des instances deja crées LINKfactoproduce 
 cleancoding : clean coding :LA SEULE FACON D ALLER VITE C EST D ALLER CLEAN ignorance is no excuse. No divided devs(frontetback = meme pers) expose your ignorance to learn. (its not weakness) 
 0: 20 minutes de tomate tomatoes*18-20/jours(4pauses2m,1pause10m). https://tomato-timer.com/ pour partager: https://www.marinaratimer.com  Sous pression, se coller à la discipline ne pas être tenté de la bypasser
 1. I will not produce harmful code
@@ -1158,6 +1158,7 @@ debugger debuger tomcat avec intellij:
     intellij>run>>editConfiguration>remote>+>debug start (copier la ligne en tête et la mettre dans les parametres de demarrage de tomcat:(-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005) demarrer le tomcat puis demarrer ce remotedebug (quand je veux c de la balle!) LINKoizeurzotie
 nettoyer netoyer clean supprimer les methodes inutilisees non utilisees unused d'une classe ou de tout le projet                                                                                |_n pour ne pas qu'il poireaute pour que le listner s'accroche. IL continue de démarrer.
   menu analyze> inspectCode      
+si il indique qu'une methode est neverused alors que c'est pas vrai faire file>invalidate cache/Restart...
 curseur multiple: 
   selectionner le truc qui se repeter puis ctrl+shift+alt+j (choisir vraiment le truc distingué pour ne pas avoir a désélectionner certain avec la souris)
   pour decompiler (download sources... ne decompile pas...) 
@@ -2517,14 +2518,43 @@ Cycle de vie du CDI bean:
                   }
           
               }
-                         
+     design patern observer je crois remplacé par @Interceptor LINKinterceptor permet de déclancher un truc de manière asynchrone rien qu'avec l'ajout d'une annotation pouvant contenir une variable.
+     1) créer une anotation perso: 
+            @Inherited
+            @InterceptorBinding
+            @Retention(RUNTIME)
+            @Target({TYPE,METHOD})
+            public @interface MonAnnotationDInterception{
+                @Nonbinding String value() default "";
+            }
+    2)  créer mon interceptor et ce qu'il fait quand il est déclanché:
+        @MonAnnotationDInterception
+        @Interceptor
+        @Priority(Interceptor.Priority.APPLICATION)
+        public class blablaInterceptor implements Serializable{
+            @Inject
+            Event<ChangeEvent> broadcaster;
+            @AroundInvoke
+            public intercept(InvocationContect ic)
+            {
+                   UnObjet unObjet=(UnObjet)ic.proceed();
+                   ChangeEvent changeEvent = new ChangeEvent(unObjet,annotation.value()); // annotatio.value() sera egale a moncul (voir plus bas)
+                   broadcaster.fireAsync(changeEvent); // ce truc va ailleur appeler ça LINKobsksf
+                   return unObjet
+            }
+    3)et maintenant je peux utiliser cet interceptor partout:
+        @MonAnnotationDinterception("moncul")
+        public Carte uneMethodeQuelquconqueQuiASonExecutionDeclancheLInterceptor(UnObjet machintruc)
+        {...}
+    
+                                 
           faire des servlets sans web.xml: 
                 ajouter en tete de classe qui etend HttpServlet @WebServlet("/un/path") ou (urlPatterns={"/a","/b"}) ou (urlPatterns="/b") .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention pour index page d'accueil on ne peut pas mettre / donc utiliser web.xml et welcome-file qui pointent sur une servlet ou une page
                  et @MultipartConfig // a utiliser si le content-type est multipart/form-data pour pouvoir recup les params avec request.getParmeters ainsi que le fichier uploade sans avoir besoin de parcourir le payload du body LINKmultilkjfqsdf. Si coté servlet on fait du GET cette annotation est ignorée.   
                 du coup ma classe n'est plus un webservice et ne pas utiliser @Produce et @Path avec. 
                 juste 
                 public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {response.getWriter().println("Hello");
-                on peut y injecter @Inject SecurityContext securityContext; à condition qu'il y ait au moins un IdentityStore sinon j'ai l'erreur "Unsatisfied dependencies for type SecurityContext"
+                on peut y injecter @Inject SecurityContext securityContext; à condition qu'il y ait au moins un IdentityStore sinon j'ai l'erreur "Unsatisfied dependencies for type SecurityContext". Ce message apparait aussi si j'essaie d'injecter la classe directement alors que celle ci implemente une interface.
 SeContainerInitializer initializer = SeContainerInitializer.newInstance();
 try (SeContainer container = initializer.disableDiscovery().addPackages(App.class).addBeanClasses(MyService.class).initialize()) { pas besoin de beans.xml
     container.select(MyService.class);       |_on l'empeche de scanner auto
@@ -2550,6 +2580,7 @@ try (SeContainer container = initializer.disableDiscovery().initialize()) { cont
           payloadEvent.fire(new Payload()); //ceci va declancher ailleur ceci:LINKobsksf
         }        
         dans une autre classe:
+        public void recoitUnChangeEvent(@ObservesAsync ChangeEvent event){...}
         public void processUnqualifiedPayload(@Observes Payload event) {} LINKobsksf
         public void processUnqualifiedObject(@Observes Object event) {}
         public void processQualifiedPayload(@Observes @Named("tutu") Payload event) {} // ne sont executés que si LINKkfkgggg
@@ -20129,7 +20160,7 @@ POUR LES MAP OU LES FOREACH      static <T,R, E extends Exception> Function<T,R>
                                                 }
                                             };
                                         }
-POUR LES FOREEACH A 2 ARGUMENTS: j'ai d'un coté: 
+POUR LES FOREACH A 2 ARGUMENTS: j'ai d'un coté: 
                                     public static <T,R, E extends Exception> BiConsumer<T,R> handlingFunctionBiArgWrapper(ThrowingBiConsumer<T, R, E> throwingConsumer, Class<E> exceptionClass) {
                                                          return (i,j) -> {
                                                             try {
@@ -26871,7 +26902,7 @@ detecter si les cookies sont activés ou pas disabled enabled
           
 pour echaper echappe escape decoder html caracteres speciaux
     remplacer toExecute.innerHTML; par toExecute.childNodes[0].nodeValue; ou toExecute.innerText;
-async await :
+async await : asyncawait :
   permet d'executer du code asynchrone comme s'il etait synchrone et le javascript fait une pause tant qu'il n'a pas la réponse de l'asynchrone.
   async function unemethode(){  // dans une methode comme ca marquée async j'ai le droit de mettre await. Mais je crois que async renvoit toujours une promese.
       let res = await uneautremethodequirenvoitunepromise(); //await doit etre devant une promesse renvoyee. Alors l'execution de async se met en pause jusqu'à ce que la promise soit résolue
@@ -26892,7 +26923,7 @@ erreur: (intermediate value)(...) is not a function
           .reduce(function(carry, number){            return costCategories.values().stream().map(cost->cost.visible).reduce((carry,elt)->carry+elt).get();
                 return carry + number;
             }, 0)
-            .forEeach((numbers)=>{ // equivalent: .forEach(function(number){//ATTENTION E majuscule
+            .forEach((numbers)=>{ // equivalent: .forEach(function(number){//ATTENTION E majuscule
                     ou(index,value)   
                 doSomethingWith(number); // faire un traitement... a creuser
             });;
