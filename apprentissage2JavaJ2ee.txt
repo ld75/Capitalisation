@@ -1,4 +1,4 @@
-(?=.*template)(?=.*onclick)
+ (?=.*string)(?=.*plusieurs)(?=.*lignes)
 AFAIRE :
     Entretien:
         qu'est ce que rest, architecture ntiers, polymorphisme, mvc, dto, bdd: gerkin  
@@ -191,7 +191,7 @@ plannification :planning :conseils Erwin:
     GELER DES JOURS ET MY TENIR (+LE JOUR DE CAPIT)
     CAPITALISER SUR LE WIKI LES VENDREDIS
 
-Design patterns : Gof est mort remplacé par CDI: A FAIRE voir @Specializes, @Decorator, @Interceptor. Pattern Command est remplacé par MessageDrivenBeans et CDI Events, pattern factory remplacé par @Produces sauf que @Produces renvoit des instances deja crées LINKfactoproduce 
+Design patterns : Gof est mort remplacé par CDI: A FAIRE voir @Specializes, @Decorator, @Interceptor(voir LINKinterceptor). Pattern Command est remplacé par MessageDrivenBeans et CDI Events, pattern factory remplacé par @Produces sauf que @Produces renvoit des instances deja crées LINKfactoproduce 
 cleancoding : clean coding :LA SEULE FACON D ALLER VITE C EST D ALLER CLEAN ignorance is no excuse. No divided devs(frontetback = meme pers) expose your ignorance to learn. (its not weakness) 
 0: 20 minutes de tomate tomatoes*18-20/jours(4pauses2m,1pause10m). https://tomato-timer.com/ pour partager: https://www.marinaratimer.com  Sous pression, se coller à la discipline ne pas être tenté de la bypasser
 1. I will not produce harmful code
@@ -524,7 +524,7 @@ installer un autre programme dans mon repository npm (en ajoutant -g)
                 npm install -g angular-cli
 faire rapidos un serveur http: 
       npm install -g live-server //(avant pourri: http-server) si pas deja fait: installe un ptit serveur sous repertoire de npm (watch- (pas reussi à le faire marcher)pour que ca rafraichit le cache du browser. sinon l'effacer  à la main. Est facultatif) Attention LINKlkjdfgkhkghkhk
-      puis:live-server ou npm run live-server // demarre un ptit serveur http pour servir là ou je suis (watch- pour que ca rafraichit à chaud. Est facultatif) Attention LINKlkjdfgkhkghkhk   
+      puis:live-server ou npm run live-server --port=8081facultatifpourchangerportpardefaut // demarre un ptit serveur http pour servir là ou je suis (watch- pour que ca rafraichit à chaud. Est facultatif) Attention LINKlkjdfgkhkghkhk   
   ancienne methode compiler le typescript:
       npm run tsc:w (compile en mode watch: si je modif le typescript il recompile à la volee)
       tsc nomfichier.ts compile un fichier typescript en fichier javascript// meme si il ya des erreurs il les ecrit mais cree un .js
@@ -651,9 +651,10 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
   docker ps -a // pour voir la liste de tous les containers (en cours de run et pas)
   docker container ls // liste les containers qui tournent qui sont en cours d'execution 
   Dockerfile= bien l'appeler "Dockerfile" fichier docker: Défini une image à partir d'une image source. A ecrire apres avoir testé sur un container l'enchainement des commandes qui marchent grace à docker exec. puis ecrire ici les commandes pour builder mon image(mettre des trucs dedans):execution du haut vers le bas. haut:ce qui bouge le moins. Bas ce qui change le plus car docker utilise un cache.
-        FROM nomdelimage:tag donc node:x.x.x-alpine OU python:2.7-slim OU...// image docker de base quel OS OU BIEN une image docker (couche 0 = layer 0 de l'image) si je veux l'etendre voir LINKxlxlx  
+        FROM nomdelimage:tag donc node:x.x.x-alpine OU python:2.7-slim OU airhacks/glassfish...// image docker de base quel OS OU BIEN une image docker (couche 0 = layer 0 de l'image) si je veux l'etendre voir LINKxlxlx  
         WORKDIR /un/path/DANSMONContainerDocker/PASdans/monOS/ (couche 1 = layer 1 de l'image)
         ENV foo /bla // du coup en dessous quand je mets ${foo} c'est en fait "/bla"
+        COPY ./target/audio.memoclap.war ${DEPLOYMENT_DIR}
         RUN apt-get update (couche 2 = layer 2 de l'image)
         RUN apt-get install -y unelibrairie      (couche 3 = layer 3 de l'image) // -y pour que lors du build docker reponde automatiquement YES à toute question interactive survenant pendant l'apt-get install: si j'ai erreur returned a non-zero code: 1
         RUN apk update && apk add unpacket  // commandes linux executees. si LINKxlxlx ca modifie l'image docker comme une extension
@@ -1131,6 +1132,10 @@ Adobe illustrator :
 
   
 intelliji : intellij : Afaire: utiliser le git et l'apprendre.(dixit christophe)
+ ajouter la javadoc:
+        File>projects structure> modules >choisir le bon module > Dependencies > choisir la bonne librairie > bouton edit(crayon)> + si la javadoc est en local dans un zip ou +@ si la javadoc est en ligne
+voir les logs d'intellij 
+    help>logs
 shortcut pour deplacer le splitpannel du projet: Ctrl+Shift+fleches droite et gauche 
 si j'ai unexpected end of file ou fin de fichier premature: c parce que j'ai des retours chario crlf au lieu de lf: faire file > line separator
 shortcut pour System.out.println ecrire sout puis ctrl+espace
@@ -1154,6 +1159,7 @@ debugger debuger tomcat avec intellij:
     intellij>run>>editConfiguration>remote>+>debug start (copier la ligne en tête et la mettre dans les parametres de demarrage de tomcat:(-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005) demarrer le tomcat puis demarrer ce remotedebug (quand je veux c de la balle!) LINKoizeurzotie
 nettoyer netoyer clean supprimer les methodes inutilisees non utilisees unused d'une classe ou de tout le projet                                                                                |_n pour ne pas qu'il poireaute pour que le listner s'accroche. IL continue de démarrer.
   menu analyze> inspectCode      
+si il indique qu'une methode est neverused alors que c'est pas vrai faire file>invalidate cache/Restart...
 curseur multiple: 
   selectionner le truc qui se repeter puis ctrl+shift+alt+j (choisir vraiment le truc distingué pour ne pas avoir a désélectionner certain avec la souris)
   pour decompiler (download sources... ne decompile pas...) 
@@ -1203,7 +1209,7 @@ gradle: pour tout builder:
     view > gradle > projet > tasks >build > assemble
       ca build sous \projet\build\libs\springboot-deployment-1.0.0-SNAPSHOT.jar 
 taille des logs dans la console: settings>console>overrideconsolebuffersize
-pom voir arbre des dependances hierarchie > dans la vue maven: clique droit sur projet > show effective pom ATTENTION A RAFRAICHIR refresh dans vue maven sinon la hierarchie est obsolete
+pom voir arbre des dependances hierarchie transitive > dans la vue maven: clique droit sur projet > show effective pom ATTENTION A RAFRAICHIR refresh dans vue maven sinon la hierarchie est obsolete
         encore mieux: charger https://plugins.jetbrains.com/plugin/7179-maven-helper et installer le plugin: installe le directement depuis settings>plugins>il est là
         permet aussi d'afficher menu contextuel maven run debug dans projets project (si inactif  appuyer sur "+" a droite pannel maven)
         dans onglet dependency analyser à gauche on y voit les artifactID:version
@@ -1247,6 +1253,7 @@ make recompiler projet: Ctrl+F9 eventuellement recharger dependances maven: cliq
     si maven deconne trop toujours settings>maven>importing> decocher import maven automatically; si ça ne suffit pas: supprimer via explorateur windows tous les .iml et .idea et recréer le projet intellij from scrach
 les cases à cocher profile de la view maven ne servent à rien on dirait. qu'à montrer les profils dispos.
 parcourir tabs de la vue view active: alt right et alt left
+afficher la vue maven poms :alt+8
 atteindre la ligne: Ctrl+g
 Toute commande: Ctrl+Shift+A exemple: modifier taille buffer terminal  tapper:"Reg" chercher "terminal" modifier la taille du buffer
 project properties proprietes: choisir projet dans la vue projet puis F4
@@ -1310,7 +1317,7 @@ overide override: Ctrl+O
 implementer methode: Ctrl+I 
 Fermer tab shift+click
 Generer constructor constructeur getter geter seter setter etc: Alt+Insert
-Changer de vue Alt+F1
+Changer de vue Ctrl+tab ou Alt+F1
 focus vers Editor: Echap et F12: focus precedent
 focus vers maven project pannel j'ai rajouté le shortcut Alt+F8
 focus precedent: alt+ctrl+fleches
@@ -1319,7 +1326,7 @@ creer surround suround trycatch Selectionner puis Ctrl+Alt+T
 creer surround suround synchronizd syncronized Selectionner puis Ctrl+Alt+T
 autocompletion Alt+Maj+Espace ou Ctrl+Espace
 fille fils methode sous classe: Ctrl+Alt+B
-Acceder à la methode de la sous classe implementant l'interface: Ctrl+b
+Acceder à la methode de la sous classe implementant l'interface: Ctrl+b ou Ctrl+Alt+b
 generer la methode d'une sous classe dans l'interface: ajouter @Override et faire alt+entree sur l'erreur affichee > pull upSelectionner de plus en plus Ctrl+w
 commenter/decommenter Ctrl+barre oblique Ctrl+maj+barre oblique DU NUMPAD!
 
@@ -2241,6 +2248,8 @@ super site pour convertir editer visualiser voir du json array en objet object c
     https://jsoneditoronline.org/
 tester testeur de variable json:
   http://jsonformatter.curiousconcept.com/
+custom element customelement webcomponent pour afficher joliement le json
+    https://github.com/cris-l/x-json  
       un objet:
             {"libelleValeur1DeMonObjet":valeur1DeMonObjet, "libelleValeur2DeMonObjet":valeur2DeMonObjet, "libelleValeur3DeMonObjet":valeur3DeMonObjet}
       un tableau: 
@@ -2279,7 +2288,49 @@ pour transformer un bean en json et vice et versa:
          MyType target = new MyType();
          String json = gson.toJson(target); // serializes target to Json
          MyType target2 = gson.fromJson(json, MyType.class); // deserializes json into target2
-
+json-schemas : jsonschema : json-schema :   
+  { "$schema": "http://json-schema.org/schema#" } // indique que ce document est un schema
+  { "$id": "http://yourdomain.com/schemas/myschema.json" } // donne un identifiant unique à ce fichier schema. recommandé d'y mettre une url vers où se trouve ce fichier sur le net.
+  {
+    "type": "object", // object ou array ou string ou number ou boolean ou null ou {"enum":["bla","bli","blo"]}
+    puis 
+        "items": { "$ref": voir LINKjsonschref }, |_ si type="array"
+        "default": []                             |
+    ou
+    "properties": {                                 // si type=object.
+      "city":           { "type": "string" },
+      "state":          { "type": "string" },
+      "street_address": { "$ref": "#/definitionshohoho/adresse_rue" } // pointe vers la base de Ce document # puis comme xpath vers definition ci dessous. Si ce pointeur est sur un autre fichier "definitions.json" il faut mettre { "$ref": "definitions.json#/definitionshohoho/addresse_rue" } donc son chemin veritable sera path de $id(soit http://yourdomain.com/schemas/) + definitions.json#definitionshohoho/adresse_rue LINKjsonschref
+      "deuxieme_adresse": { // pour enrichir une ref par d'autres trucs 
+                            "allOf":[ // allOf ou anyOf ou oneOf: j'enrichis mon ref d'autres trucs ci dessous:
+                   {"$ref": "#/definitionshohoho/adresse_rue"}
+                   {"properties:"{  // autres trucs
+                                etc etc...                                    
+                                }
+                   },
+                   "required"... voir LINKjsonschemarequired 
+                                    ]
+                            } 
+    }, // fermeture de properties
+    "required": ["street_address", "city", "state"]  // si type=object (se met juste apres fermeture de properties) LINKjsonschemarequired
+  }
+  {
+  "definitionshohoho": {
+    "addresse_rue": {
+        "$id": "#adressederue", // on peut aussi mettre une ancre ici pour qu'ailleurs on pointe ici avec {"$ref"="#adressederue"} LINKjsonschref
+      "type": "object",
+      "properties": {
+        "rue": { "type": "string" },
+        "numero":{ "type": "number" },
+        "bis":{ "type": "boolean" }
+        "adresse_interne_batiment":{ "$ref": "#/definitionshohoho/adresse_rue" } // on peut faire des pointeurs recursifs. Ici une rue peut avoir une rue qui peut avoir une rue etc
+      },
+      "required": ["street_address", "city", "state"]
+    }
+  }
+}
+              
+              un schema qui a {} ou true seulement valide tout. à l'opposé false valide rien
               
 firefox: / ie : explorer : 
       attention par rapport à IE il reecrit les liens en rajoutant devant: http://localhost etc etc...
@@ -2468,14 +2519,43 @@ Cycle de vie du CDI bean:
                   }
           
               }
-                         
+     design patern observer je crois remplacé par @Interceptor LINKinterceptor permet de déclancher un truc de manière asynchrone rien qu'avec l'ajout d'une annotation pouvant contenir une variable.
+     1) créer une anotation perso: 
+            @Inherited
+            @InterceptorBinding
+            @Retention(RUNTIME)
+            @Target({TYPE,METHOD})
+            public @interface MonAnnotationDInterception{
+                @Nonbinding String value() default "";
+            }
+    2)  créer mon interceptor et ce qu'il fait quand il est déclanché:
+        @MonAnnotationDInterception
+        @Interceptor
+        @Priority(Interceptor.Priority.APPLICATION)
+        public class blablaInterceptor implements Serializable{
+            @Inject
+            Event<ChangeEvent> broadcaster;
+            @AroundInvoke
+            public intercept(InvocationContect ic)
+            {
+                   UnObjet unObjet=(UnObjet)ic.proceed();
+                   ChangeEvent changeEvent = new ChangeEvent(unObjet,annotation.value()); // annotatio.value() sera egale a moncul (voir plus bas)
+                   broadcaster.fireAsync(changeEvent); // ce truc va ailleur appeler ça LINKobsksf
+                   return unObjet
+            }
+    3)et maintenant je peux utiliser cet interceptor partout:
+        @MonAnnotationDinterception("moncul")
+        public Carte uneMethodeQuelquconqueQuiASonExecutionDeclancheLInterceptor(UnObjet machintruc)
+        {...}
+    
+                                 
           faire des servlets sans web.xml: 
                 ajouter en tete de classe qui etend HttpServlet @WebServlet("/un/path") ou (urlPatterns={"/a","/b"}) ou (urlPatterns="/b") .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention pour index page d'accueil on ne peut pas mettre / donc utiliser web.xml et welcome-file qui pointent sur une servlet ou une page
                  et @MultipartConfig // a utiliser si le content-type est multipart/form-data pour pouvoir recup les params avec request.getParmeters ainsi que le fichier uploade sans avoir besoin de parcourir le payload du body LINKmultilkjfqsdf. Si coté servlet on fait du GET cette annotation est ignorée.   
                 du coup ma classe n'est plus un webservice et ne pas utiliser @Produce et @Path avec. 
                 juste 
                 public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {response.getWriter().println("Hello");
-                on peut y injecter @Inject SecurityContext securityContext; à condition qu'il y ait au moins un IdentityStore sinon j'ai l'erreur "Unsatisfied dependencies for type SecurityContext"
+                on peut y injecter @Inject SecurityContext securityContext; à condition qu'il y ait au moins un IdentityStore sinon j'ai l'erreur "Unsatisfied dependencies for type SecurityContext". Ce message apparait aussi si j'essaie d'injecter la classe directement alors que celle ci implemente une interface.
 SeContainerInitializer initializer = SeContainerInitializer.newInstance();
 try (SeContainer container = initializer.disableDiscovery().addPackages(App.class).addBeanClasses(MyService.class).initialize()) { pas besoin de beans.xml
     container.select(MyService.class);       |_on l'empeche de scanner auto
@@ -2501,6 +2581,7 @@ try (SeContainer container = initializer.disableDiscovery().initialize()) { cont
           payloadEvent.fire(new Payload()); //ceci va declancher ailleur ceci:LINKobsksf
         }        
         dans une autre classe:
+        public void recoitUnChangeEvent(@ObservesAsync ChangeEvent event){...}
         public void processUnqualifiedPayload(@Observes Payload event) {} LINKobsksf
         public void processUnqualifiedObject(@Observes Object event) {}
         public void processQualifiedPayload(@Observes @Named("tutu") Payload event) {} // ne sont executés que si LINKkfkgggg
@@ -2529,7 +2610,7 @@ securite : security :(JSR375 implémenté par soteria qui est la reference) plus
        MaCustomClasse implements HttpAuthenticationMechanism SEUL TRUC QUE JE REUSSI A FAIRE MARCHER. MAIS PAS CEUX CI DESSUS                                                                                                                                                                                                             
               @Inject 
               private IdentityStoreHandler identityStoreHandler; // doit avoir ca ou peut directement injecter un IdentityStore
-       METHODE Importante: validateRequest() que je dois implémenter Les 2 autres c facultatif. S'execute à chaque requete avant les filters si user n'a pas de session
+       METHODE Importante: validateRequest() que je dois implémenter Les 2 autres c facultatif. S'execute à chaque requete avant les filters si user n'a pas de session et s'il arrive dans une servlet LINKservletsecurity
                               Fait appel à->IdentityStoreHandler(Je peux le reecrire moi même)
                                 puis
                                     if(les parametres d'authent existent)
@@ -2559,8 +2640,8 @@ securite : security :(JSR375 implémenté par soteria qui est la reference) plus
        **CredentialValidationResult contient le principal et ces roles: return new CredentialValidationResult("Duke",new HashSet<>(asList("foo", "bar")));
         necessaire de parametrer web.xml voir LINKlkjsqgeegege:<security-constraint> et <security-role>       
        pour securiser securite une servlet: servlet :// pour ouvrir à tous ne pas mettre l'anotation @ServletSecurity ou bien mettre je crois @PermitAll. Mais ne rien mettre dutout marche.  
-            @WebServlet(urlPatterns="/un/path) .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention bien mettre urlPatterns sinon il se comporte comme si j'avais mis "un/path/*"
-            @ServletSecurity(
+            @WebServlet(urlPatterns="/un/path") ou @WebServlet("/un/path")  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention bien mettre urlPatterns sinon il se comporte comme si j'avais mis "un/path/*"
+            @ServletSecurity( LINKservletsecurity
                             value= @HttpConstraint(
                                 rolesAllowed = {"foo","supervisor"}), //limite cet acces aux utilisateurs qui ont ces roles. SI n'ont pas ses roles ca renvoie direct http200 sans passer dans le code sans meme pas passer par les filtres! uniquement l'authenticationmecanism
                                 transportGuarantee= TransportGuarantee.CONFIDENTIAL, // facultatif: bloque l'accès ici si on est pas en https equivaut à LINKglkdlkflglglg                                
@@ -3777,6 +3858,8 @@ pour generer java a partir de wsdl mais beurk:
              } finally {
                  if (reader != null) try { reader.close(); } catch (IOException logOrIgnore) {}
              }
+postman :
+    generation automatique d'identifiant {{$guid}}
 swagger : pour qu'un webservice rest(je pense) exposer ses methodes dans une page html wsdl LINKSWAGGER
         concurrent = raml. Voir LINKsqlkfjjjhjhjhjhjhjhj
         pour SPRING: 
@@ -7460,7 +7543,7 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
         -si je veux utiliser limit alors toujours utiliser sort avant limit dans une requete.
         -il faut faire un schema: installer https://studio3t.com/knowledge-base-articles/schema-explorer/
                         resumé de ce que j'ai lu là:https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design-part-1
-                        si j'ai relation 1-N(peu nombreux): Où je n'aurais jamais besoin de recuperer ces N tout seuls sans leur parents
+                        si j'ai relation 1-N(peu nombreux) où je n'aurais jamais besoin de recuperer ces N tout seuls sans leur parents
                                     alors je peux faire 
                                                   {
                                                     name: 'Kate Monster',
@@ -7504,7 +7587,7 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
                                             produit: ObjectID('AAAA') // comme dans une base relationelle 1-N
                                         }                               
         -il faut desactiver la casesensitive et accent sensitive pour les requetes
-        -l'ordre dans les requetes est important: d'abord filtrer puis trier puis joindre
+        -l'ordre dans les requetes est important: d'abord filtrer puis trier puis groupby joindre
         -il faut enable journaling pour recuperer la base old version si devient inconsistent (configuration-> storage.journal.enabled)
         -requetes ordonnees sortees toujours sur un ou des champs indexés. (sinon sur un-des champs non indexes risques d'overflow donc d'erreur: retourne rien)
         -des arrays pas trop longues et indexees(ca l'est pas défaut)
@@ -7518,12 +7601,62 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
         pour demarrer un client mongodb pour administrer la base et pour faire des requetes de test
             ensuite executer mongo.exe: c'est un client pour faire les requetes (c'est du javascript la dedans) LinkLKJDSFA . On peut aussi utiliser un gui qui s'appelle Robo3T à installer.
             ou bien mongo mongodb://mongodb0.example.com:28015/testdb?ssl=true // si il est distant
-        exemples de requetes. Une collection = une table relationelle
-            var doc = db.uneCollection.findOne({ _id: 1 })// trouver par id (du coup doc est une variable) 
-            db.uneCollection.remove({ _id: 1 })  
+        aide help:
+            db.help()            
+        statistiques: (etre connecté à une base d'abord)
+            db.stats()            
+        rentrer dans une base:(sur ? ou plutot se connecter ? use admin)
+            use nomdelabase
+        pour se connecter avec un utilisateur user
+            db.auth("AribaSystem","xxxx");            
+        pour voir la liste des bases
+            show dbs (faut etre connecté avec un compte pour pouvoir le faire)
+        pour voir dans quelle base je suis ?
+            db
+        pour creer un user et lui attribuer des droits sur les bases
+            db.createUser(
+                {
+                    user:"sonNom",
+                    pwd:"xxxxx",
+                    roles:[
+                    {role:"readWrite", db: "unebase1"},
+                    {role:"readWrite", db: "unebase2"},                    
+                    {role:"readWrite", db: "unebase3"},
+                    ]
+                }
+            )    
+        pour modifier les droits d'un user sur les bases:
+            db.grantRolesToUser("AribaSystem",
+                [
+                    {role:"readWrite", db: "unebase1"},
+                    {role:"readWrite", db: "unebase2"},                    
+                    {role:"readWrite", db: "unebase3"},
+                ]
+            )
+        pour supprimer les droits d'un user sur les bases:
+            db.revokeRolesFromUser("AribaSystem", [
+                    {role:"readWrite", db: "unebase1"},
+                    {role:"readWrite", db: "unebase2"},                    
+                    {role:"readWrite", db: "unebase3"},
+                ]
+            )
+        pour voir la liste des collections d'une base:
+            show collections
+          
+        exemples de rechercher requetes. Une collection = une table relationelle
+                    db.uneCollection.find() // pour trouver tout (sur ?)
+            var doc = db.uneCollection.findOne ou find({ _id: 1 unjsonquimatchquoi })// trouver par id (du coup doc est une variable) // findOne retourne le 1er resultat
+        count compter nombre de lignes:
+            db.nomdelacollection.count({duJson});
+        autres operations:             
+            db.uneCollection.remove({ _id: 1 }) //pour supprimer ce qui match. Comment faire pour tout supprimer de la collection ?  
             db.uneCollection.insert({ _id: 1, jsFunc: function(){ print("hello") } } ) // si uneCollection n'existe pas elle est automatiquement créee
             db.myNewCollection3.createIndex( { y: 1 } ) // ajoute un indexe dans la collection
-
+        pour me connecter à mongodb en java standard:
+            avec la librairie mongo-java-driver-3.10.2.jar
+                MongoCredential credential = MongoCredential.createCredential(usr,"admin",password.toCharArray());
+                MongoClient mongoClient = new MongoClient(new ServerAddress("localhost",27017),credential,MongoCLientOptions.builder().build());
+                return mongoClient.getDatabase("dbName").getCollection("collectionName");
                           
   DM 
    ^ 
@@ -8374,7 +8507,8 @@ MCD/MPD :
       1,1 <-> 1,1 faire une seule table
         exequo
       X,n-><-X,n
-      
+    normaliser=faire plein de tables
+    denormaliser=regrouper les tables      
   bonne pratique gestion des rôles droits etc... LINKsecurlsjfg
       voici les tables a creer:  USER    GROUPE                              PERMISSION(role)     USER-GROUPE      USER-PERMISSION(role)   GROUPE-PERMISSION(role)     
                                   |       |                                         |              |                         |
@@ -9478,6 +9612,7 @@ comparer une date en mysql:
                 			and UNIX_TIMESTAMP(update_date)	>".$ilyaunmois."                
 faire un alter table: 
     ALTER TABLE TB0009_TAB MODIFY IDAVISTAB INT(5) null;
+    ALTER TABLE alo_usr MODIFY usr_name VARCHAR(250) null;        
 recuperer le dernier identifiant insere: 
 		SELECT LAST_INSERT_ID() (il a l'air de bien gerer les multi connections et multi tables)
 equivalent de DECODE en mysql: IF ou CASE:
@@ -11142,7 +11277,7 @@ Tous les scopes:
                               exemple:
                       PARENT 
                               <dependencyManagement>  // ca c'est dans un pom parent ou fils. Les dependances ici ne sont pas prises en compte dans ce projet pom mais du coup grace a ca les poms fils et lui meme n'ont pas besoin de specif la version. LINKlkjsdfaaaaaaaaaaa
-                                <dependencies>
+                                <dependencies>           
                                   <dependency>
                                     <groupId>org.springframework.cloud</groupId>
                                     <artifactId>spring-cloud-dependencies</artifactId>
@@ -11157,11 +11292,11 @@ Tous les scopes:
                                 </dependencies>
                               </dependencyManagement>
                       FILS:
-                                <dependencies>                     // c c'est dans qq pom fils LINKlkjsdfaaaaaaaaaaa
+                                <dependencies>                     // c c'est dans qq pom fils LINKlkjsdfaaaaaaaaaaa 
                                   <dependency>
                                     <groupId>org.springframework.cloud</groupId>
                                     <artifactId>spring-cloud-dependencies</artifactId>
-                                      //pas besoin de mettre a version ni le scope puisque c'est importe par dependencyManagement  
+                                      //pas besoin de mettre a version ni le scope puisque c'est importe par dependencyManagement. si marche pas dans intellij  premiere fois mettre version temporairement puis retirer  
                                     <type>pom</type> // inutile de mettre ca si c'est un jar car dans ce cas c importe du parent
                                     </dependency>
                                     <dependency>
@@ -12298,6 +12433,9 @@ Toutes les modifications sont faites dans le mode ECRASEMENT.  Pour inserer ou e
 
 notepad++ :
     accolade correspondante: Ctrl+B
+    pour faire des recherches loop à partir du debut automatiquement cocher wraparound
+    column colonne editing
+        alt+shift+fleches
     
 PSPAD :
 indenter automatiquement autoindent 
@@ -15924,12 +16062,16 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
     				}
     				FilterConfig filterConfig = mock(FilterConfig.class); // c'est soit je fais comme ca, soit j'utilise les anotations ci dessus. les deux font la meme chose
     				ServletContext context = mock(ServletContext.class);
+                    pour qu'une meme classe soit testée et spyée:
+                        Machin machinATesterEtSpyer = new Machin()
+                        Mockito.spy(machinATesterEtSpyer);
                     ResultDao rd =mock ou spy(unObjetNONANNOTE ou new ResultDao() ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
                     Mockito.doReturn(toto).when(rd).getLaMethodeNONSTATIQUEResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy
     				when(filterConfig.getServNONSTATIQUEletContext( // ca s'appelle faire du "stub" et utiliser ca je crois pour les mock
     				ou                                   anyString()//tout string
     				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça . si je met des variables direct alors j'ai l'erreur InvalidUseOfMatchersException
                                                         ,anyList() // ne pas utiliser anyObject si j'ai une liste
+                                                        ,isNull() // si c'est null
     													,ArgumentMatchers.any(UneClasse.class) avant: Matchers.any(UneClasse.class) avant: anyObject(UneClasse.class)
     													).thenReturn(untruclapremierefois,unautretruclasecondefois...).getMock();
                                                         ou
@@ -15948,7 +16090,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
                             Mockito.doThrow(new HibernateException("err")).when(userWebDAO).create(Matchers.any(UserWebEntity.class)); 
     				WelcomeController wc = new WelcomeController(rd);
     				wc.getDisplayResult("1", "1","10:00", "10/10/2016");
-                    validation verifier qu'un mock a été appelé invoké invoquée par une methode x fois nombre compter combien:
+                    validation verifier qu'un mock(pasUnSpy) a été appelé invoké invoquée par une methode x fois nombre compter combien:
                             verify(userDetailDAOMock, times(2)).laMathodeDuMock(any(UserDetailsEntity.class));
 cucumber : il fait ce que fait junit mais permet à des non techniciens de comprendre les tests.LINKcucumberldfj 
       Feature: action globale
@@ -19483,6 +19625,8 @@ pour connaitre savoir le type d'une classe: LINKkgjhjhjhjhjhjc
           if (maclasse instanceof Command)...
     	ou bien:
     	e.getClass().getName()// class.getName() renvoit package+.+nomclasse
+pour savoir par introspection si une classe est une sousclasse d'une autre classe extend etent:
+    if(LaSuperClasse.class.isAssignableFrom(lasousclasse.getClass()))
 pour recuperer le nom d'une classe: 
 	maclasseinconue.getClass().getCanonicalName(); // class.getCanonicalName() renvoit package+.+nomclasse
 	.getEnclosingClass() recupere le nom de la superclasse je crois
@@ -20017,7 +20161,7 @@ POUR LES MAP OU LES FOREACH      static <T,R, E extends Exception> Function<T,R>
                                                 }
                                             };
                                         }
-POUR LES FOREEACH A 2 ARGUMENTS: j'ai d'un coté: 
+POUR LES FOREACH A 2 ARGUMENTS: j'ai d'un coté: 
                                     public static <T,R, E extends Exception> BiConsumer<T,R> handlingFunctionBiArgWrapper(ThrowingBiConsumer<T, R, E> throwingConsumer, Class<E> exceptionClass) {
                                                          return (i,j) -> {
                                                             try {
@@ -20547,6 +20691,7 @@ pour convertir un int en string
 		convertir un long en string: String.valueOf(long)
         convertir un long en string: long.toString() //mais attention je crois qu'il insert des espaces dans le string a chaque centaines et milliers: donc passer par int plutot(intValue())
         convertir un string en long: Long a = Long.parseLong(string2);
+        convertir un long en int: depuis java8: Math.toIntExact(monlong); avant: int leint = (int) lelong;// attention si chiffre depasse+-2147483647 on perd de la data
 		convertir un long en date puis en string: new Date(long).toString();
 		convertir un int en bigdecimal: int i=125; BigDecimal j = new BigDecimal(i);
 		convertir un big decimal en int: ((BigDecimal) ht.get("ISFORONEFILE")).intValue()
@@ -21456,12 +21601,18 @@ attention une hashmap n'a pas d'ordre.. et pas de doublons non plus d'apres Port
   utiliser LinkedHashMap qui conserve l'ordre dans lequel on a insere les donnees.
   utiliser TreeMap qui est capable de reordoner apres des insertions comme on veut 
   remarque (attention: jsonobject n'utilise que des hashmap)
-pour initialiser une map: (depuis java9) 
+pour initialiser instancier une map: 
+avant java9:
+    private HashMap<String,String> blah=new HashMap<String,String>(){{
+            put("ariba.common.core.User","commontruc");
+            put("ariba.common.core.User2","2commontruc");
+        }}
+    (depuis java9) 
   Map<String, String> test2 = Map.ofEntries(
     entry("a", "b"),
     entry("c", "d")
   );
-pour initialiser un autre type de map ou une linkedhashmap: (depuis java9)
+pour initialiser instancier un autre type de map ou une linkedhashmap: (depuis java9)
  LinkedHashMap<Double,String> totoSil = new LinkedHashMap<>(Map.ofEntries(
         entry(0.0, "b"),
         entry(1.0, "d")
@@ -22805,7 +22956,7 @@ pour convertire un wav foireux en bon wave
 pour mixer deux sons ou meme plus:
 	      AudioInputStream clip1 = AudioSystem.getAudioInputStream(new File("C:/wamp/www/kanail/AudioLoopOnline/sons/20121107963241352287465954/1531352287502673=Lovely0.wav"));
         AudioInputStream clip2 = AudioSystem.getAudioInputStream(new File("C:/wamp/www/kanail/AudioLoopOnline/sons/20121107963241352287465954/1531352287502673=Lovely1.wav"));
-        pour initialiser rapidement une arraylist: shortcut:
+        pour initialiser instancier rapidement une arraylist: shortcut:
               List<Price> lp =  new ArrayList<Price>(Arrays.asList(p,d,a,e)); // pour creer une liste rapidement
         List<AudioInputStream> audio = new ArrayList<AudioInputStream>();
         audio.add(clip1);
@@ -26473,7 +26624,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                     };
                     xhr.onload = function(e) { // retour du serveur: "e" c'est progressEvent et "this" c'est la reponse du serveur. SI j'ai besoin de this pour une classe faire LINKbindthisclasseresponse ou bien utiliser le e comme ça: e.target.response
                             printStacktrace(req.name);
-                            askValidator.class_AskValidator.record.call(this);
+                             askValidator.class_AskValidator.record.call(this);
                                if(this.getResponseHeader("Content-type").indexOf("text/html")!=-1) on peut recuperer ça et autre...
                               if (this.status == 200) {
                               try
@@ -26849,7 +27000,7 @@ detecter si les cookies sont activés ou pas disabled enabled
           
 pour echaper echappe escape decoder html caracteres speciaux
     remplacer toExecute.innerHTML; par toExecute.childNodes[0].nodeValue; ou toExecute.innerText;
-async await :
+async await : asyncawait :
   permet d'executer du code asynchrone comme s'il etait synchrone et le javascript fait une pause tant qu'il n'a pas la réponse de l'asynchrone.
   async function unemethode(){  // dans une methode comme ca marquée async j'ai le droit de mettre await. Mais je crois que async renvoit toujours une promese.
       let res = await uneautremethodequirenvoitunepromise(); //await doit etre devant une promesse renvoyee. Alors l'execution de async se met en pause jusqu'à ce que la promise soit résolue
@@ -26870,7 +27021,7 @@ erreur: (intermediate value)(...) is not a function
           .reduce(function(carry, number){            return costCategories.values().stream().map(cost->cost.visible).reduce((carry,elt)->carry+elt).get();
                 return carry + number;
             }, 0)
-            .forEeach((numbers)=>{ // equivalent: .forEach(function(number){//ATTENTION E majuscule
+            .forEach((numbers)=>{ // equivalent: .forEach(function(number){//ATTENTION E majuscule
                     ou(index,value)   
                 doSomethingWith(number); // faire un traitement... a creuser
             });;
@@ -31029,7 +31180,7 @@ attention si nouveau compte première fois logguer bien d'abord supprimer tous l
         (standard) controllers 190
      
 
-OAuth : OAuth2 : (https://medium.com/@darutk/diagrams-of-all-the-openid-connect-flows-6968e3990660)
+openidconnect :OAuth : OAuth2 : (https://medium.com/@darutk/diagrams-of-all-the-openid-connect-flows-6968e3990660)
                 (oltu : https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Client+Quickstart et https://github.com/apache/oltu)
 est fait pour gerer que authorization à la base. Pas pour Authentification: On a rajouté openidConnect1.0 par dessus oauth2 : pour l'authentification (https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata)
     USER = RessourceOwner = homme = moi 
@@ -32593,6 +32744,10 @@ paint :
     pour que la selection soit transparente transparante
         bouton selectionner> choisir transparant
 Excell : excel :
+    taille size length longueur
+        NBCHAR()
+    indexOf:
+        TROUVE()
     inserrer la date: ctrl+;
     si sur exell il me marque toujours #VALEUR! verifier qu'il n'y a pas d'espace dans les cases que j'ai selectionne pour faire mon calcul.
   figer les volets Affichage > figer les volets
