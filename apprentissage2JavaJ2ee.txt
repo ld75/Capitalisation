@@ -822,7 +822,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
                  ssh-keygen -t rsa -b 4096 -C "kanailaurent@gmail.com" // generer une paire de clé dans gitbash
                  clip < /c/Users/lduverge/.ssh/id_rsa.pub // copier dans le ... ma cle publique.. et ensuite le copier dans github
                  ssh-add /c/Users/lduverge/.ssh/id_rsa // ajouter (je peux renommer id_rsa comme je veux: toto_rsa par ex) 
-                 eval $(ssh-agent -s) // utiliser ca si ma cle n'est pas sous .ssh: demarrer le ssh-agent (il se peut qu'il ne soit pas demarré c pour ca.) sert aussi pour une authentification automatique
+                 eval $(ssh-agent -s) // utiliser ca si ma cle n'est pas sous .ssh: demarrer le ssh-agent (il se peut qu'il ne soit pas demarré c pour ca.) sert aussi pour une authentification automatique. si ne marche pas sur windows le faire avec git desktop console
                  ssh-add /c/path/vers/ma/cle/prive/toto_rsa // ajouter ma paire de clé au ssh agent (je peux renommer id_rsa comme je veux: toto ou toto_rsa par ex)
         sur certains serveurs on peut etre amené à devoir declarer des certificats pour se connecter au serveur git
             git config --global http.sslcert /c/Users/ut2sn0/My_IT_Applications/configs/Gitas_mygitcert.crt
@@ -847,9 +847,9 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
  creer des alias:  
     git config --global alias.st 'status' //global pour tous les projets sinon l'enlever. ici git status est copié en alias git st.
     git config --global alias.add 'add -v' // a tester.          
-    git clone:
+    git clone: 
       dupliquer/copier/recuperer un repository present sur le web en local. (en general c'est un fork que je clone si je me greffe à un projet existant)
-        git clone https://username(facultatif):motdepasse(facultatifLesguillemetsdoiventEtreEchappeesPar\)@githubSuiteUrl.com/spring-projects/spring-security-oauth-javaconfig.git // le copie dans le repertoireLocal ou je suis tout le projet son histoire ses vieilles branches commitees. Mettre username et password si j'ai le message dépot non trouvé depot ou repository not found
+        git clone (Attention si je fais en SSH je dois recup l'url SSH et non HTTP) https://username(facultatif):motdepasse(facultatifLesguillemetsdoiventEtreEchappeesPar\)@githubSuiteUrl.com/spring-projects/spring-security-oauth-javaconfig.git // le copie dans le repertoireLocal ou je suis tout le projet son histoire ses vieilles branches commitees. Mettre username et password si j'ai le message dépot non trouvé depot ou repository not found
         git clone https://scm.soprahr.com/scm/su/sample-edsn-usermanager.git nomdefacultatifmonprojetRepertoireQueJeLuiDemandeDeCreer (-b unebrancheFacultatifPourClonerJusteUneBranche)
         git clone unUserNameSur?@ungithubUrl:un/path/vers/un/.git
         git clone --bare ....etc... fait pareil mais c'est un bare 
@@ -952,10 +952,13 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
             je peux faire git push -f      
     envoyer/recuperer des projets entre mon local et le github:
       fork: fait une copie de tout un projet (branches incluses) dans mon github. Je peux ensuite travailler dessus dans github ou en local(cloner) et à la fin je soumet mes modifs: pull request= merge request mergerequest. si accepte: ça fetch+merge+commit tout mon fork(je crois). SI il y en a plusieurs qui se suivent et que je dois accepter, ne prendre que le dernier et ignorer les precednets (je pense) car le dernier mergerequest resume tous les autres d'avant.
+	pour puller les modifs de l'origin de mon fork dans mon fork local: LINKpullupstream
+		git fetch upstream
+		git merge upstream/laBrancheQueJeVeuxtirerDeL'originalVersMonForkDansLaBrancheDansLaquelleJeSuisMaintenant
       binder avec un repository distant: LINKenvoiyer
         git remote -v // etre dans mon projet. Sert à savoir à quel repo distant le projet est lie pour les pushpull renvoit le nom du bind (nom=origin)
         git remote rm origin(distant) // pour debinder mon projet avec le repository "origin" distant
-        git remote add origin(si c le repo source) ou upstream (si c'est un repo forké d'un repo source je crois) git@github.com:monusername/UnAutreRepository.git // (git@github.com facultatif) pour lier mon projet avec un repository. Je pourrais pusher et puller dessus (la premiere fois il faudra d'abord créer ce repository au meme nom sur github mais sans le .git à la fin)
+        git remote add origin(si c le repo source) ou upstream (si je suis en local dans mon repo forké d'un repo source. Ca permet de recup les MAJ de l'origin en faisant LINKpullupstream) git@github.com:monusername/UnAutreRepository.git // (git@github.com facultatif) pour lier mon projet avec un repository. Je pourrais pusher et puller dessus (la premiere fois il faudra d'abord créer ce repository au meme nom sur github mais sans le .git à la fin)
         git remote set-url --push origin svcsvnpr@gitlab.ca.cib:CCI/CIT/DIGITEAM/MyNews/$project # redefini le remote pour les push seulement vers un autre repository
       transferer le code par le reseau: (par defaut en https: il demande le user/pass)        
         git push origin masterOudevelopOuBrancheLocale //HEAD(origin)->ServeurDistantOuRepertoireQQpart(master ou develop) envoi sur le serveurOuRepertoireRepoQQpart pour merger avec le master: ça fetche+merge+commit là bas.
@@ -2498,7 +2501,7 @@ Cycle de vie du CDI bean:
                      	CDI<Object> cdi = CDI.current(); // pas reussi jusqu'au bout ce truc
 		                leservice = cdi.select(ClasseInjectee.class).get();
                      }            
-        design pattern factory remplacé par @Produces dans CDI LINKfactoproduce Bon moyen de choisir le bean au runtime
+        design pattern factory remplacé par @Produces dans CDI LINKfactoproduce Bon moyen de choisir le bean au runtime conditionnel
         class MonFactory // doit avoir un scope CDI sinon risque de probleme avec weld 
             @Inject
             ClasseA classeA; //ou bien LINKprodpara
@@ -7652,12 +7655,26 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
             db.uneCollection.remove({ _id: 1 }) //pour supprimer ce qui match. Comment faire pour tout supprimer de la collection ?  
             db.uneCollection.insert({ _id: 1, jsFunc: function(){ print("hello") } } ) // si uneCollection n'existe pas elle est automatiquement créee
             db.myNewCollection3.createIndex( { y: 1 } ) // ajoute un indexe dans la collection
-        pour me connecter à mongodb en java standard:
+	mongodump sur windows:
+		E:\x\MongoDB\bin\mongodump.exe --port=27017 --host=localhost --username=superuser --password=xxxx --authenticationDatabase=admin --db=testGlobal --out ou --archive=E:/mongoout //out ne compresse pas contrairement à archive
+        en java:pour me connecter à mongodb en java standard:
             avec la librairie mongo-java-driver-3.10.2.jar
                 MongoCredential credential = MongoCredential.createCredential(usr,"admin",password.toCharArray());
                 MongoClient mongoClient = new MongoClient(new ServerAddress("localhost",27017),credential,MongoCLientOptions.builder().build());
                 return mongoClient.getDatabase("dbName").getCollection("collectionName");
-                          
+            pour transformer bson en json en java:
+		String input="{\"timestamp\":0934820948}";
+		org.bson.Document doc=org.bson.Document.parse(input);
+		System.out.println("input = "+input);
+		System.out.println("output (SHELL) = "+  doc.toJson(new JsonWriterSettings(JsonMode.SHELL)));
+		System.out.println("output (STRICT) = "+ doc.toJson(new JsonWriterSettings(JsonMode.STRICT)));
+		System.out.println("output (JSON) = " + com.mongodb.util.JSON.serialize(doc));
+		this will generate following output:
+			input={"timestamp" : xxx}
+			output(SHELL)={"timestamp":NUMBERLONG(xxx)}
+			output (STRICT) = {"timestamp": {"$numberlong":"xxxx"}}
+			output (JSON) = {"timestamp" : xxx}
+		                  
   DM 
    ^ 
    | IOC (interfaces)
@@ -32484,6 +32501,8 @@ pour recuperer les rôles de l'utilisateur qui s'est connecté côté IDP:
         }
         }                
 scripts bat : windows :
+   pour savoir mon nom d'utilisateur ntloginid du sso kerberos:
+	whoami
     ATTENTION pour les variables 
           Generations of batch file programmers have tripped over this one. Here it goes.
           When the command processor interprets a batch file, it does it like this:
