@@ -1043,6 +1043,7 @@ gimp :
 	pour redimentioner transformer: 
 		shift+t
 		pour une redimension relative respectant la proportion: draguer un caré du bord tout en maintenant ctrl+shift enfoncés
+	un masque ne sert qu'a peindre de la transparence sur le calque qui lui est lié. (seules couleurs noir=transparent et blanc comptent) Je peux sur le masque faire par ex un degradé noir-blanc radial
 photoshop :
 justifier un texte: menu calques>texte>transformer en paragraphe > ouvrir fenetre pannel texte: les options justification sont activées: je peux focaliser la justfication sur les lignes selectionnees
 virer effet aimant magnet
@@ -8382,7 +8383,7 @@ MCD/MPD :
 JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
     pour faire du reverse engineering java vers base de donnee java2db
     monProjet>Properties>Ajouter Facelets JPA; //bof 
-    Recuperer dans ecolipse Help>Update>Plugin Hibernate tools (http://download.jboss.org/jbosstools/updates/stable/indigo)
+    Recuperer dans eclipse Help>Update>Plugin Hibernate tools (http://download.jboss.org/jbosstools/updates/stable/indigo)
     ouvrir console Hibernate et configurer une connection à une base
     Clic droit sur mon projet > JAP > faire le reverseEngeniring
     fichier resources/META-INF/persistence.xml marche bien. sinon ou mais pas sur dutout: WEB-INF/persistence.xml. Ce fichier DOIT etre dans le jar ou le war qui contient les @Entity
@@ -15021,7 +15022,7 @@ letsencrypt :
       sous opt/letsencrypt
       ./letsencrypt-auto renew    
        pour verifier le nombre de jours restant expiration certificat:
-          ./etc/letsencrypt j'ai cree des scripts qui contiennent: 
+          /etc/letsencrypt j'ai cree des scripts qui contiennent: 
                     cert="/etc/letsencrypt/live/monsite.com/cert.pem"
                       echo " "
                       echo "############"
@@ -22000,7 +22001,97 @@ pour envoyer un mail simple avec apache mail: librairie dispo ici: http://common
       
 si j'ai l'erreur:  
     javax.mail.MessagingException: Could not convert socket to TLS;      
-      
+     
+
+Pour lire les mails :
+			  String host = applicationConfiguration.getProperty("mail.host");
+			  String user = applicationConfiguration.getProperty("mail.user");
+			  String password = applicationConfiguration.getProperty("mail.password");
+
+			  // Get system properties
+			   Properties properties = System.getProperties(); 
+
+			  // Get the default Session object.
+			  Session session = Session.getDefaultInstance(properties);
+
+			  // Get a Store object that implements the specified protocol.
+			  Store store = session.getStore("imaps");
+
+			  //Connect to the current host using the specified username and password.
+			  store.connect(host, user, password);
+
+			  //Create a Folder object corresponding to the given name.
+			  Folder folder = store.getFolder("inbox");
+			  // Open the Folder.
+			  folder.open(Folder.READ_ONLY);
+
+			  int lastid=folder.getMessageCount();
+			Message[] message = folder.getMessages(Integer.parseInt(AudioLoopProperties.getInstance().propsMailLast.getProperty("mail.last")), lastid);
+
+			  // Display message.
+			  for (int i = 1; i < message.length; i++) 
+					  if (message[i]!=null && message[i].getSubject()!=null)
+					  log.debug("------------ Message " + (i + 1) + " ------------");
+		
+					  log.debug("SentDate : " + message[i].getSentDate());
+					  log.debug("From : " + getRealSenderIsPaypal(message[i]));
+					  log.debug("Subject : " + message[i].getSubject());
+					  log.debug("Message : ");
+		
+					  InputStream stream = message[i].getInputStream();
+					  MimeMessage msg = new MimeMessage(session, stream);
+					  String body="";
+					  //le mail contient: 
+					  //Description de la commande : nomDeLobjetProjet2
+					  //Numéro du produit/de l'objet : idDeLobjetProjet2
+					  try{
+						  body = dumpPart(msg);
+						  body = Util.convertToASCII(body);(...)
+		public static String dumpPart(Part p) throws Exception {
+			String ret = "";
+        if (p instanceof Message)
+            dumpEnvelope((Message)p);
+        String ct = p.getContentType();
+        
+            log.debug("CONTENT-TYPE: " + (new ContentType(ct)).toString());
+        /*
+         * Using isMimeType to determine the content type avoids
+         * fetching the actual content data until we need it.
+         */
+        if (p.isMimeType("text/plain")) {
+            log.debug("This is plain text");
+            log.debug("---------------------------");
+            ret = ((String)p.getContent());        
+        } else {
+            
+            // just a separator
+            log.debug("---------------------------");
+            
+        }
+        return ret;
+    }
+		public static void dumpEnvelope(Message m) throws Exception {        
+	        log.debug(" ");
+	        Address[] a;
+	        // FROM
+	        if ((a = m.getFrom()) != null) {
+	            for (int j = 0; j < a.length; j++)
+	                log.debug("FROM: " + a[j].toString());
+	        }
+	        // TO
+	        if ((a = m.getRecipients(Message.RecipientType.TO)) != null) {
+	            for (int j = 0; j < a.length; j++) {
+	                log.debug("TO: " + a[j].toString());                
+	            }
+	        }
+	        // SUBJECT
+	        log.debug("SUBJECT: " + m.getSubject());
+	        // DATE
+	        Date d = m.getSentDate();
+	        log.debug("SendDate: " +
+	                (d != null ? d.toString() : "UNKNOWN"));
+	    }
+
 --------------------------------
 Pour formater un chiffre: taille zeros string 
 numberTest = 1;
@@ -24003,7 +24094,10 @@ pour modifier les droits:
 chown:
 chown [-R] utilisateur fichierOuRepertoire (-R pour recursif)
 chown [-R] utilisateur:groupe fichierOuRepertoire (-R pour recursif)
-
+pour voir la liste des groupes
+	cat /etc/group
+pour creer un groupe
+	groupadd
 tar tvf ... pour visualiser le tar
 tar tvf ... | grep -i toto* pour afficher le fichier toto* dans le tar
 tar xvf ... pour extraire (attention parfois ne marche qu'avec un seul argument: pas mettre de chemin)
@@ -24445,7 +24539,7 @@ saisir les commandes suivantes pour commander le serveur smtp (pas reçu le mail
 quelle est la version processeur 
   cat /proc/cpuinfo
 quel port est ecoute utilise utilise?
-      netstat -a(all)n(afficher les liste des ports en numerique ou plutot les ip au lieu des hostnames)t(que les ports tcp) p(pour voir les idprocess en derniere colonne)
+      netstat -a(all)n(afficher les liste des ports en numerique ou plutot les ip au lieu des hostnames)t(que les ports tcp) p(pour voir les idprocess en derniere colonne) Si netstat n'est pas une commande existante: l'installer en installant net-tools via aptitude
       netstat -ant
 quels sont les fichiers ouverts? process sont utilisés lockes par qui?
       lsof -n(numerique)P -i(que les ports):8080
@@ -24625,6 +24719,7 @@ copier-coller bouts:
   v puis bouger fleche pour selectionner puis d pour couper ou y pour copier puis P pour coller ce que j'avais selectionne
 faire une recherche find: :set ignorecase puis :set smartcase puis /blabla // si j'ai pas fait les set alors faire /blabla\c pour une recherche case noncasesensitive majuscule minuscule. Pour revenir à une recherche casesensitive faire: :set noic
 		ou /bla\c exemple: /motcherche\c pour case insensitive ignorer majuscule minuscules.\c peut apparaitre partout debut ou fin et tapper. pour faire next, wildcard faire .*, tapper n (pour echapper les / slash faire un backslash) pour rechercher en arrière: N
+		pour trouver deux mots dans n'importe quel ordre sur une ligne: /.*mot1\&.*mot2
 ?: recherche de bas en haut
 u: undo si multiple undo ne marche pas: aptitude et charger vim
 .:redo Ou plutot  Ctrl+r
@@ -24661,6 +24756,8 @@ Remplacement de chaine1 (toutes les occurrences de chaine1) ,par chaine2 depuis 
       >:s/\n//g
    exemples:
    >:1,$ s/632k next 64k/80k next 64k/g			
+pour supprimer les lignes vides:
+	:g/^$/d
 pour transformer la case: MAJ -> MIN ou l'inverse: altGR + ~
 
 bash :KSH :
@@ -26723,6 +26820,7 @@ ES6 :modules: une page html/js peut importer une page html/js qui importe aussi:
               export function projectsMEMENOM(arg){...}                                        AAA
             Exporter qu'un truc
               export default class(ne marche que avec class) UnComponentAttentionMEMENOM{....} BBB
+	      export class UnComponent {...}						       BBB
               export default {unTrucDefiniPlusHaut}; // a mettre a la fin du fichier   CCC
          pour que les onclick html fonctionnent je dois pointer la methode du module que je veux depuis window: ca rend le module global visible par tous.
                     window.setModeMenu=memoclap.setModeMenu; // ainsi je peux faire onclick="setModeMenu('hihi')"; mais attention la methode est totallement extraite de son contexte si elle est dans un objet
