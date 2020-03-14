@@ -15716,7 +15716,7 @@ junit5 : junit 5 :  version 5: // https://stackify.com/junit-5/ tests repetees, 
                       () -> assertEquals("Johnson", user.getName()),
                       () -> assertEquals("johnson@gmail.com", user.getEmail()));
                 assertIterableEquals(users, userDAO.findAll()); ou assertArrayEquals(users, userDAO.findAll()); // nouveau: les fils doivent avoir la methode equals declaree
-                 Exception exception = assertThrows(NullPointerException.class, () -> user.getName()); //tester qu'il renvoit bien une exception
+                 Exception exception = assertThrows(NullPointerException.class, () -> user.getName()); //tester qu'il renvoit bien une exception LINKlkfghdfg
                 @AfterEach (....)  //remplace @After                          
     Pour faire un testsuite en junit5:LINKtestesuitelksjgmhklj 
                 package renault.diversitysimulator;
@@ -16033,8 +16033,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
                                                                     }
                     pour indiquer de retourner une exception à un spy ou stub
                             Mockito.doThrow(new HibernateException("err")).when(userWebDAO).create(Matchers.any(UserWebEntity.class)); 
-    				WelcomeController wc = new WelcomeController(rd);
-    				wc.getDisplayResult("1", "1","10:00", "10/10/2016");
+                    verifier qu'une methode throw une exception voir LINKlkfghdfg
                     validation verifier qu'un mock(pasUnSpy) a été appelé invoké invoquée par une methode x fois nombre compter combien:
                             verify(userDetailDAOMock, times(2)).laMathodeDuMock(any(UserDetailsEntity.class));
 cucumber : il fait ce que fait junit mais permet à des non techniciens de comprendre les tests.LINKcucumberldfj 
