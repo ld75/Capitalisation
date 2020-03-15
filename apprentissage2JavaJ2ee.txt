@@ -648,6 +648,7 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
   docker pull unPackage/docker:version 
   docker images // liste des images du repository
   docker image ls // LINKdckrimgls liste les images que j'ai cree. Ajouter --all si je veux voir aussi les images qui run
+  docker image tag ed9fa2cfcf96 nouveaunomderepository:nouveautag // pour renommer le repository et le tag de l'image dont l'id est ed9etc...
   docker ps -a // pour voir la liste de tous les containers (en cours de run et pas)
   docker container ls // liste les containers qui tournent qui sont en cours d'execution 
   Dockerfile= bien l'appeler "Dockerfile" fichier docker: Défini une image à partir d'une image source. A ecrire apres avoir testé sur un container l'enchainement des commandes qui marchent grace à docker exec. puis ecrire ici les commandes pour builder mon image(mettre des trucs dedans):execution du haut vers le bas. haut:ce qui bouge le moins. Bas ce qui change le plus car docker utilise un cache.
@@ -901,7 +902,10 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
           et executer avec 
           git difftool plutot qu'avec git diff
       git diff-tree --no-commit-id --name-only -r <numero de commit> // voir la liste des fichiers commités  d'un commit 
-      git reset HEAD .OuNomFichier ou *.extensionfichier // opposé inverse de add pour retirer ce fichier de l'index added(voir LINKresetgit et Linkcheckout) annuler undo un delete MAIS: si j'ai déjà pushé alors faire:LINKrmgit 
+     // opposé inverse annuler undo de add pour retirer ce fichier de l'index added(voir LINKresetgit et Linkcheckout) annuler undo un delete MAIS: si j'ai déjà pushé alors faire:LINKrmgit 
+     	 	git reset  pour tout enlever du add 
+     	 	ou
+      		git reset pathfichieravecWildcard
       git reset HEAD~ annule/undo le dernier commit. Ne pas le faire après que mon dernier commit ait ete pushe et merge avec l'origin(remote) car cela desynchronise mon local du distant. SI je veux quand même le faire par necessite alors faire git reverT: ça recommiT un snap d'avant le commit pourri.
                 on peut aussi faire git commit --amend // pour redéfinir le message du dernier commit sans besoin de l'annuler
       git reset //LINKresetgit annuler le dernier add
@@ -15789,6 +15793,7 @@ junit5 : junit 5 :  version 5: // https://stackify.com/junit-5/ tests repetees, 
                       () -> assertEquals("johnson@gmail.com", user.getEmail()));
                 assertIterableEquals(users, userDAO.findAll()); ou assertArrayEquals(users, userDAO.findAll()); // nouveau: les fils doivent avoir la methode equals declaree
                  Exception exception = assertThrows(NullPointerException.class, () -> user.getName()); //tester qu'il renvoit bien une exception
+		  puis Assertions.assertTrue(exception.getMessage().contains("privateProject"));
                 @AfterEach (....)  //remplace @After                          
     Pour faire un testsuite en junit5:LINKtestesuitelksjgmhklj 
                 package renault.diversitysimulator;
@@ -16082,6 +16087,8 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
                     pour qu'une meme classe soit testée et spyée:
                         Machin machinATesterEtSpyer = new Machin()
                         Mockito.spy(machinATesterEtSpyer);
+			ou bien l'annoter @Spy et @InjectMock puis mocker ses methodes comme ca:
+			Mockito.doReturn(unTrucQuiDoitEtreRetourne).when(machinAtesterEtSpyer).uneMethodeAMocker(anyString());
                     ResultDao rd =mock ou spy(unObjetNONANNOTE ou new ResultDao() ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
                     Mockito.doReturn(toto).when(rd).getLaMethodeNONSTATIQUEResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy
     				when(filterConfig.getServNONSTATIQUEletContext( // ca s'appelle faire du "stub" et utiliser ca je crois pour les mock
@@ -17325,7 +17332,7 @@ logback : (mieux que LinkLogutils)
                   <!-- encoders are assigned the type
                        ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
                   <encoder>
-                      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+                      <pattern>%d{dd/MM/yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
                   </encoder>
                   ou ca mais NON c'est deprecie:
                   <encoder> // avant: <layout class="ch.qos.logback.classic.PatternLayout">
@@ -24888,6 +24895,7 @@ copier-coller bouts:
 faire une recherche find: :set ignorecase puis :set smartcase puis /blabla // si j'ai pas fait les set alors faire /blabla\c pour une recherche case noncasesensitive majuscule minuscule. Pour revenir à une recherche casesensitive faire: :set noic
 		ou /bla\c exemple: /motcherche\c pour case insensitive ignorer majuscule minuscules.\c peut apparaitre partout debut ou fin et tapper. pour faire next, wildcard faire .*, tapper n (pour echapper les / slash faire un backslash) pour rechercher en arrière: N
 		pour trouver deux mots dans n'importe quel ordre sur une ligne: /.*mot1\&.*mot2
+ V selectionner toute la ligne
 ?: recherche de bas en haut
 u: undo si multiple undo ne marche pas: aptitude et charger vim
 .:redo Ou plutot  Ctrl+r
@@ -26771,7 +26779,7 @@ savoir si un element audio joue:
     traitement des variables dans des strings type template:(template literals) 
     console.log(`aaaa ${supportsCustomElements}`); // plus besoin de faire "sldfkj"+xxx Pas supporte sur IE11. Pour que ca marche bien mettre `` et non pas des guillemets
             exemple: `<div><img onclick="closeUpdateRecordBoucle('${fichiermixttemp}','${fichiermixttemp}');"/></div>` dans un template// pour echaper les dollars ${ si on est dans une jsp mettre \${
-            on peut meme faire des conditions avec templates: gabarit:
+            on peut meme faire des conditions avec templates: gabarit:. On peut les imbriquer sans probleme
                 `duhtml
            	        ${versionPro?    // ou versionPro=="machin"
                         `duhtmlsioui`:// cette partie est a mettre obligatoirement pour que ca compile
@@ -26793,7 +26801,7 @@ savoir si un element audio joue:
               };
             
             }
-tester le javascript
+tester le javascript TDD :
     tester avec jest : le meilleur d'apres sylvain. 
         les fichiers de tests doivent s'appeler xxxx.test.js            
         	    npm install --save-dev jest //--save-dest voir npm.
@@ -28281,9 +28289,28 @@ parcourir les proprietes d un objet:
  recuperer la propriete d un objet
   var keys = Object.keys(myJsonObject);
   alert(keys[key]);
-heritage: THE BEST ! heritage avec de purs objets (duck typing) (import et export ne marche qu'avec un petit serveur (npm))
+heritage: 
+nouvelle facon de definir les classes et l'heritage: mais en javascript on peut aussi faire des factory functions =composition voir Linkfactoryfnct
+       export class Toto {         
+             // je ne peux pas definir de variables ici... faire comme ci dessous          
+                constructor() // Facultatif
+                {
+                  this.sound="zzzz"
+                }
+                tals(){
+                  alert(this.sound)
+                }
+                let huhu = this.tintin(); // tintin peut etre defini ou overridé dans une sous classe
+          }
+          ggg=new Toto()
+          ggg.tals()        mais si je fais let xx=toto.tals; alors xx() va faire undefined car this est undefined. Il faut faire xx.bind(toto); xx.(); et là ca marche. Attribue un objet à this.
+       export class Titi extends Toto{
+          tals(){blabla} // override la methode tals du parent
+       }
+ 
+ heritage avec de purs objets (duck typing) (import et export ne marche qu'avec un petit serveur (npm))
   export Toto ={                   
-          this.sound="zzzz"
+          this.sound="zzzz" // apparemment ne marche plus (this genere erreur)
           tals(){alert(this.sound)},
           zozo(){xxx}
           let huhu = this.tintin(); // tintin peut etre defini ou overridé dans une sous classe
@@ -28302,24 +28329,7 @@ heritage: THE BEST ! heritage avec de purs objets (duck typing) (import et expor
         this.haha() // c'est du polymorphisme léger dans ce js dynamique
        
        
-nouvelle facon de definir les classes et l'heritage: mais en javascript on peut aussi faire des factory functions =composition voir Linkfactoryfnct
-       export class Toto {         
-             // je ne peux pas definir de variables ici... faire comme ci dessous          
-                constructor() // Facultatif
-                {
-                  this.sound="zzzz"
-                }
-                tals(){
-                  alert(this.sound)
-                }
-                let huhu = this.tintin(); // tintin peut etre defini ou overridé dans une sous classe
-          }
-          ggg=new Toto()
-          ggg.tals()        mais si je fais let xx=toto.tals; alors xx() va faire undefined car this est undefined. Il faut faire xx.bind(toto); xx.(); et là ca marche. Attribue un objet à this.
-       export class Titi extends Toto{
-          tals(){blabla} // override la methode tals du parent
-       }
-          
+         
         l'heritage avec prototype: LINKpptypeksdf
                               function capture(ev){
                                         /*...*/
@@ -28423,7 +28433,7 @@ nouvelle facon de definir les classes et l'heritage: mais en javascript on peut 
                         {
                     			DrawingFile.prototype[element] = Alerter.prototype[element]
                     		}
-            // pour faire une boucle en javascript dans un array: iteration:
+            // pour faire une loop boucle en javascript dans un array: iteration:
                     for (let selectedActeur of unarrayUneListe)// ne pas confondre for of et for in:LINKforin
                        {...}                            
                     	
@@ -28656,6 +28666,8 @@ pour ajouter ou supprimer une classe dans une liste de classe:
     this.classList.remove('over');
     ou bien this.classList.toggle('over'); // l'ajoute si elle n'existe pas et le supprime si elle existe. Interrupteur.  
     document.getElementById("theID").removeAttribute("class"); //pour les effacer toutes les classes tous remove all      
+    verifier qu'une classe existe que l'element contient la classe:
+	this.classList.contains("laclassequejecherche");
 changer une classe en javascript:
   document.getElementById("btnTest").className= "buttonType2"
 pour recuperer l'element suivant: 
@@ -29252,7 +29264,7 @@ METHODE CLASS: THEBEST? classes es6
                                                                      cloneDuTemplate.querySelector(...).innerText=untruc;
                                                                        mondiv ou thisSiJeSuisDansUneClasseHtmlElement.appendChild(cloneDuTemplate); // ajoute le template dans la page (devient visible) MARCHE PAS
                                                         findansuneboucleparex
-                                                        div.setAttribute('unAttributduTagHtml','valeurDeLattribut'); PIEGE! utiliserça et ne pas utiliser unElementHTML.unattribut=xxx (ca ne modifie que la classe pas le html et du coup attributeChangedCallback n'est pas appele)
+                                                        div.setAttribute('unAttributduTagHtml','valeurDeLattribut'); PIEGE! utiliser ça et ne pas utiliser unElementHTML.unattribut=xxx (ca ne modifie que la classe pas le html et du coup attributeChangedCallback n'est pas appele)
                                                         
                                                         on peut ajouter un listnener au slot si celui ci change en javascript: par contre si je veux modifier le innerhtml du slot voir LINKrmvEvntListner
                                                             monslot.addEventListener('slotchange', e => {
@@ -29294,7 +29306,7 @@ METHODE CLASS: THEBEST? classes es6
                                               3)        attributeChangedCallback(nameattr,oldval,newval) // exec chaque fois qu'un attrbt de observedAttributes change LINK77738
                                                         {
                                                           if (nameattr==='xxx') // mettre 3=
-                                                          this[nameattr]=newval; // va appeler le setter de cette classe (uniquement pas le tag html) "set (lenomdemonattribut){}" et dedans implicitement j'aurais dans cette classe la propriete this.lenomdemonattribut... ATTENTION SUR LES onclick ca n'accepte pas des strings mais des fonctions
+                                                          this[nameattr]=newval; //va direct setter les this.xxx de mon component. En fait va appeler le setter IMPLICITE de cette classe (uniquement pas le tag html) "set (lenomdemonattribut){}" et dedans implicitement j'aurais dans cette classe la propriete this.lenomdemonattribut... ATTENTION SUR LES onclick ca n'accepte pas des strings mais des fonctions
                                                           du coup peut etre sette depuis l'extereur: moncustomelement["machin"]=truc
                                                         }
                                                         set unattribut(unevaleur){...  // les methodes get et set peuvent etre appellees entre classes javascript: databinding
@@ -29781,7 +29793,9 @@ faire une recherche comme ca: to AND NOT toto. faire to[^to]
 
 -----------------------
 
-XSLT : TRANSFORMATION :(javax et les transformation c de la merde eviter d'utiliser si trop gros volume)
+XSLT : TRANSFORMATION :
+utiliser maintenant Saxon/Saxonica
+(javax et les transformation c de la merde eviter d'utiliser si trop gros volume)
 Struts avec XML , XSLT (utilisation de la classe XSLServlet qui serialise une ActionForm en XML)
 Transformation example 
 Consider a Struts application with a simple form bean containing two attributes: 
