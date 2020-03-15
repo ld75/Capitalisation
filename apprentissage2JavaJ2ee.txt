@@ -1,4 +1,4 @@
- (?=.*string)(?=.*plusieurs)(?=.*lignes)
+(?=.*string)(?=.*plusieurs)(?=.*lignes)
 AFAIRE :
     Entretien:
         qu'est ce que rest, architecture ntiers, polymorphisme, mvc, dto, bdd: gerkin  
@@ -7543,141 +7543,6 @@ kafka : A_COMPLETER voir aussi https://github.com/akka/alpakka-kafka qui fait de
         producer3/------->topic4                "
         logComppaction sert à convertir automatiquement les doublons-triplons... en un seul: gain de place dans le disque
         producers ont 3modes d'ecrtutre (async: donees pas garanties reçues. commited to leader: confirmation reception par le partition leader. commited to leader & quorum: confirmation reception par leader + une autre partition)
-mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents dans le systeme de fichier que en blob dans la db. la db c'est pour les metadatas.)
-        -toujours activer l'authentification (par user/password au moins) facultatif sur local pour test.
-        -il faut désactiver l'introspection javascript par sécurité(dans fichier de config mettre javascriptEnabled:false). LinkLKJDSFA
-        -attention!!!! l'ordre des champs du json au niveau n-1 est important! au niveau n pas de probleme( par ex utiliser ordre alphabetique)
-        -si je veux utiliser limit alors toujours utiliser sort avant limit dans une requete.
-        -il faut faire un schema: installer https://studio3t.com/knowledge-base-articles/schema-explorer/
-                        resumé de ce que j'ai lu là:https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design-part-1
-                        si j'ai relation 1-N(peu nombreux) où je n'aurais jamais besoin de recuperer ces N tout seuls sans leur parents
-                                    alors je peux faire 
-                                                  {
-                                                    name: 'Kate Monster',
-                                                    ssn: '123-456-7890',
-                                                    addresses: [
-                                                       { street: '123 Sesame St', city: 'Anytown', cc: 'USA' }, // j'en ai peu.
-                                                       { street: '123 Avenue Q', city: 'New York', cc: 'USA' }
-                                                    ]
-                                                  }
-                        si j'ai relation 
-                                1-N(une centaine) et que c'est l'application qui gère la recuperation des N pour l'element 1 . mais en fait ca a l'avantage d'etre aussi une relation N-N
-                                    alors je peux faire (un produit contient plusieurs pieces)
-                                    produit:{
-                                        name: 'MON PRODUIT 1',
-                                        pieces: [     // array of references to Part documents
-                                            ObjectID('AAAA'),    // reference vers la piece ci dessous
-                                            ObjectID('F17C'),    // reference to a different Part
-                                            ObjectID('D2AA'),
-                                            // etc
-                                        ]
-                                        }
-                                    piece:{
-                                            _id: ObjectID('AAAA'),
-                                            partno: '123-aff-456',
-                                            name: '#4 grommet',
-                                            qty: 94,
-                                            cost: 0.94,
-                                            price: 3.99
-                                        }                 
-                            si j'ai une relation 1-N où N c'est PLEIN denregistrements. Produit peut avoir plusieurs pieces mais une piece ne peut avoir qu'un seul produit.
-                                    produit:{
-                                        name: 'MON PRODUIT 1',
-                                        _id: ObjectID('AAAA')
-                                        }
-                                    piece:{
-                                            partno: '123-aff-456',
-                                            name: '#4 grommet',
-                                            qty: 94,
-                                            cost: 0.94,
-                                            price: 3.99
-                                            produit: ObjectID('AAAA') // comme dans une base relationelle 1-N
-                                        }                               
-        -il faut desactiver la casesensitive et accent sensitive pour les requetes
-        -l'ordre dans les requetes est important: d'abord filtrer puis trier puis groupby joindre
-        -il faut enable journaling pour recuperer la base old version si devient inconsistent (configuration-> storage.journal.enabled)
-        -requetes ordonnees sortees toujours sur un ou des champs indexés. (sinon sur un-des champs non indexes risques d'overflow donc d'erreur: retourne rien)
-        -des arrays pas trop longues et indexees(ca l'est pas défaut)
-        pour tester online en ligne des requetes: https://docs.mongodb.com/manual/tutorial/query-arrays/ 
-        pour installer mongodb en local: 
-            https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
-            dezipper quelque part, mkdir c:/data/db(ou autre part...)
-        pour démarrer mongodb serveur en local: 
-            puis cmd ceci: 
-            pathVersLeBin/mongod.exe --dbpath="c:\mongodb-win32-x86_64-2008plus-ssl-4.0.9\data\db" // ca demare le serveur par defaut là: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
-        pour demarrer un client mongodb pour administrer la base et pour faire des requetes de test
-            ensuite executer mongo.exe: c'est un client pour faire les requetes (c'est du javascript la dedans) LinkLKJDSFA . On peut aussi utiliser un gui qui s'appelle Robo3T à installer.
-            ou bien mongo mongodb://mongodb0.example.com:28015/testdb?ssl=true // si il est distant
-        aide help:
-            db.help()            
-        statistiques: (etre connecté à une base d'abord)
-            db.stats()            
-        rentrer dans une base:(sur ? ou plutot se connecter ? use admin)
-            use nomdelabase
-        pour se connecter avec un utilisateur user
-            db.auth("AribaSystem","xxxx");            
-        pour voir la liste des bases
-            show dbs (faut etre connecté avec un compte pour pouvoir le faire)
-        pour voir dans quelle base je suis ?
-            db
-        pour creer un user et lui attribuer des droits sur les bases
-            db.createUser(
-                {
-                    user:"sonNom",
-                    pwd:"xxxxx",
-                    roles:[
-                    {role:"readWrite", db: "unebase1"},
-                    {role:"readWrite", db: "unebase2"},                    
-                    {role:"readWrite", db: "unebase3"},
-                    ]
-                }
-            )    
-        pour modifier les droits d'un user sur les bases:
-            db.grantRolesToUser("AribaSystem",
-                [
-                    {role:"readWrite", db: "unebase1"},
-                    {role:"readWrite", db: "unebase2"},                    
-                    {role:"readWrite", db: "unebase3"},
-                ]
-            )
-        pour supprimer les droits d'un user sur les bases:
-            db.revokeRolesFromUser("AribaSystem", [
-                    {role:"readWrite", db: "unebase1"},
-                    {role:"readWrite", db: "unebase2"},                    
-                    {role:"readWrite", db: "unebase3"},
-                ]
-            )
-        pour voir la liste des collections d'une base:
-            show collections
-          
-        exemples de rechercher requetes. Une collection = une table relationelle
-                    db.uneCollection.find() // pour trouver tout (sur ?)
-            var doc = db.uneCollection.findOne ou find({ _id: 1 unjsonquimatchquoi })// trouver par id (du coup doc est une variable) // findOne retourne le 1er resultat
-        count compter nombre de lignes:
-            db.nomdelacollection.count({duJson});
-        autres operations:             
-            db.uneCollection.remove({ _id: 1 }) //pour supprimer ce qui match. Comment faire pour tout supprimer de la collection ?  
-            db.uneCollection.insert({ _id: 1, jsFunc: function(){ print("hello") } } ) // si uneCollection n'existe pas elle est automatiquement créee
-            db.myNewCollection3.createIndex( { y: 1 } ) // ajoute un indexe dans la collection
-	mongodump sur windows:
-		E:\x\MongoDB\bin\mongodump.exe --port=27017 --host=localhost --username=superuser --password=xxxx --authenticationDatabase=admin --db=testGlobal --out ou --archive=E:/mongoout //out ne compresse pas contrairement à archive
-        en java:pour me connecter à mongodb en java standard:
-            avec la librairie mongo-java-driver-3.10.2.jar
-                MongoCredential credential = MongoCredential.createCredential(usr,"admin",password.toCharArray());
-                MongoClient mongoClient = new MongoClient(new ServerAddress("localhost",27017),credential,MongoCLientOptions.builder().build());
-                return mongoClient.getDatabase("dbName").getCollection("collectionName");
-            pour transformer bson en json en java:
-		String input="{\"timestamp\":0934820948}";
-		org.bson.Document doc=org.bson.Document.parse(input);
-		System.out.println("input = "+input);
-		System.out.println("output (SHELL) = "+  doc.toJson(new JsonWriterSettings(JsonMode.SHELL)));
-		System.out.println("output (STRICT) = "+ doc.toJson(new JsonWriterSettings(JsonMode.STRICT)));
-		System.out.println("output (JSON) = " + com.mongodb.util.JSON.serialize(doc));
-		this will generate following output:
-			input={"timestamp" : xxx}
-			output(SHELL)={"timestamp":NUMBERLONG(xxx)}
-			output (STRICT) = {"timestamp": {"$numberlong":"xxxx"}}
-			output (JSON) = {"timestamp" : xxx}
 		                  
   DM 
    ^ 
@@ -8604,7 +8469,7 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
                 JPQL :
                       - List cat = entityManager.createQuery("SELECT cat FROM nomDeMonObjetJAVA cat LEFT JOIN FETCH cat.nomDeMonFieldJAVA WHERE toto.nomDunFieldJAVA like '%M%' AND cat.unFieldJava=:totocestmoi")
                                 .setParameter("totocestmoi",projectId).setFirstResult(0) ou .getResultList(); //overrite lazy default behaviour at runtime
-                      - List<MonEntite> cat = entityManager.createQuery("SELECT cat FROM category cat LEFT JOIN FETCH cat.art WHERE cat.id=:id",MonEntite.class).getResultList(); //overrite lazy default behaviour at runtime
+                      - List<MonEntite> cat = entityManager.createQuery("SELECT cat FROM nomDeMonObjetJAVA cat LEFT JOIN FETCH cat.nomDeMonFieldJAVA WHERE cat.nomDunFieldJAVA=:id",MonEntite.class).getResultList(); //overrite lazy default behaviour at runtime
                       - String query = "select distinct(alo_project.id), alo_project.nam......from alo_usr alo_usr left join alo_usrcrea alo_usrcrea on alo_usr.usr_id=alo_usrcrea.usrcrea_idusr where alo_usrcrea.usrcrea_idusr is not null and alo_usr.usr_id='"+uid+"' order by alo_project.name";
                         return em.createNativeQuery(query,Project.class).getResultList(); // pour les selects natifs
                         em.createNativeQuery(sql).executeUpdate(); // pour les updates natifs
@@ -9340,7 +9205,7 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
         -si je veux utiliser limit alors toujours utiliser sort avant limit dans une requete.
         -il faut faire un schema: installer https://studio3t.com/knowledge-base-articles/schema-explorer/
                         resumé de ce que j'ai lu là:https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design-part-1
-                        si j'ai relation 1-N(peu nombreux): Où je n'aurais jamais besoin de recuperer ces N tout seuls sans leur parents
+                        si j'ai relation 1-N(peu nombreux) où je n'aurais jamais besoin de recuperer ces N tout seuls sans leur parents
                                     alors je peux faire 
                                                   {
                                                     name: 'Kate Monster',
@@ -9384,7 +9249,7 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
                                             produit: ObjectID('AAAA') // comme dans une base relationelle 1-N
                                         }                               
         -il faut desactiver la casesensitive et accent sensitive pour les requetes
-        -l'ordre dans les requetes est important: d'abord filtrer puis trier puis joindre
+        -l'ordre dans les requetes est important: d'abord filtrer puis trier puis groupby joindre
         -il faut enable journaling pour recuperer la base old version si devient inconsistent (configuration-> storage.journal.enabled)
         -requetes ordonnees sortees toujours sur un ou des champs indexés. (sinon sur un-des champs non indexes risques d'overflow donc d'erreur: retourne rien)
         -des arrays pas trop longues et indexees(ca l'est pas défaut)
@@ -9398,12 +9263,75 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
         pour demarrer un client mongodb pour administrer la base et pour faire des requetes de test
             ensuite executer mongo.exe: c'est un client pour faire les requetes (c'est du javascript la dedans) LinkLKJDSFA . On peut aussi utiliser un gui qui s'appelle Robo3T à installer.
             ou bien mongo mongodb://mongodb0.example.com:28015/testdb?ssl=true // si il est distant
-        exemples de requetes. Une collection = une table relationelle
-            var doc = db.uneCollection.findOne({ _id: 1 })// trouver par id (du coup doc est une variable) 
-            db.uneCollection.remove({ _id: 1 })  
+        aide help:
+            db.help()            
+        statistiques: (etre connecté à une base d'abord)
+            db.stats()            
+        rentrer dans une base:(sur ? ou plutot se connecter ? use admin)
+            use nomdelabase
+        pour se connecter avec un utilisateur user
+            db.auth("AribaSystem","xxxx");            
+        pour voir la liste des bases
+            show dbs (faut etre connecté avec un compte pour pouvoir le faire)
+        pour voir dans quelle base je suis ?
+            db
+        pour creer un user et lui attribuer des droits sur les bases
+            db.createUser(
+                {
+                    user:"sonNom",
+                    pwd:"xxxxx",
+                    roles:[
+                    {role:"readWrite", db: "unebase1"},
+                    {role:"readWrite", db: "unebase2"},                    
+                    {role:"readWrite", db: "unebase3"},
+                    ]
+                }
+            )    
+        pour modifier les droits d'un user sur les bases:
+            db.grantRolesToUser("AribaSystem",
+                [
+                    {role:"readWrite", db: "unebase1"},
+                    {role:"readWrite", db: "unebase2"},                    
+                    {role:"readWrite", db: "unebase3"},
+                ]
+            )
+        pour supprimer les droits d'un user sur les bases:
+            db.revokeRolesFromUser("AribaSystem", [
+                    {role:"readWrite", db: "unebase1"},
+                    {role:"readWrite", db: "unebase2"},                    
+                    {role:"readWrite", db: "unebase3"},
+                ]
+            )
+        pour voir la liste des collections d'une base:
+            show collections
+        exemples de rechercher requetes. Une collection = une table relationelle
+                    db.uneCollection.find({}) //pour trouver tout
+            var doc = db.uneCollection.findOne ou find({ _id: 1 unjsonquimatchquoi })// trouver par id (du coup doc est une variable) // findOne retourne le 1er resultat
+        count compter nombre de lignes:
+            db.nomdelacollection.count({duJson});
+        autres operations:             
+            db.uneCollection.remove({ _id: 1 }) //pour supprimer ce qui match. Comment faire pour tout supprimer de la collection ?  
             db.uneCollection.insert({ _id: 1, jsFunc: function(){ print("hello") } } ) // si uneCollection n'existe pas elle est automatiquement créee
             db.myNewCollection3.createIndex( { y: 1 } ) // ajoute un indexe dans la collection
-
+	mongodump sur windows:
+		E:\x\MongoDB\bin\mongodump.exe --port=27017 --host=localhost --username=superuser --password=xxxx --authenticationDatabase=admin --db=testGlobal --out ou --archive=E:/mongoout //out ne compresse pas contrairement à archive
+        en java:pour me connecter à mongodb en java standard:
+            avec la librairie mongo-java-driver-3.10.2.jar
+                MongoCredential credential = MongoCredential.createCredential(usr,"admin",password.toCharArray());
+                MongoClient mongoClient = new MongoClient(new ServerAddress("localhost",27017),credential,MongoCLientOptions.builder().build());
+                return mongoClient.getDatabase("dbName").getCollection("collectionName");
+            pour transformer bson en json en java:
+		String input="{\"timestamp\":0934820948}";
+		org.bson.Document doc=org.bson.Document.parse(input);
+		System.out.println("input = "+input);
+		System.out.println("output (SHELL) = "+  doc.toJson(new JsonWriterSettings(JsonMode.SHELL)));
+		System.out.println("output (STRICT) = "+ doc.toJson(new JsonWriterSettings(JsonMode.STRICT)));
+		System.out.println("output (JSON) = " + com.mongodb.util.JSON.serialize(doc));
+		this will generate following output:
+			input={"timestamp" : xxx}
+			output(SHELL)={"timestamp":NUMBERLONG(xxx)}
+			output (STRICT) = {"timestamp": {"$numberlong":"xxxx"}}
+			output (JSON) = {"timestamp" : xxx}
 DB2 :
 pour se connecter à db2: 
 							connect to IS user AW0EPRI using r9097268
@@ -15792,10 +15720,12 @@ junit5 : junit 5 :  version 5: // https://stackify.com/junit-5/ tests repetees, 
                       () -> assertEquals("Johnson", user.getName()),
                       () -> assertEquals("johnson@gmail.com", user.getEmail()));
                 assertIterableEquals(users, userDAO.findAll()); ou assertArrayEquals(users, userDAO.findAll()); // nouveau: les fils doivent avoir la methode equals declaree
-                 Exception exception = assertThrows(NullPointerException.class, () -> user.getName()); //tester qu'il renvoit bien une exception
+                 
+		Exception exception = assertThrows(NullPointerException.class, () -> user.getName()); //tester qu'il renvoit bien une exception LINKlkfghdfg
 		  puis Assertions.assertTrue(exception.getMessage().contains("privateProject"));
-                @AfterEach (....)  //remplace @After                          
-    Pour faire un testsuite en junit5:LINKtestesuitelksjgmhklj 
+                
+		@AfterEach (....)  //remplace @After                          
+	      Pour faire un testsuite en junit5:LINKtestesuitelksjgmhklj 
                 package renault.diversitysimulator;
                   import org.junit.platform.suite.api.SelectClasses;
                   import org.junit.platform.suite.api.SelectPackages;
@@ -16112,8 +16042,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
                                                                     }
                     pour indiquer de retourner une exception à un spy ou stub
                             Mockito.doThrow(new HibernateException("err")).when(userWebDAO).create(Matchers.any(UserWebEntity.class)); 
-    				WelcomeController wc = new WelcomeController(rd);
-    				wc.getDisplayResult("1", "1","10:00", "10/10/2016");
+                    verifier qu'une methode throw une exception voir LINKlkfghdfg
                     validation verifier qu'un mock(pasUnSpy) a été appelé invoké invoquée par une methode x fois nombre compter combien:
                             verify(userDetailDAOMock, times(2)).laMathodeDuMock(any(UserDetailsEntity.class));
 cucumber : il fait ce que fait junit mais permet à des non techniciens de comprendre les tests.LINKcucumberldfj 
