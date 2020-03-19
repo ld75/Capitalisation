@@ -3455,7 +3455,7 @@ freemaker :
             		        System.setProperty("socksProxyPort", "1080");
             		    Sinon
             		        System.setProperty("http.ProxyHost", "frsopslinfv01.soprahronline.sopra"); voir LINKrequ939302
-            		        System.setProperty("http.ProxyPort", "1080");
+            		        System.setProperty("http.ProxyPort", "1080");ca veut dire qu'en mettant le parametre JVM -Dhttp.proxyHost=xxxx on a le meme resultat . Essayer aussi https.xxxx commes parametres si j'ai toujours sockettimeoutexception. Ca peut regler le pb.
             puis 
                     System.clearProperty("socksProxyHost"); voir LINKrequ939302
                     System.clearProperty("socksProxyPort");
@@ -5048,7 +5048,7 @@ pour faire des checkbox et radios personalises
             top: -10px;
             position: relative;
             }
-    #ask > input[type="checkbox"]:checked::after {
+    #ask > input[type="checkbox"]:checked::after { // on peut aussi faire sa negation: inverse: :not(:checked)
               display: block;
               content: " ";
               padding: 10px;
@@ -5061,7 +5061,7 @@ pour faire des checkbox et radios personalises
 pour faire un croop crop sur une image rogner
     <div style="background-image: url('/modules/amazzingblog/views/img/uploads/posts/7/m/1-595010f05579d.jpg');width: 35%;height: 178px;background-position-y: -122%;"></div>
 pour faire un background avec des zones pour cliquer lien absoluts absolu 
-      <body style="background: url('img/Image 1-1-2.png'),no-repeat; background-size: 100% 100%;">
+      <body style="background: url('img/Image 1-1-2.png') no-repeat; background-size: 100% 100%;">
       <a style="position:absolute; left:15%; top: 20%; height:20%; width:20%; text-decoration:none" href="./womens/gallery.php"></a>
       <a style="position:absolute; left:44%; top: 5%; height:20%; width:20%; text-decoration:none" href="./mens/gallery.php"></a>
       <a style="position:absolute; left:70%; top: 20%; height:20%; width:20%; text-decoration:none" href="./artwork/gallery.php"></a>
@@ -5346,6 +5346,7 @@ pour centrer direct:
                             element(div par ex...)[monatribut] tout element ayant un attribut "monattribut"; element[monattribut=toto] tout element ayant un atribut ayant valeur toto: donc on peut l'utiliser pour name!!!! hahaha!
                             [monatribut] tout court: tout element ayant cet attribut "monatribut"
                             element^[monattribut] tout element commençant par mon attribut $:finissant par... *:contenant
+			toto + titi // plus(+) c'est pour selectionner tous les siblings suivants et - moins je crois que c'est pour selectionner tous les siblings precedents
                             
     -webkit-order:0; // on peut changer l'odre independamment de la source html!!! ici si je mets -1 le deuxieme fils passe avant le premier
   }
@@ -5927,7 +5928,8 @@ Conf java
           @PropertySource("classpath:/my.properties") // Mettre au dessus classe de conf.@Configuration() Pour toutes les autres classes qui utilisent LINKPropsspring: @Value("${keyDansFichierPropriete:valeurParDefautFacultatif}totoatatarestepareil") String toto il va chercher la valeur des {$toto.toto} dans ce fichier de propriete sous resources ou dans *.properties si PropertySource ne specifie pas.  
                           "file:/C:/..."                                                                                                                       exemples Spring el SPEL: 
                                                                                                                                                                               @Value("#{'${ws.authorized.remoteIp}'.split(',')}") converti un string en listeSpring SPEL expressions
-                                                                                                                                                                              @Value("#{systemProperties['os.arch'].equals('x86') ? winDataSource: unixDataSource}")
+                                                                                                                                                                              @Value("#{new Boolean('${test}')}") // converti un sring en Boolean;
+																					      @Value("#{systemProperties['os.arch'].equals('x86') ? winDataSource: unixDataSource}")
                                                                                                                                                                               private List<String> authorizedIp;
                                                                                                                                                               Autre methode pour que les .properties se trouve dans une classe. @ConfigurationProperties(prefix="connection" ou "connection" tout court) Cette annot peut etre sur une classe Tatato avec getter et setter qui selon nom des champs, les remplis à partir de *.properties (si contient connexion.tata): Tatato a comme getter: tata se rempli tout seul pour que ca marche besoin que ma classe config ait: @EnableConfigurationProperties(Tatato.class)@ConfigurationProperties peut aussi accompagner un @Bean au dessus d'une methode
                                                                                                                                                               attention Tatato doit contenir le constructeur sans argument et les constructeurs avec tous les arguments. Pour ça utiliser lombok (voir LINKLombok )                        
@@ -9259,7 +9261,8 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
             dezipper quelque part, mkdir c:/data/db(ou autre part...)
         pour démarrer mongodb serveur en local: 
             puis cmd ceci: 
-            pathVersLeBin/mongod.exe --dbpath="c:\mongodb-win32-x86_64-2008plus-ssl-4.0.9\data\db" // ca demare le serveur par defaut là: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+            pathVersLeBin/mongod.exe --dbpath="c:\mongodb-win32-x86_64-2008plus-ssl-4.0.9\data\db" // ca demare le serveur par defaut là: mongodb://127.0.0.1:27017/nombasededonnee?ssl=true&gssapiServiceName=mongodb (ssl=true etc si il est distant)
+																	mongodb://username:password@localhost:27017/basemongo
         pour demarrer un client mongodb pour administrer la base et pour faire des requetes de test
             ensuite executer mongo.exe: c'est un client pour faire les requetes (c'est du javascript la dedans) LinkLKJDSFA . On peut aussi utiliser un gui qui s'appelle Robo3T à installer.
             ou bien mongo mongodb://mongodb0.example.com:28015/testdb?ssl=true // si il est distant
@@ -9267,8 +9270,13 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
             db.help()            
         statistiques: (etre connecté à une base d'abord)
             db.stats()            
-        rentrer dans une base:(sur ? ou plutot se connecter ? use admin)
+        rentrer dans une base. Si elle n'existe pas il la crée. Je crois que une fois dedans on peut creer des users dedans.
             use nomdelabase
+	vider une base de donnée
+		Aller d'abord dans la base (use labase)
+		puis db.dropDatabase()
+	vider effacer l'interieur supprimer toutes les lignes d'une collection
+		db.uneCollection.remove({})
         pour se connecter avec un utilisateur user
             db.auth("AribaSystem","xxxx");            
         pour voir la liste des bases
@@ -9288,13 +9296,20 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
                 }
             )    
         pour modifier les droits d'un user sur les bases:
-            db.grantRolesToUser("AribaSystem",
+            db.grantRolesToUser("NomDuUser",
                 [
                     {role:"readWrite", db: "unebase1"},
                     {role:"readWrite", db: "unebase2"},                    
                     {role:"readWrite", db: "unebase3"},
                 ]
             )
+	pour ajouter un droit a un user :
+		db.grantRolesToUser(
+		    "nomduuser",
+		    [
+		      { role: "read", db: "accounts" }
+		    ]
+		)
         pour supprimer les droits d'un user sur les bases:
             db.revokeRolesFromUser("AribaSystem", [
                     {role:"readWrite", db: "unebase1"},
@@ -9302,22 +9317,31 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
                     {role:"readWrite", db: "unebase3"},
                 ]
             )
+	pour voir la liste des utilisateurs users:
+		db.getUsers()
         pour voir la liste des collections d'une base:
             show collections
         exemples de rechercher requetes. Une collection = une table relationelle
                     db.uneCollection.find({}) //pour trouver tout
+	requete : retourner certains quelques field champs seulement
+		    db.lacollection.find({champaretourner:true,champapasretourner:false})
             var doc = db.uneCollection.findOne ou find({ _id: 1 unjsonquimatchquoi })// trouver par id (du coup doc est une variable) // findOne retourne le 1er resultat
         count compter nombre de lignes:
-            db.nomdelacollection.count({duJson});
+            db.nomdelacollection.count({duJson}); et tout compter: db.nomdelacollection.count({})
         autres operations:             
             db.uneCollection.remove({ _id: 1 }) //pour supprimer ce qui match. Comment faire pour tout supprimer de la collection ?  
             db.uneCollection.insert({ _id: 1, jsFunc: function(){ print("hello") } } ) // si uneCollection n'existe pas elle est automatiquement créee
             db.myNewCollection3.createIndex( { y: 1 } ) // ajoute un indexe dans la collection
 	mongodump sur windows:
-		E:\x\MongoDB\bin\mongodump.exe --port=27017 --host=localhost --username=superuser --password=xxxx --authenticationDatabase=admin --db=testGlobal --out ou --archive=E:/mongoout //out ne compresse pas contrairement à archive
+		E:\x\MongoDB\bin\mongodump.exe --port=27017 --host=localhost --username=superuser --password=xxxx --authenticationDatabase=admin --db=testGlobal --out ou --archive=E:/mongoout //out dans un repertoire, archive dans un compresse
+	mongorestore:
+		"path/mongorestore.exe" --username laurent --password laurent --authenticationDatabase attentionCPasLaBaseDeDonneeCestLeNomDeLaBaseDauthentificationQueJeCreeBesoinRetenirNomLINKjdjdjd --archive=cheminVersArchive ou repertoireFiniParSlashOuFichierArchiveCreeParMongoDump
+		exemple: 
+		"C:\Program Files\MongoDB\Server\4.2\bin\mongorestore.exe" --username laurent --password laurent --authenticationDatabase ariba --archive=C:\Users\B042EL\Documents\Capitalisation\ArchivageDiagrameClassesEtDoc\mongodump\mongoout2 
+
         en java:pour me connecter à mongodb en java standard:
             avec la librairie mongo-java-driver-3.10.2.jar
-                MongoCredential credential = MongoCredential.createCredential(usr,"admin",password.toCharArray());
+                MongoCredential credential = MongoCredential.createCredential(usr,"nomDeLaBaseDauthentificationLINKjdjdjd",password.toCharArray());
                 MongoClient mongoClient = new MongoClient(new ServerAddress("localhost",27017),credential,MongoCLientOptions.builder().build());
                 return mongoClient.getDatabase("dbName").getCollection("collectionName");
             pour transformer bson en json en java:
@@ -9332,6 +9356,8 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
 			output(SHELL)={"timestamp":NUMBERLONG(xxx)}
 			output (STRICT) = {"timestamp": {"$numberlong":"xxxx"}}
 			output (JSON) = {"timestamp" : xxx}
+		outil tool : mongocompass : s'installe à part.
+			C:\Users\B042EL\Documents\installation\MongoDBCompass\mongodb-compass-1.20.5-win32-x64\MongoDBCompass.exe
 DB2 :
 pour se connecter à db2: 
 							connect to IS user AW0EPRI using r9097268
@@ -15148,7 +15174,7 @@ letsencrypt en shell avec dehydrated :
     ./dehydrated -c // voir la doc:https://github.com/lukas2511/dehydrated#usage                                                                                                                                               
     
    
-SSL : TLS : https :
+SSL : TLS : https : le port https est toujours 443
 condidentialite/authenticite/non-repudiation=integrite(non modifie sur reseau) HTTPS: repond à tout ça LINK94949494
     sur windows pour voir la liste des certificats root d'autorité reconnus: executer certmgr.msc
         web:
@@ -16021,7 +16047,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
 			Mockito.doReturn(unTrucQuiDoitEtreRetourne).when(machinAtesterEtSpyer).uneMethodeAMocker(anyString());
                     ResultDao rd =mock ou spy(unObjetNONANNOTE ou new ResultDao() ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
                     Mockito.doReturn(toto).when(rd).getLaMethodeNONSTATIQUEResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy
-    				when(filterConfig.getServNONSTATIQUEletContext( // ca s'appelle faire du "stub" et utiliser ca je crois pour les mock
+    				when(filterConfig.getServNONSTATIQUEletContext( // ca s'appelle faire du "stub" et utiliser ca je crois pour les mock. Attention si c'est une methode finale il va rentrer dedans avant de traiter le when donc pour mocker une methode finale depuis Mockito2 seulement on crée un fichier sous src/test/resources/mockito-extensions/org.mockito.plugins/MockMaker et dedans on ecrit mock-maker-inline
     				ou                                   anyString()//tout string
     				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça . si je met des variables direct alors j'ai l'erreur InvalidUseOfMatchersException
                                                         ,anyList() // ne pas utiliser anyObject si j'ai une liste
@@ -24596,7 +24622,9 @@ smtp :
           Subject: Sent using the SMTP-server of GMail
           Some content.
 copy Ctlr+ins ; paste Shift+ins
-2)
+2) 
+voir deja si le serveur de mail existe
+ 	   nslookup -q=mx axa-groupsolutions.com
 saisir les commandes suivantes pour commander le serveur smtp (pas reçu le mail pourtant....)
           www-data@kanail:~$ telnet localhost smtp 
                     oubien 
@@ -25266,7 +25294,7 @@ raid :
 lvm :
     equivalent de git avec des snapshots mais pour les disques unix    
     
-pour installer des programmes: applications: (le repository miroir local qui lui indique ou chercher les paquets determine aussi la version de l'os. On peut le modifier. C'est le texte /etc/apt/sources.list C'est aussi ce fichier qu'utilise aptitude. Attention a resecter mon code version debian dedans)
+pour installer des programmes: applications: (le repository miroir local qui lui indique ou chercher les paquets determine aussi la version de l'os. On peut le modifier. C'est le texte /etc/apt/sources.list C'est aussi ce fichier qu'utilise aptitude. Attention a respecter mon code version debian dedans)
     avec apt : apt-get : (sinon il ya aussi la commande yum)
     apt-cache search unelibrairie // pour chercher une librairie que je pourrais puller avec apt-get install
       apt-get update // pour mettre a jour la liste des packages nouvellement installables c a d juste la liste.
@@ -25941,7 +25969,7 @@ Recuperation de l'adresse IP du hostname.
             nc -v -w 5 -X5 -xfrsopslinfv01:1080 rapplisaasaccess.groupeadeo.com 636
             nc -v -w 5 -X 5 -x frsopslinfv01:1080 ldap-master.22.sirca.info 636
             si j'ai l'erreur invalid tcp sequence number (flag=S.....) essayer avec une autre version du socks
-          telnet :se fait sur un port: 
+          telnet :se fait sur un port: c'est comme du ssh mais non securisé. Je me connecte à une machine et dedans je fais ce que je veux.
               exemple telnet 19.20.02.30 386 (port ldap par defaut) ftp sur port 591 par defaut
                   telnet clxs0aa 593  (login mntesp / password mntesp)
                 telnet_miami puis su root puis chmod -R 777 pour me donner tous les droits recursivement                     
