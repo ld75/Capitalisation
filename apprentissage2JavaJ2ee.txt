@@ -2250,6 +2250,7 @@ culture = country_LANGUAGE
                 -description
 
 JSON :
+l'equivalent de xpath en json sont des implementations de jsonpath comme: <groupId>com.jayway.jsonpath</groupId><artifactId>json-path</artifactId><version>2.4.0</version>
 Attention au sein de json tout est en UTF8 parse accepte que utf8(jecrois) et stringify envoie des charactères caractères en utf8
 super site pour convertir editer visualiser voir du json array en objet object conversion 
     https://jsoneditoronline.org/
@@ -5348,7 +5349,7 @@ pour centrer direct:
                             element^[monattribut] tout element commençant par mon attribut $:finissant par... *:contenant
 			toto + titi // plus(+) c'est pour selectionner tous les siblings suivants et - moins je crois que c'est pour selectionner tous les siblings precedents
                             
-    -webkit-order:0; // on peut changer l'odre independamment de la source html!!! ici si je mets -1 le deuxieme fils passe avant le premier
+    order:0; // on peut changer l'ordre independamment de la source html!!! ici si je mets -1 le deuxieme fils passe avant le premier
   }
 pour que tous les elements s'ajustent de facon bien organisee sans avoir à forcer indiquer la taille de mes elements. horizontal: % vertical: px
     min-width:338% super pour eviter les merdes sur petits ecrans
@@ -5953,7 +5954,7 @@ Conf java
             				};
             				cfg.setLocations(resources);				            				
             				ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("maconfig.xml");
-conditionnel:				context.addBeanFactoryPostProcessor(cfg); // modifie mon contexte à la volee au runtime des que ensuite je fais 
+ 					context.addBeanFactoryPostProcessor(cfg); // modifie mon contexte à la volee au runtime des que ensuite je fais 
             				context.refresh();                        // ca! recharge reinitialise rafraichit les beans
             				context.getBean(); recuperation bean possible.
             	
@@ -6022,9 +6023,13 @@ AILLEURS: injecter mes beans par constructeur
                                                       public boolean matches()
                                                       {ma condition}
                       @ConditionalOnClass({UneClassePeutEtrePresenteDansLeClasspath.class,UneAutre.class}) conditionnel: cette classe s'injecte si les deux classes specifiees existent dans le classpath
-                      @ConditionalOnMissingBean(UneClasseQuiPeutEtreEstInstancieeDansUnBean.class) conditionel: Ne cree les beans ci dessous que si un bean de ce type n'existe pas dejà comme ca:@Bean UneClasseQuiPeutEtreEstInstancieeDansUnBean lala(){return null; }
-                      @Configuration ou @ComponentGENERIQUEEVITERDUTILISERUtiliser@Named   
-                      UneClasse 
+                   ou
+		      @ConditionalOnMissingBean(UneClasseQuiPeutEtreEstInstancieeDansUnBean.class) conditionel: Ne cree les beans ci dessous que si un bean de ce type n'existe pas dejà comme ca:@Bean UneClasseQuiPeutEtreEstInstancieeDansUnBean lala(){return null; }
+	   	      @ConditionalOnProperty(value="une.propriete.dans.application.properties", havingValue="unevaleur1",matchIfMissing=true) // cette classe sera choisie si la propriete est unevaleur1 Je peux avoir une autre UneClasse2 qui est injectee a la place si par ex la valeur =unevaleur2
+                      @Configuration ou @ComponentGENERIQUEEVITERDUTILISERUtiliser@Named  ou @Service
+                      UneClasse implement UneInterface
+
+	
 
         spring et mongodb :
                     une classe @Configuration doit contenir aussi l'annotation:
@@ -7545,6 +7550,166 @@ kafka : A_COMPLETER voir aussi https://github.com/akka/alpakka-kafka qui fait de
         producer3/------->topic4                "
         logComppaction sert à convertir automatiquement les doublons-triplons... en un seul: gain de place dans le disque
         producers ont 3modes d'ecrtutre (async: donees pas garanties reçues. commited to leader: confirmation reception par le partition leader. commited to leader & quorum: confirmation reception par leader + une autre partition)
+mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents dans le systeme de fichier que en blob dans la db. la db c'est pour les metadatas.)
+        -toujours activer l'authentification (par user/password au moins) facultatif sur local pour test.
+        -il faut désactiver l'introspection javascript par sécurité(dans fichier de config mettre javascriptEnabled:false). LinkLKJDSFA
+        -attention!!!! l'ordre des champs du json au niveau n-1 est important! au niveau n pas de probleme( par ex utiliser ordre alphabetique)
+        -si je veux utiliser limit alors toujours utiliser sort avant limit dans une requete.
+        -il faut faire un schema: installer https://studio3t.com/knowledge-base-articles/schema-explorer/
+                        resumé de ce que j'ai lu là:https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design-part-1
+                        si j'ai relation 1-N(peu nombreux) où je n'aurais jamais besoin de recuperer ces N tout seuls sans leur parents
+                                    alors je peux faire 
+                                                  {
+                                                    name: 'Kate Monster',
+                                                    ssn: '123-456-7890',
+                                                    addresses: [
+                                                       { street: '123 Sesame St', city: 'Anytown', cc: 'USA' }, // j'en ai peu.
+                                                       { street: '123 Avenue Q', city: 'New York', cc: 'USA' }
+                                                    ]
+                                                  }
+                        si j'ai relation 
+                                1-N(une centaine) et que c'est l'application qui gère la recuperation des N pour l'element 1 . mais en fait ca a l'avantage d'etre aussi une relation N-N
+                                    alors je peux faire (un produit contient plusieurs pieces)
+                                    produit:{
+                                        name: 'MON PRODUIT 1',
+                                        pieces: [     // array of references to Part documents
+                                            ObjectID('AAAA'),    // reference vers la piece ci dessous
+                                            ObjectID('F17C'),    // reference to a different Part
+                                            ObjectID('D2AA'),
+                                            // etc
+                                        ]
+                                        }
+                                    piece:{
+                                            _id: ObjectID('AAAA'),
+                                            partno: '123-aff-456',
+                                            name: '#4 grommet',
+                                            qty: 94,
+                                            cost: 0.94,
+                                            price: 3.99
+                                        }                 
+                            si j'ai une relation 1-N où N c'est PLEIN denregistrements. Produit peut avoir plusieurs pieces mais une piece ne peut avoir qu'un seul produit.
+                                    produit:{
+                                        name: 'MON PRODUIT 1',
+                                        _id: ObjectID('AAAA')
+                                        }
+                                    piece:{
+                                            partno: '123-aff-456',
+                                            name: '#4 grommet',
+                                            qty: 94,
+                                            cost: 0.94,
+                                            price: 3.99
+                                            produit: ObjectID('AAAA') // comme dans une base relationelle 1-N
+                                        }                               
+        -il faut desactiver la casesensitive et accent sensitive pour les requetes
+        -l'ordre dans les requetes est important: d'abord filtrer puis trier puis groupby joindre
+        -il faut enable journaling pour recuperer la base old version si devient inconsistent (configuration-> storage.journal.enabled)
+        -requetes ordonnees sortees toujours sur un ou des champs indexés. (sinon sur un-des champs non indexes risques d'overflow donc d'erreur: retourne rien)
+        -des arrays pas trop longues et indexees(ca l'est pas défaut)
+        pour tester online en ligne des requetes: https://docs.mongodb.com/manual/tutorial/query-arrays/ 
+        pour installer mongodb en local: 
+            https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
+            dezipper quelque part, mkdir c:/data/db(ou autre part...)
+        pour démarrer mongodb serveur en local: 
+            puis cmd ceci: 
+            pathVersLeBin/mongod.exe --dbpath="c:\mongodb-win32-x86_64-2008plus-ssl-4.0.9\data\db" // ca demare le serveur par defaut là: mongodb://127.0.0.1:27017/nombasededonnee?ssl=true&gssapiServiceName=mongodb (ssl=true etc si il est distant)
+																	mongodb://username:password@localhost:27017/basemongo
+        pour demarrer un client mongodb pour administrer la base et pour faire des requetes de test
+            ensuite executer mongo.exe: c'est un client pour faire les requetes (c'est du javascript la dedans) LinkLKJDSFA . On peut aussi utiliser un gui qui s'appelle Robo3T à installer.
+            ou bien mongo mongodb://mongodb0.example.com:28015/testdb?ssl=true // si il est distant
+        aide help:
+            db.help()            
+        statistiques: (etre connecté à une base d'abord)
+            db.stats()            
+        rentrer dans une base. Si elle n'existe pas il la crée. Je crois que une fois dedans on peut creer des users dedans.
+            use nomdelabase
+	vider une base de donnée
+		Aller d'abord dans la base (use labase)
+		puis db.dropDatabase()
+	vider effacer l'interieur supprimer toutes les lignes d'une collection
+		db.uneCollection.remove({})
+        pour se connecter avec un utilisateur user
+            db.auth("AribaSystem","xxxx");            
+	qui je suis whoami quel est mon user utilisateur
+		db.runCommand({connexionStatus:1})
+        pour voir la liste des bases
+            show dbs (faut etre connecté avec un compte pour pouvoir le faire)
+        pour voir dans quelle base je suis ?
+            db
+        pour creer un user et lui attribuer des droits sur les bases
+            db.createUser(
+                {
+                    user:"sonNom",
+                    pwd:"xxxxx",
+                    roles:[
+                    {role:"readWrite", db: "unebase1"},
+                    {role:"readWrite", db: "unebase2"},                    
+                    {role:"readWrite", db: "unebase3"},
+                    ]
+                }
+            )    
+        pour modifier les droits d'un user sur les bases:
+            db.grantRolesToUser("NomDuUser",
+                [
+                    {role:"readWrite", db: "unebase1"},
+                    {role:"readWrite", db: "unebase2"},                    
+                    {role:"readWrite", db: "unebase3"},
+                ]
+            )
+	pour ajouter un droit a un user :
+		db.grantRolesToUser(
+		    "nomduuser",
+		    [
+		      { role: "read", db: "accounts" }
+		    ]
+		)
+        pour supprimer les droits d'un user sur les bases:
+            db.revokeRolesFromUser("AribaSystem", [
+                    {role:"readWrite", db: "unebase1"},
+                    {role:"readWrite", db: "unebase2"},                    
+                    {role:"readWrite", db: "unebase3"},
+                ]
+            )
+	pour voir la liste des utilisateurs users:
+		db.getUsers()
+        pour voir la liste des collections d'une base:
+            show collections
+        exemples de rechercher requetes. Une collection = une table relationelle
+                    db.uneCollection.find({}) //pour trouver tout
+	requete : retourner certains quelques field champs seulement
+		    db.lacollection.find({champaretourner:true,champapasretourner:false})
+            var doc = db.uneCollection.findOne ou find({ _id: 1 unjsonquimatchquoi })// trouver par id (du coup doc est une variable) // findOne retourne le 1er resultat
+        count compter nombre de lignes:
+            db.nomdelacollection.count({duJson}); et tout compter: db.nomdelacollection.count({})
+        autres operations:             
+            db.uneCollection.remove({ _id: 1 }) //pour supprimer ce qui match. Comment faire pour tout supprimer de la collection ?  
+            db.uneCollection.insert({ _id: 1, jsFunc: function(){ print("hello") } } ) // si uneCollection n'existe pas elle est automatiquement créee
+            db.myNewCollection3.createIndex( { y: 1 } ) // ajoute un indexe dans la collection
+	mongodump sur windows:
+		E:\x\MongoDB\bin\mongodump.exe --port=27017 --host=localhost --username=superuser --password=xxxx --authenticationDatabase=admin --db=testGlobal --out ou --archive=E:/mongoout //out dans un repertoire, archive dans un compresse
+	mongorestore:
+		"path/mongorestore.exe" --username laurent --password laurent --authenticationDatabase attentionCPasLaBaseDeDonneeCestLeNomDeLaBaseDauthentificationQueJeCreeBesoinRetenirNomLINKjdjdjd --archive=cheminVersArchive ou repertoireFiniParSlashOuFichierArchiveCreeParMongoDump
+		exemple: 
+		"C:\Program Files\MongoDB\Server\4.2\bin\mongorestore.exe" --username laurent --password laurent --authenticationDatabase ariba --archive=C:\Users\B042EL\Documents\Capitalisation\ArchivageDiagrameClassesEtDoc\mongodump\mongoout2 
+
+        en java:pour me connecter à mongodb en java standard:
+            avec la librairie mongo-java-driver-3.10.2.jar
+                MongoCredential credential = MongoCredential.createCredential(usr,"nomDeLaBaseDauthentificationLINKjdjdjd",password.toCharArray());
+                MongoClient mongoClient = new MongoClient(new ServerAddress("localhost",27017),credential,MongoCLientOptions.builder().build());
+                return mongoClient.getDatabase("dbName").getCollection("collectionName");
+            pour transformer bson en json en java:
+		String input="{\"timestamp\":0934820948}";
+		org.bson.Document doc=org.bson.Document.parse(input);
+		System.out.println("input = "+input);
+		System.out.println("output (SHELL) = "+  doc.toJson(new JsonWriterSettings(JsonMode.SHELL)));
+		System.out.println("output (STRICT) = "+ doc.toJson(new JsonWriterSettings(JsonMode.STRICT)));
+		System.out.println("output (JSON) = " + com.mongodb.util.JSON.serialize(doc));
+		this will generate following output:
+			input={"timestamp" : xxx}
+			output(SHELL)={"timestamp":NUMBERLONG(xxx)}
+			output (STRICT) = {"timestamp": {"$numberlong":"xxxx"}}
+			output (JSON) = {"timestamp" : xxx}
+		outil tool : mongocompass : s'installe à part.
+			C:\Users\B042EL\Documents\installation\MongoDBCompass\mongodb-compass-1.20.5-win32-x64\MongoDBCompass.exe
 		                  
   DM 
    ^ 
@@ -9200,164 +9365,7 @@ Exemple de classe jdo: a mettre cote client:
                                                 	
                                                 
                                                 	}
-mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents dans le systeme de fichier que en blob dans la db. la db c'est pour les metadatas.)
-        -toujours activer l'authentification (par user/password au moins) facultatif sur local pour test.
-        -il faut désactiver l'introspection javascript par sécurité(dans fichier de config mettre javascriptEnabled:false). LinkLKJDSFA
-        -attention!!!! l'ordre des champs du json au niveau n-1 est important! au niveau n pas de probleme( par ex utiliser ordre alphabetique)
-        -si je veux utiliser limit alors toujours utiliser sort avant limit dans une requete.
-        -il faut faire un schema: installer https://studio3t.com/knowledge-base-articles/schema-explorer/
-                        resumé de ce que j'ai lu là:https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design-part-1
-                        si j'ai relation 1-N(peu nombreux) où je n'aurais jamais besoin de recuperer ces N tout seuls sans leur parents
-                                    alors je peux faire 
-                                                  {
-                                                    name: 'Kate Monster',
-                                                    ssn: '123-456-7890',
-                                                    addresses: [
-                                                       { street: '123 Sesame St', city: 'Anytown', cc: 'USA' }, // j'en ai peu.
-                                                       { street: '123 Avenue Q', city: 'New York', cc: 'USA' }
-                                                    ]
-                                                  }
-                        si j'ai relation 
-                                1-N(une centaine) et que c'est l'application qui gère la recuperation des N pour l'element 1 . mais en fait ca a l'avantage d'etre aussi une relation N-N
-                                    alors je peux faire (un produit contient plusieurs pieces)
-                                    produit:{
-                                        name: 'MON PRODUIT 1',
-                                        pieces: [     // array of references to Part documents
-                                            ObjectID('AAAA'),    // reference vers la piece ci dessous
-                                            ObjectID('F17C'),    // reference to a different Part
-                                            ObjectID('D2AA'),
-                                            // etc
-                                        ]
-                                        }
-                                    piece:{
-                                            _id: ObjectID('AAAA'),
-                                            partno: '123-aff-456',
-                                            name: '#4 grommet',
-                                            qty: 94,
-                                            cost: 0.94,
-                                            price: 3.99
-                                        }                 
-                            si j'ai une relation 1-N où N c'est PLEIN denregistrements. Produit peut avoir plusieurs pieces mais une piece ne peut avoir qu'un seul produit.
-                                    produit:{
-                                        name: 'MON PRODUIT 1',
-                                        _id: ObjectID('AAAA')
-                                        }
-                                    piece:{
-                                            partno: '123-aff-456',
-                                            name: '#4 grommet',
-                                            qty: 94,
-                                            cost: 0.94,
-                                            price: 3.99
-                                            produit: ObjectID('AAAA') // comme dans une base relationelle 1-N
-                                        }                               
-        -il faut desactiver la casesensitive et accent sensitive pour les requetes
-        -l'ordre dans les requetes est important: d'abord filtrer puis trier puis groupby joindre
-        -il faut enable journaling pour recuperer la base old version si devient inconsistent (configuration-> storage.journal.enabled)
-        -requetes ordonnees sortees toujours sur un ou des champs indexés. (sinon sur un-des champs non indexes risques d'overflow donc d'erreur: retourne rien)
-        -des arrays pas trop longues et indexees(ca l'est pas défaut)
-        pour tester online en ligne des requetes: https://docs.mongodb.com/manual/tutorial/query-arrays/ 
-        pour installer mongodb en local: 
-            https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
-            dezipper quelque part, mkdir c:/data/db(ou autre part...)
-        pour démarrer mongodb serveur en local: 
-            puis cmd ceci: 
-            pathVersLeBin/mongod.exe --dbpath="c:\mongodb-win32-x86_64-2008plus-ssl-4.0.9\data\db" // ca demare le serveur par defaut là: mongodb://127.0.0.1:27017/nombasededonnee?ssl=true&gssapiServiceName=mongodb (ssl=true etc si il est distant)
-																	mongodb://username:password@localhost:27017/basemongo
-        pour demarrer un client mongodb pour administrer la base et pour faire des requetes de test
-            ensuite executer mongo.exe: c'est un client pour faire les requetes (c'est du javascript la dedans) LinkLKJDSFA . On peut aussi utiliser un gui qui s'appelle Robo3T à installer.
-            ou bien mongo mongodb://mongodb0.example.com:28015/testdb?ssl=true // si il est distant
-        aide help:
-            db.help()            
-        statistiques: (etre connecté à une base d'abord)
-            db.stats()            
-        rentrer dans une base. Si elle n'existe pas il la crée. Je crois que une fois dedans on peut creer des users dedans.
-            use nomdelabase
-	vider une base de donnée
-		Aller d'abord dans la base (use labase)
-		puis db.dropDatabase()
-	vider effacer l'interieur supprimer toutes les lignes d'une collection
-		db.uneCollection.remove({})
-        pour se connecter avec un utilisateur user
-            db.auth("AribaSystem","xxxx");            
-        pour voir la liste des bases
-            show dbs (faut etre connecté avec un compte pour pouvoir le faire)
-        pour voir dans quelle base je suis ?
-            db
-        pour creer un user et lui attribuer des droits sur les bases
-            db.createUser(
-                {
-                    user:"sonNom",
-                    pwd:"xxxxx",
-                    roles:[
-                    {role:"readWrite", db: "unebase1"},
-                    {role:"readWrite", db: "unebase2"},                    
-                    {role:"readWrite", db: "unebase3"},
-                    ]
-                }
-            )    
-        pour modifier les droits d'un user sur les bases:
-            db.grantRolesToUser("NomDuUser",
-                [
-                    {role:"readWrite", db: "unebase1"},
-                    {role:"readWrite", db: "unebase2"},                    
-                    {role:"readWrite", db: "unebase3"},
-                ]
-            )
-	pour ajouter un droit a un user :
-		db.grantRolesToUser(
-		    "nomduuser",
-		    [
-		      { role: "read", db: "accounts" }
-		    ]
-		)
-        pour supprimer les droits d'un user sur les bases:
-            db.revokeRolesFromUser("AribaSystem", [
-                    {role:"readWrite", db: "unebase1"},
-                    {role:"readWrite", db: "unebase2"},                    
-                    {role:"readWrite", db: "unebase3"},
-                ]
-            )
-	pour voir la liste des utilisateurs users:
-		db.getUsers()
-        pour voir la liste des collections d'une base:
-            show collections
-        exemples de rechercher requetes. Une collection = une table relationelle
-                    db.uneCollection.find({}) //pour trouver tout
-	requete : retourner certains quelques field champs seulement
-		    db.lacollection.find({champaretourner:true,champapasretourner:false})
-            var doc = db.uneCollection.findOne ou find({ _id: 1 unjsonquimatchquoi })// trouver par id (du coup doc est une variable) // findOne retourne le 1er resultat
-        count compter nombre de lignes:
-            db.nomdelacollection.count({duJson}); et tout compter: db.nomdelacollection.count({})
-        autres operations:             
-            db.uneCollection.remove({ _id: 1 }) //pour supprimer ce qui match. Comment faire pour tout supprimer de la collection ?  
-            db.uneCollection.insert({ _id: 1, jsFunc: function(){ print("hello") } } ) // si uneCollection n'existe pas elle est automatiquement créee
-            db.myNewCollection3.createIndex( { y: 1 } ) // ajoute un indexe dans la collection
-	mongodump sur windows:
-		E:\x\MongoDB\bin\mongodump.exe --port=27017 --host=localhost --username=superuser --password=xxxx --authenticationDatabase=admin --db=testGlobal --out ou --archive=E:/mongoout //out dans un repertoire, archive dans un compresse
-	mongorestore:
-		"path/mongorestore.exe" --username laurent --password laurent --authenticationDatabase attentionCPasLaBaseDeDonneeCestLeNomDeLaBaseDauthentificationQueJeCreeBesoinRetenirNomLINKjdjdjd --archive=cheminVersArchive ou repertoireFiniParSlashOuFichierArchiveCreeParMongoDump
-		exemple: 
-		"C:\Program Files\MongoDB\Server\4.2\bin\mongorestore.exe" --username laurent --password laurent --authenticationDatabase ariba --archive=C:\Users\B042EL\Documents\Capitalisation\ArchivageDiagrameClassesEtDoc\mongodump\mongoout2 
 
-        en java:pour me connecter à mongodb en java standard:
-            avec la librairie mongo-java-driver-3.10.2.jar
-                MongoCredential credential = MongoCredential.createCredential(usr,"nomDeLaBaseDauthentificationLINKjdjdjd",password.toCharArray());
-                MongoClient mongoClient = new MongoClient(new ServerAddress("localhost",27017),credential,MongoCLientOptions.builder().build());
-                return mongoClient.getDatabase("dbName").getCollection("collectionName");
-            pour transformer bson en json en java:
-		String input="{\"timestamp\":0934820948}";
-		org.bson.Document doc=org.bson.Document.parse(input);
-		System.out.println("input = "+input);
-		System.out.println("output (SHELL) = "+  doc.toJson(new JsonWriterSettings(JsonMode.SHELL)));
-		System.out.println("output (STRICT) = "+ doc.toJson(new JsonWriterSettings(JsonMode.STRICT)));
-		System.out.println("output (JSON) = " + com.mongodb.util.JSON.serialize(doc));
-		this will generate following output:
-			input={"timestamp" : xxx}
-			output(SHELL)={"timestamp":NUMBERLONG(xxx)}
-			output (STRICT) = {"timestamp": {"$numberlong":"xxxx"}}
-			output (JSON) = {"timestamp" : xxx}
-		outil tool : mongocompass : s'installe à part.
-			C:\Users\B042EL\Documents\installation\MongoDBCompass\mongodb-compass-1.20.5-win32-x64\MongoDBCompass.exe
 DB2 :
 pour se connecter à db2: 
 							connect to IS user AW0EPRI using r9097268
@@ -17096,7 +17104,7 @@ executer du javascript à partir de java:
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName("JavaScript");
         puis
-        engine.eval(Files.newBufferedReader(Paths.get("C:/Scripts/Jsfunctions.js"), StandardCharsets.UTF_8));
+        engine.eval(Files.newBufferedReader(Paths.get("C:/Scripts/Jsfunctions.js"), StandardCharsets.UTF_8)); //ici je converti un string en path LINKfkjfkjfv
         ou        
         String script1 = (String)"function nomDeLaMethode(name) {print ('Hello, ' + name);}";
         engine.eval(script1);
@@ -17830,7 +17838,8 @@ pour convertir un string objet java en array json meme si l'array a plusieurs ni
              	ou bien avec org.json:
              	    JSONObject json = new JSONObject(lByteOut.toString());
              	    JSONArray json = new JSONArray(lByteOut.toString());
-
+pour convertir un string en Path
+	Path path=Paths.get(unstring); LINKfkjfkjfv
 pour convertir une LinkedHashMap en array Json correctement:
                 public JSONArray hMapToJson(LinkedHashMap<Integer, Object> var) throws Exception {
                 		System.out.println(var.toString());
@@ -19608,6 +19617,7 @@ pour savoir par introspection si une classe est une sousclasse d'une autre class
     if(LaSuperClasse.class.isAssignableFrom(lasousclasse.getClass()))
 pour recuperer le nom d'une classe: 
 	maclasseinconue.getClass().getCanonicalName(); // class.getCanonicalName() renvoit package+.+nomclasse
+	this.getClass().getSimpleName() // pour recuperer seulement le nom de la classe sans son package.
 	.getEnclosingClass() recupere le nom de la superclasse je crois
     pour executer une interface en passant le nom d'une classe de cette interface en dur: introspection
 			IState state = (IState) Class.forName("cpi.sm." + clase).newInstance(); // peut etre c mieux d'utiliser chez Spring: ClassUtils.forName("mon.package.MaClasse", classLoader (c'est CetteClasse.class.getClassLoader());
@@ -32692,7 +32702,8 @@ pour avoir la liste des taches (control alt suppr; ctrl alt suppr):
     de là ou je suis il supprime: 
         del /s *.MF (il supprime tous les fichiers *.MF recursivement) /Q pour qu'il ne demande pas de confirmation
         rmdir /S repertoire // pour supprimer un repertoire. /S c'est pour forcer meme si repertoires non vides
-            
+  pour vider le contenu d'un fichier:
+	break>monfichier          
       pour copier copy le nom de plusieurs fichiers: nom des fichiers en dos
           aller en commande dos
                 copy ..\MemOclapFront\target\memoclap.front.war C:\Users\lduverge\apache-tomee-plume-8.0.0\webapps\
