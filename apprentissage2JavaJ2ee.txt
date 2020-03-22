@@ -7419,7 +7419,7 @@ Les events et listeners :
                 // puis je rajoute le ou les validators
                 monComponentEditableValueHolder.setValidator(mb);
                 ou
-                monComponentEditableValueHolder.getValidators(); // ici il faut s'assurer qu'il n'a pas dejà les validators qu'on veut rajouter en double.(if (validators[i] instanceof MonValidator)) Si c'est le cas faire return; linkinstanceof
+                monComponentEditableValueHolder.getValidators(); // ici il faut s'assurer qu'il n'a pas dejà les validators qu'on veut rajouter en double.(if (validators[i] instanceof MonValidator)) Si c'est le cas faire return; LINKinstanceof
                 monComponentEditableValueHolder.addValidator(monValidator);
             }
           }
@@ -7429,7 +7429,7 @@ Les events et listeners :
             {
               public boolean isListenerForSource(Object app)
               {
-                return app instanceof Application; // filtre en fonction du type d'event pour executer la methode suivante que lors d'events applicatifs linkinstanceof
+                return app instanceof Application; // filtre en fonction du type d'event pour executer la methode suivante que lors d'events applicatifs LINKinstanceof
               }
               public void processEvent(SystemEvent event) throws AbortProcessingException
               {
@@ -12422,6 +12422,7 @@ notepad++ :
         alt+shift+fleches
     
 PSPAD :
+ remplacer: Ctrl+g
 indenter automatiquement autoindent 
     si c'est du html: html>reformater code html 
 backups: back: menu >parametres>parametres du programme>sauvegarde
@@ -19285,7 +19286,7 @@ exceptions :exception :
                catch (InvocationTargetException ex) 
                {
               			Exception th=null; 
-              			if (ex.getClass().isInstance(new Exception()) ou plutot ex instanceof Exception linkinstanceof c'est mieux voir LINKkgjhjhjhjhjhjc
+              			if (ex.getClass().isInstance(new Exception()) ou plutot ex instanceof Exception LINKinstanceof c'est mieux voir LINKkgjhjhjhjhjhjc
               			{
                       ....              			
                     }
@@ -19611,7 +19612,7 @@ introspection :
 pour connaitre savoir le type d'une classe: LINKkgjhjhjhjhjhjc 
     	instanceof
     	   exemple:
-          if (maclasse instanceof Command)...
+          if (maclasse instanceof Command)...  // et si Command est une superclasse ca renvoit true quand même
     	ou bien:
     	e.getClass().getName()// class.getName() renvoit package+.+nomclasse
 pour savoir par introspection si une classe est une sousclasse d'une autre classe extend etent:
@@ -21457,7 +21458,7 @@ Sinon on peut aussi faire ca sublist subtable subarr:
 //		System.out.println(a.getClass().getCanonicalName());// class.getCanonicalName() renvoit package+.+nomclasse
 		String b = Constants.EMPTY;
 		
-		if (a.getClass().isInstance(new String())) linkinstanceof
+		if (a.getClass().isInstance(new String())) LINKinstanceof
 		{
 			b = (String)a;
 		}
