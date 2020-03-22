@@ -648,6 +648,7 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
   docker pull unPackage/docker:version 
   docker images // liste des images du repository
   docker image ls // LINKdckrimgls liste les images que j'ai cree. Ajouter --all si je veux voir aussi les images qui run
+  docker image tag ed9fa2cfcf96 nouveaunomderepository:nouveautag // pour renommer le repository et le tag de l'image dont l'id est ed9etc...
   docker ps -a // pour voir la liste de tous les containers (en cours de run et pas)
   docker container ls // liste les containers qui tournent qui sont en cours d'execution 
   Dockerfile= bien l'appeler "Dockerfile" fichier docker: Défini une image à partir d'une image source. A ecrire apres avoir testé sur un container l'enchainement des commandes qui marchent grace à docker exec. puis ecrire ici les commandes pour builder mon image(mettre des trucs dedans):execution du haut vers le bas. haut:ce qui bouge le moins. Bas ce qui change le plus car docker utilise un cache.
@@ -901,7 +902,10 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
           et executer avec 
           git difftool plutot qu'avec git diff
       git diff-tree --no-commit-id --name-only -r <numero de commit> // voir la liste des fichiers commités  d'un commit 
-      git reset HEAD .OuNomFichier ou *.extensionfichier // opposé inverse de add pour retirer ce fichier de l'index added(voir LINKresetgit et Linkcheckout) annuler undo un delete MAIS: si j'ai déjà pushé alors faire:LINKrmgit 
+     // opposé inverse annuler undo de add pour retirer ce fichier de l'index added(voir LINKresetgit et Linkcheckout) annuler undo un delete MAIS: si j'ai déjà pushé alors faire:LINKrmgit 
+     	 	git reset  pour tout enlever du add 
+     	 	ou
+      		git reset pathfichieravecWildcard
       git reset HEAD~ annule/undo le dernier commit. Ne pas le faire après que mon dernier commit ait ete pushe et merge avec l'origin(remote) car cela desynchronise mon local du distant. SI je veux quand même le faire par necessite alors faire git reverT: ça recommiT un snap d'avant le commit pourri.
                 on peut aussi faire git commit --amend // pour redéfinir le message du dernier commit sans besoin de l'annuler
       git reset //LINKresetgit annuler le dernier add
@@ -2247,6 +2251,7 @@ culture = country_LANGUAGE
                 -description
 
 JSON :
+l'equivalent de xpath en json sont des implementations de jsonpath comme: <groupId>com.jayway.jsonpath</groupId><artifactId>json-path</artifactId><version>2.4.0</version>
 Attention au sein de json tout est en UTF8 parse accepte que utf8(jecrois) et stringify envoie des charactères caractères en utf8
 super site pour convertir editer visualiser voir du json array en objet object conversion 
     https://jsoneditoronline.org/
@@ -3452,7 +3457,7 @@ freemaker :
             		        System.setProperty("socksProxyPort", "1080");
             		    Sinon
             		        System.setProperty("http.ProxyHost", "frsopslinfv01.soprahronline.sopra"); voir LINKrequ939302
-            		        System.setProperty("http.ProxyPort", "1080");
+            		        System.setProperty("http.ProxyPort", "1080");ca veut dire qu'en mettant le parametre JVM -Dhttp.proxyHost=xxxx on a le meme resultat . Essayer aussi https.xxxx commes parametres si j'ai toujours sockettimeoutexception. Ca peut regler le pb.
             puis 
                     System.clearProperty("socksProxyHost"); voir LINKrequ939302
                     System.clearProperty("socksProxyPort");
@@ -5045,7 +5050,7 @@ pour faire des checkbox et radios personalises
             top: -10px;
             position: relative;
             }
-    #ask > input[type="checkbox"]:checked::after {
+    #ask > input[type="checkbox"]:checked::after { // on peut aussi faire sa negation: inverse: :not(:checked)
               display: block;
               content: " ";
               padding: 10px;
@@ -5058,7 +5063,7 @@ pour faire des checkbox et radios personalises
 pour faire un croop crop sur une image rogner
     <div style="background-image: url('/modules/amazzingblog/views/img/uploads/posts/7/m/1-595010f05579d.jpg');width: 35%;height: 178px;background-position-y: -122%;"></div>
 pour faire un background avec des zones pour cliquer lien absoluts absolu 
-      <body style="background: url('img/Image 1-1-2.png'),no-repeat; background-size: 100% 100%;">
+      <body style="background: url('img/Image 1-1-2.png') no-repeat; background-size: 100% 100%;">
       <a style="position:absolute; left:15%; top: 20%; height:20%; width:20%; text-decoration:none" href="./womens/gallery.php"></a>
       <a style="position:absolute; left:44%; top: 5%; height:20%; width:20%; text-decoration:none" href="./mens/gallery.php"></a>
       <a style="position:absolute; left:70%; top: 20%; height:20%; width:20%; text-decoration:none" href="./artwork/gallery.php"></a>
@@ -5343,8 +5348,9 @@ pour centrer direct:
                             element(div par ex...)[monatribut] tout element ayant un attribut "monattribut"; element[monattribut=toto] tout element ayant un atribut ayant valeur toto: donc on peut l'utiliser pour name!!!! hahaha!
                             [monatribut] tout court: tout element ayant cet attribut "monatribut"
                             element^[monattribut] tout element commençant par mon attribut $:finissant par... *:contenant
+			toto + titi // plus(+) c'est pour selectionner tous les siblings suivants et - moins je crois que c'est pour selectionner tous les siblings precedents
                             
-    -webkit-order:0; // on peut changer l'odre independamment de la source html!!! ici si je mets -1 le deuxieme fils passe avant le premier
+    order:0; // on peut changer l'ordre independamment de la source html!!! ici si je mets -1 le deuxieme fils passe avant le premier
   }
 pour que tous les elements s'ajustent de facon bien organisee sans avoir à forcer indiquer la taille de mes elements. horizontal: % vertical: px
     min-width:338% super pour eviter les merdes sur petits ecrans
@@ -5924,7 +5930,8 @@ Conf java
           @PropertySource("classpath:/my.properties") // Mettre au dessus classe de conf.@Configuration() Pour toutes les autres classes qui utilisent LINKPropsspring: @Value("${keyDansFichierPropriete:valeurParDefautFacultatif}totoatatarestepareil") String toto il va chercher la valeur des {$toto.toto} dans ce fichier de propriete sous resources ou dans *.properties si PropertySource ne specifie pas.  
                           "file:/C:/..."                                                                                                                       exemples Spring el SPEL: 
                                                                                                                                                                               @Value("#{'${ws.authorized.remoteIp}'.split(',')}") converti un string en listeSpring SPEL expressions
-                                                                                                                                                                              @Value("#{systemProperties['os.arch'].equals('x86') ? winDataSource: unixDataSource}")
+                                                                                                                                                                              @Value("#{new Boolean('${test}')}") // converti un sring en Boolean;
+																					      @Value("#{systemProperties['os.arch'].equals('x86') ? winDataSource: unixDataSource}")
                                                                                                                                                                               private List<String> authorizedIp;
                                                                                                                                                               Autre methode pour que les .properties se trouve dans une classe. @ConfigurationProperties(prefix="connection" ou "connection" tout court) Cette annot peut etre sur une classe Tatato avec getter et setter qui selon nom des champs, les remplis à partir de *.properties (si contient connexion.tata): Tatato a comme getter: tata se rempli tout seul pour que ca marche besoin que ma classe config ait: @EnableConfigurationProperties(Tatato.class)@ConfigurationProperties peut aussi accompagner un @Bean au dessus d'une methode
                                                                                                                                                               attention Tatato doit contenir le constructeur sans argument et les constructeurs avec tous les arguments. Pour ça utiliser lombok (voir LINKLombok )                        
@@ -5948,7 +5955,7 @@ Conf java
             				};
             				cfg.setLocations(resources);				            				
             				ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("maconfig.xml");
-conditionnel:				context.addBeanFactoryPostProcessor(cfg); // modifie mon contexte à la volee au runtime des que ensuite je fais 
+ 					context.addBeanFactoryPostProcessor(cfg); // modifie mon contexte à la volee au runtime des que ensuite je fais 
             				context.refresh();                        // ca! recharge reinitialise rafraichit les beans
             				context.getBean(); recuperation bean possible.
             	
@@ -6017,9 +6024,13 @@ AILLEURS: injecter mes beans par constructeur
                                                       public boolean matches()
                                                       {ma condition}
                       @ConditionalOnClass({UneClassePeutEtrePresenteDansLeClasspath.class,UneAutre.class}) conditionnel: cette classe s'injecte si les deux classes specifiees existent dans le classpath
-                      @ConditionalOnMissingBean(UneClasseQuiPeutEtreEstInstancieeDansUnBean.class) conditionel: Ne cree les beans ci dessous que si un bean de ce type n'existe pas dejà comme ca:@Bean UneClasseQuiPeutEtreEstInstancieeDansUnBean lala(){return null; }
-                      @Configuration ou @ComponentGENERIQUEEVITERDUTILISERUtiliser@Named   
-                      UneClasse 
+                   ou
+		      @ConditionalOnMissingBean(UneClasseQuiPeutEtreEstInstancieeDansUnBean.class) conditionel: Ne cree les beans ci dessous que si un bean de ce type n'existe pas dejà comme ca:@Bean UneClasseQuiPeutEtreEstInstancieeDansUnBean lala(){return null; }
+	   	      @ConditionalOnProperty(value="une.propriete.dans.application.properties", havingValue="unevaleur1",matchIfMissing=true) // cette classe sera choisie si la propriete est unevaleur1 Je peux avoir une autre UneClasse2 qui est injectee a la place si par ex la valeur =unevaleur2
+                      @Configuration ou @ComponentGENERIQUEEVITERDUTILISERUtiliser@Named  ou @Service
+                      UneClasse implement UneInterface
+
+	
 
         spring et mongodb :
                     une classe @Configuration doit contenir aussi l'annotation:
@@ -7540,6 +7551,166 @@ kafka : A_COMPLETER voir aussi https://github.com/akka/alpakka-kafka qui fait de
         producer3/------->topic4                "
         logComppaction sert à convertir automatiquement les doublons-triplons... en un seul: gain de place dans le disque
         producers ont 3modes d'ecrtutre (async: donees pas garanties reçues. commited to leader: confirmation reception par le partition leader. commited to leader & quorum: confirmation reception par leader + une autre partition)
+mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents dans le systeme de fichier que en blob dans la db. la db c'est pour les metadatas.)
+        -toujours activer l'authentification (par user/password au moins) facultatif sur local pour test.
+        -il faut désactiver l'introspection javascript par sécurité(dans fichier de config mettre javascriptEnabled:false). LinkLKJDSFA
+        -attention!!!! l'ordre des champs du json au niveau n-1 est important! au niveau n pas de probleme( par ex utiliser ordre alphabetique)
+        -si je veux utiliser limit alors toujours utiliser sort avant limit dans une requete.
+        -il faut faire un schema: installer https://studio3t.com/knowledge-base-articles/schema-explorer/
+                        resumé de ce que j'ai lu là:https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design-part-1
+                        si j'ai relation 1-N(peu nombreux) où je n'aurais jamais besoin de recuperer ces N tout seuls sans leur parents
+                                    alors je peux faire 
+                                                  {
+                                                    name: 'Kate Monster',
+                                                    ssn: '123-456-7890',
+                                                    addresses: [
+                                                       { street: '123 Sesame St', city: 'Anytown', cc: 'USA' }, // j'en ai peu.
+                                                       { street: '123 Avenue Q', city: 'New York', cc: 'USA' }
+                                                    ]
+                                                  }
+                        si j'ai relation 
+                                1-N(une centaine) et que c'est l'application qui gère la recuperation des N pour l'element 1 . mais en fait ca a l'avantage d'etre aussi une relation N-N
+                                    alors je peux faire (un produit contient plusieurs pieces)
+                                    produit:{
+                                        name: 'MON PRODUIT 1',
+                                        pieces: [     // array of references to Part documents
+                                            ObjectID('AAAA'),    // reference vers la piece ci dessous
+                                            ObjectID('F17C'),    // reference to a different Part
+                                            ObjectID('D2AA'),
+                                            // etc
+                                        ]
+                                        }
+                                    piece:{
+                                            _id: ObjectID('AAAA'),
+                                            partno: '123-aff-456',
+                                            name: '#4 grommet',
+                                            qty: 94,
+                                            cost: 0.94,
+                                            price: 3.99
+                                        }                 
+                            si j'ai une relation 1-N où N c'est PLEIN denregistrements. Produit peut avoir plusieurs pieces mais une piece ne peut avoir qu'un seul produit.
+                                    produit:{
+                                        name: 'MON PRODUIT 1',
+                                        _id: ObjectID('AAAA')
+                                        }
+                                    piece:{
+                                            partno: '123-aff-456',
+                                            name: '#4 grommet',
+                                            qty: 94,
+                                            cost: 0.94,
+                                            price: 3.99
+                                            produit: ObjectID('AAAA') // comme dans une base relationelle 1-N
+                                        }                               
+        -il faut desactiver la casesensitive et accent sensitive pour les requetes
+        -l'ordre dans les requetes est important: d'abord filtrer puis trier puis groupby joindre
+        -il faut enable journaling pour recuperer la base old version si devient inconsistent (configuration-> storage.journal.enabled)
+        -requetes ordonnees sortees toujours sur un ou des champs indexés. (sinon sur un-des champs non indexes risques d'overflow donc d'erreur: retourne rien)
+        -des arrays pas trop longues et indexees(ca l'est pas défaut)
+        pour tester online en ligne des requetes: https://docs.mongodb.com/manual/tutorial/query-arrays/ 
+        pour installer mongodb en local: 
+            https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
+            dezipper quelque part, mkdir c:/data/db(ou autre part...)
+        pour démarrer mongodb serveur en local: 
+            puis cmd ceci: 
+            pathVersLeBin/mongod.exe --dbpath="c:\mongodb-win32-x86_64-2008plus-ssl-4.0.9\data\db" // ca demare le serveur par defaut là: mongodb://127.0.0.1:27017/nombasededonnee?ssl=true&gssapiServiceName=mongodb (ssl=true etc si il est distant)
+																	mongodb://username:password@localhost:27017/basemongo
+        pour demarrer un client mongodb pour administrer la base et pour faire des requetes de test
+            ensuite executer mongo.exe: c'est un client pour faire les requetes (c'est du javascript la dedans) LinkLKJDSFA . On peut aussi utiliser un gui qui s'appelle Robo3T à installer.
+            ou bien mongo mongodb://mongodb0.example.com:28015/testdb?ssl=true // si il est distant
+        aide help:
+            db.help()            
+        statistiques: (etre connecté à une base d'abord)
+            db.stats()            
+        rentrer dans une base. Si elle n'existe pas il la crée. Je crois que une fois dedans on peut creer des users dedans.
+            use nomdelabase
+	vider une base de donnée
+		Aller d'abord dans la base (use labase)
+		puis db.dropDatabase()
+	vider effacer l'interieur supprimer toutes les lignes d'une collection
+		db.uneCollection.remove({})
+        pour se connecter avec un utilisateur user
+            db.auth("AribaSystem","xxxx");            
+	qui je suis whoami quel est mon user utilisateur
+		db.runCommand({connexionStatus:1})
+        pour voir la liste des bases
+            show dbs (faut etre connecté avec un compte pour pouvoir le faire)
+        pour voir dans quelle base je suis ?
+            db
+        pour creer un user et lui attribuer des droits sur les bases
+            db.createUser(
+                {
+                    user:"sonNom",
+                    pwd:"xxxxx",
+                    roles:[
+                    {role:"readWrite", db: "unebase1"},
+                    {role:"readWrite", db: "unebase2"},                    
+                    {role:"readWrite", db: "unebase3"},
+                    ]
+                }
+            )    
+        pour modifier les droits d'un user sur les bases:
+            db.grantRolesToUser("NomDuUser",
+                [
+                    {role:"readWrite", db: "unebase1"},
+                    {role:"readWrite", db: "unebase2"},                    
+                    {role:"readWrite", db: "unebase3"},
+                ]
+            )
+	pour ajouter un droit a un user :
+		db.grantRolesToUser(
+		    "nomduuser",
+		    [
+		      { role: "read", db: "accounts" }
+		    ]
+		)
+        pour supprimer les droits d'un user sur les bases:
+            db.revokeRolesFromUser("AribaSystem", [
+                    {role:"readWrite", db: "unebase1"},
+                    {role:"readWrite", db: "unebase2"},                    
+                    {role:"readWrite", db: "unebase3"},
+                ]
+            )
+	pour voir la liste des utilisateurs users:
+		db.getUsers()
+        pour voir la liste des collections d'une base:
+            show collections
+        exemples de rechercher requetes. Une collection = une table relationelle
+                    db.uneCollection.find({}) //pour trouver tout
+	requete : retourner certains quelques field champs seulement
+		    db.lacollection.find({champaretourner:true,champapasretourner:false})
+            var doc = db.uneCollection.findOne ou find({ _id: 1 unjsonquimatchquoi })// trouver par id (du coup doc est une variable) // findOne retourne le 1er resultat
+        count compter nombre de lignes:
+            db.nomdelacollection.count({duJson}); et tout compter: db.nomdelacollection.count({})
+        autres operations:             
+            db.uneCollection.remove({ _id: 1 }) //pour supprimer ce qui match. Comment faire pour tout supprimer de la collection ?  
+            db.uneCollection.insert({ _id: 1, jsFunc: function(){ print("hello") } } ) // si uneCollection n'existe pas elle est automatiquement créee
+            db.myNewCollection3.createIndex( { y: 1 } ) // ajoute un indexe dans la collection
+	mongodump sur windows:
+		E:\x\MongoDB\bin\mongodump.exe --port=27017 --host=localhost --username=superuser --password=xxxx --authenticationDatabase=admin --db=testGlobal --out ou --archive=E:/mongoout //out dans un repertoire, archive dans un compresse
+	mongorestore:
+		"path/mongorestore.exe" --username laurent --password laurent --authenticationDatabase attentionCPasLaBaseDeDonneeCestLeNomDeLaBaseDauthentificationQueJeCreeBesoinRetenirNomLINKjdjdjd --archive=cheminVersArchive ou repertoireFiniParSlashOuFichierArchiveCreeParMongoDump
+		exemple: 
+		"C:\Program Files\MongoDB\Server\4.2\bin\mongorestore.exe" --username laurent --password laurent --authenticationDatabase ariba --archive=C:\Users\B042EL\Documents\Capitalisation\ArchivageDiagrameClassesEtDoc\mongodump\mongoout2 
+
+        en java:pour me connecter à mongodb en java standard:
+            avec la librairie mongo-java-driver-3.10.2.jar
+                MongoCredential credential = MongoCredential.createCredential(usr,"nomDeLaBaseDauthentificationLINKjdjdjd",password.toCharArray());
+                MongoClient mongoClient = new MongoClient(new ServerAddress("localhost",27017),credential,MongoCLientOptions.builder().build());
+                return mongoClient.getDatabase("dbName").getCollection("collectionName");
+            pour transformer bson en json en java:
+		String input="{\"timestamp\":0934820948}";
+		org.bson.Document doc=org.bson.Document.parse(input);
+		System.out.println("input = "+input);
+		System.out.println("output (SHELL) = "+  doc.toJson(new JsonWriterSettings(JsonMode.SHELL)));
+		System.out.println("output (STRICT) = "+ doc.toJson(new JsonWriterSettings(JsonMode.STRICT)));
+		System.out.println("output (JSON) = " + com.mongodb.util.JSON.serialize(doc));
+		this will generate following output:
+			input={"timestamp" : xxx}
+			output(SHELL)={"timestamp":NUMBERLONG(xxx)}
+			output (STRICT) = {"timestamp": {"$numberlong":"xxxx"}}
+			output (JSON) = {"timestamp" : xxx}
+		outil tool : mongocompass : s'installe à part.
+			C:\Users\B042EL\Documents\installation\MongoDBCompass\mongodb-compass-1.20.5-win32-x64\MongoDBCompass.exe
 		                  
   DM 
    ^ 
@@ -9195,140 +9366,7 @@ Exemple de classe jdo: a mettre cote client:
                                                 	
                                                 
                                                 	}
-mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents dans le systeme de fichier que en blob dans la db. la db c'est pour les metadatas.)
-        -toujours activer l'authentification (par user/password au moins) facultatif sur local pour test.
-        -il faut désactiver l'introspection javascript par sécurité(dans fichier de config mettre javascriptEnabled:false). LinkLKJDSFA
-        -attention!!!! l'ordre des champs du json au niveau n-1 est important! au niveau n pas de probleme( par ex utiliser ordre alphabetique)
-        -si je veux utiliser limit alors toujours utiliser sort avant limit dans une requete.
-        -il faut faire un schema: installer https://studio3t.com/knowledge-base-articles/schema-explorer/
-                        resumé de ce que j'ai lu là:https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design-part-1
-                        si j'ai relation 1-N(peu nombreux) où je n'aurais jamais besoin de recuperer ces N tout seuls sans leur parents
-                                    alors je peux faire 
-                                                  {
-                                                    name: 'Kate Monster',
-                                                    ssn: '123-456-7890',
-                                                    addresses: [
-                                                       { street: '123 Sesame St', city: 'Anytown', cc: 'USA' }, // j'en ai peu.
-                                                       { street: '123 Avenue Q', city: 'New York', cc: 'USA' }
-                                                    ]
-                                                  }
-                        si j'ai relation 
-                                1-N(une centaine) et que c'est l'application qui gère la recuperation des N pour l'element 1 . mais en fait ca a l'avantage d'etre aussi une relation N-N
-                                    alors je peux faire (un produit contient plusieurs pieces)
-                                    produit:{
-                                        name: 'MON PRODUIT 1',
-                                        pieces: [     // array of references to Part documents
-                                            ObjectID('AAAA'),    // reference vers la piece ci dessous
-                                            ObjectID('F17C'),    // reference to a different Part
-                                            ObjectID('D2AA'),
-                                            // etc
-                                        ]
-                                        }
-                                    piece:{
-                                            _id: ObjectID('AAAA'),
-                                            partno: '123-aff-456',
-                                            name: '#4 grommet',
-                                            qty: 94,
-                                            cost: 0.94,
-                                            price: 3.99
-                                        }                 
-                            si j'ai une relation 1-N où N c'est PLEIN denregistrements. Produit peut avoir plusieurs pieces mais une piece ne peut avoir qu'un seul produit.
-                                    produit:{
-                                        name: 'MON PRODUIT 1',
-                                        _id: ObjectID('AAAA')
-                                        }
-                                    piece:{
-                                            partno: '123-aff-456',
-                                            name: '#4 grommet',
-                                            qty: 94,
-                                            cost: 0.94,
-                                            price: 3.99
-                                            produit: ObjectID('AAAA') // comme dans une base relationelle 1-N
-                                        }                               
-        -il faut desactiver la casesensitive et accent sensitive pour les requetes
-        -l'ordre dans les requetes est important: d'abord filtrer puis trier puis groupby joindre
-        -il faut enable journaling pour recuperer la base old version si devient inconsistent (configuration-> storage.journal.enabled)
-        -requetes ordonnees sortees toujours sur un ou des champs indexés. (sinon sur un-des champs non indexes risques d'overflow donc d'erreur: retourne rien)
-        -des arrays pas trop longues et indexees(ca l'est pas défaut)
-        pour tester online en ligne des requetes: https://docs.mongodb.com/manual/tutorial/query-arrays/ 
-        pour installer mongodb en local: 
-            https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
-            dezipper quelque part, mkdir c:/data/db(ou autre part...)
-        pour démarrer mongodb serveur en local: 
-            puis cmd ceci: 
-            pathVersLeBin/mongod.exe --dbpath="c:\mongodb-win32-x86_64-2008plus-ssl-4.0.9\data\db" // ca demare le serveur par defaut là: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
-        pour demarrer un client mongodb pour administrer la base et pour faire des requetes de test
-            ensuite executer mongo.exe: c'est un client pour faire les requetes (c'est du javascript la dedans) LinkLKJDSFA . On peut aussi utiliser un gui qui s'appelle Robo3T à installer.
-            ou bien mongo mongodb://mongodb0.example.com:28015/testdb?ssl=true // si il est distant
-        aide help:
-            db.help()            
-        statistiques: (etre connecté à une base d'abord)
-            db.stats()            
-        rentrer dans une base:(sur ? ou plutot se connecter ? use admin)
-            use nomdelabase
-        pour se connecter avec un utilisateur user
-            db.auth("AribaSystem","xxxx");            
-        pour voir la liste des bases
-            show dbs (faut etre connecté avec un compte pour pouvoir le faire)
-        pour voir dans quelle base je suis ?
-            db
-        pour creer un user et lui attribuer des droits sur les bases
-            db.createUser(
-                {
-                    user:"sonNom",
-                    pwd:"xxxxx",
-                    roles:[
-                    {role:"readWrite", db: "unebase1"},
-                    {role:"readWrite", db: "unebase2"},                    
-                    {role:"readWrite", db: "unebase3"},
-                    ]
-                }
-            )    
-        pour modifier les droits d'un user sur les bases:
-            db.grantRolesToUser("AribaSystem",
-                [
-                    {role:"readWrite", db: "unebase1"},
-                    {role:"readWrite", db: "unebase2"},                    
-                    {role:"readWrite", db: "unebase3"},
-                ]
-            )
-        pour supprimer les droits d'un user sur les bases:
-            db.revokeRolesFromUser("AribaSystem", [
-                    {role:"readWrite", db: "unebase1"},
-                    {role:"readWrite", db: "unebase2"},                    
-                    {role:"readWrite", db: "unebase3"},
-                ]
-            )
-        pour voir la liste des collections d'une base:
-            show collections
-        exemples de rechercher requetes. Une collection = une table relationelle
-                    db.uneCollection.find({}) //pour trouver tout
-            var doc = db.uneCollection.findOne ou find({ _id: 1 unjsonquimatchquoi })// trouver par id (du coup doc est une variable) // findOne retourne le 1er resultat
-        count compter nombre de lignes:
-            db.nomdelacollection.count({duJson});
-        autres operations:             
-            db.uneCollection.remove({ _id: 1 }) //pour supprimer ce qui match. Comment faire pour tout supprimer de la collection ?  
-            db.uneCollection.insert({ _id: 1, jsFunc: function(){ print("hello") } } ) // si uneCollection n'existe pas elle est automatiquement créee
-            db.myNewCollection3.createIndex( { y: 1 } ) // ajoute un indexe dans la collection
-	mongodump sur windows:
-		E:\x\MongoDB\bin\mongodump.exe --port=27017 --host=localhost --username=superuser --password=xxxx --authenticationDatabase=admin --db=testGlobal --out ou --archive=E:/mongoout //out ne compresse pas contrairement à archive
-        en java:pour me connecter à mongodb en java standard:
-            avec la librairie mongo-java-driver-3.10.2.jar
-                MongoCredential credential = MongoCredential.createCredential(usr,"admin",password.toCharArray());
-                MongoClient mongoClient = new MongoClient(new ServerAddress("localhost",27017),credential,MongoCLientOptions.builder().build());
-                return mongoClient.getDatabase("dbName").getCollection("collectionName");
-            pour transformer bson en json en java:
-		String input="{\"timestamp\":0934820948}";
-		org.bson.Document doc=org.bson.Document.parse(input);
-		System.out.println("input = "+input);
-		System.out.println("output (SHELL) = "+  doc.toJson(new JsonWriterSettings(JsonMode.SHELL)));
-		System.out.println("output (STRICT) = "+ doc.toJson(new JsonWriterSettings(JsonMode.STRICT)));
-		System.out.println("output (JSON) = " + com.mongodb.util.JSON.serialize(doc));
-		this will generate following output:
-			input={"timestamp" : xxx}
-			output(SHELL)={"timestamp":NUMBERLONG(xxx)}
-			output (STRICT) = {"timestamp": {"$numberlong":"xxxx"}}
-			output (JSON) = {"timestamp" : xxx}
+
 DB2 :
 pour se connecter à db2: 
 							connect to IS user AW0EPRI using r9097268
@@ -15145,7 +15183,7 @@ letsencrypt en shell avec dehydrated :
     ./dehydrated -c // voir la doc:https://github.com/lukas2511/dehydrated#usage                                                                                                                                               
     
    
-SSL : TLS : https :
+SSL : TLS : https : le port https est toujours 443
 condidentialite/authenticite/non-repudiation=integrite(non modifie sur reseau) HTTPS: repond à tout ça LINK94949494
     sur windows pour voir la liste des certificats root d'autorité reconnus: executer certmgr.msc
         web:
@@ -15717,9 +15755,12 @@ junit5 : junit 5 :  version 5: // https://stackify.com/junit-5/ tests repetees, 
                       () -> assertEquals("Johnson", user.getName()),
                       () -> assertEquals("johnson@gmail.com", user.getEmail()));
                 assertIterableEquals(users, userDAO.findAll()); ou assertArrayEquals(users, userDAO.findAll()); // nouveau: les fils doivent avoir la methode equals declaree
-                 Exception exception = assertThrows(NullPointerException.class, () -> user.getName()); //tester qu'il renvoit bien une exception LINKlkfghdfg
-                @AfterEach (....)  //remplace @After                          
-    Pour faire un testsuite en junit5:LINKtestesuitelksjgmhklj 
+                 
+		Exception exception = assertThrows(NullPointerException.class, () -> user.getName()); //tester qu'il renvoit bien une exception LINKlkfghdfg
+		  puis Assertions.assertTrue(exception.getMessage().contains("privateProject"));
+                
+		@AfterEach (....)  //remplace @After                          
+	      Pour faire un testsuite en junit5:LINKtestesuitelksjgmhklj 
                 package renault.diversitysimulator;
                   import org.junit.platform.suite.api.SelectClasses;
                   import org.junit.platform.suite.api.SelectPackages;
@@ -16011,9 +16052,11 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
                     pour qu'une meme classe soit testée et spyée:
                         Machin machinATesterEtSpyer = new Machin()
                         Mockito.spy(machinATesterEtSpyer);
+			ou bien l'annoter @Spy et @InjectMock puis mocker ses methodes comme ca:
+			Mockito.doReturn(unTrucQuiDoitEtreRetourne).when(machinAtesterEtSpyer).uneMethodeAMocker(anyString());
                     ResultDao rd =mock ou spy(unObjetNONANNOTE ou new ResultDao() ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
                     Mockito.doReturn(toto).when(rd).getLaMethodeNONSTATIQUEResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy
-    				when(filterConfig.getServNONSTATIQUEletContext( // ca s'appelle faire du "stub" et utiliser ca je crois pour les mock
+    				when(filterConfig.getServNONSTATIQUEletContext( // ca s'appelle faire du "stub" et utiliser ca je crois pour les mock. Attention si c'est une methode finale il va rentrer dedans avant de traiter le when donc pour mocker une methode finale depuis Mockito2 seulement on crée un fichier sous src/test/resources/mockito-extensions/org.mockito.plugins/MockMaker et dedans on ecrit mock-maker-inline
     				ou                                   anyString()//tout string
     				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça . si je met des variables direct alors j'ai l'erreur InvalidUseOfMatchersException
                                                         ,anyList() // ne pas utiliser anyObject si j'ai une liste
@@ -17062,7 +17105,7 @@ executer du javascript à partir de java:
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName("JavaScript");
         puis
-        engine.eval(Files.newBufferedReader(Paths.get("C:/Scripts/Jsfunctions.js"), StandardCharsets.UTF_8));
+        engine.eval(Files.newBufferedReader(Paths.get("C:/Scripts/Jsfunctions.js"), StandardCharsets.UTF_8)); //ici je converti un string en path LINKfkjfkjfv
         ou        
         String script1 = (String)"function nomDeLaMethode(name) {print ('Hello, ' + name);}";
         engine.eval(script1);
@@ -17253,7 +17296,7 @@ logback : (mieux que LinkLogutils)
                   <!-- encoders are assigned the type
                        ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
                   <encoder>
-                      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+                      <pattern>%d{dd/MM/yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
                   </encoder>
                   ou ca mais NON c'est deprecie:
                   <encoder> // avant: <layout class="ch.qos.logback.classic.PatternLayout">
@@ -17796,7 +17839,8 @@ pour convertir un string objet java en array json meme si l'array a plusieurs ni
              	ou bien avec org.json:
              	    JSONObject json = new JSONObject(lByteOut.toString());
              	    JSONArray json = new JSONArray(lByteOut.toString());
-
+pour convertir un string en Path
+	Path path=Paths.get(unstring); LINKfkjfkjfv
 pour convertir une LinkedHashMap en array Json correctement:
                 public JSONArray hMapToJson(LinkedHashMap<Integer, Object> var) throws Exception {
                 		System.out.println(var.toString());
@@ -19574,6 +19618,7 @@ pour savoir par introspection si une classe est une sousclasse d'une autre class
     if(LaSuperClasse.class.isAssignableFrom(lasousclasse.getClass()))
 pour recuperer le nom d'une classe: 
 	maclasseinconue.getClass().getCanonicalName(); // class.getCanonicalName() renvoit package+.+nomclasse
+	this.getClass().getSimpleName() // pour recuperer seulement le nom de la classe sans son package.
 	.getEnclosingClass() recupere le nom de la superclasse je crois
     pour executer une interface en passant le nom d'une classe de cette interface en dur: introspection
 			IState state = (IState) Class.forName("cpi.sm." + clase).newInstance(); // peut etre c mieux d'utiliser chez Spring: ClassUtils.forName("mon.package.MaClasse", classLoader (c'est CetteClasse.class.getClassLoader());
@@ -24588,7 +24633,9 @@ smtp :
           Subject: Sent using the SMTP-server of GMail
           Some content.
 copy Ctlr+ins ; paste Shift+ins
-2)
+2) 
+voir deja si le serveur de mail existe
+ 	   nslookup -q=mx axa-groupsolutions.com
 saisir les commandes suivantes pour commander le serveur smtp (pas reçu le mail pourtant....)
           www-data@kanail:~$ telnet localhost smtp 
                     oubien 
@@ -24816,6 +24863,7 @@ copier-coller bouts:
 faire une recherche find: :set ignorecase puis :set smartcase puis /blabla // si j'ai pas fait les set alors faire /blabla\c pour une recherche case noncasesensitive majuscule minuscule. Pour revenir à une recherche casesensitive faire: :set noic
 		ou /bla\c exemple: /motcherche\c pour case insensitive ignorer majuscule minuscules.\c peut apparaitre partout debut ou fin et tapper. pour faire next, wildcard faire .*, tapper n (pour echapper les / slash faire un backslash) pour rechercher en arrière: N
 		pour trouver deux mots dans n'importe quel ordre sur une ligne: /.*mot1\&.*mot2
+ V selectionner toute la ligne
 ?: recherche de bas en haut
 u: undo si multiple undo ne marche pas: aptitude et charger vim
 .:redo Ou plutot  Ctrl+r
@@ -25257,7 +25305,7 @@ raid :
 lvm :
     equivalent de git avec des snapshots mais pour les disques unix    
     
-pour installer des programmes: applications: (le repository miroir local qui lui indique ou chercher les paquets determine aussi la version de l'os. On peut le modifier. C'est le texte /etc/apt/sources.list C'est aussi ce fichier qu'utilise aptitude. Attention a resecter mon code version debian dedans)
+pour installer des programmes: applications: (le repository miroir local qui lui indique ou chercher les paquets determine aussi la version de l'os. On peut le modifier. C'est le texte /etc/apt/sources.list C'est aussi ce fichier qu'utilise aptitude. Attention a respecter mon code version debian dedans)
     avec apt : apt-get : (sinon il ya aussi la commande yum)
     apt-cache search unelibrairie // pour chercher une librairie que je pourrais puller avec apt-get install
       apt-get update // pour mettre a jour la liste des packages nouvellement installables c a d juste la liste.
@@ -25932,7 +25980,7 @@ Recuperation de l'adresse IP du hostname.
             nc -v -w 5 -X5 -xfrsopslinfv01:1080 rapplisaasaccess.groupeadeo.com 636
             nc -v -w 5 -X 5 -x frsopslinfv01:1080 ldap-master.22.sirca.info 636
             si j'ai l'erreur invalid tcp sequence number (flag=S.....) essayer avec une autre version du socks
-          telnet :se fait sur un port: 
+          telnet :se fait sur un port: c'est comme du ssh mais non securisé. Je me connecte à une machine et dedans je fais ce que je veux.
               exemple telnet 19.20.02.30 386 (port ldap par defaut) ftp sur port 591 par defaut
                   telnet clxs0aa 593  (login mntesp / password mntesp)
                 telnet_miami puis su root puis chmod -R 777 pour me donner tous les droits recursivement                     
@@ -26699,7 +26747,7 @@ savoir si un element audio joue:
     traitement des variables dans des strings type template:(template literals) 
     console.log(`aaaa ${supportsCustomElements}`); // plus besoin de faire "sldfkj"+xxx Pas supporte sur IE11. Pour que ca marche bien mettre `` et non pas des guillemets
             exemple: `<div><img onclick="closeUpdateRecordBoucle('${fichiermixttemp}','${fichiermixttemp}');"/></div>` dans un template// pour echaper les dollars ${ si on est dans une jsp mettre \${
-            on peut meme faire des conditions avec templates: gabarit:
+            on peut meme faire des conditions avec templates: gabarit:. On peut les imbriquer sans probleme
                 `duhtml
            	        ${versionPro?    // ou versionPro=="machin"
                         `duhtmlsioui`:// cette partie est a mettre obligatoirement pour que ca compile
@@ -26721,7 +26769,7 @@ savoir si un element audio joue:
               };
             
             }
-tester le javascript
+tester le javascript TDD :
     tester avec jest : le meilleur d'apres sylvain. 
         les fichiers de tests doivent s'appeler xxxx.test.js            
         	    npm install --save-dev jest //--save-dest voir npm.
@@ -28209,9 +28257,28 @@ parcourir les proprietes d un objet:
  recuperer la propriete d un objet
   var keys = Object.keys(myJsonObject);
   alert(keys[key]);
-heritage: THE BEST ! heritage avec de purs objets (duck typing) (import et export ne marche qu'avec un petit serveur (npm))
+heritage: 
+nouvelle facon de definir les classes et l'heritage: mais en javascript on peut aussi faire des factory functions =composition voir Linkfactoryfnct
+       export class Toto {         
+             // je ne peux pas definir de variables ici... faire comme ci dessous          
+                constructor() // Facultatif
+                {
+                  this.sound="zzzz"
+                }
+                tals(){
+                  alert(this.sound)
+                }
+                let huhu = this.tintin(); // tintin peut etre defini ou overridé dans une sous classe
+          }
+          ggg=new Toto()
+          ggg.tals()        mais si je fais let xx=toto.tals; alors xx() va faire undefined car this est undefined. Il faut faire xx.bind(toto); xx.(); et là ca marche. Attribue un objet à this.
+       export class Titi extends Toto{
+          tals(){blabla} // override la methode tals du parent
+       }
+ 
+ heritage avec de purs objets (duck typing) (import et export ne marche qu'avec un petit serveur (npm))
   export Toto ={                   
-          this.sound="zzzz"
+          this.sound="zzzz" // apparemment ne marche plus (this genere erreur)
           tals(){alert(this.sound)},
           zozo(){xxx}
           let huhu = this.tintin(); // tintin peut etre defini ou overridé dans une sous classe
@@ -28230,24 +28297,7 @@ heritage: THE BEST ! heritage avec de purs objets (duck typing) (import et expor
         this.haha() // c'est du polymorphisme léger dans ce js dynamique
        
        
-nouvelle facon de definir les classes et l'heritage: mais en javascript on peut aussi faire des factory functions =composition voir Linkfactoryfnct
-       export class Toto {         
-             // je ne peux pas definir de variables ici... faire comme ci dessous          
-                constructor() // Facultatif
-                {
-                  this.sound="zzzz"
-                }
-                tals(){
-                  alert(this.sound)
-                }
-                let huhu = this.tintin(); // tintin peut etre defini ou overridé dans une sous classe
-          }
-          ggg=new Toto()
-          ggg.tals()        mais si je fais let xx=toto.tals; alors xx() va faire undefined car this est undefined. Il faut faire xx.bind(toto); xx.(); et là ca marche. Attribue un objet à this.
-       export class Titi extends Toto{
-          tals(){blabla} // override la methode tals du parent
-       }
-          
+         
         l'heritage avec prototype: LINKpptypeksdf
                               function capture(ev){
                                         /*...*/
@@ -28351,7 +28401,7 @@ nouvelle facon de definir les classes et l'heritage: mais en javascript on peut 
                         {
                     			DrawingFile.prototype[element] = Alerter.prototype[element]
                     		}
-            // pour faire une boucle en javascript dans un array: iteration:
+            // pour faire une loop boucle en javascript dans un array: iteration:
                     for (let selectedActeur of unarrayUneListe)// ne pas confondre for of et for in:LINKforin
                        {...}                            
                     	
@@ -28584,6 +28634,8 @@ pour ajouter ou supprimer une classe dans une liste de classe:
     this.classList.remove('over');
     ou bien this.classList.toggle('over'); // l'ajoute si elle n'existe pas et le supprime si elle existe. Interrupteur.  
     document.getElementById("theID").removeAttribute("class"); //pour les effacer toutes les classes tous remove all      
+    verifier qu'une classe existe que l'element contient la classe:
+	this.classList.contains("laclassequejecherche");
 changer une classe en javascript:
   document.getElementById("btnTest").className= "buttonType2"
 pour recuperer l'element suivant: 
@@ -29180,7 +29232,7 @@ METHODE CLASS: THEBEST? classes es6
                                                                      cloneDuTemplate.querySelector(...).innerText=untruc;
                                                                        mondiv ou thisSiJeSuisDansUneClasseHtmlElement.appendChild(cloneDuTemplate); // ajoute le template dans la page (devient visible) MARCHE PAS
                                                         findansuneboucleparex
-                                                        div.setAttribute('unAttributduTagHtml','valeurDeLattribut'); PIEGE! utiliserça et ne pas utiliser unElementHTML.unattribut=xxx (ca ne modifie que la classe pas le html et du coup attributeChangedCallback n'est pas appele)
+                                                        div.setAttribute('unAttributduTagHtml','valeurDeLattribut'); PIEGE! utiliser ça et ne pas utiliser unElementHTML.unattribut=xxx (ca ne modifie que la classe pas le html et du coup attributeChangedCallback n'est pas appele)
                                                         
                                                         on peut ajouter un listnener au slot si celui ci change en javascript: par contre si je veux modifier le innerhtml du slot voir LINKrmvEvntListner
                                                             monslot.addEventListener('slotchange', e => {
@@ -29222,7 +29274,7 @@ METHODE CLASS: THEBEST? classes es6
                                               3)        attributeChangedCallback(nameattr,oldval,newval) // exec chaque fois qu'un attrbt de observedAttributes change LINK77738
                                                         {
                                                           if (nameattr==='xxx') // mettre 3=
-                                                          this[nameattr]=newval; // va appeler le setter de cette classe (uniquement pas le tag html) "set (lenomdemonattribut){}" et dedans implicitement j'aurais dans cette classe la propriete this.lenomdemonattribut... ATTENTION SUR LES onclick ca n'accepte pas des strings mais des fonctions
+                                                          this[nameattr]=newval; //va direct setter les this.xxx de mon component. En fait va appeler le setter IMPLICITE de cette classe (uniquement pas le tag html) "set (lenomdemonattribut){}" et dedans implicitement j'aurais dans cette classe la propriete this.lenomdemonattribut... ATTENTION SUR LES onclick ca n'accepte pas des strings mais des fonctions
                                                           du coup peut etre sette depuis l'extereur: moncustomelement["machin"]=truc
                                                         }
                                                         set unattribut(unevaleur){...  // les methodes get et set peuvent etre appellees entre classes javascript: databinding
@@ -29709,7 +29761,9 @@ faire une recherche comme ca: to AND NOT toto. faire to[^to]
 
 -----------------------
 
-XSLT : TRANSFORMATION :(javax et les transformation c de la merde eviter d'utiliser si trop gros volume)
+XSLT : TRANSFORMATION :
+utiliser maintenant Saxon/Saxonica
+(javax et les transformation c de la merde eviter d'utiliser si trop gros volume)
 Struts avec XML , XSLT (utilisation de la classe XSLServlet qui serialise une ActionForm en XML)
 Transformation example 
 Consider a Struts application with a simple form bean containing two attributes: 
@@ -32649,7 +32703,8 @@ pour avoir la liste des taches (control alt suppr; ctrl alt suppr):
     de là ou je suis il supprime: 
         del /s *.MF (il supprime tous les fichiers *.MF recursivement) /Q pour qu'il ne demande pas de confirmation
         rmdir /S repertoire // pour supprimer un repertoire. /S c'est pour forcer meme si repertoires non vides
-            
+  pour vider le contenu d'un fichier:
+	break>monfichier          
       pour copier copy le nom de plusieurs fichiers: nom des fichiers en dos
           aller en commande dos
                 copy ..\MemOclapFront\target\memoclap.front.war C:\Users\lduverge\apache-tomee-plume-8.0.0\webapps\
