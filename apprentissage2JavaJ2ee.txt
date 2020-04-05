@@ -1152,6 +1152,7 @@ ajouter une dependence un pluggin dans le pom: alt+insert
 pour voir les stats (nombre de lignes de code etc...) charger le plugin de statistiques https://plugins.jetbrains.com/plugin/4509-statistic: on voit tout en bas une nouvelle icone pour les afficher   
 creer un bookmark flag tag ctrl+f11. Acceder à ce bookmark trouver: alt+2 ou ctrl+chiffredubookmark. Ensuite editer la note du bookmark:shift+f11 puis Ctrl+entree sur le bookmark  
 supprimer les bookmarks: shift+f11 (j'ai le choix)
+enregistrer macro: edit>macros>start macro recording etc...
 si erreur  Error:java: invalid target release: 10: file>settings...>build>java compiler>choisir la bonne version
 si erreur Error connecting to 127.0.0.1:51924; reason: Error:failed to create a child event loop
     redémarrer pc
@@ -7487,7 +7488,7 @@ Les events et listeners :
                 // puis je rajoute le ou les validators
                 monComponentEditableValueHolder.setValidator(mb);
                 ou
-                monComponentEditableValueHolder.getValidators(); // ici il faut s'assurer qu'il n'a pas dejà les validators qu'on veut rajouter en double.(if (validators[i] instanceof MonValidator)) Si c'est le cas faire return; linkinstanceof
+                monComponentEditableValueHolder.getValidators(); // ici il faut s'assurer qu'il n'a pas dejà les validators qu'on veut rajouter en double.(if (validators[i] instanceof MonValidator)) Si c'est le cas faire return; LINKinstanceof
                 monComponentEditableValueHolder.addValidator(monValidator);
             }
           }
@@ -7497,7 +7498,7 @@ Les events et listeners :
             {
               public boolean isListenerForSource(Object app)
               {
-                return app instanceof Application; // filtre en fonction du type d'event pour executer la methode suivante que lors d'events applicatifs linkinstanceof
+                return app instanceof Application; // filtre en fonction du type d'event pour executer la methode suivante que lors d'events applicatifs LINKinstanceof
               }
               public void processEvent(SystemEvent event) throws AbortProcessingException
               {
@@ -12490,6 +12491,7 @@ notepad++ :
         alt+shift+fleches
     
 PSPAD :
+ remplacer: Ctrl+g
 indenter automatiquement autoindent 
     si c'est du html: html>reformater code html 
 backups: back: menu >parametres>parametres du programme>sauvegarde
@@ -19361,7 +19363,7 @@ exceptions :exception :
                catch (InvocationTargetException ex) 
                {
               			Exception th=null; 
-              			if (ex.getClass().isInstance(new Exception()) ou plutot ex instanceof Exception linkinstanceof c'est mieux voir LINKkgjhjhjhjhjhjc
+              			if (ex.getClass().isInstance(new Exception()) ou plutot ex instanceof Exception LINKinstanceof c'est mieux voir LINKkgjhjhjhjhjhjc
               			{
                       ....              			
                     }
@@ -19687,7 +19689,7 @@ introspection :
 pour connaitre savoir le type d'une classe: LINKkgjhjhjhjhjhjc 
     	instanceof
     	   exemple:
-          if (maclasse instanceof Command)...
+          if (maclasse instanceof Command)...  // et si Command est une superclasse ca renvoit true quand même
     	ou bien:
     	e.getClass().getName()// class.getName() renvoit package+.+nomclasse
 pour savoir par introspection si une classe est une sousclasse d'une autre classe extend etent:
@@ -21533,7 +21535,7 @@ Sinon on peut aussi faire ca sublist subtable subarr:
 //		System.out.println(a.getClass().getCanonicalName());// class.getCanonicalName() renvoit package+.+nomclasse
 		String b = Constants.EMPTY;
 		
-		if (a.getClass().isInstance(new String())) linkinstanceof
+		if (a.getClass().isInstance(new String())) LINKinstanceof
 		{
 			b = (String)a;
 		}
