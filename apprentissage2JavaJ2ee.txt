@@ -471,7 +471,7 @@ nodejs : node.js : node : npm :  (https://www.npmjs.com/package tous les program
       defs: browserify(obsolete) : permet à des applis nodes (contiennent "require" car cote serveur require est comme import. mais browser interdit acces au filesystem) d'etres comprises par les browsers: il remplace "require par la concatenation des fichiers js dans un seul
             webpack fait comme browserify mais en plus avec plus de choses. voir LINKWPKCS
             babel converti du javascript recent pour les vieux navigateurs(ES5:vieux) voir LINKBBLE
-si problemes dans npm: https://github.com/npm/npm/wiki/Troubleshooting
+si problemes dans npm: https://github.com/npm/npm/wiki/Troubleshooting: on peut par ex supprimer package-lock.json et node_modules et refaire un npm install pour tout remettre.
   installer npm:
    aller sur https://nodejs.org/en/download/ (downloader npm: sur internet)
   dans un repertoire faire
@@ -893,16 +893,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git commit -m "blablamMonCommentaire"// index->masterOuBrancheQuiALeHEAD:jusqu'a present tout est encore en local. voir git add si il ne commit pas malgres tout.
       git commit -am // -a pour ne commiter que les fichiers je crois ou bien -a pour forcer l'ajout de fichier non indexes avant de faire le commit
       apres commit je peux faire un pull puis ensuite un push
-        
-      git diff compare pour parametrer avec un meilleur visibilité: external tool:        
-          installer C:\Program Files\KDiff3
-          git config --global --add diff.guitool kdiff3
-          git config --global --add difftool.kdiff3.path "C:\Users\ut2sn0\My_IT_Applications\programmes\kdiff\KDiff3/kdiff3.exe"
-          git config --global --add difftool.kdiff3.trustExitCode false
-          et executer avec 
-          git difftool plutot qu'avec git diff
-      git diff-tree --no-commit-id --name-only -r <numero de commit> // voir la liste des fichiers commités  d'un commit 
-     // opposé inverse annuler undo de add pour retirer ce fichier de l'index added(voir LINKresetgit et Linkcheckout) annuler undo un delete MAIS: si j'ai déjà pushé alors faire:LINKrmgit 
+      // opposé inverse annuler undo de add pour retirer ce fichier de l'index added(voir LINKresetgit et Linkcheckout) annuler undo un delete MAIS: si j'ai déjà pushé alors faire:LINKrmgit 
      	 	git reset  pour tout enlever du add 
      	 	ou
       		git reset pathfichieravecWildcard
@@ -929,7 +920,15 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git log --follow -- path/du/fichier // pour voir les commits d'un fichier specifique
       git log --graph --oneline --decorate --all // affiche joli voir joli
       git shortlog -s -n  // voir le nombre de commits par auteur: stats.statistiques
-      git diff compare mon workspacepasencoreadded avec le dernier commit
+      git diff compare pour parametrer avec un meilleur visibilité: external tool:        
+          installer C:\Program Files\KDiff3
+          git config --global --add diff.guitool kdiff3
+          git config --global --add difftool.kdiff3.path "C:\Users\ut2sn0\My_IT_Applications\programmes\kdiff\KDiff3/kdiff3.exe"
+          git config --global --add difftool.kdiff3.trustExitCode false
+          et executer avec 
+          git difftool plutot qu'avec git diff
+      git diff-tree --no-commit-id --name-only -r <numero de commit> // voir la liste des fichiers commités  d'un commit 
+git diff compare mon workspacepasencoreadded avec le dernier commit
       git diff --name-only // affiche que les noms des fichiers differents
       git diff HEAD~1 path/dun/fichier.xxx // compare un seul fichier avec le commit precedent
       git diff <optionel num commit> <wildcardPathOptionel> compare repertoire avec index ou unCommit
@@ -939,6 +938,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git tag 1.2.0 (sans mettre "v")// tag le dernier commit fait dans mon repo. ce tag ne se push pas.... voir Linktaggit
       git tag 1.2.0 iducommit fourni par >git log // cree un tag pour le désigné
       git diff --name-only // affiche que les noms des fichiers differents
+      git log -L 2,5 ou +3 :pathfichier.txt // genial: affiche entre la ligne 2 et la ligne 5 tout l'historique du bouzin
       Linktaggit:  le tag ne se push pas par defaut: pour le pusher faire git push origin <identifiant du tag>
       git checkout pathfichiermodifieMaisPasAdded //undo retour annuler mes modifs 
       git checkout <nom_du_tag> pour revenir à une ancienne version// ne marche pas si je veux remplacer mon working directory modifié par le dernier commit: dans ce cas faire git chekout -- pathAvecWildcardDesFichiersQueJaiModifieDansLeWorkSpaceMaisQueJeNaiPasAdded (undo) Linkcheckout
@@ -2384,7 +2384,7 @@ erreurs codes http: LINKcodesHttp
 413 Payload Too Large
 415 Unsupported Media Type
 417 SC_EXPECTATION_FAILED 
-304: le serveur dit que le browser a deja toutes les infos et pas besoin de renvoyer d'autres infos + code 200
+304: le serveur dit que le browser a deja toutes les infos dans son cache et pas besoin de renvoyer d'autres infos + code 200
 500: erreur interne du serveur
 503: Service unavailable
 502: Probleme entre un serveur proxy intermediaire et le serveur final: probleme de protocole ou config
@@ -2458,7 +2458,7 @@ Cycle de vie du CDI bean:
               – @CustomScoped pour que les beans soient stockees dans le FacesContext (qui a une duree de vie plus courte que RequestScope donc FC est plus rapide, bouffe moins de memoire)
               – @NoneScoped (si c un bean qui est reference par un autre bean qui lui est scoped)
               >> attention un bean ne peut pas referencer un autre bean si son scope est plus petit que le sien (sauf les @NoneScoped que tous peuvent referencer). Moi grand je ne peux pas referencer un petit. Seulement un plus grand que moi.
-                  @PostConstruct-->methode s'execute quand le bean est place dans son scope utile pour initialiser marche sur EJB (du coup sur @Singlton) et CDI mais attention avec ApplicationScoped chais pas pourquoi peut ne pas s'initialiser avant d'être injectés. Du coup faire LINKobsgdgdgz
+                  @PostConstruct--> LINKkgkdieieieie methode s'execute quand le bean est place dans son scope utile pour initialiser marche sur EJB (du coup sur @Singleton) et CDI mais attention avec ApplicationScoped chais pas pourquoi peut ne pas s'initialiser avant d'être injectés. Du coup faire LINKobsgdgdgz
                   public void debut() { ... }//ne doit pas thrower une exception donc y mettre un trycatch
                   @PreDestroy--->methode s'execute quand le bean est retire du scope ou le scope est detruit.
                   public void fin() { ... }
@@ -2731,9 +2731,9 @@ ou remote                       peute etre sur classe meme un webservice. Peut a
                   @Local ---> l'accès à ces beans ne peut se faire que par d'autres beans du meme EJB (même contexte, même classLoader)
                   @LocalBean ---> >=EJB 3.1: bean sans interface necessaire.
                   @Asynchronous à utiliser au lieu de faire des threads sur des webservice/servlet. marche avec @Stateful @Stateless et @Singleton LINKashcrinosdf
-                  @Schedule             |_Utilise Quartz et est automatiquement transactionnel. LINKkdgjzoiriririr 
-                  @ScheduleExpression   |
-                  @Startup // a mettre sur une classe. s'execute au demarrage. marche qu'avec @Singleton  
+                  @Schedule             |_Utilise Quartz et est automatiquement transactionnel. se met sur une methode exemple :  @Schedule(fixedDelay=1000 ou dayOfMonth="Last", dayOfWeek="Fri", hour = "*", minute = "*", second = "*/5", info = "Every 5 seconds timer") LINKkdgjzoiriririr 
+                  @ScheduleExpression   |// heuu... celui la nexiste pas on dirait
+                  @Startup // a mettre sur une classe. s'execute au demarrage. marche qu'avec @Singleton pour l'initialiser voir LINKkgkdieieieie 
                   @Remote ---> Bean de l'EJB peut être accede de l'exterieur de son classLoader   
                   @WebService  // pour faire un webservice jax-ws(donc soap) marche qu'avec une classe ayant @Stateless et/ou? @Singleton
                   @Path // pour faire un webservice jax-rs marche qu'avec une classe ayant @Stateless et/ou? @Singleton
@@ -3263,11 +3263,77 @@ freemaker :
                         
         
   pour uploader un fichier audio du mobile vers le serveur: faire envoyer une requette requete POST http. voir LINKrequ939302 plus bas      
+		depuis java 11  LINKhghghgieieiei
+		
+				import java.net.URI;
+				import java.net.URLEncoder;
+				import java.net.http.HttpClient;
+				import java.net.http.HttpRequest;
+				import java.net.http.HttpResponse;
+				import java.nio.charset.StandardCharsets;
+				import java.util.HashMap;
+				import java.util.Map;
+
+				public class Java11HttpClientExample {
+
+				    // one instance, reuse
+				    private final HttpClient httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).build();
+
+				    public static void main(String[] args) throws Exception {
+ 					Java11HttpClientExample obj = new Java11HttpClientExample();
+					System.out.println("Testing 1 - Send Http GET request");
+					obj.sendGet();
+					System.out.println("Testing 2 - Send Http POST request");
+					obj.sendPost();
+
+				    }
+
+				    private void sendGet() throws Exception {
+
+					HttpRequest request = HttpRequest.newBuilder().GET().uri(URI.create("https://httpbin.org/get")).setHeader("User-Agent", "Java 11 HttpClient Bot").build();
+					HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+					// print status code
+					System.out.println(response.statusCode());
+					// print response body
+					System.out.println(response.body());
+				    }
+
+				    private void sendPost() throws Exception {
+					// form parameters
+					Map<Object, Object> data = new HashMap<>();
+					data.put("username", "abc");
+					data.put("password", "123");
+					data.put("custom", "secret");
+					data.put("ts", System.currentTimeMillis());
+					HttpRequest request = HttpRequest.newBuilder().POST(buildFormDataFromMap(data)).uri(URI.create("https://httpbin.org/post")).setHeader("User-Agent", "Java 11 HttpClient Bot").header("Content-Type", "application/x-www-form-urlencoded").build();
+					HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+					// print status code
+					System.out.println(response.statusCode());
+					// print response body
+					System.out.println(response.body());
+				    }
+
+				    private static HttpRequest.BodyPublisher buildFormDataFromMap(Map<Object, Object> data) {
+					var builder = new StringBuilder();
+					for (Map.Entry<Object, Object> entry : data.entrySet()) {
+					    if (builder.length() > 0) {
+						builder.append("&");
+					    }
+					    builder.append(URLEncoder.encode(entry.getKey().toString(), StandardCharsets.UTF_8));
+					    builder.append("=");
+					    builder.append(URLEncoder.encode(entry.getValue().toString(), StandardCharsets.UTF_8));
+					}
+					System.out.println(builder.toString());
+					return HttpRequest.BodyPublishers.ofString(builder.toString());
+				    }
+
+				}
+
                      cote mobile: 
                   package pack.coderzheaven;
-                                    public boolean localFileToUrlFile(String urlString, File toSend, String targetFileName, Map<String,String> params, String callback ) throws Exception {
+                                   public boolean localFileToUrlFile(String urlString, File toSend, String targetFileName, Map<String,String> params, String callback ) throws Exception {
                                     try {
-                                        HttpURLConnection conn = null; ou HttpsURLConnection conn = null;
+                                        HttpURLConnection conn = null; ou HttpsURLConnection conn = null; //HttpURLConnection c'est le plus vieux du standard. voir LINKhghghgieieiei.
                                         DataOutputStream dos = null;
                                         DataInputStream inStream = null;
                                         String lineEnd = "\r\n";
@@ -3308,7 +3374,7 @@ freemaker :
                         Methode1: faire envoyer faire une requette request requete get ou post http LINKrequ939302
                                         URL url = new URL(urlString);
                                         // Open a HTTP connection to the URL
-                                        conn = (HttpURLConnection) url.openConnection(); ou conn = (HttpsURLConnection) url.openConnection();
+                                        conn = (HttpURLConnection) url.openConnection(); ou conn = (HttpsURLConnection) url.openConnection(); // c'est le plus vieux du standard. voir LINKhghghgieieiei
                                         conn.setDoInput(true); // Allow Inputs
                                         conn.setDoOutput(true); // Allow Outputs
                                         conn.setUseCaches(false); // Don't use a cached copy.
@@ -3317,6 +3383,7 @@ freemaker :
 					conn.setRequestProperty("User-Agent", USER_AGENT);   // ca ca ajoute un header a la requette http post: 1er argument= clé 2e=value(peut etre au format "x:y" ou "x;y"...)
                     conn.setRequestProperty("Connection", "Keep-Alive"); 
 			// a partir de là c'est que pour du post
+				conn.setRequestMethod("POST");
 				String data="xxxx=yyyy&" +
                                                           "zzzzzz=wwwwww&" +
                                                           "cl_login=EVAL_VAAS&" +
@@ -3325,8 +3392,9 @@ freemaker :
                                                           "req_text=Bonjour&" +
                                                           "req_asw_type=SOUND";
 					  conn.setFixedLengthStreamingMode(data.getBytes().length);
+						ou 
 					  //conn.setChunkedStreamingMode(0); si on ne connait pas la taille de l'envoi
-                                        conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+                                        conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary); // attention dans ce cas la voir LINKmultilkjfqsdf. 
                                         String basicAuth = "Basic " + new String(new Base64().encode("unuser:unpassword".getBytes())); // si on rajoute de l'authentification
                                         conn.setRequestProperty("Authorization",basicAuth); 
                                         dos = new DataOutputStream(conn.getOutputStream());    //si dos=DataOutputStream                         
@@ -3396,7 +3464,7 @@ freemaker :
                                       if(conn != null) // Make sure the connection is not null.
                                       conn.disconnect();
                                         }
-                                Methode 2: faire une requete post request avec apache.http qui est c plus vieux et moins bien que HttpURLConnection.:  LINKrequ939302
+                                Methode 2: faire une requete post request avec apache.http pas top car librairie externe. regarder plutot le standard ci dessus
                                                  voir les exemples:https://hc.apache.org/httpcomponents-client-ga/examples.html
                                                 HttpClient httpClient = new HttpClient(); // attention peut etre qu'il ne gère pas les prop système proxy que je parametre
                                               		PostMethod postMethod = new PostMethod(this.location_UneURL);
@@ -3964,7 +4032,7 @@ eventsource :sse(server-sent-event) autre alternative aux websocket mais ca ne f
             }
              this.broadcaster.register(eventSink);
         }
-        @Schedule(second = "*/2",minute = "*", hour="*") LINKTimersdkjsq
+        @Schedule(@Schedule( year="*", dayOfMonth="Last", hour = "22" ou hour="*", minute = "0" ou minute = "*", second = "0" ou "second = "*/2", info = "Every end of month at 22h")  //toujours mettre toutes les options sinon ca marche pas LINKTimersdkjsq
         public void beat(){
           this.broadcaster.broadcast(this.sse.newEvent("time:"+localTime.low(à.toString()))
         }
@@ -4945,6 +5013,7 @@ pour faire un effet 3d avec les caractères:
       -webkit-transform: rotateX(89deg);
 pour supprimer personnaliser dans tout imput select radio checkbox le bleu qui entoure quand on est en focus: 
     outline:0;
+	on peut aussi changer leur taille: width:24px; height:24px;
 pour alligner aligner les <li> des <ul> verticallement mettre  
       display:table-cell; dans les li  
 pour empecher le body de scroller lui attribuer la classe: 
@@ -7674,14 +7743,14 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
         pour voir la liste des collections d'une base:
             show collections
         exemples de rechercher requetes. Une collection = une table relationelle
-                    db.uneCollection.find({}) //pour trouver tout
-	requete : retourner certains quelques field champs seulement
-		    db.lacollection.find({champaretourner:true,champapasretourner:false})
-            var doc = db.uneCollection.findOne ou find({ _id: 1 unjsonquimatchquoi })// trouver par id (du coup doc est une variable) // findOne retourne le 1er resultat
+                    db.uneCollection.find({queryNeRienMettrePourTrouverTout},{facultatifLesChampsARetourer}) 
+	requete : exemples:
+		    db.lacollection.find({"champTypeTableau.4":{$not:{$in:["x","y]}}},{champaretourner:true,champapasretourner:false}) //4 eme index du champttypeTableau not(negation) in
+            var doc = db.uneCollection.findOne ou find(...)// trouver par id (du coup doc est une variable) // findOne retourne le 1er resultat
         count compter nombre de lignes:
-            db.nomdelacollection.count({duJson}); et tout compter: db.nomdelacollection.count({})
+            db.nomdelacollection.find(..).count(); et tout compter: db.nomdelacollection.count()
         autres operations:             
-            db.uneCollection.remove({ _id: 1 }) //pour supprimer ce qui match. Comment faire pour tout supprimer de la collection ?  
+            db.uneCollection.remove(...) //pour supprimer ce qui match. Comment faire pour tout supprimer de la collection ?  
             db.uneCollection.insert({ _id: 1, jsFunc: function(){ print("hello") } } ) // si uneCollection n'existe pas elle est automatiquement créee
             db.myNewCollection3.createIndex( { y: 1 } ) // ajoute un indexe dans la collection
 	mongodump sur windows:
@@ -9623,7 +9692,7 @@ pour recuperer lignes d'une annee: comme TO_DATE(xxx,'YYY')
 				select * from TB0001_CAPTAGE captage, TB0006_TRANSPORTEUR tx where YEAR(DATE_PREVUE)='2009'
 pour recuperer les premieres lignes d'une requete:
 		Select .... LIMIT 1 ou LIMIT 1,3. Ne pas mettre de Order sinon ca peut durer tres longtemps la requete. 
-pour rechercher underscore dans un champ: (caractère special)
+pour rechercher underscore dans un champ: (charactere caractère special)
 		select * from TB0006_TRANSPORTEUR where NOM_TRANSPORTEUR like '%\_%'
 DATEDIFF()
 		peut etre qu'il ne vaut mieux pas utiliser cette methode bugguee?
@@ -15750,6 +15819,7 @@ junit5 : junit 5 :  version 5: // https://stackify.com/junit-5/ tests repetees, 
                 @Test
                 @Disabled // remplace @Ignore
                 public void siJaiCetEtat_AlorsJeMattendsACa.....Assertions.assertEquals(3,res.size());
+			return new File(UtilsForTest.class.getClassLoader().getResource("A.wav").getPath()).getParent() + "/../../src/test/resources/"; // pour acceder aux resources du test dans le src
                 assertAll("user", // regroupement d'assertions 
                       () -> assertEquals("Johnson", user.getName()),
                       () -> assertEquals("johnson@gmail.com", user.getEmail()));
@@ -17307,8 +17377,15 @@ logback : (mieux que LinkLogutils)
               <file>MyLog.log</file>
                   <layout class="ch.qos.logback.classic.PatternLayout">
                     <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern> ajouter %X{first} et %X{last} pour LINKslf4jMcd 
-                  </layout>
-               </appender>
+                  </layout> 
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"> //rotation des fichiers de logs 
+			    <fileNamePattern>logs\logFile.%d{yyyy-MM-dd}.%i.html</fileNamePattern> <!-- daily rollover -->
+			    <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>20MB</maxFileSize> <!-- or whenever the file size reaches 50MB -->
+			    </timeBasedFileNamingAndTriggeringPolicy>
+			    <maxHistory>2</maxHistory><!-- keep 2 days' worth of history -->
+			</rollingPolicy>
+	    </appender>
               <root level="debug">
                   <appender-ref ref="STDOUT" />
                   <appender-ref ref="FILE" />
@@ -17670,7 +17747,7 @@ pour faire une liste synchronisee entre plusieurs threads (dans une classe qui v
           execution d'une seule tâche à la fois
           pas de persistance des planifications et des tâches  
           schedule et scheduleatfixedrate: (fixedrate rattrape vite le temps perdu)
-          Log.d("timer", "ccccccccccccccc"+total.setScale(5,BigDecimal.ROUND_DOWN).divide(new BigDecimal(nbmeasure),4, RoundingMode.HALF_UP));
+          Log.d("timer", "ccccccccccccccc"+total.setScale(5,BigDecimal.ROUND_DOWN ou HALF_EVEN).divide(new BigDecimal(nbmeasure),4, RoundingMode.HALF_UP));// setscale pour arrondir arondir un bigdecimal ici affichera 5 chiffres apres la virgule
         public void onCreate() 
            {  
               timer = new Timer();
@@ -20317,7 +20394,7 @@ detecter determiner voir l'encodage encode d'un fichier:
                   }
               }
  url :
-    LINK_URLENCODEDECODE  quand un string contient des pourcentages % a cause de l'URI
+    LINK_URLENCODEDECODE  quand un string contient des pourcentages % a cause de l'URI characteres caracters speciaux
     url encoder :
           en java faire: user = (java.net.)URLEncoder.encode(user, "UTF-8");
           ou bien 
@@ -20368,7 +20445,7 @@ pour deflateandencode :
                 ou
               String sUserPwdDecode = new String(Base64.getDecoder().decode(sUserPwdCode));  
 		En interne en Java toutes les Strings, les char et charset sont encodes en UTF-16. En Java il est abberant de vouloir changer l'encodage d'une String !
-		String str = "blah";		// c'est forcement de l'utf16
+		String str = "blah";		// c'est forcement de l'utf16. En revanche les bytes eux ont un encodage et je peux le convertir. unstringPeutEtreEnPuissanceConvertiEnToutTypeDencodageDeBytes.getBytes(Charset.EncodageQueJeVeux) et quand je fais new String(desbytes,Charset.encodingIMPOSEparCommentSontDejaEncodesDesbytesDoncFautLeConnaitre) 
 		Cependant je peux forcer tout mon programe java à fonctionner avec un autre encodage en lancant mon programme java comme ca:
 		java -Dfile.encoding=ISO-8859-15 -Dlog4j.configuration=file:/var/w(...)tchs/log4j.properties -Dconfpath=/v(...)tchs/Parser.properties -jar /var/www(...)adMails.jar 
 		// on essaye d'ecoder en utf8
@@ -20789,7 +20866,7 @@ pour ajouter/supprimer des jours à une date
         long toto = datenow.getTime()-(7*24*60*60*1000); // 7 jours avant
         Date date1 = new Date(toto);
         Sinon on peut aussi utiliser gregorianCalendar
-connaitre le nombre de mois entre deux dates: (diff dates)
+connaitre le nombre de mois entre deux dates: (comparer diff dates) voir aussi  LINKkgkkgkgz
 // attention il faut que date1 soit < à date2
               public static int nbOfMonthsBetweenTwoDates(String dateString1, String dateString2) throws Exception  {
                       SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); // attention n'est pas threadsafe.
@@ -21028,7 +21105,7 @@ pour recuperer la date la plus elevee ou la plus basse parmis une liste de dates
                                       Date biggest = formatter.parse("01/01/2001");
                                   
                                               for (int i = 0 ; i < dateslist.size() ; i ++) {
-                                                      if(biggest.before(dateslist.get(i))) {
+                                                      if(biggest.before(dateslist.get(i))) { // comparer diff entre deux dates LINKkgkkgkgz
                                                               biggest=dateslist.get(i);
                                                       }
                                               }
@@ -24140,7 +24217,7 @@ si lors de l'execution dun sh qui appelle un src qui appelle un sql j'ai "invali
 pour executer un script en mode debug: 
       sh -x monscript.sh
 Pour creer un nouveau fichier vide: 
-    >>monfichier.log ou plutot > mon fichier.log (>ecrase effacer et ecrit; >> ecrit a la suite)
+    >>monfichier.log ou plutot > mon fichier.log (>ecrase effacer et ecrire ecrit; echo "sdlkjfsdf" >> ecrire ecrit a la suite)
 env pour voir les variables d'environnement
 pour seter setter les variable d'environnement sur unix linux
       sur unbuntu si c une nouvelle variable: 
@@ -24238,12 +24315,6 @@ pour voir la liste des groupes
 	cat /etc/group
 pour creer un groupe
 	groupadd
-tar tvf ... pour visualiser le tar
-tar tvf ... | grep -i toto* pour afficher le fichier toto* dans le tar
-tar xvf ... pour extraire (attention parfois ne marche qu'avec un seul argument: pas mettre de chemin)
-tar cvf ... pour tarer ziper compresser ou cvzf pour compresser en gzip
-tar -cvf aps95.tar aps95 compresse le REPERTOIRE aps95
-pour tarer en compressant: tar -zcvf repertroire.tar.z repertoire
 grep chainedecaracteres nomfichier
 grep -i chainecaracteres nomfichier........... -i pour ignorer la case
 grep 'chainecaracteres' nomfichier1 nomfichier2 nomfichier3 JE NE PENSE PAS QU ON EST BESOIN DE METTRE DES GUILLEMENTS
@@ -24468,19 +24539,24 @@ xterm (x terminal) (peut etre besoin faire un export display avant?)
 si je veux  voir contient contenu zip ce qui a dans un .jar: jar -tvf nomdujar.jar | more
 pour extraire tout le jar: jar -xvf nodujar.jar (je pense: xvf)
 sous unix on peut faire une liste de commandes separees par un ";"
-pour tarer: tar -cvf nouveau.tar * ( quand il y a des espaces il faut mettre des guillemets: tar -cvf "2006101BABABAA-1000300_titre en francaisIncorrect.tar" "2006101BABABAA-1000300_titre en francaisIncorrect"
-(pour detarer: tar xvf fichiertar chemin/vers/ou (attention parfois ne marche qu'avec un seul argument: pas mettre de chemin)
+tar est un type de compression puissant
+pour tarer
+	tar cvf ... pour tarer ziper compresser ou cvzf pour compresser en gzip
+        tar -Jcvf votre_archive.tar.xz votre_dossier/
+	tar -cvf nouveau.tar * ( quand il y a des espaces il faut mettre des guillemets: tar -cvf "2006101BABABAA-1000300_titre en francaisIncorrect.tar" "2006101BABABAA-1000300_titre en francaisIncorrect"
+	tar -cvf aps95.tar aps95 compresse le REPERTOIRE aps95 // attention si je mets tar.../repertoire/rep2/rep3/repAcompresser en fait il met tout ce path dans le tar
+	pour tarer en compressant: tar -zcvf repertroire.tar.z repertoire
+pour detarer:
+        tar -Jxvf votre_archive.tar.xz
+	tar xvf fichiertar chemin/vers/ou (attention parfois ne marche qu'avec un seul argument: pas mettre de chemin)
+	tar xvf ... pour extraire (attention parfois ne marche qu'avec un seul argument: pas mettre de chemin)
+pour visualiser voir:
+	tar tvf ... pour visualiser le tar
+	tar tvf ... | grep -i toto* pour afficher le fichier toto* dans le tar
 pour deziper: gzip -d fichiertar.gz)
 pour deziper un tgz:tar -zxvf fichier.tgz
 pour ziper: gzip fichiertar (le fichier doit etre un .tar au prealable)
 pour ziper au maximum: gzip -9 fichiertar
-tar -cvf nouveau.tar * ( quand il y a des espaces il faut mettre des guillemets: tar -cvf "2006101BABABAA-1000300_titre en francaisIncorrect.tar" "2006101BABABAA-1000300_titre en francaisIncorrect"
-(pour detarer: tar xvf fichiertar chemin/vers/ou(attention parfois ne marche qu'avec un seul argument: pas mettre de chemin)
-tar.xz est un type de compression puissant
-    Creation
-        tar -Jcvf votre_archive.tar.xz votre_dossier/
-    Extraction
-        tar -Jxvf votre_archive.tar.xz
 deziper: unzip GroupNet.zip (on peut aussi deziper un ear et un war) PEUT ETRE besoin installer: apt-get install unzip
 (pour compresser XXX.toto faire: compress  XXX.toto ca va donner un XXX.toto.Z à  ne pas confondre avec la commande unzip qui cree des .zip)
 pour zipper ziper un fichier ziper: zip monfichier.zip *
@@ -24608,15 +24684,15 @@ scp :commande
     -vvv pour verbose (mode debug)
     pull: PUTAIN j'arrivaispas à faire marcher avec cle: toujours permission denied (publickey) meme apres avoir declare ma cle publique sur le serveur> il falait utiliser une cle privee de type .pem pour que ca marche et non pas .ppk (sur windows en tout cas)
         si j'ai le message Permission denied c'est parce que je n'ai pas les droits d'ecriture dans le repertoire de destination: faire un chmod
-      scp -i cheminVersMaClePriveeFacultatifDeType.pem user@machine:cequejeveuxcopierDeLaMachineDistante repertoireoujeveuxlecopiersurMAmachine ATTENTION espace interdits apres le:
+      scp -i cheminVersMaClePriveeFacultatifDeType.pem user@machine:fichier(s)quejeveuxcopierDeLaMachineDistanteOuRepertoireSiJaiMisMoinsR repertoireoujeveuxlecopiersurMAmachine ATTENTION espace interdits apres le:
     push:
       scp -i cheminVersMaClePriveeFacultatifDeType.pem cequejeveuxcopierdeMAmachine user@machine:oujeveuxLecopiersurlaamachinedistante
     exemples  
       scp -p admddd\@su571ars.mc2.renault.fr:/data/documentum/applications/a_ddd/ExportPHX/jar/Exporter-0.0.1.jar . //-p pour preserver l'horodatage du fichier
       scp -p admddd\@su571ars.mc2.renault.fr:/data/documentum/applications/a_ddd/ExportPHX/sh/L.ksh .
       scp -p admddd\@sum50301:/data/documentum/applications/a_ddd/ExportPHX/tmp/pgn/*.xml .
-      Pour transferer exporter des fichier donnees sur un autre serveur reseau remote(faire un backup) et en tarrant
-      tar cvzf - /etc | ssh root@lautreserveur.com -p2222 "cat >>/data/home/lduverge/etc.gz" //tar le repertoire etc et met le dans lautreserveur dans le repertoire data/... etc.gz: besoin connexion par cle peut etre pour que mot de passe n'empeche pas la connection.
+      Pour transferer envoyer exporter des fichier dossier repertoire donnees sur un autre serveur reseau remote(faire un backup) et en tarrant
+      tar cvzf - /etc | ssh root@lautreserveur.com -p2222 "cat >>/data/home/lduverge/etc.gz" //tar le repertoire etc (attention si javais mis /toto/titi/etc il aurait mis tout ce path dans mon tar) et met le dans lautreserveur dans le repertoire data/... etc.gz: besoin connexion par cle peut etre pour que mot de passe n'empeche pas la connection.
 smtp :
     tester que le serveur de mail marche bien
 1)  recuperer ssmtp sur aptitude (il est obsolete: utiliser msmtp)
@@ -24797,7 +24873,7 @@ diviser split ecran CTRL+w puis
 	h: cree un nouveau split horizontal
 	l: passe à l'ecran à droite
 	s: cree un nouveau split
-pour indenter: > voire >> puis . pour refaire autant de fois que necessaire. ce . sert à repeter action precedante precedente
+pour tabuler tabulation indenter: > voire >> puis . pour refaire autant de fois que necessaire. ce . sert à repeter action precedante precedente
 pour affichier avec des fonts colorees couleurs: aptitude: charger vim
 view nomfichier pour afficher en lecture seule
 http://www.ledman.ch/eti_linux/08vi.html
@@ -24892,7 +24968,7 @@ Remplacement de chaine1 (toutes les occurrences de chaine1) ,par chaine2 depuis 
 	     >:1,$ s/>/\&gt;/g
 	     >:1,$ s/< /\&lt;/g
 			remarque: -si n2 est egal à  $ alors on effectue le remplacement jusqu'à  la fin du document. - /g indique que c'est une option de remplacement; les autres ne sont pas documentees ici car pas interessantes ( man vi ...).  
-			Attention: dans la chaine 2 seulement, certains caractères sont specialises (ex / ," ,[ ,] ,\ ,',{,},etc..), il faut donc les despecialiser, ceci se fait en inserant un \ avant ce caractère. le caractère \ ne despecialise qu'un seul caractère; il faut donc le repeter devant chaque caractère specialiser à  remplacer. 
+			Attention: dans la chaine 2 seulement, certains characteres caractères sont specialises (ex / ," ,[ ,] ,\ ,',{,},etc..), il faut donc les despecialiser, ceci se fait en inserant un \ avant ce caractère. le caractère \ ne despecialise qu'un seul caractère; il faut donc le repeter devant chaque caractère specialiser à  remplacer. 
 			ex: >:1,$ s/\/bug\"/\\\\correction/g 
 			Cet exemple remplace dans tout le texte l'expression 
 			/bug" par \\correction
@@ -24917,10 +24993,8 @@ parser du json avec unix: installer jq
 
       pour faire une pause dans un script ksh:
             read -p "Press [Enter] key to start backup..."
-      pour faire un prompt dans un script ksh:
-          
-          ou bien 
-             read -p "Pret? " -n 1 -r # -n nombre de caractères que l'utiliseur doit saisir; -r pour echaper les \; -p: le message
+      pour faire un prompt confirm dans un script ksh:
+             read -p "Pret? " -n 1 -r # -n nombre de caractères que l'utiliseur doit saisir(marche pas bien?) -r pour echaper les \; -p: le message
               if [[ $REPLY =~ ^[Yy]$ ]] # on a ecrit Y ou y
               then
                       chmod -R 775 $Version
@@ -26500,15 +26574,16 @@ svg :
    T = smooth quadratic Bézier curveto
    A = elliptical Arc
    Z = closepath
+<text> je peux ecrire du texte </text>
     </svg>
 
 pour empecher le cache :
-      <meta http-equiv="cache-control" content="max-age=0" /> max-age est une durée de secondes. request et response utilisent cache-control voir developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control 
+      <meta http-equiv="cache-control" content="max-age=0" /> ou setHeader("Cache-Control","max.age=0") max-age est une durée de secondes. request et response utilisent cache-control voir developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control -TERMINER DE LIRE LARTICLE
       <meta http-equiv="cache-control" content="no-cache" /> no-store=zero cache; no-cache=existe un cache mais a chaque requete client demande au serveur si le cache est toujours valable
       <meta http-equiv="expires" content="0" />content doit etre une date. Si on met 0 ca veut dire que c'est passé
       ou
       <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
-      <meta http-equiv="pragma" content="no-cache" /> 
+      <meta http-equiv="pragma" content="no-cache" />  // pragma est equivalent de cache-controle mais c'est la vieille version... a degager donc.
       autre methode radicale: renommer ses fichiers et changer ses liens ex: memoclap20131901.js 
   pour interpreter le html 
     le mettre entre les balises <pre></pre>
@@ -26836,18 +26911,19 @@ tester le javascript TDD :
                           });
                           describe('nom du test suite', () => {
                               	it(.skip pour ignorer)('nom du test', () => {
-                                    // pour mocker un objet(xhr par exemple)
+                                    // pour mocker un objet(xhr pour requete par exemple)
                                          const mockMonObjet = ()=> ({// toujours nommer cet objet en commencant par "mock"
                                          ou
-                                         const mockMonObjet={
+                                         const mockMonObjet={ // si marche pas (le new mock ne peut pas s'instancier au run essayer ci dessus
+						nomdemamethode:jest.fn().mockImplementation..etc...voir ci dessous
                                                 send:jest.fn().mockImplementation(function(){this.onload();}),
                                                 ou
                                                 send:jest.fn(), // si on veut rien faire.
                                                 onload:jest.fn().mockImplementation(function(){}),
-                                                open:jest.fn().mockImplementation(function(){this.status=200;}),
+                                                open:jest.fn().mockImplementation(function(){this.status=200;}),// je peux setter une variable dans le mock
                                                 overrideMimeType:jest.fn().mockImplementation(function(){}),
                                          })
-                                      window.XMLHttpRequest = jest.fn().mockImplementation(mymock);
+                                      window.XMLHttpRequest = jest.fn().mockImplementation(mockMonObjet);
                                 
                                 (.. mes tests..)
                                 });
@@ -26965,6 +27041,9 @@ ES6 :modules: une page html/js peut importer une page html/js qui importe aussi:
               export default class(ne marche que avec class) UnComponentAttentionMEMENOM{....} BBB
 	      export class UnComponent {...}						       BBB
               export default {unTrucDefiniPlusHaut}; // a mettre a la fin du fichier   CCC
+	   Exporter plusieurs classes
+	     export class UneClasse{...}     |_AAA
+	     export class UneAutreClasse{...}| 
          pour que les onclick html fonctionnent je dois pointer la methode du module que je veux depuis window: ca rend le module global visible par tous.
                     window.setModeMenu=memoclap.setModeMenu; // ainsi je peux faire onclick="setModeMenu('hihi')"; mais attention la methode est totallement extraite de son contexte si elle est dans un objet
                     window.memoclap=memoclap; // je peux faire onclick="memoclap.setModeMenu() tester aussi memoclap.memoclap.setModeMenu()" 
@@ -27080,9 +27159,9 @@ promesses : promese :promeses :Promises :promise : ne plus utiliser les callback
               totoEstObligatoirementUnePromese = mamethodeQuiRetourneUnePromesseDoncDedansCestToujoursAsychrone("dd")
                                                                 toto.then((resATOUJOURSMETTRE)=>{console.log(res); return ToujoursRetournerQqch ou throw new Error(x)} //res = unobjetrenvoyéparLaPromessToto}  // then arrive a un moment on sait pas quand en asynchrone. 2 arguments=fonctions: 1ere: si ok 2eme si ko
                                                                           ,(err)=>{console.log(err); //err = l'objetderreurici} // facultatif. est la resultante d'un return reject(x) de la promesse anterieure. preferer thrower des Exception et utiliser .catch
-                                                                .then((xATOUJOURSMETTRE)=> return Promise.resolve("toto") ou return Promise.reject("toto")).then... // on peut meme enchainer donc sur d'autres promises then..then..then
-                                                                .then(xATOUJOURSMETTRE=> return new Promise...(voir suite dessus) // permet aussi d'enchainer les then
-                                                                .then(xATOUJOURSMETTRE=> return unevalue; // ca equivaut a faire un return Promise.resolve(unevalue) le suivant .then(x=>{x sera egal à unevalue})
+                                                                .then((xATOUJOURSMETTRE)=>{return Promise.resolve("toto") ou return Promise.reject("toto")).then... // on peut meme enchainer donc sur d'autres promises then..then..then
+                                                                .then(xATOUJOURSMETTRE=>{return new Promise...(voir suite dessus) // permet aussi d'enchainer les then
+                                                                .then(xATOUJOURSMETTRE=>{return unevalue; // ca equivaut a faire un return Promise.resolve(unevalue) le suivant .then(x=>{x sera egal à unevalue})
                                                                 .then(xATOUJOURSMETTRE=> throw new Error("xxx")// equivaut à return Promise.reject("xxx") 
                                                                 
                             ).catch(err=>{return unemethode(err)}) LINKtootot
@@ -27721,7 +27800,7 @@ pour faire defiler comme un prompteur:
                  pour mettre une image : .style.backgroundImage="url('boutton.png')";
             	focuser.style.backgroundRepeat="no-repeat";
             	focuser.style.backgroundSize="0% 100%";
-            setTimeout(function(){
+            setTimeout(function(){ // attention dans un settimeout si je mets un throw Exception ce throw sort de mon context et ne va tapper que dans le contexte global. Utiliser donc les promeses pour gerer ca... comment ?
             	focuser.style.webkitTransitionDuration=duration+"s";
             	focuser.style.MozTransitionDuration=duration+"s";
             	focuser.style.oTransitionDuration=duration+"s";
@@ -28682,7 +28761,7 @@ pour tester ses expressions regulières:regexp: attention j'ai l'impression qu'o
              match avec 1234 ou 12345
        contient que des characteres ascii: 
           ^[\u0020-\u007e]+$
-       contient des caractères speciaux: 
+       contient des characteres caractères speciaux: 
                 if(!password.match(".*[^A-Za-z0-9].*")){                    
         Pour faire le test en javascript:
                             var reg=new RegExp(regexp,"g"); // "g" permet de remplacer tout
@@ -28699,7 +28778,7 @@ pour faire une regexp case insensitive maj min ignorer
 regexp plus grand que plus petit que greater than lesser than
       ^([5-9]\d|[1-9]\d{2,})$                    			
 trouver une chaine de caractere dans une autre chaine: 
-      c'est le meme moteur que regexp: pour echaper les caractères speciaux escape: 
+      c'est le meme moteur que regexp: pour echaper les characteres caractères speciaux escape: 
        boutDeChaineEscp=code.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"); // ou codeescp est mon expression regulière
       toutelachaine.search(boutDeChaineEscp); renvoit -1 si rien trouve
 
@@ -29385,7 +29464,7 @@ PWA : progressive webapps :
        tester mon pwa avec chrome:
             dev>application>service workers>offline
             pluggin chrome "lighthouse"
-    service-workers : serviceworkers : POUR SUPPRIMER TOUT CACHE POUR TESTER: 1)debugger chrome>onglet application > clearstorage> bouton clear site data 
+    service-workers : serviceworkers : POUR SUPPRIMER TOUT CACHE POUR TESTER: 1)debugger chrome>onglet application > clearstorage> bouton clear site data. A son propre systeme de cache manipulable et qui se place AVANT le cache http quand j'envoie une requete vers le serveur: user->CachePWA->CacheHTTP(voir LINKcachehttp)->Serveur
     pour faire un site qui marche offline avec les service workers: html5: P envoyer notifications meme quand navigateur est fermé car c'est un worker(thread) indépendant de tous les navigateurs.(un peu comme un programme nodejs) Peut travailler avec indexDB database voir LINKpwanotif
     ça ne marche que en https ou en http://localhost
     serviceworker.js:
@@ -29400,159 +29479,585 @@ PWA : progressive webapps :
     }
     -----------dans service-worker.js(a renommer a chaque version: service-worker-v1 puis v2 etc si je le change):
                                         // voir https://ponyfoo.com/articles/progressive-networking-serviceworker et https://serviceworke.rs/strategy-network-or-cache.html en haut a droite
-                                    var cacheVersion='v${version}';
-                                    var cacheFiles=[
-                                                                            '/testDoNotUse1234/offline.html',
-                                                                            '/testDoNotUse1234/*'
-                                    
-                                                                      ];
-                                    var FALLBACK ='/testDoNotUse1234/offline.html';
-                                        /*'<svg xmlns="http://www.w3.org/2000/svg" width="200" height="180" stroke-linejoin="round">' +
-                                        '  <path stroke="#DDD" stroke-width="25" d="M99,18 15,162H183z"/>' +
-                                        '  <path stroke-width="17" fill="#FFF" d="M99,18 15,162H183z" stroke="#eee"/>' +
-                                        '  <path d="M91,70a9,9 0 0,1 18,0l-5,50a4,4 0 0,1-8,0z" fill="#aaa"/>' +
-                                        '  <circle cy="138" r="9" cx="100" fill="#aaa"/>' + // cx et cy: position centre du cercle x et y. r=rayon
-                                        '</svg>';
-                                    */
-                                    
-                                    self.addEventListener('install', function(evt) {
-                                      console.log('WORKER: The service worker is being installed.');
-                                      evt.waitUntil(precache());
-                                    });
-                                    function precache() {
-                                      return caches.open(cacheVersion).then(function (cache) {
-                                        return cache.addAll(cacheFiles);
-                                      });
-                                    }
-                                    
-                                    self.addEventListener("activate", function(event) {
-                                      console.log('WORKER: The service worker is being activated.');
-                                        event.waitUntil(
-                                            caches.keys()
-                                                .then(function (keys) {
-                                                    return Promise.all(
-                                                                       keys.filter(function (key) {
-                                                                                                return !key.startsWith(cacheVersion);
-                                                                                              })
-                                                                                              .map((key)=>{
-                                                                                                console.log('WORKER: version '+key+' supprimee.');
-                                                                                                    return caches.delete(key); // on supprime une vieille version
-                                                                                              })
-                                                                                          );
-                                                                                        })
-                                                                                        .then(function() {
-                                                                                          console.log('WORKER: activate completed.');
-                                                                                        })
-                                                                                    );
-                                                                                  });
-                                    
-                                    
-                                    self.addEventListener('fetch', function(evt) {
-                                      console.log('WORKER: The service worker is serving the asset.');
-                                      if (evt.request.method==="GET") // attention si je traite fais un fetch de requete post ça va poster 2 fois!! une fois sans passer par le service-worker et une fois via le service-worker
-                                      {
-                                      {
-                                            let response = proceedFetch(evt.request,evt);
-                                              evt.respondWith(response);
-                                       }
-                                    });
-                                    
-                                    
-                                    function proceedFetch(request,event) {
-                                        let requestClone=request.clone();
-                                        return getResponseFromNetworkAndCachit(requestClone,400)
-                                        .then(function(response){
-                                            return response;
-                                        })
-                                        .catch(function(err){
-                                            console.log("WORKER: error! "+err);
-                                            let res = fromCacheButFallback(event.request,event);
-                                            return res;
-                                            });
-                                    }
-                                    
-                                    function getResponseFromNetworkAndCachit(request, timeout)
-                                    {
-                                     return new Promise(function (fulfill, reject) {
-                                        var timeoutId = setTimeout(reject, timeout);
-                                        fetch(request)
-                                        .then(function(response){
-                                                                clearTimeout(timeoutId);
-                                                                let responseToCach=response.clone();
-                                                                let res = cachIt(request,responseToCach)
-                                                                return res;
-                                                                },reject)
-                                        .then(function(response){
-                                                                        fulfill(response);
-                                                                        }
-                                              );
-                                        });
-                                    }
-                                    function cachIt(request,responseToCache){
-                                            caches.open(cacheVersion)
-                                            .then(function(cache){
-                                                cache.put(request,responseToCache);
-                                            })
-                                            return responseToCache.clone();
-                                    }
-                                    function fromCacheButFallback(request,event){
-                                            let res= caches.open(cacheVersion)
-                                            .then(function(cache){
-                                                let res = cache.match(request)
-                                                 .then(function (response) {
-                                                            if (!response)
-                                                            {
-                                                                    let res = useFallback(event);
-                                                                    return res;
-                                                            }
-                                                            else
-                                                            {
-                                                                return response;
-                                                            }
-                                                    })
-                                                  .catch(err=>{ // n'arrive jamais car cache.match n'envoie jamais une exception mais une response undefined si KO
-                                                    let res = useFallback(event);
-                                                    return res;
-                                                    });
-                                                    return res;
-                                                 }
-                                            );
-                                            return res;
-                                    }
-                                    
-                                    function useFallback(event) {
-                                        if (!event.clientId)
-                                         {
-                                            let res = returnImageKO();
-                                            return res;
-                                         }
-                                        clients.get(event.clientId)
-                                        .then(function(client){
-                                            if (!client) {returnImageKO()}
-                                            else{
-                                                     self.clients.matchAll().then(function (clients){
-                                                            clients.forEach(function(client){
-                                                              client.postMessage({
-                                                                msg: "Hey I just got a fetch from you!",
-                                                                url: event.request.url
-                                                              });
-                                                            });
-                                                          });
-                                                }
-                                    
-                                        })
-                                    }
-                                    function returnImageKO()
-                                    {
-                                     return caches.open(cacheVersion).then(function (cache) {
-                                        return cache.match(FALLBACK)
-                                        .then(function (response) {
-                                        return response;
-                                        })
-                                      }).catch(err=>{console.log("WORKER: error! "+err);});
-                                    }
-                    AFAIRE: channelmessaging api pour faire communiquer un webworker avec mon serviceworker (marche meme si navigateur ferme)                                              
-   
+						class EssaisParUrl {
+								constructor()
+								{
+								this.nbessaisParUrl=new Array();
+								}
+								clearForUrl(url)
+								{
+								    delete(this.nbessaisParUrl[url]);
+								}
+								getNbForUrl(url)
+								{
+								    let nbessais= this.nbessaisParUrl[url];
+								    if (nbessais==undefined){
+								    return 0;
+								    }
+								    else
+								    {
+								    return this.nbessaisParUrl[url];
+								    }
+								}
+								incrementNbForUrl(url)
+								{
+								   let nb = this.nbessaisParUrl[url];
+								   if (nb==undefined) this.nbessaisParUrl[url]=1;
+								   else this.nbessaisParUrl[url]=nb+1;
+								}
+							  }
+
+						class RangedResponse {
+						    constructor()
+						    {
+						    this.CHUNK_SIZE= 1024 * 512;
+						    }
+						  static _isRangeRequest (request) {
+						    const header = request.headers.get('Range');
+						    if (!header) {
+						      return false;
+						    }
+
+						    const rangeHeader = header.trim().toLowerCase();
+						    // Not a range request
+						    if (!rangeHeader) {
+						      return false;
+						    }
+
+						    return true;
+						  }
+
+						  static getBestCacheMatch (request) {
+						    return caches.keys().then(cacheNames => {
+						      return Promise.all(cacheNames.map(cacheName => {
+							return caches.match(`${request.url}_0`, {cacheName: cacheName})
+							    .then(response => {
+							      if (response) {
+								return cacheName;
+							      }
+
+							      return null;
+							    });
+						      }));
+						    }).then(possibleMatches => {
+						      let cachesWithMatch = possibleMatches.filter(m => m !== null);
+						      if (cachesWithMatch.length === 0) {
+							return null;
+						      }
+
+						      // If there's more than one match, exclude the prefetch cache.
+						      if (cachesWithMatch.length > 1) {
+							cachesWithMatch = cachesWithMatch.filter(m => m !== 'prefetch');
+						      }
+
+						      // Now pick the first possible match.
+						      return cachesWithMatch[0];
+						    });
+						  }
+
+						  static canHandle (request) {
+						    if (!RangedResponse._isRangeRequest(request)) {
+						      return Promise.resolve(false);
+						    }
+
+						    return this.getBestCacheMatch(request).then(cacheName => {
+						      if (!cacheName) {
+							return false;
+						      }
+
+						      // Check for the first chunk in cache storage.
+						      return caches.match(`${request.url}_0`, {cacheName: cacheName})
+							.then(firstChunk => {
+							  if (!firstChunk) {
+							    return false;
+							  }
+
+							  // Failing that, look up the chunks that would be needeed, and assume
+							  // that if we need -- say -- chunks 1 to 10, that checking for 1 & 10
+							  // is sufficient for success.
+							  const header = request.headers.get('Range');
+							  const rangeHeader = header.trim().toLowerCase();
+							  const size = parseInt(firstChunk.headers.get('Content-Length'), 10);
+							  if (!size) {
+							    return false;
+							  }
+
+							  const {start, end} = this._getStartAndEnd(rangeHeader, size);
+							  const startIndex = Math.floor(start / this.CHUNK_SIZE);
+							  const endIndex = Math.floor(end / this.CHUNK_SIZE);
+
+							  return Promise.all([
+							    caches.match(`${request.url}_${startIndex}`, {cacheName: cacheName}),
+							    caches.match(`${request.url}_${endIndex}`, {cacheName: cacheName})
+							  ]).then(v => {
+							    // Start by checking that there are at least two responses.
+							    let hasData = v.every(r => !!r);
+
+							    if (!hasData) {
+							      return false;
+							    }
+
+							    // If both chunks exist, we need to refine the query further by
+							    // ensuring that the endIndex chunk has actually got sufficient
+							    // bytes to respond.
+							    const chunkSize = parseInt(v[1].headers.get('x-chunk-size'), 10);
+							    const finalByteInEndChunk =
+								endIndex * this.CHUNK_SIZE + chunkSize;
+
+							    if (finalByteInEndChunk < end) {
+							      console.log(`${request.url}
+								  Cannot handle range request because unable to find
+								  final chunk byte is at ${finalByteInEndChunk}, but end
+								  requires ${end}.`);
+							    }
+
+							    return finalByteInEndChunk >= end;
+							  });
+							});
+						    });
+						  }
+
+						  static _isOpaqueOrError (response) {
+						    if (response.status != 200) {
+						      return response;
+						    }
+						  }
+
+						  static _getStartAndEnd (rangeHeader, size) {
+						    if (!rangeHeader.startsWith('bytes=')) {
+						      throw new Error('Invalid range unit');
+						    }
+
+						    const rangeParts = /(\d*)-(\d*)/.exec(rangeHeader);
+						    if (!rangeParts[1] && !rangeParts[2]) {
+						      throw new Error('Invalid range unit');
+						    }
+
+						    let start = 0;
+						    let end = 0;
+						    if (rangeParts[1] === '') {
+						      start = size - Number(rangeParts[2]);
+						      end = size;
+						    } else if (rangeParts[2] === '') {
+						      start = Number(rangeParts[1]);
+						      end = size;
+						    } else {
+						      start = Number(rangeParts[1]);
+						      // Range values are inclusive, so add 1 to the value.
+						      end = Number(rangeParts[2]) + 1;
+						    }
+
+						    if (start < 0) {
+						      throw new Error('Range not satisfiable');
+						    }
+
+						    return {
+						      start,
+						      end
+						    };
+						  }
+
+						  static _createRangedResponse (blob, headers, start, end, offset=0) {
+						    let s = start - offset;
+						    let e = end - offset;
+						    let total = parseInt(headers.get('Content-Length'), 10);
+
+						    if (Number.isNaN(total)) {
+						      throw new Error('Unable to create byte range: content-length not set.');
+						    }
+
+						    const slicedBlob = blob.slice(s, e);
+						    const slicedResponse = new Response(slicedBlob, {
+						      status: 206,
+						      headers
+						    });
+
+						    slicedResponse.headers.set('X-From-Cache', 'true');
+						    slicedResponse.headers.set('Content-Length', slicedBlob.size);
+						    slicedResponse.headers.set('Content-Range',
+							`bytes ${start}-${end - 1}/${total}`);
+						    return slicedResponse;
+						  }
+
+						  static create (request) {
+						    if (!RangedResponse._isRangeRequest(request)) {
+						      return response;
+						    }
+
+						    return this.getBestCacheMatch(request).then(cacheName => {
+						      if (!cacheName) {
+							return null;
+						      }
+
+						      return caches.match(request.url + '_0', {cacheName: cacheName})
+							  .then(chunkedResponse => {
+							    if (chunkedResponse) {
+							      return RangedResponse._createFromChunks(request, cacheName);
+							    }
+
+							    return RangedResponse._createFromEntireBuffer(request, cacheName);
+							  });
+						    });
+						  }
+
+						  static _createFromEntireBuffer (request, cacheName) {
+						    return caches.match(request, {cacheName: cacheName}).then(response => {
+						      if (RangedResponse._isOpaqueOrError(response)) {
+							return response;
+						      }
+
+						      const header = request.headers.get('Range');
+						      const rangeHeader = header.trim().toLowerCase();
+
+						      try {
+							const {start, end} = RangedResponse._getStartAndEnd(rangeHeader);
+
+							return response.blob().then(blob => {
+							  return this._createRangedResponse(blob,
+							      response.headers, start, end);
+							});
+						      } catch (e) {
+							return new Response(e.message, {status: 400});
+						      };
+						    });
+						  }
+
+						  static _createFromChunks (request, cacheName) {
+						    try {
+						      const header = request.headers.get('Range');
+						      const rangeHeader = header.trim().toLowerCase();
+						      const {start, end} = RangedResponse._getStartAndEnd(rangeHeader);
+						      const startIndex = Math.floor(start / this.CHUNK_SIZE);
+						      const endIndex = Math.floor(end / this.CHUNK_SIZE);
+						      const offset = startIndex * this.CHUNK_SIZE;
+
+						      // If the start and end come from the same chunk then pull that chunk
+						      // from the cache and use it directly.
+						      if (startIndex === endIndex) {
+							return caches.match(request.url + '_' + startIndex, {cacheName: cacheName})
+							    .then(response => {
+							      return response.blob().then(blob => {
+								return RangedResponse._createRangedResponse(blob,
+								  response.headers, start, end, offset);
+							      });
+							    });
+						      }
+
+						      const bufferSize = (endIndex - startIndex + 1) * this.CHUNK_SIZE;
+						      const responseBuffer = new ArrayBuffer(bufferSize);
+						      const responseView = new Uint8Array(responseBuffer);
+						      const cachedResponses = [];
+
+						      for (let i = startIndex; i <= endIndex; i++) {
+							cachedResponses.push(
+							  caches.match(request.url + '_' + i, {cacheName: cacheName})
+							);
+						      }
+
+						      let headers;
+						      return Promise.all(cachedResponses)
+							  .then(responses => {
+							    if (responses.length === 0) {
+							      return Promise.reject('Unable to locate chunks.');
+							    }
+
+							    // Take the first set of headers as representative.
+							    headers = responses[0].headers;
+							    return Promise.all(responses.map(r => r.arrayBuffer()));
+							  })
+							  .then(buffers => {
+							    // Copy the buffers into the response buffer for us to slice.
+							    let k = 0;
+							    buffers.forEach(buffer => {
+							      const view = new Uint8Array(buffer);
+							      for (let j = 0; j < view.length; j++) {
+								responseView[k++] = view[j];
+							      }
+							    });
+							  }).then(_ => {
+							    // The start and end indexes need shifting back because we're not
+							    // slicing the entire array buffer, just the relevant chunks.
+							    const blob = new Blob([responseBuffer]);
+							    return RangedResponse._createRangedResponse(blob, headers,
+								start, end, offset);
+							  });
+						    } catch (e) {
+						      console.log(e);
+						      return new Response(e.message, {status: 400});
+						    };
+						  }
+						}
+
+						//-------------------FIN CLASSES
+
+
+
+
+
+
+						var cacheVersion='v${version}';
+						var cacheFiles=[
+											'/${service-worker-fallback-directory}offline.html',
+											'/${service-worker-fallback-directory}*'
+
+										  ];
+
+						var nbEssaisParUrl=new EssaisParUrl();
+						var neverCachedUrls="nevercachedUrl1,nevercachedUrl2";
+
+						var FALLBACK ='/${service-worker-fallback-directory}offline.html';
+						    /*'<svg xmlns="http://www.w3.org/2000/svg" width="200" height="180" stroke-linejoin="round">' +
+						    '  <path stroke="#DDD" stroke-width="25" d="M99,18 15,162H183z"/>' +
+						    '  <path stroke-width="17" fill="#FFF" d="M99,18 15,162H183z" stroke="#eee"/>' +
+						    '  <path d="M91,70a9,9 0 0,1 18,0l-5,50a4,4 0 0,1-8,0z" fill="#aaa"/>' +
+						    '  <circle cy="138" r="9" cx="100" fill="#aaa"/>' +
+						    '</svg>';
+						*/
+
+						self.addEventListener('install', function(evt) {
+						  console.log('WORKER: The service worker is being installed.');
+						  evt.waitUntil(precache());
+						});
+						function precache() {
+						  return caches.open(cacheVersion).then(function (cache) {
+						    return cache.addAll(cacheFiles);
+						  }).catch(err=>{console.log("WORKER ERR: "+err)})
+						}
+
+						self.addEventListener("activate", function(event) {
+						  console.log('WORKER: The service worker is being activated.');
+						    event.waitUntil(
+							caches.keys()
+							    .then(function (keys) {
+								return Promise.all(
+										   keys.filter(function (key) {
+													    return !key.startsWith(cacheVersion);
+													  })
+													  .map((key)=>{
+													    console.log('WORKER: version '+key+' supprimee.');
+														return caches.delete(key); // on supprime une vieille version
+													  })
+												      );
+												    })
+												    .then(function() {
+												      console.log('WORKER: activate completed.');
+												    })
+												);
+											      });
+
+
+						self.addEventListener('fetch', function(evt) {
+						try{
+						      if (evt.request.method==="GET" && urlmustbecached(evt.request.url)) // attention si je traite fais un fetch de requete post ça va poster 2 fois!! une fois sans passer par le service-worker et une fois via le service-worker
+						      {
+							    let response = proceedFetch(evt.request,evt);
+							      evt.respondWith(response);
+						      }
+						   }
+						   catch(err)
+						   {
+						    console.log("WORKER ERR"+err);
+						    console.trace();
+						   }
+						});
+						function urlmustbecached(url)
+						{
+						    return url.lastIndexOf(neverCachedUrls)==-1
+						}
+
+						function proceedFetch(request,event) {
+						    let requestClone=request.clone();
+						    console.log("WORKER: url: "+request.url);
+						    console.log("WORKER: range: "+request.headers.get("range"));
+						    console.log("WORKER proceedFetch");
+						    return getResponseFromNetworkAndCachit(requestClone,1000)
+						    .then(function(response){
+							    console.log("WORKER: responsestatus: "+response.status+" requesturl "+ requestClone.url);
+							nbEssaisParUrl.clearForUrl(requestClone.url);
+							return response;
+						    })
+						    .catch(function(err){
+							let nbessais=nbEssaisParUrl.getNbForUrl(requestClone.url)
+							let res=null;
+							if (nbessais<4){
+							    console.log("WORKER: echoue "+nbessais+ " for request " +requestClone.url+" retry...");
+							    nbEssaisParUrl.incrementNbForUrl(requestClone.url);
+							    res=proceedFetch(request,event);
+							}
+							else
+							{
+							    nbEssaisParUrl.clearForUrl(requestClone.url);
+							   console.log("WORKER: error! "+err+ " for request " +requestClone.url+" try in cache...");
+							   res = fromCacheButFallback(event.request,event);
+							   console.log("WORKER fallback is "+res);
+
+							}
+						       return res;
+						    });
+						}
+						function sendMessageToUserAgent(messageType,detail)
+						{
+						    self.clients.matchAll().then(function (clients){
+									    clients.forEach(function(client){
+									      client.postMessage({
+										msg: messageType,
+										url: detail
+									      });
+									    });
+									  });
+						}
+						function fetchWithTimeout (request, timeout = 7000) {
+						    return Promise.race([
+							fetch(request),
+							new Promise((_, reject) =>
+							    setTimeout(() => reject( new Error("WORKER: Network TimedOut")), timeout)
+							)
+						    ]);
+						}
+
+						function getResponseFromNetworkAndCachit(request, timeout)
+						{
+
+						    sendMessageToUserAgent("Info:query_network",request.url);
+						    return fetchWithTimeout(request,timeout)
+						    .then((response)=>{
+								let responseToCach=response.clone();
+								if (request.headers.get('range')) {
+									let promiseWithResponseRanged = cacheAndModifyResponseForRange(request,response);
+									console.log("WORKER:rangedResponseReturned: "+promiseWithResponseRanged);
+								      return promiseWithResponseRanged;
+								}
+								else{
+								    console.log("pas range audio "+ request.url);
+								    cachIt(request,responseToCach)
+								    return responseToCach.clone();
+								}
+						     })
+						    .then((response)=>{
+							    console.log("WORKER: ResponseRgetResponseFromNetworkAndCachit returns:"+response);
+							    sendMessageToUserAgent("Info:response_network",request.url);
+							    return response;
+						    });
+						}
+
+						function cacheAndModifyResponseForRange(request,response)
+						{
+						    return new Promise((resolve,reject)=>{
+							try{
+							    cachIt(request,response);
+							    console.log("WORKER: RangeRequest cached. Response is:"+response);
+							    let range = request.headers.get('range');
+							    let rangePos =Number(/^bytes\=(\d+)\-$/g.exec(range)[1]);
+							    let responseHeader = {"status": "206","statusText": "Partial Content","headers": []};
+							     resolve(buildResponseWithRangeHeader(response,responseHeader,rangePos));
+							     }
+							     catch(e){reject(e);}
+							    })
+
+						}
+						function buildResponseWithRangeHeader(response,responseHeader,rangePos)
+						{
+						    return response.arrayBuffer().then(arrayBuffer=>{
+							try{
+							    responseHeader.headers.push(["Content-Range", "bytes " + rangePos + "-" +(arrayBuffer.byteLength - 1) + "/" + arrayBuffer.byteLength])
+							   let rangedResponse = new Response(arrayBuffer.slice(rangePos),responseHeader);
+							   console.log("WORKER: ResponseHeaderBuilt: "+responseHeader);
+							   console.log("WORKER: ResponseHeaderAndBodyBuilt: "+rangedResponse);
+							   return rangedResponse;
+							   }
+							   catch(e) {throw new Error(e)}
+							   });
+
+						}
+						function cachIt(request,responseToCache){
+							let cloneResponseToCache= responseToCache.clone();
+							caches.open(cacheVersion)
+							.then(function(cache){
+							    try{
+							    cache.put(request,cloneResponseToCache);
+							    }
+							    catch(err){console.log("WORKER ERR "+err)}
+							}).catch(err=>{console.log("WORKER ERR "+err);})
+							return responseToCache;
+						}
+
+
+						function fromCacheButFallback(request,event){
+							let res= caches.open(cacheVersion)
+							.then(cache=>{
+							    let res = cache.match(request)
+										.then(response=>{
+											   if (!response)
+											   {
+												   let res = useFallback(event).then(res=>{
+												   return res;
+												   });
+												   return res;
+											   }
+											   else
+											   {
+											       sendMessageToUserAgent("Warn:response_cache",request.url);
+											       return response;
+											   }
+										   })
+										 .catch(err=>{ // n'arrive jamais car cache.match n'envoie jamais une exception mais une response undefined si KO
+											    console.log("WORKER ERR"+err);
+											    let res = useFallback(event).then(res=>res);
+											    return res;
+										   });
+							     return res;
+							   }
+							);
+							return res;
+						}
+
+
+						function useFallback(event) {
+						    if (!event.clientId)
+						     {
+							let res = returnImageKO().then(res=>{
+							return res;
+							});
+							return res;
+						     }
+						    clients.get(event.clientId)
+						    .then(function(client){
+							if (!client) {
+								    let res = returnImageKO().then(res=>{
+											     return res;
+											     });
+								    return res;
+								   }
+							else{
+							    sendMessageToUserAgent("Err:no_network_no_cache",event.request.url);
+							    }
+
+						    })
+						}
+						function returnImageKO()
+						{
+						 return caches.open(cacheVersion).then(cache=>{
+						    return cache.match(FALLBACK)
+						    .then(response=> {
+							if (!response) {
+							let image = '<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" stroke-linejoin="round">  <path stroke="#DDD" stroke-width="25" d="M99,18 15,162H183z"/>'+
+									 '<style>'+
+									'.heavy { font: italic bold 30px sans-serif; }'+
+									'.rouge { font: bold 40px serif; fill: red; }'+
+								       '</style>'+
+								       '<path stroke-width="17" fill="#FFF" d="M99,18 15,162H183z" stroke="#eee"/>  <path d="M91,70a9,9 0 0,1 18,0l-5,50a4,4 0 0,1-8,0z" fill="#aaa"/>  <circle xmlns="http://www.w3.org/2000/svg" cy="138" r="9" cx="100" fill="#aaa"/>'+
+								       '<text x="40" y="100" class="rouge">Pas de réseau</text>'+
+								       '<text x="40" y="150" class="heavy">Réessayez plus tard.</text>'+
+								     </svg>';
+							let response = new Response(image,{ headers: {'Content-Type': 'image/svg+xml'}});
+							return Promise.resolve(response);
+							}
+							return Promise.resolve(response);
+						    })
+						  })
+						}
+						  
+    AFAIRE: channelmessaging api pour faire communiquer un webworker avec mon serviceworker (marche meme si navigateur ferme)                                              
      pour faire un background sync avec mon serviceworker AFAIRE: continuer de documenter
         dans mon fichier app.js:
             navigator.serviceWorker.ready.then(function(swRegistration) { // 
@@ -32799,7 +33304,7 @@ premiers caracteres substring Droite
 pour savoir si une cellule est en erreur: 
 	=esterreur(Cellule)
 pour faire un diff entre deux dates: 
-		soustraire deux dates: donner le nombre d'annees entre deux dates: (delta difference entre deux dates)
+		soustraire deux dates: donner le nombre d'annees entre deux dates: (comparer comparer delta difference entre deux dates)
 			15/10/2008 01/09/1974
 			=ANNEE(A1) =ANNEE(B1) 
 			=SI(MOIS(A1)<MOIS(B1);ANNEE(A1)-ANNEE(B1)-1;ANNEE(A1)-ANNEE(B1))
@@ -33445,11 +33950,13 @@ seo :
   pour bien referencer sa page referencement: 
         <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-      <meta http-equiv="cache-control" content="max-age=0" /> est moins bien que expires ci dessous.
+      <meta http-equiv="cache-control" content="max-age=12" /> est moins bien que expires ci dessous. Dans les 12 prochaines secondes le browser n'essayera meme pas DUTOUT de requeter et prendra directement dans son cache. Je peux mettre 0 pour qu'il ne cache jamais.
       <meta http-equiv="cache-control" content="no-cache" />   est moins bien que expires ci dessous.: no-cache signifie qu'il garde en cache mais avant de l'utiliser demande au serveur s'il faut rafraichir ou pas. no-store est vraiment sans cache par contre LINKcachehttp
       <meta http-equiv="expires" content="0" />
-      <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+      <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" /> // mettre dans le serveur une date dans quelques jours ameliore efficacité car pas besoin de requeter dutout avant cette date. plus efficace donc que ETag
       <meta http-equiv="pragma" content="no-cache" />
+	ETag: "d72fc-4f51df8b04180"
+
       <meta name="google-site-verification" content="QR2ftvbXhfKdlLXVS7iM8yOWKpN4uH--pegRciX_yvo" />
       <meta name="keywords" content="vêtement ecologique ethique bio durable environnement prêt-à-porter ecochic feminin t-shirt pull robe jupe wenhua duverge duverge duverger" />
       <meta name="description" content="Prêt-à-porter feminin ethique, ecologique et chic ! Cotton bio, Eco extrafin laine merinos, coton recycle, bouton biodegradable" />
