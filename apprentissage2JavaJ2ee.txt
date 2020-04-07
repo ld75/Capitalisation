@@ -1,4 +1,14 @@
 (?=.*string)(?=.*plusieurs)(?=.*lignes)
+bugmemoclap : 
+
+Ouverture du texte de l'extrait en edition : trop grand
+Apres enregistrement du micro le projet n'etait pas chargé
+Caddie a supprimer
+Message non visibles quand upload fichier
+Barre de defilement quand on upload un fichier "Mise a jour du texte patientez"
+Il ne switche pas sur le nouveau projet quand on creeun projet
+
+
 AFAIRE :
     Entretien:
         qu'est ce que rest, architecture ntiers, polymorphisme, mvc, dto, bdd: gerkin  
@@ -2619,7 +2629,7 @@ securite : security :(JSR375 implémenté par soteria qui est la reference) plus
        MaCustomClasse implements HttpAuthenticationMechanism SEUL TRUC QUE JE REUSSI A FAIRE MARCHER. MAIS PAS CEUX CI DESSUS                                                                                                                                                                                                             
               @Inject 
               private IdentityStoreHandler identityStoreHandler; // doit avoir ca ou peut directement injecter un IdentityStore
-       METHODE Importante: validateRequest() que je dois implémenter Les 2 autres c facultatif. S'execute à chaque requete avant les filters si user n'a pas de session et s'il arrive dans une servlet LINKservletsecurity
+       METHODE Importante: validateRequest() que je dois implémenter Les 2 autres c facultatif. S'execute à chaque requete avant les filters (si user n'a pas de session FAUX!) et s'il arrive dans une servlet LINKservletsecurity
                               Fait appel à->IdentityStoreHandler(Je peux le reecrire moi même)
                                 puis
                                     if(les parametres d'authent existent)
@@ -5025,7 +5035,7 @@ pour empecher le body de scroller lui attribuer la classe:
   /* position: fixed; pour pas de scroll x ni y */
   overflow-x: hidden; 
   }
-adapter le css au mobile ecran plus petit switcher entre css en fonction taille ecran ou taille fenetre responsive
+adapter le css au mobile ecran plus petit switcher entre css en fonction taille ecran ou taille fenetre responsive : @media :
 Utiliser dans chrome "Responsive...." pas les differentes marques de phone: c trop long. avec responsive je bouge la fenetre à 30% de zoom et je teste tout comme ca d'un coup
       directement dans un css
             @media attention voir LINKlksdflqa
@@ -7417,7 +7427,7 @@ Afficher une java.util.list<String>
                   </h:outputText>                                      public void uneMethodeQuiPeutRedefinirLeRequest(ComponentSystemEvent cse) throws AbortProcessingException 
               </h:column>                                              { ValueHolder monchamp= (ValueHolder)cse.getComponent(); ....}
           </h:dataTable>
-        pour attacher un listener (ex: scroll pagination) a la datatable ou à une autre UI (utile si veut faire de l'ajax-like avec onclick et immediate):
+        pour attacher un listener (ex: scroll charge defilement pagination) a la datatable ou à une autre UI (utile si veut faire de l'ajax-like avec onclick et immediate):
           <h:dataTable id="enpTable" rows="10" var="row" binding="#{monBean.typeDonnees}"-------------->Java: public UIData getTypeDonnees(){...return un UIData}
                                                          value="#{monBean.donneesInitiales}">-------------->Java: public List getDonneesInitiales(){...}
               ....
@@ -9547,7 +9557,7 @@ se connecter:
       mysql -h localhost -P 3306 -u root  --password=foulurecalotte --default-character-set=utf8
       puis 
       USE `ple_db_01`;
-afficher la liste des bases: 
+afficher voir la liste des bases: 
   show databases;
 si j'ai erreur 
 	Caused by: java.sql.SQLException: The server time zone value 'Paris, Madrid (heure d??t?)' is unrecognized or represents more than one time zone.
@@ -24204,7 +24214,7 @@ pour recuperer telecharger uploader directement java: installer updater programm
       
 pour savoir quel type de langage est utilise:
   echo $SHELL 
-  si il met bin/bash c'est du CSH pas du KSH. voir plus haut pour installer KSH et quoi mettre en debut de script Linkkshsflk  
+  si il met bin/bash c'est du CSH pas du KSH. voir plus haut pour installer KSH et quoi mettre en debut de script Linkkshsflk. Si "erreur mauvais interpreteur ksh" installer le ksh ou faire un dos2unix sur le fichier
 pour savoir en quoi est code un .exe:
     less nom_de_l'exe"
       et en entete du fichier on voit:
@@ -25385,7 +25395,7 @@ pour installer des programmes: applications: (le repository miroir local qui lui
     apt-cache search unelibrairie // pour chercher une librairie que je pourrais puller avec apt-get install
       apt-get update // pour mettre a jour la liste des packages nouvellement installables c a d juste la liste.
     pour installer ksh sur Debian:
-      sudo apt-get install ksh pdksh         Linkkshsflk
+      sudo apt-get install ksh pdksh    //ou bien avec aptitude     Linkkshsflk
     pour desinstaller
       sudo apt-get --purge remove nomprogramme
    pour raffraichir reinitialiser nettoyer ma memoire aptget aptitutde apt-get:
@@ -28616,7 +28626,7 @@ pour empecher que le bouton effacer ne fasse un retour arriere:
                                                   }
                                               });
 
-tableaux: fonctionnement et suppression d'un element du tableau: 
+tableaux: fonctionnement et suppression d'un element du tableau: arrays
                                           Lorsque l'on code ceci:
                                     
                                      var tab = new Array();
@@ -29369,7 +29379,7 @@ METHODE CLASS: THEBEST? classes es6
                                                         {....
                                                             var timer=setInterval(this.uneautremethodepersodecetteclasse.bind(this), 7000); // bind pour que dans le setInterval, this corresponde à cette classe et non pas à window
                                                         }
-                                                        this.dispatchEvent(new CustomEvent('unNomQueJ'invente',{unobjetJSON}); // envoie un event vers l'univers!
+                                                        this.dispatchEvent(new CustomEvent('unNomQueJ'invente',{unobjetJSON}); // envoie un event vers l'univers! heu non ca ne marche qu'avec les webworkers// CustomEvent ne marche pas avec unobjetJSON vide alors dans ce cas utiliser juste l'ojbet new Event("toto")
                                                         this.addEventListener('unNomQueJ'invente',function(e){        // reception d'un event depuis l'univers (dans cet exemple il s'envoie a lui meme car même nomQueJinvente: n'a pas de sens mais c pour l'exemple)
                                                                         this.toto=e.detail.unparametreARecuperer;
                                                                         this.titi=e.detail.unAutreParametreARecuperer;
