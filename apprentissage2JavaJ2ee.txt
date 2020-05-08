@@ -1,11 +1,4 @@
 (?=.*string)(?=.*plusieurs)(?=.*lignes)
-bugmemoclap : 
-Apres enregistrement du micro le projet n'etait pas chargé
-Message non visibles quand upload fichier
-Barre de defilement quand on upload un fichier "Mise a jour du texte patientez"
-Il ne switche pas sur le nouveau projet quand on creeun projet
-
-
 AFAIRE :
     Entretien:
         qu'est ce que rest, architecture ntiers, polymorphisme, mvc, dto, bdd: gerkin  
@@ -100,7 +93,7 @@ public class CharacterEncodingFilter implements Filter {
    reqwrapper = new ExtraParamWrappedRequest((HttpServletRequest) request, additionalParams);
    reqwrapper.setCharacterEncoding(this.encoding);
    if (this.forceEncoding) {
-    response.setCharacterEncoding(this.encoding);
+    response.setCharacterEncoding(this.encoding); LINKforcfilterutf8
     
    }
   }
@@ -646,13 +639,13 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
     avoir docker CE(community edition) ou EE(entreprise edition) recuperable sur store.docker.com
     sur linux conf dans docker.json
   docker --version ou docker run hello-world // verifier que docker est bien installe
-  docker info // indique entre autre nombre combien j'ai de containers ? Un container (une image) ne doit contenir qu'une seule chose. (1 pyton ou 1 redis ou 1 mysql) pas plus!
+  docker info // indique entre autre nombre combien j'ai de containers ? Un container (une image) ne doit contenir qu'une seule chose. (1 pyton ou 1 redis ou 1 mysql) pas plus! mais il hérite.
     haut 
     -Stack // defini les interractions entre les services docker
     -Services // defini comment le container se comporte
     -Container // mon executable
     bas
-  docker pull unPackage/docker:version 
+  docker pull unPackage/docker:version //pour installer une nouvelle image
   docker images // liste des images du repository
   docker image ls // LINKdckrimgls liste les images que j'ai cree. Ajouter --all si je veux voir aussi les images qui run
   docker image tag ed9fa2cfcf96 nouveaunomderepository:nouveautag // pour renommer le repository et le tag de l'image dont l'id est ed9etc...
@@ -689,17 +682,15 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
             command: npm run // overrite CMD ci dessus: en general la commande ici sert à demarrer un serveur
           postgres: // deuxieme service = 1 container
   docker build -t(pour tag) unnomquejedonneamoncontainer:untag /pathOuEstDockerfile("." si j'y suis et -f DocerfileToto si j'y suis mais que le nom n'est pas "Dockerfile")// Creer mon container docker qui rentre dans la liste repository d'images. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto
-  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e"nomDuneSystem.PropertySiJeVeux=savaeleur" --name=facultatifUnAutreNomQueJeDonneAMonContainer -d (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement) -v $(pwd)(ou un repertoire du host os. S'il n'existe pas il est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container) nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) OU identifiantDeLImage LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container --env(facultatif) JAVA_OPS="-Dpropriete.java=yyyy nomdel'image -Dxxx=yyy"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
-                                  -p portdeOS:portOuvertduContainer(je peux en mettre plusieurs)                                                                                                                                                                                                                                                             |_ce nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con                                                                                                                                                                                      
+  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e"nomDuneSystem.PropertySiJeVeux=savaeleur" --name=facultatifUnAutreNomQueJeDonneAMonContainerce(nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con) -d (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement. on peut enchainer plusieurs -p) -v $(pwd)(ou un repertoire du host os. S'il n'existe pas il est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container) nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) OU identifiantDeLImage LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container --env(facultatif) JAVA_OPS="-Dpropriete.java=yyyy nomdel'image -Dxxx=yyy"
   docker start -ia(comme -it avec run) nomduconteneurARedemarrer // existe aussi docker stop nomduconteneur ou idduconteneur pour stopper un conteneur
   docker container stop IDDuContainer // pour stopper l'execution d'un container (par son ID ça marche mieux voir donc la liste.)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
   docker inspect nomduconteneur ou nomduneimage // pour avoir plein de details infos donnees exposedPorts sur mon conteneur ou mon image                                  
   docker logs -f(comme tail -f)facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomD'uneImageAExecuter(en cours d'execution) // a faire apres avoir fait run pour afficher les logs
   docker attach nomduconteneur ou permierscharDuIdDuConteneur // pour se rattaché à un conteneur demarré en backgroud LINKlgkezoiur
   docker history facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomD'uneImageAExecuter(qui a un conteneur) // pour afficher l'historique d'ajout de ce conteneur 
-  docker rm -f facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomD'uneImageAExecuter(qui est en cours d'execution dans un conteneur)// pour le supprimer.
+  docker image rm -f nomOuIdD'uneImageAExecuter(qui est en cours d'execution dans un conteneur)// pour le supprimer l'image
+  docker rm -f nomOuIdDunContainer // pour le supprimer le container
   
   docker exec -it idp_jetty bash // LINKjgjgjgaba: execute une commande dans un conteneur déja actif. ici la commande bash est executée dans le container qui demarre en mode -it(interactif) donc du coup je vais avoir le prompt bash DANS mon container. De la si j'execute top je ne vois que les process qui tournent DANS le container
         de là je peux faire du apt-get pour installer d'autres librairies si besoin. 
@@ -1311,7 +1302,7 @@ afficher toutes les erreurs problemes: pour les voir il faut faire un build
 parcourir atteindre erreurs problems F2/Maj+F2
 trouver les recurences, qui utilise reference les appelants dependance: Alt+F7 peut aussi servir à epingler un pannel
 pin epingler un tab un pannel pin j'ai rajouté le raccourci alt+$                                                                                                       
-ouvrir fichier recent: Ctrl+E / Ctrl+shift+E
+ouvrir fichier/emplacement/position recente: Ctrl+E / Ctrl+shift+E(encore mieux!)
 deploie plie fold reduire unfold code bloc (se mettre bien à l'interieur du bloc) Ctrl+Plus/Minus et pour le faire de facon recursif pour tous: Ctrl+shift+Plus/minus
 atteindre definition declaration methode Ctrl+b
 aide detail help info afficher doc: dans une parenthese de methode: Ctrl+P; quelquepart: Ctrl+Q doc: pour installer la doc si elle n'existe pas télécharger le zip sous http://www.oracle.com/technetwork/java/javase/downloads/jdk10-doc-downloads-4417029.html le poser qqpart puis intellij>projectstructure>sdk>onglet documentationpath>+> chemin vers .zip direct.
@@ -1717,7 +1708,7 @@ tomcat :
     
 was : 
 si j'ai une erreur: corba blabla port xxx deja utilise: faire un 
- netstat -an(p pour voir les idprocess) ou netstat -b etc pour voir par quoi est utilise le port et arreter le programme en question (sur windows ou unix cette commande fonctionne)
+ netstat -an(p pour voir les idprocess) <espace> tcp etc pour voir par quoi est utilise le port et arreter le programme en question (sur windows ou unix cette commande fonctionne)
  
 Android :
 driver usb samsung mobile: il ne detecte pas mon telephone 
@@ -4568,7 +4559,7 @@ Si j'ai un problème d'accents dans le RESPONSE: des actions vers les jsp (affic
 								}
 								public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException 
 								{
-										request.setCharacterEncoding("UTF-8");
+										request.setCharacterEncoding("UTF-8"); comme  LINKforcfilterutf8
 										HttpServletResponse toto = (HttpServletResponse)response;
 										toto.setHeader("Content-Type","text/html;charset=UTF-8");
 										response.setContentType("text/html; charset=UTF-8");
@@ -5010,7 +5001,6 @@ utilisation de variables customisées reutilisables réutilisables ailleurs:
         yyyy{        
              width:var(--un-nom-qui-commence-par-deux-tirets, 500QuiEstLaValeurParDefautAuCasOuLaVariableNestPasTrouvee);
         }
-selecteur: LINKcsslkhkhkhkhkh
   !important // signifie qu'il est prioritire il prend la precedence override tout exemple: display:none !important;
   espacement des caractères
        letter-spacing: 6px;
@@ -5030,6 +5020,9 @@ pour supprimer personnaliser dans tout imput select radio checkbox le bleu qui e
 	on peut aussi changer leur taille: width:24px; height:24px;
 pour alligner aligner les <li> des <ul> verticallement mettre  
       display:table-cell; dans les li  
+pour ordonner les li changer l'order forcer l'ordre trier
+	li.uneclasse{order:1;}
+	li.uneautreclasse{order:2}
 pour empecher le body de scroller lui attribuer la classe: 
   .no-scroll {
   height: 100%;
@@ -5388,10 +5381,7 @@ utiliser les fonts telecharges du serveur:
         
         
         
-pour selectionner un nextSibing d'un element
-        elementrepere + elementJusteACoteASelectionner
-         Sinon utiliser plutot nextElementSibling si on veut exclure les textes
-          
+         
 faire disparaitre un div layer au premier plan pour agir derriere: (voir javascript)
 mettre au milieu un div centrer direct:
         width: 23%;
@@ -5413,17 +5403,22 @@ pour centrer direct:
     flex-direction: row  ou row-reverse ou column ou column-reverse // transforme complettement le html quel qu'il soit! affichage bien centre en ligne ou colonne. ou bien flex-flow: row ou column ???
     flex-wrap: wrap ou nowrap ou wrap-reverse
   }
-  enfants: jouer avec les width:x%; pour passer à la ligne et les padding pour les espaces 
+  enfants: jouer avec les width:x%; pour passer à la ligne et les padding pour les espaces
+selectors: selecteur: LINKcsslkhkhkhkhkh
      :nth-child veut dire selctionner element si:
           It is a paragraph element
           It is the second child of a parent
      :nth-of-type veut dire selctionner element si:
           Select the second paragraph child of a parent
+	sauf negation:
+		element:not(:attribut)
   .parent>:nth-child(2)  // (queryselector utilise la meme syntaxe) le deuxieme fils de la liste. li:nth-of-child(n+6) selectionner tout sauf les six premiers. li:nth-child(-n+5)  selectionner les 5 premiers. li:nth-child(odd) selectionner seulement les pairs. li:nth-child(even) selecitonner seulement les impaires. li:last-child(2) selectionner le dernier. li:last-child selectionner l'avant dernier. div:nth-of-type(1) selectionner que le premier div. div:nth-child(1) ben en fait là div ne sert à rien puis qu'il selectione le permier element quel qu'il soit
   {                             voir http://www.w3.org/TR/CSS2/selector.html   LINKcsslkhkhkhkhkh
                                 queryselectorAll ramene tous les elements correspondants alors que queryselector ne ramene que le premier
                                #toto c'est pour les id, .toto c'est pour la classe toto c'est pour la balise? [unattribut=valeurattrut] c'est pour par exemple name. LINKcssselectors
                                > c'est fils direct; " "(espace) c'est fils indirect ou direct
+				pour selectionner un nextSibing d'un element
+        				elementrepere + ou ~ elementJusteACoteASelectionner //tilde  ou plus pour choisir le sibling
                                , (virgule)c'est pour "OU" donc a,b retourne a ET b
                                ; (point-virgule):first-child;:nth-child(2); element1+element2 cherche element2 precede par un element1;
                                rien sans espace c'est "ET": #font.creer: c'est pour <div id="font" class="creer">
@@ -7634,6 +7629,7 @@ kafka : A_COMPLETER voir aussi https://github.com/akka/alpakka-kafka qui fait de
         logComppaction sert à convertir automatiquement les doublons-triplons... en un seul: gain de place dans le disque
         producers ont 3modes d'ecrtutre (async: donees pas garanties reçues. commited to leader: confirmation reception par le partition leader. commited to leader & quorum: confirmation reception par leader + une autre partition)
 mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents dans le systeme de fichier que en blob dans la db. la db c'est pour les metadatas.)
+	pour voir sur quelle version on est: db.version()
         -toujours activer l'authentification (par user/password au moins) facultatif sur local pour test.
         -il faut désactiver l'introspection javascript par sécurité(dans fichier de config mettre javascriptEnabled:false). la config est dans mongod.cfg on peut y voir ou sont les donnees de la base sur le disque LinkLKJDSFA
         -attention!!!! l'ordre des champs du json au niveau n-1 est important! au niveau n pas de probleme( par ex utiliser ordre alphabetique)
@@ -7692,9 +7688,8 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
         pour installer mongodb en local: 
             https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
             dezipper quelque part, mkdir c:/data/db(ou autre part...)
-        pour démarrer mongodb serveur en local: 
-            puis cmd ceci: 
-            pathVersLeBin/mongod.exe --dbpath="c:\path/vers/repertoire/database/ongodb-win32-x86_64-2008plus-ssl-4.0.9/data/db" // ca demare le serveur par defaut là: mongodb://127.0.0.1:27017/nombasededonnee?ssl=true&gssapiServiceName=mongodb (ssl=true etc si il est distant)
+        pour démarrer mongodb serveur en local: mongod xxxx:
+            pathVersLeBin/mongod.exe --dbpath="c:\path/vers/repertoire/database/data/db" (--auth: facultatif pour que l'utilisateur doive se connecter avec un user password voir LINKauthmgdb sinon c'est openbar) // ca demare le serveur par defaut là: mongodb://127.0.0.1:27017/nombasededonnee?ssl=true&gssapiServiceName=mongodb (ssl=true etc si il est distant)
 																	mongodb://username:password@localhost:27017/basemongo
         pour demarrer un client mongodb pour administrer la base et pour faire des requetes de test
             executer mongo.exe: c'est un client pour faire les requetes (c'est du javascript la dedans) LinkLKJDSFA . On peut aussi utiliser un gui qui s'appelle Robo3T à installer.
@@ -7713,12 +7708,7 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
             db.stats()            
         rentrer dans une base. Si elle n'existe pas il la crée. Je crois que une fois dedans on peut creer des users dedans.
             use nomdelabase
-	vider supprimer une base de donnée
-		Aller d'abord dans la base (use labase)
-		puis db.dropDatabase()
-	vider effacer l'interieur supprimer toutes les lignes d'une collection
-		db.uneCollection.remove({})
-        pour se connecter avec un utilisateur user
+pour se connecter avec un utilisateur user
             db.auth("AribaSystem","xxxx");            
 	qui je suis whoami quel est mon user utilisateur
 		db.runCommand({connexionStatus:1})
@@ -7735,7 +7725,9 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
                     {role:"readWrite", db: "unebase1"},
                     {role:"readWrite", db: "unebase2"},                    
                     {role:"readWrite", db: "unebase3"},
-                    ]
+               		ou 
+			"readWriteAnyDatabase"
+    		 ]
                 }
             )    
         pour modifier les droits d'un user sur les bases:
@@ -7744,6 +7736,8 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
                     {role:"readWrite", db: "unebase1"},
                     {role:"readWrite", db: "unebase2"},                    
                     {role:"readWrite", db: "unebase3"},
+		ou 
+		"readWriteAnyDatabase"
                 ]
             )
 	pour ajouter un droit a un user :
@@ -7751,6 +7745,8 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
 		    "nomduuser",
 		    [
 		      { role: "read", db: "accounts" }
+			ou 
+			"readWriteAnyDatabase"
 		    ]
 		)
         pour supprimer les droits d'un user sur les bases:
@@ -7767,12 +7763,17 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
         exemples de rechercher requetes. Une collection = une table relationelle
                     db.uneCollection.find({queryNeRienMettrePourTrouverTout},{facultatifLesChampsARetourerFiltrer}) 
 	requete : exemples:
-		    db.lacollection.find({"champTypeTableau.4":{$not:{$in:["x","y]}}},{champaretourner:true,champapasretourner:false}) //4 eme index du champttypeTableau not(negation) in
+		    db.lacollection.find({"champTypeTableau.4":{$not:{$in:["x","y]}}},{champaretourner:true,champapasretourner:false}) //4 eme index du champttypeTableau not(negation) in pour n'importe quel index mettre les GUILLEMETS! "champTypeTableau.souschampDuTableau":x c'est comme si je mettais: "champTypeTableau[nimporteQuelIndex].souchampDuTableau
             var doc = db.uneCollection.findOne ou find(...)// trouver par id (du coup doc est une variable) // findOne retourne le 1er resultat
         count compter nombre de lignes:
             db.nomdelacollection.find(..).count(); et tout compter: db.nomdelacollection.count()
         autres operations:             
-            db.uneCollection.remove(...) //pour supprimer ce qui match. Comment faire pour tout supprimer de la collection ?  
+	vider supprimer une base de donnée
+		Aller d'abord dans la base (use labase)
+		puis db.dropDatabase()
+	vider effacer l'interieur supprimer toutes les lignes d'une collection
+		db.uneCollection.remove({})
+                    db.uneCollection.remove(...) //pour supprimer ce qui match. Comment faire pour tout supprimer de la collection ?  
             db.uneCollection.insert({ _id: 1, jsFunc: function(){ print("hello") } } ) // si uneCollection n'existe pas elle est automatiquement créee
             db.myNewCollection3.createIndex( { y: 1 } ) // ajoute un indexe dans la collection
 	mongodump sur windows:
@@ -7784,7 +7785,7 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
 
         en java:pour me connecter à mongodb en java standard:
             avec la librairie mongo-java-driver-3.10.2.jar
-                MongoCredential credential = MongoCredential.createCredential(usr,"nomDeLaBaseDauthentificationLINKjdjdjd",password.toCharArray());
+                MongoCredential credential = MongoCredential.createCredential("nomUser","nomDeLaBaseDauthentificationLINKjdjdjd","motDePasseEnClair".toCharArray());// ceci n'est necessaire que si LINKauthmgdb
                 MongoClient mongoClient = new MongoClient(new ServerAddress("localhost",27017),credential,MongoCLientOptions.builder().build());
                 return mongoClient.getDatabase("dbName").getCollection("collectionName");
 		// pour faire une recherche requete:
@@ -7933,7 +7934,7 @@ si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from col
         utile pour transactions
             mettre @Transactional devant classe ou methode // rend ma methode dans une transaction LINKtranslsdfjai
             @Transactional(rollbackFor = Exception.class, noRollbackFor = AuthWebBusinessWSException.class) // si je throw  une exception dans mon programme ca fait un rollback si c'est une autre exception de type Authmachin ca ne fait pas de rollback 
-            AF pourquoi mettre transactional pour readonly requettes?
+            AFAIRE pourquoi mettre transactional pour readonly requettes?
             si j'ai javax.persistence.TransactionRequiredException: null mettre @Transactional plus en amont ou plus en aval du stacktrace. Il n'est pas sur la bonne méthode.
     si j'ai l'erreur Internal Exception: java.sql.SQLIntegrityConstraintViolationException: integrity constraint violation: NOT NULL check constraint; SYS_CT_10110 table: ALO_USR column: USR_NAME
             il me disait que l'erreur etait dans une methode select mais qui n'avait rien a voir avec la table ci dessus. En fait l'erreur a eu lieu juste avant! Connerie de merde. bref. effectivement le champ etait null dans la requette precedente alors qu'il ne devait pas. un peu merdique ce truc. Il aurait pu m'indiquer le bon stack ce con.
@@ -8742,6 +8743,8 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
                       - String query = "select distinct(alo_project.id), alo_project.nam......from alo_usr alo_usr left join alo_usrcrea alo_usrcrea on alo_usr.usr_id=alo_usrcrea.usrcrea_idusr where alo_usrcrea.usrcrea_idusr is not null and alo_usr.usr_id='"+uid+"' order by alo_project.name";
                         return em.createNativeQuery(query,Project.class).getResultList(); // pour les selects natifs
                         em.createNativeQuery(sql).executeUpdate(); // pour les updates natifs
+			em.persist(unObjet) // ceci va inserer l'objet et cet objet deviendra alors persisant donc chaque modif dedans DANS une transaction sera immediatement modifiée en base
+			em.merge(unobjet) // ceci fait un upsert de l'objet: insertion si n'existe pas et update si existe. L'objet ne devient pas persistant donc modifiable a souhait (je crois) comme pour .persist.
                 JPA_API_CRITERIA : Cest trop de la merde!!!!!!!!!
                         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
                         CriteriaQuery<MonEntite> query = cb.createQuery(MonEntite.class);
@@ -13427,12 +13430,14 @@ Pour recuperer le user utilisateur connecte à travers un certificat
                 }
 Cryptage : crypto : en java
         algos : algorithmes :
-                MD5 et SHA1: obsoletes 
-                RSA = asymetrique paire de cles
+                MD5 et SHA1: obsoletes pour hasher. SHA1>MD5
+                RSA = asymetrique paire de cles (taille cle peut varier) (symetrique plus rapide que asymetrique)
                     RSA-SHA256 = RS256
-                ECDSA = asymetrique
+		AES successeur de DES = symetrique = DESED?
+			3DES plus fort que DES
+                ECDSA = asymetrique (plus lent que symetriques)
                     ECDSA-SHA512 = ES512 
-                HMAC =  symetrique. signature et verification de la signature avec la meme cle
+                HMAC =  symetrique(sur?). signature et verification de la signature avec la meme cle
                     HMAC-SHA256 = HS256
                     HMAC-SHA512 = HS512 
   Pour recuperer une cle d'un certificat: 
@@ -13459,7 +13464,7 @@ Cryptage : crypto : en java
             signer.update(unString.getBytes("UTF-8"));
             String signedPayload = org.apache.commons.codec.binary.Base64.encodeBase64URLSafeString(signer.sign());
             signedPayload est la signature!
-	       deuxième methode pour signer un string:
+       deuxième methode pour signer un string:
             Mac sha512_HMAC;
            	byte[] secretkeyBytes = Base64.decodeBase64(secretKey); // secretKey est un string = mot de passe secret.
           	try {
@@ -13469,6 +13474,7 @@ Cryptage : crypto : en java
           	  byte[] mac_data = sha512_HMAC.doFinal(stringToSign.getBytes("UTF-8")); // il hash stringToSign et ca donne mac_data. verifier la signature consite à refaire la meme chose avec la secretkey et s'assurer que le macdata est pareil.        
           	  result = org.apache.commons.codec.binary.Base64.encodeBase64String(mac_data);
     pour crypter cripter decripter decrypter des donnees en java
+		Asymetrique:
                   public void crypterDecrypter() throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, UnrecoverableKeyException, KeyStoreException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, CertificateException {
                       //d'abord crypter
                      //KeyStore keystore = KeyStore.getInstance("PKCS12");
@@ -13492,7 +13498,28 @@ Cryptage : crypto : en java
                       System.out.println(new String(ret));
                   }
         
-        
+       Symetrique:// mais c'est galère car selon l'environnement (la jvm etc...) ca peut ne pas marcher donc utiliser docker
+			@Test
+	   	 public void aesSymetrique_encrypt_decryptTest() throws UnsupportedEncodingException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+		    String initVector="encryptionIntVec"; // doit faire 16 caracteres=16 bytes
+		    String key="aesEncriptionKey"; // doit faire 16 bytes
+		    String valeurACrypterDecrypter = "IPZYNGjfnE-wS1jKMkBPem_EFc_W4rVWpOhlRdUfoaQDuJG6rbAdNoiCpNDt1SbS";
+		     IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
+		    SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+		    //crypter
+		    Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+		    cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
+		    byte[] encrypted = cipher.doFinal(valeurACrypterDecrypter.getBytes());
+			System.out.println("nonUtilisable: "+new String(encrypted));
+			byte[] res = Base64.getEncoder().encode(encrypted);
+			System.out.println("crypté: "+new String(res));
+
+			cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
+			byte[] original = cipher.doFinal(Base64.getDecoder().decode(res));
+			String decripte = new String(original);
+			System.out.println("3 "+ decripte);
+			Assertions.assertEquals(valeurACrypterDecrypter,decripte);
+	    } 
                   			
 			pour recuperer un certificat:
 			         Certificate certificateSYE = CipherBean.getX509Certificate(syeCertificateName.getAbsolutePath());
@@ -13500,8 +13527,7 @@ Cryptage : crypto : en java
               ne marche pas, aller dans C:\Program Files\IBM\SDP70\runtimes\base_v61\java\jre\lib\security
               Il faut que local_policy.jar contienne la meme chose que ce qu'il y a dans US_export_policy.jar. le JCE contenant les deux jar est à mettre sous jre.x.x.x/ (voir README)
                       pour cripter decripter de gros fichiers:
-              				 //-----------------Cipher (c'est un criptage super car on cripte de gros fichiers avec une cle symetrique RSA. Cette cle est ensuite criptee par une cle publique
-                               que DES)
+              				 //-----------------Cipher (c'est un criptage super car on cripte de gros fichiers avec une cle symetrique AES qui est le successeur de DES. Cette cle est ensuite criptee par une cle publique RSA (qui est le successeur de DES)
               				 CipherBean cipher = CipherFactory.getCipherBean(CipherFactory.CIPHER_TYPE.DESede);
               				FileInputStream fileTest = new FileInputStream(tmpRecvFolder+File.separator+"texte.txt");//chemin absolu necessaire
               				FileOutputStream criptedFileTest = new FileOutputStream(tmpRecvFolder+File.separator+"texteCRIPTE.txt"); // on peut ecrire à la suite dans le fichier en rajouter un argument "append" à true
@@ -13613,7 +13639,7 @@ Cipherbean cypherbean de francois:
                                                                         
                                                                         /**
                                                                          * CrgCipher: A limited cipher to fullfill cryptographic needs of project use a
-                                                                         * pk12 keystore use keys RSA 2048 bits and AES 256 bits.
+                                                                         * pk12 keystore use keys RSA 2048 bits and AES 256 bits. AES est le successeur de DES AES est le successeur de DES
                                                                          * 
                                                                          * @author RS3MINUTE
                                                                          * @version 1.0 5 Août 2009
@@ -15317,8 +15343,7 @@ condidentialite/authenticite/non-repudiation=integrite(non modifie sur reseau) H
     pour pourvoir faire du https:(recevoir des requetes https sur mon serveur): LINKhttpslkjsdgfml
               cryptage: (voir aussi openssl)
                   cryptage AES avec generation de cle etc etc...
-                      voir article http://java.sun.com/developer/technicalArticles/Security/AES/AES_v1.html                                                            
-si j'ai l'erreur: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target et ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: 
+	si j'ai l'erreur: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target et ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: 
 	C'est pas compliqué: faut juste mettre dans le truststore le bon certificat pem de TOTO ou son certificat parent, et au demarrage de lappli charger ce truststore grace aux options -D pour que mon appli accepte la requete entrante de TOTO
             Pour bypasser ignorer le trust handshake ssl: ou bien installer le certificat dans le truststore
             	String accesspoint = "https://ipam.intra.renault.fr/interfaces/ws.php";
@@ -19983,7 +20008,7 @@ modules :java 9 : java9 : java10 : java11 : depuis java9
                                                               }
                                                           }
 compiler : compilation :
-                java9 : java10 : java11 :
+                java9 : java10 : java11 :avant ces version ne pas essayer c'est trop galère quand on a des dependances. faire du maven
                       javac --module-path /=ModulePath/chemin/vers/les/modules/dont/ici/je/depend -d repertoire/de/sortie/des/class 'find pathFichiersjavaatrouver -name *.java' // devient un .class
                               maven: pour les dependances à des automatic modules utiliser: 
                                           <plugin>
@@ -20048,11 +20073,11 @@ Depuis la version 1.6 utiliser -classpath ou -cp (c pareil) et separer par des ;
 				ou
 				"C:\Program Files\JavaSoft\JRE\1.5.0_12\bin\javaw.exe" -jar monJar.jar
 				si on a un noclassdeffounderror voir plus bas
-		execution d'un .class: (qui s'appelle Main.class)
+		executer execution d'un .class: (qui s'appelle Main.class)
 				java Main
-		execution d'un .class en envoyer une propriete à la jvm LINKù*ù
+		executer execution d'un .class en envoyer une propriete à la jvm LINKù*ù
 					$ java -DTOTOTI="blabli" Main
-		execution d'un .class en envoyer une propriete = à une variable d'environneent à la jvm
+		executer execution d'un .class en envoyer une propriete = à une variable d'environneent à la jvm
 					$ java -DTOTOTI=$TOTOTI Main
                     recuperer une variable d'environnement en java:
                             System.getenv("lavariable"); // recupere une variable d'environnement settee sur la machine (unix...windows?)voir LINK4488
@@ -24960,6 +24985,7 @@ u: undo si multiple undo ne marche pas: aptitude et charger vim
 :w "autrenom" pour sauver sous enregistrer sous save as un aure nom
 :!MaCommande faire une commande unix executer une commande unix
 :r ! MaCommande faire une commande unix et le resultat de la commande rentre dans le texte
+:%!xxd pour editer en hexadecimal: je peux alors modifier la partie centrale uniquement. revenir en mode normal après pour voir le resultat: :%!xxd -r
 shift G pour aller en bas du fichier
 Remplacement de chaine1 (toutes les occurrences de chaine1) ,par chaine2 depuis la ligne n1 jusqu'à  la ligne n2  
 		:n1,n2 s/chaine1/chaine2/g   // echappement des caractères / se fait par \/
@@ -26952,7 +26978,7 @@ tester le javascript TDD :
 				test('nom du test,async()=>{
 					impossible de definir une variable globale pour un test. il faut raisonner en modules. et les modules ont leurs variables
 						console.log("xxx possible");
-                              		    expect(bidule)(.not).toEqual({one: 1, two: 2}); //.not est facultatif. // toEqual regarde l'egalité en profondeur Assertions
+                              		    expect(bidule)(.not).toEqual({one: 1, two: 2}); //.not est facultatif. // toEqual regarde l'egalité en profondeur Assertions equals
                                                    toBe                        //toBe egalité simple
                                                    toBeNull
                                                    toBeUndefined!=toBeDefined
@@ -27103,7 +27129,7 @@ erreur: (intermediate value)(...) is not a function
     lambda en javascript fonctionnal programing :functionnal programing :
         var newNumbers = tableau.filter(function(number,indexFacultatif){ // indexFacultatif si on a besoin de l'index ouaou.:-)
 			contraction: filter((number,indexFacultatif)=>{return xxxx}); ou filter((number,indexFacultatif)=>uncalculSiJeMetsPasReturn)
-		.find(....) // comme filter mais retourne que LE PREMIER element qu'il trouve sans embarquer toute l'arbo comme filter/javascript :
+		.find(....) // comme filter mais retourne que LE PREMIER element qu'il trouve sans embarquer toute l'arbo comme filter/javascript:
               return (number % 2 !== 0); //filtrer. doit retourner un boolean// ne rien modifier dedans
           }).map(function(numberEstLeFils,indexFacultatif){ // on peut aussi faire dujson.map(unemethodeTemplate) avec function unemethodeTemplate(json){return 'bla${json.propriete}bli'} templating du json!
               return numberEstLeFils * 2; // Modifier. Ne pas modifier d'objets externes la dedans
@@ -27349,11 +27375,9 @@ connaitre l'URL de la page actuelle:
 connaitre les bouts de l'URL: 
 var newURL = window.location.protocol + "//" + window.location.host +(window.location.port?':'+location.port:'') "/" + window.location.pathname; // le scheme le domaine le port le path
 pour modifier la duree et son accelleration d'une animation css: 
-        document.getElementById("animantisechegen").style.webkitTransitionTimingFunction ="linear";
-        document.getElementById("animantisechegen").style.webkitTransitionDuration="0s";
-        focuser.style.MozTransitionDuration="0s";
-				focuser.style.oTransitionDuration="0s";
-				focuser.style.msTransitionDuration="0s";
+        document.getElementById("animantisechegen").style.transitionTimingFunction ="linear";
+        document.getElementById("animantisechegen").style.transitionDuration="0s";
+				focuser.style.transitionDuration="0s";
 pour desactiver le clic droit:
       document.oncontextmenu = function(e){return false;};
 pour detecter le navigateur mais c pas super precis! voir le site:http://diveintohtml5.info/everything.html 
@@ -27825,10 +27849,7 @@ pour faire defiler comme un prompteur:
             	focuser.style.backgroundRepeat="no-repeat";
             	focuser.style.backgroundSize="0% 100%";
             setTimeout(function(){ // attention dans un settimeout si je mets un throw Exception ce throw sort de mon context et ne va tapper que dans le contexte global. Utiliser donc les promeses pour gerer ca... comment ?
-            	focuser.style.webkitTransitionDuration=duration+"s";
-            	focuser.style.MozTransitionDuration=duration+"s";
-            	focuser.style.oTransitionDuration=duration+"s";
-            	focuser.style.msTransitionDuration=duration+"s";
+            	focuser.style.transitionDuration=duration+"s";
         			setTimeout(function()
         			{
         			focuser.style.backgroundSize="150% 100%";
@@ -27836,10 +27857,7 @@ pour faire defiler comme un prompteur:
             					{
             						focuser.style.backgroundImage=""; // ou .style.backgroundImage="url('boutton.png')";
             						focuser.style.backgroundSize="";
-            						focuser.style.webkitTransitionDuration="0s";
-            						focuser.style.MozTransitionDuration="0s";
-            						focuser.style.oTransitionDuration="0s";
-            						focuser.style.msTransitionDuration="0s";
+            						focuser.style.transitionDuration="0s";
             					},duration*1000);
             			},100);
             },10);
@@ -28315,7 +28333,7 @@ pour faire un drag and drop avec html5:
 pour setter le name l'attribut la propriete d'un element tag html:  
         the element normally does not have a name attribute, so setting the DOM property like that myelement.name="toto" won't work.
         For example, setting the name property on an input element will work. Setting it on a div will not.
-        It will work, however, with myelement.setAttribute("name","toto"). // ne pas mettre de boolean, toujours string
+        It will work, however, with myelement.setAttribute("nametoujourstoutenminuscules","toto"). // ne pas mettre de boolean, toujours string
 generer une image à la volee:
         var img=new Image();
        img.src="clearmute.png";
@@ -29336,7 +29354,7 @@ METHODE CLASS: THEBEST? classes es6
                                                                      cloneDuTemplate.querySelector(...).innerText=untruc;
                                                                        mondiv ou thisSiJeSuisDansUneClasseHtmlElement.appendChild(cloneDuTemplate); // ajoute le template dans la page (devient visible) MARCHE PAS
                                                         findansuneboucleparex
-                                                        div.setAttribute('unAttributduTagHtml','valeurDeLattributStringPasBoolean'); PIEGE! utiliser ça et ne pas utiliser unElementHTML.unattribut=xxx (ca ne modifie que la classe pas le html et du coup attributeChangedCallback n'est pas appele)
+                                                        div.setAttribute('unattributdutaghtmltoujourstoutenminuscules','valeurDeLattributStringPasBoolean'); PIEGE! utiliser ça et ne pas utiliser unElementHTML.unattribut=xxx (ca ne modifie que la classe pas le html et du coup attributeChangedCallback n'est pas appele)
                                                         
                                                         on peut ajouter un listnener au slot si celui ci change en javascript: par contre si je veux modifier le innerhtml du slot voir LINKrmvEvntListner
                                                             monslot.addEventListener('slotchange', e => {
@@ -29373,16 +29391,16 @@ METHODE CLASS: THEBEST? classes es6
                                                         // attribute c'est: <totot CA="ça">ici c'est properties</totot>
                                               1)      static get observedAttributes()
                                                         {
-                                                          return ['blabla','unattribut',...]; // voir ci dessous: LINK77738 NE pas utiliser "title" c'est un mot cle: boucle infinie
+                                                          return ['bladoittoujoursetreenminusculesbla','unattributtoutenminuscules',...]; // voir ci dessous: LINK77738 NE pas utiliser "title" c'est un mot cle: boucle infinie
                                                         }
                                               3)        attributeChangedCallback(nameattr,oldval,newval) // exec chaque fois qu'un attrbt de observedAttributes change LINK77738
                                                         {
-                                                          if (nameattr==='xxx') // mettre 3=
+                                                          if (nameattr==='xxxtoujourslowercasexxx') // mettre 3=
                                                           this[nameattr]=newval; //va direct setter les this.xxx de mon component. En fait va appeler le setter IMPLICITE de cette classe (uniquement pas le tag html) "set (lenomdemonattribut){}" et dedans implicitement j'aurais dans cette classe la propriete this.lenomdemonattribut... ATTENTION SUR LES onclick ca n'accepte pas des strings mais des fonctions
                                                           du coup peut etre sette depuis l'extereur: moncustomelement["machin"]=truc
                                                         }
                                                         set unattribut(unevaleur){...  // les methodes get et set peuvent etre appellees entre classes javascript: databinding
-                                                        this.setAttribute('unattribut',unevaleur); // modifie le dom associe à cette classe MAIS du coup immediatement DANS UN AUTRE THREAD appelle "attributeChangedCallback"
+                                                        this.setAttribute('unattributtoujourstoutenlowercase',unevaleur); // modifie le dom associe à cette classe MAIS du coup immediatement DANS UN AUTRE THREAD appelle "attributeChangedCallback"
                                                         ...}               
                                                         get unattribut(){
                                                         return this.getAttribute('unattribut');
@@ -33737,7 +33755,7 @@ Gradle : (je peux overrider et definir mes propres conventions over configuratio
             |__ gradle
             |   |__ wrapper
             |       |__ gradle-wrapper.jar // wrapper jar et sa configuration  
-            |       |__ gradle-wrapper.properties  // sa configuration
+            |       |__ gradle-wrapper.properties  // sa configuration // possible definir proxy ici: systemProp.http(s).proxyHost, proxyPort, proxyPassword comme d'hab
             |__ gradlew // script du wrapper pour unix  
             |__ gradlew.bat // script du wrapper pour windows  
             |__ settings.gradle     // contient le nom de mon projet
@@ -33749,6 +33767,7 @@ Gradle : (je peux overrider et definir mes propres conventions over configuratio
               monprojet/gradlew.bat -v //pour voir la version
               monprojet/gradlew.bat wrapper --gradle-version 4.10 //pour updater la version du wrapper et aussi de gradle par defaut
               commande gradlew.bat c comme gradle mais gradlew s'appuie sur le wrapper et l'installe s'il est pas là. pas gradle.            
+	
   LINKtaskgradleff
               dans build.gradle  
                         task copy(type: Copy, group: "Custom", description: "Copies sources to the dest directory") {   //pour executer cette task: ./gradlew copy
