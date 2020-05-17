@@ -639,6 +639,7 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
     avoir docker CE(community edition) ou EE(entreprise edition) recuperable sur store.docker.com
     sur linux conf dans docker.json
   docker --version ou docker run hello-world // verifier que docker est bien installe
+  systemctl start docker // pour demarrer start le daemon docker
   docker info // indique entre autre nombre combien j'ai de containers ? Un container (une image) ne doit contenir qu'une seule chose. (1 pyton ou 1 redis ou 1 mysql) pas plus! mais il hérite.
     haut 
     -Stack // defini les interractions entre les services docker
@@ -654,26 +655,28 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
   Dockerfile= bien l'appeler "Dockerfile" fichier docker: Défini une image à partir d'une image source. A ecrire apres avoir testé sur un container l'enchainement des commandes qui marchent grace à docker exec. puis ecrire ici les commandes pour builder mon image(mettre des trucs dedans):execution du haut vers le bas. haut:ce qui bouge le moins. Bas ce qui change le plus car docker utilise un cache.
         FROM nomdelimage:tag donc node:x.x.x-alpine OU python:2.7-slim OU airhacks/glassfish...// image docker de base quel OS OU BIEN une image docker (couche 0 = layer 0 de l'image) si je veux l'etendre voir LINKxlxlx  
         WORKDIR /un/path/DANSMONContainerDocker/PASdans/monOS/ (couche 1 = layer 1 de l'image)
+        USER root // defini le user qui va executer les commandes suivantes. On peut en mettre un executer un truc puis refaire USER ${autreuser} et executer d'autres trucs
         ENV foo /bla // du coup en dessous quand je mets ${foo} c'est en fait "/bla"
         COPY ./target/audio.memoclap.war ${DEPLOYMENT_DIR}
-        RUN apt-get update (couche 2 = layer 2 de l'image)
+        RUN apt-get update (couche 2 = layer 2 de l'image) //RUN sont des commandes executées avant CMD et ENTRYPOINT.
         RUN apt-get install -y unelibrairie      (couche 3 = layer 3 de l'image) // -y pour que lors du build docker reponde automatiquement YES à toute question interactive survenant pendant l'apt-get install: si j'ai erreur returned a non-zero code: 1
-        RUN apk update && apk add unpacket  // commandes linux executees. si LINKxlxlx ca modifie l'image docker comme une extension
+        RUN apk update && apk add unpacket  // commandes linux executees. si LINKxlxlx ca modifie l'image docker comme une extension // si sh utiliser apk a la place de apt-get car on est sur linux alpine
+	RUN apk update && apk add busybox-extras // sur sh ca c'est pour pouvoir utiliser telnet (busybox-extras telnet) vi et ping et autres dans mon container si besoin pour debuger les pb reseau. busybox --list pour voir toutes commandes possibles 
         RUN npm install --quiet // par exemple.
         RUN pip3 install numpy // par exemple. Commande pip3 qui installe numpy dans mon container.
         RUN pip install --trusted-host pypi.python.org - r requirement.txt // requirement.txt doit avoir été copie precedemment dans mon container dans le WORKDIR
         LABEL image.mynews-authentication.maintainer=developer@cacd2.fr // ca ajoute une metadata à mon image
         ARG user=jboss // la seule commande qui peut etre mise avant FROM. C'est comme ENV mais il peut etre mis avant FROM mais dans ce cas seul FROM peut l'utiliser. S'il est après FROM. Voir la doc
-        USER root // defini le user qui va executer les commandes suivantes. On peut en mettre un executer un truc puis refaire USER ${autreuser} et executer d'autres trucs
         COPY /un/path/dans/mon/Os /destination/dans/mon/image/docker
         COPY . . // par exemple: je copy tout dans mon image docker
         ADD . OU /un/PathDeMonOS/que/je/veuxCopierDansContainer /un/path/DANSMONContainerDocker/PASdans/monOS/    // comme COPY mais premier argument peut etre une URL
         EXPOSE 80 // ouvre le port 80 du container.
         ENV NAMEDEMAVARIABLE totoValeurDeMaVariable // créer une variable d'environnement (?) // tous les params de config doivent etre mis dans ce fichier docker. pas ailleurs(bonne pratique). (mysql.conf.d, javaMemory, phpini...) du coup ailleurs dans le fichier je peux mettre $totoValeurDeMaVariable
+	ENV JAVA_OPTS="-Djavax.net.ssl.trustStore=truststore.jks -Djavax.net.ssl.keyStore=letsencrypt.jks" 
         ENV http_proxy hostAremplir:portAremplir // mettre ça si je suis derriere un proxy sinon il ne peut pas builder mon conteiner
         ENV https_proxy hostAremplir:portAremplir // mettre ça si je suis derriere un proxy sinon il ne peut pas builder mon conteiner
-        ENTRYPOINT ["/docker-entrypoint.sh"] // facultatif c'est le script qui est executé pour lors du démarrage de l'image et qui prend tous les arguments de la commande docker 
-        CMD ["npm","start"] OU ["python", "app.py"]// execute npm start OU python app.py (app.py doit avoir été copie precedemment dans mon container dans le WORKDIR) qui va s'executer quand je vais executer mon container
+        ENTRYPOINT ["/docker-entrypoint.sh"] // facultatif c'est le script qui est executé pour lors du démarrage de l'image et qui prend tous les arguments de CMD 
+        CMD ["npm","start"] OU ["python", "app.py"]// execute npm start OU python app.py (app.py doit avoir été copie precedemment dans mon container dans le WORKDIR) qui va s'executer quand je vais executer mon container. Rajoute aussi des arguments a mon ENTRYPOINT
   fichier docker-compose.yml: (overrite le fichier docker ci-dessus)
          version:'3'
          services:
@@ -681,8 +684,9 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
             build: . (tu te buildera à la racine du container docker (?)
             command: npm run // overrite CMD ci dessus: en general la commande ici sert à demarrer un serveur
           postgres: // deuxieme service = 1 container
-  docker build -t(pour tag) unnomquejedonneamoncontainer:untag /pathOuEstDockerfile("." si j'y suis et -f DocerfileToto si j'y suis mais que le nom n'est pas "Dockerfile")// Creer mon container docker qui rentre dans la liste repository d'images. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto
-  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e"nomDuneSystem.PropertySiJeVeux=savaeleur" --name=facultatifUnAutreNomQueJeDonneAMonContainerce(nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con) -d (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement. on peut enchainer plusieurs -p) -v $(pwd)(ou un repertoire du host os. S'il n'existe pas il est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container) nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) OU identifiantDeLImage LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container --env(facultatif) JAVA_OPS="-Dpropriete.java=yyyy nomdel'image -Dxxx=yyy"
+  docker build -t(pour tag) unnomquejedonneamonImageAcreer:untag -f ./path/AutreNomDeDockerfile facultatifPathVersLeDockerFile) /pathOuEstDockerfile("." si j'y suis) dernierArgumentFacultatifEstPathRelatifVersLeRepertoireContexteContenantLaRacineDuCodeSource/// Creer mon container docker qui rentre dans la liste repository d'images. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto
+  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e "nomDuneSystem.PropertySiJeVeux=savaeleur" ou --env(facultatif) JAVA_OPTS="-Dpropriete.java=yyyy -Dxxx=yyy" --link(facultatif) nomduncontainerTypeDatabaseDansunNetworkBridge:nomDuHostNameDansLaConfDeMonProgrammeLINKjdbcdockerdatabase --name=facultatifUnAutreNomQueJeDonneAMonContainerce(nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con) -d (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement. on peut enchainer plusieurs -p) -v $(pwd)(ou un repertoire du host os. S'il n'existe pas il est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container) --network unreseaubridge -hNomDuHostnameSiParExempleCestUneBaseDeDoneeJeCrois nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) OU identifiantDeLImage LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container nomdelimage
+	par defaut c'est executé sur le reseau bridgé partage entre tous les containers et même le host. Suffit de se connecter dans le container et voir leur IP
   docker start -ia(comme -it avec run) nomduconteneurARedemarrer // existe aussi docker stop nomduconteneur ou idduconteneur pour stopper un conteneur
   docker container stop IDDuContainer // pour stopper l'execution d'un container (par son ID ça marche mieux voir donc la liste.)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
   docker inspect nomduconteneur ou nomduneimage // pour avoir plein de details infos donnees exposedPorts sur mon conteneur ou mon image                                  
@@ -691,8 +695,8 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
   docker history facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomD'uneImageAExecuter(qui a un conteneur) // pour afficher l'historique d'ajout de ce conteneur 
   docker image rm -f nomOuIdD'uneImageAExecuter(qui est en cours d'execution dans un conteneur)// pour le supprimer l'image
   docker rm -f nomOuIdDunContainer // pour le supprimer le container
-  
-  docker exec -it idp_jetty bash // LINKjgjgjgaba: execute une commande dans un conteneur déja actif. ici la commande bash est executée dans le container qui demarre en mode -it(interactif) donc du coup je vais avoir le prompt bash DANS mon container. De la si j'execute top je ne vois que les process qui tournent DANS le container
+ docker save nomdelimageactuelement nomdurepositoryQuonVeutQuilAitLorsDuReimport:tagduRepositoryQuonVeutQuilAitLorsDuReimport > unnom.tar et docker load < unfichier.tar // save pour dumper exporter mon image docker dans un tar que je peux envoyer a un client. et lui de son cote fait docker load monTar pour charger mon image livrable
+  docker exec -it nomconteneurDejaRunne bash ou sh ou ksh // LINKjgjgjgaba: execute une commande dans un conteneur déja actif. ici la commande bash est executée dans le container qui demarre en mode -it(interactif) donc du coup je vais avoir le prompt bash DANS mon container. De la si j'execute top je ne vois que les process qui tournent DANS le container
         de là je peux faire du apt-get pour installer d'autres librairies si besoin. 
         ensuite regarder aussi sur le hub.docker la doc de l'image si je veux enrichir cette image.            
   registry (docker.hub par exemple)
@@ -702,15 +706,21 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
       repository2
                  imagedocker2:tag1
                  imagedocker2:tag2...
+  reseau network manage :
+	pilote none: aucune connexion possible
+	pilote bridge par defaut tout les conteneurs sur ce bridge se voient et l'hote aussi
+	creer un network manage:
+		docker network create --driver=bridge nomdubridge
   volumes managés: permettent de copier/d'exporter d'avoir en synchro des repertoires/fichier du conteneur vers l'OS (c'est synchro entre les deux meme si conteneur est off)
-      docker volume create monvolumemanagé // creer un volume managé sur l'OS hote
+      docker volume create monvolumemanagé // creer un volume managé sur l'OS hote. Si je monte un volume managé vide sur un dossier du container qui n'est pas vide alors le contenu de mon container est mirroré sur le volume manage sur l'hote et ca reste persistant meme apres suppr container.
       docker volume ls // lister les volumes manages (leur nom= repertoireOSOuEstMonProjetDocker_nomduvolumemanagé)
-      docker volume inspect // inspecter un volume managé: savoir où il se trouve sur l'OS hote exemple /usr/moncul
-      docker run -v monvolumemanagé:/path/du/conteneurcontenant/deja/des/trucs    
+      docker volume inspect nomDeMonVolumeManage// inspecter un volume managé: savoir où il se trouve sur l'OS hote exemple /usr/moncul
+      docker volume prune // pour supprimer tous les volumes non utilises
+      docker run -v monvolumemanagéOuUnPathDeMonOSVersFichierOuDossier:/path/du/conteneurcontenant/deja/des/trucs(:ro facultatif pour readonly)    
                         du coup tout ce qui est dans le conteneur /path/du/conteneurcontenant/deja/des/trucs se retrouve synchro avec le path /usr/moncul et c'est persistant.         
     docker compose : toujours regarder les doc du hub pour bien utiliser les images standards
             fichier docker-compose.yml // ecrire que en ascii sans espaces.
-                version: "3"
+                version:<espace>"3" // toujour utiliser un editeur digne de ce nom pour le yaml
                 services: //contient la liste des conteneurs dont on a besoin
                     nomdemonservice1: // nom unique  
                         image: nomdemonconteneur1:sontag
@@ -1162,7 +1172,7 @@ fermer fichier en cours Ctrl+F4
 fermer tous les fichiers sauf l'actuel close: close all closeall
         windows > editortab >close... 
 debugger debuger tomcat avec intellij: 
-    intellij>run>>editConfiguration>remote>+>debug start (copier la ligne en tête et la mettre dans les parametres de demarrage de tomcat:(-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005) demarrer le tomcat puis demarrer ce remotedebug (quand je veux c de la balle!) LINKoizeurzotie
+    intellij>run>>editConfiguration>remote>+>debug start (copier la ligne en tête et la mettre dans les parametres de demarrage de tomcat:(pour demarer en mode debugger voir LINKoizeurzotie java puis demarrer le tomcat puis demarrer ce remotedebug (quand je veux c de la balle!) LINKoizeurzotie
 nettoyer netoyer clean supprimer les methodes inutilisees non utilisees unused d'une classe ou de tout le projet                                                                                |_n pour ne pas qu'il poireaute pour que le listner s'accroche. IL continue de démarrer.
   menu analyze> inspectCode      
 si il indique qu'une methode est neverused alors que c'est pas vrai faire file>invalidate cache/Restart...
@@ -1363,8 +1373,9 @@ microprofile : microprofiles : microprofile : pannels d'outils en plus facultati
       @Retry(maxRetries=2) // en cas d'exception trowée, reesaye une autre fois/plusieurs fois 
       public String unemethode(){...}
 payara :payaramicro : // executeur direct d'un microservice.
-    java -jar payara-micro.jar                      // créé un payara serveur
-        --rootDir repertoire/de/travail/cree/auto/si/existepas // pour y mettre sous lib les jars qu'il n'arrive pas à trouver au demarrage: les drivers par exemple. il y met automatiquement des trucs. ca se rempli beaucoup donc il faut mettre ce parametre pour avoir un control de la ou il ecrit tout son fatras. Attention si je suis en ssl il y ecrit des trucs dedans qui ne me permettent plus ensuite de ne plus être en ssl donc utiliser plusieurs rootDir differents par environnement
+    java  voir  LINKoizeurzotie pour debugger en remote
+        --jar payara-micro.jar                      // créé un payara serveur
+	-rootDir repertoire/de/travail/cree/auto/si/existepas // pour y mettre sous lib les jars qu'il n'arrive pas à trouver au demarrage: les drivers par exemple. il y met automatiquement des trucs. ca se rempli beaucoup donc il faut mettre ce parametre pour avoir un control de la ou il ecrit tout son fatras. Attention si je suis en ssl il y ecrit des trucs dedans qui ne me permettent plus ensuite de ne plus être en ssl donc utiliser plusieurs rootDir differents par environnement
         --deploy /home/user/example.war ou le repertoire root du war exploaded(dans target)// mettre un .reload sous la racine de mon war exploded et le modifier/toucher recharge le war exploded automatiquement (faire mvn package)(sauf si le war ne s'est pas déployé la fois précédente)
                  possible faire plusieurs --deploy dans une meme commande seront sur le meme port
         --contextroot contextrootquiremplacelenomdemonwarcommecontextroot (avec / au debut, sans / à la fin) on peut mettre / tout court. Si on pet pas ca le contextroot=nomDuWar //ou faire --deploy /x/y:contextroot
@@ -1382,7 +1393,6 @@ payara :payaramicro : // executeur direct d'un microservice.
         --sslcert aliasdanslecertificat qui se trouve dans le chemin retourne par javax.net.ssl.trustStore je crois
         --mcAdress // facultatif sert à placer mon instance dans un multicast en particulier   
         --mcPort // facultatif sert à forcer le port de mon multicast (???)
-        -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n // pour debugger en remote
         --prebootcommandfile fichier LINKasadmdfirez//facultatif. Execute le fichier avant de demarrer le serveur. Attention tout ne peux pas marcher dedans puisque le serveur n'est pas encore demarré
         --postbootcommandfile fichier LINKasadmdfirez//facultatif. s'execute dès que le serveur a demarré
         --postdeploycommandfile fichier LINKasadmdfirez//facultatif s'execute après les deployements sont terminés.         
@@ -1450,9 +1460,9 @@ executer de la configuration post demarrage: LINKasadmdfirez
 rajouter une base de LINKlskjdfqm  donnée jta au serveur payara
     jai mis un domain.xml  a coté de payara.jar et j'ai rajouté dedans 
           <resources>
-        <jdbc-resource pool-name="H2Pool" jndi-name="jdbc/__default" object-type="system-all"/>
+        <jdbc-resource pool-name="H2Pool" jndi-name="jdbc/__default" object-type="system-all"/> // dans <resources>/<jdbc-resource jndi-name="cettefererence" Ma declaration de LINKjta est ici 
 	<jdbc-connection-pool is-isolation-level-guaranteed="false" name="H2Pool" datasource-classname="com.mysql.cj.jdbc.MysqlConnectionPoolDataSource" res-type="javax.sql.DataSource">
-            <property name="URL" value="jdbc:mysql://127.0.0.1:3306/memoclap"/>
+            <property name="URL" value="jdbc:mysql://127.0.0.1 ou LINKjdbcdockerdatabase :3306/memoclap"/>
             <property name="user" value="root"/>
             <property name="password" value="foulurecalotte"/>
         </jdbc-connection-pool>
@@ -2679,7 +2689,7 @@ config de la base de donnée donnee: en jee
                 ),
                 @DataSourceDefinition(name = "java:app/MemOclapDataSourceRemote", 
                         className = "com.mysql.jdbc.jdbc2.optional.MysqlDataSource", // ou com.mysql.cj.jdbc.MysqlConnectionPoolDataSource ? PAS DE Driver
-                        url = "jdbc:mysql://www.memoclap.com:3306/alo",
+                        url = "jdbc:mysql://www.memoclap.com ou LINKjdbcdockerdatabase:3306/alo",
                         user = "root",
                         password = "foulurecalotte"
                         portNumber=6689
@@ -2688,7 +2698,7 @@ config de la base de donnée donnee: en jee
         ou  (l'un ou l'autre mais ne pas melanger) // ci dessous si je ne veux déclarer qu'une seule datasource.
             @DataSourceDefinition(name="java:global/MyApp/MyDataSource2",
               className="org.apache.derby.jdbc.ClientDataSource", ou org.hsqldb.jdbc.JDBCDriver
-              url="jdbc:derby://localhost:1527/myDB",
+              url="jdbc:derby://localhost ou LINKjdbcdockerdatabase:1527/myDB",
               user="lance",
               password="secret"
            )
@@ -7689,7 +7699,7 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
             https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
             dezipper quelque part, mkdir c:/data/db(ou autre part...)
         pour démarrer mongodb serveur en local: mongod xxxx:
-            pathVersLeBin/mongod.exe --dbpath="c:\path/vers/repertoire/database/data/db" (--auth: facultatif pour que l'utilisateur doive se connecter avec un user password voir LINKauthmgdb sinon c'est openbar) // ca demare le serveur par defaut là: mongodb://127.0.0.1:27017/nombasededonnee?ssl=true&gssapiServiceName=mongodb (ssl=true etc si il est distant)
+            pathVersLeBin/mongod.exe --dbpath="c:\path/vers/repertoire/database/data/db" (--bind_ip_all facultatif pour ouvrir a toutes les ip etrangeres sinon timeoutconnexion depuis ext) (--auth: facultatif pour que l'utilisateur doive se connecter avec un user password voir LINKauthmgdb sinon c'est openbar) // ca demare le serveur par defaut là: mongodb://127.0.0.1:27017/nombasededonnee?ssl=true&gssapiServiceName=mongodb (ssl=true etc si il est distant)
 																	mongodb://username:password@localhost:27017/basemongo
         pour demarrer un client mongodb pour administrer la base et pour faire des requetes de test
             executer mongo.exe: c'est un client pour faire les requetes (c'est du javascript la dedans) LinkLKJDSFA . On peut aussi utiliser un gui qui s'appelle Robo3T à installer.
@@ -7778,7 +7788,7 @@ pour se connecter avec un utilisateur user
             db.myNewCollection3.createIndex( { y: 1 } ) // ajoute un indexe dans la collection
 	mongodump sur windows:
 		E:\x\MongoDB\bin\mongodump.exe --port=27017 --host=localhost --username=superuser --password=xxxx --authenticationDatabase=admin --db=testGlobal --out ou --archive=E:/mongoout //out dans un repertoire, archive dans un compresse
-	mongorestore: // ne fait jamais d'upsert. Ignore seulement si l'id existe deja
+	mongorestore: //pour importer ne fait jamais d'upsert. Ignore seulement si l'id existe deja
 		"path/mongorestore.exe" --username laurent --password laurent --authenticationDatabase attentionCPasLaBaseDeDonneeCestLeNomDeLaBaseDauthentificationQueJeCreeBesoinRetenirNomLINKjdjdjd --archive=cheminVersArchive ou repertoireFiniParSlashOuFichierArchiveCreeParMongoDump --nsFrom NomdemabaseInitialeDansLarchiveAttentionSiFauxilIgnoreToutNsFromEtNsTo.* --nsTo NouveauNomQueJeVeuxQuiDoitOverriderNomInitial.*
 		exemple: 
 		"C:\Program Files\MongoDB\Server\4.2\bin\mongorestore.exe" --username laurent --password laurent --authenticationDatabase ariba --archive=C:\Users\B042EL\Documents\Capitalisation\ArchivageDiagrameClassesEtDoc\mongodump\mongoout2 
@@ -8675,13 +8685,13 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
     fichier resources/META-INF/persistence.xml marche bien. sinon ou mais pas sur dutout: WEB-INF/persistence.xml. Ce fichier DOIT etre dans le jar ou le war qui contient les @Entity
     <?xml version="1.0" encoding="UTF-8"?> // super important de mettre ça
     <persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"> // super important de mettre ça 
-        <persistence-unit name="com.memoclap"     transaction-type="RESOURCE_LOCAL(utilise le système de transaction du JDBC natif donc a utiliser pour les testsunitaires LINKentitymlocal) ou JTA(pour utiliser la gestion de transaction du container donc d'un jndi LINKjta)"> // du coup applicativement je l'appelle comme ça : LINKentitym
+        <persistence-unit name="com.memoclap"     transaction-type="RESOURCE_LOCAL(utilise le système de transaction du JDBC natif donc a utiliser pour les testsunitaires LINKentitymlocal) ou JTA(pour utiliser la gestion de transaction du container donc d'un jndi defini la:LINKjta)"> // du coup applicativement je l'appelle comme ça : LINKentitym
             <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> // facultatif provider peut etre eclipselink ou hibernate. si on met rien.. sais pas. depend jars ?
             <description>EclipseLink EntityManager</description>                 // facultatif
             <exclude-unlisted-classes>false</exclude-unlisted-classes>
-             <jta-data-source>java:app/MemOclapDataSource</jta-data-source> //LINKjta: mettre la valeur de @DataSourceDefinition(name="java:app/MemOclapDataSource" pour aller cherche un datasource deja defini applicativement
+             <jta-data-source>java:app/MemOclapDataSource</jta-data-source> // est defini la LINKjta: mettre la valeur de @DataSourceDefinition(name="java:app/MemOclapDataSource" pour aller cherche un datasource deja defini applicativement
              ou/et
-            <properties> // parametres envoyés au persistenceprovider. On peut définir la base de donnée ici mais je prefere LINKjta  
+            <properties> // parametres envoyés au persistenceprovider. On peut définir la base de donnée ici mais je prefere le definir la LINKjta  
                 <property name="eclipselink.logging.level" value="FINE"/>				|_Marche bien et trace les logs dans systemOut en tout cas.
 		<property name="eclipselink.logging.file" value="outputeclipselink.log"></property>	|
                 <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbc.JDBCDataSource"/><!-- com.mysql.jdbc.Driver -->
@@ -8712,7 +8722,7 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
     //recuperer l'entitymanager applicativement:
           Persistencecontext a une duree de vie dependante de celle de la transaction.
           Une transaction peut contenir un ou plusieurs persistencecontext" 
-            @PersistenceContext(name = "facultatifUtileDansLeJavaChaisPasTropEncoreCOmmentAFAIRE" unitName="LINKdkdkfjfjnomcorrespondantA<persistence-unit nameEstFacultatifSiYEnAQunDansLeXml) // est def ici LINKentitym . attention c'est une annotation ejb. Est Injectable dans Ejbs. Pour la rendre injectable dans cdi faire LINKlerendreinjectable (heu je crois que ca marche quand meme l'injection sans ça.)
+            @PersistenceContext(name = "facultatifUtileDansLeJavaChaisPasTropEncoreCOmmentAFAIRE" unitName="LINKdkdkfjfjnomcorrespondantA<persistence-unit nameEstFacultatifSiYEnAQunDansLeXml) // est def ici LINKentitym . attention c'est une annotation ejb. Est Injectable dans Ejbs donc voir CDI ou pour la rendre injectable dans cdi faire LINKlerendreinjectable (heu je crois que ca marche quand meme l'injection sans ça.)
             EntityManager em; "EntityManager gère le lifecycle de persistenceContexts 
         ou
             EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.memoclap"); //est def ici LINKentitymlocal(jecrois voir doc tomee). dans persistence.xml mettre <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> sinon ca ne marche pas 
@@ -9508,7 +9518,8 @@ this will show you all of the tables:
                                                                                          
 MYSQL :
    apres installation: 
-          cd C:\Program Files\MySQL\MySQL Server 5.6\bin\
+        windows: 
+	 cd C:\Program Files\MySQL\MySQL Server 5.6\bin\
           mysqld.exe --initialize ou mysqld.exe --initialize --user=mysql si besoin pour la première fois apres installation. cree  le repertoire data.
            puis
           C:\Program Files\MySQL\MySQL Server 5.6\bin\mysqld --console --skip-grant-table(pour que je puisse me connecter en root sans mot de passe) (demarre le serveur mysql)
@@ -9517,6 +9528,12 @@ MYSQL :
           pour arreter redemarrer mysql voir LINKmysql9938 
           cd C:\Program Files\MySQL\MySQL Server 5.6\bin\
           C:\Program Files\MySQL\MySQL Server 5.6\bin\mysqld --console
+	unix:
+		demarrer arreter le serveur:
+		/etc/init.d/mysql start
+		ou 
+		sudo service mysql start ou stop
+	   pour reinitialiser la base si par ex j'ai perdu le mdp root: refaire un repertoire vierge /var/lib/mysql dont chown -R mysql:mysql mysql et chmod -R 777 mysql puis executer sudo mysql_install_db
          ATTENTION! toujours d'abord arreter apache puis redemarrer mysql puis redemarrer apache LINKmysql9938
                 ce qui donne
                 /etc/init.d/apache2 stop      MAIS Plutot faire sur ubuntu simplement "start et stop mysql" sous /etc/init.d
@@ -9782,6 +9799,15 @@ indexof:   INSTR:
         drop database nomdemadatabase
 si erreur 1136 column count doesn't match value count at row 
         il me manque/j'ai trop de champs dans ma requete
+mysql avec docker:
+	installer mysql
+		sudo docker pull mysql
+	depuis image docker je cree un container mysql avec un nouveau user root et son password et une nouvelle base de donnee
+		sudo docker run --name memoclap_mysql -e "MYSQL_ROOT_PASSWORD=foulurecalotte" -e "MYSQL_DATABASE=alo" -d mysql:latest
+	je charge du SQL dans le container qui tourne
+		sudo docker exec -i memoclap_mysql sh -c 'exec mysql --force --default-character-set=utf8 -uroot -pfoulurecalotte alo' < /home/laurent/Documents/MemOclap/java/MemOclapFront/src/test/resources/memoclapCreate_mysql.sql
+	je me connecte a la base
+		sudo docker exec -it lenomdemoncontainer mysql -uroot -p
         
 H2 : voir LINKldkjgieieioruz qui est mieux
 client H2: http://www.h2database.com/html/main.html
@@ -11259,6 +11285,7 @@ pour connaitre les profiles:
         <artifactId>maven-war-plugin</artifactId>
         <version>3.0.0</version>ou LATEST
         <configuration>
+		<outputDirectory>path/vers/ou/on/veutQuilDeposeLeWar</outputDirectory> // MARCHE PAS
           <webResources>
             <resource>
               <filtering>true</filtering>
@@ -23026,6 +23053,22 @@ blob -> Image:
             }
           }
 Audio :
+	****convertisseurs
+	mp3>wav
+	ffmpeg -i 25fa39ea7f0ebf04c1a26f7b407a810e=51422196457796.mp3 25fa39ea7f0ebf04c1a26f7b407a810e=51422196457796.wav
+	wav>mp3
+	ffmpeg -i 25fa39ea7f0ebf04c1a26f7b407a810e=51422196457796.wav -qscale:a 4 25fa39ea7f0ebf04c1a26f7b407a810e=51422196457796.mp3 Ca ca marche sur Iphone au moins!
+	ffmpeg -i 0ed653b908711b83b01a66256ce771f1=21422128902797.wav 0ed653b908711b83b01a66256ce771f1=21422128902797.mp3 Ne marche pas sur Iphone.
+	ffmpeg -i 0ed653b908711b83b01a66256ce771f1=21422128902797.wav -codec:a libmp3lame -b:a 160k 0ed653b908711b83b01a66256ce771f1=21422128902797.mp3 Jamais essaye
+	ogg>wav
+	oggdec -i d2d3d32c91ea38e0d1d9094add5b9a41=Memo7.ogg -o d2d3d32c91ea38e0d1d9094add5b9a41=Memo7.wav
+	wav>ogg
+	oggenc -q4 6921381850833683=Chinois43.wav
+	wmv>webm
+	ffmpeg -i Memoclap3.wmv Memoclap3.webm
+	wmv>3gp
+	ffmpeg -y -i Memoclap3.wmv -r 20 -s 352x288 -b 400k -acodec aac -strict experimental -ac 1 -ar 8000 -ab 24k Memoclap3.3gp
+
 convettir les AMR en MP3
   amr to mp3 converter
 convertir mp3 en wave: 
@@ -24202,7 +24245,8 @@ sudo :
                 ou                                                    ou 
                 %groupe(utilisateurs appartenant à ce groupe)         NOPASSWD:
                 lire la suite ici:http://www.linuxpedia.fr/doku.php/commande/su_sudo
-                
+	si message n'apparait pas dans le fichier sudoer faire
+		adduser nomdemonuserAAutoriserPourFaireSudo sudo                
   avant on utilisait "su"
     su // switch ma session dans la connexion d'un autre utilisateur. Par defaut root.
     su toto ou su - toto// je deviens l'utilisateur user toto
@@ -24319,9 +24363,8 @@ si a l'execution d'un script sh j'ai ca: cannot execute binary file
 on peut voir les hosts sous /etc/hosts
 les droits utilisateurs sous /etc/hosts.allow
 env pour voir les variables d'environnement
-dans /usr/bin noramlement (on peut retrouver dans les variables d'environnement) on voit tous les programmes que le user peut utiliser (.exe) (les commandes)
 
-commande unix: ifconfig -a determine adresse ip(nonfixe) (equivalent windows = ipconfig)(adresse ipv4 donne une valeur qui bouge) //pour une valeur ipfixe: un appel à https://httpbin.org/ip = http://www.mon-ip.com/
+commande unix: "ip address" ou anciennement ifconfig -a determine adresse ip(nonfixe) (equivalent windows = ipconfig)(adresse ipv4 donne une valeur qui bouge) //pour une valeur ipfixe: un appel à https://httpbin.org/ip = http://www.mon-ip.com/
 les droits: 
     r=4
     w=2
@@ -24344,7 +24387,7 @@ pour modifier les droits:
 		chmod -R 755 dossier
 		chmod - 755 fichier (R a disparu par erreur ?)
 		Chmod -R 755 deliver.sh
-chown:
+chown: changer le owner d'un fichier/repertoire
 chown [-R] utilisateur fichierOuRepertoire (-R pour recursif)
 chown [-R] utilisateur:groupe fichierOuRepertoire (-R pour recursif)
 pour voir la liste des groupes
@@ -24446,6 +24489,7 @@ les comptes utilisateurs sont sur etc/password (si un jour un gars qu'on ne conn
 SUPER methode pour trouver les plus gros fichiers: il y a aussi apparemment sur unix baobab l'equivalent de windirstat.  
 du -sk -h * | grep '[0-9\.]\+[M;G]'
 du -sh * c'est mieux c'est plus clair ou du -sh . pour voir la taille du repertoire courant
+probleme d'espace disque disk? utiliser ncdu c'est top. (faire ncdu repertoirequonVeutSiOnMetRienCestOuOnEst. d pour supprimer.  Pour liberer de l'espace: apt-get clean
 du -s -k -h *: permet de voir la taille espace du repertoire courant: en kilo. (-h pour voir si c M ou G ...)
 du -s -m *: en MEGA 
 ou 
@@ -24568,6 +24612,8 @@ pour changer le groupe de mon fichier:
 chgrp [-R] nomgroupe nomfichierOuRepertoire -R pour recursif
 plour savoir a quelle groupe un user appartien:
 id username
+Pour ajouter un user dans un groupe
+usermod -aG legroupe nomduuser // a faire en sudo si command not found
 pour compter le nombre de lignes renvoyees par un find par exemple: find . -name 'R*.xml' | wc -l
 uname -a nom machine etc...
 stty: (config clavier)
@@ -24722,7 +24768,7 @@ scp :commande
         si j'ai le message Permission denied c'est parce que je n'ai pas les droits d'ecriture dans le repertoire de destination: faire un chmod
       scp -i cheminVersMaClePriveeFacultatifDeType.pem user@machine:fichier(s)quejeveuxcopierDeLaMachineDistanteOuRepertoireSiJaiMisMoinsR repertoireoujeveuxlecopiersurMAmachine ATTENTION espace interdits apres le:
     push:
-      scp -i cheminVersMaClePriveeFacultatifDeType.pem cequejeveuxcopierdeMAmachine user@machine:oujeveuxLecopiersurlaamachinedistante
+      scp -i cheminVersMaClePriveeFacultatifDeType.pem cequejeveuxcopierdeMAmachine user@wwwmachine:oujeveuxLecopiersurlaamachinedistante
     exemples  
       scp -p admddd\@su571ars.mc2.renault.fr:/data/documentum/applications/a_ddd/ExportPHX/jar/Exporter-0.0.1.jar . //-p pour preserver l'horodatage du fichier
       scp -p admddd\@su571ars.mc2.renault.fr:/data/documentum/applications/a_ddd/ExportPHX/sh/L.ksh .
@@ -24966,7 +25012,7 @@ dd: supprimer une ligne (en fait il fait un couper)(copier mais supprime)
 2dd: supprimer deux lignes  (en fait il fait un couper)
 100dd: supprimer cent lignes (en fait il fait un couper)
 kdgg: supprimer tout avant le curseur en arriere arrière
-D: supprimer à  partir du curseur (en fait il fait un couper je crois) jusqu'à la fin de la ligne
+D: supprimer effacer à  partir du curseur (en fait il fait un couper je crois) jusqu'à la fin de la ligne droite
 yy: copier ligne puis P: coller ligne
 4yy puis P: le faire pour 4 lgines
 copier-coller bouts:
@@ -25079,7 +25125,7 @@ bon exemplde ksh de lancement de batch:
                       #                	                                                        #
                       # DESCRIPTION  	: Lance le batch PAE						#
                       #-------------------------------------------------------------------------------#
-                      . $HOME/vcour/paeBatch/cfg/Batch.cfg
+                      . $HOME/vcour/paeBatch/cfg/Batch.cfg et dans ce fichier je peux mettre: toto=titi etc... ca definira ma variable $toto
                       echo "PAE_VERSION: " $PAE_VERSION
                       echo "PAE_LIB: " $PAE_LIB
                       echo "PAE_CMD: " $PAE_CMD
@@ -25524,7 +25570,7 @@ iptables : pour configurer le firewall netfilte de unix
                       cable<--
       
 
-IMAGES GENEREES EN JAVA SUR UNIX :
+IMAGES GENEREES EN JAVA SUR UNIX:
 Question:
 Why is the following error message displayed "java.lang.InternalError: Can't connect to X11 window server using ':0.0' as the value of the DISPLAY variable" ?
 Answer:
@@ -25671,7 +25717,9 @@ utiliser sur maven:
                     <modules-path>C:/wildfly/wildfly-17.0.0.Final/modules</modules-path>
                     <port>9990</port>
                     <javaOpts>  
-                        <javaOpt>-agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n</javaOpt> // pour pouvoir débugger rajouter ça et voir LINKoizeurzotie 
+                        <javaOpt>-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n</javaOpt> // pour pouvoir débugger rajouter ça et voir LINKoizeurzotie 
+				ou bien 
+				-Xrunjdwp:transport=dt_socket,address=*:5005,server=y,suspend=n
                     </javaOpts>
                     <timeout>3000</timeout> // pour que au demmarage il ne plante pas avec did not start within 60 seconds quand ca prend trop de temps ou si tjrs ko rajouter dans les <properties><wildfly.timeout>300</wildfly.timeout>
                 </configuration>
@@ -27167,7 +27215,7 @@ erreur: (intermediate value)(...) is not a function
       const c comme let sauf qu'on ne peut pas reassigner. on peut le modifie mais si on le reassigne ca fait une erreur
       bonne pratique reduire le nombre de variable modifiees: utiliser de preference const>let>:-( var
   traiter des elements nodes en masse par exemple pour faire du i18n cote front balise data:
-    <div data-machin="truc"></div>
+    <div data-machin="truc"></div> // stocker des donnees dans le html
     on les trouve en javascript par
     let elts = querySelectorAll("[data-machin]");
     elts.forEach(el=> ....);    
