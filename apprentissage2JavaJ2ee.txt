@@ -633,7 +633,7 @@ reactjs : react.js + redux :
       );
 
 docker : créer une image (executable)-> builder ->image(classe) devient container(instance tourne par defaut en vase clos/fichiers et /ports) qd est runné(!=VM. Une VM virtual machine contient un OS. Un container est executé dans un OS: plusieurs containers peuvent s'executer dans un meme OS) quand est executee alors des config s'appliquent à lui-> déposer dans machine
-                    |_populaires: le registry https://hub.docker.com/search?q=&type=image du coup faire docker pull une/image/a/charger  puis docker run payara/micro par exemple
+                    |_populaires: le registry pour distribuer des images:https://hub.docker.com/search?q=&type=image du coup faire docker pull une/image/a/charger  puis docker run payara/micro par exemple
   continuer à lire https://docs.docker.com/get-started/part2/#share-your-image
   installer docker: sudo apt-get update puis installer docker.io
     avoir docker CE(community edition) ou EE(entreprise edition) recuperable sur store.docker.com
@@ -676,39 +676,42 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
         ENV http_proxy hostAremplir:portAremplir // mettre ça si je suis derriere un proxy sinon il ne peut pas builder mon conteiner
         ENV https_proxy hostAremplir:portAremplir // mettre ça si je suis derriere un proxy sinon il ne peut pas builder mon conteiner
         ENTRYPOINT ["/docker-entrypoint.sh"] // facultatif c'est le script qui est executé pour lors du démarrage de l'image et qui prend tous les arguments de CMD 
-        CMD ["npm","start"] OU ["python", "app.py"]// execute npm start OU python app.py (app.py doit avoir été copie precedemment dans mon container dans le WORKDIR) qui va s'executer quand je vais executer mon container. Rajoute aussi des arguments a mon ENTRYPOINT
-  fichier docker-compose.yml: (overrite le fichier docker ci-dessus)
-         version:'3'
-         services:
-          web: // premier service = 1 container
-            build: . (tu te buildera à la racine du container docker (?)
-            command: npm run // overrite CMD ci dessus: en general la commande ici sert à demarrer un serveur
-          postgres: // deuxieme service = 1 container
-  docker build -t(pour tag) unnomquejedonneamonImageAcreer:untag -f ./path/AutreNomDeDockerfile facultatifPathVersLeDockerFile) /pathOuEstDockerfile("." si j'y suis) dernierArgumentFacultatifEstPathRelatifVersLeRepertoireContexteContenantLaRacineDuCodeSource/// Creer mon container docker qui rentre dans la liste repository d'images. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto
-  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e "nomDuneSystem.PropertySiJeVeux=savaeleur" ou --env(facultatif) JAVA_OPTS="-Dpropriete.java=yyyy -Dxxx=yyy" --link(facultatif) nomduncontainerTypeDatabaseDansunNetworkBridge:nomDuHostNameDansLaConfDeMonProgrammeLINKjdbcdockerdatabase --name=facultatifUnAutreNomQueJeDonneAMonContainerce(nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con) -d (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement. on peut enchainer plusieurs -p) -v $(pwd)(ou un repertoire du host os. S'il n'existe pas il est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container) --network unreseaubridge -hNomDuHostnameSiParExempleCestUneBaseDeDoneeJeCrois nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) OU identifiantDeLImage LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container nomdelimage
+        CMD ["npm","start"] OU ["python", "app.py"]// executera npm start OU python app.py au moment ou on fera un run de l'image (app.py doit avoir été copie precedemment dans mon container dans le WORKDIR). cela s'ajoute à la fin de ENTRYPOINT sauf si je force dans docker run uneautrecmdquiprendralaplace
+   docker build -t(pour tag) unnomquejedonneamonImageAcreer:untag -f ./path/AutreNomDeDockerfileSiCestPasJusteDockerfile dernierArgumentEstPathRelatifVersLeRepertoireContexteContenantLaRacineDuCodeSourceOnPeutMettrePoint/// Creer mon container docker qui rentre dans la liste repository d'images. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto
+  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e "nomDuneSystem.PropertySiJeVeux=savaeleur" ou --env(facultatif) JAVA_OPTS="-Dpropriete.java=yyyy -Dxxx=yyy" --link(facultatif et inutile au sein d'un docker-compose) nomduncontainerTypeDatabaseDansunNetworkBridge:nomDuHostNameDansLaConfDeMonProgrammeLINKjdbcdockerdatabase --name=facultatifUnAutreNomQueJeDonneAMonContainerce(nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con) -d (--detatch) (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement. on peut enchainer plusieurs -p) --mount type=bind,source=$variablepath ou /un/path/duHost/DirOuFichier,target=/unPathDansle/container/dirOuFichier OU -v(mais preferer--mount à-v) $(pwd)(ou un repertoire du host os. S'il n'existe pas il est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container) --network(inutile au sein d'un docker-compose) unreseaubridge -hNomDuHostnameSiParExempleCestUneBaseDeDoneeJeCrois nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) OU identifiantDeLImage LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container nomdelimage
 	par defaut c'est executé sur le reseau bridgé partage entre tous les containers et même le host. Suffit de se connecter dans le container et voir leur IP
   docker start -ia(comme -it avec run) nomduconteneurARedemarrer // existe aussi docker stop nomduconteneur ou idduconteneur pour stopper un conteneur
   docker container stop IDDuContainer // pour stopper l'execution d'un container (par son ID ça marche mieux voir donc la liste.)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-  docker inspect nomduconteneur ou nomduneimage // pour avoir plein de details infos donnees exposedPorts sur mon conteneur ou mon image                                  
-  docker logs -f(comme tail -f)facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomD'uneImageAExecuter(en cours d'execution) // a faire apres avoir fait run pour afficher les logs
+  docker inspect nomduconteneur ou nomduneimage | grep networkparex // pour avoir plein de details infos donnees exposedPorts sur mon conteneur ou mon image                                  
+  docker logs -f(comme tail -f)facultatifUnAutreNomJeCroisQueJeDonneAMonContainer // a faire apres avoir fait run pour afficher les logs
   docker attach nomduconteneur ou permierscharDuIdDuConteneur // pour se rattaché à un conteneur demarré en backgroud LINKlgkezoiur
   docker history facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomD'uneImageAExecuter(qui a un conteneur) // pour afficher l'historique d'ajout de ce conteneur 
-  docker image rm -f nomOuIdD'uneImageAExecuter(qui est en cours d'execution dans un conteneur)// pour le supprimer l'image
+  docker image rm -f nomOuIdD'uneImage// pour le supprimer l'image
   docker rm -f nomOuIdDunContainer // pour le supprimer le container
  docker save nomdelimageactuelement nomdurepositoryQuonVeutQuilAitLorsDuReimport:tagduRepositoryQuonVeutQuilAitLorsDuReimport > unnom.tar et docker load < unfichier.tar // save pour dumper exporter mon image docker dans un tar que je peux envoyer a un client. et lui de son cote fait docker load monTar pour charger mon image livrable
   docker exec -it nomconteneurDejaRunne bash ou sh ou ksh // LINKjgjgjgaba: execute une commande dans un conteneur déja actif. ici la commande bash est executée dans le container qui demarre en mode -it(interactif) donc du coup je vais avoir le prompt bash DANS mon container. De la si j'execute top je ne vois que les process qui tournent DANS le container
         de là je peux faire du apt-get pour installer d'autres librairies si besoin. 
         ensuite regarder aussi sur le hub.docker la doc de l'image si je veux enrichir cette image.            
-  registry (docker.hub par exemple)
-      repository1
-                 imagedocker1:tag1 
-                 imagedocker1:tag2...
-      repository2
-                 imagedocker2:tag1
-                 imagedocker2:tag2...
+  registry (docker.hub par exemple) //un registry est juste un container que je peux faire tourner chez moi et qui met à disposition des images que je peux pusher puller dedans. 
+	Pour creer un registry en local: docker run -d -p 5000:5000 --name registry registry:2
+	registry peut alors contenir:
+	      repository1			= une image en fait
+			 imagedocker1:tag1 
+			 imagedocker1:tag2...
+	      repository2
+			 imagedocker2:tag1
+			 imagedocker2:tag2...
+	pour associer une image-unrepository à un registry: 
+		docker image tag monimage:sontag hostduregistry:portduregistry/aliasDeMonImage   LINKtagregistr
+	et puis pour la pusher: 
+		docker push hostduregistry:portduregistry/aliasDeMonImage
+	pour la puller: 
+		docker pull hostduregistry:portduregistry/aliasDeMonImage
   reseau network manage :
 	pilote none: aucune connexion possible
 	pilote bridge par defaut tout les conteneurs sur ce bridge se voient et l'hote aussi
+	liste des networks:
+		docker network ls
 	creer un network manage:
 		docker network create --driver=bridge nomdubridge
   volumes managés: permettent de copier/d'exporter d'avoir en synchro des repertoires/fichier du conteneur vers l'OS (c'est synchro entre les deux meme si conteneur est off)
@@ -718,12 +721,19 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
       docker volume prune // pour supprimer tous les volumes non utilises
       docker run -v monvolumemanagéOuUnPathDeMonOSVersFichierOuDossier:/path/du/conteneurcontenant/deja/des/trucs(:ro facultatif pour readonly)    
                         du coup tout ce qui est dans le conteneur /path/du/conteneurcontenant/deja/des/trucs se retrouve synchro avec le path /usr/moncul et c'est persistant.         
-    docker compose : toujours regarder les doc du hub pour bien utiliser les images standards
-            fichier docker-compose.yml // ecrire que en ascii sans espaces.
-                version:<espace>"3" // toujour utiliser un editeur digne de ce nom pour le yaml
+docker-compose : dockercompose :
+  fichier docker-compose.yml // overrite le fichier Docker sil y a. ecrire que en ascii sans espaces.
+                version:<espace>"3.3" // toujour utiliser un editeur digne de ce nom pour le yaml
                 services: //contient la liste des conteneurs dont on a besoin
-                    nomdemonservice1: // nom unique  
-                        image: nomdemonconteneur1:sontag
+                    nomdemonservice1: // premier service. nom unique 1service=1container
+            		build: . //facultatif tu te buildera à la racine du container docker (?)
+                        image: nomDeMonImage1:sontag // me permet aussi direct de tager pour un registry mon image: image:iponregistre:5000/monprojetFacultatif?/image:tag voir LINKtagregistr
+			container_name: nomdemoncontainerQueJeForce //obligatoire meme si "."
+			depends_on:
+				- unautreservicedontLuiDepend
+			links: // non inutile! sauf si je veux faire des sousreseau et cloisoner dans un docker-compose
+				- NONINUTILEunautreservice:hostnamedansmoncontainer
+            		command: npm run // overrite CMD ci dessus: en general la commande ici sert à demarrer un serveur
                             ports:
                                 - 80:80  // quand on met - c'est parce que c'est une liste
                                 - 81:80  // comme pour -p (cote hote:cote conteneur)
@@ -731,13 +741,21 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
                                 - UNE_VARIABLE1=lavaleur1
                                 - UNE_VARIABLE2=lavaleur2
                                 - UNE_VARIABLE3=nomdemonservice2 // on peut avoir ca si nomdemonservice1 accede à nomdemonservice2
-                            networks:
-                                - unreseaubridgé (AFAIRE reprendre cours sur reseaubridgés sur udemy docker)
-                            volumes:
-                                - /un/path/host:/un/path/du/container
-                                - unnomdevolumemanagé:/un/path/du/container2 LINKaze
+                            networks://non inutile dans docker compose! sauf si je veux faire des sous-reseau dans un dockercompose
+                                - unreseaubridgéNONINUTILE
+	                volumes:
+                        - type: bind // ou volume ou tmpfs(temporaire est ephemere)
+                          source: ${localcustomcsspath}
+                          target: /opt/payara/customcss
+                        - type: bind
+                          source: ${localpropertydirpath}/MemOclap.properties
+                          target: /opt/payara/conf/MemOclap.properties
+                        - /un/path/host:/un/path/du/container //ancienne facon
+                        - unnomdevolumemanagé:/un/path/du/container2 LINKaze
                             restart: always(redemarre ce container toujours quand on fait docker-compose up) ou no (redemarre jamais ce container) ou unless-stop(dedemarre ce container sauf si on a fait docker-compose stop avant (sur?)                                   
-                    nomdemonservice2:
+          		postgres: // deuxieme service = 1 container
+
+                     nomdemonservice2:
                         image: blabla:2.0
                             networks:
                                 - unreseaubridgé
@@ -748,12 +766,16 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
                 networks: //falcultatif                
                     unreseaubridgé: // je crée un reseau brigé qui est utilisé sur les 2 services dessus pour qu'ils communiquement
             executer sur l'emplacement de ce fichier:
-                docker-compose up -d // -d pour executer en background sinon il garde le prompt et Ctrl+C kill le process
+                docker-compose up -d // -d pour executer en background sinon il garde le prompt et Ctrl+C kill le process. Il build et il execute dans la foulee
+		docker-compose build // il build l'image seulement
+		docker-compose rm // pour supprimer le cache dans dockercompose de mes images. A faire si j'ai mis à jour l'image docker. A faire chaque fois que je modifie docker-compose.yml
                 docker-compose logs -f pour voir les logs comme un tail -f
                 docker-compose stop // arret du run mais ne supprime pas les conteneurs
                 docker-compose start// demarre les conteneurs arretés
                 docker-compose down // attention, supprime tous les conteneurs et images sauf les volumes
                 docker-compose down -v// attention, supprime tous les conteneurs, images et volumes managés                                        
+		docker-compose push // push par defaut dans le docker.hub.(des ricains) sauf si j'ai tagge LINKtagregistr mon image 
+		
 visualstudiocode :editeur:
   acceder au fichier trouver: ctrl+p
 gource : annimation de git
@@ -911,17 +933,17 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git reset --hard <identifiantcommit>  revenir en arriere sur identifiantcommit et virer definitivement tous les trucs qui ont suivi
       git reset --hard versionDuTag: ce tag revient dans le mon HEAD/branch + repertoire et vire tout ce qu'il y a eu après
       git reset --hard // sans rien: pour annuler un pull qui vient d'etre fait
-      git rebase //TROP GALERE!!!! ne pas utiliser avant une formation
+      git rebase //attention si bloque pas hesiter a abandonner et retenter
       git rebase commitquinebougepasEtQuiVaRecevoirLaSuiteDeLHistoire commitQuiVaMettreSonHistoireALaSuiteDuPremierArgument // a la toute fin faire rebase DernierCommit master pour que le master se remette au bout
       git rebase -i identifiantCommitDuPassé // ouvre un editeur et je peux manipuler mes commits du passer pas a pas un par un jusqu'a aujourd'hui. J'ai du utiliser ca pour supprimer les indexs de fichiers trop gros qui m'empechaient de pusher sur le repo distant. 
                 si je veux commencer depuis le debut faire git rebase -i --root
-                quand j'ai remplacé chaque pick souhaité par edit, faire comme dans vi: sauver et quitter. il fait alors du pas a pas sur chaque edit ou a chaque fois je fait soit git rebase --amend(modifier le commit en cours) ou git rebase --continue(au suivant!)
-                        quand je fais git rebase --amend alors il ouvre un editeur montrant le commit. Executer comme dans vi:!macommandeGit (exemple faire un checkout pour supprimer de l'index) et Entree a chaque fois. Quand fini faire:wq. et puis git rebase --continue et ainsi de suite pour finir avec un git rebase --continue jusqu'à ce que la branche rebase soit automatiquement mergée avec mon master.
+                quand j'ai remplacé chaque pick souhaité par edit, faire comme dans vi: sauver et quitter. il fait alors du pas a pas sur chaque edit ou a chaque fois je fait soit git commit --amend(modifier le commit en cours) ou git rebase --continue(au suivant!)
+                        quand je fais git commit --amend alors il ouvre un editeur montrant le commit.(si il fait erreur de fusion faire git diff --check si toujours tenter git rebase --skip) Executer comme dans vi:!macommandeGit (exemple faire un checkout pour supprimer de l'index) et Entree a chaque fois. Quand fini faire:wq. et puis git rebase --continue et ainsi de suite pour finir avec un git rebase --continue jusqu'à ce que la branche rebase soit automatiquement mergée avec mon master.
                 pour annuler mon rebase en cours faire 
                 git rebase --abort ou au pire pour sortir faire git rebase --quit
         pour supprimer tous les gros fichiers de l'historique pour que je puisse pusher sur github
         si j'ai "error: could not read '.git/rebase-merge/head-name': No such file or directory" faire git reflog 
-            git filter-branch --index-filter "git rm --cached -f --ignore-unmatch(ignoreleserreurs) NomDeMonGrosFichier.webm" --prune-empty --tag-name-filter cat -- --all
+            git filter-branch --index-filter "git rm --cached -f --ignore-unmatch(ignoreleserreurs) PathDeMonGrosFichier.webm" (mettre -f si il le demande) --prune-empty --tag-name-filter cat -- --all
       git log //voir les commits. N'affiche pas les commits du futur donc voir LINKlkghhrghh
       git log --all // voir les commits du future si j'ai fait un checkout sur un commit du passé LINKlkghhrghh
       git log --name-status // voir tous les fichiers modifiés à chaque commit
@@ -9698,7 +9720,7 @@ pour faire un delete:
 pour executer une commande mysql:
       mysql --force -h $SQL_SERVER -P $SQL_PORT -u $SQL_USER  --password=$SQL_PASSWD --default-character-set=utf8 $SQL_SCHEMA<init_DB.sql 1>$LOG_INFO 2>$LOG_ERROR
       --force = continue meme si erreurs -h: host
-      exemple:
+      exemple: charger un fichiersql
       mysql --force -h vma30ads.mc2.renault.fr -P 3307 -u sra_adm  --password=sra_adm_int01 --default-character-set=utf8 sra_db_01<dumpINTSRA.sql 1>./sra_database_info.log 2>./sra_database_error.log
       mysql -h localhost -P 3306 -u root  --password=foulurecalotte --default-character-set=utf8 samicours<samicours_query1.sql 1>./samicours_database_info.log 2>./samicours_database_error.log
       mysql -u root  --password=foulurecalotte wenhuaduvergeshop<dumpsql20170807.sql 1>1sql.log 2>2sql.log
@@ -13379,6 +13401,7 @@ fin c ca que j'ai fait qui marche PAS jusqu'au bout.
                                       D:\Java\jdk1.6.0_45\bin\keytool -genkeypair -v -alias aliasdemoncertif -validity 360ou3650 -storetype voircidessous(facultatif) -keystore mon.keystore.p12 -keysize 4096(facttf) -keyalg RSA -sigalg SHA1withRSAparexmpleOuSHA256withRSA(facultatifMaisAttentionAuDefaut) -storepass monpasswordDuTrousseau(facttf) // sert à creer nouveau trousseau ou rajouter une cle dans trousseau existant (il demandera la creation du password de la cle). Dans ce cas -storepass doitEtreLeMdpDuTrousseau
                .P12         pour sha2: D:\Java\jdk1.6.0_45\bin\keytool -genkeypair  -v -alias fondationauteuil -validity 10800 -storetype pkcs12  -keystore fondationauteuilks.p12 -keysize 4096 -keyalg RSA -sigalg SHA256withRSA -storepass fondation2017
                                           (un .p12 peut contenir ou pas une cle privée dedans)
+			pour AES: keytool -genseckey -alias memoclapOauth -keyalg AES -keysize 128 -storetype JCEKS -keystore memoclapOauth.jks 
                          -storetype       JKS(que Java. Pas de scretkey dedans) est par defaut j Java9. (.jks)  
                                           JCEKS(Que java. +d'algos. Contient secretkey,TripleDES est + fort) que >Java1.4 (.jceks)
                                           PKCS12(tout language,Contient scretkey, cle privee peut etre extraite) (.p12 ou .pfx) par defaut des java9
@@ -13408,7 +13431,7 @@ fin c ca que j'ai fait qui marche PAS jusqu'au bout.
                           D:\Java\jdk1.7.0_03-32b\bin\keytool -list -v -alias selfsigned -keystore samlKeystore.jks -storetype pkcs12(Facultatif par defaut c jks)
                    // verification date expiration duree de vie date certificat dans jks: 
                           D:\Java\jdk1.7.0_03-32b\bin\keytool -list -v -keystore renault.jks // certif 1 c celui la, puis s'enchainent les certifs du pki et leurs dates respectives
-                      regarder voir ce que j'ai dans le certificat public en mode rfc PEM ascii base64 (en mode texte): format x509 afficher 
+                      regarder lire voir ce que j'ai dans le certificat public en mode rfc PEM ascii base64 (en mode texte): format x509 afficher 
                           D:\Java\jdk1.7.0_03-32b\bin\keytool -list -rfc -keystore monKeystore.jks -storetype pkcs12(Facultatif par defaut c jks) par defaut .p12 des java9 (un .p12 peut contenir ou pas une cle privée dedans)
                       regarde ce que j'ai dans les truststore de mon JDK: 
                           D:\Java\jdk1.7.0_03-32b\bin\keytool -list -keystore D:\Java\jdk1.6.0_45\jre\lib\security\cacerts (facultatif: -alias unAliasCertifDeMonStore) -storetype pkcs12(Facultatif par defaut c jks)
@@ -13460,7 +13483,7 @@ Cryptage : crypto : en java
                 MD5 et SHA1: obsoletes pour hasher. SHA1>MD5
                 RSA = asymetrique paire de cles (taille cle peut varier) (symetrique plus rapide que asymetrique)
                     RSA-SHA256 = RS256
-		AES successeur de DES = symetrique = DESED?
+		AES successeur de DES = symetrique = DESED?  //AES 1)ECB:bof que pour les tout petites chaines de char<128bits. 2)CBC:s'utilise avec un Padding et un IV InitializationVector(sert que au 1er bloc) qui est juste un randomdata de 128bits ne doit s'utiliser qu'une fois et peut etre public 3)CTR:IV sert sur tous les blocs.<M-F12>
 			3DES plus fort que DES
                 ECDSA = asymetrique (plus lent que symetriques)
                     ECDSA-SHA512 = ES512 
@@ -19963,7 +19986,7 @@ pour tester la performance : perfs : perf : performances : performences :
     problème de performances en Java? ehcache: 
           voir http://www.ehcache.org/ +  aussi s'assurer que le navigateur utilise le cache (grace au header) + la connexion ne se ferme pas chaque fois dans le cas du https sinon à chaque requette il faut refaire un shakehands
 pour minuter chronometrer faire des laps lors du programme temps passe duree: utiliser mesurer performances
-      System.nanoTime après java 1.5 semble threadsafe
+      System.nanoTime après java 1.5 semble threadsafe mais attention est est plus lent que System.currentTimeMillis()
       StopWatch de spring: n'est pas threadsafe // plus bas stopwatch d'apache
       StopWatch stopwatch= new StopWatch(); ou new StopWatch(AbstractSAMLEntryPoint.class.getName()); // si je ne fais pas ça a chaque fois dans la methode il va cumuller les enregistrements meme entre plusieurs thread indépendants qui passent dans la classe
       	if (stopwatch.isRunning()) stopwatch.stop();
@@ -20070,8 +20093,9 @@ execution : executer :
                       java --module-path ./path/repertoire/contenant/tous/les/jars --module nom.de.mon.module/package.et.nom.DeMaClasseMain
                       java --module-path C:/Users/Laurent/.m2/repository/log4j/log4j/1.2.14/log4j-1.2.14.jar;memoclap.utils-2.19.0.jar --module memoclap.utils/utils.Utils E:/www/kanail/AudioLoopOnline/java/MemOclapUtils/src/test/resources/d
                       java --module-path C:/Users/Laurent/.m2/repository/log4j/log4j/1.2.14/log4j-1.2.14.jar;memoclap.utils-2.19.0.jar -cp C:/Users/Laurent/.m2/repository/com/googlecode/soundlibs/tritonus-share/0.3.7-2/tritonus-share-0.3.7-2.jar;C:/Users/Laurent/.m2/repository/com/googlecode/soundlibs/mp3spi/1.9.5-1/mp3spi-1.9.5-1.jar;C:/Users/Laurent/.m2/repository/com/googlecode/soundlibs/vorbisspi/1.0.3-1/vorbisspi-1.0.3-1.jar --module memoclap.utils/utils.Utils E:/www/kanail/AudioLoopOnline/java/MemOclapUtils/src/test/resources/d
-       repl: jshell:
+       repl: jshell: executer line de commande cli
             tapper jshell et je peux tester des petit bouts snippets de code java sans m'inqueter des exeptions et des ";" point virgules pointvirgule                                                       
+		pour quitter terminer /exit
       depuis java9 existe aussi - VarHandle pour passer rapidos de noeud en noeud d'un coup.
                                 - ProcessBuilder: executer une commande externe sortir pid unix linux autre programme process
         pour lancer executer un programme java faire ca: (ATTENTION ne marche plus depuis la version 1.6?)
@@ -20286,7 +20310,7 @@ LINKconvertiCheckedExceptionDansUnStreamEnUnCheckedExceptionPourQueCaCompile:
                                         public interface ThrowingConsumer<T, E extends Exception> {
                                             void accept(T t) throws E;
                                         }
-                                        static <T, E extends Exception> Consumer<T> handlingConsumerWrapper(ThrowingConsumer<T, E> throwingConsumer, Class<E> exceptionClass) {
+          quelquepart ailleurs :        static <T, E extends Exception> Consumer<T> handlingConsumerWrapper(ThrowingConsumer<T, E> throwingConsumer, Class<E> exceptionClass) {
                                             return i -> {
                                                 try {
                                                     throwingConsumer.accept(i);
@@ -20449,7 +20473,7 @@ pour copier les proprietes d'un bean formulaire vers un autre bean de type info 
 
             		 
 ************************
-externe : systeme : depuis java :
+externe : systeme : depuis java:
 pour executer une commande externe en java:
 Pour lancer votre application externe il vous suffit maintenant d'appeler l'une des six methodes exec() de la classe Runtime et dont voici les declarations:
 ne pas faire ca:
@@ -20773,6 +20797,12 @@ pour convertir un set en arraylist
       List<Criteria> mainList = new ArrayList<Criteria>();
               mainList.addAll(criteria);
               return mainList;
+pour convertir une date en zonedatetime cest cet en gmt
+	Date date...
+	ZoneDateTime zoneDateTime = date.toInstant().atZone(ZoneId.of("Europe/Paris"));
+	DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+	return zoneDateTime.format(formatter);
+	
 pour convertir un string en Time heure
     DateFormat formatter = new SimpleDateFormat("HH:mm"); // attention n'est pas threadsafe.
     java.sql.Time timeValue = new java.sql.Time(formatter.parse(fajr_prayertime).getTime());              	    
@@ -24202,7 +24232,17 @@ connectionPassword=AWTWSAD
 userSearchMatching=(uid={0})
 
 UNIX : linux :(unix est la plus basse couche; linux est au dessus mais il a été complettement réecrit, c le kernel=noyau; ubuntu(https://wiki.ubuntu.com/Releases) et debian sont deux distrib au dessus de linux. Sont differentes mais ubuntu est un layer par dessus debian)
+AFAIRE:capitaliser
+ sudo iptables -I INPUT -i br-5d651268b7df -j ACCEPT
+ host -T A memoclap.com
+ host -T A memoclap.com
+ vi /etc/resolv.conf
+ docker ps -a
+
+
 Pour utiliser USB avec mon mobile utiliser gnome_file (de son nom de programme "file") tiroir bleu
+pour convertir un package .rpm en .deb
+	alien fichier.rpm (attendre longtemps)
 pour installer un fichier extension extention .deb
 	dpkg -i lefichier.deb
 pour pouvoir lire cd audio installer cdrskin et xorriso et executer cdrskin --devices puis ca marche tout seul
@@ -24612,8 +24652,8 @@ pour changer le groupe de mon fichier:
 chgrp [-R] nomgroupe nomfichierOuRepertoire -R pour recursif
 plour savoir a quelle groupe un user appartien:
 id username
-Pour ajouter un user dans un groupe
-usermod -aG legroupe nomduuser // a faire en sudo si command not found
+Pour ajouter add un utilisateur user dans un groupe
+usermod -aG legroupe nomduuser // a faire en sudo si command not found. Necessite de se relogger ou faire su -s monusername
 pour compter le nombre de lignes renvoyees par un find par exemple: find . -name 'R*.xml' | wc -l
 uname -a nom machine etc...
 stty: (config clavier)
@@ -24677,7 +24717,7 @@ ssh : se logger sur une machine a distance
       pour ne plus avoir a ressaisir mon mdp quand je fais du scp rsync ssh j'ai besoin de me connecter par key:
                     Copier cle publique dans id_rsa.pub sur autre serveur dans sous homeUtilisateurAvecQuiJeVeuxMeConnecterDansServerB/.ssh/authorized_keys et authorized_keys2 (pour être sur je mets dans les deux... chais pas si c bon.)VERIFIER que la ligne a zero retour chario et espace LINKmljsdf
                           authorized_keys et 2 contient les cles publiques des autres serveurs qui peuvent se connecter ici grace à leur clé privee dans id_rsa.priv et/ou id_rsa //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
-              se connecter alors en faisant depuis serveurA: ssh -i path/vers/la/cle/priveeRSA/que/je/veux/forcer_rsa homeUtilisateurAvecQuiJeVeuxMeConnecterDansServerB@serverB  //-i est facultatif. Comme pour scp
+              se connecter alors en faisant depuis serveurA: ssh -i path/vers/la/cle/priveeRSA/que/je/veux/forcer_rsa UtilisateurAvecQuiJeVeuxMeConnecterDansServerB@serverB  //-i est facultatif. Comme pour scp
               les droits doivent être comme ça:
                 -rw-r--r-- 1 utisateurInteresse utisateurInteresse  820 nov.  25  2014 authorized_keys2
                 -rw------- 1 utisateurInteresse utisateurInteresse  820 nov.  25  2014 authorized_keys
@@ -24838,9 +24878,9 @@ saisir les commandes suivantes pour commander le serveur smtp (pas reçu le mail
             
 quelle est la version processeur 
   cat /proc/cpuinfo
-quel port est ecoute utilise utilise?
+quel port est ecoute utilise utilise? netstat :
       netstat -a(all)n(afficher les liste des ports en numerique ou plutot les ip au lieu des hostnames)t(que les ports tcp) p(pour voir les idprocess en derniere colonne) Si netstat n'est pas une commande existante: l'installer en installant net-tools via aptitude
-      netstat -ant
+      netstat -antulp
 quels sont les fichiers ouverts? process sont utilisés lockes par qui?
       lsof -n(numerique)P -i(que les ports):8080
       lsof -nP -i:8080
@@ -24878,8 +24918,10 @@ effacer:
   rm pour les fichiers et rm -r pour les repertoires en recursif mais si je ne veux effacer que les repertoires si ils sont vides: rmdir -v n'efface que les repertoires vides. -v pour verbose
   rm -i pour confirmer à chaque fois
   rm -r -i ...
-connaitre la taille d'une chaine de caractères: 
+connaitre la taille d'une chaine de caractères en byte:
+	wc -c < fichieravecdonneesdedans
       chaine_longueur=`echo $OBJECTID | wc -c` 
+	
 renommer rename un fichier: 
   mv toto.txt titi.txt
 faire une addition:
@@ -25075,7 +25117,7 @@ parser du json avec unix: installer jq
 					done
 
       pour faire une pause dans un script ksh:
-            read -p "Press [Enter] key to start backup..."
+		read -p "Continuer..."
       pour faire un prompt confirm dans un script ksh:
              read -p "Pret? " -n 1 -r # -n nombre de caractères que l'utiliseur doit saisir(marche pas bien?) -r pour echaper les \; -p: le message
               if [[ $REPLY =~ ^[Yy]$ ]] # on a ecrit Y ou y
@@ -25543,7 +25585,7 @@ si j'ai cette erreur avec aptitude ou apt-get update:
 iptables : pour configurer le firewall netfilte de unix
   bonne pratique securite:avec iptable fermer tous les ports non utilises et laisser ouvert que les ports utiles et se proteger de nmap:https://nmap.org/misc/defeat-nmap-osdetect.html
   afficher la liste des regles: 
-      sudo iptables -L
+      sudo iptables -L --line-numbers
   supprimer la ligne numero 7 de ce qui a ete affiche
         iptables -D INPUT 7      (ca commence par 1)
   ajouter l'acceptation du port 3306: 
@@ -25653,10 +25695,13 @@ ADMIN_URL=http://130.98.232.97:7001
     
      il faut essayer ca: 
      java -Djava.awt.headless=true -classpath JimiProClasses.jar:. convertisseur.Main
-xfce : // bureautique debian :
+xfce : xcfe : // bureautique debian :
 	modifier les shortcuts raccourcis clavier: xfce>parametres>gestionnaire de parametres > gestionnaire de fenetre > clavier
 	raccourci shortcut pour demarrer un programme: alt+f2 puis faire fleche vers le bas puis commencer à saisir
 	si le bureau ne s'affiche plus tapper la commande xfdesktop
+	passer de querty a azerty: application> parametre> clavier> dernier onglet...
+	si il me fait chier avec le trousseau de cle:
+		backupper et supprimer ~/.local/share/keyrings et la prochaine fois qu'il redemande un mot de passe ne rien mettre plusieurs fois
 PHP :     
 pour faire marcher php avec oracle: (wamp) il faut que j'utilise l'utilitaire de wamp pour activer les extensions dll et decommenter aussi les lignes dans php.ini( deux lignes.. ora et oci un truc comme ca)
 ORACLE_HOME 
@@ -25687,15 +25732,15 @@ LES ZONES : ZONE :DNS :                                                         
       Definitions: DNS: nom d'hôte hostname <-correspond-> IP. utilise le port 53(UDP=requete très rapide sans auth.) root/    /            C'est une infra à part entiere: il a ses serveurs, son protocole il peut etre floode(crouler sous le taf)
        (*x)<-> machine                                                                                       \_fr
       hostname  = nom du serveur = nom d'hôte = domaine = site web. Possible etre une machine ou pas.                            \_toto.fr
-      1 machine peut avoir plusieurs domaines 
+      1 machine peut avoir plusieurs domaines et chaque domaine a une zone.
       Je suis dans la zone de mon domaine blalbabli.com
       www           CNAME (see name)        pitous.tataboabndou.net. (ne peut pas etre une adresse ip et TOUJOURS mettre un "." a la fin)   TTL 3h = cache de 3h au sein de la machine de l'utilisateur lambda. Debrancher-rebrancher la box pour effacer le cache        // [1] si url = www.blalbabli.com alors aller vers pitous.tataboabndou.net et ainsi de suite jusqu'à arriver à un "A"
-      ...
+      @ // pas encore compris
       ...
       
       et dans la zone de mon domaine tataboabndou.net il  ya:
       www            A                    1230.515.516   // [3] obligatoirement une adresse ipv4 pour A. Point d'arrivee final vers un serveur de destination.
-       ?             AAAA                  ?             // adresse ipv6
+    unsousdomaine    AAAA                  ?             // adresse ipv6
        ?             PTR                   ?             // inverse de A ou AAA: permet recuperer hostname depuis adresse ip
        ?             MX                                   //nom du serveur mail
       pitous        CNAME                 www.tataboabndou.net.  // [2] // ne pas oublier le point à la fin
@@ -25895,6 +25940,74 @@ Dissalow /unrepertoire/unfichier.php
 Allow /unrepertoire/unautrerepertoireLeSeulAEtreVisible/
 Dissalow etc...
 
+NGNIX : nginx :
+	fichier conf.d: exemple de configuration
+	upstream unnom{
+		server unhostdestination:8080; // unhost et son port	
+	}
+	server {
+	   listen 80;
+	   listen [::]:80;//facultatif
+	   server_name www.undomaine.com undomaine.com;
+	   return 301 https://$host$request_uri; // redirection https
+		ou
+	    location /{
+			proxy_pass http://unnom;
+		}
+	}
+
+	# SSL configuration
+	server {
+	   listen 443 ssl http2;
+	   listen [::]:443 ssl http2; 	
+	   server_name www.domain.com domain.com;
+		ssl_certificate      /etc/letsencrypt/live/www.domain.com/fullchain.pem;
+		ssl_certificate_key  /etc/letsencrypt/live/www.domain.com/privkey.pem;
+	  
+		# Improve HTTPS performance with session resumption
+		ssl_session_cache shared:SSL:10m;
+		ssl_session_timeout 10m;
+
+		# Enable server-side protection against BEAST attacks
+		ssl_protocols TLSv1.2;
+		ssl_prefer_server_ciphers on;
+		ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384";
+			
+		# RFC-7919 recommended: https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096
+		ssl_dhparam /etc/ssl/ffdhe4096.pem;
+		ssl_ecdh_curve secp521r1:secp384r1;
+
+		# Aditional Security Headers
+		# ref: https://developer.mozilla.org/en-US/docs/Security/HTTP_Strict_Transport_Security
+		add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+
+		# ref: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+		add_header X-Frame-Options DENY always;
+
+		# ref: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+		add_header X-Content-Type-Options nosniff always;
+
+		# ref: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+		add_header X-Xss-Protection "1; mode=block" always;
+
+		# Enable OCSP stapling 
+		# ref. http://blog.mozilla.org/security/2013/07/29/ocsp-stapling-in-firefox
+		ssl_stapling on;
+		ssl_stapling_verify on;
+		ssl_trusted_certificate /etc/letsencrypt/live/www.domain.com/fullchain.pem;
+		resolver 1.1.1.1 1.0.0.1 [2606:4700:4700::1111] [2606:4700:4700::1001] valid=300s; # Cloudflare
+		resolver_timeout 5s;
+	# Required for Let's Encrypt certificate enrollment using certbot
+	   location '/.well-known/acme-challenge' { // si l'utilisateur navigue vers /.well-known/acme-challenge alors afficher /var/www/html
+		default_type "text/plain";
+		root /var/www/html;
+	   }
+	   location / { // pareil mais virer ca si ngnix fait office de reverse proxy vers un autre serveur applicatif derriere
+		root /var/www/html; 
+		ou 
+      		proxy_pass http://localhost:3000/;
+	   }
+	}
      
 APACHE :
 Connaitre la version d'apache
@@ -26111,7 +26224,8 @@ facebook : linkedin : linked in :
 
 reseau : reseaux :
 Recuperation de l'adresse IP du hostname.
-              nslookup:pour verifier que le DNS est bien config: on peut faire aussi à l'inverse nslookup ipadresse/nomdedomaine: renvoit nomdedomaine/adresseip corresp (reponse des serveurs de dns) 
+		host -T A nom.de.domaine.com  // pour avoir je crois l'ip dun domaine des DNS
+              nslookup:// est vieux. remplacé par dig et par host. Pour verifier que le DNS est bien config: on peut faire aussi à l'inverse nslookup ipadresse/nomdedomaine: renvoit nomdedomaine/adresseip corresp (reponse des serveurs de dns) 
                         >nslookup wec.intra.renault.fr
                           Serveur:  dc-boismortier.corp.noxiane.net // ca c le serveur DNS qui va chercher l'IP de wec.intra.renault.fr
                           Address:  138.21.151.138 // ca c l'adresse IP du serveur DNS ci dessus
