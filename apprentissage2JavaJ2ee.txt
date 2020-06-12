@@ -640,6 +640,7 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
     sur linux conf dans docker.json
   docker --version ou docker run hello-world // verifier que docker est bien installe
   systemctl start docker // pour demarrer start le daemon docker
+	pour executer les commandes docker mon user utilisateur doit appartenir au groupe docker
   docker info // indique entre autre nombre combien j'ai de containers ? Un container (une image) ne doit contenir qu'une seule chose. (1 pyton ou 1 redis ou 1 mysql) pas plus! mais il hérite.
     haut 
     -Stack // defini les interractions entre les services docker
@@ -648,16 +649,18 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
     bas
   docker pull unPackage/docker:version //pour installer une nouvelle image
   docker images // liste des images du repository
+   ||	 
   docker image ls // LINKdckrimgls liste les images que j'ai cree. Ajouter --all si je veux voir aussi les images qui run
   docker image tag ed9fa2cfcf96 nouveaunomderepository:nouveautag // pour renommer le repository et le tag de l'image dont l'id est ed9etc...
   docker ps -a // pour voir la liste de tous les containers (en cours de run et pas)
-  docker container ls // liste les containers qui tournent qui sont en cours d'execution 
-  Dockerfile= bien l'appeler "Dockerfile" fichier docker: Défini une image à partir d'une image source. A ecrire apres avoir testé sur un container l'enchainement des commandes qui marchent grace à docker exec. puis ecrire ici les commandes pour builder mon image(mettre des trucs dedans):execution du haut vers le bas. haut:ce qui bouge le moins. Bas ce qui change le plus car docker utilise un cache.
+   ||
+  docker container ls // liste les containers qui tournent qui sont en cours d'execution  facultatif: --filter volume=123415678identifiantd'unvolume // pour avoir la liste des containers qui utilisent ce volume
+  Dockerfile : bien l'appeler "Dockerfile" par defaut fichier docker: Défini une image à partir d'une image source. A ecrire apres avoir testé sur un container l'enchainement des commandes qui marchent grace à docker exec. puis ecrire ici les commandes pour builder mon image(mettre des trucs dedans):execution du haut vers le bas. haut:ce qui bouge le moins. Bas ce qui change le plus car docker utilise un cache.
         FROM nomdelimage:tag donc node:x.x.x-alpine OU python:2.7-slim OU airhacks/glassfish...// image docker de base quel OS OU BIEN une image docker (couche 0 = layer 0 de l'image) si je veux l'etendre voir LINKxlxlx  
         WORKDIR /un/path/DANSMONContainerDocker/PASdans/monOS/ (couche 1 = layer 1 de l'image)
         USER root // defini le user qui va executer les commandes suivantes. On peut en mettre un executer un truc puis refaire USER ${autreuser} et executer d'autres trucs
         ENV foo /bla // du coup en dessous quand je mets ${foo} c'est en fait "/bla"
-        COPY ./target/audio.memoclap.war ${DEPLOYMENT_DIR}
+        COPY ./target/audio.memoclap.war ${DEPLOYMENT_DIR} // la source est relative au contexte du dockerfile et on ne peut pas y mettre de variable contrairement je crois au target
         RUN apt-get update (couche 2 = layer 2 de l'image) //RUN sont des commandes executées avant CMD et ENTRYPOINT.
         RUN apt-get install -y unelibrairie      (couche 3 = layer 3 de l'image) // -y pour que lors du build docker reponde automatiquement YES à toute question interactive survenant pendant l'apt-get install: si j'ai erreur returned a non-zero code: 1
         RUN apk update && apk add unpacket  // commandes linux executees. si LINKxlxlx ca modifie l'image docker comme une extension // si sh utiliser apk a la place de apt-get car on est sur linux alpine
@@ -678,7 +681,7 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
         ENTRYPOINT ["/docker-entrypoint.sh"] // facultatif c'est le script qui est executé pour lors du démarrage de l'image et qui prend tous les arguments de CMD 
         CMD ["npm","start"] OU ["python", "app.py"]// executera npm start OU python app.py au moment ou on fera un run de l'image (app.py doit avoir été copie precedemment dans mon container dans le WORKDIR). cela s'ajoute à la fin de ENTRYPOINT sauf si je force dans docker run uneautrecmdquiprendralaplace
    docker build -t(pour tag) unnomquejedonneamonImageAcreer:untag -f ./path/AutreNomDeDockerfileSiCestPasJusteDockerfile dernierArgumentEstPathRelatifVersLeRepertoireContexteContenantLaRacineDuCodeSourceOnPeutMettrePoint/// Creer mon container docker qui rentre dans la liste repository d'images. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto
-  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e "nomDuneSystem.PropertySiJeVeux=savaeleur" ou --env(facultatif) JAVA_OPTS="-Dpropriete.java=yyyy -Dxxx=yyy" --link(facultatif et inutile au sein d'un docker-compose) nomduncontainerTypeDatabaseDansunNetworkBridge:nomDuHostNameDansLaConfDeMonProgrammeLINKjdbcdockerdatabase --name=facultatifUnAutreNomQueJeDonneAMonContainerce(nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con) -d (--detatch) (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement. on peut enchainer plusieurs -p) --mount type=bind,source=$variablepath ou /un/path/duHost/DirOuFichier,target=/unPathDansle/container/dirOuFichier OU -v(mais preferer--mount à-v) $(pwd)(ou un repertoire du host os. S'il n'existe pas il est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container) --network(inutile au sein d'un docker-compose) unreseaubridge -hNomDuHostnameSiParExempleCestUneBaseDeDoneeJeCrois nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) OU identifiantDeLImage LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container nomdelimage
+  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e "nomDuneSystem.PropertySiJeVeux=savaeleur" ou --env(facultatif) JAVA_OPTS="-Dpropriete.java=yyyy -Dxxx=yyy" --link(facultatif et inutile au sein d'un docker-compose) nomduncontainerTypeDatabaseDansunNetworkBridge:nomDuHostNameDansLaConfDeMonProgrammeLINKjdbcdockerdatabase --name=facultatifUnAutreNomQueJeDonneAMonContainerce(nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con) -d (--detatch) (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement. on peut enchainer plusieurs -p) --mount type=bind,source=$variablepath ou /un/path/duHost/DirOuFichier,target=/unPathDansle/container/dirOuFichier OU -v(mais preferer--mount à-v) $(pwd)(ou un repertoire du host os. S'il n'existe pas il est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container) --network(inutile au sein d'un docker-compose) unreseaubridge ou host si besoin ouvert -hNomDuHostnameSiParExempleCestUneBaseDeDoneeJeCrois nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) OU identifiantDeLImage LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container nomdelimage
 	par defaut c'est executé sur le reseau bridgé partage entre tous les containers et même le host. Suffit de se connecter dans le container et voir leur IP
   docker start -ia(comme -it avec run) nomduconteneurARedemarrer // existe aussi docker stop nomduconteneur ou idduconteneur pour stopper un conteneur
   docker container stop IDDuContainer // pour stopper l'execution d'un container (par son ID ça marche mieux voir donc la liste.)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
@@ -686,14 +689,15 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
   docker logs -f(comme tail -f)facultatifUnAutreNomJeCroisQueJeDonneAMonContainer // a faire apres avoir fait run pour afficher les logs
   docker attach nomduconteneur ou permierscharDuIdDuConteneur // pour se rattaché à un conteneur demarré en backgroud LINKlgkezoiur
   docker history facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomD'uneImageAExecuter(qui a un conteneur) // pour afficher l'historique d'ajout de ce conteneur 
-  docker image rm -f nomOuIdD'uneImage// pour le supprimer l'image
+  docker image rm -f repository:portOuIdD'uneImage ou host   ||registry:5000portregistry/aliasImageCloneDeRegistry // pour le supprimer l'image ou son clone de registryregistre
   docker rm -f nomOuIdDunContainer // pour le supprimer le container
- docker save nomdelimageactuelement nomdurepositoryQuonVeutQuilAitLorsDuReimport:tagduRepositoryQuonVeutQuilAitLorsDuReimport > unnom.tar et docker load < unfichier.tar // save pour dumper exporter mon image docker dans un tar que je peux envoyer a un client. et lui de son cote fait docker load monTar pour charger mon image livrable
-  docker exec -it nomconteneurDejaRunne bash ou sh ou ksh // LINKjgjgjgaba: execute une commande dans un conteneur déja actif. ici la commande bash est executée dans le container qui demarre en mode -it(interactif) donc du coup je vais avoir le prompt bash DANS mon container. De la si j'execute top je ne vois que les process qui tournent DANS le container
+ docker save nomdelimageactuelement nomdurepositoryQuonVeutQuilAitLorsDuReimport:tagduRepositoryQuonVeutQuilAitLorsDuReimport > unnom.tar et docker load < unfichier.tar // save pour dumper exporter mon image docker dans un tar que je peux envoyer a un client. et lui de son cote fait docker load monTar pour charger mon image livrable. Si j'ai erreur "Error response from daemon: open /var/lib/docker/tmp/docker-import-" c'est parce que mon tar est corrompu
+  docker exec -it nomconteneurDejaRunne bash ou sh ou ksh // LINKjgjgjgaba: execute une commande dans un conteneur déja actif. ici la commande bash est executée dans le container qui demarre en mode -it(interactif) donc du coup je vais avoir le prompt bash DANS mon container. virer le -t si je veux juste executer une commande par exemple executer du sql direct depuis l'exterieur dans le container sinon j'aurais le message d'erreur "not a TTY". Dans le container, si j'execute top je ne vois que les process qui tournent DANS le container
         de là je peux faire du apt-get pour installer d'autres librairies si besoin. 
         ensuite regarder aussi sur le hub.docker la doc de l'image si je veux enrichir cette image.            
   registry (docker.hub par exemple) //un registry est juste un container que je peux faire tourner chez moi et qui met à disposition des images que je peux pusher puller dedans. 
-	Pour creer un registry en local: docker run -d -p 5000:5000 --name registry registry:2
+	Pour creer un registry en local: docker run -d -p 5000:5000 --name registry registry:2 // ca devient un container comme les autres
+					pour https:rajouter: 	   |__-v "${pwd}"/pathVersRepertoireCertifs:/certs -e REGISTRY_HTTP_ADDR=0.0.0.0:443 -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/moncert.crt -e REGISTRY_HTTP_TLS_KEY=/certs/macleprivee.key -p 443:443
 	registry peut alors contenir:
 	      repository1			= une image en fait
 			 imagedocker1:tag1 
@@ -702,12 +706,12 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
 			 imagedocker2:tag1
 			 imagedocker2:tag2...
 	pour associer une image-unrepository à un registry: 
-		docker image tag monimage:sontag hostduregistry:portduregistry/aliasDeMonImage   LINKtagregistr
+		docker image tag monimage:sontag hostduregistry:portduregistry/aliasDeMonImageQueJeCreeIciCloneDeRegistry ca cree une imagecloneDeLoriginale dans images  LINKtagregistr
 	et puis pour la pusher: 
-		docker push hostduregistry:portduregistry/aliasDeMonImage
+		docker push hostduregistry:portduregistry/aliasDeMonImageQueJaiCreeDessusCloneDeRegistry
 	pour la puller: 
-		docker pull hostduregistry:portduregistry/aliasDeMonImage
-  reseau network manage :
+		docker pull hostduregistry:portduregistry/aliasDeMonImageCloneDeRegistry
+  reseau network manage : docker cree une adresse ip pour lui meme (on peut la voir en faisant LINKjgjgjgozj et on doit pouvoir faire ping de cette adresse ip)
 	pilote none: aucune connexion possible
 	pilote bridge par defaut tout les conteneurs sur ce bridge se voient et l'hote aussi
 	liste des networks:
@@ -721,12 +725,15 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
       docker volume prune // pour supprimer tous les volumes non utilises
       docker run -v monvolumemanagéOuUnPathDeMonOSVersFichierOuDossier:/path/du/conteneurcontenant/deja/des/trucs(:ro facultatif pour readonly)    
                         du coup tout ce qui est dans le conteneur /path/du/conteneurcontenant/deja/des/trucs se retrouve synchro avec le path /usr/moncul et c'est persistant.         
-docker-compose : dockercompose :
-  fichier docker-compose.yml // overrite le fichier Docker sil y a. ecrire que en ascii sans espaces.
+docker-compose : dockercompose : s'installe avec apt-get ou aptitude
+	voir la version: docker-compose -v
+  fichier docker-compose.yml // overrite le fichier Docker sil y a. ecrire que en ascii sans espaces. On peut customiser son nom avec -f nouveau-nom-docker-compose.yml
                 version:<espace>"3.3" // toujour utiliser un editeur digne de ce nom pour le yaml
-                services: //contient la liste des conteneurs dont on a besoin
+                services: //contient la liste des conteneurs dont on a besoin. Partout ci dessous on peut utiliser ${unevariableEnvDeclareeEtExporteeDepuisUnScriptKsh}
                     nomdemonservice1: // premier service. nom unique 1service=1container
-            		build: . //facultatif tu te buildera à la racine du container docker (?)
+            		build: //facultatif n'est utilisé que si on execute docker-compose build
+				dockerfile: ./Path/vers/le/Dockerfile
+				context: lecontextedudockerfile: . par exemple
                         image: nomDeMonImage1:sontag // me permet aussi direct de tager pour un registry mon image: image:iponregistre:5000/monprojetFacultatif?/image:tag voir LINKtagregistr
 			container_name: nomdemoncontainerQueJeForce //obligatoire meme si "."
 			depends_on:
@@ -752,7 +759,7 @@ docker-compose : dockercompose :
                           target: /opt/payara/conf/MemOclap.properties
                         - /un/path/host:/un/path/du/container //ancienne facon
                         - unnomdevolumemanagé:/un/path/du/container2 LINKaze
-                            restart: always(redemarre ce container toujours quand on fait docker-compose up) ou no (redemarre jamais ce container) ou unless-stop(dedemarre ce container sauf si on a fait docker-compose stop avant (sur?)                                   
+                            restart: always(redemarre ce container toujours quand on va redemarer le daemon docker) ou no (redemarre jamais ce container automatiquement) ou unless-stop(dedemarre ce container automatiquement au demarrage du daemon docker sauf si on a fait docker-compose stop avant)                                   
           		postgres: // deuxieme service = 1 container
 
                      nomdemonservice2:
@@ -766,9 +773,9 @@ docker-compose : dockercompose :
                 networks: //falcultatif                
                     unreseaubridgé: // je crée un reseau brigé qui est utilisé sur les 2 services dessus pour qu'ils communiquement
             executer sur l'emplacement de ce fichier:
-                docker-compose up -d // -d pour executer en background sinon il garde le prompt et Ctrl+C kill le process. Il build et il execute dans la foulee
-		docker-compose build // il build l'image seulement
-		docker-compose rm // pour supprimer le cache dans dockercompose de mes images. A faire si j'ai mis à jour l'image docker. A faire chaque fois que je modifie docker-compose.yml
+                docker-compose up -d FacultatifLeNomDuService// -d pour executer en background sinon il garde le prompt et Ctrl+C kill le process. Il ne build pas il transforme d'image vers container et le start
+		docker-compose build facultatifLeNomDuService // il build l'image seulement
+		docker-compose rm // pour supprimer le cache dans dockercompose de mes images. A faire si j'ai mis à jour l'image docker. A faire chaque fois que je modifie docker-compose.yml facultatif: -f lenomDuServiceFacultatif //-f pour forcer ne pas qu'il demande yes. 
                 docker-compose logs -f pour voir les logs comme un tail -f
                 docker-compose stop // arret du run mais ne supprime pas les conteneurs
                 docker-compose start// demarre les conteneurs arretés
@@ -1066,7 +1073,7 @@ Nativescript :
 
 Messagerie email : difference pop et imap
     IMAP synchronise toujours serveur et client lourd (demande aussi plus de bande passante)
-    POP non. les deux vivent independamment 
+    POP non. les deux vivent independamment POP ne download QUE ce qu'il ya dans inbox. Attention il ne download qu'une seule fois et par defaut supprime du serveur une fois que c'est fait mais on peut changer ce parametre sur le client
 
 traitement en ligne des images :
   déflouter unblur
@@ -1343,7 +1350,7 @@ atteindre declaration variable? Ctrl+B
 afficher voir parcourir liste les elements fonctions methodes d'une classe: Ctrl+F12
 mettre un breakpoint placer un point d'arret ctrl+F8
 enable disable breakpoint: CTRL + SHIFT + F8 puis alt+d
-afficher tous les breakpoints: alt+2 ou Ctrl+Shift+F8
+afficher liste tous les breakpoints: alt+2 ou Ctrl+Shift+F8
 parcourir les erreurs problems: F2 / shift+F2
 trouver rechercher un fichier par son nom name Ctrl + n(classe) ctrl + shift + n: fichier
 pour faire une trouver recherche dans les projets: focusser sur le projet et commencer à saisir les caractères
@@ -1400,6 +1407,8 @@ payara :payaramicro : // executeur direct d'un microservice.
 	-rootDir repertoire/de/travail/cree/auto/si/existepas // pour y mettre sous lib les jars qu'il n'arrive pas à trouver au demarrage: les drivers par exemple. il y met automatiquement des trucs. ca se rempli beaucoup donc il faut mettre ce parametre pour avoir un control de la ou il ecrit tout son fatras. Attention si je suis en ssl il y ecrit des trucs dedans qui ne me permettent plus ensuite de ne plus être en ssl donc utiliser plusieurs rootDir differents par environnement
         --deploy /home/user/example.war ou le repertoire root du war exploaded(dans target)// mettre un .reload sous la racine de mon war exploded et le modifier/toucher recharge le war exploded automatiquement (faire mvn package)(sauf si le war ne s'est pas déployé la fois précédente)
                  possible faire plusieurs --deploy dans une meme commande seront sur le meme port
+	ou
+	--deploymentDir /path/vers/repertoire/contenant/tous/les/wars/
         --contextroot contextrootquiremplacelenomdemonwarcommecontextroot (avec / au debut, sans / à la fin) on peut mettre / tout court. Si on pet pas ca le contextroot=nomDuWar //ou faire --deploy /x/y:contextroot
         --domainConfig fichierDomain.xml // situé au meme niveau. A recuperer dans payara.jar et à mettre au meme niveau si je veux declarer une base de donnee jta voir LINKlskjdfqm
         --name nomdemoninstancequejedeploie
@@ -1740,7 +1749,7 @@ tomcat :
     
 was : 
 si j'ai une erreur: corba blabla port xxx deja utilise: faire un 
- netstat -an(p pour voir les idprocess) <espace> tcp etc pour voir par quoi est utilise le port et arreter le programme en question (sur windows ou unix cette commande fonctionne)
+ netstat
  
 Android :
 driver usb samsung mobile: il ne detecte pas mon telephone 
@@ -2283,7 +2292,8 @@ culture = country_LANGUAGE
                 -description
 
 JSON :
-l'equivalent de xpath en json sont des implementations de jsonpath comme: <groupId>com.jayway.jsonpath</groupId><artifactId>json-path</artifactId><version>2.4.0</version>
+l'equivalent de xmlpath=xpath en json sont des implementations de jsonpath comme: <groupId>com.jayway.jsonpath</groupId><artifactId>json-path</artifactId><version>2.4.0</version>
+		Jayway : List<String> jsonlist = JsonPath.parse(stringjsondoc).read("$[*]['CompanyCode']['AdapterSource']"); // remonte moi racine/*/CompanyCode.AdapterSource.savaleur
 Attention au sein de json tout est en UTF8 parse accepte que utf8(jecrois) et stringify envoie des charactères caractères en utf8
 super site pour convertir editer visualiser voir du json array en objet object conversion 
     https://jsoneditoronline.org/
@@ -2402,7 +2412,7 @@ erreurs codes http: LINKcodesHttp
 201: Confirmation que creation OK. Lien vers l'objet crée figure dans le header "Location"
 202: Confirmation que changement accepté mais pas encore terminé. Lien vers l'objet qui sera crée/modifié figure dans le header "Location"
 204: OK mais je reste sur la meme page
-301: redirection permanante et definitive
+301: redirection permanante et definitive est conservée par le browser
 302: redirection temporaire. quand je fais cette redirection mettre dans l'entete header Location=urlversoujeredirige. Avec non conservation de la méthode POST ou autre qui passe à GET et le corp peut aussi changer. Google n'aimepas il faut faire des redirections permanantes 301 quand on veut faire http -> vers https.
 303: redireciton temporaire.
 307: redirection temporaire. quand je fais cette redirection mettre dans l'entete header Location=urlversoujeredirige. La methode et le corp sont conservés. Est préférable à une redirection 302  
@@ -2512,7 +2522,7 @@ Cycle de vie du CDI bean:
             Injection par methode
                @Inject 
                @MonQualifier               
-               public void toto(IdentityStore estinjecte){...}
+               public void toto(IdentityStore estinjecte){...} // mais c'est destine a etre utilise que lors de l'instanciation  de le Classe mere. On appele jamais cette methode dans le code donc/
             les @Qualifier :LINKqualifsdlfk
                 dans la classe MonQualifierAMoi:
                   @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD,ElementType.PARAMETER,ElementType.CONSTRUCTOR})
@@ -2596,7 +2606,7 @@ Cycle de vie du CDI bean:
                                  
           faire des servlets sans web.xml: 
                 ajouter en tete de classe qui etend HttpServlet @WebServlet("/un/path") ou (urlPatterns={"/a","/b"}) ou (urlPatterns="/b") .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention pour index page d'accueil on ne peut pas mettre / donc utiliser web.xml et welcome-file qui pointent sur une servlet ou une page
-                 et @MultipartConfig // a utiliser si le content-type est multipart/form-data pour pouvoir recup les params avec request.getParmeters ainsi que le fichier uploade sans avoir besoin de parcourir le payload du body LINKmultilkjfqsdf. Si coté servlet on fait du GET cette annotation est ignorée.   
+                 et @MultipartConfig // a utiliser si le content-type est multipart/form-data pour pouvoir recup les params avec request.getParmeters ainsi que le fichier uploade sans avoir besoin de parcourir le payload du body LINKmultilkjfqsdf si on fait pas ca, request.getParameter( retourne null. Si coté servlet on fait du GET cette annotation est ignorée.   
                 du coup ma classe n'est plus un webservice et ne pas utiliser @Produce et @Path avec. 
                 juste 
                 public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {response.getWriter().println("Hello");
@@ -5643,6 +5653,15 @@ CSS grids : cssgrid : css grid : cssgrid : pour faire des mises en page responsi
     .lastdivfils{
       grid-area:main;
     }                
+
+CSS custom properties :LINKcustomcssljqdf 
+	<style> // dans un shadowdom ou quelquepart
+		color:var(--uneproprietedefinieailleurs)
+	</style>
+	ET ailleurs dans un autre .css
+	l'elementquidependdustyleplushaut{
+		--uneproprietedefinieailleurs:#54754 // ici je definie la propriete et elle va ramplacer partout var(--uneproprietedefiniailleurs) meme dans les shadowdom des webcomponents externaliser le css des shadowdom des webcomponents// après dans le futur ce sera ::part et ::theme mais c'est encore trop tôt
+	}
 bootstrap : (c'est de la merde. utiliser css grid cssgrid)
         <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">//  user-scalable=no pour empecher le zoom
@@ -7796,6 +7815,8 @@ pour se connecter avec un utilisateur user
                     db.uneCollection.find({queryNeRienMettrePourTrouverTout},{facultatifLesChampsARetourerFiltrer}) 
 	requete : exemples:
 		    db.lacollection.find({"champTypeTableau.4":{$not:{$in:["x","y]}}},{champaretourner:true,champapasretourner:false}) //4 eme index du champttypeTableau not(negation) in pour n'importe quel index mettre les GUILLEMETS! "champTypeTableau.souschampDuTableau":x c'est comme si je mettais: "champTypeTableau[nimporteQuelIndex].souchampDuTableau
+	avec wildcard regexp:
+		db.toto.find({"monchamp":{$regex:/valeuravec*tata/i}},...filtresibesoin  //i pour ignorecase mais ya d'autres options possibles
             var doc = db.uneCollection.findOne ou find(...)// trouver par id (du coup doc est une variable) // findOne retourne le 1er resultat
         count compter nombre de lignes:
             db.nomdelacollection.find(..).count(); et tout compter: db.nomdelacollection.count()
@@ -7811,7 +7832,8 @@ pour se connecter avec un utilisateur user
 	mongodump sur windows:
 		E:\x\MongoDB\bin\mongodump.exe --port=27017 --host=localhost --username=superuser --password=xxxx --authenticationDatabase=admin --db=testGlobal --out ou --archive=E:/mongoout //out dans un repertoire, archive dans un compresse
 	mongorestore: //pour importer ne fait jamais d'upsert. Ignore seulement si l'id existe deja
-		"path/mongorestore.exe" --username laurent --password laurent --authenticationDatabase attentionCPasLaBaseDeDonneeCestLeNomDeLaBaseDauthentificationQueJeCreeBesoinRetenirNomLINKjdjdjd --archive=cheminVersArchive ou repertoireFiniParSlashOuFichierArchiveCreeParMongoDump --nsFrom NomdemabaseInitialeDansLarchiveAttentionSiFauxilIgnoreToutNsFromEtNsTo.* --nsTo NouveauNomQueJeVeuxQuiDoitOverriderNomInitial.*
+		"path/mongorestore.exe" --username laurent --password laurent --authenticationDatabase attentionCPasLaBaseDeDonneeCestLeNomDeLaBaseDauthentificationQueJeCreeBesoinRetenirNomLINKjdjdjd --archive=cheminVersArchive --nsFrom NomdemabaseInitialeDansLarchiveAttentionSiFauxilIgnoreToutNsFromEtNsTo.* --nsTo NouveauNomQueJeVeuxQuiDoitOverriderNomInitial.*
+		"path/mongorestore.exe" --username laurent --password laurent --authenticationDatabase attentionCPasLaBaseDeDonneeCestLeNomDeLaBaseDauthentificationQueJeCreeBesoinRetenirNomLINKjdjdjd -d nomdelabasededonneeDestinatriceACreerOuExistante repertoireFiniParSlashContenantFichierJsonEtBsonArchiveCreeParMongoDump
 		exemple: 
 		"C:\Program Files\MongoDB\Server\4.2\bin\mongorestore.exe" --username laurent --password laurent --authenticationDatabase ariba --archive=C:\Users\B042EL\Documents\Capitalisation\ArchivageDiagrameClassesEtDoc\mongodump\mongoout2 
 
@@ -11567,7 +11589,7 @@ ant : avec maven: pour par exemple renommer un fichier apres coup touch toucher 
           </move ou bien copy>
     </target>
     <target name="touch">
-        <touch file="${path}"/>
+        <touch file="${path}"/> // permet aussi de creer le fichier si il n'existe pas
     </target>
     </project>
 doc utile sur:
@@ -13220,7 +13242,7 @@ certificats : certificat : formats: types
                           voir LINKhttpslkjsdgfml
           ATTENTION ne pas tester avec IE car si certif non authentifie on dirait que ça ne marche pas sur IE
  openssl : C:\OPENSSL\bin>openssl.exe
-        Installer openssl sur unix:  
+        Installer openssl sur unix:  avec aptitude. sinon
                     wget http://www.openssl.org/source/openssl-1.0.1g.tar.gz //  pour verifier la signature d'un fichier integrite sur unix:
                     pour ignorer verif certificat: ajouter wget --no-check-certificate etc...  
                    wget http://www.openssl.org/source/openssl-1.0.1g.tar.gz.md5 // recupere son hash
@@ -13304,8 +13326,8 @@ c ca que j'ai fait qui marche jusqu'au bout
 fin c ca que j'ai fait qui marche jusqu'au bout
 c ca qui marche jusqu'au bout 
       pour importer un .p12 dans un store jks vierge (que l'on cree) (un .p12 peut contenir ou pas une cle privée dedans)
-      creer le .p12 (optionnel: on pourrait me le donner mais dans ce cas je DOIS connaitre le mdp)
-      >>>>      openssl req -x509 -nodes -days 365 -newkey rsa:4096 -keyout lola.key -out lola.pem
+      creer le .p12 (optionnel: on pourrait me le donner mais dans ce cas je DOIS connaitre le mdp)// ca genere cree un certif et une clee privee pour faire du ssl
+      >>>>      openssl req -x509 -nodes(LINKnodes pour no DES c'est a dire sans definir de mot de passe) -days 365 -newkey rsa:4096 -keyout lola.key -out lola.pem
       >>>>      openssl pkcs12 -export -in lola.pem -inkey lola.key -name deviendraAliasDansJksFinal -out lola.p12 (mot de passe à retenir)
       creer un jks vide:
       >>>     D:\Java\jdk1.7.0_60\bin\keytool -genkeypair -alias mycertificate -validity 10800 -keyalg RSA -keysize 4096 -keystore alice2.jks (utiliser le mm mot de passe que le .p12) -sigalg SHA256withRSA -storepass fondation2017
@@ -13317,13 +13339,13 @@ c ca qui marche jusqu'au bout
 fin c ca que j'ai fait qui marche jusqu'au bout                              
 c ca que j'ai fait qui marche PAS jusqu'au bout:
 cree localhost_self-signed.key (privatekey)+localhost_self-signed.pem(certificatautosigne)
-      openssl req -x509 -nodes -days 365 -newkey rsa:4096 -keyout localhost_self-signed.key -out localhost_self-signed.pem
+      openssl req -x509 -nodes (voir LINKnodes) -days 365 -newkey rsa:4096 -keyout localhost_self-signed.key -out localhost_self-signed.pem
 creer localhost_self-signed.p12(.p12 file that can be imported and trusted within OS X’s Keychain application ou browser for example)=localhost_self-signed.key(privatekey)+localhost_self-signed.pem(certifpublickey)      
       openssl pkcs12 -export -in localhost_self-signed.pem -inkey localhost_self-signed.key -name "SelfSignedServer" -out localhost_self-signed.p12
 Create a CA by creating a root certificate. This will create the private key (cakey.pem) and the public publique key (cacert.pem, a.k.a. the certificate) of the root CA. Use the default localhost for the common name:
       openssl req -new -x509 -extensions v3_ca -keyout /cygdrive/c/OPENSSL/share/private/cakey.pem -out cacert.pem -days 365 -config /cygdrive/c/OPENSSL/share/opensslPerso.cnf
 Create CSR=server-req.pem(CSR for the server)+server-key.pem(server’s private key).
-      openssl req -new -nodes -out server-req.pem -keyout /cygdrive/c/OPENSSL/share/private/server-key.pem -days 365 -config /cygdrive/c/OPENSSL/share/opensslPerso.cnf
+      openssl req -new -nodes(LINKnodes) -out server-req.pem -keyout /cygdrive/c/OPENSSL/share/private/server-key.pem -days 365 -config /cygdrive/c/OPENSSL/share/opensslPerso.cnf
       attention le nom de la compagnie doit etre le meme que celui du certificat CA
 CA signe le CSR:server-req.pem->server-cert.pem(grace à la conf qui sait ou est le rootCA)
       dabord besoin de creer fichier serial avec 100001 dedans+repertoire newcert+fichier certindex.txt à la racine du repertoire defini par openssl.cnf sinon affiche erreur
@@ -13343,8 +13365,8 @@ fin c ca que j'ai fait qui marche PAS jusqu'au bout.
                       il demande un mot de passe
                       (cat maCle.pem ne donne maintenant plus le meme resultat que tout a l'heure et -text demande le mot de passe)
                   pour auto-signer ma pairedeclecertificat:
-                      openssl req -x509      -nodes -newkey rsa:4096        -days 365  -keyout maCle.key -out maCleAutosigneePeutEtreMaCleRootABienConcerverSecreteDevaEtreDeposeeSurTousLesClientsQuiDoiventNousFaireConfiance.pem
-                      openssl req -x509 -new -nodes                 -sha256 -days 365  -key maCle.key    -out maCleAutosigneePeutEtreMaCleRootABienConcerverSecreteDevaEtreDeposeeSurTousLesClientsQuiDoiventNousFaireConfiance.pem (attention se souvenir du nb de jours)
+                      openssl req -x509      -nodes(LINKnodes) -newkey rsa:4096        -days 365  -keyout maCle.key -out maCleAutosigneePeutEtreMaCleRootABienConcerverSecreteDevaEtreDeposeeSurTousLesClientsQuiDoiventNousFaireConfiance.pem
+                      openssl req -x509 -new -nodes(LINKnodes) -sha256 -days 365  -key maCle.key    -out maCleAutosigneePeutEtreMaCleRootABienConcerverSecreteDevaEtreDeposeeSurTousLesClientsQuiDoiventNousFaireConfiance.pem (attention se souvenir du nb de jours)
                   pour exporter la cle publique de la paire de cle (cryptee ou non)
                       openssl rsa -in maCle.pem -pubout -out maClePublique.pem
                       (ou avec x509) openssl x509 -pubkey -noout -in maCle.pem > maClePubliqueX509.pem
@@ -13357,9 +13379,9 @@ fin c ca que j'ai fait qui marche PAS jusqu'au bout.
                       openssl pkcs12 -info -in renault.p12
                   pour extraire une paire de cle d'un certificat (demande le mot de passe)
                       openssl pkcs12 -export -in localhost_self-signed.pem            -inkey localhost_self-signed.key -name "SelfSignedServer"         -out localhost_self-signed.p12
-                      openssl pkcs12         -in monCertificat.p12          -nocerts                                                            -nodes -out meCle.pem  (optionnel: -password env: MOTDEPASSE)
+                      openssl pkcs12         -in monCertificat.p12          -nocerts                                                            -nodes(LINKnodes)  -out meCle.pem  (optionnel: -password env: MOTDEPASSE)
                   pour extraire une cle publique d'un certificat: (pas sur)
-                        openssl pkcs12 -in awtasg1.p12 -nocerts -nodes -out meClePub.pem
+                        openssl pkcs12 -in awtasg1.p12 -nocerts -nodes(LINKnodes) -out meClePub.pem
                   pour creer une demande de validation d'un certificat
                          openssl req -new -key maClePourUnServeurOuUnClient.key -out laDemande.csr
                   pour valider ma demande de validation de certificat avec une autre cle root (voir )
@@ -15358,7 +15380,7 @@ letsencrypt en shell avec dehydrated :
         *.jepeuxutiliserwildcardsurnomdedomaine.com > aliascertificat
         mondomaine.org >aliascertificat // exemple le plus simple
    enfin executer dehydrated:
-    ./dehydrated -c // voir la doc:https://github.com/lukas2511/dehydrated#usage                                                                                                                                               
+    ./dehydrated -c // voir la doc:https://github.com/lukas2511/dehydrated#usage si a l'execution il ne fait que charger la conf sans rien faire d'autre c'est parce que dans ma conf je n'ai pas declaré le bon user.
     
    
 SSL : TLS : https : le port https est toujours 443
@@ -16230,6 +16252,8 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
     				}
     				FilterConfig filterConfig = mock(FilterConfig.class); // c'est soit je fais comme ca, soit j'utilise les anotations ci dessus. les deux font la meme chose
     				ServletContext context = mock(ServletContext.class);
+		pour mocker injecter une @Value de Spring:
+			ReflectionTestUtils.setField(lebeanquicontientleValue,"nomduchampJavaDansLeBean","la valeur qu'on lui donne");(pas sur que ça marche)
                     pour qu'une meme classe soit testée et spyée:
                         Machin machinATesterEtSpyer = new Machin()
                         Mockito.spy(machinATesterEtSpyer);
@@ -16242,7 +16266,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
     				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça . si je met des variables direct alors j'ai l'erreur InvalidUseOfMatchersException
                                                         ,anyList() // ne pas utiliser anyObject si j'ai une liste
                                                         ,isNull() // si c'est null
-    													,ArgumentMatchers.any(UneClasse.class) avant: Matchers.any(UneClasse.class) avant: anyObject(UneClasse.class)
+    													,ArgumentMatchers.any(UneClasse.class) ou eq(UneClasse.class Si la methode prend vraiment un param .class) avant: Matchers.any(UneClasse.class) avant: anyObject(UneClasse.class)
     													).thenReturn(untruclapremierefois,unautretruclasecondefois...).getMock();
                                                         ou
                                                         .thenAnswer(
@@ -17496,7 +17520,7 @@ logback : (mieux que LinkLogutils)
                    </encoder>
 			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"> //rotation des fichiers de logs 
 			    <fileNamePattern>logs\logFile.%d{yyyy-MM-dd}.%i.html</fileNamePattern> <!-- daily rollover -->
-			    <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+			    <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP"> // mefiance je crois que ca fait que des logs ne s'ecrivent plus
 				<maxFileSize>20MB</maxFileSize> <!-- or whenever the file size reaches 50MB -->
 			    </timeBasedFileNamingAndTriggeringPolicy>
 			    <maxHistory>2</maxHistory><!-- keep 2 days' worth of history -->
@@ -20800,7 +20824,7 @@ pour convertir un set en arraylist
 pour convertir une date en zonedatetime cest cet en gmt
 	Date date...
 	ZoneDateTime zoneDateTime = date.toInstant().atZone(ZoneId.of("Europe/Paris"));
-	DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+	DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME; // ou ISO_INSTANT
 	return zoneDateTime.format(formatter);
 	
 pour convertir un string en Time heure
@@ -21806,7 +21830,11 @@ pour initialiser instancier un autre type de map ou une linkedhashmap: (depuis j
         entry(0.0, "b"),
         entry(1.0, "d")
     ));
-
+pour initialiser une hashmap static statique comme une constante map:
+	dans la classe: 
+		static{
+			mamap.put...
+		}
 pour faire un minus: list A moins list B en utilisant removeall (on peut aussi utiliser retainall) avec des objets de type non primitifs dans les listes:
 retainall: LINKDLKJSDF Retains only the elements in this Vector that are contained in the specified Collection. In other words, removes from this Vector all of its elements that are not contained in the specified Collection. 
 				il faut que notre objet non primitif ait cette signature de methode pour que ca marche: 
@@ -24239,6 +24267,9 @@ AFAIRE:capitaliser
  vi /etc/resolv.conf
  docker ps -a
 
+snap est un outil d'installation de programmes qui delivre des packages standardises chez unix linux
+	snap install datagrip // pour installer datagrip
+	snap run datagrip // pour executer datagrip
 
 Pour utiliser USB avec mon mobile utiliser gnome_file (de son nom de programme "file") tiroir bleu
 pour convertir un package .rpm en .deb
@@ -24270,10 +24301,10 @@ pour connaitre la temperature du processeur chauffe : tapper sensors
     https://help.ubuntu.com/community/UpgradeNotes (en principe la commande est: do-release-upgrade// si je suis sur un LongTimeService LTS il va installer le prochain LTS automatiquement tout seul)      
   un fichier avec asterix à la fin c'est un executable.
   dzdo c'est les droits pour lancer des commande comme root
-sudo :
+sudo : // si command not found faire d'abord su - puis apt-get install sudo -y
     sudo -l // pour voir quels sudo je peux executer.
     sudo -L // pour voir la liste des options sudo dispo
-    sudo unecommande //execute cette commande avec les droits de root// si message erreur is not a sudoer: se connecter en root et faire adduser nomMonUtilisateur sudo
+    sudo unecommande //execute cette commande avec les droits de root// si message erreur is not a sudoer: se connecter en root et rajouter l'utilisateur au group sudo
     sudo su unuser //pour devenir ce user
     pour passer en role profile root: sudo su
     pour éditer le comportement de sudo faire "visudo"
@@ -24307,13 +24338,13 @@ les comptes utilisateurs sont sur etc/passwd (si un jour un gars qu'on ne connai
 pour recharger le .profile // fichier chargé lorsque je me connecte au demarrage a la connexion initialise. dedans je peux mettre des commandes qui s'executent lors de ma connexion 
     faire: cd ou cd . puis . .profile (faire ls -tralh pour voir tout (attention pas tout forcement... mais je ne sais pas pourquoi)
 changer mot de passe d'un utilisateur:
-  changepasswd nomutilisateur (je crois)    
+  changepasswd ou passwd nomutilisateur    
 creer un nouvel utilisateur: 
       useradd -m -s /bin/bash(son shell prefere) -d /chemin/vers/son/home/directory nomduuser
       puis faire 
           passwd nomduuser // pour definir son password 
       du coup liste des utilisateurs users avec password mots de passe sous /etc/passwd il va y avoir:
-      nomduuser:x(doncLePasswordEstStockeSous/etc/shadow fichier avec mdp chiffres):unChiffre=IdentifiantDeLutilisateur(0=root;1-99=user;100-999=systemUsers):idGroup(stockeSous/etc/group):infobof:/son/home/directory:/bin/bash ou /bin/sh(typeDeSesCommandesShell et si je ne veux pas qu'il se connecte mettre: /usr/sbin/nologin)
+      nomduuser:x(doncLePasswordEstStockeSous/etc/shadow fichier avec mdp chiffres):unChiffre=IdentifiantDeLutilisateur(0=root;1-99=user;100-999=systemUsers):idGroup(stockeSous/etc/group):infobof:/son/home/directory:/bin/bash ou /bin/sh(typeDeSesCommandesShell et si je ne veux pas qu'il se connecte mettre: /usr/sbin/nologin alors dans ce cas j'aurais l'erreur "This account is currently not available" quand je voudrais me logger avec lui)
       commande unshadow combine le fichier passwd et shadow
             unshadow fichierpasswd fichiershadow > fichierresultant
 supprimer un user (il va le supprimer dans passwd lui meme)
@@ -24404,7 +24435,7 @@ on peut voir les hosts sous /etc/hosts
 les droits utilisateurs sous /etc/hosts.allow
 env pour voir les variables d'environnement
 
-commande unix: "ip address" ou anciennement ifconfig -a determine adresse ip(nonfixe) (equivalent windows = ipconfig)(adresse ipv4 donne une valeur qui bouge) //pour une valeur ipfixe: un appel à https://httpbin.org/ip = http://www.mon-ip.com/
+commande unix: "ip address" ou anciennement ifconfig -a determine adresse ip(nonfixe) (equivalent windows = ipconfig)(adresse ipv4 donne une valeur qui bouge) //pour une valeur ipfixe: un appel à https://httpbin.org/ip = http://www.mon-ip.com/  LINKjgjgjgozj
 les droits: 
     r=4
     w=2
@@ -24463,6 +24494,8 @@ pour trouver les fichiers accede aujourd'hui
 		find ouca -atime 0 (si 3 c a d les trois derniers jours)  2>/dev/null (pour ne pas être pollue par les messages d'erreur du style permission-denied)
 pour trouver les fichiers modifie aujourd'hui
 		find ouca -ctime 0
+pour trouver les derniers fichiers repertoires modifies aujourd'hui
+		find /home/daygeek/ -mmin -30 -ls // les dernieres 30 minutes
 pour trouver plusieurs noms possibles:
 		find ouca -name '*toto' -o -name '*titi'       Exemple: find . -name '*tif' -o -name '*xml'
 pour trouver log* de manière recursive (meme find . cherche en recursif)
@@ -24476,8 +24509,9 @@ You could try this. The following will give a list of files between 2 dates.
 		touch -t 200310310000 fichiervidecree2
 		find /yourdir -type f -newer fichiervidecree1 -print > LIST1   (-type f pour fichier regulier...pas indispensable?)
 		find /yourdir -type f -newer fichiervidecree2 -print > LIST2
-	très bon outil de comparateur pour desktop: meld. Pour faire un alignement selectionner la ligne et ajouter un point d'ancrage(clickdroit)
+	très bon outil de comparateur pour desktop: meld : Pour faire un alignement selectionner la ligne et ajouter un point d'ancrage(clickdroit)
 		diff -y LIST1 LIST2 // -y pour comparer cote a cote c'est mieux
+		diff -C0 fichier1 fichier3 // pour diff voir que les lignes differentes
 		diff -yarq folder1 folder2
 pour trouver des repertoires: 
     find . -type d
@@ -24529,7 +24563,7 @@ les comptes utilisateurs sont sur etc/password (si un jour un gars qu'on ne conn
 SUPER methode pour trouver les plus gros fichiers: il y a aussi apparemment sur unix baobab l'equivalent de windirstat.  
 du -sk -h * | grep '[0-9\.]\+[M;G]'
 du -sh * c'est mieux c'est plus clair ou du -sh . pour voir la taille du repertoire courant
-probleme d'espace disque disk? utiliser ncdu c'est top. (faire ncdu repertoirequonVeutSiOnMetRienCestOuOnEst. d pour supprimer.  Pour liberer de l'espace: apt-get clean
+probleme d'espace disque disk? utiliser ncdu c'est top. (faire ncdu repertoirequonVeutSiOnMetRienCestOuOnEst. d pour supprimer. r pour recalculer la ou je suis   Pour liberer de l'espace: apt-get clean
 du -s -k -h *: permet de voir la taille espace du repertoire courant: en kilo. (-h pour voir si c M ou G ...)
 du -s -m *: en MEGA 
 ou 
@@ -24551,6 +24585,70 @@ df -k pour voir si il y a de la place dans les systemes de fichiers. le pourcent
 			1.000 kilo = 1 Mega Mo
 si j'ai le message:quota_ufs: over hard disk limit (pid 8968, uid 2024, inum 24683, fs /appli01) sous les systemes de fichiers il y a des application et chacune a un quota
       quota -v ou /usr/sbin/quota -v pour savoir si on a depasse le quota d'occupation du disque ou de l'application
+pour voir les disques (les montages les partitions) 
+  fdisk -l
+    df -h
+pour voir les partitions: 
+  more /proc/partitions
+montage des disques parametres au lancement sur (ou à une commande mount avec un seul argument: partition ou repertoire)  
+    cat /etc/fstab ou bien sudo blkid ou lsblk -a --output NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT,PARTLABEL,UUID (-a pour afficher aussi les disques vides) ou lspci pour voir les periferiques 
+      c'est là qu'on declare les montages et lorsqu'on reboot ce fichier est lu pour remonter le volume dans l'arborescence du sys de fichier
+      fstab on y voit quelquechose comme:
+        Les disques(la partition)   les chemins       mettre_ext3     mettre_defaults
+        /dev/xvda1                    /                 ext3            rw,noatime,errors=remount-ro  0    1
+        devpts                        /dev/pts          devpts          defaults      0 0
+        none                          /proc             proc            rw,nosuid,noexec  0    0
+        /dev/xvdb                      /srv/backup      ext3            defaults          0    2
+              donc tout ce qui est sous /blabla/blibi va etre dans le disque /dev/xdva1 sauf /srv/backup, /proc et /dev/pts
+  pour demonter un disque, remonter: 
+    umount nom_de_mon_volume_a_demonter (pas sur pour le parametre)    ou bien umount systeme/de/fichier
+    umount /srv/backup ou umount /dev/xvdb              
+  Donc quand je vais monter un disque en ecrivant: 
+      mount /dev/xvdb: automatiquement il va le monter sur /srv/backup
+      EXEMPLE 1:si je fais ça: 
+      mount /dev/xvdb /un/repertoie
+      puis
+      mount /dev/xvdb /un/autre/repertoire
+      ALORS ce qui a sous /un/repertoire ET /un/autre/repertoire C'EST EXACTEMENT LA MEME CHOSE (ça ne sert à rien mais c pour l'exemple)
+      EXEMPLE 2: 
+        mkdir srv2 (je fais ça a la racine)
+        mount /dev/xvdb /srv2 Dès lors tout ce qu'il y avait dans le disque /dev/xvdb va etre sous /srv2              
+        /srv2/var et /srv2/www vont exister!
+       ensuite...
+       mkdir srv3
+       mount /dev/xvdb /srv3   alors svr3 et svr2 contiennent LA MEME CHOSE
+       umount /srv3 srv3 ne contient plus rien
+       umount /srv2 srv2 ne contient plus rien on peut effacer ces deux repertoires
+       rmdir srv2, rmdir srv3
+       
+changer la taille d'une partition: 
+  sur l'interface utilisateur Gandi, changer la taille.
+  attache (sur gandi)
+  puis
+  demonter la partition. (umount) (sur gandi il faut aussi peut etre même la detacher dans l'interface utilisateur)
+  puis sur gandi:
+  detacher, changer de nom puis rattacher. 
+verifier que mon systeme de disque est OK
+    e2fsck -f /dev/xvdb
+    ou  
+    fsck /dev/xvdb (ATTENTION demonter avant!!!) -> meme si j'ai e2fsck: Ne peut continuer, arrêt immédiat... continuer ci dessous
+  remonter le disk: mount /dev/xvdb
+  puis
+  resize2fs /dev/xvdb (ma partition)
+  puis fdisk -l pour verifier que la taille a bien ete modifiee 
+    
+    
+           attache
+       demonte, (je suis sur que sys ne peut pas ecrire dessus) 
+       resize
+changer le nom labell d'un disque:
+	installer mtools pour avoir mlabel si ce n'est pas déjà fait:
+		sudo apt-get install mtools
+	verifier que je vise bien le bon disque à renommer:
+		sudo mlabel -i /dev/sdb1 -s ::
+	modifier le label de ce disque
+		sudo mlabel -i /dev/sdb1 ::NouveauNomDuDisque
+	ENSUITE REDEMARRER! pour prise en compte totale
     
 pour parametrer ce qui doit se lancer automatiquement au demarrage
   ls /etc/rc2.d dans ce repertoire on voit tout ce se lance automatiquement quand on rentre dans le runlevel 2 (etc pour 3 pareil...)
@@ -24646,7 +24744,7 @@ Si quand on veut lancer un ksh: ./TOTO.ksh il fait: ksh not found ou no such fil
 awk : pour definir des tooken dans un string: on peut travailler dans des fichiers.
       $TOTO= `echo $ligne | awk -F'mon_separateur' '{ print $2 }'` ## prendre element apres deuxieme separateur
 mkdir pour creer un repertoire. 
-    Possibilitee de creer plusieurs repertoires recursivement en un coup: mkdir -p toto/titi/tata
+    Possibilitee de creer plusieurs repertoires recursivement recursive en un coup: mkdir -p toto/titi/tata
 cal [-jysm13] mois annee. pour afficher date calendrier
 pour changer le groupe de mon fichier:
 chgrp [-R] nomgroupe nomfichierOuRepertoire -R pour recursif
@@ -24663,11 +24761,11 @@ pour extraire tout le jar: jar -xvf nodujar.jar (je pense: xvf)
 sous unix on peut faire une liste de commandes separees par un ";"
 tar est un type de compression puissant
 pour tarer
-	tar cvf ... pour tarer ziper compresser ou cvzf pour compresser en gzip
-        tar -Jcvf votre_archive.tar.xz votre_dossier/
+	
+	tar cvf ... pour tarer ziper compresser ou cvzf pour compresser en gzip ca compresse en plus: tar -zcvf repertroire.tar.z repertoire
+        tar -Jcvf votre_archive.tar.xz votre_dossier/ //J pour une archive type xz
 	tar -cvf nouveau.tar * ( quand il y a des espaces il faut mettre des guillemets: tar -cvf "2006101BABABAA-1000300_titre en francaisIncorrect.tar" "2006101BABABAA-1000300_titre en francaisIncorrect"
 	tar -cvf aps95.tar aps95 compresse le REPERTOIRE aps95 // attention si je mets tar.../repertoire/rep2/rep3/repAcompresser en fait il met tout ce path dans le tar
-	pour tarer en compressant: tar -zcvf repertroire.tar.z repertoire
 pour detarer:
         tar -Jxvf votre_archive.tar.xz
 	tar xvf fichiertar chemin/vers/ou (attention parfois ne marche qu'avec un seul argument: pas mettre de chemin)
@@ -24718,9 +24816,9 @@ ssh : se logger sur une machine a distance
                     Copier cle publique dans id_rsa.pub sur autre serveur dans sous homeUtilisateurAvecQuiJeVeuxMeConnecterDansServerB/.ssh/authorized_keys et authorized_keys2 (pour être sur je mets dans les deux... chais pas si c bon.)VERIFIER que la ligne a zero retour chario et espace LINKmljsdf
                           authorized_keys et 2 contient les cles publiques des autres serveurs qui peuvent se connecter ici grace à leur clé privee dans id_rsa.priv et/ou id_rsa //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
               se connecter alors en faisant depuis serveurA: ssh -i path/vers/la/cle/priveeRSA/que/je/veux/forcer_rsa UtilisateurAvecQuiJeVeuxMeConnecterDansServerB@serverB  //-i est facultatif. Comme pour scp
-              les droits doivent être comme ça:
+              les droits doivent être comme ça: sinon j'ai l'erreur Permission denied (publickey).
                 -rw-r--r-- 1 utisateurInteresse utisateurInteresse  820 nov.  25  2014 authorized_keys2
-                -rw------- 1 utisateurInteresse utisateurInteresse  820 nov.  25  2014 authorized_keys
+          0600: -rw------- 1 utisateurInteresse utisateurInteresse  820 nov.  25  2014 authorized_keys
                 -rw------- 1 utisateurInteresse utisateurInteresse  883 nov.  28  2014 id_rsa 
                  mais si je veux automatiser le transfert de clé publique dans le serveur sur lequel je veux me connecter: voir voir LINK9939572
       pour qu'il retienne toujours mon mot de passe:(bof. MobaXterm retient) 
@@ -24879,8 +24977,8 @@ saisir les commandes suivantes pour commander le serveur smtp (pas reçu le mail
 quelle est la version processeur 
   cat /proc/cpuinfo
 quel port est ecoute utilise utilise? netstat :
-      netstat -a(all)n(afficher les liste des ports en numerique ou plutot les ip au lieu des hostnames)t(que les ports tcp) p(pour voir les idprocess en derniere colonne) Si netstat n'est pas une commande existante: l'installer en installant net-tools via aptitude
-      netstat -antulp
+      netstat -a(all)n(afficher les liste des ports en numerique ou plutot les ip au lieu des hostnames)t(que les ports tcp) p sur linux o sur windows(pour voir les idprocess en derniere colonne) Si netstat n'est pas une commande existante: l'installer en installant net-tools via aptitude
+      netstat -antulp sur linux netstat -ano sur windows
 quels sont les fichiers ouverts? process sont utilisés lockes par qui?
       lsof -n(numerique)P -i(que les ports):8080
       lsof -nP -i:8080
@@ -24990,13 +25088,15 @@ raccourcis shortcut commandes: deplacer le curseur mot a mot dessus
 	Alt+f avant
 sur vi : 
 diviser split ecran CTRL+w puis
+	v: cree un nouveau split vertical
+	w: passe à l'autre ecran
+	h: cree un nouveau split horizontal
+	q: ferme l'ecran en cours
 	k:passe a l'ecran au dessus
 	j: passe a l'ecran en dessous
-	q: ferme l'ecran en cours
-	v: cree un nouveau split vertical
-	h: cree un nouveau split horizontal
 	l: passe à l'ecran à droite
 	s: cree un nouveau split
+:diffthis pour faire un diff deux deux ecrans dans un split: executer cette commande dans chaque split concerné
 pour tabuler tabulation indenter: > voire >> puis . pour refaire autant de fois que necessaire. ce . sert à repeter action precedante precedente
 pour affichier avec des fonts colorees couleurs: aptitude: charger vim
 view nomfichier pour afficher en lecture seule
@@ -25035,7 +25135,7 @@ Ctrl B: recule d'une page
 e: sur la fin du prochain mot 
 b: debut du mot precedent
 G ou:$ pour aller a la derniere ligne (fin du document)
-:f connaitre le nom du fichier et son nb de lignes
+:f connaitre le nom du fichier en cours actuelle et son nb de lignes
 pour effacer tout: 
 		:f (entree) -> retourne le nb de lignes
 		puis se mettre en debut du document(1G) et ecrire nbligne dd
@@ -25062,6 +25162,7 @@ copier-coller bouts:
 faire une recherche find: :set ignorecase puis :set smartcase puis /blabla // si j'ai pas fait les set alors faire /blabla\c pour une recherche case noncasesensitive majuscule minuscule. Pour revenir à une recherche casesensitive faire: :set noic
 		ou /bla\c exemple: /motcherche\c pour case insensitive ignorer majuscule minuscules.\c peut apparaitre partout debut ou fin et tapper. pour faire next, wildcard faire .*, tapper n (pour echapper les / slash faire un backslash) pour rechercher en arrière: N
 		pour trouver deux mots dans n'importe quel ordre sur une ligne: /.*mot1\&.*mot2
+ggVG pour selectionner tout selectionner
  V selectionner toute la ligne
 ?: recherche de bas en haut
 u: undo si multiple undo ne marche pas: aptitude et charger vim
@@ -25071,6 +25172,7 @@ u: undo si multiple undo ne marche pas: aptitude et charger vim
 :wq sauve et quitter enregistrer et quitter
 :w sauve enregistrer
 :w "autrenom" pour sauver sous enregistrer sous save as un aure nom
+:sav! ~/.recovered // sauver sous un autre nom et basculer ensuite sur ce fichier. Puis faire :bn pour repasser sur le fichier editer precedemment utile pour gerer les problemes de swp
 :!MaCommande faire une commande unix executer une commande unix
 :r ! MaCommande faire une commande unix et le resultat de la commande rentre dans le texte
 :%!xxd pour editer en hexadecimal: je peux alors modifier la partie centrale uniquement. revenir en mode normal après pour voir le resultat: :%!xxd -r
@@ -25418,72 +25520,6 @@ trouver ou se trouver un programme: (besoin de "locate:") (la nouvelle version c
    installer locate par aptitude si il n'exite pas, 
    Faire updatedb pour mettre à jour la base de donnee de locate 
    puis locate jetty (par exemple)
-pour voir les disques (les montages les partitions) 
-  fdisk -l
-    df -h
-pour voir les partitions: 
-  more /proc/partitions
-montage des disques parametres au lancement sur (ou à une commande mount avec un seul argument: partition ou repertoire)  
-    cat /etc/fstab ou bien sudo blkid
-      c'est là qu'on declare les montages et lorsqu'on reboot ce fichier est lu pour remonter le volume dans l'arborescence du sys de fichier
-      on y voit quelquechose comme:
-
-        periferiques peripheriques (pour les voir faire la commande: lsblk ou lspci)
-        Les disques(la partition)   les chemins       mettre_ext3     mettre_defaults
-        /dev/xvda1                    /                 ext3            rw,noatime,errors=remount-ro  0    1
-        devpts                        /dev/pts          devpts          defaults      0 0
-        none                          /proc             proc            rw,nosuid,noexec  0    0
-        /dev/xvdb                      /srv/backup      ext3            defaults          0    2
-              donc tout ce qui est sous /blabla/blibi va etre dans le disque /dev/xdva1 sauf /srv/backup, /proc et /dev/pts
-  pour demonter un disque, remonter: 
-    umount nom_de_mon_volume_a_demonter (pas sur pour le parametre)    ou bien umount systeme/de/fichier
-    umount /srv/backup ou umount /dev/xvdb              
-  Donc quand je vais monter un disque en ecrivant: 
-      mount /dev/xvdb: automatiquement il va le monter sur /srv/backup
-      EXEMPLE 1:si je fais ça: 
-      mount /dev/xvdb /un/repertoie
-      puis
-      mount /dev/xvdb /un/autre/repertoire
-      ALORS ce qui a sous /un/repertoire ET /un/autre/repertoire C'EST EXACTEMENT LA MEME CHOSE (ça ne sert à rien mais c pour l'exemple)
-      EXEMPLE 2: 
-        mkdir srv2 (je fais ça a la racine)
-        mount /dev/xvdb /srv2 Dès lors tout ce qu'il y avait dans le disque /dev/xvdb va etre sous /srv2              
-        /srv2/var et /srv2/www vont exister!
-       ensuite...
-       mkdir srv3
-       mount /dev/xvdb /srv3   alors svr3 et svr2 contiennent LA MEME CHOSE
-       umount /srv3 srv3 ne contient plus rien
-       umount /srv2 srv2 ne contient plus rien on peut effacer ces deux repertoires
-       rmdir srv2, rmdir srv3
-       
-changer la taille d'une partition: 
-  sur l'interface utilisateur Gandi, changer la taille.
-  attache (sur gandi)
-  puis
-  demonter la partition. (umount) (sur gandi il faut aussi peut etre même la detacher dans l'interface utilisateur)
-  puis sur gandi:
-  detacher, changer de nom puis rattacher. 
-verifier que mon systeme de disque est OK
-    e2fsck -f /dev/xvdb
-    ou  
-    fsck /dev/xvdb (ATTENTION demonter avant!!!) -> meme si j'ai e2fsck: Ne peut continuer, arrêt immédiat... continuer ci dessous
-  remonter le disk: mount /dev/xvdb
-  puis
-  resize2fs /dev/xvdb (ma partition)
-  puis fdisk -l pour verifier que la taille a bien ete modifiee 
-    
-    
-           attache
-       demonte, (je suis sur que sys ne peut pas ecrire dessus) 
-       resize
-changer le nom labell d'un disque:
-	installer mtools pour avoir mlabel si ce n'est pas déjà fait:
-		sudo apt-get install mtools
-	verifier que je vise bien le bon disque à renommer:
-		sudo mlabel -i /dev/sdb1 -s ::
-	modifier le label de ce disque
-		sudo mlabel -i /dev/sdb1 ::NouveauNomDuDisque
-	ENSUITE REDEMARRER! pour prise en compte totale
 condition: 
   if [-z bla] //si bla=null return true.
 compter le nombre de fichiers dans un repertoire:
@@ -25611,7 +25647,15 @@ iptables : pour configurer le firewall netfilte de unix
           sort par ex par eth0<--
                       cable<--
       
-
+xfce : xcfe : // bureautique debian :
+	modifier les shortcuts raccourcis clavier: xfce>parametres>gestionnaire de parametres > gestionnaire de fenetre > clavier
+	raccourci shortcut pour demarrer un programme: alt+f2 puis faire fleche vers le bas puis commencer à saisir
+	si le bureau ne s'affiche plus tapper la commande xfdesktop
+	passer de querty a azerty: application> parametre> clavier> dernier onglet...
+	si il me fait chier avec le trousseau de cle:
+		backupper et supprimer ~/.local/share/keyrings et la prochaine fois qu'il redemande un mot de passe ne rien mettre plusieurs fois
+	logiciel de scan: XSane
+	packages disponible avec application discover
 IMAGES GENEREES EN JAVA SUR UNIX:
 Question:
 Why is the following error message displayed "java.lang.InternalError: Can't connect to X11 window server using ':0.0' as the value of the DISPLAY variable" ?
@@ -25695,13 +25739,6 @@ ADMIN_URL=http://130.98.232.97:7001
     
      il faut essayer ca: 
      java -Djava.awt.headless=true -classpath JimiProClasses.jar:. convertisseur.Main
-xfce : xcfe : // bureautique debian :
-	modifier les shortcuts raccourcis clavier: xfce>parametres>gestionnaire de parametres > gestionnaire de fenetre > clavier
-	raccourci shortcut pour demarrer un programme: alt+f2 puis faire fleche vers le bas puis commencer à saisir
-	si le bureau ne s'affiche plus tapper la commande xfdesktop
-	passer de querty a azerty: application> parametre> clavier> dernier onglet...
-	si il me fait chier avec le trousseau de cle:
-		backupper et supprimer ~/.local/share/keyrings et la prochaine fois qu'il redemande un mot de passe ne rien mettre plusieurs fois
 PHP :     
 pour faire marcher php avec oracle: (wamp) il faut que j'utilise l'utilitaire de wamp pour activer les extensions dll et decommenter aussi les lignes dans php.ini( deux lignes.. ora et oci un truc comme ca)
 ORACLE_HOME 
@@ -25735,7 +25772,7 @@ LES ZONES : ZONE :DNS :                                                         
       1 machine peut avoir plusieurs domaines et chaque domaine a une zone.
       Je suis dans la zone de mon domaine blalbabli.com
       www           CNAME (see name)        pitous.tataboabndou.net. (ne peut pas etre une adresse ip et TOUJOURS mettre un "." a la fin)   TTL 3h = cache de 3h au sein de la machine de l'utilisateur lambda. Debrancher-rebrancher la box pour effacer le cache        // [1] si url = www.blalbabli.com alors aller vers pitous.tataboabndou.net et ainsi de suite jusqu'à arriver à un "A"
-      @ // pas encore compris
+      @ // ca veut dire rien. exemple: memoclap.com (sans www)
       ...
       
       et dans la zone de mon domaine tataboabndou.net il  ya:
@@ -25951,9 +25988,12 @@ NGNIX : nginx :
 	   server_name www.undomaine.com undomaine.com;
 	   return 301 https://$host$request_uri; // redirection https
 		ou
-	    location /{
-			proxy_pass http://unnom;
-		}
+	    location /{					location '/unpathtoto'{
+			proxy_pass http://unnom;	default_type "text/plain";
+							root /laracine 		// du coup si l'url est http://xxx/unpathtoto ca va pointer vers le repertoire "/laracine/unpathtoto"
+			autoindex on;			|_pour permettre l'accès en visulation aux repertoires directories sinon on a l'erreur 403
+			autoindex_exact_size off; 	|
+			proxy_set_header Host $host;	LINKapachesetterHeaderUrlDuClientAuLieuDeUrlInterneDuServeur
 	}
 
 	# SSL configuration
@@ -26044,7 +26084,9 @@ pour redemarrer apache sur ubuntu:
       apachectl configtest verifier ou bien reload
       ou
       /etc/init.d/apache2 configtest
-      
+     ou sur windows 
+     bin/httpd.exe -t 
+  verif statut:
       /etc/init.d/apache2 status // pour voir si le serveur est demarre ou pas 
       /etc/init.d/apache2 stop          faire un tail sur les logs quand on fait ces choses.
       /etc/init.d/apache2 start
@@ -26103,7 +26145,7 @@ a l'inverse pour le desactiver: a2dissite www.memoclap.com  // pour dissable
     Options -Indexes // (ligne facultative. Indexes veut dire que si j'ai pas index.html sous ce repertoire alors il affiche la liste du contenu du repertoire dans le browser) autre options: Includes = ? FollowSymLinks = liens symboliques actives etc.. bof
     AllowOverride All
     Order allow,deny   // d'abord traite Allow puis Deny qui cloture le tout. Ici donc tout le monde est refuse sauf ceux de la liste allow (mais ci dessous tout le monde est accepte: on aurait pu faire une liste pour autoriser que certaines adresses IP ou DNS a acceder au site)
-    Allow from All
+    Allow from All // Allow from mon.addresse.ip
   </Directory>
 </VirtualHost>
 
@@ -26222,7 +26264,7 @@ facebook : linkedin : linked in :
     penser à vider le cache de facebook sur https://developers.facebook.com/tools/debug/
   
 
-reseau : reseaux :
+reseau : reseaux : dns :
 Recuperation de l'adresse IP du hostname.
 		host -T A nom.de.domaine.com  // pour avoir je crois l'ip dun domaine des DNS
               nslookup:// est vieux. remplacé par dig et par host. Pour verifier que le DNS est bien config: on peut faire aussi à l'inverse nslookup ipadresse/nomdedomaine: renvoit nomdedomaine/adresseip corresp (reponse des serveurs de dns) 
@@ -27369,8 +27411,9 @@ promesses : promese :promeses :Promises :promise : ne plus utiliser les callback
               }
         utilisation1: il faut remonter la promesse le plus haut j->UI pour que l'utilisateur final voit les erreurs catchees. Ne pas les cacher dans des console.log (mouais...)
               totoEstObligatoirementUnePromese = mamethodeQuiRetourneUnePromesseDoncDedansCestToujoursAsychrone("dd")
-                                                                toto.then((resATOUJOURSMETTRE)=>{console.log(res); return ToujoursRetournerQqch ou throw new Error(x)} //res = unobjetrenvoyéparLaPromessToto}  // then arrive a un moment on sait pas quand en asynchrone. 2 arguments=fonctions: 1ere: si ok 2eme si ko
+                                                                toto.then(resATOUJOURSMETTRE=>{console.log(res); return ToujoursRetournerQqch ou throw new Error(x)} //res = unobjetrenvoyéparLaPromessToto}  // then arrive a un moment on sait pas quand en asynchrone. 2 arguments=fonctions: 1ere: si ok 2eme si ko
                                                                           ,(err)=>{console.log(err); //err = l'objetderreurici} // facultatif. est la resultante d'un return reject(x) de la promesse anterieure. preferer thrower des Exception et utiliser .catch
+								    .then(res=>saveIntoLocalStorage()) // attention pas de ";"pointvirgule apres la methode dans cette syntaxe
                                                                 .then((xATOUJOURSMETTRE)=>{return Promise.resolve("toto") ou return Promise.reject("toto")).then... // on peut meme enchainer donc sur d'autres promises then..then..then
                                                                 .then(xATOUJOURSMETTRE=>{return new Promise...(voir suite dessus) // permet aussi d'enchainer les then
                                                                 .then(xATOUJOURSMETTRE=>{return unevalue; // ca equivaut a faire un return Promise.resolve(unevalue) le suivant .then(x=>{x sera egal à unevalue})
@@ -29485,7 +29528,7 @@ https://developers.google.com/web/fundamentals/web-components/customelements#att
                 {
                     color: white;
                 }
-
+		// le shadowdom est ferme au style global mais je peux utiliser les css custom properties si depuis l'exterieur je veux modifier dans le webcomponent voir LINKcustomcssljqdf
       </style> 
           du dom (balises html...) <slot name="toto"></slot>// A FINIR. represente ce qu'ont met dans ce webcomponent dans le html (attention le style de mon shadowdom ci dessus ne s'applique pas dans les slots sauf avec::slotted)
           du dom (balises html..ne pas mettre d'appel a des methodes dedans. Marche pas (onclick..marche que si on utilise le javascript direct dedans sans faire appel à des methodes. Si besoin appeler methodes alors faire LINKlkjsdflh)
@@ -29501,7 +29544,7 @@ METHODE CLASS: THEBEST? classes es6
                                                           this.id="tata"; // defini direct l'id du dom element|_ATTENTION ne marche que si on instancie la classe en javascript. Pas si on met la balise html dans la page
                                                           this.toto=true;// c'est une propriete properties    |
                                             //         creer un shadowdom: Maintenant FFOx supporte aussi. Avant: (pas encore supporte sur firefox: besoin faire about:config puis dom.webcomponents.enabled et dom.webcomponents.shadowdom.enabled a true)
-                                                         var root = thisMonElement.attachShadow({mode:'open ou closed LINKkddkdkdkd'}); // host maintenant devient un shadowroot: tout ce qu'il a a l'interieur devient invisible. open/closed= atteignable ou pas par javascript et querySelector('div').shadowRoot est visible ou pas selon. LINKkddkdkdkd: si j'ai mis closed alors xxx.shadowRoot=null pour l'avoir faire une variable dans le custom element: this.shadow = this.attachShadow({mode:'closed'});  et je réutilise this.shadow partout.
+                                                         var root = thisMonElement.attachShadow({mode:'open ou closed LINKkddkdkdkd'}); // host maintenant devient un shadowroot: tout ce qu'il a a l'interieur devient invisible. open/closed= atteignable ou pas par javascript et querySelector('div').shadowRoot est visible par le javascript ou pas selon. LINKkddkdkdkd: si j'ai mis closed alors xxx.shadowRoot=null pour l'avoir faire une variable dans le custom element: this.shadow = this.attachShadow({mode:'closed'});  et je réutilise this.shadow partout.
                                                           on peut juste faire aussi 
                                                           thisMonElement.attachShadow({mode:'open'}); // ca va créer automatiquement this.shadowRoot dans mas classe. Pas besoin de var root                                                        
                                                          var monTemplate = templatexxx; ou voir LINKCustomTemplate=`du contenu
@@ -33380,7 +33423,7 @@ pour connaitre mon domaine, mon dns et d'autres infos: ipconfig/all
                                       Suffixe DNS propre à la connexion: ddns.pls.renault.fr
                                       Description . . . . . . . . . . .: Broadcom NetXtreme Gigabit Ethernet
                                       Adresse physique . . . . . . . . .: 64-31-50-2A-30-FC
-                                      DHCP active. . . . . . . . . . .: Oui
+                                      DHCP active. . . . . . . . . . .: Oui // dhcp est un serveur (il y en a plusieurs dans le monde) qui délivre des addresses IP. Chaque DHCP à un range d'adresse IP a delivrer. en mode lease chaque PC dit "je suis là!" pour que DHCP continue de lui reserver son adresse ip. Creer une "Reservention" garantie que le DHCP reserve IP TOTO au MAC titi toujours: cela est fait pour les imprimantes, routeurs etc...
                                       Configuration automatique activee . . . .: Non
                                       Adresse IP. . . . . . . . . . . .: 10.230.213.230
                                       Masque de sous-reseau . . . . . .: 255.255.240.0
@@ -33465,6 +33508,8 @@ Excell : excel :
   figer les volets Affichage > figer les volets
 pour masquer le quadrillage lignes, colonnes:
   Outils > Options> cocher quadrillage  
+pour que la touche entrer enter passe à doite colonne suivante ou en bas ligne suivate
+	fichier>option>avance> enter....
 Si les lignes ne s'ajustent pas automatiquement: tout ne rentre pas dans la case
   c'est parce que j'ai ecrit en gras et en gras ca prend plus de place dans la case mais pour autant la ligne n'ajuste pas sa hauteur: solution: augmenter un peu la taille de la police
 fichier locke: apparition du nom de la personne qui locke. 
@@ -33914,10 +33959,11 @@ Gradle : (je peux overrider et definir mes propres conventions over configuratio
                    |_main_java
                    |_test_java
             |__ build.gradle // contient des tasks LINKtaskgradleff   
+	    |__ gradle.properties 
             |__ gradle
             |   |__ wrapper
             |       |__ gradle-wrapper.jar // wrapper jar et sa configuration  
-            |       |__ gradle-wrapper.properties  // sa configuration // possible definir proxy ici: systemProp.http(s).proxyHost, proxyPort, proxyPassword comme d'hab
+            |       |__ gradle-wrapper.properties  // sa configuration // possible definir proxy ici et/ou dans gradle.properties: systemProp.http(s).proxyHost, proxyPort, proxyPassword comme d'hab
             |__ gradlew // script du wrapper pour unix  
             |__ gradlew.bat // script du wrapper pour windows  
             |__ settings.gradle     // contient le nom de mon projet
