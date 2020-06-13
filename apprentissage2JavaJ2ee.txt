@@ -1089,6 +1089,8 @@ gimp :
 		shift+t
 		pour une redimension relative respectant la proportion: draguer un caré du bord tout en maintenant ctrl+shift enfoncés
 	un masque ne sert qu'a peindre de la transparence sur le calque qui lui est lié. (seules couleurs noir=transparent et blanc comptent) Je peux sur le masque faire par ex un degradé noir-blanc radial
+	rogner croop:
+		image> rogner selon le contenu(très pratique)
 photoshop :
 justifier un texte: menu calques>texte>transformer en paragraphe > ouvrir fenetre pannel texte: les options justification sont activées: je peux focaliser la justfication sur les lignes selectionnees
 virer effet aimant magnet
@@ -4982,7 +4984,7 @@ effet parallax: une image ne scroll pas ou scroll à vitesse differente
                     
                     .parallax::after {
                       /* Display and position the pseudo-element */
-                      content: " ";
+                      content: " ";// s'utilise toujours avec :after ou :before
                       position: absolute;
                       top: 0;
                       right: 0;
@@ -5137,7 +5139,7 @@ pour faire un menu de telephone mobile:
                 position: fixed;
                 left: 3%;
                 cursor: pointer;
-                content: "";
+                content: ""; // s'utilise toujours avec :before ou :after
                 width: 20px;
                 background-color: #4c4c4c;
                 opacity: 1;
@@ -5353,9 +5355,8 @@ pour rendre n'importe quel objet (div etc ) redimensionable par l'utilisateur:
 effet de degrade: 
           .gradient-bg {
                 background: #466368;
-                background: -webkit-linear-gradient(#4A4C4B, #000000);
-                background:    -moz-linear-gradient(#4A4C4B, #000000);
-                background(-color):         linear-gradient(#4A4C4B, #000000); // a tester avec background-color             
+                background: linear-gradient(#4A4C4B, #000000);
+                background:linear-gradient(3deg, #4A4C4B 0%, #000000 30%,#093833 100%); // a tester avec background-color             
 
           avant: 
              /* fallback/image non-cover color */
@@ -24486,7 +24487,7 @@ pour trouver des noms à l'inverse opposé non pas
     -maxdepth 1 pour que la recursivité s'arrete là ou je suis ?        
 pour effacer les fichiers trouves
 		find ouca -name '*toto*' | xargs rm (je ne peux pas faire -i ici)
-trouver un repertoire:
+trouver un repertoire: ou un fichier:
       find . -type d(f pour fichier) | grep -i runtime //-i: ignore casse		
 pour trouver des repertoires et fichiers et les effacer les repertoires trouves
 		find ouca -name '*toto*' | xargs rm -r (je ne peux pas faire -i ici)
@@ -28046,7 +28047,7 @@ pour scroller scrooler, ou focuser (que ce soit dans un div ou le windows) vers 
                   window.scrollBy(0,0); ou window.scrollTo(0,0);  
                 }
 pour faire defiler comme un prompteur:
-            	focuser.style.backgroundImage="-webkit-linear-gradient(left, rgba(255, 255, 255, 0.0) 80%, rgba(255, 255, 255, 1) 90%, rgba(255, 255, 255, 0.0) 100%)";
+            	focuser.style.backgroundImage="-webkit-linear-gradient(left, rgba(255, 255, 255, 0.0) 80%, rgba(255, 255, 255, 1) 90%, rgba(255, 255, 255, 0.0) 100%)"; // attention linear-gradient a changé voir linear-gradient
             	focuser.style.backgroundImage="-moz-linear-gradient(left, rgba(255, 255, 255, 0.0) 80%, rgba(255, 255, 255, 1) 90%, rgba(255, 255, 255, 0.0) 100%)";
             	focuser.style.backgroundImage="-o-linear-gradient(left, rgba(255, 255, 255, 0.0) 80%, rgba(255, 255, 255, 1) 90%, rgba(255, 255, 255, 0.0) 100%)";
             	focuser.style.backgroundImage="-ms-linear-gradient(left, rgba(255, 255, 255, 0.0) 80%, rgba(255, 255, 255, 1) 90%, rgba(255, 255, 255, 0.0) 100%)";
@@ -33457,7 +33458,7 @@ pour avoir la liste des taches (control alt suppr; ctrl alt suppr):
         del /s *.MF (il supprime tous les fichiers *.MF recursivement) /Q pour qu'il ne demande pas de confirmation
         rmdir /S repertoire // pour supprimer un repertoire. /S c'est pour forcer meme si repertoires non vides
   pour vider le contenu d'un fichier:
-	break>monfichier          
+	  >monfichier  // sur linux et break > monfichier // sur windows
       pour copier copy le nom de plusieurs fichiers: nom des fichiers en dos
           aller en commande dos
                 copy ..\MemOclapFront\target\memoclap.front.war C:\Users\lduverge\apache-tomee-plume-8.0.0\webapps\
