@@ -908,7 +908,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git checkout -b nomBranche_vers_laquelle_aller_et_si_elle_n'existePasIlLaCreeDansLaFoulee
       git checkout master // reviens dans le master et le HEAD maintenant est dans le master
       git checkout nomfichier // pour recuperer un fichier (juste modifié mais que je veux annuler) utile aussi si il dit "Your local changes to the following files would be overwritten by merge" sur des fichiers et que je m'en fous de mes modifs et que je veux les ecraser
-      git checkout uneAutreBranche path/vers/un/fichier // pour dans ma branche actuelle ecraser un fichier par son équivalent dans une autre branche (il cree le fichier si dans ma branche actuelle il n'existe pas)
+      git checkout uneAutreBranche path/vers/un/fichier path/vers/fichier2// pour dans ma branche actuelle ecraser un fichier par son équivalent dans une autre branche c'est un merge ciblé d'un ou plusieurs fichiers seulement (il cree le fichier si dans ma branche actuelle il n'existe pas)
     merger ma branche avec mon master ATTENTION TOUJOURS COMMITER AVANT DE FAIRE UN MERGE
       se positionner dans là ou je veux tirer vers moi (le master en principe)
       git merge NomDeLaBranchequejeveuxTirerVersLaBranchDansLaquelleJeSuis(en principe le master) master<----tototo ATTENTION TOUJOURS COMMITER AVANT DE FAIRE UN MERGE
@@ -3230,6 +3230,8 @@ freemaker :
                                     // Set the preferred charset template files are stored in. UTF-8 is
                                     // a good choice in most applications:
                                     cfg.setDefaultEncoding("UTF-8");
+				    TemplateLoader templateLoader = new ClassTemplateLoader(MaClassePourRecupSonclassPathOuChercherLesTemplates.class,"/path/root");
+				    cfg.setTemplateLoader(templateLoader);
                                     
                                     // Sets how errors will appear.
                                     // During web page *development* TemplateExceptionHandler.HTML_DEBUG_HANDLER is better.
@@ -3240,10 +3242,16 @@ freemaker :
                                     
                                     // Wrap unchecked exceptions thrown during template processing into TemplateException-s.
                                     cfg.setWrapUncheckedExceptions(true);
+				Map root = new HashMap
+				root.put("nomDeMonOjet",unBean);
+				Template template = cfg.getTemplate("/pathVers/template/t.html");
+				StringWriter out = new StringWriter();
+				template.process(root,out);
+				return out.toString();
           
           
           
-  Avec Velocity : (voir freemaker c'est mieux.)
+  Avec Velocity : (voir freemaker c'est mieux car il gere mieux les listes l'introspection ect...)
     dans un fichier toto.vm
     #set( $contextPath = $request.getContextPath() ) //contextroot
   <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -3306,7 +3314,7 @@ freemaker :
                         HTTPTransportUtils.setUTF8Encoding(outTransport);
                         HTTPTransportUtils.setContentType(outTransport, "text/html");
                         OutputStreamWriter out = new OutputStreamWriter(outTransport.getOutgoingStream(), "UTF-8");
-                        this.velocityEngine.mergeTemplate("/path/vers/fichier/xxx.vm", "UTF-8", e, out);
+                        this.velocityEngine.getTemplate("/invoice.vm","UTF-8").merge(vcontext,stringwriter); // avant: mergeTemplate("/path/vers/fichier/xxx.vm", "UTF-8", e, out);
                         out.flush();
                         ou
                         
@@ -5663,6 +5671,8 @@ CSS custom properties :LINKcustomcssljqdf
 	l'elementquidependdustyleplushaut{
 		--uneproprietedefinieailleurs:#54754 // ici je definie la propriete et elle va ramplacer partout var(--uneproprietedefiniailleurs) meme dans les shadowdom des webcomponents externaliser le css des shadowdom des webcomponents// après dans le futur ce sera ::part et ::theme mais c'est encore trop tôt
 	}
+	en javascript:
+	monelement.style.background="var(--uneproprietedefinieailleurs)
 bootstrap : (c'est de la merde. utiliser css grid cssgrid)
         <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">//  user-scalable=no pour empecher le zoom
@@ -7685,7 +7695,7 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
         -toujours activer l'authentification (par user/password au moins) facultatif sur local pour test.
         -il faut désactiver l'introspection javascript par sécurité(dans fichier de config mettre javascriptEnabled:false). la config est dans mongod.cfg on peut y voir ou sont les donnees de la base sur le disque LinkLKJDSFA
         -attention!!!! l'ordre des champs du json au niveau n-1 est important! au niveau n pas de probleme( par ex utiliser ordre alphabetique)
-        -si je veux utiliser limit alors toujours utiliser sort avant limit dans une requete.
+        -si je veux utiliser limit alors toujours utiliser sort avant limit dans une requete. pour utiliser sort sur le dernier id enregistrement inserer ne pas overriter _id. Je peux utiliser mon propre id unique cree de toute piece meme a plusieurs niveau voir LINKupsertmongo
         -il faut faire un schema: installer https://studio3t.com/knowledge-base-articles/schema-explorer/
                         resumé de ce que j'ai lu là:https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design-part-1
                         si j'ai relation 1-N(peu nombreux) où je n'aurais jamais besoin de recuperer ces N tout seuls sans leur parents
@@ -7815,12 +7825,15 @@ pour se connecter avec un utilisateur user
         exemples de rechercher requetes. Une collection = une table relationelle
                     db.uneCollection.find({queryNeRienMettrePourTrouverTout},{facultatifLesChampsARetourerFiltrer}) 
 	requete : exemples:
-		    db.lacollection.find({"champTypeTableau.4":{$not:{$in:["x","y]}}},{champaretourner:true,champapasretourner:false}) //4 eme index du champttypeTableau not(negation) in pour n'importe quel index mettre les GUILLEMETS! "champTypeTableau.souschampDuTableau":x c'est comme si je mettais: "champTypeTableau[nimporteQuelIndex].souchampDuTableau
+		    db.lacollection.find({"champTypeTableau.4":{$not:{$in:["x","y]}}},{champaretourner:true,champapasretourner:false}) //4 eme index du champttypeTableau(attention ce truc .4 marche que dans la premiere partie du find) not(negation) in pour n'importe quel index mettre les GUILLEMETS! "champTypeTableau.souschampDuTableau":x c'est comme si je mettais: "champTypeTableau[nimporteQuelIndex].souchampDuTableau
 	avec wildcard regexp:
-		db.toto.find({"monchamp":{$regex:/valeuravec*tata/i}},...filtresibesoin  //i pour ignorecase mais ya d'autres options possibles
+		db.toto.find({"monchamp":{$regex:/^valeuravec.*tata/i}},...filtresibesoin  //i pour ignorecase mais ya d'autres options possibles.(/ est obligatoire, i est facultatif) Attention toujours commencer par ^et les wildcard c'est .*
             var doc = db.uneCollection.findOne ou find(...)// trouver par id (du coup doc est une variable) // findOne retourne le 1er resultat
+	recuperer le dernier enregistrement insere:
+		db.uneCollection.find(...).sort({"_id":-1}).limit(1) // attention ne marche que si on a pas forcé overridé le _id auto incrementé
         count compter nombre de lignes:
             db.nomdelacollection.find(..).count(); et tout compter: db.nomdelacollection.count()
+	si mes find renvoient trois petits points ... ca veut dire que ma requete n'est pas bien complette peut etre accolade non fermee
         autres operations:             
 	vider supprimer une base de donnée
 		Aller d'abord dans la base (use labase)
@@ -7841,11 +7854,14 @@ pour se connecter avec un utilisateur user
         en java:pour me connecter à mongodb en java standard:
             avec la librairie mongo-java-driver-3.10.2.jar
                 MongoCredential credential = MongoCredential.createCredential("nomUser","nomDeLaBaseDauthentificationLINKjdjdjd","motDePasseEnClair".toCharArray());// ceci n'est necessaire que si LINKauthmgdb
-                MongoClient mongoClient = new MongoClient(new ServerAddress("localhost",27017),credential,MongoCLientOptions.builder().build());
+                MongoClient mongoClient = new com.mongodb.MongoClient(new ServerAddress("localhost",27017),credential,MongoCLientOptions.builder().build());
                 return mongoClient.getDatabase("dbName").getCollection("collectionName");
 		// pour faire une recherche requete:
 			MongoDatabase connection...
 			connection.getCollection("unnomdecollection).find() ou .find(eq("UniqueName","toto").first();
+		pour faire un update (ou meme un upsert)
+			BasicDBObject searchQuery= new BasicDBObject("DBRef",undbref); ou new BasicDBObject("_id",unid); LINKupsertmongo
+			collection.upsertOne(searchQuery, new Document("$set",document),(new UpdateOptions()).upsert(true));
             pour transformer bson en json en java:
 		String input="{\"timestamp\":0934820948}";
 		org.bson.Document doc=org.bson.Document.parse(input);
@@ -7858,7 +7874,7 @@ pour se connecter avec un utilisateur user
 			output(SHELL)={"timestamp":NUMBERLONG(xxx)}
 			output (STRICT) = {"timestamp": {"$numberlong":"xxxx"}}
 			output (JSON) = {"timestamp" : xxx}
-		outil tool : mongocompass : s'installe à part.
+		outil tool : mongocompass : s'installe à part. par contre son moteur de recherche c'est de la merde. passer en console plutot
 			C:\Users\B042EL\Documents\installation\MongoDBCompass\mongodb-compass-1.20.5-win32-x64\MongoDBCompass.exe
 			requetes dessus: 
 				Filter: {toto:titi}
@@ -20243,7 +20259,7 @@ lambdas : lambda : lambdas expression :     (lire http://labs.excilys.com/2014/1
                       retourne les fils    
               evite les listes de listes  
               exemple pour recuperer les sous-listes sousliste sous listes à concatenner entre elles: List<Allocations<Component>> allocations = instanceFeatures.stream().map(f -> f.getAllocations()).flatMap(List::stream).collect(Collectors.toList()); ou .collect(Collectors.toCollection(FXCollections::observableArrayList));
-            LINKOptsngz optionnal:(c 1 monad): ignore les valeurs empty nulles et retourne un Optional // a utiliser que si j'ai un probleme avec null Traitement des valeurs pouvant etre nulles depuis java8 LINKjajsdfliuaerOpt c'est a utiliser dans le cadre de functionnal programming lambda. Ne jamais mettre un optionnal dans un parametre de methode (ni un setter) mais toujours que en sortie.
+            LINKOptsngz optionnal : Optionnels : optionnel :(c 1 monad): ignore les valeurs empty nulles et retourne un Optional // a utiliser que si j'ai un probleme avec null Traitement des valeurs pouvant etre nulles depuis java8 LINKjajsdfliuaerOpt c'est a utiliser dans le cadre de functionnal programming lambda. Ne jamais mettre un optionnal dans un parametre de methode (ni un setter) mais toujours que en sortie.
                                              Optional<UneClasse> optional = Optional.ofNullable(unevariablepouvantPotentiellementEtrenull);                                                                                                     |_a la place faire monOptinal.map(unefonction)
                                                                            Optional.ofNullable(unevariablepouvantPotentiellementEtrenull).orElse(variableARetournerSiNull);
                                                                            Optional.ofNullable(unevariablepouvantPotentiellementEtrenull).orElseGet(()->{...}); // une methode a executer qui renverra la bonne valeur a la place de null 
@@ -20994,7 +21010,7 @@ pour savoir si c'est le premiers jour ouvre ouvrable ouvre du mois
             	return ret;
         }
   
-ajouter des minutes à une heure 
+ajouter enlever supprimer des minutes à une heure 
         public String calculateArriveTime(String s, String is) throws ParseException {
                 int i= Integer.parseInt(is);
                 GregorianCalendar gc1 = new GregorianCalendar();
@@ -21009,7 +21025,7 @@ ajouter des minutes à une heure
                 String ret = timeformatter.format(arrive);
                 return ret;
             }
-pour ajouter/supprimer des jours à une date 
+pour ajouter/supprimer modifier des jours à une date 
   autant utiliser timemillisecondes et faire le calcul soi-meme 
         long toto = datenow.getTime()-(7*24*60*60*1000); // 7 jours avant
         Date date1 = new Date(toto);
@@ -23164,6 +23180,9 @@ pour convertire un wav foireux en bon wave
         fi.delete();
         temp.renameTo(fi); // pour renommer rename deplacer bouger move un fichier voir LINKjgdlkqjfqdgmlk
 	}
+
+convertir un InputStream en AudioInputStream sans avoir l'erreur java.io.IOException: mark/reset not supported 
+	wrapper inpustream avec BufferedInputStream: InputStream inputStream = new BufferedInputStream(new FileInputStream(wavepath.getFile()));
 pour mixer deux sons ou meme plus:
 	      AudioInputStream clip1 = AudioSystem.getAudioInputStream(new File("C:/wamp/www/kanail/AudioLoopOnline/sons/20121107963241352287465954/1531352287502673=Lovely0.wav"));
         AudioInputStream clip2 = AudioSystem.getAudioInputStream(new File("C:/wamp/www/kanail/AudioLoopOnline/sons/20121107963241352287465954/1531352287502673=Lovely1.wav"));
@@ -24745,7 +24764,7 @@ Si quand on veut lancer un ksh: ./TOTO.ksh il fait: ksh not found ou no such fil
 awk : pour definir des tooken dans un string: on peut travailler dans des fichiers.
       $TOTO= `echo $ligne | awk -F'mon_separateur' '{ print $2 }'` ## prendre element apres deuxieme separateur
 mkdir pour creer un repertoire. 
-    Possibilitee de creer plusieurs repertoires recursivement recursive en un coup: mkdir -p toto/titi/tata
+    Possibilitee de creer plusieurs repertoires recursivement recursive en un coup: mkdir -p toto/titi/tata (ne les cree que si ils n'existent pas)
 cal [-jysm13] mois annee. pour afficher date calendrier
 pour changer le groupe de mon fichier:
 chgrp [-R] nomgroupe nomfichierOuRepertoire -R pour recursif
@@ -24905,7 +24924,7 @@ scp :commande
     -vvv pour verbose (mode debug)
     pull: PUTAIN j'arrivaispas à faire marcher avec cle: toujours permission denied (publickey) meme apres avoir declare ma cle publique sur le serveur> il falait utiliser une cle privee de type .pem pour que ca marche et non pas .ppk (sur windows en tout cas)
         si j'ai le message Permission denied c'est parce que je n'ai pas les droits d'ecriture dans le repertoire de destination: faire un chmod
-      scp -i cheminVersMaClePriveeFacultatifDeType.pem user@machine:fichier(s)quejeveuxcopierDeLaMachineDistanteOuRepertoireSiJaiMisMoinsR repertoireoujeveuxlecopiersurMAmachine ATTENTION espace interdits apres le:
+      scp -i cheminVersMaClePriveeFacultatifDeType.pem user@machine:fichier(s)quejeveuxcopierDeLaMachineDistanteOuRepertoireSiJaiMisMoinsR repertoireoujeveuxlecopiersurMAmachineSansSlashALaFin ATTENTION espace interdits apres le:
     push:
       scp -i cheminVersMaClePriveeFacultatifDeType.pem cequejeveuxcopierdeMAmachine user@wwwmachine:oujeveuxLecopiersurlaamachinedistante
     exemples  
@@ -25489,8 +25508,7 @@ rsync :
                       rsync -vru  /cygdrive/c/Users/Laurent/AndroidStudioProjects /cygdrive/f/AndroidStudio4
                       rsync -vru --exclude '.metadata' --exclude 'target' /cygdrive/c/Users/Laurent/Documents/workspaceJava8/ /cygdrive/f/workspaceJava8
                   Du server (tout vers E)
->CELUI LA A FAIRE>>>serve03      rsync -avur --exclude proc --exclude tmp --exclude sys --exclude www.wenhuaduverge.comOLD --exclude www.wenhuaduverge.comORIGIN --exclude .git root@www.wenhuaduverge.com:/ /cygdrive/e/BackupServer03_20190805
->CELUI LA A FAIRE>>>serve03      rsync -avurn --exclude .git root@www.wenhuaduverge.com:/srv/datadisk03/www/www.wenhuaduverge.com /cygdrive/e/BackupServer03_20171126/srv/datadisk03/www
+>CELUI LA A FAIRE>>>serve03      rsync -avurn --exclude .git root@www.wenhuaduverge.com:/srv/datadisk03/www/www.wenhuaduverge.com /media/laurent/OUGARIT/www/WenhuaDuvergeShop/backupwenhuaduverge/shop/
 >CELUI LA A FAIRE>>>demeter      rsync -vru root@95.142.162.203:/var/www/www.memoclap.com /cygdrive/d/backupsDemeterMemOclap
 >CELUI LA A FAIRE>>>demeter      rsync -vru --exclude 'sons' --exclude 'www.wenhuaduverge.com' --exclude 'var/tmp/php' --exclude '*jar' root@95.142.142.203:/ /cygdrive/f/backupsDemeter/BackupServeurGandiDemeter20171229
                     demetersuite rsync -vru --exclude 'sons' --exclude 'www.wenhuaduverge.com' --exclude 'var/tmp/php' --exclude '*jar' root@95.142.142.203:/srv/data/var/www /cygdrive/f/backupsDemeter/BackupServeurGandiDemeter20171229/srv/data/var/www
@@ -25821,7 +25839,7 @@ pour utiliser le plugin maven tomcat: Si ça marche:-). voir dessous: pas reussi
           <systemProperties>
             <example.value.1>alpha</example.value.1>
             <example.value.2>beta</example.value.2>
-                <JAVA_OPTS>-Xms256m -Xmx512m -XX:MaxPermSize=256m -Djavax.net.ssl.trustStore="${basedir}/src/main/config/dev/truststore.jks" -Djavax.net.ssl.trustStorePassword=truststore  -Dhttp.proxyHost=10.245.1.47 -Dhttp.proxyPort=8080 -Dhttps.proxyHost=10.245.1.47 -Dhttps.proxyPort=8080 -Dhttp.nonProxyHosts=localhost</JAVA_OPTS> Si la conf proxy ne marche pas là je peux mettre les "-D" dans l'execution de la commande maven ca marche
+                <JAVA_OPTS>-Xms256m -Xmx512m -XX:MaxPermSize=256m -Djavax.net.ssl.trustStore="${basedir}/src/main/config/dev/truststore.jks" -Djavax.net.ssl.trustStorePassword=truststore  -Dhttp.proxyHost=10.245.1.47 -Dhttp.proxyPort=8080 -Dhttps.proxyHost=10.245.1.47 -Dhttps.proxyPort=8080 -Dhttp.nonProxyHosts(indique les host qui ne doivent pas passer lar le proxy pour sortir)=localhost</JAVA_OPTS> Si la conf proxy ne marche pas là je peux mettre les "-D" dans l'execution de la commande maven ca marche
           </systemProperties>
           <url>http://localhost/</url> // facultatif. ce sera http://localhost par defaut. Si je le met comme ca l'url sera http://localhost(:8080)/nom_apres_http:lePortCiDessous/manager ou si externe c'est l'URL console-admin du tomcat externe
           <server>my-tomcat</server> // facultatif sert d'identifiant qu'on retrouve dans settings.xml pour definir le user/password de l'admin/manager du serveur tomcat si on utilise un serveur non embedded. dans settings.xml: <settings>...<servers>...<server><id>myserver</id><username>myusername</username><password>mypassword</password></server>...</servers>
@@ -26071,7 +26089,7 @@ rediriger tout http vers https (j'ai essaye avec .htaccess mais n'a pas marche)
       meth1: 
         <VirtualHost...>
             RewriteEngine on
-            RewriteCond %{SERVER_PORT} !^443$
+            RewriteCond %{SERVER_PORT} !^443$ voir LINKrewri99
             RewriteRule ^/(.*) https://%{SERVER_NAME}/$1 [L,R]
       Meth2: ajouter
         <VirtualHost *:80>
@@ -26097,7 +26115,7 @@ pour redemarrer apache sur ubuntu:
       service apache2 restart // arrete et redemarre (je crois) // poossible mettre aussi start stop restart reload...
       ou bien invoke-rc.d apache2 start(/etc/init.d) ou stop ou reload
 
-htaccess :   super outil de test:https://htaccess.madewithlove.be/
+htaccess :   super outil de test:https://htaccess.madewithlove.be/   LINKrewri99
 Autoriser le cross-domain: si par exemple le canvas fait une erreur tainted canvas etc...
     dans .htaccess
     <IfModule mod_headers.c>
@@ -27161,6 +27179,8 @@ tester le javascript TDD :
                             initializeCityDatabase();
                           });
                           describe('nom du test suite', () => {
+				beforeEach(() => {....});
+				afterEach(() => {....});
                               	it(.skip pour ignorer)('nom du test', () => {
                                     // pour mocker un objet(xhr pour requete par exemple)
                                          const mockMonObjet = ()=> ({// toujours nommer cet objet en commencant par "mock"
@@ -27170,9 +27190,10 @@ tester le javascript TDD :
                                                 send:jest.fn().mockImplementation(function(){this.onload();}),
                                                 ou
                                                 send:jest.fn(), // si on veut rien faire.
-                                                onload:jest.fn().mockImplementation(function(){}),
-                                                open:jest.fn().mockImplementation(function(){this.status=200;}),// je peux setter une variable dans le mock
-                                                overrideMimeType:jest.fn().mockImplementation(function(){}),
+                                                onload:jest.fn().mockImplementation(function(){}),//si on ne veut rien faire
+                                                open:jest.fn().mockImplementation(function(){this.status=200;}),// je peux setter une variable dans le mock. Attention on ne peux pas renvoyer return un truc je crois
+                                                overrideMimeType:jest.fn().mockImplementation(function(){}), // si on ne veut rien faire
+						jest.spyOn(unModule, 'NomDeLamethodeDeCeModule').mockReturnValue(true) // mocker la methode d'un module partout. ici  retournera tout le temps true
                                          })
                                       window.XMLHttpRequest = jest.fn().mockImplementation(mockMonObjet);
                                 
@@ -27192,7 +27213,9 @@ tester le javascript TDD :
                                                    toBeFalsy() // equivalent de isFalse
                                                    toContain // regarde si une liste contient un truc
                                   })
-                              })
+                              }); // fin du describe
+			describe(.... /// describe suivant.
+                              }); // fin du describe
                       afterEach(() => {
                             clearCityDatabase();
                           });
@@ -28263,7 +28286,7 @@ pour faire un paint avec canvas: Attention ne jamais donner un style a un canvas
                             // Pencil tool instance.
                             tool = new tool_ecrire();
                             // Attach the mousedown, mousemove and mouseup event listeners.
-                            canvas.removeEventListener('mousedown', ev_canvas, false); // removeEventListner des fois ne marche pas parce que c'est chiant faut etre super precis. Du coup faire comme ca pour supprimer effacer les eventlisteners LINKrmvEvntListner
+                            canvas.removeEventListener('mousedown', ev_canvas, false); // removeEventListener des fois ne marche pas parce que c'est chiant faut etre super precis. Du coup faire comme ca pour supprimer effacer les eventlisteners LINKrmvEvntListner
                             canvas.removeEventListener('mousemove', ev_canvas, false);
                             canvas.addEventListener('mouseup',   ev_canvas, false);
                             canvas.classList.add('ecrire');
@@ -28430,7 +28453,7 @@ ou
                                             
 pour supprimer tous all les eventlisnter LINKrmvEvntListner
     l'idée est de clonner l'element que je veux nettoyer et que le clone remplace celui qui contient les eventlistener. Tout est dupliqué sauf les eventlistners:
-             elementANettoyer.parentNode.replaceChild(elementANettoyer.cloneNode(false), elementANettoyer); // elementquiremplace,elementaremplacer // pour remplacer un element dom par un autre 
+             elementANettoyer.parentNode.replaceChild(elementANettoyer.cloneNode(false), elementANettoyer); // elementquiremplace,elementaremplacer // pour remplacer un element dom par un autre (true ou false pour oui ou non y inclure les enfants)
 
                                                      
 dessiner un cercle dans un canvas:
@@ -29545,7 +29568,7 @@ METHODE CLASS: THEBEST? classes es6
                                                           this.id="tata"; // defini direct l'id du dom element|_ATTENTION ne marche que si on instancie la classe en javascript. Pas si on met la balise html dans la page
                                                           this.toto=true;// c'est une propriete properties    |
                                             //         creer un shadowdom: Maintenant FFOx supporte aussi. Avant: (pas encore supporte sur firefox: besoin faire about:config puis dom.webcomponents.enabled et dom.webcomponents.shadowdom.enabled a true)
-                                                         var root = thisMonElement.attachShadow({mode:'open ou closed LINKkddkdkdkd'}); // host maintenant devient un shadowroot: tout ce qu'il a a l'interieur devient invisible. open/closed= atteignable ou pas par javascript et querySelector('div').shadowRoot est visible par le javascript ou pas selon. LINKkddkdkdkd: si j'ai mis closed alors xxx.shadowRoot=null pour l'avoir faire une variable dans le custom element: this.shadow = this.attachShadow({mode:'closed'});  et je réutilise this.shadow partout.
+                                                         var root = thisMonElement.attachShadow({mode:'open ou closed LINKkddkdkdkd'}); // host maintenant devient un shadowroot: tout ce qu'il a a l'interieur devient invisible. open/closed= atteignable ou pas par javascript et querySelector('div').shadowRoot est visible par le javascript ou pas selon. LINKkddkdkdkd: si j'ai mis closed alors xxx.shadowRoot=null pour l'avoir faire une variable dans le custom element: this.shadow = this.attachShadow({mode:'closed'});  et je réutilise this.shadow partout. Les customcssproprietesProperties ne peuvent pas non plus l'attendre
                                                           on peut juste faire aussi 
                                                           thisMonElement.attachShadow({mode:'open'}); // ca va créer automatiquement this.shadowRoot dans mas classe. Pas besoin de var root                                                        
                                                          var monTemplate = templatexxx; ou voir LINKCustomTemplate=`du contenu
@@ -33565,7 +33588,7 @@ pour faire un diff entre deux dates:
 	diff entre deux dates sans les weekend (possibilite sans les jours feries)
 	=NETWORKDAYS(O5,N5) (anglais)
 	=NB.JOURS.OUVRES(...)
-Pour ajouter des jours a une date
+Pour ajouter modifier enlever des jours a une date
 	le plus simple c'est tout simplement d'avoir la valeur en chiffre de la date a laquelle on veut ajouter des jours: exemple:=DATEVAL("04/01/2010") (si on veut faire reference à une cellule qui contient une date, celle ci doit etre au format texte)
 	ensuite sur la celle suivante on met: =AD38+6 (ici je rajoute six jours). Changer le format de cette cellule en format date. Thats all.
 si j'ai des dièses #### partout dans une cellule:
