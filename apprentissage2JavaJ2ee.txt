@@ -949,7 +949,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
                 pour annuler mon rebase en cours faire 
                 git rebase --abort ou au pire pour sortir faire git rebase --quit
         pour supprimer tous les gros fichiers de l'historique pour que je puisse pusher sur github
-        si j'ai "error: could not read '.git/rebase-merge/head-name': No such file or directory" faire git reflog 
+        si j'ai "error: could not read '.git/rebase-merge/head-name': No such file or directory" faire git reflog // permet de voir l'historique du commit dans lequel on est
             git filter-branch --index-filter "git rm --cached -f --ignore-unmatch(ignoreleserreurs) PathDeMonGrosFichier.webm" (mettre -f si il le demande) --prune-empty --tag-name-filter cat -- --all
       git log //voir les commits. N'affiche pas les commits du futur donc voir LINKlkghhrghh
       git log --all // voir les commits du future si j'ai fait un checkout sur un commit du passé LINKlkghhrghh
@@ -971,7 +971,7 @@ git diff compare mon workspacepasencoreadded avec le dernier commit
       git diff <optionel num commit> <wildcardPathOptionel> compare repertoire avec index ou unCommit
       git diff <branche1> <branche2>
       git diff --cached <optionel num commit> <wildcardPathOptionel> compare index avec HEAD ou unCommit
-      git diff numcommitavant numcommitapres <wildcardPathOptionel> compare 2 commits (respecter ordre commits pour que ce soit plus comprehensible)
+      git diff numcommitavantOuDeNimpQuelleBranche numcommitapresOuDeNimpQuelleBranche <wildcardPathOptionel> compare 2 commits (respecter ordre commits pour que ce soit plus comprehensible)
       git tag 1.2.0 (sans mettre "v")// tag le dernier commit fait dans mon repo. ce tag ne se push pas.... voir Linktaggit
       git tag 1.2.0 iducommit fourni par >git log // cree un tag pour le désigné
       git diff --name-only // affiche que les noms des fichiers differents
@@ -991,6 +991,7 @@ git diff compare mon workspacepasencoreadded avec le dernier commit
       git stash clear // supprime tous mes stash! attention.
       si j'ai erreur Updates were rejected because the tip of your current branch is behind et que je veux quand meme pusher:
             je peux faire git push -f      
+     git cherry-pick <numerodecomitSEULQueJeVeuxRecupererLaOuJeSuis> // attention de commiter avant de faire ca
     envoyer/recuperer des projets entre mon local et le github:
       fork: fait une copie de tout un projet (branches incluses) dans mon github. Je peux ensuite travailler dessus dans github ou en local(cloner) et à la fin je soumet mes modifs: pull request= merge request mergerequest. si accepte: ça fetch+merge+commit tout mon fork(je crois). SI il y en a plusieurs qui se suivent et que je dois accepter, ne prendre que le dernier et ignorer les precednets (je pense) car le dernier mergerequest resume tous les autres d'avant.
 	pour puller les modifs de l'origin de mon fork dans mon fork local: LINKpullupstream
@@ -1008,6 +1009,7 @@ git diff compare mon workspacepasencoreadded avec le dernier commit
         git config credential.helper store // pour ne plus qu'il demande le user/pass en https
         git pull: fait automatiquement un git fetch avant si ca na pas été deja fait
         la premiere fois faire git pull origin master
+	git pull en gardant les modifis a moi les miennes en priorité: git pull -s recursive -X ours
         git pull URLouPathRepositoryDistantPeutEtreLocal si il veut pas et/ou met message refusing to merge unrelated histories mettre:--allow-unrelated-histories//recupere les derniers push des autres sur mon HEAD local // si il dit "not a git repository" il faut que je me place dans le projet git
                     si il dit "....be overwritten by merge" c'est que quelqun a poste sur le repo des choses qu'il n'aurait pas du. 2 solutions: 1)faire un git clone ailleurs du projet puis git rm fichiersquinauraientpasdusetrouverdanslerepo puis commit et push 2)aller sur le repo et les supprimer
         si j'ai l'erreur cannot stat permission denied au moment d'une manip
@@ -2418,7 +2420,7 @@ erreurs codes http: LINKcodesHttp
 302: redirection temporaire. quand je fais cette redirection mettre dans l'entete header Location=urlversoujeredirige. Avec non conservation de la méthode POST ou autre qui passe à GET et le corp peut aussi changer. Google n'aimepas il faut faire des redirections permanantes 301 quand on veut faire http -> vers https.
 303: redireciton temporaire.
 307: redirection temporaire. quand je fais cette redirection mettre dans l'entete header Location=urlversoujeredirige. La methode et le corp sont conservés. Est préférable à une redirection 302  
-400: erreur de synthaxe:protocole http non respecte
+400: erreur de synthaxe:protocole http non respecte genre j'envoie un get au lieu d'un post requis
 401: non authorise (manque login/password): n'a pas encore été authentifé et le navigateur doit maintenant chercher à s'authentifier. En récupérent dans la résponse envoyée par le serveur le header  WWW-Authenticate et son( ou ses séparés par des virgules) challenge associé et doit renvoyer une requete avec en général le header WWW-Authenticate rempli mais ça peut etre autrechose.
 403 : interdit (login/password incorrect) authentification a bien été comprise mais elle est fausse
 404: page non trouvee
@@ -2431,6 +2433,7 @@ erreurs codes http: LINKcodesHttp
 417 SC_EXPECTATION_FAILED 
 304: le serveur dit que le browser a deja toutes les infos dans son cache et pas besoin de renvoyer d'autres infos + code 200
 500: erreur interne du serveur
+504: gateway timeout	/
 503: Service unavailable
 
 			requetes dessus: 
@@ -2999,7 +3002,7 @@ pour acceder à un fichier sous web-content webcontent en java:
 pour recuperer une variable d'environnement qui est declaree dans web.xml:
 			pour recuperer le numero de version
 			String ttfPath = (String)ServiceLocator.getInstance().getRefByName("NOM_DE_LA_VARIABLE");
-                 upload du fichier cote serveur :
+                 upload du fichier cote serveur servlet:
           si apres servlet 3.0)  completer avec LINKmultilkjfqsdf
                  je peux toujours faire request.getParameter("name") pour recuperer des parametres de l'url 
                   for (Part part : request.getParts()) { // il y a les fichiers en PJ puis les champs. Les fichiers en PJ toujours en premier.
@@ -3162,7 +3165,7 @@ pour recuperer une variable d'environnement qui est declaree dans web.xml:
     	        }
     	    }
                                    
-Pour lire un fichier sur le serveur et le renvoyer pour ouverture dans le browser: 
+Pour lire un fichier sur le serveur et le renvoyer pour ouverture dans le browser: // attention en ajax c'est pas possible voir fetch LINKfetchdownloadfile ou juste via une Url en get.
                     public static void downloadFichier(HttpServletRequest request, HttpServletResponse response, String type_PJ, String nomFichier) throws DaoException
                     	{
                     		String debut_msgConsole = "ERROR FROM PJsDao.downloadFichier()";
@@ -3196,7 +3199,7 @@ Pour lire un fichier sur le serveur et le renvoyer pour ouverture dans le browse
                     			//BufferedInputStream  bis = new BufferedInputStream(stream);
                     			//outStream.write()
                     		}
-freemaker :
+freemarker :freemaker :
       <html>
           <head>
             <title>Welcome!</title>
@@ -3205,13 +3208,16 @@ freemaker :
             <h1>Welcome ${user}!</h1>
             <p>Our latest product: <#if user == "Big Joe">, our beloved leader</#if> // condition (avec # au lieu de $)
             <a href="${latestProduct.url}">${latestProduct.name}</a>!
+	<#assign uneNouvelleVaiable = latestProduct.url> // pas besoin de mettre ${
             <#list misc.fruits>          // faire une liste iteration iterate
                 <ul>
                   <#items as fruit> // comme ca si ya pas de fruit alors <li> ne s'affiche pas
                     <li>${fruit?upper_case ou ?cap_first ou ... facultatif}
+			<#include "./comment.html"> // dans le template comment, il voit toutes les variables ici.
                   </#items>
                 </ul>
               </#list>
+		misc.fruits[3].nom // je peux recuperer un element du tableau
               <#include "/copyright_footer.html"> // inclue un autre fichier
           </body>
           </html>
@@ -3243,7 +3249,7 @@ freemaker :
                                     // Wrap unchecked exceptions thrown during template processing into TemplateException-s.
                                     cfg.setWrapUncheckedExceptions(true);
 				Map root = new HashMap
-				root.put("nomDeMonOjet",unBean);
+				root.put("nomDeMonOjet",unBean); // le bean doit avoir des getters et ses proprietes doivent etre initialisees meme les Strings.
 				Template template = cfg.getTemplate("/pathVers/template/t.html");
 				StringWriter out = new StringWriter();
 				template.process(root,out);
@@ -7826,6 +7832,8 @@ pour se connecter avec un utilisateur user
                     db.uneCollection.find({queryNeRienMettrePourTrouverTout},{facultatifLesChampsARetourerFiltrer}) 
 	requete : exemples:
 		    db.lacollection.find({"champTypeTableau.4":{$not:{$in:["x","y]}}},{champaretourner:true,champapasretourner:false}) //4 eme index du champttypeTableau(attention ce truc .4 marche que dans la premiere partie du find) not(negation) in pour n'importe quel index mettre les GUILLEMETS! "champTypeTableau.souschampDuTableau":x c'est comme si je mettais: "champTypeTableau[nimporteQuelIndex].souchampDuTableau
+							             .find({$and:[{...},{...}..]})
+								     .find({unchamp:{$not:/uneregexp/}})
 	avec wildcard regexp:
 		db.toto.find({"monchamp":{$regex:/^valeuravec.*tata/i}},...filtresibesoin  //i pour ignorecase mais ya d'autres options possibles.(/ est obligatoire, i est facultatif) Attention toujours commencer par ^et les wildcard c'est .*
             var doc = db.uneCollection.findOne ou find(...)// trouver par id (du coup doc est une variable) // findOne retourne le 1er resultat
@@ -24729,6 +24737,7 @@ fg pour le remettre en foreground (ou fg %numerodetache)
 pour killer un job: kill -9 %1 (ne pas oublier le "%" et remplacer 1 par le numero du job qu'on veut killer (c pas le pid du job c son numero si on met %)) kill -15 (soft) ou -9 (hard)
 mpstat pour voir ce qui tourne et cpu utilise memoire utilisee
 prstat idemn
+htop mieux que top
 top idemn mais encore mieux... on peut l'installer facilement en le recuperant sur SUN top (sun.com, package top ou prstat si on veut). Faire tab+p pour classer conso mem cpu par ordre decroissant
     ensuite faire maj+m pour trier par ordre decroissant sort.
 free ou free -m ou -h // -m pour mega, -h pour giga. pour voir si mon disque swap beaucoup trop (on peut voir la qte de memoire virtuelle dispo/utilisee et le swap qui ne doit pas depasser 56xxx=56Mega) 
@@ -25411,8 +25420,8 @@ bon exemplde ksh de lancement de batch:
                                     // "/s"=remplacer. remplace ce qui ya après s/ (codeCible="") par (/) codeCible="0" /g: cad partout. $1= parametre: on ecrit le resultat dans $HOME/tfi/$1.tmp
                                     // du coup pour trouver certains fichiers et remplacer dans ceux trouvés une chaine par une autre faire: 
                                             find . -type f -not -name '*.mp3' -not -name '*.bak'(important!) | xargs sed -i.bak -e "s/remplacemoi(/parca(/g"
-                                ret=$?  // on defini ret etant le retour du sed ci dessus: peut etre =1 ou 0
-                                if [ $ret -ne 0 ] // si ca ne renvoie pas 0 (0=erreur 1=OK)
+                                ret=$?  // on defini ret etant le retour du sed ci dessus: peut etre =1 ou 0V
+                                if [ $ret -ne 0 ] // si ca ne renvoie pas 0 (0=erreur 1=OK) OU savoir si la derniere execution renvoit une erreur: if [[ "$?" -ne 0 ]] ; then // si ca ne renvoit pas derreur alors....heu marche pas bien encore
                                         then
                                         Log_print " probleme remplacement des carecteres "
                                         exit $ret // exit 0
@@ -26918,6 +26927,9 @@ fetch : LINKsljqffetch
           .then(response=>response.json()) // attention renvoit une promesse a retraiter comme telle car en fait response contient le header mais response.json() fait appel à recup la promesse du body
           .then((json)=>{
             (new AlertMessage()).appear(json.message);
+		si on fait un download de fichier LINKfetchdownloadfile
+			let file=window.URL.createObjectURL(jsonQuiEstEnFaitUnBlobDuBodyDeLaResponse);
+			window.location.assign(file);
            })
            .catch(err=>{(new AlertMessage()).appear("Erreur: "+err );});
      }
@@ -27154,7 +27166,7 @@ tester le javascript TDD :
                                                    
                     les fichiers de tests doivent s'appeler xxxx.test.js
                     dans xxxx.test.js:
-			pour importer du html et l'integrer dans le document de mes tests:
+			pou importer du html et l'integrer dans le document de mes tests:
 				const fs = require ("fs");
 				const path= require("path");
 				const html = fs.readFileSync(path.resolve(__dirname,'./resources/indexPro.html'),'utf8');
@@ -27183,7 +27195,10 @@ tester le javascript TDD :
 				afterEach(() => {....});
                               	it(.skip pour ignorer)('nom du test', () => {
                                     // pour mocker un objet(xhr pour requete par exemple)
-                                         const mockMonObjet = ()=> ({// toujours nommer cet objet en commencant par "mock"
+                                  un module: 
+						jest.spyOn(unModule, 'NomDeLamethodeDeCeModule').mockReturnValue(true) // mocker la methode d'un module partout. ici  retournera tout le temps true. Attention ne marche pas si cette methode est appelée dans une autre promise on dirait
+												.mockImplementation(function(){...})
+					       const mockMonObjet = ()=> ({// toujours nommer cet objet en commencant par "mock" C'EST CA QUE JE DOIS UTILISER POUR MOCKER XMLHTTPREQUEST
                                          ou
                                          const mockMonObjet={ // si marche pas (le new mock ne peut pas s'instancier au run essayer ci dessus
 						nomdemamethode:jest.fn().mockImplementation..etc...voir ci dessous
@@ -27193,11 +27208,9 @@ tester le javascript TDD :
                                                 onload:jest.fn().mockImplementation(function(){}),//si on ne veut rien faire
                                                 open:jest.fn().mockImplementation(function(){this.status=200;}),// je peux setter une variable dans le mock. Attention on ne peux pas renvoyer return un truc je crois
                                                 overrideMimeType:jest.fn().mockImplementation(function(){}), // si on ne veut rien faire
-						jest.spyOn(unModule, 'NomDeLamethodeDeCeModule').mockReturnValue(true) // mocker la methode d'un module partout. ici  retournera tout le temps true
                                          })
                                       window.XMLHttpRequest = jest.fn().mockImplementation(mockMonObjet);
-                                
-                                (.. mes tests..)
+                                             (.. mes tests..)
                                 });
                                 it("checkloop",()=>{...
 			ou 	
@@ -27208,10 +27221,13 @@ tester le javascript TDD :
                                                    toBe                        //toBe egalité simple
                                                    toBeNull
                                                    toBeUndefined!=toBeDefined
+						   toEqual // regarde egalite en profondeur
 						   toBeEqual // Marche plus on dirait teste egalitee entre deux objets
                                                    toBeTruthy() // equivalent de isTrue
-                                                   toBeFalsy() // equivalent de isFalse
+                                                   toBeFalsy()l // equivalent de isFalse
                                                    toContain // regarde si une liste contient un truc
+					//si c'est une promeses promise:
+					return mamethodeQuiRetourneUnePromise().then(x=>{expect(xxx)...}) // mettre un return avant la methode pour que ca marche bien
                                   })
                               }); // fin du describe
 			describe(.... /// describe suivant.
@@ -27260,6 +27276,24 @@ tester le javascript TDD :
 				    await page.type("input[name=name]", "blabla");
 				  }, 16000); // c'est un timeout il faut le mettre si headless:false LINKlgjozuaer
 				});
+
+			Verify: a completer et capitaliser correctement:
+				expect(fn)
+					      .toHaveBeenCalled()
+					      .toHaveBeenCalledTimes(number)
+					      .toHaveBeenCalledWith(arg1, arg2, ...)
+					      .toHaveBeenLastCalledWith(arg1, arg2, ...)
+					  expect(fn)
+					      .toHaveBeenCalledWith(expect.anything())
+					      .toHaveBeenCalledWith(expect.any(constructor))
+					      .toHaveBeenCalledWith(expect.arrayContaining([ values ]))
+					      .toHaveBeenCalledWith(expect.objectContaining({ props }))
+					      .toHaveBeenCalledWith(expect.stringContaining(string))
+					      .toHaveBeenCalledWith(expect.stringMatching(regexp))
+					  expect(memoclap.fileActorsSecondsAnnotation.length).toEqual(3);
+					  expect(memoclap.fileActorsSecondsBoolean.length).toEqual(3);
+					  expect(memoclap.numFileSecondDraw.length).toEqual(3);
+					
     
   pour executer voir LINKjestexecute
     avec Jasmine : et testem : (sinon utiliser https://jsfiddle.net/)
@@ -28961,7 +28995,7 @@ tableaux suite:
       ne surtout pas faire monarray= monarray.splice(...)il renvoit ce qu'on a supprime!!
   slice pour faire des subarray: exemple: attention ne pas confondre avec splice
         res = tableau.unarray.slice(0,9); // recupere les 9 premiers elements du tableau 
-        SUPER important si on veut copier une array dans une autre array. Car si on fait ca nouvellAray=monArray ca fait un pointeur!!!
+        SUPER important si on veut copier une tableau array dans une autre array. Car si on fait ca nouvellAray=monArray ca fait un pointeur!!!
           var newArray= myArray.slice(); 
         pointeur:
         si je recupere un objet d une table comme ca par exemple
