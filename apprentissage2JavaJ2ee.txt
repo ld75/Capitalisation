@@ -895,10 +895,10 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
         git clone D:/path/repertoireacloner (besoin peut etre faire commit dans ce repository(repertoireacloner) pour l'initialiser) 
     branches: master; develop; etc etc... elles existent en local et sur le repo distant et sont toutes TOUTES indépendantes les unes des autres c a d: je peux avoir en local un master qui push dans le develop distant. Les branches c de la merde. DEVOPS.
         si j'ai (HEAD detached from 351dcab) c'est parce que mon HEAD est orphelin et dans aucune branche(parce que j'ai fait un git checkout sur un commit). faire git stash save "bla"; git checkout master; git merge codeDeMonHeadDetached. Ancienne methode: pour le recuperer dabord le rattacher a une branche temporaire: git branch temp puis git checkout temp. Ensuite il faut ecraser une branche par temp (voir ci dessous)
-      git branch // pour voir toutes les branches.(attention ne montre pas toutes les branches en fait. pour les voir toutes je ne sais pas comment faire) et voir quelle branche est activee A8. Ou est mon HEAD. Les branches c la merde. DEVOPS
-      git branch nomdelabrancheacreer // pour creer une nouvelle branche: ca ne cre pas une branche vide: ca copie la branche actuelle (meme ce qui n'est pas addé) dans la nouvelle branche. Les branches c la merde. DEVOPS
+      git branch -vv// pour voir toutes les branches et a quel repository origin elles sont liées(attention ne montre pas toutes les branches en fait. pour les voir toutes je ne sais pas comment faire) et voir quelle branche est activee A8. Ou est mon HEAD. Les branches c la merde. DEVOPS
+      git branch nomdelabrancheacreer // pour creer une nouvelle branche: ca ne cre pas une branche vide: ca copie la branche actuelle au commit ou je me trouve (meme ce qui n'est pas addé) dans la nouvelle branche. Les branches c la merde. DEVOPS
                                           maintenant je peux checkouter sur cette nouvelle branche ET avant tout faire un commit dessus sinon LINK98530!!!! puis je peux la pusher sur le repo distant: si le nom de la branche local est le meme que sur une branche du repository distant alors il va pusher dans cette branche qui a ce meme nom. Pas mal pour pusher sur une autre branche facilement.
-      git branch -d nombrancheasupprimerDeleter // supprimer une branche
+      git branch -d nombrancheasupprimerDeleter // supprimer une branche. Ne pas se placer dans cette branche avant de faire ca.
       git branch -f nomdelabrancheAEcraser nomdelabrancheQuivaPrendreLaPlaceDeLautreEtVaLecraser
       
     switcher d'une branche à l'autre: ca remplace mes fichiers par ceux de la branche que je choisis. 
@@ -1006,6 +1006,7 @@ git diff compare mon workspacepasencoreadded avec le dernier commit
         git push origin masterOudevelopOuBrancheLocale //HEAD(origin)->ServeurDistantOuRepertoireQQpart(master ou develop) envoi sur le serveurOuRepertoireRepoQQpart pour merger avec le master: ça fetche+merge+commit là bas.
             ne pushe pas les repertoires vides: pour ça ajouter juste un fichier avec "x" dedans
             si j'ai error: failed to push some refs to // peut etre j'ai oublié de commité ou bien il faut puller avant
+	gut push --set-upstream origin nomdelabranchequejecreeADistanceSurLeOrigin // quand je suis dans une branche qui n'existe pas sur le repository distant "origin" il cree cette branche dans origin avec le nom nomdelabranchequejecreeADistanceSurLeOrigin
         git config credential.helper store // pour ne plus qu'il demande le user/pass en https
         git pull: fait automatiquement un git fetch avant si ca na pas été deja fait
         la premiere fois faire git pull origin master
@@ -5670,7 +5671,7 @@ CSS grids : cssgrid : css grid : cssgrid : pour faire des mises en page responsi
     }                
 
 CSS custom properties :LINKcustomcssljqdf 
-	<style> // dans un shadowdom ou quelquepart
+	<style> // dans un shadowdom ou quelquepart// attention n'est pas pris en compte au level niveau customelement shadowdom de profondeur >1. Dans ce cas redeclarer le css au niveau 1 pour que le niveau 2 le voit.
 		color:var(--uneproprietedefinieailleurs)
 	</style>
 	ET ailleurs dans un autre .css
@@ -17535,7 +17536,7 @@ logback : (mieux que LinkLogutils)
               </appender>
               //autre appender:
               <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-              <file>MyLog.log</file>
+              <file>MyLog.log</file> // attention deux appenders ne peuvent pas partager le meme file pour l'output
                   <layout class="ch.qos.logback.classic.PatternLayout">
                     <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern> ajouter %X{first} et %X{last} pour LINKslf4jMcd 
 		  </layout> 
@@ -17600,7 +17601,7 @@ log4j.appender.pae.layout.ConversionPattern=[%d{dd/MM/yyyy HH:mm:ss,SSS}] %t %c 
                                                                           %d	Used to output the date of the logging event. For example, %d{HH:mm:ss,SSS} or %d{dd MMM yyyy HH:mm:ss,SSS}.
                                                                           %F	Used to output the file name where the logging request was issued.
                                                                           %l	Used to output location information of the caller which generated the logging event.
-                                                                          %L	Used to output the line number from where the logging request was issued.
+                                                                          %L	Used to output the ligne line number from where the logging request was issued.
                                                                           %m	Used to output the application supplied message associated with the logging event.
                                                                           %M	Used to output the method name where the logging request was issued.
                                                                           %n	Outputs the platform dependent line separator character or characters.
