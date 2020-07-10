@@ -192,24 +192,24 @@ plannification :planning :conseils Erwin:
     CAPITALISER SUR LE WIKI LES VENDREDIS
 
 Design patterns : Gof est mort remplacé par CDI: A FAIRE voir @Specializes, @Decorator, @Interceptor(voir LINKinterceptor). Pattern Command est remplacé par MessageDrivenBeans et CDI Events, pattern factory remplacé par @Produces sauf que @Produces renvoit des instances deja crées LINKfactoproduce 
-cleancoding : clean coding :LA SEULE FACON D ALLER VITE C EST D ALLER CLEAN ignorance is no excuse. No divided devs(frontetback = meme pers) expose your ignorance to learn. (its not weakness) 
+cleancoding :cleancode : clean coding :LA SEULE FACON D ALLER VITE C EST D ALLER CLEAN ignorance is no excuse. No divided devs(frontetback = meme pers) expose your ignorance to learn. (its not weakness) 
 0: 20 minutes de tomate tomatoes*18-20/jours(4pauses2m,1pause10m). https://tomato-timer.com/ pour partager: https://www.marinaratimer.com  Sous pression, se coller à la discipline ne pas être tenté de la bypasser
 1. I will not produce harmful code
     - I will not release a defect
     - I will not make code for others harder to understand or change (soft-ware, easy to change).
             write crap , then clean en testant.
-             uneFonction fait 1 seul truc (testable). taille methode tient dans la page (mais surtout fait u1 seul truc). Nom des fonctions et variables avec un sens(en lien avec le business)) quand necessaire. eviter iterators i et j et les strxxx. Sauf si l'utilisation est immediate après la creation alors le nom peut etre super court.
-                              |_cad il n'est plus possible d'extraire(refactor) une autre fonction dans la fonction parente: extractTilYouDrop a faire. Dans ce cas chaque fonction n'a qu'une indentation, chaque if, else, while etc n'ont qu'une ligne dedans. Si impossible refactorer car methode doit retourner plusieurs variables: creer une classe avec ses variables dedans MAIS attention ma classe est statefull donc c vraiment a faire en dernier recours
-             ne pasupdater l'argument objet dans la fonction mais faire des returns. et ne pas retourner de code (d'erreur)
+             uneFonction fait 1 seul truc (testable). taille methode tient dans la page (mais surtout fait 1 seul truc). Nom des fonctions et variables avec un sens(en lien avec le business)) quand necessaire. eviter iterators i et j et les strxxx. Sauf si l'utilisation est immediate après la creation alors le nom peut etre super court.
+                              |_cad il n'est plus possible d'extraire(refactor) une autre fonction dans la fonction parente: extractTilYouDrop a faire jusqu'a ce que ce ne soit plus possible ne pas avoir peur de faire pleeeeinnn de petites methodes. Dans ce cas chaque fonction n'a qu'une indentation et dedans les niveaux de profondeur du meme niveau, chaque if, else, while etc n'ont qu'une ligne dedans. Si impossible refactorer car methode doit retourner plusieurs variables: creer une classe avec ses variables dedans MAIS attention ma classe est statefull donc c vraiment a faire en dernier recours
+             ne pasupdater l'argument objet dans la fonction mais faire des returns. et ne pas retourner de code (d'erreur).
              methodes ne renvoient pas null ni codes (-1) mais exception typee avec msg dedans ou un optional optionnal) (voir LINKjajsdfliuaerOpt)
-             Command-Query separation: Soit une methode change un state quelquepart( dans la classe ou la base etc...)=sideEffect soit elle return une value=Query mais ne fait pas les deux en meme temps. (comme pour GET et POST)
+             Command-Query separation: Soit une methode change un state quelquepart( dans la classe ou la base etc...)=sideEffect et DOIT etre void soit elle return une value=Query mais ne fait pas les deux en meme temps. (comme pour GET et POST)
                             identifier dans une methode les blocks "SideEffect" et les blocks "Query" 
              ne pas passer null ni boolean a methode (car ça veut dire que la fonction fait deux choses != avec un if dedans): si besoin virer ce param et faire autre methode(qui peut appeler la premiere). 3 args max à une methode(pour que cerveau n'aie pas à gérer ordre) Si pas possible créer bean rempli comme argument.
              ConditionIf parle mieux avec nom methode plutot que boolean. ou boolean ayant un sens. Rempalcer les if par méthodes. Preferer polymorphisme à switch-case ou plusieurs ifs: les conditions sont déplacées dans une factory(new et if dedans)
              Nom variable:15charmax. taille est proportionelle au scope ou elle est: nom variable globale: tres long. nom dans methode tres petite: tres petit nom                              
              Ne pas melanger hight levelniveau, middle levelniveau et low levelniveau contexts (BusinessObject/StringBuffer). Interieur d'une fonction a un niveau sous le nom de cette fonction. WikiPage(hight concept) et StringBuffer(low concept) n'ont pas à se retrouver dans une même methode 
              nom de classe: si une classe n'est pas nomable c qu'elle fait trop de choses.
-             commentairers: le code doit parler de lui meme. ne commenter que les @c, ref., pas du vieux code et pas un journal(c pour le repo), poukoi comme ca/business need, TODO mais a virer et regler
+             commentairers: le code doit parler de lui meme. ne commenter que les @c, ref., pas du vieux code et pas un journal(c pour le repo), pourkoi comme ca/business need, TODO mais a virer et regler. Le pire c'est le code commenté car on pourrait en avoir besoin: se baser sur VersionControl pour ca. Un commentaire ne doit jamais parler de code qui est ailleurs.
              une url ne doit pas contenir d'ID. c'est un ID pour l'URL et les deux ID(metier/url) doivent être indépendants
               SingleResponsabilityPrinciple=CommonClosurePrinciple:grouper(en usecase) ce qui change ensemble-separer ce qui change pour differentes raisons (usecases). Séparer les fichiers/classes/code par QUI va demander les modifs(le DEV, le Design, le Client). Ne pas mettre de logique dans un template html. LINKusecase. Ne pas utiliser les id de la base de donnée comme id dans les liens href: prevoir un champisolé pour les liens. Séparer les controllers(en lien avec monde exterieur) des UserCases(algo pur metier)
               OpenClosePrinciple: ouvert à l'extention et fermé au changement
@@ -252,7 +252,7 @@ cleancoding : clean coding :LA SEULE FACON D ALLER VITE C EST D ALLER CLEAN igno
                                 - si il y a quelques imprévus
                                 - si c'est le chaos
 
-
+C'est moi qui decide de dire NON et j'ai raison: dire NON avant quand on voit venir la cata!
 
 
 
@@ -270,7 +270,7 @@ scrum : management :
       roulement des taches pour que chacun maîtrise tout+coding standards: LE PLUS POSSIBLE
       rythme durable: poser les limites de rythme: les projets sont des marathons. pas des sprints.
       ContinuousIntegration: OBLIGATOIRE mais un serveur de CI est necessaire que pour les gros projets.
-      Pair Programming: Bonne pratique mais si certains ne fonctionnent pas bien comme ça alors mettre en place des revues de code. au moins 2 paires de yeux doivent voir le code
+      Pair Programming: la review c de la merde. Le pear programing 1h environ par semaine pour s'échanger nos connaissances ca doit etre informel. aussi pingpong l'un test l'autre code puis inverse. Bonne pratique mais si certains ne fonctionnent pas bien comme ça alors mettre en place des revues de code. au moins 2 paires de yeux doivent voir le code
       Simple Design: designer que quand necessaire.
       Refactorer pour avoir du clean code.
       TDD: OBLIGATOIRE 
@@ -1181,6 +1181,8 @@ Adobe illustrator :
 
   
 intelliji : intellij : Afaire: utiliser le git et l'apprendre.(dixit christophe)
+si erreur javatask source release requires target release... 	
+		file>Settings>build>Execution>deployment>Complier/javacompiler
  ajouter la javadoc:
         File>projects structure> modules >choisir le bon module > Dependencies > choisir la bonne librairie > bouton edit(crayon)> + si la javadoc est en local dans un zip ou +@ si la javadoc est en ligne
 voir les logs d'intellij 
@@ -2483,7 +2485,7 @@ CDI1.x besoin de weld pour tester Tres galère: autant utiliser mockito seul ca 
                                     ou
                                     Mockito.mock(CreatedProjectOfUserStore.class) //si doit rien faire. void
                                     ou
-                                    Mockito.when(Mockito.mock(ProjectStore.class).findByName(anyString())).thenReturn(new ArrayList<>(),autrechoseladeuxiemefois).getMock() // ne pas oublier getMock() sinon j'ai l'erreur  Can not set ...to org.mockito.internal.stubbing.ConsecutiveStubbing
+                                    Mockito.when(Mockito.mock(ProjectStore.class).findByName(anyString())).thenReturn(new ArrayList<>(),autrechoseladeuxiemefoisTimes).getMock() // ne pas oublier getMock() sinon j'ai l'erreur  Can not set ...to org.mockito.internal.stubbing.ConsecutiveStubbing
                                     ou on peut utiliser .thenAnswer voir LINKmktoanswrweld
                                     )
                             .creating( // on peut créer comme ca en enchainant plusieurs comportements pour DIFFERENTES fonctions (pas la meme fonction sinon il ne prend que la dernière definition)
@@ -7830,7 +7832,7 @@ pour se connecter avec un utilisateur user
         pour voir la liste des collections d'une base:
             show collections
         exemples de rechercher requetes. Une collection = une table relationelle
-                    db.uneCollection.find({queryNeRienMettrePourTrouverTout},{facultatifLesChampsARetourerFiltrer}) 
+                    db.uneCollection.find({queryNeRienMettrePourTrouverTout},{facultatifLesChampsARetourerFiltrer}) // {lechamp:null} pour filtrer les champs qui n'existent pas
 	requete : exemples:
 		    db.lacollection.find({"champTypeTableau.4":{$not:{$in:["x","y]}}},{champaretourner:true,champapasretourner:false}) //4 eme index du champttypeTableau(attention ce truc .4 marche que dans la premiere partie du find) not(negation) in pour n'importe quel index mettre les GUILLEMETS! "champTypeTableau.souschampDuTableau":x c'est comme si je mettais: "champTypeTableau[nimporteQuelIndex].souchampDuTableau
 							             .find({$and:[{...},{...}..]})
@@ -7844,7 +7846,7 @@ pour se connecter avec un utilisateur user
             db.nomdelacollection.find(..).count(); et tout compter: db.nomdelacollection.count()
 	si mes find renvoient trois petits points ... ca veut dire que ma requete n'est pas bien complette peut etre accolade non fermee
         autres operations:             
-	vider supprimer une base de donnée
+	vider supprimer une base de donnée database
 		Aller d'abord dans la base (use labase)
 		puis db.dropDatabase()
 	vider effacer l'interieur supprimer toutes les lignes d'une collection
@@ -7871,6 +7873,9 @@ pour se connecter avec un utilisateur user
 		pour faire un update (ou meme un upsert)
 			BasicDBObject searchQuery= new BasicDBObject("DBRef",undbref); ou new BasicDBObject("_id",unid); LINKupsertmongo
 			collection.upsertOne(searchQuery, new Document("$set",document),(new UpdateOptions()).upsert(true));
+		pour supprimer remove: ne pas supprimer par l'objet directe ça ne marche pas bien
+			collection.deleteOne(new Document("_id",documentASupprier.get("_id"));
+			
             pour transformer bson en json en java:
 		String input="{\"timestamp\":0934820948}";
 		org.bson.Document doc=org.bson.Document.parse(input);
@@ -15916,11 +15921,12 @@ test :les tests : Linktestdevopsç9349
                                               chef  ->   food-critic
 
 JUNIT : (pour les tests unitaires c mieux d'utiliser le plugin maven surefire)// parce que ça génère des fichiers xml de rapport de tests.voir aussi LINKcucumberldfj
-TDD :
+TDD : existe mutationTest= PIT test: pitest.org: AFAIRE: essayer ça
     inutile pour tester l'UI, l'accès à des fichiers (à isoler dans methodes non testees)
-    1er test doit etre Degenerate test: tester la base de la base sans rien faire dans code et avancer petits pas par petits pas aux suivants sans inclure les dépendances necessaires. Tout doit pouvoir etre mocké
+    1er test doit etre Degenerate test: tester la base de la base sans rien faire dans code et avancer petits pas par petits pas aux suivants sans inclure les dépendances necessaires. Ne pas viser l'objectif. Tout doit pouvoir etre mocké
     Je ne peux dev code tant que j'ai pas un test qui echoue d'abord
     Arreter d'ecrire le test dès qu'il echoue ou ne compile pas pour passer au code pour le que test soit OK.
+		jouer au golf: le moins de modif possibles pour faire passer le test
     Je ne peux pas ecrire plus d'un test qui échoue
     Tant que j'ai des tests KO je ne peux pas ecrire d'autres devs en +
     Derniere etape: clean (ce qu'on fait regulièrement)
@@ -16260,7 +16266,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
     si JUNIT4<!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
       <dependency>
           <groupId>org.mockito</groupId>
-          <artifactId>mockito-all</artifactId>
+          <artifactId>mockito-all</artifactId> // difference entre mockito core et mockito all. Mockito core c'est que mockito et mockito all contient les dependances avec hamcrest et objenesis. c'etait utile quand on buildait avec ant. A8 utiliser que Mockito core: maven ou gradle s'occuperont d'ajouter les dependances ou sinon ajouter les 2 autres dependances à la main.
           <version>1.10.19</version>
           <scope>test</scope>
       </dependency>
@@ -16286,7 +16292,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
 			ou bien l'annoter @Spy et @InjectMock puis mocker ses methodes comme ca:
 			Mockito.doReturn(unTrucQuiDoitEtreRetourne).when(machinAtesterEtSpyer).uneMethodeAMocker(anyString());
                     ResultDao rd =mock ou spy(unObjetNONANNOTE ou new ResultDao() ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
-                    Mockito.doReturn(toto).when(rd).getLaMethodeNONSTATIQUEResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy
+                    Mockito.doReturn(toto).when(rd).getLaMethodeNONSTATIQUEResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy. ou pour qu'un spy ne fasse rien: Mockito.doNothing().when(monSpy).lamethodeDeMonSpyQuiPeutEtreVoid();
     				when(filterConfig.getServNONSTATIQUEletContext( // ca s'appelle faire du "stub" et utiliser ca je crois pour les mock. Attention si c'est une methode finale il va rentrer dedans avant de traiter le when donc pour mocker une methode finale depuis Mockito2 seulement on crée un fichier sous src/test/resources/mockito-extensions/org.mockito.plugins/MockMaker et dedans on ecrit mock-maker-inline
     				ou                                   anyString()//tout string
     				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça . si je met des variables direct alors j'ai l'erreur InvalidUseOfMatchersException
@@ -17465,7 +17471,7 @@ logs :logguer : logger :tracer :
                                         LOGGER.config("Configuration Generals log done.");
                                         LOGGER.log(Level.FINE, "Finer logged");
                                         }
-                                      catch(IOException exception) {  // pour catcher different type d'exception: catch(IOException | FileNotFoundException e)
+                                      catch(IOException exception) {  // pour catcher different plusieurs multiple type d'exception: catch(IOException | FileNotFoundException e)
                                           LOGGER.log(Level.SEVERE, "Error occur in FileHandler.", exception);
                                       }
                 Utilisation:
@@ -17752,7 +17758,7 @@ pour attendre qu'une resource se libere:
         th.start();// execution en paralele th.run() // execution immediate pas en parallele aucun interet apparemment ne pas utiliser
 			pour faire attendre la fin d'un ou plusieurs threads avant de poursuivre le programme main: 
 			utiliser join. Exemple:
-									public static void main (String args []) {
+									public static void main (String[] args ) {
 								    Coureur c [] = {new Coureur ("un", 2000),new Coureur ("deux", 3000),new Coureur ("trois", 1800)} ;	
 								    for (int i = 0 ; i < c.length ; i ++) c [i].start () ;
 								    for (int i = 0 ; i < c.length ; i ++) {
@@ -17964,7 +17970,7 @@ pour imposer qu'il ya  qu'une seule instance de mon batch java qui tourne:
                        System.out.println("Instance du programme unique"); 
                     }catch(Exception e){ 
                        System.out.println("Il y a deja une instance du programme active"); 
-                       System.exit(0); 
+                       System.exit(0); // pour sortir interrompre un programme java main
                     } 
               }
               sinon on peut ecrire dans un fichier ou mieux dans la base comme ca on peut changer la valeur dans la base 
@@ -19515,7 +19521,7 @@ les visibilites :
 exceptions :exception :
         pour faire mes propres exceptions: customisées customises customized checkedexception checked exception: déclarés dans le code; unchecked exception: se produisent qu'au run
           ma classe d'exception 
-          public class TooMuchDB2RowsException extends Exception 
+          public class TooMuchDB2RowsException extends Exception // unclebob aime que les exceptions soient des innerclass des classes qui les throw.
           {
               	public TooMuchDB2RowsException(String string) 
               	{
@@ -20246,7 +20252,21 @@ lambdas : lambda : lambdas expression :     (lire http://labs.excilys.com/2014/1
                                                    .unelisteDuneInterface.stream().map(i->(ComponentGeneric)i)... //en un autre casting
                                                    convertir une observablelist observable liste en liste:
                                                     observableliste.stream().collect(Collectors.toList());  
-        on peut faire: maclasse.envoimail("adresse",UneClasse::uneMethodeDeUneClasse); c'est la mort du pattern strategie strategy-template ou encore voir DesignPatterns.doc  
+        on peut faire: maclasse.envoimail("adresse",UneClasse::uneMethodeDeUneClasse); c'est la mort du pattern strategie strategy-template ou encore voir DesignPatterns.doc 
+				depuis java8 je peux faire
+				methodeAcceuilantUnConsumer((argument1)->{
+					unemethodeaexecuter();
+					uneautremethodeaexecuter();
+				})
+				public void methodeAcceuillantUnConsumer(Utils.ThrowingConsumer<TypeDeArgument1,TypeDeLException> consumer){
+					(...)
+						consumer.accept(null);
+					(...)
+				}
+				@FunctionalInterface
+				public interface ThrowingConsumer<T,E extends Exception> {
+					void accept(T t) throws E;
+				} 
                 xxx.foreach(): avec un biconsumer:exemple: // si xxx est un map on ne peut pas retourner une valeur avec. Il faut passer par un stream
                                 volumesInnerData.innerDataPerYear.forEach(new BiConsumer<Integer, InnerData>()
                                   {
@@ -22272,7 +22292,7 @@ import javax.mail.internet.MimeUtility;
 	    // Modification du sujet
 	    messageAdm.setSubject (subjectadm);
 	    attention: il se peut qua cause de l'environnement le header dont le subjet soit mal encode et on a des choses du style =?ANSI_X3.4-1968?Q?GDV-_Demande_de_validation_d'entr=3Fe_d'un_visiteur?= 
-      dans ce cas peut etre fair ca plutot 
+      dans ce cas peut etre faire ca plutot 
 	     message.setSubject(MimeUtility.encodeText(monSubjectAvecDesCaracteresAccentues, "utf-8", null));
 	    //contenu message administrateur: corp du message
 	    String  contentadm = "Ci joint les logs du jour.";
@@ -22861,7 +22881,7 @@ pour recuperer le string d'un fichier lire contenu d'un fichier
         java7 et plus:
             File script = new File(getClass().getResource("/data.sql").getFile());
                     InputStream inputStream = new FileInputStream(script);
-                    final byte[] bytes = inputStream.readAllBytes();
+                    final byte[] bytes = Files.readAllBytes(Paths.get(fichier.getPath());
                     String sql = new String(bytes);
           Path resPath = Paths.get(this.getClass()).getResource("/chemin/unfichier.son").toURI());
           String jsonContent = new String(java.nio.file.Files.readAllBytes(resPath ou new File(stringChemin).toPath(),"UTF8");  
@@ -23482,6 +23502,8 @@ pour faire des formules excell:
   	cell.setCellFormula("IF(M"+numrow+">L"+numrow+",IF(M"+numrow+"<(R"+numrow+"+10),\"Pas de retard\",MIN((M"+numrow+"-L"+numrow+"),(M"+numrow+"-(R"+numrow+"+10)))),\"Pas de retard\")");
 pour lire un gros fichier avec poi :
       ma classe main:
+si erreur javatask source release requires target release... 	
+		file>Settings>build>Execution>deployment>Complier/javacompiler
                                     	        FileInputStream fin = new FileInputStream(new File("C:/temp/wec/jalonpanama.xls"));
                               	        //FileInputStream fin = new FileInputStream(new File("C:/temp/wec/test1.xml"));
                               	        // create a new org.apache.poi.poifs.filesystem.Filesystem
@@ -28835,6 +28857,9 @@ supprimer tous les fils:
                 </script> 
 lastindexof: (contains contient)
   string.lastIndexOf(searchstring)
+Savoir nombre compte combien un char dans un string:
+	ne pasutiliser .split("lechar").length; // car faux si le dernier occurence n'est suivit de rien
+	letexte.chars().fiilter(ch=>ch==occurence).count();
 endsWith en javascript: (se termine par) 
     monString.match("bla$")
 startsWith:
@@ -33558,6 +33583,7 @@ paint :
     pour que la selection soit transparente transparante
         bouton selectionner> choisir transparant
 Excell : excel :
+	pour ne selectionner que les cellules visibles filtrées: Accueil>RechercherEtSelectionner >Selectionner les cellules...>Cellules visibles uniquement
     taille size length longueur
         NBCHAR()
     indexOf:
@@ -33756,7 +33782,7 @@ prestashop :
                 Amazon: Menu Rapports > tous les releves > clique droit et ouvrir dans un nouvel onglet chaque page "afficher le recaptitulatif" > imprimer page > enregistrer format pdf . ne mettre que la somme recue (ne pas oublier de choisir la somme imputée de la commission amazon du coup le cout de transport ne doit pas parraitre dans mon fichier excell)
                 Google AdWords cle a molette > configuration > facturation et payement >Toutes transactions > TVA > Documents. (avant: > roue parametres > Facturation > select paiement > TVA > choisir periode  > OK > Facture UE avec TVA > cliquer sur lien facture )
                 Facebook: .../Gerer les publicites > menu >bien choisir compte WENHUADUVERGE  > Facturation et moyens de payement > afficher toutes les transactions depuis le debut > Telecharger toutes les factures > Resume de la facture au format PDF > telecharger 
-                Gandhi PRECISER PAR ECRIT A WENHUA QUE C EST MOI QUI PAYE AVEC MA CARTE > choisir compte de wenhua sur nouveau site > factures > facile! 
+                Gandhi PRECISER PAR ECRIT A WENHUA QUE C EST MOI QUI PAYE AVEC MA CARTE > me connecter avec mon compte mais choisir compte de wenhua sur nouveau site > factures > facile! 
                 Mailjet   mon nom>mon compte > sous facturation: vos habonnements et vos factures
                 Achats Prestashop (paye avec mon compte banquaire mais au nom de SARL MA WENHUA: https://addons.prestashop.com/fr/historique-des-commandes
                 CM-CIC Monetico: Gestion des payements: (MAIS NON! c pas eshop)  
