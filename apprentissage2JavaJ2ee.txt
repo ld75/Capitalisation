@@ -2449,7 +2449,30 @@ PRG :
                     POST: Fait tout ce que PUT ne fait pas: CREATION. never show pages in response to POST
                     DELETE: ne fait que supprimer un data du système. Peut etre async. voir LINKcodesHttp 20x 
           
-
+Clojure :
+	;; mon commentaire
+	definir une fonction:
+		(defn nomdemafonction [parametre1 parametre2] // fonction nomée nomdemafonction
+			(+ parametre1 parametre2)) // on peut mettre virguel a la place de espace
+		ou
+		(def nomdemafonctin
+			(fn [parametre1 parametre2] // en fait ca c'est une fonctin anonyme
+				(+ parametre1 parametre2))) // on peut mettre virgule a la place de espace
+	primitives: tous sont immutables
+			234 ;;long
+			404.044 ;;double
+			39.04M ;;bigdecimal
+			"lsdf" ;;string
+			\a ;;char
+			30/4 ;;ratio: c'est n'est pas une division. ca permet de garder la precision
+			:quelquechose ;; enum ou clé de map. voir LINKcljie
+			#".*xx.*" ;; # marque une regexp
+			nil ;;null
+			("a" "b" 10.5 5) ;;liste est multitype. Donc le code clojure est aussi une liste mais on utilise plutot les vecteurs. la liste est utilisée pour les macros
+			["a" "b" 10.5 5] ;; vecteur à utiliser comme une liste
+			#{"a" "b" 10.5 5} ;; set
+			(:cle1 1,:cle2 "2",:cle3 3.5) ;;map LINKcljie
+		
 J2EE : jee : jee8 :javaee : EE4J : jakartaee : https://github.com/eclipse-ee4j/jakartaee-tutorial-examples et https://github.com/eclipse-ee4j/jakartaee-tutorial
         <dependency> necessite
                <groupId>javax</groupId>
@@ -7765,9 +7788,9 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
         pour demarrer un client mongodb pour administrer la base et pour faire des requetes de test
             executer mongo.exe: c'est un client pour faire les requetes (c'est du javascript la dedans) LinkLKJDSFA . On peut aussi utiliser un gui qui s'appelle Robo3T à installer.
 			possible executer petit script avec : compter nombre de documents total totaux dans une base:
-				mongo.exe --port=xxx --host=localhost --username=xxx password=xxx --authenticationDatabase=yyy nomDeLaBaseDeDonnee path/vers/fichier/javascript.js
+				mongo.exe --port=xxx --host=localhost --username=xxx password=xxx --authenticationDatabase=yyy nomDeLaBaseDeDonnee path/vers/fichier/javascript.js // dans ce script on peut loader inclure include un autre fichier javascript: load("/path/nomfichier.js")  ou load("nomfichierMaisPasReussiAFaireMarcher.js")
 				et dans le javascript.js:
-					var collections=db.getCollectionNames();
+					var collections=db.getCollectionNames(); // ne supporte pas setInterval pour executer regulierement alors utiliser while(true){ ... sleep(1000*60*30);}
 					var total=0
 					for var i=0;i<collections.length;i++)
 					{ total=total+db[collections[i]].count()}
@@ -10027,7 +10050,7 @@ pour faire un order by customise:
             end  desc
 pour remplacer les null par autre chose: utile dans un group by 
   nvl(PREMIERCHAMPRECUPEREPEUTETRENULL, ALORSREMPLACERPARCECHAMPLA)
-pour afficher que les lignes se repetant plusieurs fois: doublons, occurences
+pour afficher que les lignes se repetant plusieurs fois: doublons, occurences identifiants en double
 SELECT 
             T94.CODE_ETABLISSEMENT,
             T94.CODE_ARTICLE,
@@ -15913,7 +15936,7 @@ test :les tests : Linktestdevopsç9349
   unitaire: isolé, rapide, test ce que le developpeur attend: ils doivent couvrir un max car rapides
             microtests: test juste une fonction ou petit groupe de fonctions
             functionaltests: plus large que microtest avec mocks pour mocker les composants lents
-  acceptance: peut etre connecte à l'exterieur(database), test ce que le client attend
+  acceptance: peut etre connecte à l'exterieur(database), test ce que le client attend: est plannifié et testé par l'eaquipe UAT
   integration:connecte à l'exterieur(database), test connecté avec tous les systemes externes de prod: reduire leur nombre car lents. DOivent etre joués en parallele avec les performance tests. Ne doivent pas tester business rules mais seulement que tout est bien parametré
   performance tests: à mettre en place dès le début d'un projet car complexes à mettre en place. (assert swatch durée < oldvalue)  
   non-functionnal testing: tester le code de pupett -> pupett-lint  + cucumber (qui met en place l'env)
@@ -27107,6 +27130,35 @@ jouer un fichier audio sans objet audio
         sendMessageDisappear("messageAudio", "OK");
         source.noteOn(0);                          // play the source now
       }
+ ajax telecharger de manière asynchrone un fichier voir blob
+export function loadAudioFile(idgenerated) {
+    idgenerated= idgenerated.replace("_0_0","");
+    let alertMessage = new AlertMessage();
+    alertMessage.appear("Chargement en cours...");
+    let numFichier = utils.getLastIndexFromTableByElementValue(fichiersNames,idgenerated);
+    let url = pageContextRequestContextPath + "/getAudioOfProject?idp=" + idprojetEnCours + "&audidx=" + numFichier;
+            fetch(url,{
+                method:'GET'
+            })
+                .then( res => {
+                 if (!res.ok) {
+                    throw Error(res.blob());
+                 }
+                return res.blob()
+                })
+                .then( blob => {
+                    alertMessage.dissappear("Terminé");   // plutot que passer par un blob car ca marche pas super autant faire un link direct vers l'objet à telecharger avec le parametre <a download
+                    let file = window.URL.createObjectURL(blob);
+                    let link = document.createElement("a");
+                    link.style="display:none";
+                    document.body.appendChild(link);
+                    link.download=nomfichier;
+                    link.href=blob;
+                    link.click();
+                    //window.location.assign(file);
+                    window.URL.revokeObjectURL(file);
+                })
+                .catch(err=>alertMessage.dissappear("erreur")); // TODO: n'arrive pas a recuperer le message du corp de l'exception
 savoir si un element audio joue:
     if(document.getElementById(lecteur).paused
     possible de mettre a jour le texte du css avec du javascript mais tout d'un coup pas possible (pas trouvé) de façon chirurgicale
@@ -27234,6 +27286,7 @@ tester le javascript TDD :
                                          })
                                       window.XMLHttpRequest = jest.fn().mockImplementation(mockMonObjet);
                                              (.. mes tests..)
+					unmodule.unemethode=jest.fn(); // pour que la methode d'un module ne fasse rien
                                 });
                                 it("checkloop",()=>{...
 			ou 	
@@ -27425,7 +27478,7 @@ erreur: (intermediate value)(...) is not a function
           .reduce(function(carry, number){            return costCategories.values().stream().map(cost->cost.visible).reduce((carry,elt)->carry+elt).get();
                 return carry + number;
             }, 0)
-            .forEach((numbers)=>{ // equivalent: .forEach(function(number){//ATTENTION E majuscule
+            .forEach((numbers)=>{ // equivalent: .forEach(function(number){//ATTENTION E majuscule Equivalent de forEach((variablepassee)=>untrucaexecuter(variablepassee));
                     ou(index,value)   
                 doSomethingWith(number); // faire un traitement... a creuser
             });;
@@ -29551,6 +29604,8 @@ pour executer un code regulierement à interval regulier:
           var timer=setInterval("Horloge()", 1000);			    
 pour arreter le interval  precedemment defini avec setInterval().
              clearInterval(recordInterval);
+on peut aussi faire 
+	
 pour changer le contenu d'un element
 				Utiliser InnerHTML
 				<style type='text/css'>
@@ -33372,7 +33427,11 @@ ren %WEB-INF-PAE%\classes\_integr.log4j.properties.template log4j.properties.tem
 ) else (echo "exit")
 
 ------------------
-        
+pour executer regulièrement une tache on peut utiliser le scheduletaskmanager mais aussi un .bat peut le faire lui meme:
+	:loop
+		path/vers/mon/programme/a/executer.exe xxxxx
+		timeout /t 30 /nobreak  // donc 30 secondes
+		goto :loop
 windows : (commande dos :)
 explorer appdata est une variable d'environnement donc on peut mettre dans explorateur %AppData% et il va direct dans le repertoire AppData
 pour effacer supprimer delete un fichier:
@@ -33465,7 +33524,7 @@ pour faire un a accent grave majuscule:
 windows+"+" ou windows + "-": loupe loop zoom puis Ctrl + alt + fleches pour bouger 
 journal des evenements: 
     Win+R puis %SystemRoot%\system32\eventvwr.msc
-commande dos pour voir les ports utilises sur mon ordi: netstat (netstat -a -n -o voir netstat plus haut)
+commande dos pour voir les ports utilises sur mon ordi: netstat (netstat -a -n -o voir netstat plus haut) pour faire un grep dessus | findstr 8293 // numero de port
 les alias: c a d le nom des serveurs et adresse ip sont a definir dans C:/WINNT/system32/drivers/etc/hosts // a la modif il prend en compte tout de suiteLINKàç<çç_à
 pour demarrer une appli en mode admin: dans le raccourci mettre: 
       C:\WINDOWS\system32\runas.exe /user:admin /savecred  "C:\jbdevstudio4\studio\jbdevstudio.exe"
