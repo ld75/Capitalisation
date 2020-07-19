@@ -507,7 +507,7 @@ mettre à jour update upgrade node
     puis
     ln -sf /usr/local/n/versions/node/11.8.0/bin/node usr/bin/node
    mettre à jour les packages suite à modif de package.json (je crois)
-	npm update (pas sur dutout)
+	npm update //verifier que j'ai bien besoin d'un update avec npm outdated si oui modifier le package.json avec la bonne version et faire un npm update
   sur windows:
          reexecuter node.msi.
 installer un autre programme dans mon repository npm (en ajoutant -g)      
@@ -651,7 +651,7 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
   docker images // liste des images du repository
    ||	 
   docker image ls // LINKdckrimgls liste les images que j'ai cree. Ajouter --all si je veux voir aussi les images qui run
-  docker image tag ed9fa2cfcf96 nouveaunomderepository:nouveautag // pour renommer le repository et le tag de l'image dont l'id est ed9etc...
+  docker image tag ed9fa2cfcf96 nouveaunomderepository:nouveautag // pour renommer le repository et le tag de l'image dont l'id est ed9etc... ATTENTION eviter d'utiliser le tag latest mais toujours mettre explicitement le numéro de version
   docker ps -a // pour voir la liste de tous les containers (en cours de run et pas)
    ||
   docker container ls // liste les containers qui tournent qui sont en cours d'execution  facultatif: --filter volume=123415678identifiantd'unvolume // pour avoir la liste des containers qui utilisent ce volume
@@ -681,7 +681,7 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
         ENTRYPOINT ["/docker-entrypoint.sh"] // facultatif c'est le script qui est executé pour lors du démarrage de l'image et qui prend tous les arguments de CMD 
         CMD ["npm","start"] OU ["python", "app.py"]// executera npm start OU python app.py au moment ou on fera un run de l'image (app.py doit avoir été copie precedemment dans mon container dans le WORKDIR). cela s'ajoute à la fin de ENTRYPOINT sauf si je force dans docker run uneautrecmdquiprendralaplace
    docker build -t(pour tag) unnomquejedonneamonImageAcreer:untag -f ./path/AutreNomDeDockerfileSiCestPasJusteDockerfile dernierArgumentEstPathRelatifVersLeRepertoireContexteContenantLaRacineDuCodeSourceOnPeutMettrePoint/// Creer mon container docker qui rentre dans la liste repository d'images. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto
-  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e "nomDuneSystem.PropertySiJeVeux=savaeleur" ou --env(facultatif) JAVA_OPTS="-Dpropriete.java=yyyy -Dxxx=yyy" --link(facultatif et inutile au sein d'un docker-compose) nomduncontainerTypeDatabaseDansunNetworkBridge:nomDuHostNameDansLaConfDeMonProgrammeLINKjdbcdockerdatabase --name=facultatifUnAutreNomQueJeDonneAMonContainerce(nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con) -d (--detatch) (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement. on peut enchainer plusieurs -p) --mount type=bind,source=$variablepath ou /un/path/duHost/DirOuFichier,target=/unPathDansle/container/dirOuFichier OU -v(mais preferer--mount à-v) $(pwd)(ou un repertoire du host os. S'il n'existe pas il est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container) --network(inutile au sein d'un docker-compose) unreseaubridge ou host si besoin ouvert -hNomDuHostnameSiParExempleCestUneBaseDeDoneeJeCrois nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) OU identifiantDeLImage LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container nomdelimage
+  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e "nomDuneSystem.PropertySiJeVeux=savaeleur" ou --env(facultatif) JAVA_OPTS="-Dpropriete.java=yyyy -Dxxx=yyy" --link(facultatif et inutile au sein d'un docker-compose) nomduncontainerTypeDatabaseDansunNetworkBridge:nomDuHostNameDansLaConfDeMonProgrammeLINKjdbcdockerdatabase --name=facultatifUnAutreNomQueJeDonneAMonContainerce(nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con) -d (--detatch) (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement. on peut enchainer plusieurs -p) --mount type=bind,source=$variablepath ou /un/path/duHost/DirOuFichier,target=/unPathDansle/container/dirOuFichier OU -v(mais preferer--mount à-v) $(pwd)(ou un repertoire du host os. S'il n'existe pas il est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container) --network(inutile au sein d'un docker-compose) unreseaubridge ou host si besoin ouvert(c'est alors plus rapide au niveau du network) -hNomDuHostnameSiParExempleCestUneBaseDeDoneeJeCrois nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) OU identifiantDeLImage LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container nomdelimage
 	par defaut c'est executé sur le reseau bridgé partage entre tous les containers et même le host. Suffit de se connecter dans le container et voir leur IP
   docker start -ia(comme -it avec run) nomduconteneurARedemarrer // existe aussi docker stop nomduconteneur ou idduconteneur pour stopper un conteneur
   docker container stop IDDuContainer // pour stopper l'execution d'un container (par son ID ça marche mieux voir donc la liste.)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
@@ -1086,8 +1086,12 @@ partage d'image :
     et
     Greenshot        
 gimp :
+	revoir les outils et fenetres:
+		fenetres> masquer les groupes de fenetres
 	pour copier un calque dans une autre image:
 		draguer le caque dans le milieu de l'autre image
+	mettre une image orpheline dans un calque:
+		calque> vers un nouveau calque
 	pour redimentioner transformer: 
 		shift+t
 		pour une redimension relative respectant la proportion: draguer un caré du bord tout en maintenant ctrl+shift enfoncés
@@ -2449,16 +2453,25 @@ PRG :
                     POST: Fait tout ce que PUT ne fait pas: CREATION. never show pages in response to POST
                     DELETE: ne fait que supprimer un data du système. Peut etre async. voir LINKcodesHttp 20x 
           
-Clojure :
+Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme (retournée) dans une fonction est reelement un pointeur vers cette fonction anonyme (la fonction anonyme est une closure.)
+	installation:
+		curl -O https://download.clojure.org/install/linux-install-1.10.1.536.sh
+		sudo ./linux-install-1.10.1.536.sh
+		puis clj pour executer le REPL
 	;; mon commentaire
-	definir une fonction:
-		(defn nomdemafonction [parametre1 parametre2] // fonction nomée nomdemafonction
-			(+ parametre1 parametre2)) // on peut mettre virguel a la place de espace
+	definir une fonction: // elles retournent TOUJOURS une valeur
+		(defn nomdemafonction [parametre1 parametre2 & parametrestypeliste] // fonction nomée nomdemafonction // le parmatre apres & c'est comme unevariable.... (= variable variadic) et du coup parametrestypeliste est en fait une liste. exemple: (nomdemafonction toto titi "a" "b" "c" "d") c'est tr
+			(+ parametre1 parametre2)) // execute la fonction PLUS. on peut mettre virgule a la place de espace
 		ou
 		(def nomdemafonctin
-			(fn [parametre1 parametre2] // en fait ca c'est une fonctin anonyme
+			(fn [parametre1 parametre2] // en fait ca c'est une fonctin anonyme. Equivalent de #(+ %1 %2) (fn [](exec "blah)) equiv: #(exec "blah"); (fn [unseulparam] (exec unseulparam "titi")) equiv: #(exec % "titi)
 				(+ parametre1 parametre2))) // on peut mettre virgule a la place de espace
-	primitives: tous sont immutables
+	fonctions multyArity = en fait c juste une fonction qui a le meme nom mais au comportement different selon le nombre de params envoyés. Comme en java.
+			(defn unefonction
+			([] (uneautrefonctionoulameme "blah"))		// premiere fonction unefonction(){...}
+			([unparam] (uneautrefonctionoulameme unparam)) // deuxième fonction unefonction(unparam){...}
+	
+	primitives: tous sont immutables: si je change un truc, en fait ca ne renvoie une nouvelle copie modifiée et l'anciennes est conservée dans un historique interne.
 			234 ;;long
 			404.044 ;;double
 			39.04M ;;bigdecimal
@@ -2469,9 +2482,46 @@ Clojure :
 			#".*xx.*" ;; # marque une regexp
 			nil ;;null
 			("a" "b" 10.5 5) ;;liste est multitype. Donc le code clojure est aussi une liste mais on utilise plutot les vecteurs. la liste est utilisée pour les macros
-			["a" "b" 10.5 5] ;; vecteur à utiliser comme une liste
-			#{"a" "b" 10.5 5} ;; set
-			(:cle1 1,:cle2 "2",:cle3 3.5) ;;map LINKcljie
+			["a" "b" 10.5 5] ;; vecteur à utiliser comme une liste (("a" "b" 10.5 5) 4) renvoit 5 car une liste comme tout objet est aussi une fonction
+			#{"a" "b" 10.5 5} ;; set  (#{"a" "b" 10.5 5} 2) renvoit "b" car un set comme tout objet est aussi une fonction
+		(:cle1 1,:cle2 "2",:cle3 3.5) ;;map les virgules sont optionelles. LINKcljie 
+	pour transformer un parametre de type liste en plusieurs parametres separes à la suiteiterer sur un parametre de type liste
+		(apply unefonctionappelee parametreNormal parametreDeTypeListe)  // ca va en realite faire (unefonctionappellee parametreNormal parametredetypeListe(1) parametredetypeliste(2) param... etc etc..)
+	pour concatener:
+		(str "a" " " "b")
+	pour convertir nombre en string
+		(str 2) je crois renvoit "2"
+	convertir un truc en vecteur: (vector montruc)
+	maven de clojure = liningen
+		(defproject monprojet "1.2.3" :description "blabla")
+	pour comparer
+		(= false "machin") ;;compare false avec "machin" donc renvoit false.
+	conditions:
+		(if UNCONDITION SIOUI SINON) et chaque element est une fonction. nil et false sont les seules deux valeurs falsy.
+	definir une variable:
+		(def nomdemonobjet UNTRUC)
+	definir des variables key limitees dans un scope:
+		(let [nouvelleCle1 "unevaleur1" nouvelleCle1 "unevaleur2] 
+			... je peux utiliser nouvelleCle1 et nouvelleCle2 c'est scopé ici.
+		)
+
+	afficher la doc d'une fonction
+		(doc nomdelafonctionquejecherche)
+	afficher le code source: (source nomdelafonctionquejecherche)
+	nombre au hasard
+		(rand valeurMaxpossible)
+	switch:
+		(cond (> uneVar 0) UNTRUCARENVOIE
+			(< uneVar 0) UNAUTRETRUCARENVOYER
+			(= uneVar 0) UNTROISIEMETRUCARENVOYER			
+	systemoutprint:
+		(println UNTRUCAECRIRE) 
+	equivalent java:
+		(MaClasse."unParametreDuConstructeur") //= new MaClasse("unParametreDuConstructeur") //instancier un objet java
+		(.unemethodeNonStatiqueJava linstancejava) //= linstancejava.unemethodeNonStatiqueJava(); appeler une methode non statique. Exemple d'utilisation: #(.length %) // du coup % peut etre un string
+		(ObjetJava/methodeStatique parametre) //=ObjetJava.methodeStatique(parametre)
+		(.-nomduchampNonStatique objetjava) // champ java = objetjava.nomduchampNonStatique
+		(ObjetJava/nomDuChampStatique) // ObjetJava.nomDuChampStatique 
 		
 J2EE : jee : jee8 :javaee : EE4J : jakartaee : https://github.com/eclipse-ee4j/jakartaee-tutorial-examples et https://github.com/eclipse-ee4j/jakartaee-tutorial
         <dependency> necessite
@@ -3283,7 +3333,7 @@ freemarker :freemaker :
           
           
           
-  Avec Velocity : (voir freemaker c'est mieux car il gere mieux les listes l'introspection ect...)
+  moteur de template Avec Velocity : (voir freemaker c'est mieux car il gere mieux les listes l'introspection ect...)
     dans un fichier toto.vm
     #set( $contextPath = $request.getContextPath() ) //contextroot
   <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -7714,14 +7764,6 @@ Bouton submit non ajax:
         <h:outputText value="#{myBean.myProperty}" id="resultId"/>.
 ------------FIN BEURK 
 
-kafka : A_COMPLETER voir aussi https://github.com/akka/alpakka-kafka qui fait de reactive streaming c a d backpressure c a d si consummer sont debordes par vitesse ils disent au producer de ralentire. voir aussi du code source sur github/jamesward/koober(demo de la voiture et du gars sur le map) 
-        producer1-   kafka
-                  --\---->topic1(copié sur partition1, partition2, partition3)  // 1 partition leader et les autres partitions sont juste des replicats de securité pour eviter perte données
-        producer2  --\--->topic2                "    partition1(0,1,2,3,4...)          -->consummer1
-                  ------->topic3                "                                      -->consummerGroup(consummer2,consummer3)
-        producer3/------->topic4                "
-        logComppaction sert à convertir automatiquement les doublons-triplons... en un seul: gain de place dans le disque
-        producers ont 3modes d'ecrtutre (async: donees pas garanties reçues. commited to leader: confirmation reception par le partition leader. commited to leader & quorum: confirmation reception par leader + une autre partition)
 mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents dans le systeme de fichier que en blob dans la db. la db c'est pour les metadatas.)
 	pour voir sur quelle version on est: db.version()
         -toujours activer l'authentification (par user/password au moins) facultatif sur local pour test.
@@ -7793,7 +7835,10 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
 					var collections=db.getCollectionNames(); // ne supporte pas setInterval pour executer regulierement alors utiliser while(true){ ... sleep(1000*60*30);}
 					var total=0
 					for var i=0;i<collections.length;i++)
-					{ total=total+db[collections[i]].count()}
+					{
+						 total=total+db[collections[i]].count()
+						sleep(6000); // on peut executer à temps d'intervals reguliers grace à ca.
+					}
 					print(total);
             ou bien mongo mongodb://mongodb0.example.com:28015/testdb?ssl=true // si il est distant
         aide help:
@@ -8851,6 +8896,7 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
                       - String query = "select distinct(alo_project.id), alo_project.nam......from alo_usr alo_usr left join alo_usrcrea alo_usrcrea on alo_usr.usr_id=alo_usrcrea.usrcrea_idusr where alo_usrcrea.usrcrea_idusr is not null and alo_usr.usr_id='"+uid+"' order by alo_project.name";
                         return em.createNativeQuery(query,Project.class).getResultList(); // pour les selects natifs
                         em.createNativeQuery(sql).executeUpdate(); // pour les updates natifs
+			User user = em.find(User.class, uid); //Pour trouver directement par identifiant a condition que @Id soit defini sur le champ d'identifiant. renvoit null si identifiant non trouvé. Ca fait un select par identifiant mais attention : pas d'updates possibles apres. Donc si besoin alors utiliser.find
 			em.persist(unObjet) // ceci va inserer l'objet et cet objet deviendra alors persisant donc chaque modif dedans DANS une transaction sera immediatement modifiée en base
 			em.merge(unobjet) // ceci fait un upsert de l'objet: insertion si n'existe pas et update si existe. L'objet ne devient pas persistant donc modifiable a souhait (je crois) comme pour .persist.
                 JPA_API_CRITERIA : Cest trop de la merde!!!!!!!!!
@@ -17556,7 +17602,7 @@ logback : (mieux que LinkLogutils)
                   <!-- encoders are assigned the type
                        ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
                   <encoder>
-                      <pattern>%d{dd/MM/yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+                      <pattern>%d{dd/MM/yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern> // ou pattern:%date{ISO8601}
                   </encoder>
                   ou ca mais NON c'est deprecie:
                   <encoder> // avant: <layout class="ch.qos.logback.classic.PatternLayout">
@@ -20277,7 +20323,7 @@ lambdas : lambda : lambdas expression :     (lire http://labs.excilys.com/2014/1
                                                     observableliste.stream().collect(Collectors.toList());  
         on peut faire: maclasse.envoimail("adresse",UneClasse::uneMethodeDeUneClasse); c'est la mort du pattern strategie strategy-template ou encore voir DesignPatterns.doc 
 				depuis java8 je peux faire
-				methodeAcceuilantUnConsumer((argument1)->{
+				methodeAcceuilantUnConsumer((TypeDeArgument1 argument1)->{
 					unemethodeaexecuter();
 					uneautremethodeaexecuter();
 				})
@@ -20439,7 +20485,7 @@ POUR LES MAP OU LES FOREACH      static <T,R, E extends Exception> Function<T,R>
                                         }
 POUR LES FOREACH A 2 ARGUMENTS: j'ai d'un coté: 
                                     public static <T,R, E extends Exception> BiConsumer<T,R> handlingFunctionBiArgWrapper(ThrowingBiConsumer<T, R, E> throwingConsumer, Class<E> exceptionClass) {
-                                                         return (i,j) -> {
+                                                         return (i,j) -> { // ou plutot (typei i, typej j) -> {
                                                             try {
                                                                  throwingConsumer.accept(i,j);
                                                             } catch (Exception ex) {
@@ -21804,6 +21850,9 @@ ou bien ca:
         			sql.append(")");
 --------------------------------
 pour supprimer les doublons d'une liste: (c'est pas forcement LinkedList ca peut etre une autre type de liste)
+			avec lambda :
+						return  Arrays.stream(data).distinct().toArray();
+				
 			public LinkedList removeDuplicates(LinkedList liste)
 				{
 				    Set set = new HashSet() ;
@@ -22850,7 +22899,7 @@ pour copier un fichier:
                       return( resultat ); 
                       }
 
-pour generer un nom de fichier de maniere aleatoire:pour generer une chaine de charactères aleatoires hasard hazard: LINK_haqsdfsaqsdfrd
+pour generer un nom de fichier de maniere aleatoire:pour generer une chaine de charactères aleatoires hasard hazard: voir aussi LINK_haqsdfsaqsdfrd
                     java.util.UUID.randomUUID().toString(); // fait pour générer des ID identifiants uniques
                     ou
                     numero aleatoire:
@@ -25730,6 +25779,7 @@ xfce : xcfe : // bureautique debian :
 		backupper et supprimer ~/.local/share/keyrings et la prochaine fois qu'il redemande un mot de passe ne rien mettre plusieurs fois
 	logiciel de scan: XSane
 	packages disponible avec application discover
+	copie d'ecran impr ecran: le programe est deja installe et s'appelle screen ou capture d'ecran
 IMAGES GENEREES EN JAVA SUR UNIX:
 Question:
 Why is the following error message displayed "java.lang.InternalError: Can't connect to X11 window server using ':0.0' as the value of the DISPLAY variable" ?
@@ -26117,11 +26167,30 @@ NGNIX : nginx :
 		root /var/www/html;
 	   }
 	   location / { // pareil mais virer ca si ngnix fait office de reverse proxy vers un autre serveur applicatif derriere
+			set $MAINTCE ""; // pour mettre en place une page de maintenance. Je defini une variable
+			if (-f /etc/nginx/html/maintenance_on.html){// je test si le fichier maitnenance_on.html est présent et existe
+			   set $MAINTCE I;// alors je set la variable à I
+			}
+			if ($remote_addr != "monipadmin"){// si l'adresse ip est differente d'une adresse ip definie
+			   set $MAINTCE "${MAINTCE}F";	// ma variable devient = IF si les deux conditions ci dessus sont vraies
+			}
+			if ($MAINTCE = IF){
+				return 503;  // dans ce cas redirger a LINKlisdfjfjjf
+			}
+						
+
 		root /var/www/html; 
 		ou 
       		proxy_pass http://localhost:3000/;
 	   }
+		error_page 503 @maintenance;   LINKlisdfjfjjf en cas d'erreur 503 trouver @maintenance ci dessous
+		location @maintenance {
+			rewrite ^(.*)$ /maintenance_on.html break;  // presenter la pagage html de maintenance
+		}
 	}
+ dans les logs l'adresse ip entrainte est tout à gauche 
+	172.18.0.1 - - [14/Jul/2020:15:16:29 +0000] "GET /img/icone_launcher.p // c'est 172.18.0.1
+
      
 APACHE :
 Connaitre la version d'apache
@@ -26981,7 +27050,7 @@ fetch : LINKsljqffetch
      }
 
 
-ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch)
+ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch). Ajax ne supporte pas les redirection 302 venant du serveur: il faut envoyer un response.status=302 manuellement dans la servlet et traiter avec cote javascript avec un window.location=nouvelleUrlVersOuRediriger
                         ans = canvas.toDataURL("image/png");  // converti l'image en base64. Pour sauver un canvas sur le serveur en image png ou jpg il faut obligatoirement envoyer les donnees en POST sinon le fichier genere est pourri:
             	    		var formData = new FormData(); ou new FormData(document.getElementById("forText")); // forText est juste un form html recuperable avec document.getElement...ATTENTION les champs de mon formulaire doivent avoir un name sinon ils ne sont pas ajoute dans les formdata 
                             formData.append('ans', ans); // Append extra data before send.
@@ -27203,7 +27272,8 @@ tester le javascript TDD :
     tester avec jest : le meilleur d'apres sylvain. 
         les fichiers de tests doivent s'appeler xxxx.test.js            
         	    npm install --save-dev jest //--save-dest voir npm.
-                    (./node_modules/.bin/)jest --init // il crée le fichier jest.config.js
+                    (./node_modules/.bin/)jest --init // il crée le fichier 
+			jest.config.js
 				dedans je peux mettre des variables globales pour tous les tests:
 						globals: {
 						   "pageContextRequestContextPath":"./"
@@ -27223,7 +27293,9 @@ tester le javascript TDD :
                                                   ],
                                               ],
                                           };
-                  faire ca pour que jest et jsdom comprenne les webcomponents customelements custom-elements: (qu'il ne plante pas à "customElement.define")
+                  faire ca pour que jest et jsdom comprenne les webcomponents customelements custom-elements: il est comprend direct à partir de jest v26.0.1. bien les rajouter dans le dom:document.appendChild(maclasseCustomElement) ou document.appendChild(document.createElement("mon-custom-element"));
+			avant:
+			(qu'il ne plante pas à "customElement.define")
                         dans mes fichiers de test mettre en  tête
                             import 'document-register-element';
                         et dans package.json mettre
@@ -27277,7 +27349,7 @@ tester le javascript TDD :
                                          ou
                                          const mockMonObjet={ // si marche pas (le new mock ne peut pas s'instancier au run essayer ci dessus
 						nomdemamethode:jest.fn().mockImplementation..etc...voir ci dessous
-                                                send:jest.fn().mockImplementation(function(){this.onload();}),
+                                                send:jest.fn().mockImplementation(function(){this.onload();}),// ca ca marche bien :-)
                                                 ou
                                                 send:jest.fn(), // si on veut rien faire.
                                                 onload:jest.fn().mockImplementation(function(){}),//si on ne veut rien faire
@@ -27287,6 +27359,7 @@ tester le javascript TDD :
                                       window.XMLHttpRequest = jest.fn().mockImplementation(mockMonObjet);
                                              (.. mes tests..)
 					unmodule.unemethode=jest.fn(); // pour que la methode d'un module ne fasse rien
+					jest ne supporte pas la methode native scrollIntoView alors faire : Element.prototype.scrollIntoView = jest.fn();
                                 });
                                 it("checkloop",()=>{...
 			ou 	
@@ -27359,7 +27432,11 @@ tester le javascript TDD :
 					      .toHaveBeenCalledTimes(number)
 					      .toHaveBeenCalledWith(arg1, arg2, ...)
 					      .toHaveBeenLastCalledWith(arg1, arg2, ...)
-					  expect(fn)
+					expect(window.XMLHttpRequest).toHaveBeenCalledWith(
+						      1,
+						      true
+						  );					
+					   expect(fn)
 					      .toHaveBeenCalledWith(expect.anything())
 					      .toHaveBeenCalledWith(expect.any(constructor))
 					      .toHaveBeenCalledWith(expect.arrayContaining([ values ]))
@@ -27369,8 +27446,7 @@ tester le javascript TDD :
 					  expect(memoclap.fileActorsSecondsAnnotation.length).toEqual(3);
 					  expect(memoclap.fileActorsSecondsBoolean.length).toEqual(3);
 					  expect(memoclap.numFileSecondDraw.length).toEqual(3);
-					
-    
+					   
   pour executer voir LINKjestexecute
     avec Jasmine : et testem : (sinon utiliser https://jsfiddle.net/)
       installer testem: (pas besoin d'installer jasmine)
@@ -27412,14 +27488,14 @@ ES6 :modules: une page html/js peut importer une page html/js qui importe aussi:
             <script type="module" src="... 
         dans main.js: // attention toutes les variables primitives exportees sont readonly. Faire des setters si je veux les modifier 
               import {toto,blabla} from "./path/xxx.js";                          AAA  // autant mettre le ".js" c'est normalement supporté partout
-             import {projectsMEMENOM} from './js/memoclap-projectsFieldsets.js';  AAA  // toujours mettre accolades meme si qu'un seul objet
+             import {projectsMEMENOM} from './js/memoclap-projectsFieldsets.js';  UUU  // toujours mettre accolades meme si qu'un seul objet
              import * as bidule from './js/memoclap-projectsFieldsets.js'; AAA et BBB  // j'importe tous les exports de bidule et ici ils sont prefixes par "bidule"             
              import projects from './js/memoclap-projectsFieldsets.js';    CCC  //du coup j'appellerais projects.unTrucDefiniPlusHaut.uneDeSesMethodes()
              import UnComponentAttentionMemeNom from './js/alertmsg.js';    BBB
              on peut faire new unmodule.UnObjetDuModule();                     
         dans path/xxx.js:  
             Exporter plusieurs trucs
-              export var projectsMEMENOM =....                                                 AAA   
+              export var projectsMEMENOM ={...des methodes dedans....                          UUU   
               export function projectsMEMENOM(arg){...}                                        AAA
             Exporter qu'un truc
               export default class(ne marche que avec class) UnComponentAttentionMEMENOM{....} BBB
@@ -27484,7 +27560,7 @@ erreur: (intermediate value)(...) is not a function
             });;
 	pour faire un minus: tableau1 minus tableau2: moins, soustraire
 		console.log("minus :"); console.log(talkingActors.filter(actor=>shuttedUpActors.indexOf(actor) < 0));
-	si c'est un NodeList faire Array.from(lanodelist).forEach(....
+	si c'est un NodeList faire Array.from(lanodelist).forEach(.... exemple Array.from(querySelectorAll("...")).filter
         par exemple cherche dans un tableau si les valeurs existent dans un autre tableau: boucle imbriquee:
           if(unTableauAParcourir.filter(function(act,idx){return unAutreTableauAParcourir.filter(function(actor){return actor == idx;}).length>0;})
                                                  .filter(function(act){return (act!=null //sur le resultat de l'imbrication on peut enchainer avec dauters filtres
@@ -27550,6 +27626,7 @@ promesses : promese :promeses :Promises :promise : ne plus utiliser les callback
 								    .then(res=>saveIntoLocalStorage()) // attention pas de ";"pointvirgule apres la methode dans cette syntaxe
                                                                 .then((xATOUJOURSMETTRE)=>{return Promise.resolve("toto") ou return Promise.reject("toto")).then... // on peut meme enchainer donc sur d'autres promises then..then..then
                                                                 .then(xATOUJOURSMETTRE=>{return new Promise...(voir suite dessus) // permet aussi d'enchainer les then
+                                                                .then(xATOUJOURSMETTRE=>{return resolve()} // si ce then est déja dans une autre promise parente (promises imbriquées. SUPER IMPORTANT DE FAIRE COMME CA. c'est le resolve de la promise parente
                                                                 .then(xATOUJOURSMETTRE=>{return unevalue; // ca equivaut a faire un return Promise.resolve(unevalue) le suivant .then(x=>{x sera egal à unevalue})
                                                                 .then(xATOUJOURSMETTRE=> throw new Error("xxx")// equivaut à return Promise.reject("xxx") 
                                                                 
@@ -27563,7 +27640,7 @@ promesses : promese :promeses :Promises :promise : ne plus utiliser les callback
         utilisation2:     Promise.all([unearray,depromesses]).then(datasRenvoyeesATOUJOURSMETTRE=>{ ...etc avec datasRenvoyees.. }).catch(errATOUJOURSMETTRE=>console.log(err)); converti array de promesses en dataRenvoyees qui est un tableau de datas.
         Promise.all(
         [
-          unefonction(1), doit retourner une promesse
+          unefonction(1), doit retourner une promesse ou si c'est une liste de fonctions: Promise.all([laliste]).then //donc toujours mettre les crochets autour de la liste
           unefonction(2),
           unefonction(3)
         ]
