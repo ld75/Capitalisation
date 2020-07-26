@@ -681,7 +681,7 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
         ENTRYPOINT ["/docker-entrypoint.sh"] // facultatif c'est le script qui est executé pour lors du démarrage de l'image et qui prend tous les arguments de CMD 
         CMD ["npm","start"] OU ["python", "app.py"]// executera npm start OU python app.py au moment ou on fera un run de l'image (app.py doit avoir été copie precedemment dans mon container dans le WORKDIR). cela s'ajoute à la fin de ENTRYPOINT sauf si je force dans docker run uneautrecmdquiprendralaplace
    docker build -t(pour tag) unnomquejedonneamonImageAcreer:untag -f ./path/AutreNomDeDockerfileSiCestPasJusteDockerfile dernierArgumentEstPathRelatifVersLeRepertoireContexteContenantLaRacineDuCodeSourceOnPeutMettrePoint/// Creer mon container docker qui rentre dans la liste repository d'images. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto
-  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e "nomDuneSystem.PropertySiJeVeux=savaeleur" ou --env(facultatif) JAVA_OPTS="-Dpropriete.java=yyyy -Dxxx=yyy" --link(facultatif et inutile au sein d'un docker-compose) nomduncontainerTypeDatabaseDansunNetworkBridge:nomDuHostNameDansLaConfDeMonProgrammeLINKjdbcdockerdatabase --name=facultatifUnAutreNomQueJeDonneAMonContainerce(nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con) -d (--detatch) (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement. on peut enchainer plusieurs -p) --mount type=bind,source=$variablepath ou /un/path/duHost/DirOuFichier,target=/unPathDansle/container/dirOuFichier OU -v(mais preferer--mount à-v) $(pwd)(ou un repertoire du host os. S'il n'existe pas il est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container) --network(inutile au sein d'un docker-compose) unreseaubridge ou host si besoin ouvert(c'est alors plus rapide au niveau du network) -hNomDuHostnameSiParExempleCestUneBaseDeDoneeJeCrois nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) OU identifiantDeLImage LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container nomdelimage
+  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e "nomDuneSystem.PropertySiJeVeux=savaeleur" ou --env(facultatif) JAVA_OPTS="-Dpropriete.java=yyyy -Dxxx=yyy" --link(facultatif et inutile au sein d'un docker-compose) nomduncontainerTypeDatabaseDansunNetworkBridge:nomDuHostNameDansLaConfDeMonProgrammeLeMotlocalhostEstInterditLINKjdbcdockerdatabase --name=facultatifUnAutreNomQueJeDonneAMonContainerce(nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con) -d (--detatch) (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement. on peut enchainer plusieurs -p) --mount type=bind,source=$variablepath ou /un/path/duHost/DirOuFichier,target=/unPathDansle/container/dirOuFichier OU -v(mais preferer--mount à-v) $(pwd)(ou un repertoire du host os. S'il n'existe pas il est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container) --network(inutile au sein d'un docker-compose) unreseaubridge ou host si besoin ouvert(c'est alors plus rapide au niveau du network) -hNomDuHostnameSiParExempleCestUneBaseDeDoneeJeCrois nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) OU identifiantDeLImage LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container nomdelimage
 	par defaut c'est executé sur le reseau bridgé partage entre tous les containers et même le host. Suffit de se connecter dans le container et voir leur IP
   docker start -ia(comme -it avec run) nomduconteneurARedemarrer // existe aussi docker stop nomduconteneur ou idduconteneur pour stopper un conteneur
   docker container stop IDDuContainer // pour stopper l'execution d'un container (par son ID ça marche mieux voir donc la liste.)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
@@ -738,8 +738,8 @@ docker-compose : dockercompose : s'installe avec apt-get ou aptitude
 			container_name: nomdemoncontainerQueJeForce //obligatoire meme si "."
 			depends_on:
 				- unautreservicedontLuiDepend
-			links: // non inutile! sauf si je veux faire des sousreseau et cloisoner dans un docker-compose
-				- NONINUTILEunautreservice:hostnamedansmoncontainer
+			links: // utile pour que plusieurs services se voient avec des noms d'hosts determinés (et pour ne pas utiliser "localhost" par defaut qui pour chacun est lui meme)
+				- unautreservice:hostnamedansmoncontainer
             		command: npm run // overrite CMD ci dessus: en general la commande ici sert à demarrer un serveur
                             ports:
                                 - 80:80  // quand on met - c'est parce que c'est une liste
@@ -773,6 +773,7 @@ docker-compose : dockercompose : s'installe avec apt-get ou aptitude
                 networks: //falcultatif                
                     unreseaubridgé: // je crée un reseau brigé qui est utilisé sur les 2 services dessus pour qu'ils communiquement
             executer sur l'emplacement de ce fichier:
+				dans les commandes ci dessous si le nom du fichier compose n'est pas docker-compose.yml mettre -f leNomDuFichierDockerCompose.yml
                 docker-compose up -d FacultatifLeNomDuService// -d pour executer en background sinon il garde le prompt et Ctrl+C kill le process. Il ne build pas il transforme d'image vers container et le start
 		docker-compose build facultatifLeNomDuService // il build l'image seulement
 		docker-compose rm // pour supprimer le cache dans dockercompose de mes images. A faire si j'ai mis à jour l'image docker. A faire chaque fois que je modifie docker-compose.yml facultatif: -f lenomDuServiceFacultatif //-f pour forcer ne pas qu'il demande yes. 
@@ -1464,7 +1465,7 @@ executer de la configuration post demarrage: LINKasadmdfirez
                                                   configs.config.default-config.network-config.protocols.protocol.sec-admin-listener.http.server-header=true
                                                   configs.config.server-config.network-config.protocols.protocol.http-listener-1.http.server-header=true
                                                   configs.config.server-config.network-config.protocols.protocol.http-listener-2.http.server-header=true
-             
+    si hazelcast plante au demarrage c'est soit qu'il ya pas assez de memoire soit qu'un truc tourne et fait ch...
     payaramicro maven plugin pluggin: mais bof pas super efficace ou j'ai pas trouvé.
     <plugin>
                 <groupId>fish.payara.maven.plugins</groupId>
@@ -7900,13 +7901,14 @@ pour se connecter avec un utilisateur user
         pour voir la liste des collections d'une base:
             show collections
         exemples de rechercher requetes. Une collection = une table relationelle
-                    db.uneCollection.find({queryNeRienMettrePourTrouverTout},{facultatifLesChampsARetourerFiltrer}) // {lechamp:null} pour filtrer les champs qui n'existent pas
+                    db.uneCollection.find({queryNeRienMettrePourTrouverTout},{facultatifLesChampsARetourerFiltrer}) // {lechamp:null} pour voir les champs s'ils n'existent pas(je le met ou ? droite ou gauche?). rajouter à la fin .pretty() pour afficher joli
+						a gauche pour quil retourne que les champs qui existent et sont remplis non nulls non vides non empty: {"mon.champ":{$exists:true,$not:{$size:0}}}
 	requete : exemples:
 		    db.lacollection.find({"champTypeTableau.4":{$not:{$in:["x","y]}}},{champaretourner:true,champapasretourner:false}) //4 eme index du champttypeTableau(attention ce truc .4 marche que dans la premiere partie du find) not(negation) in pour n'importe quel index mettre les GUILLEMETS! "champTypeTableau.souschampDuTableau":x c'est comme si je mettais: "champTypeTableau[nimporteQuelIndex].souchampDuTableau
 							             .find({$and:[{...},{...}..]})
 								     .find({unchamp:{$not:/uneregexp/}})
 	avec wildcard regexp:
-		db.toto.find({"monchamp":{$regex:/^valeuravec.*tata/i}},...filtresibesoin  //i pour ignorecase mais ya d'autres options possibles.(/ est obligatoire, i est facultatif) Attention toujours commencer par ^et les wildcard c'est .*
+		db.toto.find({"monchamp":{$regex:/^valeuravec.*tata/i}},...filtresibesoin  //i pour ignorecase mais ya d'autres options possibles.(/ est obligatoire, i est facultatif) Attention toujours commencer par ^et les wildcard c'est .* Le caractere d'echappement est \
             var doc = db.uneCollection.findOne ou find(...)// trouver par id (du coup doc est une variable) // findOne retourne le 1er resultat
 	recuperer le dernier enregistrement insere:
 		db.uneCollection.find(...).sort({"_id":-1}).limit(1) // attention ne marche que si on a pas forcé overridé le _id auto incrementé
@@ -7922,6 +7924,10 @@ pour se connecter avec un utilisateur user
                     db.uneCollection.remove(...) //pour supprimer ce qui match. Comment faire pour tout supprimer de la collection ?  
             db.uneCollection.insert({ _id: 1, jsFunc: function(){ print("hello") } } ) // si uneCollection n'existe pas elle est automatiquement créee
             db.myNewCollection3.createIndex( { y: 1 } ) // ajoute un indexe dans la collection
+	creer une view:vue:
+		db.createView("NomDeLaView","NomDeLaCollection",[{$project:{monFiltreAvecDesGuillemetsAutourDesChamps}}])
+			et ensuite je peux interroger ma view: db.NomDeLaView.find().sort("....
+			il cree aussi  une collection system.views contenant la def de toutes mes vues. Pour supprimer toutes mes vues d'un coup je fais db.system.views.drop()
 	mongodump sur windows:
 		E:\x\MongoDB\bin\mongodump.exe --port=27017 --host=localhost --username=superuser --password=xxxx --authenticationDatabase=admin --db=testGlobal --out ou --archive=E:/mongoout //out dans un repertoire, archive dans un compresse
 	mongorestore: //pour importer ne fait jamais d'upsert. Ignore seulement si l'id existe deja
@@ -24588,10 +24594,10 @@ pour voir la liste des groupes
 	cat /etc/group
 pour creer un groupe
 	groupadd
-grep chainedecaracteres nomfichier
+grep chainedecaracteres nomfichier // ajouter -l pour qu'il affiche seulement le nom des fichiers concernes
 grep -i chainecaracteres nomfichier........... -i pour ignorer la case
 grep 'chainecaracteres' nomfichier1 nomfichier2 nomfichier3 JE NE PENSE PAS QU ON EST BESOIN DE METTRE DES GUILLEMENTS
-grep 'chainecaracteres' * ... pour rechercher dans le repertoire en cours une chaine de caractere de maniere recursive
+grep 'chainecaracteres' * ... pour rechercher dans le repertoire en cours une chaine de caractere de maniere non recursive
 grep -v 'abcd$' pour faire une recherche de tout sauf ce qui se termine par abcd exclure
     grep -r 'chainecaracteres' * ... pour chercher dans le repertorie en recursif
     si ca ne marche pas on peut faire ca:
@@ -33520,6 +33526,7 @@ renommer un repertoire fichier en un autre:
     rename dir1 dir2
     commande dos pour voir les ports utilises sur mon ordi: netstat (voir netstat plus haut)
     les alias: c a d le nom des serveurs et adresse ip sont a definir dans C:/WINNT/system32/drivers/etc/hosts: a la modif il prend en compte tout de suite. LINKàç<çç_à
+		sur linux l'equivalent est ecrit dans /etc/hosts
     si je veux me connecter en dur sur miami: aller dans panneau de configuration > Reseau > protocole > TCP/IP > propriete adresse IP: 10.68.81.253 ou 242 masque: 255.255.255.0 Valider et redemarrer l'ordinateur.
     outils:de gestion programme de mot de password:
         keepass
@@ -33656,7 +33663,7 @@ pour connaitre mon domaine, mon dns et d'autres infos: ipconfig/all
                                       Bail obtenu . . . . . . . . . . .: mercredi 29 août 2012 09:40:25
                                       Bail expirant . . . . . . . . . .: samedi 8 septembre 2012 09:40:25
 les hosts pour simuler overrider les DNS:sont sur: ouvrir avec notepad en mode admin si pas possible sauver voir aussi LINKàç<çç_à 
-        C:/WINDOWS/system32/drivers/etc/hosts (attention un seul espace ou un seul tab entre ip et url)
+        C:/WINDOWS/system32/drivers/etc/hosts (attention un seul espace ou un seul tab entre ip et url) sur linux unix l'equivalent est ecrit dans /etc/hosts
               si par ex les DSN ne sont pas encore declares sur le net je peux faire comme si on ajoutant dans ce fichier:  utile pour tester la migration serveur avant la migration dns reele (voir seo: pas d'interruption de service)
               adresseIPdestination urlDeTypetoto.titi.tata  /donc quand moi je vais sur urlDeTypetoto.titi.tata il va sur adresseIPdestination meme si c pas encore defini sur le reseau
                si marche pas faire ipconfig /flushdns (sur windows) // vide memoire cache
