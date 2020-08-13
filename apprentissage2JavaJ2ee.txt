@@ -732,10 +732,10 @@ docker-compose : dockercompose : s'installe avec apt-get ou aptitude
                 services: //contient la liste des conteneurs dont on a besoin. Partout ci dessous on peut utiliser ${unevariableEnvDeclareeEtExporteeDepuisUnScriptKsh}
                     nomdemonservice1: // premier service. nom unique 1service=1container
             		build: //facultatif n'est utilisé que si on execute docker-compose build
-				dockerfile: ./Path/vers/le/Dockerfile
+				dockerfile: ./Path/vers/le/Dockerfile/parRapport/au/context/ci/dessous/leDockerfile
 				context: lecontextedudockerfile: . par exemple
                         image: nomDeMonImage1:sontag // me permet aussi direct de tager pour un registry mon image: image:iponregistre:5000/monprojetFacultatif?/image:tag voir LINKtagregistr
-			container_name: nomdemoncontainerQueJeForce //obligatoire meme si "."
+			container_name: nomdemoncontainerQueJeForce //obligatoire meme si "." c'est le nom du hostname pour les autres services
 			depends_on:
 				- unautreservicedontLuiDepend
 			links: // utile pour que plusieurs services se voient avec des noms d'hosts determinés (et pour ne pas utiliser "localhost" par defaut qui pour chacun est lui meme)
@@ -748,8 +748,8 @@ docker-compose : dockercompose : s'installe avec apt-get ou aptitude
                                 - UNE_VARIABLE1=lavaleur1
                                 - UNE_VARIABLE2=lavaleur2
                                 - UNE_VARIABLE3=nomdemonservice2 // on peut avoir ca si nomdemonservice1 accede à nomdemonservice2
-                            networks://non inutile dans docker compose! sauf si je veux faire des sous-reseau dans un dockercompose
-                                - unreseaubridgéNONINUTILE
+                            networks://non inutile dans un docker compose! car par defaut il cree un network appelé "repertoireSousLequelSeTrouveDockerPointYml_default". Sauf si je veux faire des sous-reseau dans un dockercompose. Si je veux que deux docker-compose.yml puissent se voir LINKnetworkdockercompose
+                                - unreseaubridgéDansLequelCeServiceBaigne
 	                volumes:
                         - type: bind // ou volume ou tmpfs(temporaire est ephemere)
                           source: ${localcustomcsspath}
@@ -761,24 +761,28 @@ docker-compose : dockercompose : s'installe avec apt-get ou aptitude
                         - unnomdevolumemanagé:/un/path/du/container2 LINKaze
                             restart: always(redemarre ce container toujours quand on va redemarer le daemon docker) ou no (redemarre jamais ce container automatiquement) ou unless-stop(dedemarre ce container automatiquement au demarrage du daemon docker sauf si on a fait docker-compose stop avant)                                   
           		postgres: // deuxieme service = 1 container
-
+				(...)
+				logging: // pour que docker gere la taille des logs (pas la peine d'effacer vider les logs du coup)
+				      options:
+				        max-size: "10m"
+				        max-file: "3"
                      nomdemonservice2:
                         image: blabla:2.0
-                            networks:
-                                - unreseaubridgé
                 # commentaire
-                volumes:  //falcultatif utile que pour les volumes managés
-                    unnomdevolumemanagé: // je declare ici des volumes bridgés qui peuvent etre utilisés là LINKaze
-                    auautrevolumemanagé:
-                networks: //falcultatif                
-                    unreseaubridgé: // je crée un reseau brigé qui est utilisé sur les 2 services dessus pour qu'ils communiquement
+                	volumes:  //falcultatif utile que pour les volumes managés
+                    		unnomdevolumemanagé: // je declare ici des volumes bridgés qui peuvent etre utilisés là LINKaze
+	                        auautrevolumemanagé:
+		networks: //ACAPITALISERSICAMARCHE
+		  default:
+		    external:
+		      name: repertoireSousLequelSeTrouveDockerPointYml_default
             executer sur l'emplacement de ce fichier:
 				dans les commandes ci dessous si le nom du fichier compose n'est pas docker-compose.yml mettre -f leNomDuFichierDockerCompose.yml
                 docker-compose up -d FacultatifLeNomDuService// -d pour executer en background sinon il garde le prompt et Ctrl+C kill le process. Il ne build pas il transforme d'image vers container et le start
 		docker-compose build facultatifLeNomDuService // il build l'image seulement
 		docker-compose rm // pour supprimer le cache dans dockercompose de mes images. A faire si j'ai mis à jour l'image docker. A faire chaque fois que je modifie docker-compose.yml facultatif: -f lenomDuServiceFacultatif //-f pour forcer ne pas qu'il demande yes. 
                 docker-compose logs -f pour voir les logs comme un tail -f
-                docker-compose stop // arret du run mais ne supprime pas les conteneurs
+                docker-compose stop facultatifLeNomDuServiceAArreter// arret du run mais ne supprime pas les conteneurs
                 docker-compose start// demarre les conteneurs arretés
                 docker-compose down // attention, supprime tous les conteneurs et images sauf les volumes
                 docker-compose down -v// attention, supprime tous les conteneurs, images et volumes managés                                        
@@ -952,11 +956,13 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
         pour supprimer tous les gros fichiers de l'historique pour que je puisse pusher sur github
         si j'ai "error: could not read '.git/rebase-merge/head-name': No such file or directory" faire git reflog // permet de voir l'historique du commit dans lequel on est
             git filter-branch --index-filter "git rm --cached -f --ignore-unmatch(ignoreleserreurs) PathDeMonGrosFichier.webm" (mettre -f si il le demande) --prune-empty --tag-name-filter cat -- --all
-      git log //voir les commits. N'affiche pas les commits du futur donc voir LINKlkghhrghh
+      git log -- facultatifLePathDunFichierAObserverSeul //voir les commits. N'affiche pas les commits du futur donc voir LINKlkghhrghh
+      git log uneautrebrancheQueCelleOuJeSuis -- facultatifLePathDunFichierAObserverSeul
       git log --all // voir les commits du future si j'ai fait un checkout sur un commit du passé LINKlkghhrghh
       git log --name-status // voir tous les fichiers modifiés à chaque commit
       git log --follow -- path/du/fichier // pour voir les commits d'un fichier specifique
       git log --graph --oneline --decorate --all // affiche joli voir joli
+      git log -L 2,5 ou +3 :pathfichier.txt // genial: affiche entre la ligne 2 et la ligne 5 tout l'historique du bouzin
       git shortlog -s -n  // voir le nombre de commits par auteur: stats.statistiques
       git diff compare pour parametrer avec un meilleur visibilité: external tool:        
           installer C:\Program Files\KDiff3
@@ -976,7 +982,6 @@ git diff compare mon workspacepasencoreadded avec le dernier commit
       git tag 1.2.0 (sans mettre "v")// tag le dernier commit fait dans mon repo. ce tag ne se push pas.... voir Linktaggit
       git tag 1.2.0 iducommit fourni par >git log // cree un tag pour le désigné
       git diff --name-only // affiche que les noms des fichiers differents
-      git log -L 2,5 ou +3 :pathfichier.txt // genial: affiche entre la ligne 2 et la ligne 5 tout l'historique du bouzin
       Linktaggit:  le tag ne se push pas par defaut: pour le pusher faire git push origin <identifiant du tag>
       git checkout pathfichiermodifieMaisPasAdded //undo retour recupere annuler mes modifs 
       git checkout <nom_du_tag> pour revenir à une ancienne version// ne marche pas si je veux remplacer mon working directory modifié par le dernier commit: dans ce cas faire git chekout -- pathAvecWildcardDesFichiersQueJaiModifieDansLeWorkSpaceMaisQueJeNaiPasAdded (undo) Linkcheckout
@@ -992,7 +997,7 @@ git diff compare mon workspacepasencoreadded avec le dernier commit
       git stash clear // supprime tous mes stash! attention.
       si j'ai erreur Updates were rejected because the tip of your current branch is behind et que je veux quand meme pusher:
             je peux faire git push -f      
-     git cherry-pick <numerodecomitSEULQueJeVeuxRecupererLaOuJeSuis> // attention de commiter avant de faire ca
+     git cherry-pick <numerodecomitSEULQueJeVeuxRecupererLaOuJeSuis> // attention de commiter avant de faire ca. si il dit error:... c juste que le merge est à refaire a la main. Ensuite si je reussi le merge: git add mes fichiers merges puis  git cherry-pick --continue sinon git cherry-pick --abort
     envoyer/recuperer des projets entre mon local et le github:
       fork: fait une copie de tout un projet (branches incluses) dans mon github. Je peux ensuite travailler dessus dans github ou en local(cloner) et à la fin je soumet mes modifs: pull request= merge request mergerequest. si accepte: ça fetch+merge+commit tout mon fork(je crois). SI il y en a plusieurs qui se suivent et que je dois accepter, ne prendre que le dernier et ignorer les precednets (je pense) car le dernier mergerequest resume tous les autres d'avant.
 	pour puller les modifs de l'origin de mon fork dans mon fork local: LINKpullupstream
@@ -1099,6 +1104,10 @@ gimp :
 	un masque ne sert qu'a peindre de la transparence sur le calque qui lui est lié. (seules couleurs noir=transparent et blanc comptent) Je peux sur le masque faire par ex un degradé noir-blanc radial
 	rogner croop:
 		image> rogner selon le contenu(très pratique)
+	pour faire un carré rectangle:
+		outil selection, faire la forme, choisir une couleur et outil seau
+	pour faire un trait droit
+		prendre outil pinceau + laisser shift appuyer + tracer
 photoshop :
 justifier un texte: menu calques>texte>transformer en paragraphe > ouvrir fenetre pannel texte: les options justification sont activées: je peux focaliser la justfication sur les lignes selectionnees
 virer effet aimant magnet
@@ -1194,7 +1203,7 @@ voir les logs d'intellij
     help>logs
 shortcut pour deplacer le splitpannel du projet: Ctrl+Shift+fleches droite et gauche 
 si j'ai unexpected end of file ou fin de fichier premature: c parce que j'ai des retours chario crlf au lieu de lf: faire file > line separator
-shortcut pour System.out.println ecrire sout puis ctrl+espace
+shortcut pour System.out.println ecrire sout puis tab ou ctrl+espace
 Changer la couleur des instances selectionnées: settings>(editor>color scheme>general pas obligéToutCaEntreParentheses)> chercher "identifier under caret" // j'ai du faire ça car le bleu de fond était trop pale et non visible
 pour voir les dependances depandenc dependency dependencies le diagrame c pourri et en plus c'est que sur ultimate. mieux vaut faire Analyze>Analyze Dependencies....
 ajouter une dependence un pluggin dans le pom: alt+insert
@@ -1500,10 +1509,10 @@ executer de la configuration post demarrage: LINKasadmdfirez
                     </javaCommandLineOptions>
                 </configuration>
             </plugin>
-rajouter une base de LINKlskjdfqm  donnée jta au serveur payara
+rajouter une base de  donnée jta au serveur payara LINKlskjdfqm  
     jai mis un domain.xml  a coté de payara.jar et j'ai rajouté dedans 
           <resources>
-        <jdbc-resource pool-name="H2Pool" jndi-name="jdbc/__default" object-type="system-all"/> // dans <resources>/<jdbc-resource jndi-name="cettefererence" Ma declaration de LINKjta est ici 
+        <jdbc-resource pool-name="H2Pool" jndi-name="jdbc/__default" object-type="system-all"/> // dans <resources>/<jdbc-resource jndi-name="cettefererence" Ma declaration de LINKjta est ici  mais attention je n'ai jamais reussi ici à definir mon propre jndi-name j'ai toujours utilisé H2Pool et jdbc/__default comme nom
 	<jdbc-connection-pool is-isolation-level-guaranteed="false" name="H2Pool" datasource-classname="com.mysql.cj.jdbc.MysqlConnectionPoolDataSource" res-type="javax.sql.DataSource">
             <property name="URL" value="jdbc:mysql://127.0.0.1 ou LINKjdbcdockerdatabase :3306/memoclap"/>
             <property name="user" value="root"/>
@@ -2441,6 +2450,7 @@ erreurs codes http: LINKcodesHttp
 417 SC_EXPECTATION_FAILED 
 304: le serveur dit que le browser a deja toutes les infos dans son cache et pas besoin de renvoyer d'autres infos + code 200
 500: erreur interne du serveur
+502: bad gateway : mauvais parametrage de nginx ou apache en amont d'un site web.
 504: gateway timeout	/
 503: Service unavailable
 
@@ -2747,8 +2757,8 @@ securite : security :(JSR375 implémenté par soteria qui est la reference) plus
        MaCustomClasse implements HttpAuthenticationMechanism SEUL TRUC QUE JE REUSSI A FAIRE MARCHER. MAIS PAS CEUX CI DESSUS                                                                                                                                                                                                             
               @Inject 
               private IdentityStoreHandler identityStoreHandler; // doit avoir ca ou peut directement injecter un IdentityStore
-       METHODE Importante: validateRequest() que je dois implémenter Les 2 autres c facultatif. S'execute à chaque requete avant les filters (si user n'a pas de session FAUX!) et s'il arrive dans une servlet LINKservletsecurity
-                              Fait appel à->IdentityStoreHandler(Je peux le reecrire moi même)
+       METHODE Importante: validateRequest() que je dois implémenter Les 2 autres c facultatif. S'execute à chaque requete avant les filters (seulemnt si user n'a pas de session VU_1!) et s'il arrive dans une servlet LINKservletsecurity
+                              Fait appel à->IdentityStoreHandler(Je peux le reecrire moi même mais dans la majorite des cas je vais ecrire plusieurs classes implementant IdentityStore)
                                 puis
                                     if(les parametres d'authent existent)
                                     {
@@ -2770,11 +2780,14 @@ securite : security :(JSR375 implémenté par soteria qui est la reference) plus
                                    |            |
                              MaCustomClasse     @LdapIdentityStoreDefinition;@DatabaseIdentityStoreDefinition (besoin implementer PasswordHash affublé en dependent-scoped bean // role: hasher le password pour comparer ce hash au pwd dans la DB) mais autant utiliser l'implement Pbkdf2PasswordHash  qui nous est proposé; RememberMeIdentityStore: renvoi un token longue durée au client. QUand client revient, valide le token(on dirait que ca peut etre utilisé pour oauth)
                             METHODES: CredentialValidationResult**<-validate(Credential);                                           METHODES:initialize(parametres)// est appelé automatiquement avec les parametres défnis dans @DatabaseIdentityStoreDefinition qui sont les hasheurs possibles 
-                                        automatiquement appelera                                                                              verify() et generate() pour valider un password ou pour en créer un autre ??
+							dans validate j'execute validation selon le type du credential					verify() et generate() pour valider un password ou pour en créer un autre ??	
+							if (credential instanceof TotoCredential) return CredentialValidationResult.NOT_VALIDATED_RESULT;
+							sinon poursuit la validation
+                                        automatiquement appelera                                                                              
                                      GroupesDeCettePersonne<-getCallerGroup(CredentialValidationResult**) // peut fonctionner sans la validation ci-dessus pour recuperer les groupes d'un user meme non authentifié à condition que ce user ait: IdentityStorePermission("getGroups") sécurité à implémenter moi meme si j'utilise ma propre custom classe IdentityStore
                                      Set<VALIDATE et/ou PROVIDE_GROUPS><-validationTypes() // sert à determiner quelle genre de validation fait cet IdentityStore
                                      priority() // retourne un integer: plus il est petit plus il est prioritaire pour IdentityStoreHandler
-       **CredentialValidationResult contient le principal et ces roles: return new CredentialValidationResult("Duke",new HashSet<>(asList("foo", "bar")));
+       **CredentialValidationResult contient le principal et ces roles: return new CredentialValidationResult("DukeQuiSeraAlorsLePrincipal",new HashSet<>(asList("foo", "bar")));ou new CredentialValidationResult(unObjetQuiExtendsCallerPrincipal,new HashSet<>(asList("foo", "bar"))); 
         necessaire de parametrer web.xml voir LINKlkjsqgeegege:<security-constraint> et <security-role>       
        pour securiser securite une servlet: servlet :// pour ouvrir à tous ne pas mettre l'anotation @ServletSecurity ou bien mettre je crois @PermitAll. Mais ne rien mettre dutout marche.  
             @WebServlet(urlPatterns="/un/path") ou @WebServlet("/un/path")  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention bien mettre urlPatterns sinon il se comporte comme si j'avais mis "un/path/*"
@@ -2822,8 +2835,16 @@ config de la base de donnée donnee: en jee
         sont equivalents dans web.xml de
                   <data-source>
                   <name>jdbc:hsqldb:mem:employees</name> // bien mettre mem sinon il fait chier avec les connexions mais c'est que pour tester car volatile
-                  (...)
-                  <class-name>org.hsqldb.jdbc.JDBCDriver</class-name>
+           	ou 
+		<name>java:app/jdbc/memoclap</name> LINKwebxmljta 
+                <class-name>org.hsqldb.jdbc.JDBCDriver</class-name>
+                     ou 
+		<class-name>com.mysql.cj.jdbc.MysqlConnectionPoolDataSource</class-name>
+          	<server-name>database</server-name>
+	          <port-number>3306</port-number>
+        	  <database-name>memoclap</database-name>
+	          <user>root</user>
+        	  <password>foulurecalotte</password>
               </data-source>  
              puis ailleurs LINKdtresr:       
          @Stateless  ou @ApplicationScoped// exemple d'utilisation appel ailleurs
@@ -4638,7 +4659,7 @@ web.xml : webxml :
                 	      <role-name>user</role-name> // on retrouve les memes que ceux definis dans <auth-constraint>                 
                 	      <role-name>supervisor</role-name>
             </security-role>
-            env-entry Definit le nom d'une ressource accessible grâce à l'interface JNDI. voir LINK''''**''''  
+            env-entry Definit le nom d'une ressource accessible grâce à l'interface JNDI. voir LINKmlklmkqjsdfmlkjazx  
              pages d'erreurs:
                       <error-page>
                         <exception-type>javax.faces.application.ViewExpiredException
@@ -4810,7 +4831,7 @@ exemple de generation de graphique avec jcharts: c'est une jsp:
                   	}
                   %>
 
-JNDI :LINK''''**'''' si j'ai ca en java:
+JNDI :LINKmlklmkqjsdfmlkjazx si j'ai ca en java:
               Context init = null;
               init = new javax.naming.InitialContext();  
               srcGDPark = (String)init.lookup("java:comp/env/GDPARK");
@@ -5746,7 +5767,7 @@ CSS grids : cssgrid : css grid : cssgrid : pour faire des mises en page responsi
       grid-area:main;
     }                
 
-CSS custom properties :LINKcustomcssljqdf 
+CSS custom properties : customcss : csscustom :LINKcustomcssljqdf 
 	<style> // dans un shadowdom ou quelquepart// attention n'est pas pris en compte au level niveau customelement shadowdom de profondeur >1. Dans ce cas redeclarer le css au niveau 1 pour que le niveau 2 le voit.
 		color:var(--uneproprietedefinieailleurs)
 	</style>
@@ -7831,9 +7852,10 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
         pour demarrer un client mongodb pour administrer la base et pour faire des requetes de test
             executer mongo.exe: c'est un client pour faire les requetes (c'est du javascript la dedans) LinkLKJDSFA . On peut aussi utiliser un gui qui s'appelle Robo3T à installer.
 			possible executer petit script avec : compter nombre de documents total totaux dans une base:
-				mongo.exe --port=xxx --host=localhost --username=xxx password=xxx --authenticationDatabase=yyy nomDeLaBaseDeDonnee path/vers/fichier/javascript.js // dans ce script on peut loader inclure include un autre fichier javascript: load("/path/nomfichier.js")  ou load("nomfichierMaisPasReussiAFaireMarcher.js")
+				mongo.exe --port=xxx --host=localhost --username=xxx password=xxx --authenticationDatabase=yyy --eval(facultatif pour passer des parametres) "var parametre1=\"toto\"; var parametre2=\"titi\"" nomDeLaBaseDeDonnee path/vers/fichier/javascript.js  // dans ce script on peut loader inclure include un autre fichier javascript: load("/path/nomfichier.js")  ou load("nomfichierMaisPasReussiAFaireMarcher.js")
 				et dans le javascript.js:
 					var collections=db.getCollectionNames(); // ne supporte pas setInterval pour executer regulierement alors utiliser while(true){ ... sleep(1000*60*30);}
+					ou var unecollection=db.getCollection(strnomcollection); puis unecollection.find.... // faire une recherche en definissant dynamiquement le nom de la collection à requeter
 					var total=0
 					for var i=0;i<collections.length;i++)
 					{
@@ -7901,7 +7923,7 @@ pour se connecter avec un utilisateur user
         pour voir la liste des collections d'une base:
             show collections
         exemples de rechercher requetes. Une collection = une table relationelle
-                    db.uneCollection.find({queryNeRienMettrePourTrouverTout},{facultatifLesChampsARetourerFiltrer}) // {lechamp:null} pour voir les champs s'ils n'existent pas(je le met ou ? droite ou gauche?). rajouter à la fin .pretty() pour afficher joli
+                    db.uneCollection.find({queryNeRienMettrePourTrouverTout},{facultatifLesChampsARetourerFiltrer}) // {lechamp:null} pour voir les champs s'ils n'existent pas(je le met ou ? droite ou gauche?). rajouter à la fin .pretty() pour afficher joli.
 						a gauche pour quil retourne que les champs qui existent et sont remplis non nulls non vides non empty: {"mon.champ":{$exists:true,$not:{$size:0}}}
 	requete : exemples:
 		    db.lacollection.find({"champTypeTableau.4":{$not:{$in:["x","y]}}},{champaretourner:true,champapasretourner:false}) //4 eme index du champttypeTableau(attention ce truc .4 marche que dans la premiere partie du find) not(negation) in pour n'importe quel index mettre les GUILLEMETS! "champTypeTableau.souschampDuTableau":x c'est comme si je mettais: "champTypeTableau[nimporteQuelIndex].souchampDuTableau
@@ -7913,7 +7935,7 @@ pour se connecter avec un utilisateur user
 	recuperer le dernier enregistrement insere:
 		db.uneCollection.find(...).sort({"_id":-1}).limit(1) // attention ne marche que si on a pas forcé overridé le _id auto incrementé
         count compter nombre de lignes:
-            db.nomdelacollection.find(..).count(); et tout compter: db.nomdelacollection.count()
+            db.nomdelacollection.find(..).count(); et tout compter: db.nomdelacollection.count() // attention son resultat peut etre faux car il s'appuie sur des metadata et elles peuvent etre corrompues si la base a crashé. Pour corriger: db.macollection.validate(true)
 	si mes find renvoient trois petits points ... ca veut dire que ma requete n'est pas bien complette peut etre accolade non fermee
         autres operations:             
 	vider supprimer une base de donnée database
@@ -7929,7 +7951,7 @@ pour se connecter avec un utilisateur user
 			et ensuite je peux interroger ma view: db.NomDeLaView.find().sort("....
 			il cree aussi  une collection system.views contenant la def de toutes mes vues. Pour supprimer toutes mes vues d'un coup je fais db.system.views.drop()
 	mongodump sur windows:
-		E:\x\MongoDB\bin\mongodump.exe --port=27017 --host=localhost --username=superuser --password=xxxx --authenticationDatabase=admin --db=testGlobal --out ou --archive=E:/mongoout //out dans un repertoire, archive dans un compresse
+		E:\x\MongoDB\bin\mongodump.exe --port=27017 --host=localhost --username=superuser --password=xxxx --authenticationDatabase=admin --db=testGlobal --collection(facultatif) nomdunecollectionSiJeVeuxExtraireQueCelleLa --out ou --archive=E:/mongooutEstLeNomDuFichierDarchive //out dans un repertoire, archive dans un compresse
 	mongorestore: //pour importer ne fait jamais d'upsert. Ignore seulement si l'id existe deja
 		"path/mongorestore.exe" --username laurent --password laurent --authenticationDatabase attentionCPasLaBaseDeDonneeCestLeNomDeLaBaseDauthentificationQueJeCreeBesoinRetenirNomLINKjdjdjd --archive=cheminVersArchive --nsFrom NomdemabaseInitialeDansLarchiveAttentionSiFauxilIgnoreToutNsFromEtNsTo.* --nsTo NouveauNomQueJeVeuxQuiDoitOverriderNomInitial.*
 		"path/mongorestore.exe" --username laurent --password laurent --authenticationDatabase attentionCPasLaBaseDeDonneeCestLeNomDeLaBaseDauthentificationQueJeCreeBesoinRetenirNomLINKjdjdjd -d nomdelabasededonneeDestinatriceACreerOuExistante repertoireFiniParSlashContenantFichierJsonEtBsonArchiveCreeParMongoDump
@@ -7943,7 +7965,7 @@ pour se connecter avec un utilisateur user
                 return mongoClient.getDatabase("dbName").getCollection("collectionName");
 		// pour faire une recherche requete:
 			MongoDatabase connection...
-			connection.getCollection("unnomdecollection).find() ou .find(eq("UniqueName","toto").first();
+			connection.getCollection("unnomdecollection).find() ou .find(eq("UniqueName","toto").first(); // ajouter à la fin .noCursorTimeout() pour eviter (message d'erreur à retrouver)
 		pour faire un update (ou meme un upsert)
 			BasicDBObject searchQuery= new BasicDBObject("DBRef",undbref); ou new BasicDBObject("_id",unid); LINKupsertmongo
 			collection.upsertOne(searchQuery, new Document("$set",document),(new UpdateOptions()).upsert(true));
@@ -8838,7 +8860,7 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
             <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> // facultatif provider peut etre eclipselink ou hibernate. si on met rien.. sais pas. depend jars ?
             <description>EclipseLink EntityManager</description>                 // facultatif
             <exclude-unlisted-classes>false</exclude-unlisted-classes>
-             <jta-data-source>java:app/MemOclapDataSource</jta-data-source> // est defini la LINKjta: mettre la valeur de @DataSourceDefinition(name="java:app/MemOclapDataSource" pour aller cherche un datasource deja defini applicativement
+             <jta-data-source>java:app/MemOclapDataSource</jta-data-source> // est defini la LINKjta ou la LINKwebxmljta: mettre la valeur de @DataSourceDefinition(name="java:app/MemOclapDataSource" pour aller cherche un datasource deja defini applicativement
              ou/et
             <properties> // parametres envoyés au persistenceprovider. On peut définir la base de donnée ici mais je prefere le definir la LINKjta  
                 <property name="eclipselink.logging.level" value="FINE"/>				|_Marche bien et trace les logs dans systemOut en tout cas.
@@ -10113,7 +10135,7 @@ SELECT
             LT94_SIM_GRIL T94
         WHERE
 			 T94.CODE_UTILISATEUR='invite'
-	    having count(1) > 1 // toute la magie est là
+	    having count(1) > 1 // toute la magie est là (se met avant ou apres le group by ?)
 		GROUP BY T94.CODE_ETABLISSEMENT, T94.CODE_ARTICLE
 
 faire un IF avec Oracle sans plsql :
@@ -13481,7 +13503,7 @@ fin c ca que j'ai fait qui marche PAS jusqu'au bout.
                       openssl rsa -in maClePublique.pem -text -noout -pubin
                   pour lire detail certificat (base64 avec avant -----BEGIN CERTIFICATE----- et apres -----END CERTIFICATE----- il faut faire:                      
                       openssl x509 -in renault.crt -text -noout // enlever -noout pour afficher le x509
-                  pour lire detail certificat .p12 il faut faire: (un .p12 peut contenir ou pas une cle privée dedans)                      
+                  pour voir lire detail certificat .p12 il faut faire: (un .p12 peut contenir ou pas une cle privée dedans)                      
                       openssl pkcs12 -info -in renault.p12
                   pour extraire une paire de cle d'un certificat (demande le mot de passe)
                       openssl pkcs12 -export -in localhost_self-signed.pem            -inkey localhost_self-signed.key -name "SelfSignedServer"         -out localhost_self-signed.p12
@@ -13536,7 +13558,13 @@ fin c ca que j'ai fait qui marche PAS jusqu'au bout.
                                           PKCS11 connect with hardware keystore devices such as SafeNet's Luna, nCipher or Smart cards
                                           DKS keystore de keystore
                                           Windows-MY
-                                          BKS de Bouncy castle (=JKS mais existe secretkey) possible convertir jks->bks
+                                          BKS de Bouncy castle (=JKS mais existe secretkey) possible convertir jks->bks 
+								bouncycastle pom:
+								<dependency>
+								    <groupId>org.bouncycastle</groupId>
+								    <artifactId>bcprov-jdk15on</artifactId>
+								    <version>1.60</version>
+								</dependency>
                                   Quels sont vos nom et prÚnom ?
                                     [Unknown]:  Laurent Duverge
                                   Quel est le nom de votre unitÚ organisationnelle ?
@@ -13611,7 +13639,7 @@ Cryptage : crypto : en java
                 MD5 et SHA1: obsoletes pour hasher. SHA1>MD5
                 RSA = asymetrique paire de cles (taille cle peut varier) (symetrique plus rapide que asymetrique)
                     RSA-SHA256 = RS256
-		AES successeur de DES = symetrique = DESED?  //AES 1)ECB:bof que pour les tout petites chaines de char<128bits. 2)CBC:s'utilise avec un Padding et un IV InitializationVector(sert que au 1er bloc) qui est juste un randomdata de 128bits ne doit s'utiliser qu'une fois et peut etre public 3)CTR:IV sert sur tous les blocs.<M-F12>
+		AES successeur de DES = symetrique = DESED?  //AES 1)ECB:bof que pour les tout petites chaines de char<128bits. 2)CBC:s'utilise avec un Padding et un IV InitializationVector(vecteur a pour vocation de ne servir qu'une seule fois et le transmettre au parti et le changer à chaque fois.) qui est juste un randomdata de 128bits ne doit s'utiliser qu'une fois et peut etre public 3)CTR:IV sert sur tous les blocs.<M-F12>
 			3DES plus fort que DES
                 ECDSA = asymetrique (plus lent que symetriques)
                     ECDSA-SHA512 = ES512 
@@ -14333,7 +14361,23 @@ Cipherbean cypherbean de francois:
                                                                         		}
                                                                         		return b1;
                                                                         	}
-                                                                        
+                                                                       pour haser en SHA-256:
+									public String hashSha256(String ahasher) throws NoSuchAlgorithmException {
+												final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+												final byte[] hashbytes = digest.digest(
+													ahasher.getBytes(StandardCharsets.UTF_8));
+												String sha3_256hex = bytesToHex(hashbytes);
+												return sha3_256hex;
+											    }
+											    private static String bytesToHex(byte[] hash) {
+												StringBuffer hexString = new StringBuffer();
+												for (int i = 0; i < hash.length; i++) {
+												    String hex = Integer.toHexString(0xff & hash[i]);
+												    if(hex.length() == 1) hexString.append('0');
+												    hexString.append(hex);
+												}
+												return hexString.toString();
+											    } 
                                                                         	/**
                                                                         	 * Gets the md5 digest.
                                                                         	 *
@@ -14352,10 +14396,10 @@ Cipherbean cypherbean de francois:
                                                                                 bytes.close();
                                                                                 return msgDigest.digest(); 
                                                                                 
-                                                                                // pour hasher le contenu d'un ficheir avec md5
+                                                                                // pour hasher le contenu d'un fichier avec md5
                                                                                             java.io.File file = new java.io.File("D:/Profiles/lduverge/workspace/wenhuaduvergeamazonfeed/src/main/resources/FeedSample.xml");
                                                                                             java.io.FileInputStream fis = new java.io.FileInputStream(file);
-                                                                                            java.security.DigestInputStream dis = new java.security.DigestInputStream( fis, java.security.MessageDigest.getInstance( "MD5" ));
+                                                                                            java.security.DigestInputStream dis = new java.security.DigestInputStream( fis, java.security.MessageDigest.getInstance( "MD5" )); // si j'ai java.security.NoSuchAlgorithmException: http://www.w3.org/2001/04/xmlenc#sha256 MessageDigest not available en fait faut pas que je mette http://www.w3etcetc mais bien "SHA-256" etc...
                                                                                             byte[] buffer = new byte[8192];
                                                                                             while( dis.read( buffer ) > 0 )
                                                                                                 contentMD5 = new String( org.apache.commons.codec.binary.Base64.encodeBase64(dis.getMessageDigest().digest()) );
@@ -15382,7 +15426,12 @@ hacking : haking : hack :
         MD5 et SHA1 et SHA2 sont obsoletes. parade: hasher 4 fois de suite. BcryptPasswordEncoder de spring le fait pour nous pour hasher des passwords par exemple
         ne pas loguer les users passwords  
 			  injection sql : ne jamais faire de requete sql par concatenation mais toujours pas procedure stockée. Un hacker sinon peut metre un bout de sql dans un champ texte. idemn sur mongodb
-        x-frame-options header not set // en-tête header http de response permettant d'eviter qu'un site s'affiche dans un autre site (iframe i-frame object).(clickjacking: quand je clique ça clique sur un autre bouton invisible)
+        x-frame-options header not set // en-tête header http de response permettant d'eviter qu'un site s'affiche dans un autre site (iframe i-frame object).(clickjacking: quand je clique ça clique sur un autre bouton invisible) LINKxframeiframe
+		option possibles: deny ou sameorigin(meme domaine exactement, pas sous domaine, meme port meme scheme.). Si je veux mettre mon site dans un iframe je dois mettre CSP:(content-security-policy)
+		Content-Secrurity-Policy default-src *;
+		Content-Security-Policy default-src wordpress.fauxmemoclap.com
+		Content-Security-Policy default-src *.fauxmemoclap.com
+ 
         xss ://crosssitescripting // ma servlet vulnerable fait executer au navigateur du javascript passé en parametre de ma requete. ce javascript pourrait lire mes cookies (de session!): LINKcooklskjhh LINKc.s.r.f  et le pirate de se connecter à ma place
                     pour s'en premunire faire du @safeHTML ou faire  org.jsoup.Jsoup.isValid(lechampatester); sur les champs pour que du javascript ne puisse pas etre injecté dedans. aussi empecher le javascript d'acceder aux cookies.
                     ou faire dans la jsp: <c:out value="${une_variable_renvoiee_par_la_servlet}"/> // du coup une_variable_renvoiee_par_la_servlet ne peut plus executer du javascript 
@@ -15470,7 +15519,7 @@ letsencrypt :
                       echo "############"
                       echo " "
 letsencrypt en shell avec dehydrated :  
-    les fichiers de conf doivent etre mis sous: (a l'execution dehydrated cherche du haut vers le bas)
+    les fichiers de conf doivent etre mis sous: (a l'execution dehydrated cherche du haut vers le bas) sauf si j'utilise --config
         /etc/dehydrated/config //config c'est le nom du fichier!
         ou
         /usr/local/etc/dehydrated/config //config c'est le nom du fichier!
@@ -15485,8 +15534,11 @@ letsencrypt en shell avec dehydrated :
         unautredomaine.net www.unautredomaine.net bidule.unautredomaine.net > aliasducertificatassocieacestroisdomaines // le certificat est stocké sous CERTDIR/aliasducertificatassocieacestroisdomaines
         *.jepeuxutiliserwildcardsurnomdedomaine.com > aliascertificat
         mondomaine.org >aliascertificat // exemple le plus simple
-   enfin executer dehydrated:
+   enfin executer dehydrated: Si il ne fait rien à l'execution regarder dans la conf si c'est le bon user qui est declaré
     ./dehydrated -c // voir la doc:https://github.com/lukas2511/dehydrated#usage si a l'execution il ne fait que charger la conf sans rien faire d'autre c'est parce que dans ma conf je n'ai pas declaré le bon user.
+	exemple:
+	./dehydrated -c --ipv4 --config ./dehydrated.memoclap.conf
+	si besoin : ./dehydrated --regitration --ipv4 --config ./dehydrated.memoclap.conf
     
    
 SSL : TLS : https : le port https est toujours 443
@@ -16365,7 +16417,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
                         Machin machinATesterEtSpyer = new Machin()
                         Mockito.spy(machinATesterEtSpyer);
 			ou bien l'annoter @Spy et @InjectMock puis mocker ses methodes comme ca:
-			Mockito.doReturn(unTrucQuiDoitEtreRetourne).when(machinAtesterEtSpyer).uneMethodeAMocker(anyString());
+			Mockito.doReturn(unTrucQuiDoitEtreRetourne).when(uMockOuUnSpyPasSur).uneMethodeAMocker(anyString());
                     ResultDao rd =mock ou spy(unObjetNONANNOTE ou new ResultDao() ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
                     Mockito.doReturn(toto).when(rd).getLaMethodeNONSTATIQUEResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy. ou pour qu'un spy ne fasse rien: Mockito.doNothing().when(monSpy).lamethodeDeMonSpyQuiPeutEtreVoid();
     				when(filterConfig.getServNONSTATIQUEletContext( // ca s'appelle faire du "stub" et utiliser ca je crois pour les mock. Attention si c'est une methode finale il va rentrer dedans avant de traiter le when donc pour mocker une methode finale depuis Mockito2 seulement on crée un fichier sous src/test/resources/mockito-extensions/org.mockito.plugins/MockMaker et dedans on ecrit mock-maker-inline
@@ -16387,11 +16439,13 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
                                                                             else return "UTF-8";
                                                                         }
                                                                     }
-                    pour indiquer de retourner une exception à un spy ou stub
+                 pour mocker l'iterateur iterate dans une boucle avec deux points: when(iterable.iterator()).thenReturn(cursor) ou cursor est un mock: when(cursor.hasNext().thenReturn(true).thenReturn(true).thenReturn(false); et when(cursor.next()).thenReturn(xxx).thenReturn(yy);    
+		pour indiquer de retourner une exception à un spy ou stub
                             Mockito.doThrow(new HibernateException("err")).when(userWebDAO).create(Matchers.any(UserWebEntity.class)); 
                     verifier qu'une methode throw une exception voir LINKlkfghdfg
                     validation verifier qu'un mock(pasUnSpy) a été appelé invoké invoquée par une methode x fois nombre compter combien:
                             verify(userDetailDAOMock, times(2)).laMathodeDuMock(any(UserDetailsEntity.class));
+				si erreur userDetailDAOMock is not a mock! parce que cet objet est testé (@InjectMock) je peux lui mettre @InjectMock UserDetailDAOMock userDetailDAOMock=mock(WordpressLoginModule.class)
 cucumber : il fait ce que fait junit mais permet à des non techniciens de comprendre les tests.LINKcucumberldfj 
       Feature: action globale
         Scenario: User case label
@@ -18085,7 +18139,8 @@ JSON-B :jsonb : pour binder java et json LINKjsonbnew
     de json vers java: json en java:
         AuthentMessage ret = jsonb.fromJson(dujson,AuthentMessage.class);
     Je peux personnaliser le mapping avec les annotations: (PAS FAIT AFAIRE)
-        MaClasse
+		@JsonIgnoreProperties(ignoreUnknown=true) // faclutatif: pour eviter erreur not marked as ignorable lors d'un mapping
+        public class MaClasse
             @JsonbDateFormat("yyyy.MM.dd") // attention a la conversion Jsonb.toJson() il change l'heure de la date le con!
             private Date updateDate;
             @JsonbTransient
@@ -20322,6 +20377,8 @@ lambdas : lambda : lambdas expression :     (lire http://labs.excilys.com/2014/1
       table   =.stream()   //.parallelStream() attention: cree un max de threads pour rendre une reponse très rapide vite mais utilise tous les threads possibles. Un stream n'est pas une donnee concrete c'est des methodes + un flux
                               stream peut etre sized/non-sized(infini pour faire une boucle:Stream.iterate(n,e->e+1);LINK3223) ordered/non-ordered(les elements n'ont pas de position); distinct/non-distinct(pas de doublons possibles); sorted/non-sorted(alpha)
       unMap<x,y>.entrySet().stream(entry->entry.getValue()...entry.getKey()) // voir aussi LINKmaptomapsldkjfa pour convertir une map en une autre map                               
+	pour convertir un iterable iterate en stream:
+			StreamSupport.stream(Spliterators.spliteratorUnknownSize(monIterator,Spliterator.ORDERED),false).filter etc etc...
       select  =.map(e-> (D)e) ou contraction:(::) .mapOuForeach(this::uneFonctionDeCetteClasseQuiMapL'objetEntrantEnObjetEnSortie)   // utilise pour transformer l'objet.(meme calculs) transforme un objet en un autre  exemple classeTOTO devient classeTITI c'est du transcodage mappage mapping d'un element en un autre
                                                   .map(UneClasse::new) // map en une autre classe grace au constructeur de cette autre classe
                                                    .unelisteDuneInterface.stream().map(i->(ComponentGeneric)i)... //en un autre casting
@@ -22771,7 +22828,8 @@ pour creer des repertoires: create directories creer un repertoire create a dire
 	* @param dir the directory to remove 
 	*/
     private static boolean deleteDir(File dir) {
-        File[] files = dir.listFiles();
+        File[] files = dir.listFiles(); // prend beaucoup de memoire javaheapoutofmemoryexception si il y a beaucoup de fichiers dans ce cas utiliser try(DirectoryStram<Path> iteration=Files.newDirectoryStream(Paths.get(monpath))){
+																			iteration.iterator().. j'ai un iterateur sur les fichiers enfants fils ici pas de probleme de memoire.
         if (files != null) { // ou files.lenght >0?
             for (File file: files) {
                 boolean deleted = file.delete(); // voir supprimer un fichier
@@ -24460,7 +24518,7 @@ sudo : // si command not found faire d'abord su - puis apt-get install sudo -y
     /usr/include declaration de fonctions systemes
     /usr/src sources de logiciels + du noyau Linux
     /usr/share fichiers de donnees
-    /opt logiciels commerciaux installes
+    /opt applications logiciels commerciaux installes
     /home repertoires persos pour utilisateur
     /var donnees frequements reecrites
 les comptes utilisateurs sont sur etc/passwd (si un jour un gars qu'on ne connait pas fait des trucs) figurent dedans les homes des utilisateurs et on peut atteindre leur home en faisant cd ~nomutilisateur
@@ -24505,7 +24563,7 @@ si lors de l'execution dun sh qui appelle un src qui appelle un sql j'ai "invali
 pour executer un script en mode debug: 
       sh -x monscript.sh
 Pour creer un nouveau fichier vide: 
-    >>monfichier.log ou plutot > mon fichier.log (>ecrase effacer et ecrire ecrit; echo "sdlkjfsdf" >> ecrire ecrit a la suite)
+    >>monfichier.log ou plutot > mon fichier.log (>ecrase vider effacer et ecrire ecrit; echo "sdlkjfsdf" >> ecrire ecrit a la suite)
 env pour voir les variables d'environnement
 pour seter setter les variable d'environnement sur unix linux
       sur unbuntu si c une nouvelle variable: 
@@ -24640,7 +24698,7 @@ You could try this. The following will give a list of files between 2 dates.
 		find /yourdir -type f -newer fichiervidecree2 -print > LIST2
 	très bon outil de comparateur pour desktop: meld : Pour faire un alignement selectionner la ligne et ajouter un point d'ancrage(clickdroit)
 		diff -y LIST1 LIST2 // -y pour comparer cote a cote c'est mieux
-		diff -C0 fichier1 fichier3 // pour diff voir que les lignes differentes
+		diff -C0 fichier1 fichier3 // pour diff voir que les lignes differentes LINKlhlhlhlhlioie
 		diff -yarq folder1 folder2
 pour trouver des repertoires: 
     find . -type d
@@ -24778,7 +24836,8 @@ changer le nom labell d'un disque:
 	modifier le label de ce disque
 		sudo mlabel -i /dev/sdb1 ::NouveauNomDuDisque
 	ENSUITE REDEMARRER! pour prise en compte totale
-    
+creer un nas:
+	besoin d'installer cifs    
 pour parametrer ce qui doit se lancer automatiquement au demarrage
   ls /etc/rc2.d dans ce repertoire on voit tout ce se lance automatiquement quand on rentre dans le runlevel 2 (etc pour 3 pareil...)
   pour mettre à jour la prog d'un demarrage d'un service lors du demarrage du serveur: update-rc.d mysql defaults (par exemple)
@@ -24912,7 +24971,8 @@ deziper: unzip GroupNet.zip (on peut aussi deziper un ear et un war) PEUT ETRE b
 pour zipper ziper un fichier ziper: zip monfichier.zip *
 pour zipper ziper un repertoire ziper: zip -r lenomdemonzip.zip * (* contient le repertoire.) -r pour zipper de manière recursive 
 dos2unix: la commande unix est: Dos2Unix fichier_original fichier destination // sinon si cette commande n'existe pas faire: vi puis:set ff=unix ou:set ff=dos puis sauver le fichier
-ssh : se logger sur une machine a distance
+ssh : se logger sur une machine a distance par le port 22
+	si j'ai erreur Received disconnect from xxxx too many authentication failures rajouter apres ssh: -o IdentitiesOnly=yes à ma commande ssh
     installer ssh sur debian:
       si serveur openssh deja la faire /etc/init.d/ssh reload
       les cles cles : la securite : LINK94949494
@@ -24923,7 +24983,7 @@ ssh : se logger sur une machine a distance
                 sont sous /var/log/user.log ou /var/log/auth.log  si ça défile par sécurité désactiver la connexion par mot de passe.
                 /homeDuUser/.ssh repertoire contient les cles publiques (le creer si il n'existe pas) il doit appartenir à l'utilisateur interessé droit doivent etre rwx-------
           generer creer paire de cle sur cygwin ou sur unix:
-                    ssh-keygen -t rsa // stocke la cle privee sous /repertoireHomeDuUser/.ssh/id_rsa ou toto_rsa et la cle publique sous /repertoireHomeDuUser/.ssh/id_rsa.pub  (creer ces fichiers si n'existent pas) //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
+                    ssh-keygen -t rsa //il demande ou je veux stoker ma paire de cle et par defaut stocke la cle privee sous /repertoireHomeDuUser/.ssh/id_rsa ou toto_rsa et la cle publique sous /repertoireHomeDuUser/.ssh/id_rsa.pub  (creer ces fichiers si n'existent pas) //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
                     definir passphrase (sauf si c'est pour faire du ssh rsync scp etc... avec un autre serveur, alors ne pas mettre de mot de passe!)
                     cle prive est dans id_rsa, la cle publique corresp est dans id_rsa.pub. //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
                     ssh-keygen -y -f id_rsa > id_rsa.pub // ensuite je peux copier cette cle publique et la mettre sur un autre serveur LINKmljsdf
@@ -25106,7 +25166,7 @@ saisir les commandes suivantes pour commander le serveur smtp (pas reçu le mail
             
 quelle est la version processeur 
   cat /proc/cpuinfo
-quel port est ecoute utilise utilise? netstat :
+quel port est ecoute utilise utilise? netstat : LINKnetsteatelkv
       netstat -a(all)n(afficher les liste des ports en numerique ou plutot les ip au lieu des hostnames)t(que les ports tcp) p sur linux o sur windows(pour voir les idprocess en derniere colonne) Si netstat n'est pas une commande existante: l'installer en installant net-tools via aptitude
       netstat -antulp sur linux netstat -ano sur windows
 quels sont les fichiers ouverts? process sont utilisés lockes par qui?
@@ -25226,7 +25286,7 @@ diviser split ecran CTRL+w puis
 	j: passe a l'ecran en dessous
 	l: passe à l'ecran à droite
 	s: cree un nouveau split
-:diffthis pour faire un diff deux deux ecrans dans un split: executer cette commande dans chaque split concerné
+:diffthis pour faire un diff compare deux deux ecrans dans un split: executer cette commande dans chaque split concerné et pour arreter le diff faire :diffoff
 pour tabuler tabulation indenter: > voire >> puis . pour refaire autant de fois que necessaire. ce . sert à repeter action precedante precedente
 pour affichier avec des fonts colorees couleurs: aptitude: charger vim
 view nomfichier pour afficher en lecture seule
@@ -25302,7 +25362,7 @@ u: undo si multiple undo ne marche pas: aptitude et charger vim
 :wq sauve et quitter enregistrer et quitter
 :w sauve enregistrer
 :w "autrenom" pour sauver sous enregistrer sous save as un aure nom
-:sav! ~/.recovered // sauver sous un autre nom et basculer ensuite sur ce fichier. Puis faire :bn pour repasser sur le fichier editer precedemment utile pour gerer les problemes de swp
+:sav! ~/.recovered // sauver sous un autre nom et basculer ensuite sur ce fichier. Puis faire :bn pour repasser sur le fichier editer precedemment utile pour gerer les problemes de swp puis faire en commande dans vi une comparaison cote a cote voir LINKlhlhlhlhlioie
 :!MaCommande faire une commande unix executer une commande unix
 :r ! MaCommande faire une commande unix et le resultat de la commande rentre dans le texte
 :%!xxd pour editer en hexadecimal: je peux alors modifier la partie centrale uniquement. revenir en mode normal après pour voir le resultat: :%!xxd -r
@@ -25665,7 +25725,7 @@ raid :
     raid0: j'ai plusieurs disque mais une seule interface et je crois avoir qu'un seul disque. Si un disque pete je perds tout.
     raid1: j'ai plusieurs disques et l'info est dupliquée entre les deux
     raid1.0 ou 0.1: j'ai au moins 4 disques 2 dupliqués à 2 et une paire correspond pour moi a un seul disque.
-lvm :
+lvm : (et zfs=zol) ce n'est pas une sauvegarde en cas de crash car les snapshot demeurent sur le meme disque
     equivalent de git avec des snapshots mais pour les disques unix    
     
 pour installer des programmes: applications: (le repository miroir local qui lui indique ou chercher les paquets determine aussi la version de l'os. On peut le modifier. C'est le texte /etc/apt/sources.list C'est aussi ce fichier qu'utilise aptitude. Attention a respecter mon code version debian dedans)
@@ -25786,6 +25846,7 @@ xfce : xcfe : // bureautique debian :
 	logiciel de scan: XSane
 	packages disponible avec application discover
 	copie d'ecran impr ecran: le programe est deja installe et s'appelle screen ou capture d'ecran
+	si la bare d'en haut du bureau a disparu faire alt+f2 puis xfce4-pannel...
 IMAGES GENEREES EN JAVA SUR UNIX:
 Question:
 Why is the following error message displayed "java.lang.InternalError: Can't connect to X11 window server using ':0.0' as the value of the DISPLAY variable" ?
@@ -26110,17 +26171,17 @@ Dissalow etc...
 NGNIX : nginx :
 	fichier conf.d: exemple de configuration
 	upstream unnom{
-		server unhostdestination:8080; // unhost et son port	
+		server unhostdestination:8080; // unhost et son port dans le cas de docker c'est le nom du service docker compose ou bien le nom du container les deux fonctionnent. Attention dans le cas de docker compose le port c'est pas celui de l'host qu'il faut mettre mais celui ouvert DANS le container
 	}
-	server {
+	server { // je peux faire plusieurs block de serveur pour le meme port mais des domaines_sous domaines differents.
 	   listen 80;
 	   listen [::]:80;//facultatif
-	   server_name www.undomaine.com undomaine.com;
+	   server_name www.undomaine.com undomaine.com; 
 	   return 301 https://$host$request_uri; // redirection https
 		ou
 	    location /{					location '/unpathtoto'{
 			proxy_pass http://unnom;	default_type "text/plain";
-							root /laracine 		// du coup si l'url est http://xxx/unpathtoto ca va pointer vers le repertoire "/laracine/unpathtoto"
+							root /laracine; 		// du coup si l'url est http://xxx/unpathtoto ca va pointer vers le repertoire "/laracine/unpathtoto"
 			autoindex on;			|_pour permettre l'accès en visulation aux repertoires directories sinon on a l'erreur 403
 			autoindex_exact_size off; 	|
 			proxy_set_header Host $host;	LINKapachesetterHeaderUrlDuClientAuLieuDeUrlInterneDuServeur
@@ -26152,7 +26213,7 @@ NGNIX : nginx :
 		add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
 
 		# ref: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
-		add_header X-Frame-Options DENY always;
+		add_header X-Frame-Options DENY always; ou SAMEORIGIN (jecrois) voir LINKxframeiframe
 
 		# ref: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
 		add_header X-Content-Type-Options nosniff always;
@@ -26191,7 +26252,7 @@ NGNIX : nginx :
 	   }
 		error_page 503 @maintenance;   LINKlisdfjfjjf en cas d'erreur 503 trouver @maintenance ci dessous
 		location @maintenance {
-			rewrite ^(.*)$ /maintenance_on.html break;  // presenter la pagage html de maintenance
+			rewrite ^(.*)$ /maintenance_on.html break;  // presenter la page html de maintenance // son root est automatiquement /etc/nginx/html
 		}
 	}
  dans les logs l'adresse ip entrainte est tout à gauche 
@@ -26333,6 +26394,7 @@ Pour rediriger les requetes du port 8080 de apache vers jetty:
                   RewriteCond "%{REMOTE_HOST}"  "^host1"  [OR] //si l'URL = ???ACOMPRENDRE expressionRegulière ou
                   RewriteCond %{HTTP_HOST} production-sodec.fr.auchan.com [OR] //si l'URL = ???ACOMPRENDRE expressionRegulière ou
                   RewriteCond "%{REMOTE_HOST}"  "^host3"       //si l'URL = ???ACOMPRENDRE expressionRegulière alors
+		  RewriteCond "%{REMOTE_ADDR}" !^10\.39\.309\.209  // fait le rewriteRule ci dessous à tout ceux qui arrivent avec l'adresse IP differente de 10.39.309.209
                   RewriteRule ^/hra-space$ hra-space/cas [R] //rediriger expressionReguliere vers destination
         DocumentRoot /var/www/www.wenhuaduverge.com/
       <Directory "/var/www/www.wenhuaduverge.com/shop">
@@ -26685,9 +26747,9 @@ pour manipuler le css directement:
           var sheetParent = sheetToBeRemoved.parentNode;
           sheetParent.removeChild(sheetToBeRemoved);
                 
-pour faire des frames sans utiliser le iframe:
+pour faire des frames sans utiliser le iframe: voir LINKxframeiframe
 	en HTML
-        <object data="fichier.html" type="text/html" />
+        <object data="fichier.html" type="text/html" /> // ne permet pas comme les Iframe de charger une page d'un autre site web mais que du flash ou ... chais pas
 	en javascript:
 		 var graph = document.createElement('object');
 		    graph.width = "100%";
@@ -29766,7 +29828,7 @@ METHODE CLASS: THEBEST? classes es6
                                                           this.id="tata"; // defini direct l'id du dom element|_ATTENTION ne marche que si on instancie la classe en javascript. Pas si on met la balise html dans la page
                                                           this.toto=true;// c'est une propriete properties    |
                                             //         creer un shadowdom: Maintenant FFOx supporte aussi. Avant: (pas encore supporte sur firefox: besoin faire about:config puis dom.webcomponents.enabled et dom.webcomponents.shadowdom.enabled a true)
-                                                         var root = thisMonElement.attachShadow({mode:'open ou closed LINKkddkdkdkd'}); // host maintenant devient un shadowroot: tout ce qu'il a a l'interieur devient invisible. open/closed= atteignable ou pas par javascript et querySelector('div').shadowRoot est visible par le javascript ou pas selon. LINKkddkdkdkd: si j'ai mis closed alors xxx.shadowRoot=null pour l'avoir faire une variable dans le custom element: this.shadow = this.attachShadow({mode:'closed'});  et je réutilise this.shadow partout. Les customcssproprietesProperties ne peuvent pas non plus l'attendre
+                                                         var root = thisMonElement.attachShadow({mode:'open ou closed LINKkddkdkdkd'}); // host maintenant devient un shadowroot: tout ce qu'il a a l'interieur devient invisible. open/closed= atteignable ou pas par javascript et querySelector('div').shadowRoot est visible par le javascript ou pas selon. LINKkddkdkdkd: si j'ai mis closed alors xxx.shadowRoot=null pour l'avoir faire une variable dans le custom element: this.shadow = this.attachShadow({mode:'closed'});  et je réutilise this.shadow partout. Les customcssproprietesProperties ne peuvent pas non plus l'atteindre dans des customelement>shadow>sous-customelements sauf si je redeclare mes cssproperties dans le webcomponent parent:bof bientôt ::part et ::theme devraiment permettre de faire ça. LINKcustomcssljqdf
                                                           on peut juste faire aussi 
                                                           thisMonElement.attachShadow({mode:'open'}); // ca va créer automatiquement this.shadowRoot dans mas classe. Pas besoin de var root                                                        
                                                          var monTemplate = templatexxx; ou voir LINKCustomTemplate=`du contenu
@@ -33524,7 +33586,7 @@ pour effacer un repertoire directory:
         
 renommer un repertoire fichier en un autre: 
     rename dir1 dir2
-    commande dos pour voir les ports utilises sur mon ordi: netstat (voir netstat plus haut)
+    commande dos pour voir les ports utilises sur mon ordi: netstat (voir netstat plus haut) LINKnetsteatelkv
     les alias: c a d le nom des serveurs et adresse ip sont a definir dans C:/WINNT/system32/drivers/etc/hosts: a la modif il prend en compte tout de suite. LINKàç<çç_à
 		sur linux l'equivalent est ecrit dans /etc/hosts
     si je veux me connecter en dur sur miami: aller dans panneau de configuration > Reseau > protocole > TCP/IP > propriete adresse IP: 10.68.81.253 ou 242 masque: 255.255.255.0 Valider et redemarrer l'ordinateur.
@@ -33608,7 +33670,7 @@ pour faire un a accent grave majuscule:
 windows+"+" ou windows + "-": loupe loop zoom puis Ctrl + alt + fleches pour bouger 
 journal des evenements: 
     Win+R puis %SystemRoot%\system32\eventvwr.msc
-commande dos pour voir les ports utilises sur mon ordi: netstat (netstat -a -n -o voir netstat plus haut) pour faire un grep dessus | findstr 8293 // numero de port
+commande dos pour voir les ports utilises sur mon ordi: netstat (netstat -a -n -o voir netstat plus haut) pour faire un grep dessus | findstr 8293 // numero de port LINKnetsteatelkv
 les alias: c a d le nom des serveurs et adresse ip sont a definir dans C:/WINNT/system32/drivers/etc/hosts // a la modif il prend en compte tout de suiteLINKàç<çç_à
 pour demarrer une appli en mode admin: dans le raccourci mettre: 
       C:\WINDOWS\system32\runas.exe /user:admin /savecred  "C:\jbdevstudio4\studio\jbdevstudio.exe"
@@ -33727,6 +33789,8 @@ paint :
         bouton selectionner> choisir transparant
 Excell : excel :
 	pour ne selectionner que les cellules visibles filtrées: Accueil>RechercherEtSelectionner >Selectionner les cellules...>Cellules visibles uniquement
+  compter le nombre de cellules remplies count:
+	=NBVAR(plage)
     taille size length longueur
         NBCHAR()
     indexOf:
