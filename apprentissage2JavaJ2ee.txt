@@ -741,7 +741,7 @@ docker-compose : dockercompose : s'installe avec apt-get ou aptitude
 			links: // utile pour que plusieurs services se voient avec des noms d'hosts determinés (et pour ne pas utiliser "localhost" par defaut qui pour chacun est lui meme)
 				- unautreservice:hostnamedansmoncontainer
             		command: npm run // overrite CMD ci dessus: en general la commande ici sert à demarrer un serveur
-                            ports:
+                            ports: // ATTENTION tous les services qui se voient entre eux se voient avec le port INTERNE DANS le container et pas le port exposé à l'host.
                                 - 80:80  // quand on met - c'est parce que c'est une liste
                                 - 81:80  // comme pour -p (cote hote:cote conteneur)
                             environment:
@@ -2806,56 +2806,7 @@ securite : security :(JSR375 implémenté par soteria qui est la reference) plus
             public class MaServlet extends HttpServlet {
     pour securiser un webservice : voir LINKsecuws
         
-config de la base de donnée donnee: en jee
-    en annotations:(a mettre sur une classe @Statefull en tout cas sur un EJB et pas sur CDI)
-      @DataSourceDefinitions( //facultatif mais... // de la merde parce qu'on ne peut pas externaliser les credentials
-        value = {             //...du coup possible en enchainer plusieurs et je peux avoir plusieurs datasource EN MEME TEMPS. c bien si je veux me connecter à 2 bases en meme temps mais c la merde si je veux faire un switch. Passer plutot par resources/META-INF/application.xml ou web.xml
-                @DataSourceDefinition(name = "java:app/MemOclapDataSource", // ce nom la est cree ici et sera utilise ailleurs LINKdtresr. commence par java:app (scope dans cette appli seulement) java:comp (??) java:module (??) java:global (disponible dans toutes les applications déploiees sur ce serveur) // permet de definir la source de donnée dans l'application au lieu de dans le serveur container.
-                        className = "org.hsqldb.jdbc.JDBCDataSource", ou com.example.MyDataSource", ou org.apache.derby.jdbc.ClientDataSource // NE PAS mettre un driver ici mais bien un connectiondatapoolsource
-                        url = "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;"
-                ),
-                @DataSourceDefinition(name = "java:app/MemOclapDataSourceRemote", 
-                        className = "com.mysql.jdbc.jdbc2.optional.MysqlDataSource", // ou com.mysql.cj.jdbc.MysqlConnectionPoolDataSource ? PAS DE Driver
-                        url = "jdbc:mysql://www.memoclap.com ou LINKjdbcdockerdatabase:3306/alo",
-                        user = "root",
-                        password = "foulurecalotte"
-                        portNumber=6689
-                )
-        })    // facultatif pour @DataSourceDefinitions
-        ou  (l'un ou l'autre mais ne pas melanger) // ci dessous si je ne veux déclarer qu'une seule datasource.
-            @DataSourceDefinition(name="java:global/MyApp/MyDataSource2",
-              className="org.apache.derby.jdbc.ClientDataSource", ou org.hsqldb.jdbc.JDBCDriver
-              url="jdbc:derby://localhost ou LINKjdbcdockerdatabase:1527/myDB",
-              user="lance",
-              password="secret"
-           )
-      @Stateless // a mettre sous les datasource: c'est un ejb stateless
-      public class DatasourceDefinition
-      {
-        sont equivalents dans web.xml de
-                  <data-source>
-                  <name>jdbc:hsqldb:mem:employees</name> // bien mettre mem sinon il fait chier avec les connexions mais c'est que pour tester car volatile
-           	ou 
-		<name>java:app/jdbc/memoclap</name> LINKwebxmljta 
-                <class-name>org.hsqldb.jdbc.JDBCDriver</class-name>
-                     ou 
-		<class-name>com.mysql.cj.jdbc.MysqlConnectionPoolDataSource</class-name>
-          	<server-name>database</server-name>
-	          <port-number>3306</port-number>
-        	  <database-name>memoclap</database-name>
-	          <user>root</user>
-        	  <password>foulurecalotte</password>
-              </data-source>  
-             puis ailleurs LINKdtresr:       
-         @Stateless  ou @ApplicationScoped// exemple d'utilisation appel ailleurs
-         public class MyStatelessEJB {
-           @Resource(lookup= ou plutot name="java:global/MyApp/myDataSource") // fait reference au datasource declaré ici LINKdtresr
-            DataSource myDB;
-              ...
-         }
- dans persistence.xml voir persistence.xml.
- declarer en jndi sur le serveur.               
-       
+      
 backend 
 du code java pour aller afficher une page html sans rien faire de special
   res.setContentType("text/html"); ou MediaType.APPLICATION_JSON
@@ -8878,7 +8829,58 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
             <!-- <property name="javax.persistence.schema-generation.drop-source	metadata" value="script, metadata-then-script, script-then-metadata"/> -->
             </properties>
        </persistence-unit>
-     </persistence>   
+     </persistence>  
+config de la base de donnée donnee: en jee
+1)    en annotations:(a mettre sur une classe @Statefull en tout cas sur un EJB et pas sur CDI)
+      @DataSourceDefinitions( //facultatif mais... // de la merde parce qu'on ne peut pas externaliser les credentials
+        value = {             //...du coup possible en enchainer plusieurs et je peux avoir plusieurs datasource EN MEME TEMPS. c bien si je veux me connecter à 2 bases en meme temps mais c la merde si je veux faire un switch. Passer plutot par resources/META-INF/application.xml ou web.xml
+                @DataSourceDefinition(name = "java:app/MemOclapDataSource", // ce nom la est cree ici et sera utilise ailleurs LINKdtresr. commence par java:app (scope dans cette appli seulement) java:comp (??) java:module (??) java:global (disponible dans toutes les applications déploiees sur ce serveur) // permet de definir la source de donnée dans l'application au lieu de dans le serveur container.
+                        className = "org.hsqldb.jdbc.JDBCDataSource", ou com.example.MyDataSource", ou org.apache.derby.jdbc.ClientDataSource // NE PAS mettre un driver ici mais bien un connectiondatapoolsource
+                        url = "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;"
+                ),
+                @DataSourceDefinition(name = "java:app/MemOclapDataSourceRemote", 
+                        className = "com.mysql.jdbc.jdbc2.optional.MysqlDataSource", // ou com.mysql.cj.jdbc.MysqlConnectionPoolDataSource ? PAS DE Driver
+                        url = "jdbc:mysql://www.memoclap.com ou LINKjdbcdockerdatabase:3306/alo",
+                        user = "root",
+                        password = "foulurecalotte"
+                        portNumber=6689
+                )
+        })    // facultatif pour @DataSourceDefinitions
+        ou  (l'un ou l'autre mais ne pas melanger) // ci dessous si je ne veux déclarer qu'une seule datasource.
+            @DataSourceDefinition(name="java:global/MyApp/MyDataSource2",
+              className="org.apache.derby.jdbc.ClientDataSource", ou org.hsqldb.jdbc.JDBCDriver
+              url="jdbc:derby://localhost ou LINKjdbcdockerdatabase:1527/myDB",
+              user="lance",
+              password="secret"
+           )
+      @Stateless // a mettre sous les datasource: c'est un ejb stateless
+      public class DatasourceDefinition
+      {
+ 2)       sont equivalents dans web.xml de
+                  <data-source>
+                  <name>jdbc:hsqldb:mem:employees</name> // bien mettre mem sinon il fait chier avec les connexions mais c'est que pour tester car volatile
+           	ou 
+		<name>java:app/jdbc/memoclap</name> LINKwebxmljta 
+                <class-name>org.hsqldb.jdbc.JDBCDriver</class-name>
+                     ou 
+		<class-name>com.mysql.cj.jdbc.MysqlConnectionPoolDataSource</class-name>
+          	<server-name>database</server-name>
+	          <port-number>3306</port-number>
+        	  <database-name>memoclap</database-name>
+	          <user>root</user>
+        	  <password>foulurecalotte</password>
+              </data-source>  
+             puis ailleurs LINKdtresr:       
+         @Stateless  ou @ApplicationScoped// exemple d'utilisation appel ailleurs
+         public class MyStatelessEJB {
+           @Resource(lookup= ou plutot name="java:global/MyApp/myDataSource") // fait reference au datasource declaré ici LINKdtresr
+            DataSource myDB;
+              ...
+         }
+ dans persistence.xml voir persistence.xml.
+2)  declarer en jndi sur le serveur. voir LINKlskjdfqm 
+ 
+ 
   FORMS ----> envoie des DTO---ne plus les utiliser et passer direct par les entities voir LINKemdlksqj sauf si ils ont pas la meme structure que les Entities
                            |                               |
                            vers                            |
@@ -27424,6 +27426,7 @@ tester le javascript TDD :
                                                 open:jest.fn().mockImplementation(function(){this.status=200;}),// je peux setter une variable dans le mock. Attention on ne peux pas renvoyer return un truc je crois
                                                 overrideMimeType:jest.fn().mockImplementation(function(){}), // si on ne veut rien faire
                                          })
+  				      window.confirm = jest.fn(()=>{return true});
                                       window.XMLHttpRequest = jest.fn().mockImplementation(mockMonObjet);
                                              (.. mes tests..)
 					unmodule.unemethode=jest.fn(); // pour que la methode d'un module ne fasse rien
