@@ -655,14 +655,15 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
   docker ps -a // pour voir la liste de tous les containers (en cours de run et pas)
    ||
   docker container ls // liste les containers qui tournent qui sont en cours d'execution  facultatif: --filter volume=123415678identifiantd'unvolume // pour avoir la liste des containers qui utilisent ce volume
-  Dockerfile : bien l'appeler "Dockerfile" par defaut fichier docker: Défini une image à partir d'une image source. A ecrire apres avoir testé sur un container l'enchainement des commandes qui marchent grace à docker exec. puis ecrire ici les commandes pour builder mon image(mettre des trucs dedans):execution du haut vers le bas. haut:ce qui bouge le moins. Bas ce qui change le plus car docker utilise un cache.
-        FROM nomdelimage:tag donc node:x.x.x-alpine OU python:2.7-slim OU airhacks/glassfish...// image docker de base quel OS OU BIEN une image docker (couche 0 = layer 0 de l'image) si je veux l'etendre voir LINKxlxlx  
+  Dockerfile : bien l'appeler "Dockerfile" par defaut fichier docker: Défini une image à partir d'une image source. A ecrire apres avoir testé sur un container l'enchainement des commandes qui marchent grace à docker exec -it monimage sh puis docker run -it monimage sh et dehors si besoin docker cp. puis ecrire ici les commandes pour builder mon image(mettre des trucs dedans):execution du haut vers le bas. haut:ce qui bouge le moins. Bas ce qui change le plus car docker utilise un cache.
+	#commentaire
+        FROM nomdelimage:tag donc node:x.x.x-alpine OU python:2.7-slim OU airhacks/glassfish OU debian:xxxx OU alpine:3.7 openjdk:8-jdk-alpine...// image docker de base quel OS OU BIEN une image docker (couche 0 = layer 0 de l'image) si je veux l'etendre voir LINKxlxlx  
         WORKDIR /un/path/DANSMONContainerDocker/PASdans/monOS/ (couche 1 = layer 1 de l'image)
         USER root // defini le user qui va executer les commandes suivantes. On peut en mettre un executer un truc puis refaire USER ${autreuser} et executer d'autres trucs
         ENV foo /bla // du coup en dessous quand je mets ${foo} c'est en fait "/bla"
         COPY ./target/audio.memoclap.war ${DEPLOYMENT_DIR} // la source est relative au contexte du dockerfile et on ne peut pas y mettre de variable contrairement je crois au target
         RUN apt-get update (couche 2 = layer 2 de l'image) //RUN sont des commandes executées avant CMD et ENTRYPOINT.
-        RUN apt-get install -y unelibrairie      (couche 3 = layer 3 de l'image) // -y pour que lors du build docker reponde automatiquement YES à toute question interactive survenant pendant l'apt-get install: si j'ai erreur returned a non-zero code: 1
+        RUN OU apt-get install -y unelibrairie   toujours faire le update avant d'abord. (couche 3 = layer 3 de l'image) // -y pour que lors du build docker reponde automatiquement YES à toute question interactive survenant pendant l'apt-get install: si j'ai erreur returned a non-zero code: 1
         RUN apk update && apk add unpacket  // commandes linux executees. si LINKxlxlx ca modifie l'image docker comme une extension // si sh utiliser apk a la place de apt-get car on est sur linux alpine
 	RUN apk update && apk add busybox-extras // sur sh ca c'est pour pouvoir utiliser telnet (busybox-extras telnet) vi et ping et autres dans mon container si besoin pour debuger les pb reseau. busybox --list pour voir toutes commandes possibles 
         RUN npm install --quiet // par exemple.
@@ -680,15 +681,21 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
         ENV https_proxy hostAremplir:portAremplir // mettre ça si je suis derriere un proxy sinon il ne peut pas builder mon conteiner
         ENTRYPOINT ["/docker-entrypoint.sh"] // facultatif c'est le script qui est executé pour lors du démarrage de l'image et qui prend tous les arguments de CMD 
         CMD ["npm","start"] OU ["python", "app.py"]// executera npm start OU python app.py au moment ou on fera un run de l'image (app.py doit avoir été copie precedemment dans mon container dans le WORKDIR). cela s'ajoute à la fin de ENTRYPOINT sauf si je force dans docker run uneautrecmdquiprendralaplace
-   docker build -t(pour tag) unnomquejedonneamonImageAcreer:untag -f ./path/AutreNomDeDockerfileSiCestPasJusteDockerfile dernierArgumentEstPathRelatifVersLeRepertoireContexteContenantLaRacineDuCodeSourceOnPeutMettrePoint/// Creer mon container docker qui rentre dans la liste repository d'images. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto
-  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e "nomDuneSystem.PropertySiJeVeux=savaeleur" ou --env(facultatif) JAVA_OPTS="-Dpropriete.java=yyyy -Dxxx=yyy" --link(facultatif et inutile au sein d'un docker-compose) nomduncontainerTypeDatabaseDansunNetworkBridge:nomDuHostNameDansLaConfDeMonProgrammeLeMotlocalhostEstInterditLINKjdbcdockerdatabase --name=facultatifUnAutreNomQueJeDonneAMonContainerce(nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con) -d (--detatch) (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement. on peut enchainer plusieurs -p) --mount type=bind,source=$variablepath ou /un/path/duHost/DirOuFichier,target=/unPathDansle/container/dirOuFichier OU -v(mais preferer--mount à-v) $(pwd)(ou un repertoire du host os. S'il n'existe pas il est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container) --network(inutile au sein d'un docker-compose) unreseaubridge ou host si besoin ouvert(c'est alors plus rapide au niveau du network) -hNomDuHostnameSiParExempleCestUneBaseDeDoneeJeCrois nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) OU identifiantDeLImage LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container nomdelimage
+   docker build -t(pour tag) unnomquejedonneamonImageAcreer:untag -f ./path/AutreNomDeDockerfileSiCestPasJusteDockerfile dernierArgumentEstPathRelatifVersLeRepertoireContexteContenantLaRacineDuCodeSourceOnPeutMettrePoint/// Creer mon image docker qui rentre dans la liste repository d'images. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto //attention tout ce qui est dans le contexte du dockerfile est envoye au daemon donc ne pas faire le build sur mon bureau par exemple
+  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e "nomDuneSystem.PropertySiJeVeux=savaeleur" ou --env(facultatif) JAVA_OPTS="-Dpropriete.java=yyyy -Dxxx=yyy" --link(facultatif et inutile au sein d'un docker-compose) nomduncontainerTypeDatabaseDansunNetworkBridge:nomDuHostNameDansLaConfDeMonProgrammeLeMotlocalhostEstInterditLINKjdbcdockerdatabase --name=facultatifUnAutreNomQueJeDonneAMonContainerce(nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con) -d (--detatch) (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement. on peut enchainer plusieurs -p)
+		--mount type=bind,source=$variablepath ou /un/path/duHost/DirOuFichier,target=/unPathDansle/container/dirOuFichier //contrairement aux volumes, dans ce cas pas de dockervolume crees par docker 
+		--mount type=tmpfs,dst=/pathdansLeHost/quiAUneDureeDe/vie/egalle/a/celleDuContainerDonc/seraEffaceALaMortDuContainer // seul ce container peut voir le contenu de ce fichier. Ne cree pas non plus de volume docker. Tres pratique pour les contenus sensibles secrets
+		OU
+		-v(mais preferer--mount à-v) $(pwd)(ou un repertoire du host os. S'il n'existe pas le volume est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container du coup le DRIVER du volume est de type local) --network(inutile au sein d'un docker-compose) unreseaubridge ou host si besoin ouvert(c'est alors plus rapide au niveau du network) -hNomDuHostnameSiParExempleCestUneBaseDeDoneeJeCrois nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) OU identifiantDeLImage LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container nomdelimage
 	par defaut c'est executé sur le reseau bridgé partage entre tous les containers et même le host. Suffit de se connecter dans le container et voir leur IP
   docker start -ia(comme -it avec run) nomduconteneurARedemarrer // existe aussi docker stop nomduconteneur ou idduconteneur pour stopper un conteneur
   docker container stop IDDuContainer // pour stopper l'execution d'un container (par son ID ça marche mieux voir donc la liste.)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
   docker inspect nomduconteneur ou nomduneimage | grep networkparex // pour avoir plein de details infos donnees exposedPorts sur mon conteneur ou mon image                                  
   docker logs -f(comme tail -f)facultatifUnAutreNomJeCroisQueJeDonneAMonContainer // a faire apres avoir fait run pour afficher les logs
   docker attach nomduconteneur ou permierscharDuIdDuConteneur // pour se rattaché à un conteneur demarré en backgroud LINKlgkezoiur
-  docker history facultatifUnAutreNomJeCroisQueJeDonneAMonContainer ou nomD'uneImageAExecuter(qui a un conteneur) // pour afficher l'historique d'ajout de ce conteneur 
+  docker cp fichierDansHost.txt moncontainer:/estination/dans/container.txt // pour copier un fichier du host vers le container
+  docker cp moncontainer:/fichierDansMonContainer.txt fichierDansLeHost.txt // pour copier un fichier du container vers le host
+  docker history nomduneImageDocker:sonTag > fichieroutput.txt// pour afficher l'historique d'ajout de ce conteneur: utile si je veux merger appender additionner deux images dockers 
   docker image rm -f repository:portOuIdD'uneImage ou host   ||registry:5000portregistry/aliasImageCloneDeRegistry // pour le supprimer l'image ou son clone de registryregistre
   docker rm -f nomOuIdDunContainer // pour le supprimer le container
  docker save nomdelimageactuelement nomdurepositoryQuonVeutQuilAitLorsDuReimport:tagduRepositoryQuonVeutQuilAitLorsDuReimport > unnom.tar et docker load < unfichier.tar // save pour dumper exporter mon image docker dans un tar que je peux envoyer a un client. et lui de son cote fait docker load monTar pour charger mon image livrable. Si j'ai erreur "Error response from daemon: open /var/lib/docker/tmp/docker-import-" c'est parce que mon tar est corrompu
@@ -1513,7 +1520,14 @@ rajouter une base de  donnée jta au serveur payara LINKlskjdfqm
     jai mis un domain.xml  a coté de payara.jar et j'ai rajouté dedans 
           <resources>
         <jdbc-resource pool-name="H2Pool" jndi-name="jdbc/__default" object-type="system-all"/> // dans <resources>/<jdbc-resource jndi-name="cettefererence" Ma declaration de LINKjta est ici  mais attention je n'ai jamais reussi ici à definir mon propre jndi-name j'ai toujours utilisé H2Pool et jdbc/__default comme nom
-	<jdbc-connection-pool is-isolation-level-guaranteed="false" name="H2Pool" datasource-classname="com.mysql.cj.jdbc.MysqlConnectionPoolDataSource" res-type="javax.sql.DataSource">
+	<jdbc-connection-pool is-isolation-level-guaranteed="false" name="H2Pool" datasource-classname="com.mysql.cj.jdbc.MysqlConnectionPoolDataSource" res-type="javax.sql.DataSource"
+	steady-pool-size="10"  // ajouter tout ca ci dessous si j'ai des erreurs wait timeout
+        max-pool-size="200"
+        is-connection-validation-required="true"
+        connection-validation-method="custom-validation"
+        validation-classname="org.glassfish.api.jdbc.validation.H2ConnectionValidation"
+        connection-leak-timeout-in-seconds="5"
+        statement-leak-timeout-in-seconds="5" >
             <property name="URL" value="jdbc:mysql://127.0.0.1 ou LINKjdbcdockerdatabase :3306/memoclap"/>
             <property name="user" value="root"/>
             <property name="password" value="foulurecalotte"/>
@@ -2666,8 +2680,9 @@ Cycle de vie du CDI bean:
                   }
           
               }
-     design patern observer je crois remplacé par @Interceptor LINKinterceptor permet de déclancher un truc de manière asynchrone rien qu'avec l'ajout d'une annotation pouvant contenir une variable.
-     1) créer une anotation perso: 
+I)Plusieurs messagers, un seul destinataire.
+ design patern observer je crois remplacé par @Interceptor ci dessous permet de déclancher un truc de manière asynchrone rien qu'avec l'ajout d'une annotation pouvant contenir une variable.LINKinterceptor 
+     1) créer une anotation perso: l'interceptorbinding 
             @Inherited
             @InterceptorBinding
             @Retention(RUNTIME)
@@ -2675,26 +2690,50 @@ Cycle de vie du CDI bean:
             public @interface MonAnnotationDInterception{
                 @Nonbinding String value() default "";
             }
-    2)  créer mon interceptor et ce qu'il fait quand il est déclanché:
+    2)  créer mon interceptor: c'est lui qui écoute les messages arrivants.
         @MonAnnotationDInterception
         @Interceptor
         @Priority(Interceptor.Priority.APPLICATION)
         public class blablaInterceptor implements Serializable{
-            @Inject
-            Event<ChangeEvent> broadcaster;
-            @AroundInvoke
-            public intercept(InvocationContect ic)
+           @AroundInvoke
+            public intercept(InvocationContext ic)// c'est ca qui est automatiquement executé par les messages arrivants.
             {
                    UnObjet unObjet=(UnObjet)ic.proceed();
-                   ChangeEvent changeEvent = new ChangeEvent(unObjet,annotation.value()); // annotatio.value() sera egale a moncul (voir plus bas)
-                   broadcaster.fireAsync(changeEvent); // ce truc va ailleur appeler ça LINKobsksf
-                   return unObjet
+			.. je peux executer un truc ici...
+                  return unObjet
             }
-    3)et maintenant je peux utiliser cet interceptor partout:
-        @MonAnnotationDinterception("moncul")
+    3)et maintenant je peux utiliser cet interceptor partout: C'est eux qui envoient les messages vers 1 seul destinataire.
+        @MonAnnotationDinterception("peutEtreQueJePeuxEcrireUnTrucIciJeNeSaisPas")
         public Carte uneMethodeQuelquconqueQuiASonExecutionDeclancheLInterceptor(UnObjet machintruc)
         {...}
-    
+II) Un messager plusieurs destinataires.
+ pattern observable: LINKobsgdgdgz
+	Dans la classe qui envoit les messages:
+	        @Inject //j'injecte un Event appele payloadEvent.
+        	@Named("tutu") LINKkfkgggg //Ms ça c pour jsp. utiliser plutot @Qualifier.
+	        Event<Payload> payloadEvent; ou  Event<ChangeEvent> payloadEvent;
+        
+		@Resource
+		ManagedExecutorService threadPool;	
+        	public void doSomething() {
+		        payloadEvent.fire(new Payload()); //ceci va declancher ailleur ceci:LINKobsksf
+			ou
+			CompletionStage<String> completion =payloadEvent.fireAsync("blablabbla", NotificationOptions.ofExecutor(threadPool)); // returns immediately // va declancher ailleurs LINobsksf
+			completion.thenAccept(this::jaiEnvoyeLeMessageEtIlAEteRecu);
+			ou
+                   	payloadEvent.fireAsync(new ChangeEvent(unObjet,annotation.value())); // ce truc va ailleur appeler ça LINKobsksf
+	        }        
+		public void jaiEnvoyeLeMessageEtIlAEteRecu(String event){...}
+        Dans une autre classe: cliente. (pas reussi a faire marcher sur un client qui est une servlet pour la requete en cours)
+	        public void recoitUnChangeEvent(@ObservesAsync String ou ChangeEvent message) LINKobsksf
+		{
+			System.out.println(message);
+		}
+        	public void processUnqualifiedPayload(@Observes Payload event) {} LINKobsksf
+	        public void processUnqualifiedObject(@Observes Object event) {}
+	        public void processQualifiedPayload(@Observes @Named("tutu") Payload event) {} // ne sont executés que si LINKkfkgggg
+        	public void processQualifiedObject(@Observes @Named("tutu") Object event) {} // ne sont executés que si LINKkfkgggg
+     
                                  
           faire des servlets sans web.xml: 
                 ajouter en tete de classe qui etend HttpServlet @WebServlet("/un/path") ou (urlPatterns={"/a","/b"}) ou (urlPatterns="/b") .  // marche sur version servlet spec >=3.0 DU coup mon path à attaquer c'est http://blabla:xx/monwar/un/path et faire request.getParmeters. Attention pour index page d'accueil on ne peut pas mettre / donc utiliser web.xml et welcome-file qui pointent sur une servlet ou une page
@@ -2720,20 +2759,7 @@ try (SeContainer container = initializer.disableDiscovery().initialize()) { cont
            
                                                                 
 		@Pattern(expressionreguliere) // sur un champ d'un bean: pour valider que ce champ quand il est rempli match bien à la regexp.
-    pattern observable: LINKobsgdgdgz
-        @Inject
-        @Named("tutu") LINKkfkgggg //Ms ça c pour jsp. utiliser plutot @Qualifier.
-        Event<Payload> payloadEvent;
-        public void doSomething() {
-          payloadEvent.fire(new Payload()); //ceci va declancher ailleur ceci:LINKobsksf
-        }        
-        dans une autre classe:
-        public void recoitUnChangeEvent(@ObservesAsync ChangeEvent event){...}
-        public void processUnqualifiedPayload(@Observes Payload event) {} LINKobsksf
-        public void processUnqualifiedObject(@Observes Object event) {}
-        public void processQualifiedPayload(@Observes @Named("tutu") Payload event) {} // ne sont executés que si LINKkfkgggg
-        public void processQualifiedObject(@Observes @Named("tutu") Object event) {} // ne sont executés que si LINKkfkgggg
-        		
+       		
 securite : security :(JSR375 implémenté par soteria qui est la reference) plus besoin d'utiliser web.xml: les annotations font pareil.
        AFAIRE
        https://javaee.github.io/tutorial/security-api004.html
@@ -2832,6 +2858,18 @@ ou remote                       peute etre sur classe meme un webservice. Peut a
                   @Local ---> l'accès à ces beans ne peut se faire que par d'autres beans du meme EJB (même contexte, même classLoader)
                   @LocalBean ---> >=EJB 3.1: bean sans interface necessaire.
                   @Asynchronous à utiliser au lieu de faire des threads sur des webservice/servlet. marche avec @Stateful @Stateless et @Singleton LINKashcrinosdf
+			UnBeanServeur //  A MIEUX CAPITALISER JE NE SUIS PAS DUTOUT SUR DE MOI.
+				@Asynchronous  
+				public Future<String> jeDoisInformerQueLeModelAChange()
+				{
+					return new AsyncResult<String>("hé gars ca a bougé!");
+				}	
+			UnBeanClient
+				unBeanServeur.jeDoisInformerQueLeModelAChange();
+				while(true)
+				{
+					String message = unBeanServeur.get()
+				}
                   @Schedule             |_Utilise Quartz et est automatiquement transactionnel. se met sur une methode exemple :  @Schedule(fixedDelay=1000 ou dayOfMonth="Last", dayOfWeek="Fri", hour = "*", minute = "*", second = "*/5", info = "Every 5 seconds timer") LINKkdgjzoiriririr 
                   @ScheduleExpression   |// heuu... celui la nexiste pas on dirait
                   @Startup // a mettre sur une classe. s'execute au demarrage. marche qu'avec @Singleton pour l'initialiser voir LINKkgkdieieieie 
@@ -4118,11 +4156,12 @@ Pour faire un serveur serveur de chat etc... fonctionnement des sockets
   chausette.getOutputStream() // permet de d'écrire dans le stream en sortie de cette chausette
   chausette.getInputStream() // permet de lire ce qui arrive du stream
   finally{chausette.close();} // l'echange de cette info est termine : si il ya un .accept qui attends il est interrompu
-  Cote client j'ai :
+  Cote client j'ai en java
     Socket s = new Socket("hostdemonserveurParExempleLocalhost",PORT); // cela DEFREEZE le listener.accept ci dessus
     s.getInputStream(); // pour lire read ce qui arrive de la chausette
     s.getOutputStream();
  si erreur java.net.SocketException socket closed This exception means that you closed the socket, and then continued to try to use it. os.close(); And you closed it here. Closing either the input or the output stream of a Socket closes the other stream and the Socket. 
+	en javascript voir LINKWebsocket
 
 eventsource :sse(server-sent-event) autre alternative aux websocket mais ca ne fonctionne que dans un sens : serveur->client: rafraichit en live la page dans une seule requete
     voir https://github.com/mdn/dom-examples/blob/master/server-sent-events/sse.php
@@ -4157,15 +4196,18 @@ eventsource :sse(server-sent-event) autre alternative aux websocket mais ca ne f
         public class HelloServlet extends HttpServlet {
           	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { // je cois que ca marche qu'avec les GET
                 si je fais request.getHeader("Accept") ça renverra "text/event-stream"
-          		response.setContentType("text/event-stream"); // a faire pour sse 
-          		response.setCharacterEncoding("UTF-8");
-          		PrintWriter writer = response.getWriter();
-          		for (int i = 0; i < 20; i++) {
+		response.setContentType("text/event-stream;charset=UTF-8"); // a faire pour sse
+	        response.setCharacterEncoding("UTF-8");
+        	response.setHeader("Cache-Control","no-cache");
+	        response.setHeader("Connection","keep-alive");
+        	response.setHeader("X-Accel-Buffering","no");     // ca c'est indispensable pour que nginx ne bufferise pas les responses de type ssee. Si je mets pas ça ca ne marche pas bien.
+          	PrintWriter writer = response.getWriter();
+          	for (int i = 0; i < 20; i++) {
           			writer.write("id:tititata\n"); //facultatif
                     writer.write("event:toto\n"); //facultatif LINKsseevent
                     writer.write("data:blablabla\n"); // je peux faire plusieurs lignes(doivent se terminer par \n)
                     writer.write("data:bliblibli\n\n"); // mais la dernière ligne qui va déclancher la notif coté front doit finir par \n\n
-                    if (out.checkError()){} // renvoie true si le browser ou l'onget a été fermé
+                    if (writer.checkError()){} // renvoie true si le browser ou l'onget a été fermé
           			writer.flush();
           				Thread.sleep(1000);
           		}
@@ -4526,7 +4568,7 @@ web.xml : webxml :
             servlet-mapping Definit un alias pour une servlet.
             session-config Definit un delai maximal d'inactivite pour les sessions.  
             		    sous <web-app>:<session-config>
-                	<session-timeout>15</session-timeout>
+                	<session-timeout>15</session-timeout> mettre -1 pour une duree infinie de la session
                 	   <cookie-config>
                 	       <secure>true</secure> // fait pareil que LINKlizifoizf  (a partir de servlet3.0) attention du coup en http je ne peux peut etre plus me connecter
                            <http-only>true</http-only> // fait pareil que LINKlkgjkljkjgjgjgjgj
@@ -8814,7 +8856,7 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
              <jta-data-source>java:app/MemOclapDataSource</jta-data-source> // est defini la LINKjta ou la LINKwebxmljta: mettre la valeur de @DataSourceDefinition(name="java:app/MemOclapDataSource" pour aller cherche un datasource deja defini applicativement
              ou/et
             <properties> // parametres envoyés au persistenceprovider. On peut définir la base de donnée ici mais je prefere le definir la LINKjta  
-                <property name="eclipselink.logging.level" value="FINE"/>				|_Marche bien et trace les logs dans systemOut en tout cas.
+                <property name="eclipselink.logging.level" value="FINE ou SEVERE ou..."/>				|_Marche bien et trace les logs dans systemOut en tout cas.
 		<property name="eclipselink.logging.file" value="outputeclipselink.log"></property>	|
                 <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbc.JDBCDataSource"/><!-- com.mysql.jdbc.Driver -->
             <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;"/> <!-- jdbc:mysql://127.0.0.1:3306/moviecatalog -->
@@ -15428,13 +15470,17 @@ hacking : haking : hack :
         MD5 et SHA1 et SHA2 sont obsoletes. parade: hasher 4 fois de suite. BcryptPasswordEncoder de spring le fait pour nous pour hasher des passwords par exemple
         ne pas loguer les users passwords  
 			  injection sql : ne jamais faire de requete sql par concatenation mais toujours pas procedure stockée. Un hacker sinon peut metre un bout de sql dans un champ texte. idemn sur mongodb
-        x-frame-options header not set // en-tête header http de response permettant d'eviter qu'un site s'affiche dans un autre site (iframe i-frame object).(clickjacking: quand je clique ça clique sur un autre bouton invisible) LINKxframeiframe
+        x-frame-options header not set // en-tête header http de response permettant d'eviter qu'un site s'affiche dans un autre site (iframe i-frame object).(clickjacking: quand je clique ça clique sur un autre bouton invisible). Ne plus utiliser ça c'est vieux et remplacé par content-security-policy  LINKxframeiframe
 		option possibles: deny ou sameorigin(meme domaine exactement, pas sous domaine, meme port meme scheme.). Si je veux mettre mon site dans un iframe je dois mettre CSP:(content-security-policy)
-		Content-Secrurity-Policy default-src *;
-		Content-Security-Policy default-src wordpress.fauxmemoclap.com
-		Content-Security-Policy default-src *.fauxmemoclap.com
- 
-        xss ://crosssitescripting // ma servlet vulnerable fait executer au navigateur du javascript passé en parametre de ma requete. ce javascript pourrait lire mes cookies (de session!): LINKcooklskjhh LINKc.s.r.f  et le pirate de se connecter à ma place
+	CSP :content-security-policy contentsecuritypolicy: pour dire si j'ai le droit de faire du chargement de source src. Ne rien mettre si je veux laisser openbar je crois sauf pour frame-ancestors ou la je dois le dire LINKxframeiframe
+		Content-Security-Policy default-src *;frame-ancestors https://url.qui.a.le.droit.dafficher.mon.site.dans.son.iframe;  // lire de droite à gauche: ici: par defaut tout est authorisé
+		Content-Security-Policy default-src 'self' *.trusted.com; img-src *; media-src un.site.com un.autre.com; script-src un.site.com;  // lire de droite à gauche: ici: les medias sont acceptes seulement sur deux site, les images de partout, sinon par defaut le reste de type de données seulement par moimeme et tout.trusted.com
+			les types de données possibles sont:font-src(caracteres),frame-src(iframes),img-src,manifest-src,media-src(audio et videos),object-src,script-src(javascript),style-src(css),worker-src(webworkers) 
+		comme c'est galère, pour le debugger tester:
+			Content-Security-Policy-Report-Only: default-src https:; report-uri /uneFinDurlQuelqonque // et je regarde dans le debugger du browser ce qu'il envoie comme rapport
+       	Feature-Policy: pour dire si j'ai le droit d'executer un type de truc
+		Feature-Policy unsized-media 'self' https://un.site.com; geolocation 'none' camera *;  // lire de droite à gauche: ici: camera marchera depuis n'importe quel autre site, geolocation complettement OFF; unsized-media seulement par moi et un.site.com en https
+         xss ://crosssitescripting // ma servlet vulnerable fait executer au navigateur du javascript passé en parametre de ma requete. ce javascript pourrait lire mes cookies (de session!): LINKcooklskjhh LINKc.s.r.f  et le pirate de se connecter à ma place
                     pour s'en premunire faire du @safeHTML ou faire  org.jsoup.Jsoup.isValid(lechampatester); sur les champs pour que du javascript ne puisse pas etre injecté dedans. aussi empecher le javascript d'acceder aux cookies.
                     ou faire dans la jsp: <c:out value="${une_variable_renvoiee_par_la_servlet}"/> // du coup une_variable_renvoiee_par_la_servlet ne peut plus executer du javascript 
         pathtraversal// une servlet renvoit n'importe quel fichier ! ex: monsite/maservlet?vachercher=/unpath/unfichierANeSurtoutPasMontrer !affiche le fichier!    
@@ -16419,7 +16465,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
                         Machin machinATesterEtSpyer = new Machin()
                         Mockito.spy(machinATesterEtSpyer);
 			ou bien l'annoter @Spy et @InjectMock puis mocker ses methodes comme ca:
-			Mockito.doReturn(unTrucQuiDoitEtreRetourne).when(uMockOuUnSpyPasSur).uneMethodeAMocker(anyString());
+			Mockito.doReturn(unTrucQuiDoitEtreRetourne).when(uMockPasUnSpy).uneMethodeAMocker(anyString());
                     ResultDao rd =mock ou spy(unObjetNONANNOTE ou new ResultDao() ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
                     Mockito.doReturn(toto).when(rd).getLaMethodeNONSTATIQUEResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy. ou pour qu'un spy ne fasse rien: Mockito.doNothing().when(monSpy).lamethodeDeMonSpyQuiPeutEtreVoid();
     				when(filterConfig.getServNONSTATIQUEletContext( // ca s'appelle faire du "stub" et utiliser ca je crois pour les mock. Attention si c'est une methode finale il va rentrer dedans avant de traiter le when donc pour mocker une methode finale depuis Mockito2 seulement on crée un fichier sous src/test/resources/mockito-extensions/org.mockito.plugins/MockMaker et dedans on ecrit mock-maker-inline
@@ -18107,7 +18153,16 @@ pour imposer qu'il ya  qu'une seule instance de mon batch java qui tourne:
               sinon on peut ecrire dans un fichier ou mieux dans la base comme ca on peut changer la valeur dans la base 
 
        
-
+pour connaitre le mimetype d'un fichier si je ne connais pas sa vraie extension c'est galère en java pur obligé d'utiliser la librairie apache.tika: alors que si c'est une requete http je peux faire param.get("content-type") ici non je suis dans le filesysteme.
+	Tika tika = new Tika()
+	String	contentType=	tika.detect(unObjetTypeFichierEtPasUnString);
+	if (contentType.contains("spreadsheetml")) contentType="/xlsx";
+	if (contentType.contains("excel")) contentType="/xls";
+	if (contentType.contains("ms-outlook")) contentType="/msg";
+	if (contentType.contains("msword")) contentType="/doc";
+	if (contentType.contains("officedocument.?wordprocessingml")) contentType="/docx";
+	if (contentType.contains("xhtml")) contentType="/html";
+	return "."+contentType.substring(contentType.indexOf("/")+1);	
 
 parser convertir json : 
 JSON-B :jsonb : pour binder java et json LINKjsonbnew
@@ -21093,7 +21148,7 @@ pour convertir un int en string
 		convertir un string en char[] g.toCharArray(); 
 		convertir un tableau d'objet quelquconque en array ou list:
 				List<File> list =  Arrays.asList(f); // f ne doit pas etre un tableau de primitif mais un tableau d'objets
-		convertir un array ou list en tableau:
+		convertir un array ou list en tableau: liste en tableau:
 				String[] stringArray = (String[])list.toArray(new String[list.size()]); 
 		convertir un int en short:
 				(short)3 ou bien: int toto =3; (short)toto;
@@ -22447,7 +22502,7 @@ import javax.mail.internet.MimeUtility;
 	//    }
 	    BodyPart messageBodyPart = new MimeBodyPart();
 	    BodyPart messageBodyPart2 = new MimeBodyPart();
-	    messageBodyPart2.setContent(contentadm.toString(), "text/plain"); (ou "text/html")
+	    messageBodyPart2.setContent(contentadm.toString(), "text/plain"); (ou "text/html;charset=utf-8") // bien mettre charset=utf-8 sinon le mail n'est pas bien encodé
 	    
 	    
 	             si ça ne marche pas au format text/html essayer come ca: 
@@ -24515,7 +24570,7 @@ sudo : // si command not found faire d'abord su - puis apt-get install sudo -y
     /bin et /sbin: commandes unix
     /dev fichiers pilotes materiel
     /etc fichiers d'administrations et commandes systemes
-    /usr/bin commandes suppl non contenus dans /bin
+    /us/bin commandes suppl non contenus dans /bin
     /usr/lib bibliotheques unix non vitales
     /usr/include declaration de fonctions systemes
     /usr/src sources de logiciels + du noyau Linux
@@ -24634,7 +24689,7 @@ les droits:
     rwx rwx r-x = 775
     lorsqu'on cree un repertoire ou un fichier le umask s'applique voir umask
 pour modifier les droits:
-    chmod -R 755
+    chmod -R 755 // peut ne pas marcher si je suis dans un disque ntfs
     read r 4
     write w 2
     Execute x 1
@@ -25091,6 +25146,7 @@ ssh : se logger sur une machine a distance par le port 22
                       	cat $1 >> .ssh/authorized_keys
                       	rm -f $1
 scp :commande
+	si j'ai erreur Received disconnect from xxxx too many authentication failures rajouter apres ssh: -o IdentitiesOnly=yes à ma commande ssh
   pour downloader recuperer telecharger transferer un fichier d'un serveur à un autre voir aussi rsync
     -r pour recursif si c un repertoire.
     -vvv pour verbose (mode debug)
@@ -25363,7 +25419,7 @@ u: undo si multiple undo ne marche pas: aptitude et charger vim
 :q! quitter sans sauver
 :wq sauve et quitter enregistrer et quitter
 :w sauve enregistrer
-:w "autrenom" pour sauver sous enregistrer sous save as un aure nom
+:sav autrenom pour sauver sous enregistrer sous save as un aure nom
 :sav! ~/.recovered // sauver sous un autre nom et basculer ensuite sur ce fichier. Puis faire :bn pour repasser sur le fichier editer precedemment utile pour gerer les problemes de swp puis faire en commande dans vi une comparaison cote a cote voir LINKlhlhlhlhlioie
 :!MaCommande faire une commande unix executer une commande unix
 :r ! MaCommande faire une commande unix et le resultat de la commande rentre dans le texte
@@ -26590,7 +26646,7 @@ URLS : URL :
   %28 pour ( %29 pour ) %3C pour < %3E pour > %2F pour /
   Echappement dans URL:
       arobase:%40
-      Esperluette	&	&amp;
+      Esperluette	&	&amp; echapper et commercial
       Apostrophe	'	&apos;
       Guillemets droits	"	&quot;
       Superieur superieur à	>	&gt;
@@ -27411,11 +27467,11 @@ tester le javascript TDD :
 				beforeEach(() => {....});
 				afterEach(() => {....});
                               	it(.skip pour ignorer)('nom du test', () => {
-                                    // pour mocker un objet(xhr pour requete par exemple)
+                                    // pour mocker un objet(xhr pour requete ajax par exemple)
                                   un module: 
 						jest.spyOn(unModule, 'NomDeLamethodeDeCeModule').mockReturnValue(true) // mocker la methode d'un module partout. ici  retournera tout le temps true. Attention ne marche pas si cette methode est appelée dans une autre promise on dirait
 												.mockImplementation(function(){...})
-					       const mockMonObjet = ()=> ({// toujours nommer cet objet en commencant par "mock" C'EST CA QUE JE DOIS UTILISER POUR MOCKER XMLHTTPREQUEST
+					       const mockMonObjet = ()=> ({// toujours nommer cet objet en commencant par "mock" C'EST CA QUE JE DOIS UTILISER POUR MOCKER XMLHTTPREQUEST ajax
                                          ou
                                          const mockMonObjet={ // si marche pas (le new mock ne peut pas s'instancier au run essayer ci dessus
 						nomdemamethode:jest.fn().mockImplementation..etc...voir ci dessous
@@ -29065,7 +29121,7 @@ endsWith en javascript: (se termine par)
     monString.match("bla$")
 startsWith:
     monString.indexOf("bla")==0
-pour avoir les fils d'un element:  queryselector
+pour avoir les fils d'un element:  queryselector attention un id avec un chiffre ne marchera pas il faut faire un escape : exemple querySelector("#1") doit s'ecrire je crois querySelector("#\1");
       utiliser soit .children soit .childNodes (na pas marche une fois) > fils direct(premier fils); " "(espace) fils indirect; a (balise de type a); a[toto] balise de type a avec un attribut toto; a[toto=titi] balise de type a avec un attribut toto = titi; a,b a ou b; a.toto a avec une classe=toto; #hehe  id=hehe
       document.querySelector("#prompt>#prompt1>div").children;// c'est un tableau donc on peut faire document.querySelector("#prompt>#prompt1>div").children[0];
 pour avoir tous les elements fils de manière recursive: 
@@ -34258,7 +34314,7 @@ Gradle : (je peux overrider et definir mes propres conventions over configuratio
             |__ gradle
             |   |__ wrapper
             |       |__ gradle-wrapper.jar // wrapper jar et sa configuration  
-            |       |__ gradle-wrapper.properties  // sa configuration // possible definir proxy ici et/ou dans gradle.properties: systemProp.http(s).proxyHost, proxyPort, proxyPassword comme d'hab
+            |       |__ gradle-wrapper.properties  // sa configuration // possible definir proxy ici et/ou dans gradle.properties: systemProp.http( et s).proxyHost, idem.proxyPort, idem.proxyUser, idem.proxyPassword comme d'hab
             |__ gradlew // script du wrapper pour unix  
             |__ gradlew.bat // script du wrapper pour windows  
             |__ settings.gradle     // contient le nom de mon projet
@@ -34647,4 +34703,28 @@ virtualbox : virtuabox :virtual box : virtual machine virtuel
     les .iso sont sur les sites ubuntu,debian... etc...
   lancer vbox> nouveau> creer un disque dur virtuel now > creer > config > stockage > ide > choisir un fichier .iso super important de faire ca avant pour toute installation de vm sinon la vm n'a pas de reseau      
 
-
+mimic :
+	dans docker tail sur les logs
+	se connecter au cli dans le docker:docker container exec -it mycroft bash puis 
+	docker ecoute websocket sur port 8181
+	utiliser ce websocket en javascript: LINKWebsocket
+	<html><script>
+	ws = new WebSocket("ws://localhost:8181/core");
+	ws.onopen = function () {
+	    console.log("onopen");
+	};
+	ws.onmessage = function (e) {
+	console.log("From Server:"+ e.data);
+	};
+	function send() {
+	    let message={"type":"speak","data":{"utterance":"Bonjour je m'appelle Laurent","lang":"fr-fr"}};
+	    ws.send(JSON.stringify(message));
+	}
+	function close()
+	{
+	    ws.close()
+	}
+	</script>
+	<input type="button" onclick="send()" value="go"/>
+	<input type="button" onclick="close()" value="stop"/>
+	</html>
