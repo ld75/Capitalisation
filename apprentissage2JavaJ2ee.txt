@@ -682,6 +682,8 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
         ENTRYPOINT ["/docker-entrypoint.sh"] // facultatif c'est le script qui est executé pour lors du démarrage de l'image et qui prend tous les arguments de CMD 
         CMD ["npm","start"] OU ["python", "app.py"]// executera npm start OU python app.py au moment ou on fera un run de l'image (app.py doit avoir été copie precedemment dans mon container dans le WORKDIR). cela s'ajoute à la fin de ENTRYPOINT sauf si je force dans docker run uneautrecmdquiprendralaplace
    docker build -t(pour tag) unnomquejedonneamonImageAcreer:untag -f ./path/AutreNomDeDockerfileSiCestPasJusteDockerfile dernierArgumentEstPathRelatifVersLeRepertoireContexteContenantLaRacineDuCodeSourceOnPeutMettrePoint/// Creer mon image docker qui rentre dans la liste repository d'images. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto //attention tout ce qui est dans le contexte du dockerfile est envoye au daemon donc ne pas faire le build sur mon bureau par exemple
+	si j'ai l'erreur Couldn't connect to Docker daemon at http+docker://localhost - is it running?
+		c'est peut etre parce que j'ai mis le nom de mon image en majuscules. Pas supporté.
   docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e "nomDuneSystem.PropertySiJeVeux=savaeleur" ou --env(facultatif) JAVA_OPTS="-Dpropriete.java=yyyy -Dxxx=yyy" --link(facultatif et inutile au sein d'un docker-compose) nomduncontainerTypeDatabaseDansunNetworkBridge:nomDuHostNameDansLaConfDeMonProgrammeLeMotlocalhostEstInterditLINKjdbcdockerdatabase --name=facultatifUnAutreNomQueJeDonneAMonContainerce(nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con) -d (--detatch) (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement. on peut enchainer plusieurs -p)
 		--mount type=bind,source=$variablepath ou /un/path/duHost/DirOuFichier,target=/unPathDansle/container/dirOuFichier //contrairement aux volumes, dans ce cas pas de dockervolume crees par docker 
 		--mount type=tmpfs,dst=/pathdansLeHost/quiAUneDureeDe/vie/egalle/a/celleDuContainerDonc/seraEffaceALaMortDuContainer // seul ce container peut voir le contenu de ce fichier. Ne cree pas non plus de volume docker. Tres pratique pour les contenus sensibles secrets
@@ -690,6 +692,7 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
 	par defaut c'est executé sur le reseau bridgé partage entre tous les containers et même le host. Suffit de se connecter dans le container et voir leur IP
   docker start -ia(comme -it avec run) nomduconteneurARedemarrer // existe aussi docker stop nomduconteneur ou idduconteneur pour stopper un conteneur
   docker container stop IDDuContainer // pour stopper l'execution d'un container (par son ID ça marche mieux voir donc la liste.)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+  docker stop $(docker ps -a -q) // pour stopper tous all tout les containers
   docker inspect nomduconteneur ou nomduneimage | grep networkparex // pour avoir plein de details infos donnees exposedPorts sur mon conteneur ou mon image                                  
   docker logs -f(comme tail -f)facultatifUnAutreNomJeCroisQueJeDonneAMonContainer // a faire apres avoir fait run pour afficher les logs
   docker attach nomduconteneur ou permierscharDuIdDuConteneur // pour se rattaché à un conteneur demarré en backgroud LINKlgkezoiur
@@ -697,7 +700,8 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
   docker cp moncontainer:/fichierDansMonContainer.txt fichierDansLeHost.txt // pour copier un fichier du container vers le host
   docker history nomduneImageDocker:sonTag > fichieroutput.txt// pour afficher l'historique d'ajout de ce conteneur: utile si je veux merger appender additionner deux images dockers 
   docker image rm -f repository:portOuIdD'uneImage ou host   ||registry:5000portregistry/aliasImageCloneDeRegistry // pour le supprimer l'image ou son clone de registryregistre
-  docker rm -f nomOuIdDunContainer // pour le supprimer le container
+  docker rm -f nomOuIdDunContainer // pour le supprimer le container -v pour supprimer aussi son volume
+  docker rm $(docker ps -a -q)	// pour supprimer tout tous all les containers arretes
  docker save nomdelimageactuelement nomdurepositoryQuonVeutQuilAitLorsDuReimport:tagduRepositoryQuonVeutQuilAitLorsDuReimport > unnom.tar et docker load < unfichier.tar // save pour dumper exporter mon image docker dans un tar que je peux envoyer a un client. et lui de son cote fait docker load monTar pour charger mon image livrable. Si j'ai erreur "Error response from daemon: open /var/lib/docker/tmp/docker-import-" c'est parce que mon tar est corrompu
   docker exec -it nomconteneurDejaRunne bash ou sh ou ksh // LINKjgjgjgaba: execute une commande dans un conteneur déja actif. ici la commande bash est executée dans le container qui demarre en mode -it(interactif) donc du coup je vais avoir le prompt bash DANS mon container. virer le -t si je veux juste executer une commande par exemple executer du sql direct depuis l'exterieur dans le container sinon j'aurais le message d'erreur "not a TTY". Dans le container, si j'execute top je ne vois que les process qui tournent DANS le container
         de là je peux faire du apt-get pour installer d'autres librairies si besoin. 
@@ -755,9 +759,9 @@ docker-compose : dockercompose : s'installe avec apt-get ou aptitude
                                 - UNE_VARIABLE1=lavaleur1
                                 - UNE_VARIABLE2=lavaleur2
                                 - UNE_VARIABLE3=nomdemonservice2 // on peut avoir ca si nomdemonservice1 accede à nomdemonservice2
-                            networks://non inutile dans un docker compose! car par defaut il cree un network appelé "repertoireSousLequelSeTrouveDockerPointYml_default". Sauf si je veux faire des sous-reseau dans un dockercompose. Si je veux que deux docker-compose.yml puissent se voir LINKnetworkdockercompose
-                                - unreseaubridgéDansLequelCeServiceBaigne
-	                volumes:
+                            networks:// ce service va baigner dans ce network. Dans un seul dockercompose.yml c'est pas utile car par defaut il cree un network appelé "repertoireSousLequelSeTrouveDockerPointYml_default" et baigne tous les services de mon dockercompose dedans. Sauf si je veux faire des sous-reseau dans un dockercompose. Si je veux que deux docker-compose.yml puissent se voir LINKnetworkdockercompose
+                                - unreseaubridgéDansLequelCeServiceBaigne  //le service utilise donc ce network: LINKdeclareutilisationnetwork
+	                volumes: // je crois que cette partie n'est exploitée que lors de docker-compose up
                         - type: bind // ou volume ou tmpfs(temporaire est ephemere)
                           source: ${localcustomcsspath}
                           target: /opt/payara/customcss
@@ -779,10 +783,14 @@ docker-compose : dockercompose : s'installe avec apt-get ou aptitude
                 	volumes:  //falcultatif utile que pour les volumes managés
                     		unnomdevolumemanagé: // je declare ici des volumes bridgés qui peuvent etre utilisés là LINKaze
 	                        auautrevolumemanagé:
-		networks: //ACAPITALISERSICAMARCHE
+		networks:   //les services y font reference là LINKdeclareutilisationnetwork
+			suffixeDuNomDeMonNetwork: //le prefix correspond au nom du repertoire en lowercase dans lequel figure ce docker compose.
+				name: nomcustomisedemonnetwork //override le nom autodefini ci dessus. Depuis version 3.5 de docker seulement en tete de mon docker-compose.yml
+				driver:bridge
+		networks: //LINKnetworkdockercompose //ici ce dockercompose va se rattacher à un autre network deja existant.
 		  default:
 		    external:
-		      name: repertoireSousLequelSeTrouveDockerPointYml_default
+		      name: nomDuReseauAuquelOnVeutSeJoindre_a_recuperer_avec_network_ls
             executer sur l'emplacement de ce fichier:
 				dans les commandes ci dessous si le nom du fichier compose n'est pas docker-compose.yml mettre -f leNomDuFichierDockerCompose.yml
                 docker-compose up -d FacultatifLeNomDuService// -d pour executer en background sinon il garde le prompt et Ctrl+C kill le process. Il ne build pas il transforme d'image vers container et le start
@@ -1436,7 +1444,7 @@ payara :payaramicro : // executeur direct d'un microservice.
         --deploy /home/user/example.war ou le repertoire root du war exploaded(dans target)// mettre un .reload sous la racine de mon war exploded et le modifier/toucher recharge le war exploded automatiquement (faire mvn package)(sauf si le war ne s'est pas déployé la fois précédente)
                  possible faire plusieurs --deploy dans une meme commande seront sur le meme port
 	ou
-	--deploymentDir /path/vers/repertoire/contenant/tous/les/wars/
+	--deploymentDir /path/vers/repertoire/contenant/tous/les/wars/ // Mouais.. une fois ca n'a pas marché. jamais compris pourquoi
         --contextroot contextrootquiremplacelenomdemonwarcommecontextroot (avec / au debut, sans / à la fin) on peut mettre / tout court. Si on pet pas ca le contextroot=nomDuWar //ou faire --deploy /x/y:contextroot
         --domainConfig fichierDomain.xml // situé au meme niveau. A recuperer dans payara.jar et à mettre au meme niveau si je veux declarer une base de donnee jta voir LINKlskjdfqm
         --name nomdemoninstancequejedeploie
@@ -2601,7 +2609,7 @@ CDI1.x besoin de weld pour tester Tres galère: autant utiliser mockito seul ca 
 Cycle de vie du CDI bean:
               – @RequestScoped // a mettre absolument sur un webservice utilisant jwt car les claims jwt sont naturelement request-scopeds. LINKkgkgkgklkjsdfljqi
               – @RedirectScoped // fait partie de mvc: utile si apres un post on fait un redirect et qu'on a besoin de l'info du post.
-              – @SessionScoped // s'appuye sur jsessionid: il faut qu'il soit le même pour que le bean soit le meme
+              – @SessionScoped // s'appuye sur jsessionid: il faut qu'il soit le même pour que le bean soit le meme. Doit implement Serializable
               – @ApplicationScoped // (par defaut) sur la classe. le bean est utilise pour les proprietes generales de l'appli: ex: listes deroulantes qu'on voit tout le temps Attention ne s'initialise pas avnat d'etre injecté
                                 pour dedans executer des trucs qui vivront tant que l'application tourne mais pour l'initialiser en meme temps que le container, voir LINKobsgdgdgz
                                 public void demarrage(@Observes @Initialized(ApplicationOuAutreScoped.class) Object init) // ou @Destroyed si c'est quand ca s'eteint. Ne prennent que des Scope LINKobsgdgdgz
@@ -2681,7 +2689,7 @@ Cycle de vie du CDI bean:
           
               }
 I)Plusieurs messagers, un seul destinataire.
- design patern observer je crois remplacé par @Interceptor ci dessous permet de déclancher un truc de manière asynchrone rien qu'avec l'ajout d'une annotation pouvant contenir une variable.LINKinterceptor 
+ design patern observer je crois remplacé par @Interceptor ci dessous permet de déclancher un truc de manière asynchrone rien qu'avec l'ajout d'une annotation pouvant contenir une variable.LINKinterceptor. Pas encore reussi a le faire marcher
      1) créer une anotation perso: l'interceptorbinding 
             @Inherited
             @InterceptorBinding
@@ -2694,9 +2702,10 @@ I)Plusieurs messagers, un seul destinataire.
         @MonAnnotationDInterception
         @Interceptor
         @Priority(Interceptor.Priority.APPLICATION)
-        public class blablaInterceptor implements Serializable{
+	@Dependent
+        public class blablaInterceptor implements Serializable{ // ce bean ne peut etre que @Dependent apparemment
            @AroundInvoke
-            public intercept(InvocationContext ic)// c'est ca qui est automatiquement executé par les messages arrivants.
+            public void intercept(InvocationContext ic)// c'est ca qui est automatiquement executé par les messages arrivants.
             {
                    UnObjet unObjet=(UnObjet)ic.proceed();
 			.. je peux executer un truc ici...
@@ -2709,30 +2718,32 @@ I)Plusieurs messagers, un seul destinataire.
 II) Un messager plusieurs destinataires.
  pattern observable: LINKobsgdgdgz
 	Dans la classe qui envoit les messages:
-	        @Inject //j'injecte un Event appele payloadEvent.
-        	@Named("tutu") LINKkfkgggg //Ms ça c pour jsp. utiliser plutot @Qualifier.
-	        Event<Payload> payloadEvent; ou  Event<ChangeEvent> payloadEvent;
+	        @Inject //j'injecte un Event appelé payloadEvent.
+        	@Named("tutu") LINKkfkgggg //Ms ça c pour jsp. utiliser plutot un @QualifierCustomisé
+	       Event<String> payloadEvent; ou  Event<Payload> payloadEvent; ou  Event<ChangeEvent> payloadEvent; LINKeventlabbla le type entre <> doit etre le meme que ci dessous.
         
 		@Resource
 		ManagedExecutorService threadPool;	
         	public void doSomething() {
+			payloadEvent.fire("toto");  LINKeventlabbla type String
+			ou
 		        payloadEvent.fire(new Payload()); //ceci va declancher ailleur ceci:LINKobsksf
 			ou
-			CompletionStage<String> completion =payloadEvent.fireAsync("blablabbla", NotificationOptions.ofExecutor(threadPool)); // returns immediately // va declancher ailleurs LINobsksf
+			CompletionStage<String> completion =payloadEvent.fireAsync("blaDontLeTypeDoitEtreLeMemeQueCaLINKeventlabbla", NotificationOptions.ofExecutor(threadPool)); // returns immediately // va declancher ailleurs LINobsksf
 			completion.thenAccept(this::jaiEnvoyeLeMessageEtIlAEteRecu);
 			ou
-                   	payloadEvent.fireAsync(new ChangeEvent(unObjet,annotation.value())); // ce truc va ailleur appeler ça LINKobsksf
+                   	payloadEvent.fireAsync(new ChangeEvent(unObjet,annotation.value())); // ce truc va ailleur appeler ça LINKobsksf. Le type ChangeEvent doit etre le meme que là  LINKeventlabbla
 	        }        
 		public void jaiEnvoyeLeMessageEtIlAEteRecu(String event){...}
         Dans une autre classe: cliente. (pas reussi a faire marcher sur un client qui est une servlet pour la requete en cours)
-	        public void recoitUnChangeEvent(@ObservesAsync String ou ChangeEvent message) LINKobsksf
+	        public void recoitUnChangeEvent(@ObservesAsync String ou ChangeEvent message) LINKobsksf   ca ne declanche que les methodes dont le type du parametre est le meme que  LINKeventlabbla
 		{
 			System.out.println(message);
 		}
         	public void processUnqualifiedPayload(@Observes Payload event) {} LINKobsksf
 	        public void processUnqualifiedObject(@Observes Object event) {}
-	        public void processQualifiedPayload(@Observes @Named("tutu") Payload event) {} // ne sont executés que si LINKkfkgggg
-        	public void processQualifiedObject(@Observes @Named("tutu") Object event) {} // ne sont executés que si LINKkfkgggg
+	        public void processQualifiedPayload(@Observes @Named("tutu") ou @QualifierCustomisé Payload event) {} // ne sont executés que si LINKkfkgggg
+        	public void processQualifiedObject(@Observes @Named("tutu") ou @QualifierCustomisé Object event) {} // ne sont executés que si LINKkfkgggg
      
                                  
           faire des servlets sans web.xml: 
@@ -4163,7 +4174,7 @@ Pour faire un serveur serveur de chat etc... fonctionnement des sockets
  si erreur java.net.SocketException socket closed This exception means that you closed the socket, and then continued to try to use it. os.close(); And you closed it here. Closing either the input or the output stream of a Socket closes the other stream and the Socket. 
 	en javascript voir LINKWebsocket
 
-eventsource :sse(server-sent-event) autre alternative aux websocket mais ca ne fonctionne que dans un sens : serveur->client: rafraichit en live la page dans une seule requete
+eventsource : event source :sse :(server-sent-event) autre alternative aux websocket mais ca ne fonctionne que dans un sens : serveur->client: rafraichit en live la page dans une seule requete
     voir https://github.com/mdn/dom-examples/blob/master/server-sent-events/sse.php
     coté serveur:
     // pour un webservice : (sur ?)
@@ -4192,7 +4203,7 @@ eventsource :sse(server-sent-event) autre alternative aux websocket mais ca ne f
             eventSink.send(sse.newEvent("blibli"));
             eventSink.close();
     pour une servlet : servlet 3.0
-        WebServlet("/maservleteventsource", asyncSupported=true //asyncSUpported est facultatif c'est si je veux LINKrequestmultithreadAFAIRE)  
+        WebServlet("/maservleteventsource", asyncSupported=true //asyncSUpported est facultatif c'est si je veux avoir la droit de creer un thread dans ma request http servlet. LINKrequestmultithread  
         public class HelloServlet extends HttpServlet {
           	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { // je cois que ca marche qu'avec les GET
                 si je fais request.getHeader("Accept") ça renverra "text/event-stream"
@@ -4216,13 +4227,29 @@ eventsource :sse(server-sent-event) autre alternative aux websocket mais ca ne f
           }
     et voir coté javascript sur MDN: EventSource
           var eventSource = new EventSource("/url/maservleteventsource");
-      		eventSource.onmessage = function(event) {
+      		eventSource.onmessage = function(event) { // pour tout type de message recu je crois
       			document.getElementById('foo').innerHTML = event.data;
       		};
               ou eventSource.addEventListener("toto",function(event){ // si j'ai fait LINKsseevent
                 ...event.data...
               }
-            IL FAUT appeler quand c'est fini eventSource.close(); sinon le client va encore essayer de se reconnecter au bout de 3 secondes meme si coté serveur j'ai fait close. JE CROIS. 
+            IL FAUT appeler quand c'est fini eventSource.close(); sinon le client va encore essayer de se reconnecter au bout de 3 secondes meme si coté serveur j'ai fait close.
+pouvoir faire un thread runnable dans une servlet request LINKrequestmultithread
+	@Resource
+	private ManagedExecutorService managedExecutorService; // pas trop compris a quoi ca sert
+	public void doGet....
+	{
+		final AsyncContext asyncContext = request.startAsync(request,response);
+		Runnable runnable = new Runnable() {
+        	   @Override public void run() {
+			...
+			asyncContext.complete(); // quand c'est fini.
+			}
+		};
+		managedExecutorService.submit(runnable);
+	}
+        
+
 jwebsocket : (Web Socket) faire un chat : 
   declarer  JWEBSOCKET_HOME vers D:\LocalData\p036782\jWebSocket-1.0
   en variable d'environnement
@@ -5555,7 +5582,7 @@ pour centrer direct:
 selectors: selecteur: LINKcsslkhkhkhkhkh
      :nth-child veut dire selctionner element si:
           It is a paragraph element
-          It is the second child of a parent
+          It is the 2eme second child of a parent
      :nth-of-type veut dire selctionner element si:
           Select the second paragraph child of a parent
 	sauf negation:
@@ -8853,7 +8880,7 @@ JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
             <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> // facultatif provider peut etre eclipselink ou hibernate. si on met rien.. sais pas. depend jars ?
             <description>EclipseLink EntityManager</description>                 // facultatif
             <exclude-unlisted-classes>false</exclude-unlisted-classes>
-             <jta-data-source>java:app/MemOclapDataSource</jta-data-source> // est defini la LINKjta ou la LINKwebxmljta: mettre la valeur de @DataSourceDefinition(name="java:app/MemOclapDataSource" pour aller cherche un datasource deja defini applicativement
+             <jta-data-source>java:app/MemOclapDataSource ou jdbc/__default</jta-data-source> // est defini la LINKjta ou la LINKwebxmljta: mettre la valeur de @DataSourceDefinition(name="java:app/MemOclapDataSource" pour aller cherche un datasource deja defini applicativement
              ou/et
             <properties> // parametres envoyés au persistenceprovider. On peut définir la base de donnée ici mais je prefere le definir la LINKjta  
                 <property name="eclipselink.logging.level" value="FINE ou SEVERE ou..."/>				|_Marche bien et trace les logs dans systemOut en tout cas.
@@ -9763,7 +9790,9 @@ MYSQL :
     use mantisDSII
     pour executer un fichier script sql:
     source chemain_fichieretnomfichier.sql
-    
+
+   Si j'ai le message d'erreur Connection could not be allocated because: Access denied for user ''@'172.18.0.5' (using password: NO)
+	c'est juste parce que mon user/password n'est pas bon    
     pour creer un user mysql et puis une base (javadude sera le mot de passe du user):
      CREATE USER 'javauser'@'localhost' IDENTIFIED BY 'javadude';                                                     
      GRANT ALL PRIVILEGES ON *.* TO javauser@localhost;
@@ -15546,7 +15575,7 @@ letsencrypt :
       pour reactualiser mes certificats le plus simple c de faire
       sous opt/letsencrypt
       ./letsencrypt-auto renew    
-       pour verifier le nombre de jours restant expiration certificat:
+       pour verifier le nombre de jours restant expiration certificat: duree de vie
           /etc/letsencrypt j'ai cree des scripts qui contiennent: 
                     cert="/etc/letsencrypt/live/monsite.com/cert.pem"
                       echo " "
@@ -16348,6 +16377,13 @@ junit3 : junit 3 : Version 1.3:
       	
 
 tests : mocks :
+	mocker la methode d'une classe qu'on test: LINKmockmethodeunclebob
+		dans le test:  
+			MaClasseTesteeEtStubeeEnMemeTemps = new MaClasseTesteeEtStubeeEnMemeTemps{
+									protected String laMethodeStubee()
+									{return "true"}
+								}
+			@Test... MaClasseTesteeEtStubeeEnMemeTemps.methodeTestee();
 JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIRE comprendre jmockit et à documenter voir D:\RD\hello-world-war-master\src\test\tests\JMockitTest.java
     (plus reussi à le faire marcher avec Junit5. Mais Mockito si)
                              <dependency>
@@ -16422,7 +16458,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
                           // cette classe IOUtils ci dessous est complettement mockee dans le programme (meme si elle est statique et non injectee) Cette methode marche pas bien voir LINKmockitclass
                           public static final class IOUtils extends MockUp<com.hraccess.tools.utils.IOUtils>
                           {
-                            @Mock  // je override le comportement de la methode writeFile de la classe IOUtils dans mon programme. Pour que ca marche la methode doit avoir la meme signature
+                            @Mock  // je override le comportement de la methode writeFile de la classe IOUtils dans mon programme. Pour que ca marche la methode doit avoir la meme signature. Bof c mieux de faire comme unclebob LINKmockmethodeunclebob
                               public static void writeFile(String directory, String filename, InputStream inputStream) throws FileNotFoundException, IOException {
                               (...)
                             }
@@ -16450,6 +16486,9 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
     		@InjectMocks // facultatif Mock peut marcher sans. Classe qui est testee dans laquelle on injectera les mocks
     		private RealTimePathCoverageController realTimePathCoverageController = new RealTimePathCoverageController(); // equivalent de @Tested dans jmockit : c'est une classe a tester dans laquelle je peux injecter des mocks LINKpourquecamarcheFairemokito
                                                                                 ou =spy(new MockRealTimePathCoverageController()); //on peut utiliser ça direct sans annoter @Spy. Sous un @InjectMock si on veut injecter niveau en dessous de @l'InjectMock. Necessite le LINKlkfjjgjgjgozo. avec @InjectMocks en haut c'est top! on peut remplacer facilement par un mock et en plus injecter dedans ce quon veut comme autre @Mock
+										def spy: c'est un stub qui contient des variables de mémoire qui retiennent ce qui s'est passé pour qu'on puisse les assserter. Je peux faire de ma classe de test elle meme le spy en la faisant implementer plusieurs interfaces.
+										def mock veritable: c'est un spy qui retient dans une liste l'historique des actions effectuees et à la fin du test on peut lui asserter que toutes les actions ont bien été executées grace à comparaison listaction enregistrées et liste actions requises. Est fortement couplé à l'algoritme de prod.
+										def fake: c'est un "faux mock" il mime l'implementation de prod: leur pb c'est qu'ils peuvent devenir tres complexes. a eviter.
     		@Mock ou @Spy     //Mock par defaut n'execute rien et on peut changer son comportement. Spy par defaut execute tout et on peut ecouter
             private RestTemplate restTemplate; // (peut etre une classe ou une interface) mock qui sera injectée dans RealTimePathCoverageController.
     			@BeforeEach ou @Before // selon junit5 ou 4
@@ -16465,10 +16504,10 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
                         Machin machinATesterEtSpyer = new Machin()
                         Mockito.spy(machinATesterEtSpyer);
 			ou bien l'annoter @Spy et @InjectMock puis mocker ses methodes comme ca:
-			Mockito.doReturn(unTrucQuiDoitEtreRetourne).when(uMockPasUnSpy).uneMethodeAMocker(anyString());
+			Mockito.doReturn(unTrucQuiDoitEtreRetourne).when(uMockPasUnSpy).uneMethodeAMocker(anyString()); //plutot faire comme unclebob LINKmockmethodeunclebob
                     ResultDao rd =mock ou spy(unObjetNONANNOTE ou new ResultDao() ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
                     Mockito.doReturn(toto).when(rd).getLaMethodeNONSTATIQUEResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy. ou pour qu'un spy ne fasse rien: Mockito.doNothing().when(monSpy).lamethodeDeMonSpyQuiPeutEtreVoid();
-    				when(filterConfig.getServNONSTATIQUEletContext( // ca s'appelle faire du "stub" et utiliser ca je crois pour les mock. Attention si c'est une methode finale il va rentrer dedans avant de traiter le when donc pour mocker une methode finale depuis Mockito2 seulement on crée un fichier sous src/test/resources/mockito-extensions/org.mockito.plugins/MockMaker et dedans on ecrit mock-maker-inline
+    				when(filterConfig.getServNONSTATIQUEletContext( // ca s'appelle faire du "stub" def stub:un objet qui renvoit juste des constantes utiles. Et utiliser ca je crois pour les mock. Attention si c'est une methode finale il va rentrer dedans avant de traiter le when donc pour mocker une methode finale depuis Mockito2 seulement on crée un fichier sous src/test/resources/mockito-extensions/org.mockito.plugins/MockMaker et dedans on ecrit mock-maker-inline
     				ou                                   anyString()//tout string
     				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça . si je met des variables direct alors j'ai l'erreur InvalidUseOfMatchersException
                                                         ,anyList() // ne pas utiliser anyObject si j'ai une liste
@@ -24757,6 +24796,8 @@ You could try this. The following will give a list of files between 2 dates.
 		diff -y LIST1 LIST2 // -y pour comparer cote a cote c'est mieux
 		diff -C0 fichier1 fichier3 // pour diff voir que les lignes differentes LINKlhlhlhlhlioie
 		diff -yarq folder1 folder2
+	comparaison byte par byte:
+		cmp -bl fichier1 fichier2
 pour trouver des repertoires: 
     find . -type d
 pour voir la difference entre deux fichiers:
@@ -25409,7 +25450,7 @@ copier-coller bouts:
   v puis bouger fleche pour selectionner puis d pour couper ou y pour copier puis P pour coller ce que j'avais selectionne
 faire une recherche find: :set ignorecase puis :set smartcase puis /blabla // si j'ai pas fait les set alors faire /blabla\c pour une recherche case noncasesensitive majuscule minuscule. Pour revenir à une recherche casesensitive faire: :set noic
 		ou /bla\c exemple: /motcherche\c pour case insensitive ignorer majuscule minuscules.\c peut apparaitre partout debut ou fin et tapper. pour faire next, wildcard faire .*, tapper n (pour echapper les / slash faire un backslash) pour rechercher en arrière: N
-		pour trouver deux mots dans n'importe quel ordre sur une ligne: /.*mot1\&.*mot2
+		pour trouver rechercher deux mots dans n'importe quel ordre sur une ligne: /.*mot1\&.*mot2
 ggVG pour selectionner tout selectionner
  V selectionner toute la ligne
 ?: recherche de bas en haut
@@ -25419,6 +25460,7 @@ u: undo si multiple undo ne marche pas: aptitude et charger vim
 :q! quitter sans sauver
 :wq sauve et quitter enregistrer et quitter
 :w sauve enregistrer
+:x sauve et ferme
 :sav autrenom pour sauver sous enregistrer sous save as un aure nom
 :sav! ~/.recovered // sauver sous un autre nom et basculer ensuite sur ce fichier. Puis faire :bn pour repasser sur le fichier editer precedemment utile pour gerer les problemes de swp puis faire en commande dans vi une comparaison cote a cote voir LINKlhlhlhlhlioie
 :!MaCommande faire une commande unix executer une commande unix
@@ -26533,7 +26575,14 @@ facebook : linkedin : linked in :
     penser à vider le cache de facebook sur https://developers.facebook.com/tools/debug/
   
 
-reseau : reseaux : dns :
+reseau : reseaux : dns : network :
+definition hub:
+	ne sont plus utilises de nos jours remplace par switch
+definition switch: sur la couche Liaison(MAC): donc connecte des devices sur un meme network
+defintion routeur:sur la couche Reseau(IP). existe de 2 types: coreRouter:complexes utilisent BGP et Routeur de maison.
+Duplex: des deux cotes en meme temps
+HalfDuplex: des deux cotes pas en meme temps
+Simplex: une seule direction
 Recuperation de l'adresse IP du hostname.
 		host -T A nom.de.domaine.com  // pour avoir je crois l'ip dun domaine des DNS
               nslookup:// est vieux. remplacé par dig et par host. Pour verifier que le DNS est bien config: on peut faire aussi à l'inverse nslookup ipadresse/nomdedomaine: renvoit nomdedomaine/adresseip corresp (reponse des serveurs de dns) 
@@ -26575,13 +26624,16 @@ Recuperation de l'adresse IP du hostname.
           https://iplocation.net (donne des estimations)            
 reseau tracer:     utiliser fiddler (onglet inspector) wireshark whireShark; sniffer utiliser NMap: sur kalilinux: https://svn.nmap.org/nmap/docs/nmap.usage.txt ou bien Tcpdump (no suitable device found veut dire que je n'ai pas les droits en non-root) sur linuxunix (http://lea-linux.org/documentations/Tcpdump) ou en java: jpcap 
     OSI  =standard contient 7 couches et chacune contient plusieurs protocoles 
-           Pour  -1 unite=bit(1 ou 0 Physique) couche contient plusieurs protocoles
-          *La    -2 unite=trame (1000110...Liaison) (adressage physique MAC =numero d'identification UNIQUE d'un periferique)
-          *Route -3 unite=packet (Reseau adressage logique IP non fixe à un materiel) routage Ethernet.
-          *Tu    -4 unite=Datagramme (Transport (tcp, udp)) pour verifier que les donnees envoyees sont bien reçues en entier: port source/port dest. Ack = accuse de reception; flags=exemple:"j'envoie", "je reçois"
-           Suis  -5 unite=donnee Session
-           Pierre-6 unite=donnee Presentation chiffrement/dechiffrement 
-          *Alain -7 unite=donnee Application (http))
+           Pour  -1 unite=bit(1 ou 0 *Physique) couche contient plusieurs protocoles
+          *La    -2 unite=trame (1000110...*Liaison routage Ethernet) (adressage physique MAC =numero d'identification UNIQUE d'un periferique)
+					Unicast: ->dest:1
+					Multicast:->dest:plusieurs mais certains dest bloquent.
+					Broadcast:->dest:plusieurs sans exception (le mac dest est alors FF:FF:FF:FF:FF:FF
+          *Route -3 unite=packet (*Reseau adressage logique IP non fixe à un materiel) 
+          *Tu    -4 unite=Datagramme (*Transport (tcp, udp)) pour verifier que les donnees envoyees sont bien reçues en entier: port source/port dest. Ack = accuse de reception; flags=exemple:"j'envoie", "je reçois"
+           Suis  -5 unite=donnee *Session
+           Pierre-6 unite=donnee *Presentation chiffrement/dechiffrement 
+          *Alain -7 unite=donnee *Application (http))
     TCPIP TCP/IP est un autre standard + simple(n'a que les * ci-dessus) qui ressemble à OSI. TCPIP c ce qui est utilise pour Internet.
 proxy :et reverse proxy :
         pour se connecter : http://proxypac.renault.fr/proxy.cgi
