@@ -595,12 +595,12 @@ babel : LINKBBLE
                   babel-core=core
                   babel-preset-env=environ comme core
                   babel-loader= pour fonctionner avec webpack 
-reactjs : react.js + redux :
+reactjs : react.js + redux : react :
   installer npx avec npm.
   npx create-react-app my-app (crée un projet react)
   cd my-app
               composant react
-                  class MonComposant extends React.Component { ou bof:tout simplement function MonComposant(props){
+                  class MonComposant extends React.Component { ou bof:tout simplement function MonComposant(props ou {unepropLINKprop}){ //unepropLINKprop c'est vraiment l'équivalent des attributs des webcomponents mais ici ils peuvent carrement etre des objets javascript ou meme fonctions
                     constructor(props){
                       super(props);
                       this.state={a:x,b:y} // le constructeur est le seul endroit ou ne peux setter le state directement sans passer par this.setState
@@ -613,8 +613,8 @@ reactjs : react.js + redux :
                     unefonctionamoi(){
                      this.setState({....}); // toujours passer par this.setState pour changer le state
                     }
-                      render() {
-                        return <h1>Hello, {this.props.name}</h1><h2>{this.state.a}</h2>;
+                      render() { // est facultatif je peux directement faire le return ci dessous je crois.
+                        return <h1>Hello, {this.props.name}</h1><h2>{this.state.a}</h2><p onclick={()=>{unepropLINKprop("toto")}}>{unepropLINKprop}</p>;
                       }
               }
      ailleurs:         
@@ -628,7 +628,7 @@ reactjs : react.js + redux :
       'duhtml' // enfants
       )
       ReactDOM.render( // des lors element ne bouge plus. Si besoin le changer il faut refaire le render. React s'occupe de ne modifier dans le dom que ce qui a bougé dans l'element 
-        element, // LINKrealskjdf
+        element, // LINKrealskjdf ou carrement <MonComposant unepropLINKprop="uneVariable" ou {carrementUnefunctionQueJepasse} />
         document.getElementById('root')
       );
 
@@ -684,11 +684,13 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
    docker build -t(pour tag) unnomquejedonneamonImageAcreer:untag -f ./path/AutreNomDeDockerfileSiCestPasJusteDockerfile dernierArgumentEstPathRelatifVersLeRepertoireContexteContenantLaRacineDuCodeSourceOnPeutMettrePoint/// Creer mon image docker qui rentre dans la liste repository d'images. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto //attention tout ce qui est dans le contexte du dockerfile est envoye au daemon donc ne pas faire le build sur mon bureau par exemple
 	si j'ai l'erreur Couldn't connect to Docker daemon at http+docker://localhost - is it running?
 		c'est peut etre parce que j'ai mis le nom de mon image en majuscules. Pas supporté.
-  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e "nomDuneSystem.PropertySiJeVeux=savaeleur" ou --env(facultatif) JAVA_OPTS="-Dpropriete.java=yyyy -Dxxx=yyy" --link(facultatif et inutile au sein d'un docker-compose) nomduncontainerTypeDatabaseDansunNetworkBridge:nomDuHostNameDansLaConfDeMonProgrammeLeMotlocalhostEstInterditLINKjdbcdockerdatabase --name=facultatifUnAutreNomQueJeDonneAMonContainerce(nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con) -d (--detatch) (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement. on peut enchainer plusieurs -p)
+  docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e "nomDuneSystem.PropertySiJeVeux=savaeleur" ou --env(facultatif) JAVA_OPTS="-Dpropriete.java=yyyy -Dxxx=yyy" --link(facultatif et inutile au sein d'un docker-compose) nomduncontainerTypeDatabaseDansunNetworkBridge:nomDuHostNameDansLaConfDeMonProgrammeLeMotlocalhostEstInterditLINKjdbcdockerdatabase --name=facultatifUnAutreNomQueJeDonneAMonContainerce(nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con) -d (--detatch) (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement. on peut enchainer plusieurs -p) --network(inutile au sein d'un docker-compose) unreseaubridge ou host si besoin ouvert(c'est alors plus rapide au niveau du network) -hNomDuHostnameSiParExempleCestUneBaseDeDoneeJeCrois nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) OU identifiantDeLImage LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container nomdelimage
+)
+		VOLUMES:
 		--mount type=bind,source=$variablepath ou /un/path/duHost/DirOuFichier,target=/unPathDansle/container/dirOuFichier //contrairement aux volumes, dans ce cas pas de dockervolume crees par docker 
 		--mount type=tmpfs,dst=/pathdansLeHost/quiAUneDureeDe/vie/egalle/a/celleDuContainerDonc/seraEffaceALaMortDuContainer // seul ce container peut voir le contenu de ce fichier. Ne cree pas non plus de volume docker. Tres pratique pour les contenus sensibles secrets
 		OU
-		-v(mais preferer--mount à-v) $(pwd)(ou un repertoire du host os. S'il n'existe pas le volume est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container du coup le DRIVER du volume est de type local) --network(inutile au sein d'un docker-compose) unreseaubridge ou host si besoin ouvert(c'est alors plus rapide au niveau du network) -hNomDuHostnameSiParExempleCestUneBaseDeDoneeJeCrois nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) OU identifiantDeLImage LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container nomdelimage
+		-v(mais preferer--mount à-v) $(pwd)(ou un repertoire du host os. S'il n'existe pas le volume est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container du coup le DRIVER du volume est de type local)
 	par defaut c'est executé sur le reseau bridgé partage entre tous les containers et même le host. Suffit de se connecter dans le container et voir leur IP
   docker start -ia(comme -it avec run) nomduconteneurARedemarrer // existe aussi docker stop nomduconteneur ou idduconteneur pour stopper un conteneur
   docker container stop IDDuContainer // pour stopper l'execution d'un container (par son ID ça marche mieux voir donc la liste.)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
@@ -794,6 +796,7 @@ docker-compose : dockercompose : s'installe avec apt-get ou aptitude
             executer sur l'emplacement de ce fichier:
 				dans les commandes ci dessous si le nom du fichier compose n'est pas docker-compose.yml mettre -f leNomDuFichierDockerCompose.yml
                 docker-compose up -d FacultatifLeNomDuService// -d pour executer en background sinon il garde le prompt et Ctrl+C kill le process. Il ne build pas il transforme d'image vers container et le start
+
 		docker-compose build facultatifLeNomDuService // il build l'image seulement
 		docker-compose rm // pour supprimer le cache dans dockercompose de mes images. A faire si j'ai mis à jour l'image docker. A faire chaque fois que je modifie docker-compose.yml facultatif: -f lenomDuServiceFacultatif //-f pour forcer ne pas qu'il demande yes. 
                 docker-compose logs -f pour voir les logs comme un tail -f
@@ -962,22 +965,25 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git reset --hard // sans rien: pour annuler un pull qui vient d'etre fait
       git rebase //attention si bloque pas hesiter a abandonner et retenter
       git rebase commitquinebougepasEtQuiVaRecevoirLaSuiteDeLHistoire commitQuiVaMettreSonHistoireALaSuiteDuPremierArgument // a la toute fin faire rebase DernierCommit master pour que le master se remette au bout
-      git rebase -i identifiantCommitDuPassé // ouvre un editeur et je peux manipuler mes commits du passer pas a pas un par un jusqu'a aujourd'hui. J'ai du utiliser ca pour supprimer les indexs de fichiers trop gros qui m'empechaient de pusher sur le repo distant. 
+      git rebase -i identifiantCommitDuPassé // ouvre un editeur affiche les commit du plus vieux en haut au plus recent en bas et je peux manipuler mes commits du passe pas a pas un par un jusqu'a aujourd'hui. J'ai du utiliser ca pour supprimer les indexs de fichiers trop gros qui m'empechaient de pusher sur le repo distant ou pour fusionner des commits
                 si je veux commencer depuis le debut faire git rebase -i --root
-                quand j'ai remplacé chaque pick souhaité par edit, faire comme dans vi: sauver et quitter. il fait alors du pas a pas sur chaque edit ou a chaque fois je fait soit git commit --amend(modifier le commit en cours) ou git rebase --continue(au suivant!)
+                quand j'ai remplacé chaque pick souhaité par edit(changer le commit) ou squash (merger-fusionner des commits), faire comme dans vi: sauver et quitter. il fait alors du pas a pas sur chaque edit ou a chaque fois je fait soit git commit --amend(modifier le commit en cours) ou git rebase --continue(au suivant!)
                         quand je fais git commit --amend alors il ouvre un editeur montrant le commit.(si il fait erreur de fusion faire git diff --check si toujours tenter git rebase --skip) Executer comme dans vi:!macommandeGit (exemple faire un checkout pour supprimer de l'index) et Entree a chaque fois. Quand fini faire:wq. et puis git rebase --continue et ainsi de suite pour finir avec un git rebase --continue jusqu'à ce que la branche rebase soit automatiquement mergée avec mon master.
                 pour annuler mon rebase en cours faire 
                 git rebase --abort ou au pire pour sortir faire git rebase --quit
         pour supprimer tous les gros fichiers de l'historique pour que je puisse pusher sur github
         si j'ai "error: could not read '.git/rebase-merge/head-name': No such file or directory" faire git reflog // permet de voir l'historique du commit dans lequel on est
             git filter-branch --index-filter "git rm --cached -f --ignore-unmatch(ignoreleserreurs) PathDeMonGrosFichier.webm" (mettre -f si il le demande) --prune-empty --tag-name-filter cat -- --all
+	apres un git rebase il se peut que je ne puisse plus pusher. Alors je peux forcer avec precaution grace à git push --force-with-lease
       git log -- facultatifLePathDunFichierAObserverSeul //voir les commits. N'affiche pas les commits du futur donc voir LINKlkghhrghh
       git log uneautrebrancheQueCelleOuJeSuis -- facultatifLePathDunFichierAObserverSeul
       git log --all // voir les commits du future si j'ai fait un checkout sur un commit du passé LINKlkghhrghh
       git log --name-status // voir tous les fichiers modifiés à chaque commit
+      git log -p // ajouter -p pour avoir le detail de ce qui a été modifié
       git log --follow -- path/du/fichier // pour voir les commits d'un fichier specifique
       git log --graph --oneline --decorate --all // affiche joli voir joli
-      git log -L 2,5 ou +3 :pathfichier.txt // genial: affiche entre la ligne 2 et la ligne 5 tout l'historique du bouzin
+      git log -L 2,5 ou +3:pathfichier.txt // genial: affiche entre la ligne 2 et la ligne 5 tout l'historique du bouzin utile pour chercher search find trouver grep ATTENTION pas d'espace avant le ":"
+		exemple : git log -L +1:apprentissage2JavaJ2ee.txt | grep Atomic
       git shortlog -s -n  // voir le nombre de commits par auteur: stats.statistiques
       git diff compare pour parametrer avec un meilleur visibilité: external tool:        
           installer C:\Program Files\KDiff3
@@ -1210,6 +1216,9 @@ Adobe illustrator :
 
   
 intelliji : intellij : Afaire: utiliser le git et l'apprendre.(dixit christophe)
+Si le clavier ne marche plus:
+		Go to "Help | Edit Custom VM options..." and add -Drecreate.x11.input.method=true to a new line
+		Restart IDE
 si erreur javatask source release requires target release... 	
 		file>Settings>build>Execution>deployment>Complier/javacompiler
  ajouter la javadoc:
@@ -1222,6 +1231,7 @@ shortcut pour System.out.println ecrire sout puis tab ou ctrl+espace
 Changer la couleur des instances selectionnées: settings>(editor>color scheme>general pas obligéToutCaEntreParentheses)> chercher "identifier under caret" // j'ai du faire ça car le bleu de fond était trop pale et non visible
 pour voir les dependances depandenc dependency dependencies le diagrame c pourri et en plus c'est que sur ultimate. mieux vaut faire Analyze>Analyze Dependencies....
 ajouter une dependence un pluggin dans le pom: alt+insert
+pour desactiver/activer l'autosuggestion pendant que je tappe: settings> chercher completion > decocher/cocher "Show suggestions as you type"+"insert selectd suggestion by pressing space,dot or other con...."
 pour voir les stats (nombre de lignes de code etc...) charger le plugin de statistiques https://plugins.jetbrains.com/plugin/4509-statistic: on voit tout en bas une nouvelle icone pour les afficher   
 creer un bookmark flag tag ctrl+f11. Acceder à ce bookmark trouver: alt+2 ou ctrl+chiffredubookmark. Ensuite editer la note du bookmark:shift+f11 puis Ctrl+entree sur le bookmark  
 supprimer les bookmarks: shift+f11 (j'ai le choix)
@@ -1369,10 +1379,11 @@ show console alt+4
 show/unshow console terminal alt+F12 ou EchapEscape(c'est plus rapide que de faire ctrl+tab)
 corriger quick fix: alt+enter
 voir la console du run: alt+4
+pour switcher entre ma classe de test et ma classe de prod: CTRL+shift+t
 pour modifier un type de fichier source: en faire un source, un repertoire de tests etc... Ctrl+Shift+Alt+s, choisir à gauche le projet, à droite le repertoire et clique droit dessus 
 erreur error details probleme explication Ctrl+F1
 search trouver rechercher partout Ctrl+shift+f // si ne marche plus bien, arreter intellij, supprimer .idea et redemarrer car il ne reindexe plus
-recherche trouver search partout: maj maj
+recherche trouver search partout meme les noms de methodes fonctions: maj maj
 afficher toutes les erreurs problemes: pour les voir il faut faire un build
 parcourir atteindre erreurs problems F2/Maj+F2
 trouver les recurences, qui utilise reference les appelants dependance: Alt+F7 peut aussi servir à epingler un pannel
@@ -1441,10 +1452,10 @@ payara :payaramicro : // executeur direct d'un microservice.
     java  voir  LINKoizeurzotie pour debugger en remote
         --jar payara-micro.jar                      // créé un payara serveur
 	-rootDir repertoire/de/travail/cree/auto/si/existepas // pour y mettre sous lib les jars qu'il n'arrive pas à trouver au demarrage: les drivers par exemple. il y met automatiquement des trucs. ca se rempli beaucoup donc il faut mettre ce parametre pour avoir un control de la ou il ecrit tout son fatras. Attention si je suis en ssl il y ecrit des trucs dedans qui ne me permettent plus ensuite de ne plus être en ssl donc utiliser plusieurs rootDir differents par environnement
-        --deploy /home/user/example.war ou le repertoire root du war exploaded(dans target)// mettre un .reload sous la racine de mon war exploded et le modifier/toucher recharge le war exploded automatiquement (faire mvn package)(sauf si le war ne s'est pas déployé la fois précédente)
+        --deploy le repertoire root du war exploaded(dans target)// mettre un .reload sous la racine de mon war exploded et le modifier/toucher recharge le war exploded automatiquement mais attention à LINKlksdjgfgjjg (faire mvn package)(sauf si le war ne s'est pas déployé la fois précédente)
                  possible faire plusieurs --deploy dans une meme commande seront sur le meme port
 	ou
-	--deploymentDir /path/vers/repertoire/contenant/tous/les/wars/ // Mouais.. une fois ca n'a pas marché. jamais compris pourquoi
+	--deploymentDir /path/vers/repertoire/contenant/tous/les/wars/ // 
         --contextroot contextrootquiremplacelenomdemonwarcommecontextroot (avec / au debut, sans / à la fin) on peut mettre / tout court. Si on pet pas ca le contextroot=nomDuWar //ou faire --deploy /x/y:contextroot
         --domainConfig fichierDomain.xml // situé au meme niveau. A recuperer dans payara.jar et à mettre au meme niveau si je veux declarer une base de donnee jta voir LINKlskjdfqm
         --name nomdemoninstancequejedeploie
@@ -1540,7 +1551,7 @@ rajouter une base de  donnée jta au serveur payara LINKlskjdfqm
             <property name="user" value="root"/>
             <property name="password" value="foulurecalotte"/>
         </jdbc-connection-pool>
-
+	(...)<das-config dynamic-reload-enable="true" autodeploy-enabled="true"></das-config>(...) //permettre d'utiliser .reload mais ne pas metrtre ca en prod LINKlksdjgfgjjg
 
     
 glassfish :
@@ -1569,7 +1580,15 @@ glassfish :
                         </execution>
                     </executions>
                 </plugin>
-  
+pour que glassfish et Payara qui utilisent par defaut l'encoding ISO de merde utilisent l'encoding utf8 partout
+	mettre sous WEB-INF là ou est web.xml un fichier glassfish-web.xml contenant:
+		 <?xml version="1.0" encoding="UTF-8"?>
+		<!DOCTYPE glassfish-web-app PUBLIC "-//GlassFish.org//DTD GlassFish Application Server 3.1 Servlet 3.0//EN" "http://glassfish.org/dtds/glassfish-web-app_3_0-1.dtd">
+		<glassfish-web-app>
+		    <jsp-config>
+		    </jsp-config>
+		    <parameter-encoding default-charset="UTF-8" />
+		</glassfish-web-app> 
 
 extjs :
 sdk:
@@ -2492,12 +2511,14 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 		sudo ./linux-install-1.10.1.536.sh
 		puis clj pour executer le REPL
 	;; mon commentaire
+	definir une variable:
+		(def nomdelavariableglobale savaleur) LINKclojrvar
 	definir une fonction: // elles retournent TOUJOURS une valeur
 		(defn nomdemafonction [parametre1 parametre2 & parametrestypeliste] // fonction nomée nomdemafonction // le parmatre apres & c'est comme unevariable.... (= variable variadic) et du coup parametrestypeliste est en fait une liste. exemple: (nomdemafonction toto titi "a" "b" "c" "d") c'est tr
-			(+ parametre1 parametre2)) // execute la fonction PLUS. on peut mettre virgule a la place de espace
+			(+ parametre1 parametre2)) // execute la fonction PLUS. on peut mettre virgule a la place de espace. Autre exemple: (defn nomdemamethode [x](+(*3 x)1))
 		ou
-		(def nomdemafonctin
-			(fn [parametre1 parametre2] // en fait ca c'est une fonctin anonyme. Equivalent de #(+ %1 %2) (fn [](exec "blah)) equiv: #(exec "blah"); (fn [unseulparam] (exec unseulparam "titi")) equiv: #(exec % "titi)
+		(def nomdemafonction
+			(fn [parametre1 parametre2] // en fait ca c'est une fonctin anonyme. Equivalent de #(+ %1 %2) autre exemple: (fn [](exec "blah)) equiv: #(exec "blah"); autre exemple: (fn [unseulparam] (exec unseulparam "titi")) equiv: #(exec % "titi)
 				(+ parametre1 parametre2))) // on peut mettre virgule a la place de espace
 	fonctions multyArity = en fait c juste une fonction qui a le meme nom mais au comportement different selon le nombre de params envoyés. Comme en java.
 			(defn unefonction
@@ -2515,9 +2536,13 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 			#".*xx.*" ;; # marque une regexp
 			nil ;;null
 			("a" "b" 10.5 5) ;;liste est multitype. Donc le code clojure est aussi une liste mais on utilise plutot les vecteurs. la liste est utilisée pour les macros
-			["a" "b" 10.5 5] ;; vecteur à utiliser comme une liste (("a" "b" 10.5 5) 4) renvoit 5 car une liste comme tout objet est aussi une fonction
+					'(1 2) équivaut à (list 1 2) // c'(est une liste contenant 1 et 2. Utilisable comme stack
+					(first ou last ou second bli bla blo) // retourne le nième élément de la liste.
+			["a" "b" 10.5 5] ;; vecteur à utiliser comme une liste (("a" "b" 10.5 533) 4) renvoit 533 car une liste comme tout objet est aussi une fonction
+						le vecteur peut grossir en rajoutant à la fin. Utilisable comme queue
 			#{"a" "b" 10.5 5} ;; set  (#{"a" "b" 10.5 5} 2) renvoit "b" car un set comme tout objet est aussi une fonction
 		(:cle1 1,:cle2 "2",:cle3 3.5) ;;map les virgules sont optionelles. LINKcljie 
+			Struct est un map à considérer comme un objet avec des champs pouvant être instanciés plein de fois avec différentes valeurs dans les  champs
 	pour transformer un parametre de type liste en plusieurs parametres separes à la suiteiterer sur un parametre de type liste
 		(apply unefonctionappelee parametreNormal parametreDeTypeListe)  // ca va en realite faire (unefonctionappellee parametreNormal parametredetypeListe(1) parametredetypeliste(2) param... etc etc..)
 	pour concatener:
@@ -2525,12 +2550,19 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 	pour convertir nombre en string
 		(str 2) je crois renvoit "2"
 	convertir un truc en vecteur: (vector montruc)
+	fonctions de streams:
+		map: c'est comme reduce:
+			(map inc[1 2 3]) retourne (2 3 4)
+		filter:
+			(filter odd? [1 2 3 4 5]) retourne (1 3 5)
 	maven de clojure = liningen
 		(defproject monprojet "1.2.3" :description "blabla")
 	pour comparer
 		(= false "machin") ;;compare false avec "machin" donc renvoit false.
 	conditions:
 		(if UNCONDITION SIOUI SINON) et chaque element est une fonction. nil et false sont les seules deux valeurs falsy.
+			exemple: (if (= a b) c d)//si a)b retourne c sinon d
+				(if(empty? uneliste) etc...)
 	definir une variable:
 		(def nomdemonobjet UNTRUC)
 	definir des variables key limitees dans un scope:
@@ -2555,6 +2587,10 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 		(ObjetJava/methodeStatique parametre) //=ObjetJava.methodeStatique(parametre)
 		(.-nomduchampNonStatique objetjava) // champ java = objetjava.nomduchampNonStatique
 		(ObjetJava/nomDuChampStatique) // ObjetJava.nomDuChampStatique 
+	pointeurs references dans clojure:
+		1-vars:globales et propres qu'à 1 thread voir LINKclojrvar
+		1-refs:threads modifie des références à des datas imutables dans des transactions synchrones atomiques. En coulisse les readers voient des snapshots comités uniquement et les writers modifient(alter) chacun à son tour le pointage de la référence vers une nouvelle version de l'objet "modifié".
+		3-agent: tous les threads peuvent en envoyant un "send" changer et voir la référence qui change de façon asynchrone par une queue qui respecte l'ordre et indépendemment des autres threads. Possible utiliser un callback avec await.
 		
 J2EE : jee : jee8 :javaee : EE4J : jakartaee : https://github.com/eclipse-ee4j/jakartaee-tutorial-examples et https://github.com/eclipse-ee4j/jakartaee-tutorial
         <dependency> necessite
@@ -3101,7 +3137,7 @@ pour recuperer une variable d'environnement qui est declaree dans web.xml:
 			pour recuperer le numero de version
 			String ttfPath = (String)ServiceLocator.getInstance().getRefByName("NOM_DE_LA_VARIABLE");
                  upload du fichier cote serveur servlet:
-          si apres servlet 3.0)  completer avec LINKmultilkjfqsdf
+          si apres servlet 3.0:  et completer avec voir LINKmultilkjfqsdf permet upload to tout type de champ
                  je peux toujours faire request.getParameter("name") pour recuperer des parametres de l'url 
                   for (Part part : request.getParts()) { // il y a les fichiers en PJ puis les champs. Les fichiers en PJ toujours en premier.
                       //String fileName = getFileName(part);
@@ -3526,8 +3562,8 @@ freemarker :freemaker :
                                               Last-Modified: Fri, 21 Mar 2014 13:36:22 GMT
                                               ETag: "d72fc-4f51df8b04180"
                                               Accept-Ranges: bytes
-                                              Content-Length: 881404
-                                              Content-Range: bytes 0-881403/881404
+                                              Content-Range: bytes 0-881403/881404 (start-stop/tout) //stop ne doit jamais etre = tout mais au max à tout-1
+                                              Content-Length: 881404 // stop - start +1
                                               Keep-Alive: timeout=5, max=70
                                               Connection: Keep-Alive
                                               Content-Type: audio/mpeg
@@ -3611,7 +3647,9 @@ freemarker :freemaker :
 					BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                                         String str;
                                         int res=0;
-                                        res = inStream.readInt(); ou while ((inputLine = in.readLine()) != null) { response.append(inputLine); // où StringBuffer response = new StringBuffer();
+                                        res = inStream.readInt(); 
+					while (inputStream.read(buffer)>-1){response.append(new String(buffer));} // où StringBuffer response = new StringBuffer();
+					ou while ((inputLine = in.readLine()) != null) { response.append(inputLine); // où StringBuffer response = new StringBuffer();
                                         if (res==0) // rien recu
                             		ou 
 					 StringBuilder result = new StringBuilder(); //= StringBuffer mais StringBuilder n'est pas threadsafe et est immutable
@@ -5580,7 +5618,7 @@ pour centrer direct:
   }
   enfants: jouer avec les width:x%; pour passer à la ligne et les padding pour les espaces
 selectors: selecteur: LINKcsslkhkhkhkhkh
-     :nth-child veut dire selctionner element si:
+     :nth-child veut dire selectionner element si:
           It is a paragraph element
           It is the 2eme second child of a parent
      :nth-of-type veut dire selctionner element si:
@@ -7805,7 +7843,8 @@ Bouton submit non ajax:
         </h:commandButton>      
         <h:outputText value="#{myBean.myProperty}" id="resultId"/>.
 ------------FIN BEURK 
-
+base de donnée: captheorem : cap theorem:
+	AFAIRE voir mon telephone blocnote
 mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents dans le systeme de fichier que en blob dans la db. la db c'est pour les metadatas.)
 	pour voir sur quelle version on est: db.version()
         -toujours activer l'authentification (par user/password au moins) facultatif sur local pour test.
@@ -7949,10 +7988,12 @@ pour se connecter avec un utilisateur user
 		    db.lacollection.find({"champTypeTableau.4":{$not:{$in:["x","y]}}},{champaretourner:true,champapasretourner:false}) //4 eme index du champttypeTableau(attention ce truc .4 marche que dans la premiere partie du find) not(negation) in pour n'importe quel index mettre les GUILLEMETS! "champTypeTableau.souschampDuTableau":x c'est comme si je mettais: "champTypeTableau[nimporteQuelIndex].souchampDuTableau
 							             .find({$and:[{...},{...}..]})
 								     .find({unchamp:{$not:/uneregexp/}})
+	dupliquer copier des documents des elements dans une autre collection:(pas besoin de créer cette collection ca se fait tout seul)
+		db.macollection.find(....).forEach(function(doc){db.nouvellecollection.insert(doc)})
 	avec wildcard regexp:
 		db.toto.find({"monchamp":{$regex:/^valeuravec.*tata/i}},...filtresibesoin  //i pour ignorecase mais ya d'autres options possibles.(/ est obligatoire, i est facultatif) Attention toujours commencer par ^et les wildcard c'est .* Le caractere d'echappement est \
-            var doc = db.uneCollection.findOne ou find(...)// trouver par id (du coup doc est une variable) // findOne retourne le 1er resultat
-	recuperer le dernier enregistrement insere:
+            var doc = db.uneCollection.findOne ou find({"_id" : ObjectId("xxx")})// trouver par id (du coup doc est une variable) // findOne retourne le 1er resultat
+	recuperer le dernier enregistrement insere: order by ordre trier
 		db.uneCollection.find(...).sort({"_id":-1}).limit(1) // attention ne marche que si on a pas forcé overridé le _id auto incrementé
         count compter nombre de lignes:
             db.nomdelacollection.find(..).count(); et tout compter: db.nomdelacollection.count() // attention son resultat peut etre faux car il s'appuie sur des metadata et elles peuvent etre corrompues si la base a crashé. Pour corriger: db.macollection.validate(true)
@@ -9814,6 +9855,8 @@ MYSQL :
                                           SET PASSWORD FOR nomuser = 'nouveaupassword';
                                           ou 
                                           alter user 'root'@'localhost' identified by 'nouveau password';
+		faire un update de plusieurs champs 
+			update toto set a=b,c=d...
     sur unix: 
     cd /var/run/
     /var/run/mysql -uroot -p
@@ -13794,7 +13837,7 @@ Cryptage : crypto : en java
 			System.out.println("crypté: "+new String(res));
 
 			cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
-			byte[] original = cipher.doFinal(Base64.getDecoder().decode(res));
+			byte[] original = cipher.doFinal(Base64.getDecoder().decode(res)); si erreur Input byte array has incorrect ending byte at 40 c'est parce que apres le dernier "=" il y a des caractères cachés:les enlever avec substring.
 			String decripte = new String(original);
 			System.out.println("3 "+ decripte);
 			Assertions.assertEquals(valeurACrypterDecrypter,decripte);
@@ -15510,7 +15553,9 @@ hacking : haking : hack :
        	Feature-Policy: pour dire si j'ai le droit d'executer un type de truc
 		Feature-Policy unsized-media 'self' https://un.site.com; geolocation 'none' camera *;  // lire de droite à gauche: ici: camera marchera depuis n'importe quel autre site, geolocation complettement OFF; unsized-media seulement par moi et un.site.com en https
          xss ://crosssitescripting // ma servlet vulnerable fait executer au navigateur du javascript passé en parametre de ma requete. ce javascript pourrait lire mes cookies (de session!): LINKcooklskjhh LINKc.s.r.f  et le pirate de se connecter à ma place
-                    pour s'en premunire faire du @safeHTML ou faire  org.jsoup.Jsoup.isValid(lechampatester); sur les champs pour que du javascript ne puisse pas etre injecté dedans. aussi empecher le javascript d'acceder aux cookies.
+			securehtml validite champ formulaire field
+                    pour s'en premunire faire du @safeHTML 
+			ou faire  org.jsoup.Jsoup.isValid(lechampatester); ou return Jsoup.parse(field).select("script").size()==0 sur les champs pour que du javascript ne puisse pas etre injecté dedans. aussi empecher le javascript d'acceder aux cookies.
                     ou faire dans la jsp: <c:out value="${une_variable_renvoiee_par_la_servlet}"/> // du coup une_variable_renvoiee_par_la_servlet ne peut plus executer du javascript 
         pathtraversal// une servlet renvoit n'importe quel fichier ! ex: monsite/maservlet?vachercher=/unpath/unfichierANeSurtoutPasMontrer !affiche le fichier!    
         redirectionexterne // une servlet redirige vers un autre site! http://monsite?maservletTresConne?forward=http://un_autre_site
@@ -15688,7 +15733,7 @@ condidentialite/authenticite/non-repudiation=integrite(non modifie sur reseau) H
              // sc.init(kms, tms, null);
                 sc.init(null, tms, null);
 
-             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory()); // si c'est du http
+             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory()); // si c'est du http Attention pour que ca marche il faut mettre ca avant le .openConnection() ci dessous
              httpsConnection.setHostnameVerifier(new TrustAllHostNameVerifier ());  // si on veut ignorer un certificat SSL. (voir ci dessus la declaration de TrustAllHostNameVerifier)
              ou
              HttpsURLConnection.setDefaultHostnameVerifier(hv);
@@ -16377,7 +16422,7 @@ junit3 : junit 3 : Version 1.3:
       	
 
 tests : mocks :
-	mocker la methode d'une classe qu'on test: LINKmockmethodeunclebob
+	mocker la methode d'une classe qu'on test: LINKmockmethodeunclebob et si c'est une interface que je veux mocker je peux faire que ma classe elle meme implemente l'interface ou meme plusieurs pour toutes les spyer/mocker
 		dans le test:  
 			MaClasseTesteeEtStubeeEnMemeTemps = new MaClasseTesteeEtStubeeEnMemeTemps{
 									protected String laMethodeStubee()
@@ -16486,6 +16531,8 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
     		@InjectMocks // facultatif Mock peut marcher sans. Classe qui est testee dans laquelle on injectera les mocks
     		private RealTimePathCoverageController realTimePathCoverageController = new RealTimePathCoverageController(); // equivalent de @Tested dans jmockit : c'est une classe a tester dans laquelle je peux injecter des mocks LINKpourquecamarcheFairemokito
                                                                                 ou =spy(new MockRealTimePathCoverageController()); //on peut utiliser ça direct sans annoter @Spy. Sous un @InjectMock si on veut injecter niveau en dessous de @l'InjectMock. Necessite le LINKlkfjjgjgjgozo. avec @InjectMocks en haut c'est top! on peut remplacer facilement par un mock et en plus injecter dedans ce quon veut comme autre @Mock
+										memoclap.saveActorsNameOnServer=jest.fn(()=>{console.log("aaaaaaaaaaaa")});
+										def stub:un objet qui renvoit juste des constantes utiles. 
 										def spy: c'est un stub qui contient des variables de mémoire qui retiennent ce qui s'est passé pour qu'on puisse les assserter. Je peux faire de ma classe de test elle meme le spy en la faisant implementer plusieurs interfaces.
 										def mock veritable: c'est un spy qui retient dans une liste l'historique des actions effectuees et à la fin du test on peut lui asserter que toutes les actions ont bien été executées grace à comparaison listaction enregistrées et liste actions requises. Est fortement couplé à l'algoritme de prod.
 										def fake: c'est un "faux mock" il mime l'implementation de prod: leur pb c'est qu'ils peuvent devenir tres complexes. a eviter.
@@ -16500,16 +16547,22 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
     				ServletContext context = mock(ServletContext.class);
 		pour mocker injecter une @Value de Spring:
 			ReflectionTestUtils.setField(lebeanquicontientleValue,"nomduchampJavaDansLeBean","la valeur qu'on lui donne");(pas sur que ça marche)
-                    pour qu'une meme classe soit testée et spyée:
+                    pour qu'une meme classe soit testée et spyée:// on test certaines de ces methodes et on spy certaines de ces methodes fonctions //plutot faire comme unclebob LINKmockmethodeunclebob
                         Machin machinATesterEtSpyer = new Machin()
                         Mockito.spy(machinATesterEtSpyer);
 			ou bien l'annoter @Spy et @InjectMock puis mocker ses methodes comme ca:
 			Mockito.doReturn(unTrucQuiDoitEtreRetourne).when(uMockPasUnSpy).uneMethodeAMocker(anyString()); //plutot faire comme unclebob LINKmockmethodeunclebob
                     ResultDao rd =mock ou spy(unObjetNONANNOTE ou new ResultDao() ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
                     Mockito.doReturn(toto).when(rd).getLaMethodeNONSTATIQUEResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy. ou pour qu'un spy ne fasse rien: Mockito.doNothing().when(monSpy).lamethodeDeMonSpyQuiPeutEtreVoid();
-    				when(filterConfig.getServNONSTATIQUEletContext( // ca s'appelle faire du "stub" def stub:un objet qui renvoit juste des constantes utiles. Et utiliser ca je crois pour les mock. Attention si c'est une methode finale il va rentrer dedans avant de traiter le when donc pour mocker une methode finale depuis Mockito2 seulement on crée un fichier sous src/test/resources/mockito-extensions/org.mockito.plugins/MockMaker et dedans on ecrit mock-maker-inline
+    				when(filterConfig.getServNONSTATIQUEletContext( // ca s'appelle faire du "stub" utiliser ca je crois pour les mock. Attention si c'est une methode finale il va rentrer dedans avant de traiter le when donc pour mocker une methode finale depuis Mockito2 seulement on crée un fichier sous src/test/resources/mockito-extensions/org.mockito.plugins/MockMaker et dedans on ecrit mock-maker-inline
     				ou                                   anyString()//tout string
     				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça . si je met des variables direct alors j'ai l'erreur InvalidUseOfMatchersException
+										pour faire un equals "eq(" en profondeur : 
+												ArgumentCaptor<User> argument = ArgumentCaptor.forClass(User.class);//definir un argumentcaptor.
+												verify(userStore, times(1)).createNewUser(argument.capture()); //faire mon verify mais avec mon argumentcaptor
+												Assertions.assertEquals(userCreated.id, argument.getValue().getId()); // et voila je peux asserter
+												Assertions.assertEquals(userCreated.getEmail(), argument.getValue().getEmail());
+												Assertions.assertEquals(userCreated.getUsername(), argument.getValue().getUsername());
                                                         ,anyList() // ne pas utiliser anyObject si j'ai une liste
                                                         ,isNull() // si c'est null
     													,ArgumentMatchers.any(UneClasse.class) ou eq(UneClasse.class Si la methode prend vraiment un param .class) avant: Matchers.any(UneClasse.class) avant: anyObject(UneClasse.class)
@@ -20728,6 +20781,9 @@ POUR LES FOREACH A 2 ARGUMENTS: j'ai d'un coté:
         System.out.println("something else");
     }
   }
+
+compresser des images jpg jpeg en java:LINKjpgnsdflka 
+	
 mapping :mapper :mappage :d'une classe A en une classe B (si c'est pour les DTO voir LINKemdlksqj)
  methodeA:
         public class MaClasseItemProcessor implements ItemProcessor<ClasseA, ClasseB> 
@@ -20811,7 +20867,7 @@ detecter determiner voir l'encodage encode d'un fichier:
  url :
     LINK_URLENCODEDECODE  quand un string contient des pourcentages % a cause de l'URI characteres caracters speciaux
     url encoder :
-          en java faire: user = (java.net.)URLEncoder.encode(user, "UTF-8");
+          en java faire: user = (java.net.)URLEncoder.encode(user, "UTF-8");sans l'utf8 a la fin il est deprecié
           ou bien 
                       public static char[] encodeURL(String str) throws UnsupportedEncodingException {
                     char[] temp = URLEncoder.encode(str, "UTF-8").toCharArray();
@@ -20858,7 +20914,7 @@ pour deflateandencode :
       Decoder de base64 
    		      String toto = new String(Base64.decodeBase64(unStringEncodeEnBase64));
                 ou
-              String sUserPwdDecode = new String(Base64.getDecoder().decode(sUserPwdCode));  
+              String sUserPwdDecode = new String(Base64.getDecoder().decode(sUserPwdCode)); si erreur Input byte array has incorrect ending byte at 40 c'est parce que apres le dernier "=" il y a des caractères cachés:les enlever avec substring. 
 		En interne en Java toutes les Strings, les char et charset sont encodes en UTF-16. En Java il est abberant de vouloir changer l'encodage d'une String !
 		String str = "blah";		// c'est forcement de l'utf16. En revanche les bytes eux ont un encodage et je peux le convertir. unstringPeutEtreEnPuissanceConvertiEnToutTypeDencodageDeBytes.getBytes(Charset.EncodageQueJeVeux) et quand je fais new String(desbytes,Charset.encodingIMPOSEparCommentSontDejaEncodesDesbytesDoncFautLeConnaitre) 
 		Cependant je peux forcer tout mon programe java à fonctionner avec un autre encodage en lancant mon programme java comme ca:
@@ -20936,6 +20992,8 @@ pour faire une expression reguliere: regexp:
       exemple: 
 		  replaceAll("(\\p{javaUpperCase}{2,30})",
           echapper le "." "\\."
+	pour inserer des separateurs entre des strings:
+		String.join("leseperateur","premierstring","deuxiemestring".....etc...); //depuis java8
 pour savoir si pourcent est dans une chaine de caractère, ne pas faire contains mais monstring.indexOf('%');	
 Pour utilisation des expressions regulieres conditionnelles avec sorte de callback en java pour trouver un caractère: regexp: attention !!! ca ne marche pas pareil sur unix: super galere donc eviter. Ruser avec Substring plutot
 ici on cherche des coommentaires: *
@@ -21207,6 +21265,9 @@ pour convertir un int en string
 ***********************************************************************
 Utils : Utils java :
 tuple :bean couple paire deux :
+	depuis java15 records :
+		on peut aussi meme en mettre directement dans une methode.
+			public record MonXuple(int unchiffre, String unTruc){} et c'est tout j'ai automatiquement un constructeur, les getters setters et le tostring que je peux overrider bien sur
         depuis java10: 
             var x = new Object() {int a = 1; int b =2;}
             toto = x.a; // toto=1
@@ -22321,7 +22382,7 @@ pour recuperer que certains fichiers selon leur nom: regexp de fichier: filtrer 
       			
       			logger.info("all files are purged ");
       	} 
-pour supprimer effacer delete un repertoire de manière recursive depuis java8:
+pour supprimer effacer delete contenu d'un repertoire de manière recursive depuis java8:
   private void deleteDirRecursively(Path pathToBeDeleted) throws IOException {
         Files.walk(pathToBeDeleted)
                 .sorted(Comparator.reverseOrder())
@@ -24807,11 +24868,13 @@ pour voir la difference entre deux repertoires:
     		 -a pour voir les fichier comme des textes? jamais essaye
 If you want a list from a given date to now, you just need 
 		touch -t 201802140000 fichiervidecree
-        find /yourdir -ctime 0 // liste des fichiers modifies date d'aujourd'hui
+        find /yourdir -ctime 0 // liste des fichiers modifies date d'aujourd'hui ctime recupere les fichiers à une date exacte pas un range.
 		find /yourdir -type f -anewer fichiervidecree (marche pas:-( )
+trouver les fichiers vieux de plus de x jours: et si besoin les effacer
+		find ./ -mtime +200 | xargs rm -f
 pour copier les fichiers trouves dans un autre repertoire
 		find /starting/dir -iname '*.jpg' | xargs -xi cp '{}' /backupdir
-		find . -atime 0 | xargs -xi mv '{}' temp (copier ailleurs les fichiers date aujourd'hui)
+		find . -atime 0 | xargs -xi mv '{}' temp (copier ailleurs les fichiers date aujourd'hui) // plus le chiffre est grand plus c'est vieux mais ca recupere les fichiers à une date exacte
 		ls $1 | xargs -I {} -t mv $1/{} $2/{}
 		--->find . -type f -anewer aeffacer | xargs -I {} -t cp {} /home00/mntegn/aeffacer ( on peut mettre -r à l'option du cp si on veut aussi copier les repertoires)
 for fichier in `find . -type f -newer aeffacer` ;do cp --parents $fichier /home00/mntegn/aeffacer ;done
@@ -24848,7 +24911,7 @@ les comptes utilisateurs sont sur etc/password (si un jour un gars qu'on ne conn
 SUPER methode pour trouver les plus gros fichiers: il y a aussi apparemment sur unix baobab l'equivalent de windirstat.  
 du -sk -h * | grep '[0-9\.]\+[M;G]'
 du -sh * c'est mieux c'est plus clair ou du -sh . pour voir la taille du repertoire courant
-probleme d'espace disque disk? utiliser ncdu c'est top. (faire ncdu repertoirequonVeutSiOnMetRienCestOuOnEst. d pour supprimer. r pour recalculer la ou je suis   Pour liberer de l'espace: apt-get clean
+probleme d'espace disque disk? voir aussi LINKinode utiliser ncdu c'est top. (faire ncdu repertoirequonVeutSiOnMetRienCestOuOnEst. d pour supprimer. r pour recalculer la ou je suis   Pour liberer de l'espace: apt-get clean
 du -s -k -h *: permet de voir la taille espace du repertoire courant: en kilo. (-h pour voir si c M ou G ...)
 du -s -m *: en MEGA 
 ou 
@@ -24868,6 +24931,9 @@ df -k pour voir si il y a de la place dans les systemes de fichiers. le pourcent
 			1 Mo devrait suffire (1 xxx xxx)                               
 			1.000.000   = 1Giga Go
 			1.000 kilo = 1 Mega Mo
+si j'ai trop d'inodes c'est à dire de fichiers crees meme si j'ai encore assez d'espace disque ca fait une erreur de manque d'espace.
+	pour verifier faire df -i et pour remedier supprimer des fichiers.
+	pour trouver les repertoires qui ont trop de fichiers faire:  find /le/path/ -xdev -printf '%h\n' | sort | uniq -c | sort -k 1 -n // ce qui est en bas contient le plus de fichiers
 si j'ai le message:quota_ufs: over hard disk limit (pid 8968, uid 2024, inum 24683, fs /appli01) sous les systemes de fichiers il y a des application et chacune a un quota
       quota -v ou /usr/sbin/quota -v pour savoir si on a depasse le quota d'occupation du disque ou de l'application
 pour voir les disques (les montages les partitions) 
@@ -24953,7 +25019,7 @@ pour recuperer que le pid:
     pgrep -f java
 pour localiser une commande grace au path: which nomdelacommande
 pour connaitre voir l'heure: date
-pour mettre à jour update modifier la date et l'heure:
+pour mettre à jour changer update modifier la date et l'heure:
 	date -s '2019-10-31 20:49:00' // a faire en sudo ou en root
 si on a l'erreur sh: cannot execute
 regarder si on a les droits d'execution sur les fichiers
@@ -25028,8 +25094,12 @@ pour reexecuter rerun une commande saisie:
 Si quand on veut lancer un ksh: ./TOTO.ksh il fait: ksh not found ou no such file aucun fichier ou dossier de ce type 
       essayer de le lancer comme ca: . ./TOTO.ksh ou bien c'est la version unix qui ne supporte pas cet executable: upgrader version unix
       voir aussi LINKf9t8p2
-awk : pour definir des tooken dans un string: on peut travailler dans des fichiers.
-      $TOTO= `echo $ligne | awk -F'mon_separateur' '{ print $2 }'` ## prendre element apres deuxieme separateur
+awk : pour definir des tooken dans un string: on peut travailler dans des fichiers comme si c'était des csv avec un separateur qui est espace
+     MACOMMANDE c'est : awk -F'facultatifMon_separateurForcéQuiParDefautEstEspace' '/uneExpressionRegulierePourFiltrerLesLignes/ && $2>30 { print $1,$2/10"toto" }' // print: ecrit la colonne 1 espace colonne2 divisee par 10 concatenee avec "toto" ($0 correspond à toute la ligne entiere)
+		puis autour:								Au dessus c'est un filtre		ne prend que les deuxiemes colonnes dont la valeur >30					 
+ $TOTO= `echo $ligne | MACOMMANDE `
+ou bien 
+MACOMMANDE unFichierGenreCsvAvecSeparateurEspaceParDefaut.txt	
 mkdir pour creer un repertoire. 
     Possibilitee de creer plusieurs repertoires recursivement recursive en un coup: mkdir -p toto/titi/tata (ne les cree que si ils n'existent pas)
 cal [-jysm13] mois annee. pour afficher date calendrier
@@ -25442,7 +25512,7 @@ virer le retour chariot de la ligne courante:
 dd: supprimer une ligne (en fait il fait un couper)(copier mais supprime) 
 2dd: supprimer deux lignes  (en fait il fait un couper)
 100dd: supprimer cent lignes (en fait il fait un couper)
-kdgg: supprimer tout avant le curseur en arriere arrière
+kdgg: supprimer tout avant le curseur en arriere arrière lignes avant
 D: supprimer effacer à  partir du curseur (en fait il fait un couper je crois) jusqu'à la fin de la ligne droite
 yy: copier ligne puis P: coller ligne
 4yy puis P: le faire pour 4 lgines
@@ -25450,7 +25520,7 @@ copier-coller bouts:
   v puis bouger fleche pour selectionner puis d pour couper ou y pour copier puis P pour coller ce que j'avais selectionne
 faire une recherche find: :set ignorecase puis :set smartcase puis /blabla // si j'ai pas fait les set alors faire /blabla\c pour une recherche case noncasesensitive majuscule minuscule. Pour revenir à une recherche casesensitive faire: :set noic
 		ou /bla\c exemple: /motcherche\c pour case insensitive ignorer majuscule minuscules.\c peut apparaitre partout debut ou fin et tapper. pour faire next, wildcard faire .*, tapper n (pour echapper les / slash faire un backslash) pour rechercher en arrière: N
-		pour trouver rechercher deux mots dans n'importe quel ordre sur une ligne: /.*mot1\&.*mot2
+		pour trouver rechercher deux mots dans n'importe quel ordre sur une ligne: /.*mot1\&.*mot2\&.*mot3
 ggVG pour selectionner tout selectionner
  V selectionner toute la ligne
 ?: recherche de bas en haut
@@ -25467,23 +25537,23 @@ u: undo si multiple undo ne marche pas: aptitude et charger vim
 :r ! MaCommande faire une commande unix et le resultat de la commande rentre dans le texte
 :%!xxd pour editer en hexadecimal: je peux alors modifier la partie centrale uniquement. revenir en mode normal après pour voir le resultat: :%!xxd -r
 shift G pour aller en bas du fichier
-Remplacement de chaine1 (toutes les occurrences de chaine1) ,par chaine2 depuis la ligne n1 jusqu'à  la ligne n2  
-		:n1,n2 s/chaine1/chaine2/g   // echappement des caractères / se fait par \/
+Remplacement de chaine1 (toutes les occurrences de chaine1 remplacer tout) ,par chaine2 depuis la ligne n1 jusqu'à  la ligne n2  
+		:n1,n2 s/chaine1/chaine2/g   // echappement des caractères / se fait par \/ pour mettre un retour chariot à la place c'est \r
     ou bien avec confirmation: on definit pas les lignes mais il ya confirmation a chaque fois: 
     >:%s/chaineARemmpacer/ChaineQuiRemplace/gc
     >:%s/e1/e2/gc 
 		ou bien 
 		remplace de ligne 1 à  dernière ligne: $. toto remplace par 0
-		>:1,$ s/toto/0/g  -- faut il entourer 0 de "" ?
+		:1,$ s/toto/0/g  -- faut il entourer 0 de "" ?
 		ou
-		>:1,$ s/toto/titi/g (remplace tous les toto par des titi)
+		:1,$ s/toto/titi/g (remplace tous les toto par des titi)
 		ou bien pour remplacer " par ':
-		>:1,$ s/"/'/g
+		:1,$ s/"/'/g
 		ou bien pour remplacer '' par \':
-		>:1,$ s/''/\\'/g
+		:1,$ s/''/\\'/g
 		ou remplacer ">" par "&gt"
-	     >:1,$ s/>/\&gt;/g
-	     >:1,$ s/< /\&lt;/g
+	     :1,$ s/>/\&gt;/g
+	     :1,$ s/< /\&lt;/g
 			remarque: -si n2 est egal à  $ alors on effectue le remplacement jusqu'à  la fin du document. - /g indique que c'est une option de remplacement; les autres ne sont pas documentees ici car pas interessantes ( man vi ...).  
 			Attention: dans la chaine 2 seulement, certains characteres caractères sont specialises (ex / ," ,[ ,] ,\ ,',{,},etc..), il faut donc les despecialiser, ceci se fait en inserant un \ avant ce caractère. le caractère \ ne despecialise qu'un seul caractère; il faut donc le repeter devant chaque caractère specialiser à  remplacer. 
 			ex: >:1,$ s/\/bug\"/\\\\correction/g 
@@ -25682,7 +25752,7 @@ bon exemplde ksh de lancement de batch:
                                     // du coup pour trouver certains fichiers et remplacer dans ceux trouvés une chaine par une autre faire: 
                                             find . -type f -not -name '*.mp3' -not -name '*.bak'(important!) | xargs sed -i.bak -e "s/remplacemoi(/parca(/g"
                                 ret=$?  // on defini ret etant le retour du sed ci dessus: peut etre =1 ou 0V
-                                if [ $ret -ne 0 ] // si ca ne renvoie pas 0 (0=erreur 1=OK) OU savoir si la derniere execution renvoit une erreur: if [[ "$?" -ne 0 ]] ; then // si ca ne renvoit pas derreur alors....heu marche pas bien encore
+                                if [ $ret -ne 0 ] // si ca ne renvoie pas 0 (0=erreur 1=OK) OU savoir si la derniere execution renvoit une erreur: if [[ "$?" -ne 0 ]] ; then // si ca ne renvoit pas derreur alors....heu marche pas bien encore. Pour que le programme s'interrompe en cas d'erreur mettre en tete du fichier bash : #!/bin/bash -e
                                         then
                                         Log_print " probleme remplacement des carecteres "
                                         exit $ret // exit 0
@@ -26277,9 +26347,9 @@ NGNIX : nginx :
 	   listen 80;
 	   listen [::]:80;//facultatif
 	   server_name www.undomaine.com undomaine.com; 
-	   return 301 https://$host$request_uri; // redirection https
+	   return 301 https://$host$request_uri; // redirection https peut etre utilisee pour faire tout type de redirection d'url exemple: return 301 https://$host/wwwconnect;
 		ou
-	    location /{					location '/unpathtoto'{
+	    location /{					location '/unpathtoto'{ ou    location ~ ^/$ { // pour que ce soit que le path root "/"  pour plusieurs urls mettre: location ~^(/premiere/url|/deuxieme/url|^/$|/quatrieme/url|...){
 			proxy_pass http://unnom;	default_type "text/plain";
 							root /laracine; 		// du coup si l'url est http://xxx/unpathtoto ca va pointer vers le repertoire "/laracine/unpathtoto"
 			autoindex on;			|_pour permettre l'accès en visulation aux repertoires directories sinon on a l'erreur 403
@@ -26629,6 +26699,7 @@ reseau tracer:     utiliser fiddler (onglet inspector) wireshark whireShark; sni
 					Unicast: ->dest:1
 					Multicast:->dest:plusieurs mais certains dest bloquent.
 					Broadcast:->dest:plusieurs sans exception (le mac dest est alors FF:FF:FF:FF:FF:FF
+					Preambule("10101010")--destMACaddrs--sourcMACeaddrs--VLANtag(=chaineDeCommunication exemple:telephone,internet)--Ether
           *Route -3 unite=packet (*Reseau adressage logique IP non fixe à un materiel) 
           *Tu    -4 unite=Datagramme (*Transport (tcp, udp)) pour verifier que les donnees envoyees sont bien reçues en entier: port source/port dest. Ack = accuse de reception; flags=exemple:"j'envoie", "je reçois"
            Suis  -5 unite=donnee *Session
@@ -26854,7 +26925,7 @@ pour manipuler le css directement:
             document.body.appendChild(sheet);
     pour supprimer un style
           var sheetToBeRemoved = document.getElementById('styleSheetId');
-          var sheetParent = sheetToBeRemoved.parentNode;
+          var sheetParent = sheetToBeRemoved.parentNode; // attention parentNode retourne null si l'element fils est en fait une liste! ou si j'ai fait un clone
           sheetParent.removeChild(sheetToBeRemoved);
                 
 pour faire des frames sans utiliser le iframe: voir LINKxframeiframe
@@ -27122,7 +27193,9 @@ HTML :
     Guillemets droits 	" 	&quot;
     Superieur à 	> 	&gt;
     Inferieur à 	< 	&lt;
-
+ faire des iconnes icones cools
+	https://icomoon.io/app/#/select > icomoon App (je n'ai pas de compte)
+	je peux importer/exporter le icomoon_selection.json
 svg :
    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" stroke-linejoin="round">
    <rect x="50" y="20" width="150" height="150" 
@@ -27171,7 +27244,13 @@ u accent:
     &ugrave;
 euros:
     &#128; ou Alt+0128(windows-1252 sinon &#8364 Unicode) (1252: francais. 1250: tcheque)
+STT : speach to text:
+	Regarder CMUSphinx
 Javascript :
+	TTS : text to speach :texttospeach :
+		var msg = new SpeechSynthesisUtterance();
+		msg.text="Bonjour";
+		window.speechSynthesis.speak(msg) // on peut changer les voix aussi.
     quand on appelle une fonction, le dernier argument c'est toujours l'event
 enfant child childrens d'un element: 
     this.children (que les enfants de type elements)
@@ -27226,7 +27305,8 @@ fetch : LINKsljqffetch
            })
            .catch(err=>{(new AlertMessage()).appear("Erreur: "+err );});
      }
-
+duree d'une balise audio: 
+	<audio>.... document.querySelector("audio").duration;
 
 ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch). Ajax ne supporte pas les redirection 302 venant du serveur: il faut envoyer un response.status=302 manuellement dans la servlet et traiter avec cote javascript avec un window.location=nouvelleUrlVersOuRediriger
                         ans = canvas.toDataURL("image/png");  // converti l'image en base64. Pour sauver un canvas sur le serveur en image png ou jpg il faut obligatoirement envoyer les donnees en POST sinon le fichier genere est pourri:
@@ -27234,6 +27314,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                             formData.append('ans', ans); // Append extra data before send.
                             formData.append('idp', idprojetEnCours); // Append extra data before send.
                             formData.append('fs', askValidator.fs); // Append extra data before send.
+			    formData.append('unfichier',monChampInputFile.file[0]); // pour uploader un fichier. Voir aussi LINKee"(çà)"
                             pour recuperer une valeur  :formData.get("fs")
                       var xhr = new XMLHttpRequest();
                               xhr.setRequestHeader("Content-Type", "multipart/form-data"); // c'est ca par défaut si j'utilise FormData()! pour le gerer sur une servlet sans avoir a regarder dans le payload mettre LINKmultilkjfqsdf 
@@ -27297,7 +27378,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                       xhr.upload.addEventListener("progress",  onUploadProgress, false); //on s'abonne à l'evenement progress pour savoir où en est l'upload
                                   et
                                                             function onUploadProgress(event) {
-                                                               if (event.lengthComputable) {
+                                                               if (event.lengthComputable) { // event.target est l'element sur lequel on a cliqué
                                                                        yourProgressBar.style.width = (event.loaded / event.total) * 100 + "%";
                                                                 ...                      
                       ou
@@ -27368,7 +27449,7 @@ jouer un fichier audio sans objet audio
         				      playSound(soundBuffer);
     function playSound(buffer) 
       {
-      rintStacktrace();
+      printStacktrace();
         source = context.createBufferSource(); // creates a sound source
         source.buffer = buffer;                    // tell the source which sound to play
         //source.connect(filter);       
@@ -27520,10 +27601,19 @@ tester le javascript TDD :
 				afterEach(() => {....});
                               	it(.skip pour ignorer)('nom du test', () => {
                                     // pour mocker un objet(xhr pour requete ajax par exemple)
-                                  un module: 
-						jest.spyOn(unModule, 'NomDeLamethodeDeCeModule').mockReturnValue(true) // mocker la methode d'un module partout. ici  retournera tout le temps true. Attention ne marche pas si cette methode est appelée dans une autre promise on dirait
+                                  un module: pour le spyer
+						memoclap.saveActorsNameOnServer=jest.fn(()=>{console.log("aaaaaaaaaaaa")}); // le top pour faire un spy mais n'a pas marché une fois dans un Promise
+						unmodule.unemethode=jest.fn(); // pour que la methode d'un module ne fasse rien
+					
+
+						jest.spyOn(unModule, 'NomDeLamethodeDeCeModule').mockReturnValue(true) // mocker la methode d'un module partout. ici  retournera tout le temps true. Attention ne marche pas si cette methode est appelé sans mettre "this." devant ou module.NomDeLamethodeDeCeModule
+												.mockReturnValue(Promise.resolve())
 												.mockImplementation(function(){...})
-					       const mockMonObjet = ()=> ({// toujours nommer cet objet en commencant par "mock" C'EST CA QUE JE DOIS UTILISER POUR MOCKER XMLHTTPREQUEST ajax
+					pour le mocker:
+					jest.mock(memoclap);
+					memoclap.unemethode.mockImplementation(() => Promise.resolve({ data: { name: 'Jimmy Jedi' } }))	
+
+				       const mockMonObjet = ()=> ({// toujours nommer cet objet en commencant par "mock" C'EST CA QUE JE DOIS UTILISER POUR MOCKER XMLHTTPREQUEST ajax ou Worker voir aussi LINKmockwork
                                          ou
                                          const mockMonObjet={ // si marche pas (le new mock ne peut pas s'instancier au run essayer ci dessus
 						nomdemamethode:jest.fn().mockImplementation..etc...voir ci dessous
@@ -27534,11 +27624,16 @@ tester le javascript TDD :
                                                 open:jest.fn().mockImplementation(function(){this.status=200;}),// je peux setter une variable dans le mock. Attention on ne peux pas renvoyer return un truc je crois
                                                 overrideMimeType:jest.fn().mockImplementation(function(){}), // si on ne veut rien faire
                                          })
-  				      window.confirm = jest.fn(()=>{return true});
+  				      window.confirm = jest.fn(()=>{return true}); LINKmockwork
                                       window.XMLHttpRequest = jest.fn().mockImplementation(mockMonObjet);
                                              (.. mes tests..)
-					unmodule.unemethode=jest.fn(); // pour que la methode d'un module ne fasse rien
 					jest ne supporte pas la methode native scrollIntoView alors faire : Element.prototype.scrollIntoView = jest.fn();
+				    mocker fetch: ca ne marche pas grrrrr! du coup autant mocker la methode juste en amont.
+					window.fetch = jest.fn(() =>
+						    Promise.resolve({
+							json: () => Promise.resolve({ status: 200}),
+						    })
+						);
                                 });
                                 it("checkloop",()=>{...
 			ou 	
@@ -27659,6 +27754,12 @@ tester le javascript TDD :
         pour executer ce test: 
           >testem ci --launch PhantomJS(obsolete)
 ES6 :modules: une page html/js peut importer une page html/js qui importe aussi: le browser gère les doublons si yen a // pas implemente dans firefox et safari?
+	copier cloner les proprietes d'un objet dans un autre rapidement: 
+		const {unprop,unautreprop,troisiemeprop:nomfinal} = unautrepbjet // equivaut à faire unprop=unautreobjet.unprop, unautreprop=unautreobjet.unautreprop,nomfinal=unautreobjet.troisiemeprop
+	contraction pour les splits:
+		let unchamp; //un champ qui existe deja
+		let unautrechamp; // un autre champ qui existe deja
+		[unchamp, unautrechamp] = unstring.split(' '); // equivaut à faire unchamp=unstring.split(' ')[0]; unautrechamp=unstring.split(' ')[1]. ca set les deux champs donc en gros une methode peut retourner plusieurs variables !
     pour les tester il faut aubligatoirement un serveur: peux pas jouer en local SI JE PEUX
         Top pour faire du singleResponsabilityPrinciple
         pour que ca marche ne plus mettre 
@@ -27666,26 +27767,27 @@ ES6 :modules: une page html/js peut importer une page html/js qui importe aussi:
             mais 
             <script type="module" src="... 
         dans main.js: // attention toutes les variables primitives exportees sont readonly. Faire des setters si je veux les modifier 
-              import {toto,blabla} from "./path/xxx.js";                          AAA  // autant mettre le ".js" c'est normalement supporté partout
+              import {toto,blabla} from "./path/xxx.js";                          RRR  // autant mettre le ".js" c'est normalement supporté partout
              import {projectsMEMENOM} from './js/memoclap-projectsFieldsets.js';  UUU  // toujours mettre accolades meme si qu'un seul objet
              import * as bidule from './js/memoclap-projectsFieldsets.js'; AAA et BBB  // j'importe tous les exports de bidule et ici ils sont prefixes par "bidule"             
              import projects from './js/memoclap-projectsFieldsets.js';    CCC  //du coup j'appellerais projects.unTrucDefiniPlusHaut.uneDeSesMethodes()
-             import UnComponentAttentionMemeNom from './js/alertmsg.js';    BBB
+             import UnComponentAttentionMemeNom from './js/alertmsg.js';    BBB (pour les default export de classes)
              on peut faire new unmodule.UnObjetDuModule();                     
         dans path/xxx.js:  
             Exporter plusieurs trucs
               export var projectsMEMENOM ={...des methodes dedans....                          UUU   
               export function projectsMEMENOM(arg){...}                                        AAA
             Exporter qu'un truc
-              export default class(ne marche que avec class) UnComponentAttentionMEMENOM{....} BBB
-	      export class UnComponent {...}						       BBB
+              export default class(ne marche que avec class) UnComponentAttentionMEMENOM{....} BBB a eviter.Preferer UUU avec un named export et non pas un default export voir ci dessus.
+	      export class UnComponent {...}						       UUU
               export default {unTrucDefiniPlusHaut}; // a mettre a la fin du fichier   CCC
 	   Exporter plusieurs classes
-	     export class UneClasse{...}     |_AAA
+	     export class UneClasse{...}     |_RRR
 	     export class UneAutreClasse{...}| 
          pour que les onclick html fonctionnent je dois pointer la methode du module que je veux depuis window: ca rend le module global visible par tous.
-                    window.setModeMenu=memoclap.setModeMenu; // ainsi je peux faire onclick="setModeMenu('hihi')"; mais attention la methode est totallement extraite de son contexte si elle est dans un objet
-                    window.memoclap=memoclap; // je peux faire onclick="memoclap.setModeMenu() tester aussi memoclap.memoclap.setModeMenu()" 
+                    window.setModeMenu=memoclap.setModeMenu; // Si j'ai fait un javascript avec un export de methode dedans. ainsi je peux faire onclick="setModeMenu('hihi')"; mais attention la methode est totallement extraite de son contexte si elle est dans un objet
+                    window.memoclap=memoclap; // si j'ai fait un .js avec plein d'exports dedans. Je peux faire onclick="memoclap.setModeMenu() tester aussi memoclap.memoclap.setModeMenu()" 
+		    window.UneClasse=new UnClasse(); // si j'ai fait un export class...
   avant dans un .js charger en ajax un autre .js et faire eval sur le retour pour executer. executer un javascript dans un tag script renvoyé par le serveur. ATTENTION impossible de eval de nouvelles fonctions elles ne seront pas visibles par le browser pour execution depuis la page principale
   avant: dans un .html creer un src et l'ajouter au document          
   avant: methode ancienne: <link rel="import" href="laurent-moncompoentn1.html">              
@@ -27712,12 +27814,14 @@ pour echaper echappe escape decoder html caracteres speciaux
     remplacer toExecute.innerHTML; par toExecute.childNodes[0].nodeValue; ou toExecute.innerText;
 async await : asyncawait :
   permet d'executer du code asynchrone comme s'il etait synchrone et le javascript fait une pause tant qu'il n'a pas la réponse de l'asynchrone.
-  async function unemethode(){  // dans une methode comme ca marquée async j'ai le droit de mettre await. Mais je crois que async renvoit toujours une promese.
-      let res = await uneautremethodequirenvoitunepromise(); //await doit etre devant une promesse renvoyee. Alors l'execution de async se met en pause jusqu'à ce que la promise soit résolue
-      return res; // await a converti la promise en valeur retournée par celle ci
+  async function unemethode(){  // dans une methode comme ca marquée async j'ai le droit de mettre await. JE SUIS SUR: async renvoit toujours une promese de facon implicite dont le then contiendra undefined et dedans moi je dois faire un return de valeur ou return tout court seulement pas de promesse.
+      let res = await uneautremethodequirenvoitunepromise(); ou directement return await new Promise... ou return Promise.all(xxx) sans await du coup ca marche aussi //await doit etre devant une promesse renvoyee. Alors l'execution de async se met en pause jusqu'à ce que la promise soit résolue mais async lui meme est bien asynchrone vis a vis de son appelant sauf si LINKasynawaitdfsf
+      return res; // await a converti la promise en valeur retournée par celle ci. Ne surtout pas oublier le await sinon c'est le bordel.
   }
+ puis	function methodequiappelleAsync(){
+		unemethode().then( // then est obligé car si je ne met pas then unemethode execute en asynchrone. pour palier à ca appeler unemethode comme ca à son tour: await unemethode() et mettre async devant methodequiappelleAsync: je propage le truc vers le haut. LINKasynawaitdfsf
 erreur: (intermediate value)(...) is not a function
-    c a d il manque un ";" qqpart.
+    c a d il manque un ";" qqpart. ou il y a des ";" là ou il ne devrait pas y en avoir
     
     lambda en javascript fonctionnal programing :functionnal programing :
         var newNumbers = tableau.filter(function(number,indexFacultatif){ // indexFacultatif si on a besoin de l'index ouaou.:-)
@@ -27730,9 +27834,9 @@ erreur: (intermediate value)(...) is not a function
           .map(function(number){
               return number + 2;
           })
-          .reduce(function(carry, number){            return costCategories.values().stream().map(cost->cost.visible).reduce((carry,elt)->carry+elt).get();
+          .reduce(function(carry, number){       ou sinon mais pas reussi a le faire marcher avec une liste de chiffre: return costCategories.values().stream().map(cost->cost.visible).reduce((carry,elt)->carry+elt).get();
                 return carry + number;
-            }, 0)
+            }, 0)	// attention ne pas oublier ici la première valeur initiale! sinon ca renvoit undefined
             .forEach((numbers)=>{ // equivalent: .forEach(function(number){//ATTENTION E majuscule Equivalent de forEach((variablepassee)=>untrucaexecuter(variablepassee));
                     ou(index,value)   
                 doSomethingWith(number); // faire un traitement... a creuser
@@ -27787,12 +27891,12 @@ promesses : promese :promeses :Promises :promise : ne plus utiliser les callback
                                            alert("a");
                                            if(true)
                                            {
-                                              resolve(something à retourner); // toujours mettre au moins un truc (parce que une fois dans une requete ajax il allait dans le then avant meme de passer par le resolve. QUand j'ai mis un truc ça a fonctionné). ATTENTION!! resolve n'est qu'un callback mais le code ici LINKjecontinue continue après execution du callback. Pour eviter faire "return resolve(something à retourner);" qui permet l'utilisation de .then(somthingaretourner=>{somthingaretourner dispo ici})
+                                              return resolve(something à retourner); // toujours mettre au moins un truc (parce que une fois dans une requete ajax il allait dans le then avant meme de passer par le resolve. QUand j'ai mis un truc ça a fonctionné). ATTENTION!! resolve n'est qu'un callback mais le code ici LINKjecontinue continue après execution du callback. Pour eviter faire "return resolve(something à retourner);" qui permet l'utilisation de .then(somthingaretourner=>{somthingaretourner dispo ici}) ou   .then(function(somthingaretourner){somthingaretourner dispo ici}.bind(this)) si besoin du this parent
                                               du code ici peut continue a etre executé LINKjecontinue  
                                               }
                                               else
                                               {
-                                              reject(something à retourner); // ça renvoit une erreur et donc on va se retrouver sur LINKtootot ATTENTION!! reject n'est qu'un callback mais le code ici LINKjecontinue continue après execution du callback. Pour eviter faire "return reject(something à retourner);"" 
+                                              return reject(something à retourner); // ça renvoit une erreur et donc on va se retrouver sur LINKtootot ATTENTION!! reject n'est qu'un callback mais le code ici LINKjecontinue continue après execution du callback. Pour eviter faire "return reject(something à retourner);"" 
                                               }
                                               du code ici peut continue a etre executé LINKjecontinue 
                                             });
@@ -27816,7 +27920,7 @@ promesses : promese :promeses :Promises :promise : ne plus utiliser les callback
                             ).catch(function(err){.return UnTruc..})
                             .finally(x=>{...}); // finally existe (x est udefined. AFAIRE syntaxe exacte/x =?)                              
         
-        utilisation2:     Promise.all([unearray,depromesses]).then(datasRenvoyeesATOUJOURSMETTRE=>{ ...etc avec datasRenvoyees.. }).catch(errATOUJOURSMETTRE=>console.log(err)); converti array de promesses en dataRenvoyees qui est un tableau de datas.
+        utilisation2:     Promise.all([unearray,depromesses]).then(datasRenvoyeesATOUJOURSMETTRE=>{ ...etc avec datasRenvoyees.. }).catch(errATOUJOURSMETTRE=>console.log(err)); converti array de promesses en dataRenvoyees qui est un tableau de datas. ATTENTION Toujours mettre le catch sinon si il ya une erreur ans ma liste de promeses ca part dans l'univers.
         Promise.all(
         [
           unefonction(1), doit retourner une promesse ou si c'est une liste de fonctions: Promise.all([laliste]).then //donc toujours mettre les crochets autour de la liste
@@ -28474,6 +28578,8 @@ ouvrir toujours la meme fenetre
         onclick="window.open('<%=request.getContextPath()%>/I18NListLang.do?language=en', '_self','menubar=no, status=no, scrollbars=no, menubar=no, width=2px, height=2px');
 ouvrir toujours une nouvelle fenetre (ou nouvel onglet selon browser: <a href="" target="_blank")
         onclick="window.open('<%=request.getContextPath()%>/I18NListLang.do?language=en', '_blank','menubar=no, status=no, scrollbars=no, menubar=no, width=2px, height=2px');
+pour invoquer le onclick d'un element: 
+	document.getElementById("filesForUpdate").click();
 recharger la page:
   location.reload();
 activer la fenêtre courante:
@@ -29878,7 +29984,7 @@ Pour recuperer des variables de la page html, les convertir en chiffre, faire de
 function calcTotal(objet,euros)
               {
                   var total=document.getElementById('total').innerHTML;
-                  totalNum=parseFloat(total);
+                  totalNum=parseFloat(total); // converti un string en nombre a virgule 
                   eurosNum=parseFloat(euros);
                   if (objet.checked) total=totalNum+eurosNum;
                   else total=totalNum-eurosNum;
@@ -29929,6 +30035,7 @@ https://developers.google.com/web/fundamentals/web-components/customelements#att
           du dom (balises html..ne pas mettre d'appel a des methodes dedans. Marche pas (onclick..marche que si on utilise le javascript direct dedans sans faire appel à des methodes. Si besoin appeler methodes alors faire LINKlkjsdflh)
           `; // ` ` marche partout pour faire des strings qui vont a la ligne ! 
 METHODE CLASS: THEBEST? classes es6
+						import SiBesoinUnAutreCustomElementIciCLeNomDeSaClasse from "./chemin/versLautre/custom/element.js";
                         			(export default A METTRE SI ES6) class MonElement extends HTMLElement ou un autre element webcomponent (avec de l'animation par exemple) du coup pour que le fils appelle une methode du parent il doit faire super.methodeDuParent()
                                                  {
                                                  // attention les alerts ne marchent dans un webcomponent faire console.log (si j'en ai besoin chercher sur internet)
@@ -29946,7 +30053,7 @@ METHODE CLASS: THEBEST? classes es6
                                                                                               <span>SSSS<slot name(facultatif)='aaa'>bBBBB</slot><slot name='bbb'/>CCCC</span>   //se remplira avec par defaut le HTML qui est dans la page dans ma balise custom element sinon si name existe alors avec le HTML de base qui est comme ça:<mon-customelement><h1 slot='aaa'>bla</h1><div slot='bbb'></div></mon-customelement>
                                                                                              html${this.variable}html` // pour que ${this.variable} marche il faut mettre tout ce bloc non pas dans constructor mais dans connectedcallback en ayant préalablement défini MaCLasse.variabl=xx
                                                                                              `${super.gui()}` //pour appeler dans le template un autre template retourne dans la classe parente
-                                                                                        ou autre facon de definir un template: <template id="x">lkjsdf</template>
+                                                                                        ou autre facon de definir un template: <template id="x">lklkjsqf ${une.variable}jsdf</template> et on peut faire let montemplate = document.getElementById("x").content.cloneNode(true)
                                                          var cloneDuTemplate = monTemplate.content.cloneNode(true);  // true: il est recursif dans le dom
                                                         this.shadowRoot.appendChild(cloneDuTemplate); ou root.appendChild(cloneDuTemplate); ou root.appendChild(document.importNode(cloneDuTemplate,true)); ou root.innerHtml=... ou ou this.shadowRoot.innerHTML=""; ou this.shadowRoot.querySelector.....
                                                         sans shadowdom: faire this.cloneDuTemplate=monTemplate.content.cloneNode(true); puis voir LINKsansshadowlkjsdgh
@@ -33694,7 +33801,8 @@ pour effacer supprimer delete un fichier:
     del /f C:\Users\lduverge\apache-tomee-plume-8.0.0\webapps\memoclap.front.war // /f pour forcer
 pour effacer un repertoire directory:
     rmDir C:\path\vers\repertoire // rajouter <espace>/Q/S après rmDir pour effacer de facon recursive 
-        
+supprimer les vieux fichier dates de plus de trois jours je crois
+	        forfiles /p "E:\path\xxxx" /s /m *.* /D -3 /C "cmd /c del @path"
 renommer un repertoire fichier en un autre: 
     rename dir1 dir2
     commande dos pour voir les ports utilises sur mon ordi: netstat (voir netstat plus haut) LINKnetsteatelkv
@@ -33899,6 +34007,8 @@ paint :
     pour que la selection soit transparente transparante
         bouton selectionner> choisir transparant
 Excell : excel :
+	pour remplacer des caracteres speciaux escape echappement echape
+		mettre ~ devant exemple remplacer *: mettre ~* a ma recherche
 	pour ne selectionner que les cellules visibles filtrées: Accueil>RechercherEtSelectionner >Selectionner les cellules...>Cellules visibles uniquement
   compter le nombre de cellules remplies count:
 	=NBVAR(plage)
@@ -34068,10 +34178,16 @@ pour generer un menu index:
 envoismoinscher : 
     pli
     20*20cm        
+wordpress :
+	pour voir les logs : 
+		changer wp-config.php
+			ajouter:
+			define('WP_DEBUG',true);
+			define('WP_DEBUG_LOG','/un/path/fichier.log');
 prestashop :
-      vider les tables trop grosses: memoire:
-            delete from ps_connections where YEAR(date_add) <2017 and date_add != '2015-08-07 20:55:43';
-            delete from ps_guest where id_guest < 210000;
+      vider les tables trop grosses: memoire: possible necessite de redemarrer serveur apache et vider cache prestashop apres sinon il n'affiche plus les produits dans les categories parentes
+            delete from ps_connections where YEAR(date_add) <2018 and date_add != '2015-08-07 20:55:43';
+            delete from ps_guest where id_guest < 510000;
             delete from ps_pagenotfound where id_pagenotfound < 70000;
       pour logguer tracer debugger dans les .php
           error_log('LAURENT pagination: $page_nb=$total_prod/$this->n: '.$pages_nb."=".$total_products."/".$this->n);
@@ -34716,10 +34832,15 @@ seo :
                     pour savoir si mon serveur est lent temps de reponse du serveur à analyser avec TTFB(time to first byte: temps entre envoit requete et premier byte recu du serveur)
         si dans plusieurs pays: mettre plusieurs serveurs avec même nom de domaine selon pays: voir CDNs
         Faire de la compression Gzip du serveur A FAIRE!             
-        compression d'images optimisation img sans perte de qualite:
+        compression d'images optimisation img sans perte de qualite: en java voir LINKjpgnsdflka
           http://advsys.net/ken/utils.htm voir dans D:/DEV/pngout.exe // a executer en ligne de commande sur windows: pngout.exe Lot4devFrontEND.PNG Lot4devFrontENDOUT.png
           http://freecode.com/projects/jpegoptim    D:/Dev/jpegoptim-1.3.0-win32-binary/jpegoptim.exe d:/Profiles/lduverge/Ah02hight.jpg ATTENTION je crois qu'il ecrase l'ancien fichier
                                                     F:\Mesdocuments\Installations\jpegoptim-1.3.0-win32-binary/jpegoptim.exe F:/PHOTOS/aeffacer/*.jpg
+		ou bien 
+			    	BufferedImage img = ImageIO.read(imageInputStream); // load image
+				BufferedImage scaledImg = Scalr.resize(img, 300, 300);
+				File outputfile= new File(outimageFilePath);
+				ImageIO.write(scaledImg, "jpg", outputfile);
     mettre dans .htaccess pour que http redirige vers https quand on clique sur un lien http vers notre site depuis l'exterieur.
     googlewebmastertools: passer tout ça en revue: Sert à faire des verifs mais ne fait rien par rapport à la popularite, legitimite etc...
                                 apparence dans les resultats de redcherche 
