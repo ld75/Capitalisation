@@ -2356,6 +2356,7 @@ culture = country_LANGUAGE
 JSON :
 l'equivalent de xmlpath=xpath en json sont des implementations de jsonpath comme: <groupId>com.jayway.jsonpath</groupId><artifactId>json-path</artifactId><version>2.4.0</version>
 		Jayway : List<String> jsonlist = JsonPath.parse(stringjsondoc).read("$[*]['CompanyCode']['AdapterSource']"); // remonte moi racine/*/CompanyCode.AdapterSource.savaleur
+										read("$..CompanyCode..AdapterSource") // companycode etant loin a plusieurs niveaux 
 Attention au sein de json tout est en UTF8 parse accepte que utf8(jecrois) et stringify envoie des charactères caractères en utf8
 super site pour convertir editer visualiser voir du json array en objet object conversion 
     https://jsoneditoronline.org/
@@ -2513,7 +2514,12 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 	;; mon commentaire
 	definir une variable:
 		(def nomdelavariableglobale savaleur) LINKclojrvar
-	definir une fonction: // elles retournent TOUJOURS une valeur
+	definir des variables key limitees dans un scope:
+		(let [nouvelleCle1 "unevaleur1" nouvelleCle2 "unevaleur2] 
+			... je peux utiliser nouvelleCle1 et nouvelleCle2 c'est scopé ici.
+		)
+
+	definir une fonction methode: // elles retournent TOUJOURS une valeur // bonne pratique :quand une fonction methode fait un mapping d'un format vers un autre, le nom de ma fonction doit s'appeler formattruc->formatmachin
 		(defn nomdemafonction [parametre1 parametre2 & parametrestypeliste] // fonction nomée nomdemafonction // le parmatre apres & c'est comme unevariable.... (= variable variadic) et du coup parametrestypeliste est en fait une liste. exemple: (nomdemafonction toto titi "a" "b" "c" "d") c'est tr
 			(+ parametre1 parametre2)) // execute la fonction PLUS. on peut mettre virgule a la place de espace. Autre exemple: (defn nomdemamethode [x](+(*3 x)1))
 		ou
@@ -2550,9 +2556,12 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 	pour convertir nombre en string
 		(str 2) je crois renvoit "2"
 	convertir un truc en vecteur: (vector montruc)
+	fonction macro:
+		le nom de la methode est "->"
+		voir la doc et CAPITALISER
 	fonctions de streams:
 		map: c'est comme reduce:
-			(map inc[1 2 3]) retourne (2 3 4)
+			(map inc [1 2 3]) retourne (2 3 4) c.a.d on ecrit (map unemethode untableau) ca retourne un tableau dont chaque element est passé par la methode: donc en fait map fait une boucle loop
 		filter:
 			(filter odd? [1 2 3 4 5]) retourne (1 3 5)
 	maven de clojure = liningen
@@ -2563,14 +2572,7 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 		(if UNCONDITION SIOUI SINON) et chaque element est une fonction. nil et false sont les seules deux valeurs falsy.
 			exemple: (if (= a b) c d)//si a)b retourne c sinon d
 				(if(empty? uneliste) etc...)
-	definir une variable:
-		(def nomdemonobjet UNTRUC)
-	definir des variables key limitees dans un scope:
-		(let [nouvelleCle1 "unevaleur1" nouvelleCle1 "unevaleur2] 
-			... je peux utiliser nouvelleCle1 et nouvelleCle2 c'est scopé ici.
-		)
-
-	afficher la doc d'une fonction
+	afficher la doc d'une fonction help aide
 		(doc nomdelafonctionquejecherche)
 	afficher le code source: (source nomdelafonctionquejecherche)
 	nombre au hasard
@@ -3131,7 +3133,7 @@ pour acceder à un fichier sous web-content webcontent en java:
         // ou getServet().getServletContext()
   	where /resources/Tableau_de_bord.xls is present inside the webcontent
 	ou 
-    ClassificationNodeTest.class.getClassLoader().getResource(".")	ClassLoader.getResourceAsStream() ; ClassLoader.getResource() voir LINKgetRes9 verifier avec System.out.println("CLASSPATH: " + System.getProperty("java.class.path")); System.out.println("ClassLoader resource path: " + HRParameters.class.getClassLoader().getResource("hr-openhr-for-ta.properties")); voir LINKgetRes9 System.out.println("ClassLoader resource path: " + ClassLoader.getSystemResourceAsStream("hr-openhr-for-ta.properties"));
+    ClassificationNodeTest.class.getClassLoader().getResource("." ou "suite/dupath/")	ClassLoader.getResourceAsStream() ; ClassLoader.getResource() voir LINKgetRes9 verifier avec System.out.println("CLASSPATH: " + System.getProperty("java.class.path")); System.out.println("ClassLoader resource path: " + HRParameters.class.getClassLoader().getResource("hr-openhr-for-ta.properties")); voir LINKgetRes9 System.out.println("ClassLoader resource path: " + ClassLoader.getSystemResourceAsStream("hr-openhr-for-ta.properties"));
     WelcomePresentor.class.getClassLoader().findResource("demo.css").getPath()
 pour recuperer une variable d'environnement qui est declaree dans web.xml:
 			pour recuperer le numero de version
@@ -7988,10 +7990,32 @@ pour se connecter avec un utilisateur user
 		    db.lacollection.find({"champTypeTableau.4":{$not:{$in:["x","y]}}},{champaretourner:true,champapasretourner:false}) //4 eme index du champttypeTableau(attention ce truc .4 marche que dans la premiere partie du find) not(negation) in pour n'importe quel index mettre les GUILLEMETS! "champTypeTableau.souschampDuTableau":x c'est comme si je mettais: "champTypeTableau[nimporteQuelIndex].souchampDuTableau
 							             .find({$and:[{...},{...}..]})
 								     .find({unchamp:{$not:/uneregexp/}})
+	groupby avec aggregate:
+		db.Invoice.aggregate([ // group by et count
+			{
+				$match:{
+					"UnChampQuiExiste":{
+						critere de recherche
+					}
+				}
+			},
+			{
+				$unwind: "$UnAutreChampQuiExisteAPlusieursNiveauAApplatir" // pour appalatire. Facultatif. D'abord essayer sans ce bloc
+			},
+			{
+				$group:{
+					_id:{ // toujours mettre _id ici
+						UnNomDeChampAChoisir:"$UnAutreChampQuiExisteAPlusieursNiveauAApplatir.UnSousChamp" //on groupby le souschamp.
+					},
+					"count":{ "$sum":1}   //le count par groupe
+				}
+			}
+		])
 	dupliquer copier des documents des elements dans une autre collection:(pas besoin de créer cette collection ca se fait tout seul)
 		db.macollection.find(....).forEach(function(doc){db.nouvellecollection.insert(doc)})
 	avec wildcard regexp:
 		db.toto.find({"monchamp":{$regex:/^valeuravec.*tata/i}},...filtresibesoin  //i pour ignorecase mais ya d'autres options possibles.(/ est obligatoire, i est facultatif) Attention toujours commencer par ^et les wildcard c'est .* Le caractere d'echappement est \
+					$regex:/.*(Jan|Feb|Mar|Jul|Aug[Sep).*2018.*/i // pour faire des chaines de caracteres strings avec OU.
             var doc = db.uneCollection.findOne ou find({"_id" : ObjectId("xxx")})// trouver par id (du coup doc est une variable) // findOne retourne le 1er resultat
 	recuperer le dernier enregistrement insere: order by ordre trier
 		db.uneCollection.find(...).sort({"_id":-1}).limit(1) // attention ne marche que si on a pas forcé overridé le _id auto incrementé
@@ -10251,8 +10275,8 @@ SELECT
             LT94_SIM_GRIL T94
         WHERE
 			 T94.CODE_UTILISATEUR='invite'
-	    having count(1) > 1 // toute la magie est là (se met avant ou apres le group by ?)
 		GROUP BY T94.CODE_ETABLISSEMENT, T94.CODE_ARTICLE
+	    having count(1) > 1 // toute la magie est là (se met avant ou apres le group by )
 
 faire un IF avec Oracle sans plsql :
           SELECT wec53_id IdCmp2, WEC53_IDDMD IdDmd, WEC53_IDTEMPLATE IdTplCmp, wec53_dlivre livre, wec53_dnotif notif, wec53_process etat,
@@ -16425,7 +16449,7 @@ tests : mocks :
 	mocker la methode d'une classe qu'on test: LINKmockmethodeunclebob et si c'est une interface que je veux mocker je peux faire que ma classe elle meme implemente l'interface ou meme plusieurs pour toutes les spyer/mocker
 		dans le test:  
 			MaClasseTesteeEtStubeeEnMemeTemps = new MaClasseTesteeEtStubeeEnMemeTemps{
-									protected String laMethodeStubee()
+									protected String laMethodeStubee() // attention ne marche que si la methode n'est pas private
 									{return "true"}
 								}
 			@Test... MaClasseTesteeEtStubeeEnMemeTemps.methodeTestee();
@@ -16530,7 +16554,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
         public class UploadToServerServiceTest {
     		@InjectMocks // facultatif Mock peut marcher sans. Classe qui est testee dans laquelle on injectera les mocks
     		private RealTimePathCoverageController realTimePathCoverageController = new RealTimePathCoverageController(); // equivalent de @Tested dans jmockit : c'est une classe a tester dans laquelle je peux injecter des mocks LINKpourquecamarcheFairemokito
-                                                                                ou =spy(new MockRealTimePathCoverageController()); //on peut utiliser ça direct sans annoter @Spy. Sous un @InjectMock si on veut injecter niveau en dessous de @l'InjectMock. Necessite le LINKlkfjjgjgjgozo. avec @InjectMocks en haut c'est top! on peut remplacer facilement par un mock et en plus injecter dedans ce quon veut comme autre @Mock
+                                                                                ou =spy(new MockRealTimePathCoverageController()); //on peut utiliser ça direct sans annoter @Spy et a mettre sous un @InjectMock si on veut injecter niveau en dessous de @l'InjectMock. Necessite le LINKlkfjjgjgjgozo. avec @InjectMocks en haut c'est top! on peut remplacer facilement par un mock et en plus injecter dedans ce quon veut comme autre @Mock
 										memoclap.saveActorsNameOnServer=jest.fn(()=>{console.log("aaaaaaaaaaaa")});
 										def stub:un objet qui renvoit juste des constantes utiles. 
 										def spy: c'est un stub qui contient des variables de mémoire qui retiennent ce qui s'est passé pour qu'on puisse les assserter. Je peux faire de ma classe de test elle meme le spy en la faisant implementer plusieurs interfaces.
@@ -16551,7 +16575,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
                         Machin machinATesterEtSpyer = new Machin()
                         Mockito.spy(machinATesterEtSpyer);
 			ou bien l'annoter @Spy et @InjectMock puis mocker ses methodes comme ca:
-			Mockito.doReturn(unTrucQuiDoitEtreRetourne).when(uMockPasUnSpy).uneMethodeAMocker(anyString()); //plutot faire comme unclebob LINKmockmethodeunclebob
+			Mockito.doReturn(unTrucQuiDoitEtreRetourne).when(unMockPasUnSpy).uneMethodeAMocker(anyString()); //plutot faire comme unclebob LINKmockmethodeunclebob
                     ResultDao rd =mock ou spy(unObjetNONANNOTE ou new ResultDao() ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
                     Mockito.doReturn(toto).when(rd).getLaMethodeNONSTATIQUEResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy. ou pour qu'un spy ne fasse rien: Mockito.doNothing().when(monSpy).lamethodeDeMonSpyQuiPeutEtreVoid();
     				when(filterConfig.getServNONSTATIQUEletContext( // ca s'appelle faire du "stub" utiliser ca je crois pour les mock. Attention si c'est une methode finale il va rentrer dedans avant de traiter le when donc pour mocker une methode finale depuis Mockito2 seulement on crée un fichier sous src/test/resources/mockito-extensions/org.mockito.plugins/MockMaker et dedans on ecrit mock-maker-inline
@@ -18003,7 +18027,7 @@ pour attendre qu'une resource se libere:
                          threadList.add(callable);
                   		}
                   		List<Future<DossierCommitResult>> futures = execute.invokeAll(threadList); // ici invokeAll alors que invokeAny execute la premiere task et c tout.
-                  		                                            execute.execute(UnRunnable) // possible aussi pour executer un thread LINKRunnable
+                  		                                            execute.execute(UnRunnable) // plus simplement possible aussi pour executer un thread LINKRunnable
                           // checks for thread termination // ne pas mettre de points d'arret de debuggate dans le traitement des futures parce que ça risque de te faire croire que ça ne marche pas alors que ça marche
                           /*final boolean isTerminated = execute.isTerminated();
                           System.out.println(isTerminated);*/
@@ -21860,8 +21884,8 @@ inverser changer l'order ordre d'une arraylist  A MIEUX DOCUMENTER voir aussi LI
 pour savoir quel string passe en premier dans un ordre alphabetique: 
 		"laquelle est la 1ere dans l'ordre alphabetique",  s1.compareTo(s2). ca retourne CHIFFRE(attention pas que des 1 et 0) negatif si c'est s1 < s2, un positif si s1 > s2 et 0 si c'est egale.
 --------------------
-attention la fonction File.renameTo peut ne pas marcher: LINKjgdlkqjfqdgmlk 
-		toujours verifier par la variable de retour que ca s'est bien passe car en fonction des os win-unix pb compatibilite
+attention la fonction File.renameTo peut ne pas marcher: LINKjgdlkqjfqdgmlk utiliser de preference Files.move(fichierWavARemplacer.toPath(), finalTempWaveFile.toPath(), StandardCopyOption.REPLACE_EXISTING); comme ca si le dest existe deja ça ne plante pas.
+		toujours verifier par la variable de retour que ca s'est bien passe car en fonction des os win-unix pb compatibilite et retourne false aussi si le dest existe deja
 -------			
  Pour savoir si un char est un numero numerique numerique est un chiffre:
       // en effet l'Action est executee deux fois donc l'entete et une donnee sont enleves: c un bug du a harmony.
@@ -24824,13 +24848,13 @@ grep -v 'abcd$' pour faire une recherche de tout sauf ce qui se termine par abcd
     avant:
       ls | xargs grep 'chainedecaracteres'
 pour trouver certain fichiers et n'afficher que certains fichiers de ces fichiers trouves
-		find . -name 'MR*' | xargs grep 'chainedecaracteres'
+		find . -name 'MR*' | xargs grep 'chainedecaracteres' // -iname à la place de -/name pour case isensitive
 pour trouver des noms à l'inverse opposé non pas 
     find . -not -name '*.mp3' -not -name '*.ogg' -not -name '*.txt' -not -name '*.draw' -not -name '*.m' -not -name '*.zip' -not -name '*.js' -not -name '*.html' -not -name '*_*' -not -name '*.png' -not -name '*.wav' -not -name '*.xls' -not -name '*.bmp*' -not -name '*.jpg' -not -name '*.sh'
     -maxdepth 1 pour que la recursivité s'arrete là ou je suis ?        
 pour effacer les fichiers trouves
 		find ouca -name '*toto*' | xargs rm (je ne peux pas faire -i ici)
-trouver un repertoire: ou un fichier:
+trouver un repertoire dossier: ou un fichier:
       find . -type d(f pour fichier) | grep -i runtime //-i: ignore casse		
 pour trouver des repertoires et fichiers et les effacer les repertoires trouves
 		find ouca -name '*toto*' | xargs rm -r (je ne peux pas faire -i ici)
@@ -25061,7 +25085,7 @@ fg pour le remettre en foreground (ou fg %numerodetache)
 pour killer un job: kill -9 %1 (ne pas oublier le "%" et remplacer 1 par le numero du job qu'on veut killer (c pas le pid du job c son numero si on met %)) kill -15 (soft) ou -9 (hard)
 mpstat pour voir ce qui tourne et cpu utilise memoire utilisee
 prstat idemn
-htop mieux que top
+htop mieux que top // utiliser les touches F
 top idemn mais encore mieux... on peut l'installer facilement en le recuperant sur SUN top (sun.com, package top ou prstat si on veut). Faire tab+p pour classer conso mem cpu par ordre decroissant
     ensuite faire maj+m pour trier par ordre decroissant sort.
 free ou free -m ou -h // -m pour mega, -h pour giga. pour voir si mon disque swap beaucoup trop (on peut voir la qte de memoire virtuelle dispo/utilisee et le swap qui ne doit pas depasser 56xxx=56Mega) 
@@ -26100,6 +26124,14 @@ ADMIN_URL=http://130.98.232.97:7001
     
      il faut essayer ca: 
      java -Djava.awt.headless=true -classpath JimiProClasses.jar:. convertisseur.Main
+
+Electrum :
+	installer:
+	 sudo apt-get install python3-pyqt5 libsecp256k1-0 python3-cryptography
+	wget https://download.electrum.org/4.0.4/Electrum-4.0.4.tar.gz
+	
+	cd /home/laurent/Bureau/Electrum
+	python3 Electrum-4.0.4/run_electron
 PHP :     
 pour faire marcher php avec oracle: (wamp) il faut que j'utilise l'utilitaire de wamp pour activer les extensions dll et decommenter aussi les lignes dans php.ini( deux lignes.. ora et oci un truc comme ca)
 ORACLE_HOME 
@@ -27344,7 +27376,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                       printStacktrace(req.name);
                       // quand le chargement a demarre
                     };
-                    xhr.onload = function(e) { // retour du serveur: "e" c'est progressEvent et "this" c'est la reponse du serveur. SI j'ai besoin de this pour une classe faire LINKbindthisclasseresponse ou bien utiliser le e comme ça: e.target.response
+                    xhr.onload = function(e) { // retour du serveur: "e" c'est progressEvent et "this" c'est la reponse du serveur. SI j'ai besoin de this pour une classe faire LINKbindthisclasseresponse ou bien utiliser le e comme ça: e.target.response e.target.status
                             printStacktrace(req.name);
                              askValidator.class_AskValidator.record.call(this);
                                if(this.getResponseHeader("Content-type").indexOf("text/html")!=-1) on peut recuperer ça et autre...
@@ -27767,7 +27799,7 @@ ES6 :modules: une page html/js peut importer une page html/js qui importe aussi:
             mais 
             <script type="module" src="... 
         dans main.js: // attention toutes les variables primitives exportees sont readonly. Faire des setters si je veux les modifier 
-              import {toto,blabla} from "./path/xxx.js";                          RRR  // autant mettre le ".js" c'est normalement supporté partout
+             import {toto,blabla} from "./path/xxx.js";                          RRR  // autant mettre le ".js" c'est normalement supporté partout
              import {projectsMEMENOM} from './js/memoclap-projectsFieldsets.js';  UUU  // toujours mettre accolades meme si qu'un seul objet
              import * as bidule from './js/memoclap-projectsFieldsets.js'; AAA et BBB  // j'importe tous les exports de bidule et ici ils sont prefixes par "bidule"             
              import projects from './js/memoclap-projectsFieldsets.js';    CCC  //du coup j'appellerais projects.unTrucDefiniPlusHaut.uneDeSesMethodes()
@@ -27815,7 +27847,7 @@ pour echaper echappe escape decoder html caracteres speciaux
 async await : asyncawait :
   permet d'executer du code asynchrone comme s'il etait synchrone et le javascript fait une pause tant qu'il n'a pas la réponse de l'asynchrone.
   async function unemethode(){  // dans une methode comme ca marquée async j'ai le droit de mettre await. JE SUIS SUR: async renvoit toujours une promese de facon implicite dont le then contiendra undefined et dedans moi je dois faire un return de valeur ou return tout court seulement pas de promesse.
-      let res = await uneautremethodequirenvoitunepromise(); ou directement return await new Promise... ou return Promise.all(xxx) sans await du coup ca marche aussi //await doit etre devant une promesse renvoyee. Alors l'execution de async se met en pause jusqu'à ce que la promise soit résolue mais async lui meme est bien asynchrone vis a vis de son appelant sauf si LINKasynawaitdfsf
+      let res = await uneautremethodequirenvoitunepromise(); ou directement return await new Promise... ou return Promise.all(xxx) sans await du coup ca marche aussi LINKpromiseallawait //await doit etre devant une promesse renvoyee. Alors l'execution de async se met en pause jusqu'à ce que la promise soit résolue mais async lui meme est bien asynchrone vis a vis de son appelant sauf si LINKasynawaitdfsf
       return res; // await a converti la promise en valeur retournée par celle ci. Ne surtout pas oublier le await sinon c'est le bordel.
   }
  puis	function methodequiappelleAsync(){
@@ -27920,8 +27952,8 @@ promesses : promese :promeses :Promises :promise : ne plus utiliser les callback
                             ).catch(function(err){.return UnTruc..})
                             .finally(x=>{...}); // finally existe (x est udefined. AFAIRE syntaxe exacte/x =?)                              
         
-        utilisation2:     Promise.all([unearray,depromesses]).then(datasRenvoyeesATOUJOURSMETTRE=>{ ...etc avec datasRenvoyees.. }).catch(errATOUJOURSMETTRE=>console.log(err)); converti array de promesses en dataRenvoyees qui est un tableau de datas. ATTENTION Toujours mettre le catch sinon si il ya une erreur ans ma liste de promeses ca part dans l'univers.
-        Promise.all(
+        utilisation2:     Promise.all([une,array,de,promesses]).then(datasRenvoyeesATOUJOURSMETTRE=>{ ...etc avec datasRenvoyees.. }).catch(errATOUJOURSMETTRE=>console.log(err)); converti array de promesses en dataRenvoyees qui est un tableau de datas. ATTENTION Toujours mettre le catch sinon si il ya une erreur ans ma liste de promeses ca part dans l'univers.
+        Promise.all( // pour await voir LINKpromiseallawait
         [
           unefonction(1), doit retourner une promesse ou si c'est une liste de fonctions: Promise.all([laliste]).then //donc toujours mettre les crochets autour de la liste
           unefonction(2),
@@ -27929,7 +27961,7 @@ promesses : promese :promeses :Promises :promise : ne plus utiliser les callback
         ]
         ).then(recuATOUJOURSMETTRE=>recu) // recu c'est un tableau de datas
           .then(resATOUJOURSMETTRE)=>{ // res est aussi  une liste sur laquel on peut mettre foreach
-          res.forEach(iteration=>unemethode(iteration.qqch))
+          res.forEach(iteration=>unemethode(iteration.qqch)) //IMPORTANT mettre un return dans ce then si je veux renvoyer qqch
           },(err)=>console.log(err) // pas sur de la synthaxe ici
 pour recuperer le jour du mois month sur deux chiffre d'un objet Date                                                                                          
       utiliser moment.js:                                                                                                                                     
@@ -28539,6 +28571,8 @@ pour scroller scrooler, ou focuser (que ce soit dans un div ou le windows) vers 
                   el.scrollIntoView(false); // false: aligne en bas, true: aligne en haut
                   window.scrollBy(0,0); ou window.scrollTo(0,0);  
                 }
+	pour savoir à quelle position se trouve un scroll:
+		window.scrollY
 pour faire defiler comme un prompteur:
             	focuser.style.backgroundImage="-webkit-linear-gradient(left, rgba(255, 255, 255, 0.0) 80%, rgba(255, 255, 255, 1) 90%, rgba(255, 255, 255, 0.0) 100%)"; // attention linear-gradient a changé voir linear-gradient
             	focuser.style.backgroundImage="-moz-linear-gradient(left, rgba(255, 255, 255, 0.0) 80%, rgba(255, 255, 255, 1) 90%, rgba(255, 255, 255, 0.0) 100%)";
@@ -29345,7 +29379,7 @@ pour empecher que le bouton effacer ne fasse un retour arriere:
                                               document.unbind('keydown').bind('keydown', function (event) 
                                             	{
                                                   var doPrevent = false;
-                                                  if (event.keyCode === 8) 
+                                                  if (event.keyCode === 8) // trois egales === c'est pour "strictement identique" sinon par ex 0=="" retourne true mais 0==="" retourne false 
                                                   {
                                                       var d = event.srcElement || event.target;
                                                      if ((d.tagName.toUpperCase() === 'INPUT' && (d.type.toUpperCase() === 'TEXT' || d.type.toUpperCase() === 'PASSWORD')) 
