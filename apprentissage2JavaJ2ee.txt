@@ -735,7 +735,7 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
       docker volume create monvolumemanagé // creer un volume managé sur l'OS hote. Si je monte un volume managé vide sur un dossier du container qui n'est pas vide alors le contenu de mon container est mirroré sur le volume manage sur l'hote et ca reste persistant meme apres suppr container.
       docker volume ls // lister les volumes manages (leur nom= repertoireOSOuEstMonProjetDocker_nomduvolumemanagé)
       docker volume inspect nomDeMonVolumeManage// inspecter un volume managé: savoir où il se trouve sur l'OS hote exemple /usr/moncul
-      docker volume prune // pour supprimer tous les volumes non utilises
+      docker volume prune // pour supprimer tous les volumes non utilises fonctionne aussi pour les images et les containers
       docker run -v monvolumemanagéOuUnPathDeMonOSVersFichierOuDossier:/path/du/conteneurcontenant/deja/des/trucs(:ro facultatif pour readonly)    
                         du coup tout ce qui est dans le conteneur /path/du/conteneurcontenant/deja/des/trucs se retrouve synchro avec le path /usr/moncul et c'est persistant.         
 docker-compose : dockercompose : s'installe avec apt-get ou aptitude
@@ -1316,6 +1316,7 @@ ajouter un module equivaut a importer un projet dans le worskpace: module intell
   test>java = test
 voir les windows cote a cote split au milieu comparer comparaison
       clique droit sur tab de editeur > split vertically horizontally        
+	puis pour enlever le split: clique droit sur l'onglet> unsplit
 trouver tous les todos: alt+6 . pour voir les fixme faire settings>todos>Filter> rajouter fixme
 naviguer dans l'arbo du projet repertoire fichiers voir où je suis position. faisable dans pannel projet ou dans pannel editeur:alt+début
 buildpath du projet: file>project structure
@@ -3219,6 +3220,7 @@ pour recuperer une variable d'environnement qui est declaree dans web.xml:
   redirige redirection web en java: (voir aussi LINKRedirectwebservice)
     HttpServletResponse servletResponse = (HttpServletResponse)response;
     servletResponse.sendRedirect("http://www.google.com"); Fait une redirection 302( pour faire une 301 faire response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);response.setHeader("Location", "http://somewhere/"); //pour un webservice voir //LINKredirwebservice998 
+		concernant ajax a la reception d'un 302 AUTOMATIQUEMENT le browser renvoit une requete de redirection au back et le serveur recoit la page soivante avec un code 200 alors dans ce cas plutot que faire une redirection 30x renvoyer un code 401 (Unauthorized) et la ajax peut gérer. coté back je peux detecter que ma requete vient de ajax grace a la presence du header:X-Requested-With: XMLHttpRequest mais je dois moi meme le mettre dans mon ajax manuellement
     servletResponse.sendRedirect("/login");ou response.sendRedirect(request.getContextPath()+"/show.html"); // avec le contextroot la requette request est renvoyee vers le client(url change sur browser navigateur) et redirige vers nouvelle url avec perte des params de la requette. !=.getRequestDispatcher("/urlduncontrolleurOuUneJSP.jsp").forward(req, resp) ça reste côte serveur: ça ne va pas vers navigateur client: les params de requette sont conserves. voir LINKçç("'"'
           ATTENTION! forward et sendRedirect doivent être executées avant le commit de la response: pas de chain après ou d'autre redirection de requette! requette!  sinon j'aurais java.lang.IllegalStateException: Impossible d'utiliser faire-suivre (forward) après que la reponse ait ete envoyee
      fichier :
@@ -5619,7 +5621,7 @@ pour centrer direct:
     flex-wrap: wrap ou nowrap ou wrap-reverse
   }
   enfants: jouer avec les width:x%; pour passer à la ligne et les padding pour les espaces
-selectors: selecteur: LINKcsslkhkhkhkhkh
+selectors: selecteurs: LINKcsslkhkhkhkhkh
      :nth-child veut dire selectionner element si:
           It is a paragraph element
           It is the 2eme second child of a parent
@@ -6191,7 +6193,7 @@ spring security : spring-security : springsecurity :
         dans jsp:${pageContext.request.remoteUser}
      Tester les filtres de securite: tests : test : 
       @Autowired
-      @Qualifier("nom")//facultatif // correspond je crois au name du bean
+      @Qualifier("nom")//facultatif // correspond au meme libelle que j'ai mis dans @Qualifier("nom) en tête de ma classe implementant
       private FilterChainProxy springSecurityFilterChain;
       puis dans la methode de test:
       mockMvc=MockMvcBuilders.webApplicationContextSetupOuwebAppContextSetup(this.wac).addFilter(this.springSecurityFilterChain).build(); voir LINKmockmvc tester appel http et/ou webservice 
@@ -6287,7 +6289,7 @@ Conf java
                                                           }                                                  }
                                                           public ClassB methRenvoitClassB() 
                                                           {....                                                                                                    ""
-  Recup un bean si mon fichier de conf est Java
+ instancier recup un bean si mon fichier de conf est Java
       AnnotationConfigApplicationContext tata = new AnnotationConfigApplicationContext(MaClasseDeConfig.class, UneAutreConfigMaisBof**.class); // attention il regenere l'arborescence de beans je crois
       IUneClasse = tata.getBean(UneClasse.class);
 AILLEURS: injecter mes beans par constructeur
@@ -8005,14 +8007,20 @@ pour se connecter avec un utilisateur user
 			{
 				$group:{
 					_id:{ // toujours mettre _id ici
-						UnNomDeChampAChoisir:"$UnAutreChampQuiExisteAPlusieursNiveauAApplatir.UnSousChamp" //on groupby le souschamp.
-					},
+						UnNomDeChampAInventer:"$UnAutreChampQuiExisteAPlusieursNiveauAApplatir.UnSousChamp" //on groupby le souschamp.
+						,facultatifUnAutreNomDeChampAInventer:"$...etc
+						},
 					"count":{ "$sum":1}   //le count par groupe
 				}
+			},
+			{
+				$sort:{count:1}} // ou -1 // block facultatif
 			}
 		])
-	dupliquer copier des documents des elements dans une autre collection:(pas besoin de créer cette collection ca se fait tout seul)
-		db.macollection.find(....).forEach(function(doc){db.nouvellecollection.insert(doc)})
+	dupliquer copier des documents des elements dans une autre collection:(pas besoin de créer cette collection ca se fait tout seul) dans une meme base de donnee
+		db.macollection.find(....).forEach(function(doc){db.nouvellecollection.insert(doc)}) // il parrait qu'on peut aussi le faire avec copyTo() jamais essayé
+	copier une collection d'une base de donnée vers une autre base de donnée
+		on peut faire un mogodump puis restore avec nsFrom et nsTo ou bien faire dans la base expeditrice: db.lacollection.find().forEach(function(doc){db.getSibligDB('AUTRE_BASEDEDEONEE')['autrecollection'].insert(doc);});
 	avec wildcard regexp:
 		db.toto.find({"monchamp":{$regex:/^valeuravec.*tata/i}},...filtresibesoin  //i pour ignorecase mais ya d'autres options possibles.(/ est obligatoire, i est facultatif) Attention toujours commencer par ^et les wildcard c'est .* Le caractere d'echappement est \
 					$regex:/.*(Jan|Feb|Mar|Jul|Aug[Sep).*2018.*/i // pour faire des chaines de caracteres strings avec OU.
@@ -8038,7 +8046,7 @@ pour se connecter avec un utilisateur user
 	mongodump sur windows:
 		E:\x\MongoDB\bin\mongodump.exe --port=27017 --host=localhost --username=superuser --password=xxxx --authenticationDatabase=admin --db=testGlobal --collection(facultatif) nomdunecollectionSiJeVeuxExtraireQueCelleLa --out ou --archive=E:/mongooutEstLeNomDuFichierDarchive //out dans un repertoire, archive dans un compresse
 	mongorestore: //pour importer ne fait jamais d'upsert. Ignore seulement si l'id existe deja
-		"path/mongorestore.exe" --username laurent --password laurent --authenticationDatabase attentionCPasLaBaseDeDonneeCestLeNomDeLaBaseDauthentificationQueJeCreeBesoinRetenirNomLINKjdjdjd --archive=cheminVersArchive --nsFrom NomdemabaseInitialeDansLarchiveAttentionSiFauxilIgnoreToutNsFromEtNsTo.* --nsTo NouveauNomQueJeVeuxQuiDoitOverriderNomInitial.*
+		"path/mongorestore.exe" --username laurent --password laurent --authenticationDatabase attentionCPasLaBaseDeDonneeCestLeNomDeLaBaseDauthentificationQueJeCreeBesoinRetenirNomLINKjdjdjd --archive=cheminVersArchive --db nombasededonneedestinatrice --collection facultatifNomDeLaCollectionARestorerATTENTIONMARCHEQUESIArchiveBson --nsFrom NomDeLaBaseDeDonneeDansLarchiveAttentionSiFauxilIgnoreToutNsFromEtNsTo.* ou .nomDeCollectionDansLarchive --nsTo AutreNomDAutreBaseDeDonneeOuLeMemeQueDansLarchive.* ou .nomDeCollectionPareilQueDansLarchiveOuDifferent
 		"path/mongorestore.exe" --username laurent --password laurent --authenticationDatabase attentionCPasLaBaseDeDonneeCestLeNomDeLaBaseDauthentificationQueJeCreeBesoinRetenirNomLINKjdjdjd -d nomdelabasededonneeDestinatriceACreerOuExistante repertoireFiniParSlashContenantFichierJsonEtBsonArchiveCreeParMongoDump
 		exemple: 
 		"C:\Program Files\MongoDB\Server\4.2\bin\mongorestore.exe" --username laurent --password laurent --authenticationDatabase ariba --archive=C:\Users\B042EL\Documents\Capitalisation\ArchivageDiagrameClassesEtDoc\mongodump\mongoout2 
@@ -8052,7 +8060,10 @@ pour se connecter avec un utilisateur user
 			MongoDatabase connection...
 			connection.getCollection("unnomdecollection).find() ou .find(eq("UniqueName","toto").first(); // ajouter à la fin .noCursorTimeout() pour eviter (message d'erreur à retrouver)
 		pour faire un update (ou meme un upsert)
-			BasicDBObject searchQuery= new BasicDBObject("DBRef",undbref); ou new BasicDBObject("_id",unid); LINKupsertmongo
+			BasicDBObject searchQuery= 
+				new BasicDBObject("DBRef",undbref);// ici l'identifiant unique se base sur un champ à moi qui s'appelle DBRef et dont la valeur est contenue dans undbref
+			 ou 
+				new BasicDBObject("_id",unid); LINKupsertmongo // ici l'identifiant unique se base sur un autre champ à moi qui s'appelle _id (donc j'override l'id naturel de mongodb) et dont la valeur est contenue dans unid
 			collection.upsertOne(searchQuery, new Document("$set",document),(new UpdateOptions()).upsert(true));
 		pour supprimer remove: ne pas supprimer par l'objet directe ça ne marche pas bien
 			collection.deleteOne(new Document("_id",documentASupprier.get("_id"));
@@ -16452,7 +16463,10 @@ tests : mocks :
 									protected String laMethodeStubee() // attention ne marche que si la methode n'est pas private
 									{return "true"}
 								}
-			@Test... MaClasseTesteeEtStubeeEnMemeTemps.methodeTestee();
+			@Test... MaClasseTesteeEtStubeeEnMemeTemps.methodeTestee(); //cette methodeTestee appellera laMethodeStubee
+		SelfShut d'unclebob:
+				ma classe de test implemente l'interface de l'objet que je veux mocker stuber et j'injecte ma classe meme dans le getter de la classe que je veux tester.
+
 JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIRE comprendre jmockit et à documenter voir D:\RD\hello-world-war-master\src\test\tests\JMockitTest.java
     (plus reussi à le faire marcher avec Junit5. Mais Mockito si)
                              <dependency>
@@ -16569,7 +16583,7 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
     				}
     				FilterConfig filterConfig = mock(FilterConfig.class); // c'est soit je fais comme ca, soit j'utilise les anotations ci dessus. les deux font la meme chose
     				ServletContext context = mock(ServletContext.class);
-		pour mocker injecter une @Value de Spring:
+		pour mocker injecter une @Value genre string de Spring:
 			ReflectionTestUtils.setField(lebeanquicontientleValue,"nomduchampJavaDansLeBean","la valeur qu'on lui donne");(pas sur que ça marche)
                     pour qu'une meme classe soit testée et spyée:// on test certaines de ces methodes et on spy certaines de ces methodes fonctions //plutot faire comme unclebob LINKmockmethodeunclebob
                         Machin machinATesterEtSpyer = new Machin()
@@ -18008,7 +18022,7 @@ pour attendre qu'une resource se libere:
       Si commplexe, ne plus utiliser les treads directement mais passer par un ExecutorService (a faire voir aussi ExecutorCompletionService )
         ExecutorService: pour faire un traitement par packets blocs blocks paquets: je traite une longue liste: je la divise en plusieurs et je traite chaque sous liste dans un thread soit en parallele soit les uns apres les autres
            public List<Future<DossierCommitResult>> doIMportExcell(final IHRUser hrUser, final IHRRole hrRole, final List<T> entries, final ExcelTemplate excelTemplate, final boolean simulation, final IDossierDAO<T> dao) throws InterruptedException {
-              		List<List<T>> entriesPartition = MyPartition.partition(entries, 100);   // sous diviser sousdiviser decouper ma liste en plusieurs listes de 100elmts
+              		List<List<T>> entriesPartition = MyPartition.partition(entries, 100);   // sous diviser sousdiviser decouper ma liste en plusieurs listes de 100elmts grouper decouper
                   Set<Callable<DossierCommitResult>> threadList = new HashSet<Callable<DossierCommitResult>>();
               				ExecutorService execute = Executors.newSingleThreadExecutor(); // pour une execution d'un thread les uns a la suite des autres
                   		//ExecutorService execute = Executors.newFixedThreadPool(2); // pour une execution de 2 threads à la fois. 2 doit etre recupéré par int proc = Runtime.getRuntime().availableProcessors(); // permet de recuperer le nb de threads simultanes possibles
@@ -18023,10 +18037,11 @@ pour attendre qu'une resource se libere:
                               };
                   			//execute.shutdown(); laisser les tasks en cours se terminer mais ne plus accepter de nouvelles tasks
                   			//execute.shutdownNow(); ne plus accepter de nouvelles tasks et Stopper les tasks en cours
-                  			// execute.awaitTermination(500, TimeUnit.MILLISECONDS); A mettre apres un shutdown: arrête l'execution du thread principal et attends que toutes les taches soient terminees si toujours pas et que le timeout est atteind alors force l'arret des threads et continue
+                  			// execute.awaitTermination(500, TimeUnit.MILLISECONDS ou DAYS...); possibilite de mettre apres un shutdown: pause l'execution du thread principal et attends que toutes les taches soient terminees si toujours pas et que le timeout est atteind alors force l'arret des threads et continue
                          threadList.add(callable);
                   		}
                   		List<Future<DossierCommitResult>> futures = execute.invokeAll(threadList); // ici invokeAll alors que invokeAny execute la premiere task et c tout.
+									    execute.submit(UnCallable);
                   		                                            execute.execute(UnRunnable) // plus simplement possible aussi pour executer un thread LINKRunnable
                           // checks for thread termination // ne pas mettre de points d'arret de debuggate dans le traitement des futures parce que ça risque de te faire croire que ça ne marche pas alors que ça marche
                           /*final boolean isTerminated = execute.isTerminated();
@@ -19900,7 +19915,7 @@ les enums : enum :
                   		this.typeId = typeId;
                   		this.labelId = labelId;
                                     	}	
-                                      	// methode standard pour les enums (pas la peine. si je fais ProfileEnum.valueOf("eleve") ca me renvoit le bon enum 
+                                      	// methode standard pour les enums (pas la peine. si je fais ProfileEnum.valueOf("eleve") ca me renvoit le bon enum : pas besoin de definir de champs ni de constructeur "eleve" en fait correspond à l'enum meme eleve ca match tout seul
                		public static ActionTypeEnum getEnum(String type) // trouver un enum par sa cle. Mais si besoin trouver par un de ses champs faire: res = Arrays.stream(UnitiesForNumericParameters.values()).filter(e->e.value.equals("MO/S")).findFirst().get();
                    {
                 		return (ActionTypeEnum)ActionTypeEnum.valueOf(ActionTypeEnum.class, type);
@@ -21072,7 +21087,7 @@ private boolean contientCommentStart(String ligne) {
                              
                             Character classes
                             [abc] 	a, b, or c (simple class)
-                            [^abc] 	Any character except a, b, or c (negation) ne contient pas
+                            [^abc] 	Any character except a, b, or c (negation sauf excepte) ne contient pas. Pour une chaine de caractère faire (?!lachainedecaractère)
                             [a-zA-Z] 	a through z or A through Z, inclusive (range)
                             [a-d[m-p]] 	a through d, or m through p: [a-dm-p] (union)
                             [a-z&&[def]] 	d, e, or f (intersection)
@@ -21080,7 +21095,7 @@ private boolean contientCommentStart(String ligne) {
                             [a-z&&[^m-p]] 	a through z, and not m through p: [a-lq-z](subtraction)
                              
                             Predefined character classes
-                            . 	Any character (may or may not match line terminators)
+                            . 	Any character (may or may not match line terminators ca depend donc ce que je peux faire pour inclure une chaine de caractères Et les retours chariot retour chariot: (.*\n.*)*
                             \d 	A digit: [0-9]
                                d+ c'est un chiffre nombre
                             \D 	A non-digit: [^0-9]
@@ -21293,9 +21308,9 @@ tuple :bean couple paire deux :
 		on peut aussi meme en mettre directement dans une methode.
 			public record MonXuple(int unchiffre, String unTruc){} et c'est tout j'ai automatiquement un constructeur, les getters setters et le tostring que je peux overrider bien sur
         depuis java10: 
-            var x = new Object() {int a = 1; int b =2;}
+            var x = new Object() {int a = 1; int b =2;} // mais ne marche que à un seul endroit. Si je return cet objet, la haut ils ne retrouvent pas mes champs
             toto = x.a; // toto=1
-        utiliser AbstractMap.SimpleEntry comme ca:new AbstractMap.SimpleEntry(clientId, state); 
+        utiliser AbstractMap.SimpleEntry comme ca:new AbstractMap.SimpleEntry<Possible,Typer>(clientId, state); 
         ou bien faire la classe
         public class Tuple<X, Y>
                   {
@@ -22334,7 +22349,7 @@ pour merger deux collections listes:
 		Collection.retainAll(Collection c) (c'est comme un "et") voir LINKDLKJSDF
 pour faire un "ou"
 		Collection.addAll(Collection c)
-pour partitionner decouper sousliste subliste une liste en liste de liste d'objets à traiter par blocs:
+pour partitionner decouper grouper sousliste subliste une liste en liste de liste d'objets à traiter par blocs:
         List<IHRKey> hrKeys = new ArrayList<IHRKey>();
         ...                         
         List<List<IHRKey>> hrKeysPartitions = MyPartition.partition(hrKeys, 20); // 20 taille des blocs
@@ -24635,6 +24650,12 @@ AFAIRE:capitaliser
  vi /etc/resolv.conf
  docker ps -a
 
+pour faire copy paste du clipboard avec le terminal raccourci shortcut:
+	sudo apt-get install xclip -y
+	et creer les alias suivants:
+		alias copy='xclip -selection clipboard' 
+		alias paste='xclip -selection clipboard -o'
+	utiliser: pwd | copy // ca a copié le pwd dans le clipboard
 snap est un outil d'installation de programmes qui delivre des packages standardises chez unix linux
 	snap install datagrip // pour installer datagrip
 	snap run datagrip // pour executer datagrip
@@ -24797,7 +24818,7 @@ tail et head exemples:
 pour quitter un manuel man: 
 		faire q
 si a l'execution d'un script sh j'ai ca: cannot execute binary file
-		faire: file mon_fichier // connaitre le format du fichier si il est en dos ou unix 
+		faire: file mon_fichier // connaitre le format du fichier si il est en dos ou unix marche aussi pour connaitre le detail d'un fichier audio wav LINKgsptnsdf
 		il va donner l'encodage de mon fichier.
 on peut voir les hosts sous /etc/hosts
 les droits utilisateurs sous /etc/hosts.allow
@@ -27276,9 +27297,9 @@ u accent:
     &ugrave;
 euros:
     &#128; ou Alt+0128(windows-1252 sinon &#8364 Unicode) (1252: francais. 1250: tcheque)
-STT : speach to text:
-	Regarder CMUSphinx
 Javascript :
+STT : speach to text:
+	Regarder CMUSphinx https://cmusphinx.github.io/wiki/tutorialsphinx4/ les modeles de langues sont sous https://sourceforge.net/projects/cmusphinx/files/Acoustic%20and%20Language%20Models/
 	TTS : text to speach :texttospeach :
 		var msg = new SpeechSynthesisUtterance();
 		msg.text="Bonjour";
@@ -27349,9 +27370,6 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
 			    formData.append('unfichier',monChampInputFile.file[0]); // pour uploader un fichier. Voir aussi LINKee"(çà)"
                             pour recuperer une valeur  :formData.get("fs")
                       var xhr = new XMLHttpRequest();
-                              xhr.setRequestHeader("Content-Type", "multipart/form-data"); // c'est ca par défaut si j'utilise FormData()! pour le gerer sur une servlet sans avoir a regarder dans le payload mettre LINKmultilkjfqsdf 
-                              ou
-                              xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); Attention A METTRE APRES LE .open. dans ce cas c'est dans l'URL que sont les parametres comme un GET. Si on ne veut pas que notre formulaire puisse envoyer des fichiers
                         // ne pas mettre ces lignes ci dessous sinon ca ne marche pas... ??....pq? 
                      /*         et
                               xhr.setRequestHeader("X-File-Name", file.fileName);
@@ -27363,6 +27381,10 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                       xhr.open("POST", "/musclesWeb/strongPassword?action="+JSON.stringify(jsontable), true); //alors mettre au dessus: xhr.setRequestHeader("Content-Type", "application/json"); recuperable dans servlet java: httpServletRequest.getParameter("action"); voir convert conversion champs formulaire en json LINKç'ç'ç"_() 
                       ou
                       xhr.open("GET", "AudioLoopOnlineDownloadText.php?target=sons/"+idprojetEnCours+"/"+numfichierEnCours+"_"+cursec+".txt", true);
+			ci dessous, Attention A METTRE APRES LE .open.
+                      xhr.setRequestHeader("Content-Type", "multipart/form-data"); // c'est ca par défaut si j'utilise FormData()! pour le gerer sur une servlet sans avoir a regarder dans le payload mettre LINKmultilkjfqsdf 
+                      ou
+                      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");  dans ce cas c'est dans l'URL que sont les parametres comme un GET. Si on ne veut pas que notre formulaire puisse envoyer des fichiers
                       si probleme d'encodage lors de l'envoi si j'ai une page en ISOetc etc... ma base aussi mais il faut que lors de l'envoie je specifie bien l'encodage:
                       xhr.overrideMimeType("text/html; charset=ISO-8859-15"); (sinon en base il enregistre de la m...) si je veux envoyer du javascript, le mime c'est "application/javascript"
                       xhr.responseType = 'text';  ou 'blob' si c'est pour un upload de fichier
@@ -27528,7 +27550,7 @@ savoir si un element audio joue:
   pour avoir la proportion taille d'un element en pixcel au lieu de pourcentage largeur
       monelement.clientWidth
     savoir si un string est vide:
-        if(!lestring) renvoit true si c'est null, undefined ou "". 
+        if(!lestring) renvoit true si c'est null, undefined ou "". ou bien typeof(unevariable) 
         du coup si je veux passer que si'il est defini faire
         if (!lestring==false)
     incrementer une valeur de margin-top sans prise de tete avec "px" pas besoin de faire substring:
@@ -27634,6 +27656,7 @@ tester le javascript TDD :
                               	it(.skip pour ignorer)('nom du test', () => {
                                     // pour mocker un objet(xhr pour requete ajax par exemple)
                                   un module: pour le spyer
+						en fait pas besoin de jest on peut direct redefinir une methode d'un objet: memoclap.runmachin=async function(){return Promise.resolve("unittest")}; et si c'est memoclap a  une methode memoclap.toto qui appelle elle meme memoclap.runmachin alors pour que ça marche memoclap.toto(){exports.runmachin()} sinon le mock va pointer sur l'origine meme runmachin et non pas le mock mais attention exports n'est pas supporté par les browsers alors le seul moyen que j'ai trouvé pour réussir à le faire marcher sur un browser c'est ca : if (typeof(exports)=="undefined") promese=setAudioSrc(...) else promese=exports.setAudioSrc(...)
 						memoclap.saveActorsNameOnServer=jest.fn(()=>{console.log("aaaaaaaaaaaa")}); // le top pour faire un spy mais n'a pas marché une fois dans un Promise
 						unmodule.unemethode=jest.fn(); // pour que la methode d'un module ne fasse rien
 					
@@ -27657,17 +27680,15 @@ tester le javascript TDD :
                                                 overrideMimeType:jest.fn().mockImplementation(function(){}), // si on ne veut rien faire
                                          })
   				      window.confirm = jest.fn(()=>{return true}); LINKmockwork
+				     window.alert = jest.fn(()=>{return true});
                                       window.XMLHttpRequest = jest.fn().mockImplementation(mockMonObjet);
                                              (.. mes tests..)
 					jest ne supporte pas la methode native scrollIntoView alors faire : Element.prototype.scrollIntoView = jest.fn();
-				    mocker fetch: ca ne marche pas grrrrr! du coup autant mocker la methode juste en amont.
-					window.fetch = jest.fn(() =>
-						    Promise.resolve({
-							json: () => Promise.resolve({ status: 200}),
-						    })
-						);
-                                });
-                                it("checkloop",()=>{...
+				    mocker fetch: 
+						window.fetch= async function (){return Promise.resolve({status:200,
+								json: () => Promise.resolve({ status: 200}), // pas sur pour ça
+							    })};                             
+			  it("checkloop",()=>{...
 			ou 	
 				test('nom du test,async()=>{
 					impossible de definir une variable globale pour un test. il faut raisonner en modules. et les modules ont leurs variables
@@ -27787,7 +27808,9 @@ tester le javascript TDD :
           >testem ci --launch PhantomJS(obsolete)
 ES6 :modules: une page html/js peut importer une page html/js qui importe aussi: le browser gère les doublons si yen a // pas implemente dans firefox et safari?
 	copier cloner les proprietes d'un objet dans un autre rapidement: 
-		const {unprop,unautreprop,troisiemeprop:nomfinal} = unautrepbjet // equivaut à faire unprop=unautreobjet.unprop, unautreprop=unautreobjet.unautreprop,nomfinal=unautreobjet.troisiemeprop
+		const {unprop,unautreprop,troisiemeprop:nomfinal} = unautrepbjet // equivaut à faire unprop=unautreobjet.unprop, unautreprop=unautreobjet.unautreprop,nomfinal=unautreobjet.troisiemeprop ATTENTION les noms de variables doivent etre les memes sinon ca ne marche pas
+		du coup une methode peut retourner PLUSIEURS variables: 
+		let {indexprohtmlText, htmltemplatesText} = unemethode(); et unemethode(){....return {indexprohtmlText, htmltemplatesText};
 	contraction pour les splits:
 		let unchamp; //un champ qui existe deja
 		let unautrechamp; // un autre champ qui existe deja
@@ -27801,7 +27824,7 @@ ES6 :modules: une page html/js peut importer une page html/js qui importe aussi:
         dans main.js: // attention toutes les variables primitives exportees sont readonly. Faire des setters si je veux les modifier 
              import {toto,blabla} from "./path/xxx.js";                          RRR  // autant mettre le ".js" c'est normalement supporté partout
              import {projectsMEMENOM} from './js/memoclap-projectsFieldsets.js';  UUU  // toujours mettre accolades meme si qu'un seul objet
-             import * as bidule from './js/memoclap-projectsFieldsets.js'; AAA et BBB  // j'importe tous les exports de bidule et ici ils sont prefixes par "bidule"             
+
              import projects from './js/memoclap-projectsFieldsets.js';    CCC  //du coup j'appellerais projects.unTrucDefiniPlusHaut.uneDeSesMethodes()
              import UnComponentAttentionMemeNom from './js/alertmsg.js';    BBB (pour les default export de classes)
              on peut faire new unmodule.UnObjetDuModule();                     
@@ -28597,10 +28620,10 @@ pour faire defiler comme un prompteur:
 pour scroller dans un div: 
     document.getElementById("saved").scrollTop=document.getElementById("saved").scrollTop+1;  
 replace all replaceall remplace: 
-      return txt.replace(new RegExp(replace, 'g'),with_this); // 'g' permet de remplacer tout!!!!
+      return txt.replace(new RegExp(replace, 'g'),with_this); // 'g' permet de remplacer tout!!!! // voir LINKçeeçeeçregexpçeeçeeç
 Si j'ai l'erreur is not a constructor
        c parce que j'ai quelquepart en global une variable qui a le meme nom que mon constructeur (ma fonction)
-pour supprimer un element par son Id c le seul moyen: 
+pour effacer supprimer un element par son Id c le seul moyen: 
         element = document.getElementById("element-id");
         element.parentNode.removeChild(element);
 
@@ -29314,7 +29337,7 @@ endsWith en javascript: (se termine par)
 startsWith:
     monString.indexOf("bla")==0
 pour avoir les fils d'un element:  queryselector attention un id avec un chiffre ne marchera pas il faut faire un escape : exemple querySelector("#1") doit s'ecrire je crois querySelector("#\1");
-      utiliser soit .children soit .childNodes (na pas marche une fois) > fils direct(premier fils); " "(espace) fils indirect; a (balise de type a); a[toto] balise de type a avec un attribut toto; a[toto=titi] balise de type a avec un attribut toto = titi; a,b a ou b; a.toto a avec une classe=toto; #hehe  id=hehe
+      utiliser soit .children soit .childNodes (childNodes inclu les textes mais children non) > fils direct(premier fils); " "(espace) fils indirect; a (balise de type a); a[toto] balise de type a avec un attribut toto; a[toto=titi] balise de type a avec un attribut toto = titi; a,b a ou b; a.toto a avec une classe=toto; #hehe  id=hehe
       document.querySelector("#prompt>#prompt1>div").children;// c'est un tableau donc on peut faire document.querySelector("#prompt>#prompt1>div").children[0];
 pour avoir tous les elements fils de manière recursive: 
           myDiv.getElementsByTagName("*")
@@ -33845,8 +33868,8 @@ renommer un repertoire fichier en un autre:
     si je veux me connecter en dur sur miami: aller dans panneau de configuration > Reseau > protocole > TCP/IP > propriete adresse IP: 10.68.81.253 ou 242 masque: 255.255.255.0 Valider et redemarrer l'ordinateur.
     outils:de gestion programme de mot de password:
         keepass
-    logiciel analyseur de sons audio detail infos: 
-        gspot       
+    logiciel analyseur de sons audio detail infos wav mp3:
+        gspot       equivalent linux voir LINKgsptnsdf
 raccourci creer un nouveau dossier repertoire: ctrl+shift+n
 window+x ouvre des options de luminosité
 creer un fichier en commande dos: copy NUL nouveaufichier.txt
