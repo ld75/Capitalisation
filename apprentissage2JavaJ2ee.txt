@@ -1384,6 +1384,7 @@ pour switcher entre ma classe de test et ma classe de prod: CTRL+shift+t
 pour modifier un type de fichier source: en faire un source, un repertoire de tests etc... Ctrl+Shift+Alt+s, choisir à gauche le projet, à droite le repertoire et clique droit dessus 
 erreur error details probleme explication Ctrl+F1
 search trouver rechercher partout Ctrl+shift+f // si ne marche plus bien, arreter intellij, supprimer .idea et redemarrer car il ne reindexe plus
+	pour conserver l'historique de recherche: tab find > roue crantée > open results in new tab
 recherche trouver search partout meme les noms de methodes fonctions: maj maj
 afficher toutes les erreurs problemes: pour les voir il faut faire un build
 parcourir atteindre erreurs problems F2/Maj+F2
@@ -4355,7 +4356,7 @@ pour que le request soit transfere a une autre page:
       <jsp:forward page="/utils/errorReporter.jsp" /> (en dur)
       ou bien
       <jsp:forward page="<%= someJavaExpression %>" />
-      ${pageContext.request.contextPath} // ca renvoit /monwarMonApplication
+      ${pageContext.request.contextPath} // ca renvoit /monwarMonApplication ce que String getContextPath() renverrait
 pour afficher les erreurs dans la page d'erreur jsp:
                                   <%@ page import="java.lang.Exception"%>
                                   <%@ page import="java.io.PrintWriter"%>
@@ -8020,7 +8021,7 @@ pour se connecter avec un utilisateur user
 	dupliquer copier des documents des elements dans une autre collection:(pas besoin de créer cette collection ca se fait tout seul) dans une meme base de donnee
 		db.macollection.find(....).forEach(function(doc){db.nouvellecollection.insert(doc)}) // il parrait qu'on peut aussi le faire avec copyTo() jamais essayé
 	copier une collection d'une base de donnée vers une autre base de donnée
-		on peut faire un mogodump puis restore avec nsFrom et nsTo ou bien faire dans la base expeditrice: db.lacollection.find().forEach(function(doc){db.getSibligDB('AUTRE_BASEDEDEONEE')['autrecollection'].insert(doc);});
+		on peut faire un mogodump puis restore avec nsFrom et nsTo ou bien se mettre dans la base expeditrice et faire db.lacollection.find().forEach(function(doc){db.getSiblingDB('AUTRE_BASEDEDEONEE')['autrecollection'].insert(doc);});
 	avec wildcard regexp:
 		db.toto.find({"monchamp":{$regex:/^valeuravec.*tata/i}},...filtresibesoin  //i pour ignorecase mais ya d'autres options possibles.(/ est obligatoire, i est facultatif) Attention toujours commencer par ^et les wildcard c'est .* Le caractere d'echappement est \
 					$regex:/.*(Jan|Feb|Mar|Jul|Aug[Sep).*2018.*/i // pour faire des chaines de caracteres strings avec OU.
@@ -10301,7 +10302,8 @@ faire un inner join qui ne renvoit qu'une ligne (exclure les doublons du resulta
                 on x.wec60_iddmd = wec01_id 
   ou bien     mais marche moins bien car rownum =1 renvoie la premiere ligne bof bof...
               from TATA 
-                inner join (select cs.*, row_number() over (partition by cs.wec60_iddmd order by cs.wec60_iddmd) as rn from wec60_d_event cs) b  on b.wec60_iddmd = TATA.wec01_id and b.rn=1 and b.wec60_action like 'REAFFECTATION DE%SERVICE-CONTROL-44200-ACCENTURE%'
+                inner join (select cs.*, row_number() over (partition by cs.wec60_iddmd order by cs.wec60_iddmd) as rn 
+		from wec60_d_event cs) b  on b.wec60_iddmd = TATA.wec01_id and b.rn=1 and b.wec60_action like 'REAFFECTATION DE%SERVICE-CONTROL-44200-ACCENTURE%'
 Depuis la version 11g pour concatener plusieurs lignes en une seule: 
       select wec60_iddmd, LISTAGG(commentaire,'<br>') WITHIN GROUP (ORDER BY wec60_dcreate) AS commentaire
 			from 
@@ -11115,7 +11117,8 @@ end;
 pour faire des requetes avec procedure stockee de type *.blabla faire: where description like "'%'||?||'%'"
      
 
-kafka : A_COMPLETER voir aussi https://github.com/akka/alpakka-kafka qui fait de reactive streaming c a d backpressure c a d si consummer sont debordes par vitesse ils disent au producer de ralentire. voir aussi du code source sur github/jamesward/koober(demo de la voiture et du gars sur le map) 
+kafka : je peux utiliser avec microprofile>ReactiveMessaging. 
+	 A_COMPLETER voir aussi https://github.com/akka/alpakka-kafka qui fait de reactive streaming c a d backpressure c a d si consummer sont debordes par vitesse ils disent au producer de ralentire. voir aussi du code source sur github/jamesward/koober(demo de la voiture et du gars sur le map) 
         producer1-   kafka
                   --\---->topic1(copié sur partition1, partition2, partition3)  // 1 partition leader et les autres partitions sont juste des replicats de securité pour eviter perte données
         producer2  --\--->topic2                "    partition1(0,1,2,3,4...)          -->consummer1
@@ -11125,7 +11128,7 @@ kafka : A_COMPLETER voir aussi https://github.com/akka/alpakka-kafka qui fait de
         producers ont 3modes d'ecrtutre (async: donees pas garanties reçues. commited to leader: confirmation reception par le partition leader. commited to leader & quorum: confirmation reception par leader + une autre partition)
 
 
-MAVEN : super pour trouver un maven à partir de package ou meme classe: https://search.maven.org/
+MAVEN :mvn : super pour trouver un maven à partir de package ou meme classe: https://search.maven.org/
  attention: artifactid ne doit pas contenir des points
 versionning : versioning :
 v.x.y.z_u (x=evol maj; y=evolmin; z=ano; u=ano du build)
@@ -11750,6 +11753,7 @@ Les phases: se jouent de manière sequencielle du haut vers le bas:
             compile - compile the source code of the project
             test - test the compiled source code using a suitable unit testing framework. These tests should not require the code be packaged or deployed
                 pour sauter la phase de test: exemple: install -DskipTests ou -Dmaven.test.skip=true
+	    clean resources:testResources // pratique pour recompiler les resources des tests (pour le tdd) (pour le tdd)
             package - take the compiled code and package it in its distributable format, such as a JAR.
             process-resources
             integration-test - process and deploy the package if necessary into an environment where integration tests can be run
@@ -13731,8 +13735,11 @@ fin c ca que j'ai fait qui marche PAS jusqu'au bout.
                     // curl -u user:password -k https://127.0.0.1:9000/greeting
                     // convertir un .P12 en JKS (en fait j'importe ajouter un certif .p12 dans un keystore jks je crois) (un .p12 peut contenir ou pas une cle privée dedans)
                             keytool -importkeystore -srckeystore key.p12 -srcstoretype PKCS12 -srcstorepass password -alias some-alias -destkeystore samlKeystore.jks -destalias some-alias	-destkeypass changeit (si erreur "java.util.IllegalFormatConversionException: d != java.lang.String" rajouter -J-Duser.language=en: ca se produit pour java>7)
-                    // convertir un JKS en .P12 (en fait importkeystore va recup un alias d'un keystore B pour le copier dans un keystoreA mais on peut se passer du keystoreB si j'ai bien compris)
+                    // convertir un JKS en .P12 PKCS12 (en fait importkeystore va recup un alias d'un keystore B pour le copier dans un keystoreA mais on peut se passer du keystoreB si j'ai bien compris)
                              keytool -importkeystore -srckeystore file.jks -destkeystore file.p12 -srcstoretype JKS -deststoretype PKCS12 -deststorepass motdepasse -srcalias aliasdansjks -destalias aliasdest (si erreur "java.util.IllegalFormatConversionException: d != java.lang.String" rajouter -J-Duser.language=en: ca se produit pour java>7)
+				ou
+		  	     keytool -importkeystore -srckeystore file.jks -destkeystore file.p12 -deststoretype pkcs12
+				
                                   si j'ai erreur BadPaddingException: Given final block not properly padded le .p12 est casse      
                   // regarder voir dans detail jks liste ce que j'ai dans mon fichier keystore -v pour plus de details. -alias pour voir cet alias 
                           D:\Java\jdk1.7.0_03-32b\bin\keytool -list -v -alias selfsigned -keystore samlKeystore.jks -storetype pkcs12(Facultatif par defaut c jks)
@@ -15676,7 +15683,7 @@ letsencrypt :
                       echo "############"
                       echo " "
 letsencrypt en shell avec dehydrated :  
-    les fichiers de conf doivent etre mis sous: (a l'execution dehydrated cherche du haut vers le bas) sauf si j'utilise --config
+    les fichiers de conf doivent etre mis sous: (a l'execution dehydrated cherche du haut vers le bas) sauf si j'utilise --config pour forcer
         /etc/dehydrated/config //config c'est le nom du fichier!
         ou
         /usr/local/etc/dehydrated/config //config c'est le nom du fichier!
@@ -17649,7 +17656,7 @@ executer du javascript à partir de java:
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName("JavaScript");
         puis
-        engine.eval(Files.newBufferedReader(Paths.get("C:/Scripts/Jsfunctions.js"), StandardCharsets.UTF_8)); //ici je converti un string en path LINKfkjfkjfv
+        engine.eval(Files.newBufferedReader(Paths.get("C:/Scripts/Jsfunctions.js"), StandardCharsets.UTF_8)); //ici je converti un string en path LINKfkjfkjfv ou bien Path.of(unstring)
         ou        
         String script1 = (String)"function nomDeLaMethode(name) {print ('Hello, ' + name);}";
         engine.eval(script1);
@@ -19886,7 +19893,7 @@ pour faire une classe abstraite abstract: // on ne peut pas faire  new maclassea
 classe fille:
       super: en java: appele la classe au dessus... (extend)
 Varargs : pour envoyer des arguments à une methode :
-			pour une methode qui a cette signature : public static String format(String pattern, Object... arguments);  trois petits points
+			pour une methode qui a cette signature : public static String format(String pattern, Object... arguments);  trois petits points s'appelle le spread syntax operator
 			on peut l'appeller comme ca: 
 							Object[] arguments = {new Integer(7),new Date(),"a disturbance in the Force"};
 							String result = format("balblabla", arguments);
@@ -20587,7 +20594,7 @@ lambdas : lambda : lambdas expression :     (lire http://labs.excilys.com/2014/1
 				public interface ThrowingConsumer<T,E extends Exception> {
 					void accept(T t) throws E;
 				} 
-                xxx.foreach(): avec un biconsumer:exemple: // si xxx est un map on ne peut pas retourner une valeur avec. Il faut passer par un stream
+                xxx.foreach(monCusummer(x->mamethode(f)): avec un biconsumer:exemple: // si xxx est un map on ne peut pas retourner une valeur avec. Il faut passer par un stream
                                 volumesInnerData.innerDataPerYear.forEach(new BiConsumer<Integer, InnerData>()
                                   {
                                       @Override
@@ -21032,7 +21039,7 @@ pour faire une expression reguliere: regexp:
 		  replaceAll("(\\p{javaUpperCase}{2,30})",
           echapper le "." "\\."
 	pour inserer des separateurs entre des strings:
-		String.join("leseperateur","premierstring","deuxiemestring".....etc...); //depuis java8
+		String.join("leseperateur","premierstring","deuxiemestring".....etc... ou tableauDeStrings); //depuis java8
 pour savoir si pourcent est dans une chaine de caractère, ne pas faire contains mais monstring.indexOf('%');	
 Pour utilisation des expressions regulieres conditionnelles avec sorte de callback en java pour trouver un caractère: regexp: attention !!! ca ne marche pas pareil sur unix: super galere donc eviter. Ruser avec Substring plutot
 ici on cherche des coommentaires: *
@@ -21042,7 +21049,7 @@ private boolean contientCommentStart(String ligne) {
 		Pattern pattern = Pattern.compile(regexp); // le mettre en tete de classe en static final car ca bouffe memoire
 		Matcher matcher = pattern.matcher(ligne);
 		while (matcher.find()) {
-		  System.out.println(m.group(1)); // renvoit donc contenu de la premiere parenthese (commence par 1)
+		  System.out.println(mmatcher.group(1)); // renvoit donc contenu de la premiere parenthese (commence par 1)
           regexMatcher.appendReplacement(resultString, "replacement"); // ajoute dans resultString (le stringbuffer) en remplacant TOUT regexp par "remplacement" 
 		}
         regexMatcher.appendTail(resultString); // ajoute la fin du texte dans resultString (le stringbuffer)
@@ -21899,7 +21906,8 @@ inverser changer l'order ordre d'une arraylist  A MIEUX DOCUMENTER voir aussi LI
 pour savoir quel string passe en premier dans un ordre alphabetique: 
 		"laquelle est la 1ere dans l'ordre alphabetique",  s1.compareTo(s2). ca retourne CHIFFRE(attention pas que des 1 et 0) negatif si c'est s1 < s2, un positif si s1 > s2 et 0 si c'est egale.
 --------------------
-attention la fonction File.renameTo peut ne pas marcher: LINKjgdlkqjfqdgmlk utiliser de preference Files.move(fichierWavARemplacer.toPath(), finalTempWaveFile.toPath(), StandardCopyOption.REPLACE_EXISTING); comme ca si le dest existe deja ça ne plante pas.
+attention renommer la fonction File.renameTo peut ne pas marcher: 
+		LINKjgdlkqjfqdgmlk utiliser de preference Files.move(fichierWavARemplacer.toPath(), finalTempWaveFile.toPath(), StandardCopyOption.REPLACE_EXISTING); comme ca si le dest existe deja ça ne plante pas.
 		toujours verifier par la variable de retour que ca s'est bien passe car en fonction des os win-unix pb compatibilite et retourne false aussi si le dest existe deja
 -------			
  Pour savoir si un char est un numero numerique numerique est un chiffre:
@@ -22160,7 +22168,8 @@ pour supprimer les doublons d'une liste: (c'est pas forcement LinkedList ca peut
             			}
             			// fin suppression doublons
             
-tableaux : tableau :
+tableaux : tableau : listes :
+pour updater dans une arraylist utiliser .set pour inserer dans une arraylist utiliser .add(index,valeur)
 pour ajouter des elements à un tableau de type [] passer par des Arrays.
 les sous classes de collection sont:
     AbstractCollection, AbstractList, AbstractSet, ArrayList, BeanContextServicesSupport, BeanContextSupport, HashSet (ordre pourri non fiable, vire les doublons, non threadsafe) , LinkedHashSet(conserve l'ordre d'insertion), LinkedList(comme arraylist: ordonné et duplicats possibles mais il gere mieux la memoire si données dedans sont tres manipulées), TreeSet garde l'ordre?, Vector
@@ -23503,7 +23512,8 @@ Audio :
 	wmv>webm
 	ffmpeg -i Memoclap3.wmv Memoclap3.webm
 	wmv>3gp
-	ffmpeg -y -i Memoclap3.wmv -r 20 -s 352x288 -b 400k -acodec aac -strict experimental -ac 1 -ar 8000 -ab 24k Memoclap3.3gp
+	ffmpeg -y -i Memoclap3.wmv -r 20 -s 352x288 -b 400k -acodec aac -strict experimental -ac 1 -ar 8000 -ab 24k Memoclap3.3gp // -ar pour la frequence rate en Hz
+	ffmpeg -i micro2.wav -ar 16000 micro2out.wav // changer la frequence rate d'un wave
 
 convettir les AMR en MP3
   amr to mp3 converter
@@ -25308,7 +25318,7 @@ scp :commande
     -vvv pour verbose (mode debug)
     pull: PUTAIN j'arrivaispas à faire marcher avec cle: toujours permission denied (publickey) meme apres avoir declare ma cle publique sur le serveur> il falait utiliser une cle privee de type .pem pour que ca marche et non pas .ppk (sur windows en tout cas)
         si j'ai le message Permission denied c'est parce que je n'ai pas les droits d'ecriture dans le repertoire de destination: faire un chmod
-      scp -i cheminVersMaClePriveeFacultatifDeType.pem user@machine:fichier(s)quejeveuxcopierDeLaMachineDistanteOuRepertoireSiJaiMisMoinsR repertoireoujeveuxlecopiersurMAmachineSansSlashALaFin ATTENTION espace interdits apres le:
+      scp -i cheminVersMaClePriveeFacultatifDeType.pem user@machine:fichier(s)quejeveuxcopierDeLaMachineDistanteOuRepertoireSiJaiMisMoins_r repertoireoujeveuxlecopiersurMAmachineSansSlashALaFin ATTENTION espace interdits apres le:
     push:
       scp -i cheminVersMaClePriveeFacultatifDeType.pem cequejeveuxcopierdeMAmachine user@wwwmachine:oujeveuxLecopiersurlaamachinedistante
     exemples  
@@ -27239,7 +27249,7 @@ mettre une image a un bouton image bouton
 
 HTML :
     XML :     interpretation des caractères xml html
-    remplacer les & (et commercial) par &amp;
+    remplacer les & (et commercial) par &amp; voir LINKhmltcxode
     Caractère  	Code d'echappement
     Perluète 	& 	&amp;
     Apostrophe 	' 	&apos;
@@ -27702,6 +27712,7 @@ tester le javascript TDD :
                                                    toBeTruthy() // equivalent de isTrue
                                                    toBeFalsy()l // equivalent de isFalse
                                                    toContain // regarde si une liste contient un truc
+						   expect(()=>mamethodetestee(toto)).toThrow(TypeError); // tester qu'une exception est renvoyée // on met la methode testee dans une fonction anonyme
 					//si c'est une promeses promise:
 					return mamethodeQuiRetourneUnePromise().then(x=>{expect(xxx)...}) // mettre un return avant la methode pour que ca marche bien
                                   })
@@ -27811,6 +27822,20 @@ ES6 :modules: une page html/js peut importer une page html/js qui importe aussi:
 		const {unprop,unautreprop,troisiemeprop:nomfinal} = unautrepbjet // equivaut à faire unprop=unautreobjet.unprop, unautreprop=unautreobjet.unautreprop,nomfinal=unautreobjet.troisiemeprop ATTENTION les noms de variables doivent etre les memes sinon ca ne marche pas
 		du coup une methode peut retourner PLUSIEURS variables: 
 		let {indexprohtmlText, htmltemplatesText} = unemethode(); et unemethode(){....return {indexprohtmlText, htmltemplatesText};
+		ou 
+		let lastOuvreBouche=0;
+		let lastTalkingActor=0;
+		[lastOuvreBouche, lastTalkingActor] = methretourne2(); et si je veux recuperer que une des deux faire methoderetourne2()[0] (dans methoderetourne2 je return [x,y] 
+	trois petits points spread syntax operator
+		export function getSecurrelyDeepValueFromTable(table, ...indexes)
+		{
+		    while (deep<indexes.length)
+		    {
+			indexes[deep] on utilise le spread operator comme une table pouvant etre infinie
+		    }
+		}
+				
+	
 	contraction pour les splits:
 		let unchamp; //un champ qui existe deja
 		let unautrechamp; // un autre champ qui existe deja
@@ -27824,7 +27849,7 @@ ES6 :modules: une page html/js peut importer une page html/js qui importe aussi:
         dans main.js: // attention toutes les variables primitives exportees sont readonly. Faire des setters si je veux les modifier 
              import {toto,blabla} from "./path/xxx.js";                          RRR  // autant mettre le ".js" c'est normalement supporté partout
              import {projectsMEMENOM} from './js/memoclap-projectsFieldsets.js';  UUU  // toujours mettre accolades meme si qu'un seul objet
-
+	     import * as bidule from './js/memoclap-projectsFieldsets.js'; AAA et BBB  // j'importe tous les exports de bidule et ici ils sont prefixes par "bidule"
              import projects from './js/memoclap-projectsFieldsets.js';    CCC  //du coup j'appellerais projects.unTrucDefiniPlusHaut.uneDeSesMethodes()
              import UnComponentAttentionMemeNom from './js/alertmsg.js';    BBB (pour les default export de classes)
              on peut faire new unmodule.UnObjetDuModule();                     
@@ -27865,8 +27890,8 @@ detecter si les cookies sont activés ou pas disabled enabled
             // do something here
           }
           
-pour echaper echappe escape decoder html caracteres speciaux
-    remplacer toExecute.innerHTML; par toExecute.childNodes[0].nodeValue; ou toExecute.innerText;
+pour echaper echappe escape decoder html caracteres speciaux voir LINKhmltcxode
+    remplacer toExecute.innerHTML; par toExecute.childNodes[0].nodeValue; ou toExecute.innerText; Si je fais toto.innerText=deschars avec "<" ">" alors toto.innerHTML="$lt; etc" Et je crois que l'inverse est vrai
 async await : asyncawait :
   permet d'executer du code asynchrone comme s'il etait synchrone et le javascript fait une pause tant qu'il n'a pas la réponse de l'asynchrone.
   async function unemethode(){  // dans une methode comme ca marquée async j'ai le droit de mettre await. JE SUIS SUR: async renvoit toujours une promese de facon implicite dont le then contiendra undefined et dedans moi je dois faire un return de valeur ou return tout court seulement pas de promesse.
@@ -27874,7 +27899,7 @@ async await : asyncawait :
       return res; // await a converti la promise en valeur retournée par celle ci. Ne surtout pas oublier le await sinon c'est le bordel.
   }
  puis	function methodequiappelleAsync(){
-		unemethode().then( // then est obligé car si je ne met pas then unemethode execute en asynchrone. pour palier à ca appeler unemethode comme ca à son tour: await unemethode() et mettre async devant methodequiappelleAsync: je propage le truc vers le haut. LINKasynawaitdfsf
+		unemethode().then( // then est obligé car si je ne met pas then unemethode execute en asynchrone. pour palier à ca appeler unemethode comme ca à son tour: await unemethode() et mettre async devant methodequiappelleAsync: je propage le truc vers le haut. LINKasynawaitdfsf quitte a faire une methode async anonyme anonymous: .then(async ()=> {await unemthodeasync();autresmethodes();
 erreur: (intermediate value)(...) is not a function
     c a d il manque un ";" qqpart. ou il y a des ";" là ou il ne devrait pas y en avoir
     
@@ -28045,7 +28070,7 @@ faire un tri trier
               // -1 si a < b
               //  0 si a = b
               //  1 si a > b
-              return parseInt(a) - parseInt(b) // pour convertir un string en chiffre chifre
+              return parseInt(a) - parseInt(b) // pour convertir un string en chiffre chifreA integer
             }
             // on trie le tableau en utilisant la fonction de comparaison
             // pour chaines contenant des entiers:
