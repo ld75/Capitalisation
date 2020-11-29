@@ -256,7 +256,8 @@ C'est moi qui decide de dire NON et j'ai raison: dire NON avant quand on voit ve
 
 
 
-scrum : management :
+scrum : management : agile
+	equipes contient petit nombre de DEV. si gros projets, plusieurs petites equipes
       Cynefin :Framework. "Bring in the bare minimum amount of process" 
           obvious: manager+planning... =orchestre: utiliser les best practices SOLID+TDD
           complicate: =orchestre
@@ -274,6 +275,9 @@ scrum : management :
       Simple Design: designer que quand necessaire.
       Refactorer pour avoir du clean code.
       TDD: OBLIGATOIRE 
+      La velocity n'est pas censée augmenter dans le tmps mais elle est stable (sauf au debut)
+     les devs seniors doivent passer leur temps en pairing avec les juniors
+    en tant que senior je dois tenir une classe par jour
 	  
 logiciel de copie d'ecran capture :
 	greenshot
@@ -765,8 +769,8 @@ docker-compose : dockercompose : s'installe avec apt-get ou aptitude
                                 - unreseaubridgéDansLequelCeServiceBaigne  //le service utilise donc ce network: LINKdeclareutilisationnetwork
 	                volumes: // je crois que cette partie n'est exploitée que lors de docker-compose up
                         - type: bind // ou volume ou tmpfs(temporaire est ephemere)
-                          source: ${localcustomcsspath}
-                          target: /opt/payara/customcss
+                          source: ${localcustomcsspath}  // path dans mon os
+                          target: /opt/payara/customcss  //path DANS le container
                         - type: bind
                           source: ${localpropertydirpath}/MemOclap.properties
                           target: /opt/payara/conf/MemOclap.properties
@@ -5829,6 +5833,7 @@ CSS grids : cssgrid : css grid : cssgrid : pour faire des mises en page responsi
     .lastdivfils{
       grid-area:main;
     }                
+	pour modifier le grid-template-areas en javascript : 'grid-template-area:"outilsdedition outilsdedition" "antiseche antiseche"'; (mettre des singlequotes autour)
 
 CSS custom properties : customcss : csscustom :LINKcustomcssljqdf 
 	<style> // dans un shadowdom ou quelquepart// attention n'est pas pris en compte au level niveau customelement shadowdom de profondeur >1. Dans ce cas redeclarer le css au niveau 1 pour que le niveau 2 le voit.
@@ -7919,7 +7924,7 @@ mongo :mongodb : nosql : (il vaut mieux stocker les fichiers images documents da
 				mongo.exe --port=xxx --host=localhost --username=xxx password=xxx --authenticationDatabase=yyy --eval(facultatif pour passer des parametres) "var parametre1=\"toto\"; var parametre2=\"titi\"" nomDeLaBaseDeDonnee path/vers/fichier/javascript.js  // dans ce script on peut loader inclure include un autre fichier javascript: load("/path/nomfichier.js")  ou load("nomfichierMaisPasReussiAFaireMarcher.js")
 				et dans le javascript.js:
 					var collections=db.getCollectionNames(); // ne supporte pas setInterval pour executer regulierement alors utiliser while(true){ ... sleep(1000*60*30);}
-					ou var unecollection=db.getCollection(strnomcollection); puis unecollection.find.... // faire une recherche en definissant dynamiquement le nom de la collection à requeter
+					ou var unecollection=db.getCollection(strnomcollection); puis unecollection.find.... // faire une requete recherche en definissant dynamiquement le nom de la collection à requeter
 					var total=0
 					for var i=0;i<collections.length;i++)
 					{
@@ -7989,6 +7994,7 @@ pour se connecter avec un utilisateur user
         exemples de rechercher requetes. Une collection = une table relationelle
                     db.uneCollection.find({queryNeRienMettrePourTrouverTout},{facultatifLesChampsARetourerFiltrer}) // {lechamp:null} pour voir les champs s'ils n'existent pas(je le met ou ? droite ou gauche?). rajouter à la fin .pretty() pour afficher joli.
 						a gauche pour quil retourne que les champs qui existent et sont remplis non nulls non vides non empty: {"mon.champ":{$exists:true,$not:{$size:0}}}
+								OR: find({$or:[{a},{b}....]})
 	requete : exemples:
 		    db.lacollection.find({"champTypeTableau.4":{$not:{$in:["x","y]}}},{champaretourner:true,champapasretourner:false}) //4 eme index du champttypeTableau(attention ce truc .4 marche que dans la premiere partie du find) not(negation) in pour n'importe quel index mettre les GUILLEMETS! "champTypeTableau.souschampDuTableau":x c'est comme si je mettais: "champTypeTableau[nimporteQuelIndex].souchampDuTableau
 							             .find({$and:[{...},{...}..]})
@@ -15701,8 +15707,10 @@ letsencrypt en shell avec dehydrated :
    enfin executer dehydrated: Si il ne fait rien à l'execution regarder dans la conf si c'est le bon user qui est declaré
     ./dehydrated -c // voir la doc:https://github.com/lukas2511/dehydrated#usage si a l'execution il ne fait que charger la conf sans rien faire d'autre c'est parce que dans ma conf je n'ai pas declaré le bon user.
 	exemple:
-	./dehydrated -c --ipv4 --config ./dehydrated.memoclap.conf
-	si besoin : ./dehydrated --regitration --ipv4 --config ./dehydrated.memoclap.conf
+	./dehydrated -c --ipv4 --config ./dehydrated.memoclap.conf // pour renouveller le certificat
+	si besoin : ./dehydrated --registration --ipv4 --config ./dehydrated.memoclap.conf
+	pour revoquer un certificat:
+	dehydreated -r /path/vers/cert.pem --config ./path/vers/conf.conf
     
    
 SSL : TLS : https : le port https est toujours 443
@@ -19822,7 +19830,7 @@ Dynamic Dynamique classe loading classloader hotde recharger une classe: issu de
 
             pour lire le java.library.path: 
                 System.getProperty("java.library.path");// recupère prop de la jvm voir LINKù*ù
-donnees types variables numeriques: nombres :
+donnees types variables numeriques: nombres :primitives
         Type	Signification	Taille (en octets)	Plage de valeurs acceptees
         char	Caractère Unicode	2	'\u0000' → '\uffff' (0 à 65535)
         byte	Entier très court	1	-128 → +127
@@ -24925,7 +24933,7 @@ If you want a list from a given date to now, you just need
 		touch -t 201802140000 fichiervidecree
         find /yourdir -ctime 0 // liste des fichiers modifies date d'aujourd'hui ctime recupere les fichiers à une date exacte pas un range.
 		find /yourdir -type f -anewer fichiervidecree (marche pas:-( )
-trouver les fichiers vieux de plus de x jours: et si besoin les effacer
+trouver les fichiers vieux de plus de x jours: et si besoin les effacer supprimer si date old
 		find ./ -mtime +200 | xargs rm -f
 pour copier les fichiers trouves dans un autre repertoire
 		find /starting/dir -iname '*.jpg' | xargs -xi cp '{}' /backupdir
@@ -26403,17 +26411,17 @@ Dissalow etc...
 
 NGNIX : nginx :
 	fichier conf.d: exemple de configuration
-	upstream unnom{
+	upstream unnomupstream{
 		server unhostdestination:8080; // unhost et son port dans le cas de docker c'est le nom du service docker compose ou bien le nom du container les deux fonctionnent. Attention dans le cas de docker compose le port c'est pas celui de l'host qu'il faut mettre mais celui ouvert DANS le container
 	}
 	server { // je peux faire plusieurs block de serveur pour le meme port mais des domaines_sous domaines differents.
 	   listen 80;
 	   listen [::]:80;//facultatif
 	   server_name www.undomaine.com undomaine.com; 
-	   return 301 https://$host$request_uri; // redirection https peut etre utilisee pour faire tout type de redirection d'url exemple: return 301 https://$host/wwwconnect;
+	   return 301 https://$host$request_uri; // redirection https peut etre utilisee pour faire tout type de redirection d'url exemple: return 301 https://$host/wwwconnect; return prend le pas sur location si les deux sont au meme niveau quelquesoit l'ordre. on peut mettre le return dans un location
 		ou
 	    location /{					location '/unpathtoto'{ ou    location ~ ^/$ { // pour que ce soit que le path root "/"  pour plusieurs urls mettre: location ~^(/premiere/url|/deuxieme/url|^/$|/quatrieme/url|...){
-			proxy_pass http://unnom;	default_type "text/plain";
+			proxy_pass http://unnomupstream;	default_type "text/plain";
 							root /laracine; 		// du coup si l'url est http://xxx/unpathtoto ca va pointer vers le repertoire "/laracine/unpathtoto"
 			autoindex on;			|_pour permettre l'accès en visulation aux repertoires directories sinon on a l'erreur 403
 			autoindex_exact_size off; 	|
@@ -27009,10 +27017,8 @@ pour faire un .ico icone
           <link rel="shortcut icon" type="image/x-icon" href="favicon.png?v=2" /> ?v=2 pour forcer le rafraichissement
 
     
-faire un textearea: blur c comme loosefocus 
+faire un textarea: blur c comme loosefocus 
     <textarea maxlength="50" style="width: 326px; height:80px;" placeholder="Tappez ici la phrase d&#39; texte " id="annotation" onfocus="pause()" onblur="playAndSaveAnnotation()"></textarea>
-faire un drag and drop avec html5:
-    <mon element  draggable="true"></mon element>
 pour supprimer le cache d'un element audio:
     // pour supprimer cache audio
     	d = new Date();
@@ -27166,8 +27172,6 @@ mon propre dropdownlist datalist plus efficace encore: prend aussi le milieu
                                                                 </html>
                                                                 <style>
                                                                 </style>
-faire un drag and drop avec html5:
-    <mon element  draggable="true"></mon element>
 super site de html5:
       http://slides.html5rocks.com/#speech-input
 l'element audio html5: 
@@ -27326,26 +27330,6 @@ pour faire des dessins animes avec background facon sprites:
           	document.getElementById("avatar").style.backgroundPosition=table[Math.round(Math.random()*13)]+"% 10%";
 si dans une table on veut masquer les borders à l'interieur: 
       <table rules="none"
-yahoo.js :pour faire un drag and drop 
-        public static native void addDraggableSlot(
-        		Element e, 
-        		String affordance,
-        		int counter) 
-        	/*-{
-        		e.id = 'drag_'+counter;
-        		new $wnd.YAHOO.example.DDPlayer(e.id, affordance);
-            	}-*/;
-        // l'objet e peut maintenant etre drague
-        
-        	public static native void addTargetSlot(
-        		Element e, 
-        		String affordance, 
-        		int counter) 
-        	/*-{
-        		e.id = 'target_'+counter;
-        		new $wnd.YAHOO.util.DDTarget(e.id, affordance);
-        	}-*/;
-        // l'objet e peut maintenant etre la cible d'un autre objet drague
 fetch : LINKsljqffetch
             en mode synchro:
                         async function mamethode() { 
@@ -27454,7 +27438,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                             {
                               var progressBar = document.querySelector('progress');
                               progressBar.value = (e.loaded / e.total) * 100;
-                              progressBar.textContent = progressBar.value; // Fallback for unsupported browsers.
+                              progressBar.textContent = progressBar.value; // Fallback for unsupported browsers. textePur.textContent="haha" // marche aussi pour du textepur dans le html
                             }
                         xhr.onreadystatechange = function() { // pour faire un upload de fichier en ajax
                                     if (this.readyState == 4 && this.status == 200) {
@@ -27555,12 +27539,17 @@ savoir si un element audio joue:
     if(document.getElementById(lecteur).paused
     possible de mettre a jour le texte du css avec du javascript mais tout d'un coup pas possible (pas trouvé) de façon chirurgicale
         document.getElementById("identifiantDeMaBaliseStyle").innerHTML
+	Si c'est possible : document.styleSheets //  pour recuperer un tableau de tous les styles: un element par block de styles je crois.
+	document.styleSheet[3].href // sera egal à www.path/vers/mon.css
+	document.styleSheets[1].cssRules[3].style.fontSize="1000px" // prend la feuille de style 1, le troisieme block (attention les blocks media sont=undefined), definit-y le style font-size à 100px  
+			ou .cssRules[x].cssRules[y] pour les media //TODO a bien finir
+				ici le nom de la rule c'est .selectorText
   pour savoir si une variable est un chiffre: 
     isNaN(toto); 
   pour avoir la proportion taille d'un element en pixcel au lieu de pourcentage largeur
       monelement.clientWidth
     savoir si un string est vide:
-        if(!lestring) renvoit true si c'est null, undefined ou "". ou bien typeof(unevariable) 
+        if(!lestring) renvoit true si c'est null, undefined ou "". ou bien typeof(unevariable). Sinon pour connaitre le type d'un objet: styleSheet.rules[0] instanceof CSSMediaRule renvoit true par ex
         du coup si je veux passer que si'il est defini faire
         if (!lestring==false)
     incrementer une valeur de margin-top sans prise de tete avec "px" pas besoin de faire substring:
@@ -27821,7 +27810,7 @@ ES6 :modules: une page html/js peut importer une page html/js qui importe aussi:
 	copier cloner les proprietes d'un objet dans un autre rapidement: 
 		const {unprop,unautreprop,troisiemeprop:nomfinal} = unautrepbjet // equivaut à faire unprop=unautreobjet.unprop, unautreprop=unautreobjet.unautreprop,nomfinal=unautreobjet.troisiemeprop ATTENTION les noms de variables doivent etre les memes sinon ca ne marche pas
 		du coup une methode peut retourner PLUSIEURS variables: 
-		let {indexprohtmlText, htmltemplatesText} = unemethode(); et unemethode(){....return {indexprohtmlText, htmltemplatesText};
+		let {indexprohtmlText, htmltemplatesText} = unemethode(); et unemethode(){....return {indexprohtmlText, htmltemplatesText}; // ca s'appelle je crois destructuration
 		ou 
 		let lastOuvreBouche=0;
 		let lastTalkingActor=0;
@@ -27849,16 +27838,16 @@ ES6 :modules: une page html/js peut importer une page html/js qui importe aussi:
         dans main.js: // attention toutes les variables primitives exportees sont readonly. Faire des setters si je veux les modifier 
              import {toto,blabla} from "./path/xxx.js";                          RRR  // autant mettre le ".js" c'est normalement supporté partout
              import {projectsMEMENOM} from './js/memoclap-projectsFieldsets.js';  UUU  // toujours mettre accolades meme si qu'un seul objet
-	     import * as bidule from './js/memoclap-projectsFieldsets.js'; AAA et BBB  // j'importe tous les exports de bidule et ici ils sont prefixes par "bidule"
+	     import * as bidule from './js/memoclap-projectsFieldsets.js'; AAA   // j'importe tous les exports de bidule et ici ils sont prefixes par "bidule"
              import projects from './js/memoclap-projectsFieldsets.js';    CCC  //du coup j'appellerais projects.unTrucDefiniPlusHaut.uneDeSesMethodes()
-             import UnComponentAttentionMemeNom from './js/alertmsg.js';    BBB (pour les default export de classes)
+             import UnComponentAttentionMemeNom from './js/alertmsg.js';    DDD (pour les default export de classes)
              on peut faire new unmodule.UnObjetDuModule();                     
         dans path/xxx.js:  
             Exporter plusieurs trucs
               export var projectsMEMENOM ={...des methodes dedans....                          UUU   
               export function projectsMEMENOM(arg){...}                                        AAA
             Exporter qu'un truc
-              export default class(ne marche que avec class) UnComponentAttentionMEMENOM{....} BBB a eviter.Preferer UUU avec un named export et non pas un default export voir ci dessus.
+              export default class(ne marche que avec class) UnComponentAttentionMEMENOM{....} DDD a eviter.Preferer UUU avec un named export et non pas un default export voir ci dessus.
 	      export class UnComponent {...}						       UUU
               export default {unTrucDefiniPlusHaut}; // a mettre a la fin du fichier   CCC
 	   Exporter plusieurs classes
@@ -27914,7 +27903,7 @@ erreur: (intermediate value)(...) is not a function
           .map(function(number){
               return number + 2;
           })
-          .reduce(function(carry, number){       ou sinon mais pas reussi a le faire marcher avec une liste de chiffre: return costCategories.values().stream().map(cost->cost.visible).reduce((carry,elt)->carry+elt).get();
+          .reduce(function(carry, number){       ou sinon mais pas reussi a le faire marcher avec une liste de chiffre: return costCategories.values().stream().map(cost=>cost.visible).reduce((carry,elt)->carry+elt).get();
                 return carry + number;
             }, 0)	// attention ne pas oublier ici la première valeur initiale! sinon ca renvoit undefined
             .forEach((numbers)=>{ // equivalent: .forEach(function(number){//ATTENTION E majuscule Equivalent de forEach((variablepassee)=>untrucaexecuter(variablepassee));
@@ -28011,6 +28000,8 @@ promesses : promese :promeses :Promises :promise : ne plus utiliser les callback
           .then(resATOUJOURSMETTRE)=>{ // res est aussi  une liste sur laquel on peut mettre foreach
           res.forEach(iteration=>unemethode(iteration.qqch)) //IMPORTANT mettre un return dans ce then si je veux renvoyer qqch
           },(err)=>console.log(err) // pas sur de la synthaxe ici
+	utilisation3: boucles de promesses loop for(while(:
+		const status = await Promise.all(tableauDeVars.map(element=> methodePrRetournantUnePromese((variale)))
 pour recuperer le jour du mois month sur deux chiffre d'un objet Date                                                                                          
       utiliser moment.js:                                                                                                                                     
             var d = new Date();
@@ -28648,7 +28639,7 @@ replace all replaceall remplace:
       return txt.replace(new RegExp(replace, 'g'),with_this); // 'g' permet de remplacer tout!!!! // voir LINKçeeçeeçregexpçeeçeeç
 Si j'ai l'erreur is not a constructor
        c parce que j'ai quelquepart en global une variable qui a le meme nom que mon constructeur (ma fonction)
-pour effacer supprimer un element par son Id c le seul moyen: 
+pour effacer supprimer un element par son Id du dom c le seul moyen: 
         element = document.getElementById("element-id");
         element.parentNode.removeChild(element);
 
@@ -29047,7 +29038,7 @@ pour faire des graphs graphiques
                 <script src="<%=request.getContextPath()%>/js/jquery.min.js"></script>
                 <script src="<%=request.getContextPath()%>/js/highcharts.js"></script>            
 pour faire un drag and drop avec html5:
-                  <img src='move.png' class='buttonmove' onmousedown='startDrag(this.parentNode)' name='dragBoucle'  title='Sert &agrave; changer la position de cette boucle'/>
+                  <img draggable="true"METTRE CA src='move.png' class='buttonmove' onmousedown='startDrag(this.parentNode)' name='dragBoucle'  title='Sert &agrave; changer la position de cette boucle'/>
                   startDrag=function(element)
                   {
                     element.addEventListener('dragstart', handleDragStart, false);
@@ -29066,6 +29057,7 @@ pour faire un drag and drop avec html5:
                   }
                   handleDragStart=function(e)
                   {
+				window.requestAnimationFrame(function() {         e.target.style.display = "none";}); // mettre ca si je veux masquer l'element initial que je drag
                     e.dataTransfer.setData("text", this.id); // attention ne mettre que soit text/html soit text soit url soit d' autres trucs à voir
                   }
                   handleDragEnter=function(e)
@@ -29167,7 +29159,7 @@ nouvelle facon de definir les classes et l'heritage: mais en javascript on peut 
              // je ne peux pas definir de variables ici... faire comme ci dessous          
                 constructor() // Facultatif
                 {
-                  this.sound="zzzz"
+                  this.sound="zzzz" // attention cette variable depuis ailleurs sera undefined si je n'initialise pas ma classe Toto par new Toto()
                 }
                 tals(){
                   alert(this.sound)
@@ -29177,6 +29169,7 @@ nouvelle facon de definir les classes et l'heritage: mais en javascript on peut 
           ggg=new Toto()
           ggg.tals()        mais si je fais let xx=toto.tals; alors xx() va faire undefined car this est undefined. Il faut faire xx.bind(toto); xx.(); et là ca marche. Attribue un objet à this.
        export class Titi extends Toto{
+		constructor(){super()} // si je mets constructor, je DOIS faire appel à super()
           tals(){blabla} // override la methode tals du parent
        }
  
@@ -29553,6 +29546,8 @@ pour recuperer l'element suivant:
     ou nextElementSibling si on veut bypasser les elements textes et <br>...
     navigation a volonte!!
     this.parentNode.nextSibling.firstChild.innerHTML
+pour recuperer le parent d'un element queryselector vers le haut upwards arriere
+	eltfils.closest(".uneclasseOuUnAutreSelector"))})
 data api audio echantillon valeur spectre temporel
 
 
@@ -30092,6 +30087,7 @@ requirejs : require.js : require : approximatif: a bien améliorer
   
 webcomponent :webcomponents : web-components : web components : custom elements : custom-elements :customelements : customelement :
         si j'ai erreur operation is not supported ca equivaut à indexPro:1 Uncaught DOMException: Failed to execute 'define' on 'CustomElementRegistry': the name "memoclap-progressionaudiorepere" has already been used with this registry
+	pour avoir le nom de la classe de la balise d'un customelement custom-element webcomponent: this.localName ou this.tagName
 https://developers.google.com/web/fundamentals/web-components/customelements#attrchanges
  au final dans mon html j'aurais:
  <script src="laurent-moncomponent1.js"/>  
@@ -30154,7 +30150,7 @@ METHODE CLASS: THEBEST? classes es6
                                                                 this.querySelector("[slot=contenu]").style.height=this.taillecontenu; // je change le contenu dynamique dans mon customelement
                                                                 this.querySelector("[slot=contenu]").outerHTML; // permet de recuperer le node vers lequel pointe pointeur mon slot                       
                                                             });
-                                                                LINKrmvEvntListner: this.shadowRoot.querySelector("slot").addEventListener('slotchange', this.changeHtml.bind(this),false);
+                                                                LINKrmvEvntListner: this.shadowRoot.querySelector("slot").addEventListener('slotchange', this.changeHtml.bind(this),false); on peut faire ca aussi d'un javascript exterieur au webcomponent. elt.querySelector("slot").appendChild(... car si je fais juste elt.appendChild(... ca ne mettra pas DANS le slot de elt.
                                                             }//fin de constructor.
                                                                   et  LINKrmvEvntListner suite: changeHtml(e)
                                                                     {                   peut etre necessaire de differer l'execution ci-dessous avec un timer si les childs sont aussi des customs elements car dans ce cas this.innerHTML ="...rien..." pendant un court instant
@@ -30209,7 +30205,7 @@ METHODE CLASS: THEBEST? classes es6
                                                     }
                                                  }
                                                 Puis
-                                                var montag =window.customElements.define('laurent-moncompoentn1', MonElement); //du coup chaque fois qu'il verra <laurent-moncopoentn1> il creera une instance de la classe MonElement
+                                                var montag =window.customElements.define('laurent-moncompoentn1', MonElement); //du coup chaque fois qu'il verra <laurent-moncopoentn1> il creera une instance de la classe MonElement // si je ne mets pas ca j'aurais l'erreur illegal constructor
                                                  //instancier mon tag:<laurent-moncompoentn1></laurent-moncompoentn1> // toujours mettre "-"
                                                  //ou en js: faire var toto = document.createElement('laurent-moncompoentn1'); ou var toto = new montag(); 
                                                  //     puis document.body.appendChild(toto);
