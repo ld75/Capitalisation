@@ -1307,7 +1307,7 @@ taille des logs dans la console: settings>console>overrideconsolebuffersize
 pom voir arbre des dependances hierarchie transitive > dans la vue maven: clique droit sur projet > show effective pom ATTENTION A RAFRAICHIR refresh dans vue maven sinon la hierarchie est obsolete
         encore mieux: charger https://plugins.jetbrains.com/plugin/7179-maven-helper et installer le plugin: installe le directement depuis settings>plugins>il est là
         permet aussi d'afficher menu contextuel maven run debug dans projets project (si inactif  appuyer sur "+" a droite pannel maven)
-        dans onglet dependency analyser à gauche on y voit les artifactID:version
+        sous pannel editeur il y a le tab dependencyAnalyzer onglet dependency analyser à gauche on y voit les artifactID:version
 si le pom.xml maven est en erreur: rafraichir refresh dans la vue maven +  faire une mvn:compilation pour le forcer à charger les dependances et montrer les vraies erreurs
 gradle: creer si j'ai Could not find GradleWrapperMain il faut creer projet\gradle\wrapper\gradle-wrapper.jar
       ouvrir view gradle > a cote de run ouvrir editconfiguration > ajouter un conf gradle avec la Task:createWrapper executer ça.
@@ -7999,6 +7999,7 @@ pour se connecter avec un utilisateur user
 		    db.lacollection.find({"champTypeTableau.4":{$not:{$in:["x","y]}}},{champaretourner:true,champapasretourner:false}) //4 eme index du champttypeTableau(attention ce truc .4 marche que dans la premiere partie du find) not(negation) in pour n'importe quel index mettre les GUILLEMETS! "champTypeTableau.souschampDuTableau":x c'est comme si je mettais: "champTypeTableau[nimporteQuelIndex].souchampDuTableau
 							             .find({$and:[{...},{...}..]})
 								     .find({unchamp:{$not:/uneregexp/}})
+								find({unchamp:{$ne:"blah"}}) // pour not equal different de 
 	groupby avec aggregate:
 		db.Invoice.aggregate([ // group by et count
 			{
