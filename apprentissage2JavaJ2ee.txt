@@ -9,6 +9,8 @@ AFAIRE :
  Capitaliser get spring
 lire : C:\Users\ut2sn0\My_IT_Applications\apprentissage\20190716_Kubernetes_Live_Demo_in_SQY.pdf
 comment eviter transitive pb maven
+la presentation en entonnoir
+	poser des question sur l'integration continue, les methodologies
 svn tortoise: merger depuis 2.11 sur trunk en modifiant trunk:
         chekouter trunk>merge choisir option2 > choisir 2.11 >merge> ca ne merge que mon trunk en local. reste plus qu'à commiter ça.
 
@@ -809,7 +811,20 @@ docker-compose : dockercompose : s'installe avec apt-get ou aptitude
                 docker-compose down // attention, supprime tous les conteneurs et images sauf les volumes
                 docker-compose down -v// attention, supprime tous les conteneurs, images et volumes managés                                        
 		docker-compose push // push par defaut dans le docker.hub.(des ricains) sauf si j'ai tagge LINKtagregistr mon image 
-		
+Kubernetes :(K8)
+	gere des millions de containers docker ou autres dans des env varies: cloud ou serveurs au lieu de le faire par scripts
+	-pas de downntime; scalable(rapidité); desastre resilient grace a backup/restore 
+	pod=wrapper de container(pod pourrait avoir plusieurs container mais c rare) est ephemere  <  Node sont des mirroirs de groupes de pods qui partagent entre PodsMirroirs les memes SERVICES(=ip). Chaque Node contient x Pods, 1ContainerRuntime(exple:docker)
+	au sein du node les pods ont un network dedié. donc ont chacun une adrssIP interne.
+									MAIS sont ephemeres aussi comme le pod donc chaque pod partage avec d'autres podsmirroirs un serviceInterne qui lui est persistant qui son adresse IPInterne aussi et qui est aussi un loadbalancer
+									url du serviceExterne est http://adresse.ip.du.node:portDuService
+									url de l'ingress httpS://NomDeDomaine (l'ingress forward le trafic au serviceExterne)
+	ConfigMap texte pur non securisé contient la conf des applications (ca remplace la conf qu'on met dans le docker-compose pour que les services se voient)	|
+		DB_URL=la_vraie_url / dans dockercompose j'ai la ref DB_URL // comme ca plus besoin de refaire l'image quand lien change				|_ sont connectés aux pods
+	Secret:=ConfigMap mais crypté puis en base64 on y met les password et certificats										|
+	Deployement defini les podsMirroirsSTATELESS(tout sauf DATABASES) partageant des services. Défini aussi les scales(nb de pods mirroirs loadbalancés). Finallement un Deployement c'est comme un wrapper d'un pod qui sous jacament sont des pods miroirs
+	StatefulSet defini les podsMirroirsSTATEFULL(DATABASES) partagent des services. Capable de synchro des Databases pour ne pas corrompre la base.(difficile à faire donc en general la database est hors de K8)	
+	un pod peut etre relie a un volume(PERSISTANT contrairement au pod) qui lui peut etre dans le meme node ou ailleurs du cluster K8: cloud etc...
 visualstudiocode :editeur:
   acceder au fichier trouver: ctrl+p
 gource : annimation de git
@@ -2513,6 +2528,7 @@ PRG :
                     DELETE: ne fait que supprimer un data du système. Peut etre async. voir LINKcodesHttp 20x 
           
 Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme (retournée) dans une fonction est reelement un pointeur vers cette fonction anonyme (la fonction anonyme est une closure.)
+	supporte le sequencage par imbrication de fonctions, la selection par les cond, et les loopboucles par la recursion ou mieux tailrecursion
 	installation:
 		curl -O https://download.clojure.org/install/linux-install-1.10.1.536.sh
 		sudo ./linux-install-1.10.1.536.sh
@@ -2522,7 +2538,8 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 		(def nomdelavariableglobale savaleur) LINKclojrvar
 	definir des variables key limitees dans un scope:
 		(let [nouvelleCle1 "unevaleur1" nouvelleCle2 "unevaleur2] 
-			... je peux utiliser nouvelleCle1 et nouvelleCle2 c'est scopé ici.
+			... je peux utiliser nouvelleCle1 et nouvelleCle2 c'est scopé ici entre les parenthèses qui entourent.
+			ce qui est ici entre ces parentheses EST RETOURNE
 		)
 
 	definir une fonction methode: // elles retournent TOUJOURS une valeur // bonne pratique :quand une fonction methode fait un mapping d'un format vers un autre, le nom de ma fonction doit s'appeler formattruc->formatmachin
@@ -2544,7 +2561,7 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 			"lsdf" ;;string
 			\a ;;char
 			30/4 ;;ratio: c'est n'est pas une division. ca permet de garder la precision
-			:quelquechose ;; enum ou clé de map. voir LINKcljie
+			:quelquechose ;; enum ou clé de map. c'est un symbole. voir LINKcljie Un symbole est toujours truthy TOUJOURS
 			#".*xx.*" ;; # marque une regexp
 			nil ;;null
 			("a" "b" 10.5 5) ;;liste est multitype. Donc le code clojure est aussi une liste mais on utilise plutot les vecteurs. la liste est utilisée pour les macros
@@ -2572,21 +2589,23 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 			(filter odd? [1 2 3 4 5]) retourne (1 3 5)
 	maven de clojure = liningen
 		(defproject monprojet "1.2.3" :description "blabla")
+	les boucles loops sont faites par recursion ou par map ou faire une tail recursion en rappenant en tout dernier la meme methode avec 2 args pour suivre l'index. Comme la jvm ne fait pas de jump pour ne pas charger la stack on remplace cet reappel de fonction par "recur" et ca fait un jump et ya pas de stack qui se rempli (episode 53 Cleancoders)
 	pour comparer
 		(= false "machin") ;;compare false avec "machin" donc renvoit false.
 	conditions:
-		(if UNCONDITION SIOUI SINON) et chaque element est une fonction. nil et false sont les seules deux valeurs falsy.
+		(if UNCONDITION RETOURNECASIOUI RETOURNECASINON) et chaque element est une fonction. nil et false sont les seules deux valeurs falsy. if est une macro en fait.
 			exemple: (if (= a b) c d)//si a)b retourne c sinon d
-				(if(empty? uneliste) etc...)
+				(if(empty? uneliste) etc...) ou (if (zero? untruc) 2 -4)
 	afficher la doc d'une fonction help aide
 		(doc nomdelafonctionquejecherche)
 	afficher le code source: (source nomdelafonctionquejecherche)
 	nombre au hasard
 		(rand valeurMaxpossible)
-	switch:
-		(cond (> uneVar 0) UNTRUCARENVOIE
+	switch: cond qui est en fait une macro dapres unclebob
+		(cond (> uneVar 0) UNTRUCARENVOYER // en fait le premier argument ca doit juste etre un boolean qui ici est renvoyé par la fonction
 			(< uneVar 0) UNAUTRETRUCARENVOYER
 			(= uneVar 0) UNTROISIEMETRUCARENVOYER			
+		)
 	systemoutprint:
 		(println UNTRUCAECRIRE) 
 	equivalent java:
@@ -5833,7 +5852,7 @@ CSS grids : cssgrid : css grid : cssgrid : pour faire des mises en page responsi
     .lastdivfils{
       grid-area:main;
     }                
-	pour modifier le grid-template-areas en javascript : 'grid-template-area:"outilsdedition outilsdedition" "antiseche antiseche"'; (mettre des singlequotes autour)
+	pour modifier le grid-template-areas en javascript: 'grid-template-area:"outilsdedition outilsdedition" "antiseche antiseche"'; (mettre des singlequotes autour)
 
 CSS custom properties : customcss : csscustom :LINKcustomcssljqdf 
 	<style> // dans un shadowdom ou quelquepart// attention n'est pas pris en compte au level niveau customelement shadowdom de profondeur >1. Dans ce cas redeclarer le css au niveau 1 pour que le niveau 2 le voit.
@@ -8025,6 +8044,8 @@ pour se connecter avec un utilisateur user
 				$sort:{count:1}} // ou -1 // block facultatif
 			}
 		])
+	faire un update:
+		db.Contract.update({marequetesansfind},{$set:{"champ.a.setter.3.en.profondeur" ou champASetterEnSurface:"nouvelle valeur"}}) wildcart n'a pas marché ni $ qui ferait office de wildcard
 	dupliquer copier des documents des elements dans une autre collection:(pas besoin de créer cette collection ca se fait tout seul) dans une meme base de donnee
 		db.macollection.find(....).forEach(function(doc){db.nouvellecollection.insert(doc)}) // il parrait qu'on peut aussi le faire avec copyTo() jamais essayé
 	copier une collection d'une base de donnée vers une autre base de donnée
@@ -8045,6 +8066,8 @@ pour se connecter avec un utilisateur user
 	vider effacer l'interieur supprimer toutes les lignes d'une collection
 		db.uneCollection.remove({})
                     db.uneCollection.remove(...) //pour supprimer ce qui match. Comment faire pour tout supprimer de la collection ?  
+		pour complettement effacer supprimer la collection: 
+			db.uneCollection.drop()
             db.uneCollection.insert({ _id: 1, jsFunc: function(){ print("hello") } } ) // si uneCollection n'existe pas elle est automatiquement créee
             db.myNewCollection3.createIndex( { y: 1 } ) // ajoute un indexe dans la collection
 	creer une view:vue:
@@ -11871,6 +11894,7 @@ ant : avec maven: pour par exemple renommer un fichier apres coup touch toucher 
         <delete file="../../batchs/memoclap.copyproject-${version}.jar"/>
         <delete file="../../batchs/memoclap.filter-${version}.jar"/>
         <delete file="../../batchs/memoclap.parser-${version}.jar"/>
+	<mkdir dir="pathdurepertoireacreer meme en profondeur${peutetreunevariable}"/>
     </target>
         <target name="renameServiceWorkerFile"> //deplacer renommer un fichier avec ant et maven
           <move ou bien copy todir="../../repertoire/ou/copier/" includeemptydirs="false">
@@ -15657,6 +15681,7 @@ letsencrypt :
       si Error: couldn't get currently installed version for /opt/eff.org/certbot/venv/bin/letsencrypt:
           faire:rm -rf /opt/eff.org
       server03: >>>MAINTENANT: methode http-01 qui est supportée: certbot --webroot certonly -d kanail.net -d www.kanail.net
+		wenhua: /var/www/www.wenhuaduverge.com# certbot --webroot -w /var/www/www.wenhuaduverge.com certonly -d www.wenhuaduverge.com
                 >>>>AVANT: methode tls-sni-01 qui n'est plus acceptee: certbot --apache certonly -d www.kanail.net (certonly:install le certif mais c a moi de config apache. Il ma de changé le path du certificat de /etc/letsencrypt/live/kanail.net/ vers /etc/letsencrypt/live/www.kanail.net/) donc j'ai du modifier ce path dans la conf apache.    
       demeter:  sous /opt/letsencrypt
        ./letsencrypt-auto renew
@@ -19838,7 +19863,7 @@ donnees types variables numeriques: nombres :primitives
         short	Entier court	2	-32 768 → +32 767
         int	Entier	4	-231≈-2,147×109 → +231-1≈2,147×109
         long	Entier long	8	-263≈-9,223×1018 → +263-1≈9,223×1018
-        float	Nombre reel simple	4	±2-149≈1.4×10-45 → ±2128-2104≈3.4×1038
+        float	Nombre reel simple	4	±2-149≈1.4×10-45 → ±2128-2104≈3.4×1038 // pour declarer un float: float x =5.5f
         double	Nombre reel double	8	±2-1074≈4,9×10-324 → ±21024-2971≈1,8×10308
         boolean	Valeur logique (booleen)	1	true (vrai), ou false (faux)
 les visibilites :
@@ -24742,6 +24767,7 @@ sudo : // si command not found faire d'abord su - puis apt-get install sudo -y
     /opt applications logiciels commerciaux installes
     /home repertoires persos pour utilisateur
     /var donnees frequements reecrites
+	/var/log contient le journal des erreurs
 les comptes utilisateurs sont sur etc/passwd (si un jour un gars qu'on ne connait pas fait des trucs) figurent dedans les homes des utilisateurs et on peut atteindre leur home en faisant cd ~nomutilisateur
 pour recharger le .profile // fichier chargé lorsque je me connecte au demarrage a la connexion initialise. dedans je peux mettre des commandes qui s'executent lors de ma connexion 
     faire: cd ou cd . puis . .profile (faire ls -tralh pour voir tout (attention pas tout forcement... mais je ne sais pas pourquoi)
@@ -24838,6 +24864,7 @@ pour quitter un manuel man:
 		faire q
 si a l'execution d'un script sh j'ai ca: cannot execute binary file
 		faire: file mon_fichier // connaitre le format du fichier si il est en dos ou unix marche aussi pour connaitre le detail d'un fichier audio wav LINKgsptnsdf
+		si command not found l'installer avec sudo apt-get install file
 		il va donner l'encodage de mon fichier.
 on peut voir les hosts sous /etc/hosts
 les droits utilisateurs sous /etc/hosts.allow
@@ -27310,6 +27337,7 @@ c cedille:
     e accentaigu majuscule &Eacute;
 u accent: 
     &ugrave;
+oe de coeur: &#339;
 euros:
     &#128; ou Alt+0128(windows-1252 sinon &#8364 Unicode) (1252: francais. 1250: tcheque)
 Javascript :
@@ -27545,7 +27573,7 @@ savoir si un element audio joue:
 	document.styleSheets[1].cssRules[3].style.fontSize="1000px" // prend la feuille de style 1, le troisieme block (attention les blocks media sont=undefined), definit-y le style font-size à 100px  
 			ou .cssRules[x].cssRules[y] pour les media //TODO a bien finir
 				ici le nom de la rule c'est .selectorText
-  pour savoir si une variable est un chiffre: 
+  pour savoir si une variable est un chiffre un nombre: 
     isNaN(toto); 
   pour avoir la proportion taille d'un element en pixcel au lieu de pourcentage largeur
       monelement.clientWidth
@@ -27656,7 +27684,7 @@ tester le javascript TDD :
                               	it(.skip pour ignorer)('nom du test', () => {
                                     // pour mocker un objet(xhr pour requete ajax par exemple)
                                   un module: pour le spyer
-						en fait pas besoin de jest on peut direct redefinir une methode d'un objet: memoclap.runmachin=async function(){return Promise.resolve("unittest")}; et si c'est memoclap a  une methode memoclap.toto qui appelle elle meme memoclap.runmachin alors pour que ça marche memoclap.toto(){exports.runmachin()} sinon le mock va pointer sur l'origine meme runmachin et non pas le mock mais attention exports n'est pas supporté par les browsers alors le seul moyen que j'ai trouvé pour réussir à le faire marcher sur un browser c'est ca : if (typeof(exports)=="undefined") promese=setAudioSrc(...) else promese=exports.setAudioSrc(...)
+						en fait pas besoin de jest on peut direct redefinir une methode d'un objet: memoclap.runmachin=async function(){return Promise.resolve("unittest")}; et si c'est memoclap a  une methode memoclap.toto qui appelle elle meme memoclap.runmachin alors pour que ça marche memoclap.toto(){exports.runmachin()} sinon le mock va pointer sur l'origine meme runmachin et non pas le mock mais attention exports n'est pas supporté par les browsers alors le seul moyen que j'ai trouvé pour réussir à le faire marcher sur un browser c'est ca: if (typeof(exports)=="undefined") promese=setAudioSrc(...) else promese=exports.setAudioSrc(...)
 						memoclap.saveActorsNameOnServer=jest.fn(()=>{console.log("aaaaaaaaaaaa")}); // le top pour faire un spy mais n'a pas marché une fois dans un Promise
 						unmodule.unemethode=jest.fn(); // pour que la methode d'un module ne fasse rien
 					
@@ -27672,7 +27700,7 @@ tester le javascript TDD :
                                          ou
                                          const mockMonObjet={ // si marche pas (le new mock ne peut pas s'instancier au run essayer ci dessus
 						nomdemamethode:jest.fn().mockImplementation..etc...voir ci dessous
-                                                send:jest.fn().mockImplementation(function(){this.onload();}),// ca ca marche bien :-)
+                                                send:jest.fn().mockImplementation(function(){this.onload();}),// ca ca marche bien:-)
                                                 ou
                                                 send:jest.fn(), // si on veut rien faire.
                                                 onload:jest.fn().mockImplementation(function(){}),//si on ne veut rien faire
@@ -27683,7 +27711,7 @@ tester le javascript TDD :
 				     window.alert = jest.fn(()=>{return true});
                                       window.XMLHttpRequest = jest.fn().mockImplementation(mockMonObjet);
                                              (.. mes tests..)
-					jest ne supporte pas la methode native scrollIntoView alors faire : Element.prototype.scrollIntoView = jest.fn();
+					jest ne supporte pas la methode native scrollIntoView alors faire: Element.prototype.scrollIntoView = jest.fn();
 				    mocker fetch: 
 						window.fetch= async function (){return Promise.resolve({status:200,
 								json: () => Promise.resolve({ status: 200}), // pas sur pour ça
@@ -27807,6 +27835,23 @@ tester le javascript TDD :
                     expect(unobjetdom.text()).toEqual("blabli");
         pour executer ce test: 
           >testem ci --launch PhantomJS(obsolete)
+DDD : autour d'une table avec tous les acteurs on redige ceci:
+	Feature: <titre de la feature>
+	Contexte: En tant que truc
+	  	 Je souhaite faire chose
+		 Pour ceci
+	Background:
+		Etant donné que ces membres existent:
+			x, y , z
+	Scenario1)
+		Etant donné que x et que y et que z
+		quand wwwwww et quand hhhhh
+		alors uuuuuuuuu
+		exemples:
+			xxxxxxxxxxxx
+	Scenario2)... etc...
+			
+	
 ES6 :modules: une page html/js peut importer une page html/js qui importe aussi: le browser gère les doublons si yen a // pas implemente dans firefox et safari?
 	copier cloner les proprietes d'un objet dans un autre rapidement: 
 		const {unprop,unautreprop,troisiemeprop:nomfinal} = unautrepbjet // equivaut à faire unprop=unautreobjet.unprop, unautreprop=unautreobjet.unautreprop,nomfinal=unautreobjet.troisiemeprop ATTENTION les noms de variables doivent etre les memes sinon ca ne marche pas
@@ -28164,7 +28209,7 @@ pour detecter si navigateur peut lire vorbid audio mp3:
     if (!!(document.getElementById(lecteur).canPlayType && document.getElementById(lecteur).canPlayType('audio/mpeg;').replace(/no/, '')))                        
         //Utils
         
-        convert 12hampm en 24h
+        convert 12hampm en 24h date heure (vieille methode)
                     var time = $("#starttime").val();
                     var hours = Number(time.match(/^(\d+)/)[1]);
                     var minutes = Number(time.match(/:(\d+)/)[1]);
@@ -29106,6 +29151,19 @@ pour faire un drag and drop avec html5:
                     }
                     
                   }
+pour faire drag and drop sur mobile
+	unelementdom.addEventListener('touchmove', handleMobileToucheMoveExtraitStart, false);
+	extraitElement.addEventListener('touchend', handleMobileToucheMoveExtraitEnd,false);
+	puis
+	export function handleMobileToucheMoveExtraitStart(e) {
+    		let touchLocation = e.targetTouches[0];
+	    	movingElement.style.top = touchLocation.pageY + 'px';
+		(...)
+	};
+	function handleMobileToucheMoveExtraitEnd(){
+	    let extraitNameWithExtMoved = this.id+".s";
+		(...)
+	}
 pour setter le name l'attribut la propriete d'un element tag html:  
         the element normally does not have a name attribute, so setting the DOM property like that myelement.name="toto" won't work.
         For example, setting the name property on an input element will work. Setting it on a div will not.
@@ -29982,7 +30040,7 @@ pour sauver ecrire recuperer les cookies: en javascript: LINKcooklskjhh
               	}
               }							
 pour executer du javascript a chaque fois qu'on appuie sur le clavier, qu'on presse un bouton, qu'on change la valeur d'un champ:
-		onKeyUp // et non pas onchange qui s'execute au changement du focus
+		onkeyup // et non pas onchange qui s'execute au changement du focus
 pour qu'une fenetre fille quand elle se ferme fasse une action dans la fenetre parente: affiche ou masque une div
 				<body onunload="confirmeOk();">
 				<?php echo javascript_tag("
@@ -30296,7 +30354,7 @@ PWA : progressive webapps :
             pluggin chrome "lighthouse"
     service-workers : serviceworkers : POUR SUPPRIMER TOUT CACHE POUR TESTER: 1)debugger chrome>onglet application > clearstorage> bouton clear site data. A son propre systeme de cache manipulable et qui se place AVANT le cache http quand j'envoie une requete vers le serveur: user->CachePWA->CacheHTTP(voir LINKcachehttp)->Serveur
     pour faire un site qui marche offline avec les service workers: html5: P envoyer notifications meme quand navigateur est fermé car c'est un worker(thread) indépendant de tous les navigateurs.(un peu comme un programme nodejs) Peut travailler avec indexDB database voir LINKpwanotif
-    ça ne marche que en https ou en http://localhost
+    ça ne marche que en https ou en http://localhost mais si je veux le faire en local en https alors faire un certif auto signé, le declarer dans voir LINKàç<çç_à  et demarrer chrome comme ça: ./google-chrome-stable --ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=https://www.fauxmemoclap.co./google-chrome-stable --ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=https://www.fauxmemoclap.com
     serviceworker.js:
     if ('serviceWorker' in navigator) { // s'assurer que servicerworker est supporte par le navigateur
             navigator.serviceWorker.register('https://mon_site/service-worker-v1.js',{scope:'./'}).then(function(registration) {      // .register(uneUrlVersUneResource) renvoit une promesse. service-worker.js doit être placé dans un repertoire à la racine pour que toutes les urls soient gérées. Car si je le mets sous https://mon_site/tata/service-worker.js alors seulement la partie sous tata pourra etre offline
@@ -30737,7 +30795,7 @@ PWA : progressive webapps :
 									  });
 						}
 						function fetchWithTimeout (request, timeout = 7000) {
-						    return Promise.race([
+						    return Promise.race([// execute toutes les promesses du tableau mais seul le resultat de la plus rapide est retourné
 							fetch(request),
 							new Promise((_, reject) =>
 							    setTimeout(() => reject( new Error("WORKER: Network TimedOut")), timeout)
@@ -30752,7 +30810,7 @@ PWA : progressive webapps :
 						    return fetchWithTimeout(request,timeout)
 						    .then((response)=>{
 								let responseToCach=response.clone();
-								if (request.headers.get('range')) {
+								if (request.headers.get('range')) { // aujourd'hui on a plus besoin de toute cette partie les services wokers dans le browser savent gerer les reponses 206 desormais
 									let promiseWithResponseRanged = cacheAndModifyResponseForRange(request,response);
 									console.log("WORKER:rangedResponseReturned: "+promiseWithResponseRanged);
 								      return promiseWithResponseRanged;
