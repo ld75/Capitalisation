@@ -538,7 +538,7 @@ faire rapidos un serveur http:
       npm run build
   pour tester
       npm test // a faire dans mon projet ou bien C:\Users\lduverge\Desktop\node-v8.12.0-win-x64\npm test --scripts-prepend-node-path // si npm n'est pas defini dans le path windows Linktestjest
-  package.json :
+  package.json:
       {
   "name": "wenhuaduverge",
   "version": "1.0.0",
@@ -811,20 +811,40 @@ docker-compose : dockercompose : s'installe avec apt-get ou aptitude
                 docker-compose down // attention, supprime tous les conteneurs et images sauf les volumes
                 docker-compose down -v// attention, supprime tous les conteneurs, images et volumes managés                                        
 		docker-compose push // push par defaut dans le docker.hub.(des ricains) sauf si j'ai tagge LINKtagregistr mon image 
-Kubernetes :(K8)
+Kubernetes :(K8) le cluster K8 contient des Nodes(Masters et Workers)
 	gere des millions de containers docker ou autres dans des env varies: cloud ou serveurs au lieu de le faire par scripts
 	-pas de downntime; scalable(rapidité); desastre resilient grace a backup/restore 
-	pod=wrapper de container(pod pourrait avoir plusieurs container mais c rare) est ephemere  <  Node sont des mirroirs de groupes de pods qui partagent entre PodsMirroirs les memes SERVICES(=ip). Chaque Node contient x Pods, 1ContainerRuntime(exple:docker)
-	au sein du node les pods ont un network dedié. donc ont chacun une adrssIP interne.
-									MAIS sont ephemeres aussi comme le pod donc chaque pod partage avec d'autres podsmirroirs un serviceInterne qui lui est persistant qui son adresse IPInterne aussi et qui est aussi un loadbalancer
-									url du serviceExterne est http://adresse.ip.du.node:portDuService
+	installation sur debian:
+		curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+		chmod +x ./kubectl
+		sudo mv ./kubectl /usr/local/bin/kubectl
+		kubectl version --client
+		sudo apt install libvirt-clients libvirt-daemon-system virtinst
+		curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
+		sudo install minikube-linux-amd64 /usr/local/bin/minikube
+		sudo dpkg -i minikube_latest_amd64.deb
+		kubectl // pour tester que c bien installe
+		minikube //pour tester que c bien installe
+		
+	pod=wrapper de container(pod pourrait avoir plusieurs container mais c rare) est ephemere  <  NodeWorkers sont des mirroirs de groupes de pods qui partagent entre PodsMirroirs les memes SERVICES(=ip). Chaque NodeWorker contient x Pods, 1ContainerRuntime(exple:docker) à installer dans chaque NodeWorker, 1Kubelet qui interragit avec ContainerRuntime et le NodeWorker pour assigner les resources du NodeWorker au Pod en passant par ContainerRuntime,1KubeProxy qui forward les requetes qui passent par les services de façon la plus optimale en terme de trajet. 
+	au sein du NodeWorker les pods ont un network dedié. donc ont chacun une adrssIP interne.
+									MAIS NodesWorker sont ephemeres aussi comme le pod donc chaque pod partage avec d'autres podsmirroirs un serviceInterne qui lui est persistant qui son adresse IPInterne aussi et qui est aussi un loadbalancer
+									url du serviceExterne est http://adresse.ip.du.nodeworker:portDuService
 									url de l'ingress httpS://NomDeDomaine (l'ingress forward le trafic au serviceExterne)
 	ConfigMap texte pur non securisé contient la conf des applications (ca remplace la conf qu'on met dans le docker-compose pour que les services se voient)	|
 		DB_URL=la_vraie_url / dans dockercompose j'ai la ref DB_URL // comme ca plus besoin de refaire l'image quand lien change				|_ sont connectés aux pods
 	Secret:=ConfigMap mais crypté puis en base64 on y met les password et certificats										|
 	Deployement defini les podsMirroirsSTATELESS(tout sauf DATABASES) partageant des services. Défini aussi les scales(nb de pods mirroirs loadbalancés). Finallement un Deployement c'est comme un wrapper d'un pod qui sous jacament sont des pods miroirs
 	StatefulSet defini les podsMirroirsSTATEFULL(DATABASES) partagent des services. Capable de synchro des Databases pour ne pas corrompre la base.(difficile à faire donc en general la database est hors de K8)	
-	un pod peut etre relie a un volume(PERSISTANT contrairement au pod) qui lui peut etre dans le meme node ou ailleurs du cluster K8: cloud etc...
+	un pod peut etre relie a un volume(PERSISTANT contrairement au pod) qui lui peut etre dans le meme NodeWorker ou ailleurs du cluster K8: cloud etc...
+	MasterNodeS gerent le cycle de vie des Nodes et Pods: 1)ApiServer sécurisé=uniqueEntrypoint. On communique avec à travers un CLI(=kubectl c le plus puissant) ou une UI ou une API. 2) Sceduler: decide intelligement dans quel Node qui a le plus de resources dispo demarrer le pod et demande à Kubelet de le faire. 3)ControllerManager detecte les pods qui tombent dire au scheduler de les remplacer. 4) etcd = Map du state en mémoire (quels pods sont morts, resources restantes des nodes etc...)
+		entre eux ils partagent virtuelement le meme etcd et ApiServeur qui sont synchronisés entre MasterNodes. MasterNodes consomment peu de resources.
+		ratio MasterNodes/WorkerNodes = 1/2 
+	Minikube=kubernetes cluster en local dans une virtualbox auto-creee où NodeWorkers et MasterNodes bossent dans un seul et meme node qui contient un dockerContainerRuntime preinstallé
+	minikube start --vm-driver=kvm2 // crée et demarre un cluster kubernetes mini en demarrant sur la machine virtuelle kvm que j'ai déjà installé. Si je ne mets pas d'option il arrive a demarrer mais du coup je ne sais pas ou il tourne
+	kubectl get nodes // liste moi les Nodes(il y en a qu'un dans minikube)
+	minikube status // info sur le statut de mon cluster
+	
 visualstudiocode :editeur:
   acceder au fichier trouver: ctrl+p
 gource : annimation de git
@@ -5541,7 +5561,7 @@ pour que l'image background de fond prenne toute la place
   .fond
   {
 	background: url(accueil.jpg) no-repeat center center fixed; 
-  -webkit-background-size: cover;
+  -webkit-background-size: cover; // a utiliser avec radius
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
@@ -8118,169 +8138,7 @@ pour se connecter avec un utilisateur user
 				Project: {UnChampARamener:1} // ou 0 pour exclure
 				Sort: {UnChampAFiltrer:1} // ou -1 pour desc
 		                  
-  DM 
-   ^ 
-   | IOC (interfaces)
-   V
-Hibernate : implemente jpa
-Hibernet le livre:
-exemple de fichier mapping pojo-base p10
-si erreur:
-        (don't flush the Session after an exception occurs) 
-            c'est parce qu'il y aune exception dans une transation et que cette exception n'est pas trowée et que du coup derriere je refais une autre requete dans cette transaction. IL faut gérer la transaction. avec LINKtranslsdfjai 
-si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from column 5 to TIMESTAMP
-        il faut que je modif mes valeurs ='0000-00-00 00:00:00' en date valide 
-  definition bean: getter, setter independant (pas d'extension ni d'heritage) serializable
-  definition pojo: idemn que bean mais peut etendre, heriter, peut ne pas être serializable
-  DAO faire un store par dm p7 gestion des sessions à ce niveau grâce au Contextual Session
-      possibilite synchro schema base-DAO java
-      annotations hibernate:p5-6
-          Feaching
-          caching (parametrer taille et temps d'expiration)
-          lazy-loading
-              for (Category categ: categories)
-              {
-                for (Art art: categ.getArt()){system.out.print(art.getTitle());}} // FAIT N requettes! (erreur N+1)
-              Pour eviter faire:
-               1) List cat = entityManager.createQuery("SELECT cat FROM category cat LEFT JOIN FETCH cat.art WHERE cat.id=:id").getResultList(); //overrite lazy default behaviour at runtime
-               2) @ManyToMany
-                  @BatchSize(size=10) recup que les 10 premps ou bien @Fetch(FetchMode.JOIN)// recup tout! inverse de lazy
-                  public Set<Art> getArt(){return arts;}
-              Si LazyInitializationException: c parce qu'il n'existe pas d'EntityManager                
-      exceptions generiques hibernates vers spring p7
-            pour faire des requetes:
-            HQL   possede criteria api comme JPQL
-            ActiveRecordPattern (pour pouvoir faire monEntite.save())
-      Hibernate peut fonctionner avec framework Lucene qui permet de faire des recherches textuelles imprecises comme google
-      Si classes java hierarchisees, meilleur option c'est faire ca: 
-            Java                                                                                    DB
-          @Entity                                                                                     1 seule table
-          @Id                                                                                         c'est le champ de cle primaire
-          @GeneratedValue                                                                             id est incremente auto
-          @Inheritance(strategy = Inheritance type.SINGLE_TABLE)                                         cols de A
-          @DiscriminatorColumn(discriminatorType=DiscriminatorType.STRING ou CHAR ou INTEGER)            cols de B et de C
-          @DiscriminatorValue("GENERIC")
-                A                                                                                   
-               /  \                         
-              /      @DiscriminatorValue("CHAISPASCEQUECEST!")
-      B extends A     C extends A                        
-       @Entity
-       @Cache(usage=CacheConcurrencyStrategy.READ_WRITE//existe quasi pas de cache: access concurent bien tolere .NONSTRICT_READ_WRITE si updates rares(bof, pas bien pige) .READ_ONLY(cache jamais invalide: tres performant mais updates pas possibles si cache est outOfdate (sur?))
-         @IdClass(ProjectId.class) // facultatif mais recommandé: quand ma classe à deux champs qui forment la cle primaire JPA demande de faire ça et dans la classe ProjectId  c'est juste une classe avec deux champs et aucune annotation. Meme pas besoin de getter et setters
-       @Table(name="NonDeLaTableEnBDSIDifferenteQueNomClasseJava") // optionnel
-            public class UserPermission implements DomainObject, Serializable 
-            {
-            	@Id //Cle primaire
-            	@GeneratedValue //(strategy=GenerationType.AUTO par defaut c a d 1 sequence pot tables. Deconseille) ou (strategy=GenerationType.SEQUENCE, generator="NOMDEMASEQ") 1 sequence nommee NOMDEMASEQ pour cette table seulement
-            	private Integer id;
-
-              @ManyToOne //1ici a n labas(passur?)
-              @Column(name="NonDeLaColonneEnBDSIDifferenteQueNomProprieteJava") // optionnel. si j'ai erreur "during the execution of the query was detected to be null. Primary keys must not contain null" c'est parce que le name ne correspond pas exactement à celui de la colonne sql. Attention les espaces comptent
-              @Column(name="price", columnDefinition="Decimal(10,2) default '0.0'") // si on veut une valeur par defaut DANS LA BASE de donnée seulement; renvoit qd meme null en java si ce champ est déjà null dans la base
-              @Cache peut etre aussi mis au niveau d'une propriete
-              @NotNull // si je veux valider que le champ ne soit pas null
-               @Pattern(regexp = "^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$",message = "{invalid.phonenumber}") // si je veux valider que le champ respecte un pattern regexp
-            	   private Idea idea;
-            	@OneToMany (orphanRemoval=true//pour les deletes en cascade, cascade={javax.persistence.CascadeType.ALL}//pour les update en cascades)
-            	               ,mappedBy="permission") // car je suis dans le classe Permission.class et je fais ref à UserPermission.permission
-            	   private Set<User> getUsers(){return users;}
-            	@Temporal(TemporalType.TIMESTAMP)
-            	   public Date getCommentDate(){return commentDate;}
-            	@Version //pour les acces concurents   (voir cache ci-dessus)
-            	   public Integer getVersion(){return version;}
-              @Transient // en opposition à @Basic qui est mis par defaut
-                  public String proprieteNonPersistanteCarOnAMisTransient;                            
-                  ManyToMany: 2 possibilites:
-                        permission.class:
-                          @ManyToMany (mappedBy="nomDeLaProprieteDeLautreEntiteQuiAppelleCetteClasseLà") //mappedBy optionel
-                        	@JoinTable(name="UserPermission")  // ma table de jointure. pas besoin de creer la table de cette classe.
-                        	private Set<User> users;
-                        user.class:
-                            @ManyToMany
-                    	      @JoinTable(name="UserPermission")
-                    	      private Set<Permission> permissions;
-                  ManyToMany jointure de trois tables: 
-                            ma table de jointure: 
-                              @Entity
-                            public class UserPermission implements DomainObject, Serializable 
-                            {
-                            	@Id
-                            	private Integer id;
-                            	@ManyToOne 
-                            	private Idea idea;
-            	@ManyToOne
-            	private User user;
-            	@ManyToOne
-            	private Permission permission;
-            	@Override
-            	public String getId() {
-            		return null;
-            	}
-                            } 
-                          	@Override
-                          	public String getId() {
-                          		return null;
-                          	}
-                          }    	      
-      chacune de mes tables jointes: 
-        	@OneToMany(mappedBy="permission") // car je suis dans le classe Permission.class et je fais ref à UserPermission.permission
-        	private Set<UserPermission> userPermission;
-             Comparer des entitees entre elles si elles sont des listes comme proprietes: il faut overrider equals et hashcode: (voir page 84Spring persistance with Hibernate)
-                @Override    (A FAIRE: GENERALISER AVEC LE DESIGN PATTERN DES DAO: dao sont morts remplacés par entitymanager voir LINKemdlksqj)
-                public boolean equals(Object o)
-                {
-                  if(this==o) return true;
-                  if(!(o instanceof Category)) return false;
-                  Category category = (Category));
-                  if (categoryName!=null? !categoryName.equals(category.categoryName): category.categoryName!=null)
-                  {return false;
-                  }else{return true;}
-                }
-                @Override
-                public int hashCode()
-                {return categoryName!=null? categoryName.hashcode():0;}
-        utile pour transactions
-            mettre @Transactional devant classe ou methode // rend ma methode dans une transaction LINKtranslsdfjai
-            @Transactional(rollbackFor = Exception.class, noRollbackFor = AuthWebBusinessWSException.class) // si je throw  une exception dans mon programme ca fait un rollback si c'est une autre exception de type Authmachin ca ne fait pas de rollback 
-            AFAIRE pourquoi mettre transactional pour readonly requettes?
-            si j'ai javax.persistence.TransactionRequiredException: null mettre @Transactional plus en amont ou plus en aval du stacktrace. Il n'est pas sur la bonne méthode.
-    si j'ai l'erreur Internal Exception: java.sql.SQLIntegrityConstraintViolationException: integrity constraint violation: NOT NULL check constraint; SYS_CT_10110 table: ALO_USR column: USR_NAME
-            il me disait que l'erreur etait dans une methode select mais qui n'avait rien a voir avec la table ci dessus. En fait l'erreur a eu lieu juste avant! Connerie de merde. bref. effectivement le champ etait null dans la requette precedente alors qu'il ne devait pas. un peu merdique ce truc. Il aurait pu m'indiquer le bon stack ce con.
-    
-hsqldb : LINKldkjgieieioruz
-        base de donnée pour les tests
-        si erreur data exception: string data, right truncation c'est parce que j'ai voulu inserer une colonne trop longue
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
-		<property name="url" value="jdbc:hsqldb:mem:v3" /> // bien mettre mem sinon il fait chier avec les connexions mais c'est que pour tester car volatile
-		<property name="username" value="sa" />
-		<property name="password" value="" />
-	</bean>                
-    maven:
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>2.3.4</version>
-        </dependency>
-        classe de test:
-            @BeforeAll
-    public static void initDB() throws ClassNotFoundException, SQLException
-	 Class.forName("org.hsqldb.jdbc.JDBCDriver");
-           try (Connection connection = getConnection(); Statement statement = connection.createStatement();) {
-            statement.execute("CREATE TABLE employee (id INT NOT NULL, name VARCHAR(50) NOT NULL,email VARCHAR(50) NOT NULL, PRIMARY KEY (id))");
-            connection.commit();
-            statement.executeUpdate(
-                    "INSERT INTO employee VALUES (1001,'Vinod Kumar Kashyap', 'vinod@javacodegeeks.com')");
-            statement.executeUpdate("INSERT INTO employee VALUES (1002,'Dhwani Kashyap', 'dhwani@javacodegeeks.com')");
-            statement.executeUpdate("INSERT INTO employee VALUES (1003,'Asmi Kashyap', 'asmi@javacodegeeks.com')");
-            connection.commit();
-        }
-    }
-            @AfterAll
-            public static void destroy() throws SQLException, ClassNotFoundException, IOException
-            {
-                try (Connection connection = getConnection(); Statement statement = connection.createStatement();) {
-                    statement.executeUpdate("DROP TABLE employee");
+            statement.executeUpdate("DROP TABLE employee");
                     connection.commit();
                 }
             }
@@ -8367,121 +8225,6 @@ faire un formulaire de upload telechargement de fichier, d'image:
                                 }
                             });
                             splitPanel.add(formulaire);
-                        
-Pour faire quoi?:
-            @AfterAll
-            public static void destroy() throws SQLException, ClassNotFoundException, IOException
-            {
-                try (Connection connection = getConnection(); Statement statement = connection.createStatement();) {
-                    statement.executeUpdate("DROP TABLE employee");
-                    connection.commit();
-                }
-            }
-            private static Connection getConnection() throws SQLException {
-                return DriverManager.getConnection("jdbc:hsqldb:mem:employees", "vinod", "vinod");// bien mettre mem sinon il fait chier avec les connexions mais c'est que pour tester car volatile
-            }
-            @Test
-            public void getTotalRecordsTest() {
-                int ret=0;
-                try (Connection connection = getConnection(); Statement statement = connection.createStatement();) {
-                    ResultSet result = statement.executeQuery("SELECT count(*) as total FROM employee");
-                    if (result.next()) {
-                        ret= result.getInt("total");
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                Assertions.assertEquals(3, ret);
-            }
-JOOQ : mieus que jdo?
-    facile: dans eclipse pour lancer le generateur: 
-    class main: org.jooq.util.GenerationTool
-    arguments de programme: /jooq.properties
-    ce fichier contient: 
-    jooq.properties:
-           #Configure the database connection here
-          jdbc.Driver=com.mysql.jdbc.Driver
-          jdbc.URL=jdbc:mysql://localhost:3306/lduverge
-          jdbc.Schema=lduverge
-          jdbc.User=root
-          jdbc.Password=
-          
-          #The default code generator. You can override this one, to generate your own code style
-          #Defaults to org.jooq.util.DefaultGenerator
-          generator=org.jooq.util.DefaultGenerator
-          
-          #The database type. The format here is:
-          #generator.database=org.util.[database].[database]Database
-          generator.database=org.jooq.util.mysql.MySQLDatabase
-          
-          #All elements that are generated from your schema (several Java regular expressions, separated by comma)
-          generator.database.includes=.*
-          
-          #All elements that are excluded from your schema (several Java regular expressions, separated by comma). Excludes match before includes
-          generator.database.excludes=
-          
-          #Primary key / foreign key relations should be generated and used. 
-          #This will be a prerequisite for various advanced features
-          #Defaults to false
-          generator.generate.relations=true
-          
-          #Generate deprecated code for backwards compatibility 
-          #Defaults to true
-          generator.generate.deprecated=false
-          
-          #The destination package of your generated classes (within the destination directory)
-          generator.target.package=com.application.yoani.server.servlet.jooq
-          
-          #The destination directory of your generated classes
-          generator.target.directory=D:/workspaceGanymedeGXT/YoaniWeb/src/
-          
-          #Generate a master data table enum classes (several Java regular expressions, separated by comma)
-          #generator.generate.master-data-tables=[a list of tables]
-          
-          #For every master data table, specify two special columns
-          #generator.generate.master-data-table-literal.[master data table]=[column used for enum literals]
-          #generator.generate.master-data-table-description.[master data table]=[column used for documentation]
-
-JDO :
-si j'ai l'erreur 
-    error: cannot access Detacheable.... retapper code pour qu'il recompile ca devrait marcher.
-pour faire un java2db java vers la base de donnee: 
-    soit utiliser maven mais ca ne marche pas tout le temps (???) Attention bien utiliser mvn datanucleus:schema-createschema  et non pas mvn datanucleus:schema-create!!
-    ATTEntion si rien n'est cree en base on peut executer datanucleus:schema-validate et là .. ca marche... pfff 
-    Soit utiliser le pluggin eclipse DataNucleus de eclipse
-faire une relation N-N jointure nn
-        SUPPLIERS------PRODUCTS_SUPPLIERS---------PRODUCT
-        supplier_id     product_id                product_id
-                        supplier_id
-                        
-      // ATTENTION si il enregistre qu'une seule ligne à chaque fois dans la table des jointures essayer d'inverser les annotations entre les deux classes
-        public class Product // important: mettre les getters et setters et les utiliser sinon le passage detached-clean->detached-dirty ne se fait pas si on modif un champ
-        {
-            @Persistent(table="PRODUCTS_SUPPLIERS")
-            @Join(column="PRODUCT_ID")
-            @Element(column="SUPPLIER_ID")
-            Set<Supplier> suppliers; Attention plutot utiliser ArrayList à Set car ArrayList est serialisable!
-        }
-        public class Supplier
-        {
-            @Persistent(mappedBy="suppliers") // nom de l'objet java
-            Set<Products> products;  Attention plutot utiliser ArrayList à Set car ArrayList est est serialisable!
-        }
-Faire une relation 1-N
-ELEVE---------------GROUPE (un eleve appartient à un groupe et un groupe appartient à plusieurs eleves)
-ideleve             idgroupe
-idgroupe
-public class Groupe
-{
-    Set<Eleve> eleves;  Attention plutot utiliser ArrayList à Set car ArrayList est est serialisable!
-}
-
-??? :
-    (...)
-     logginService.getStudentById(st, new AsyncCallback<VPA01_STUDENT>()
-				{
-				(...)
-				}
     dans xxxx.gwt.xml
         <module>
               <!-- Inherit our applications main module.                      -->
@@ -9176,14 +8919,16 @@ si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from col
       B extends A     C extends A                        
        @Entity
        @Cache(usage=CacheConcurrencyStrategy.READ_WRITE//existe quasi pas de cache: access concurent bien tolere .NONSTRICT_READ_WRITE si updates rares(bof, pas bien pige) .READ_ONLY(cache jamais invalide: tres performant mais updates pas possibles si cache est outOfdate (sur?))
+         @IdClass(ProjectId.class) // facultatif mais recommandé: quand ma classe à deux champs qui forment la cle primaire JPA demande de faire ça et dans la classe ProjectId  c'est juste une classe avec deux champs et aucune annotation. Meme pas besoin de getter et setters
        @Table(name="NonDeLaTableEnBDSIDifferenteQueNomClasseJava") // optionnel
             public class UserPermission implements DomainObject, Serializable 
             {
             	@Id //Cle primaire
             	@GeneratedValue //(strategy=GenerationType.AUTO par defaut c a d 1 sequence pot tables. Deconseille) ou (strategy=GenerationType.SEQUENCE, generator="NOMDEMASEQ") 1 sequence nommee NOMDEMASEQ pour cette table seulement
             	private Integer id;
+
               @ManyToOne //1ici a n labas(passur?)
-              @Column(name="NonDeLaColonneEnBDSIDifferenteQueNomProprieteJava") // optionnel
+              @Column(name="NonDeLaColonneEnBDSIDifferenteQueNomProprieteJava") // optionnel. si j'ai erreur "during the execution of the query was detected to be null. Primary keys must not contain null" c'est parce que le name ne correspond pas exactement à celui de la colonne sql. Attention les espaces comptent
               @Column(name="price", columnDefinition="Decimal(10,2) default '0.0'") // si on veut une valeur par defaut DANS LA BASE de donnée seulement; renvoit qd meme null en java si ce champ est déjà null dans la base
               @Cache peut etre aussi mis au niveau d'une propriete
               @NotNull // si je veux valider que le champ ne soit pas null
@@ -9250,7 +8995,7 @@ si j'ai cette erreur:        Cannot convert value '0000-00-00 00:00:00' from col
         utile pour transactions
             mettre @Transactional devant classe ou methode // rend ma methode dans une transaction LINKtranslsdfjai
             @Transactional(rollbackFor = Exception.class, noRollbackFor = AuthWebBusinessWSException.class) // si je throw  une exception dans mon programme ca fait un rollback si c'est une autre exception de type Authmachin ca ne fait pas de rollback 
-            AF pourquoi mettre transactional pour readonly requettes?
+            AFAIRE pourquoi mettre transactional pour readonly requettes?
             si j'ai javax.persistence.TransactionRequiredException: null mettre @Transactional plus en amont ou plus en aval du stacktrace. Il n'est pas sur la bonne méthode.
     si j'ai l'erreur Internal Exception: java.sql.SQLIntegrityConstraintViolationException: integrity constraint violation: NOT NULL check constraint; SYS_CT_10110 table: ALO_USR column: USR_NAME
             il me disait que l'erreur etait dans une methode select mais qui n'avait rien a voir avec la table ci dessus. En fait l'erreur a eu lieu juste avant! Connerie de merde. bref. effectivement le champ etait null dans la requette precedente alors qu'il ne devait pas. un peu merdique ce truc. Il aurait pu m'indiquer le bon stack ce con.
@@ -22864,6 +22609,10 @@ private static DecimalFormat  nf = new DecimalFormat("000" ); ou "00.000" ou "##
             decimalformat peut etre remplacé par string.format pour ecrire les millions  String.format("%.2fM", theNumber/ 1000000.0); ou String.format("%,.2f",totalNPV) LINKStringFOrmatNumb 
 String retour =code.concat(nf.format(numberTest));
 retour va etre egal à 001
+      ou 
+String format = new DecimalFormat("##.##").format(Math.random() * 1000).replace(",",".");
+        return Double.parseDouble(format);
+
 --------------
 erreurs exception java: faire un e.printStackTrace() linkgetStringStackTrace pour avoir plus de details sur l'erreur java. afficher le stacktrace depuis java9 utiliser StackWalker
 		mais pour le printer dans un log faire: 
@@ -25609,6 +25358,7 @@ yy: copier ligne puis P: coller ligne
 4yy puis P: le faire pour 4 lgines
 copier-coller bouts:
   v puis bouger fleche pour selectionner puis d pour couper ou y pour copier puis P pour coller ce que j'avais selectionne
+ Ctrl+v pour selectionner en mode columne colonnes
 faire une recherche find: :set ignorecase puis :set smartcase puis /blabla // si j'ai pas fait les set alors faire /blabla\c pour une recherche case noncasesensitive majuscule minuscule. Pour revenir à une recherche casesensitive faire: :set noic
 		ou /bla\c exemple: /motcherche\c pour case insensitive ignorer majuscule minuscules.\c peut apparaitre partout debut ou fin et tapper. pour faire next, wildcard faire .*, tapper n (pour echapper les / slash faire un backslash) pour rechercher en arrière: N
 		pour trouver rechercher deux mots dans n'importe quel ordre sur une ligne: /.*mot1\&.*mot2\&.*mot3
@@ -27341,6 +27091,12 @@ oe de coeur: &#339;
 euros:
     &#128; ou Alt+0128(windows-1252 sinon &#8364 Unicode) (1252: francais. 1250: tcheque)
 Javascript :
+JSON :
+	piege: pour instancier un objet en JSON ceci ne marche pas:
+		let monobjet={unevariable:unevaleur}
+			il faut faire:
+			let monobjet={};
+			monobjet[unevariable]=unevaleur
 STT : speach to text:
 	Regarder CMUSphinx https://cmusphinx.github.io/wiki/tutorialsphinx4/ les modeles de langues sont sous https://sourceforge.net/projects/cmusphinx/files/Acoustic%20and%20Language%20Models/
 	TTS : text to speach :texttospeach :
@@ -27667,7 +27423,7 @@ tester le javascript TDD :
                     const html = fs.readFileSync(path.resolve(__dirname,'./resources/indexPro.html'),'utf8');
                     const htmltemplates = fs.readFileSync(path.resolve(__dirname,'./resources/memoclap-template.html'),'utf8');
                     puis 
-                         beforeAll(async () => {
+                         beforeAll(async () => { // attention ne passe par là que si j'execute tout le fichier
                           document.documentElement.innerHTML="<html><body>"+htmltemplates+html; // attention erreur si html contient je ne sais quoi
                           ou
                           document.body.innerHTML="htmltemplate+html";
@@ -28148,15 +27904,16 @@ trier les options d'un select:
                                         										}
                                       												
 faire preceder un chiffre d'un certain nombre de zeros: // regarder plutot DecimalFormat 
-    function precedByZerosForLenght(number , lenght )
-    {        
-      number=number+"";                                                            
-    	while (number.length<lenght)                            
-    	{                                                                  
-    		number = "0"+number;                   
-    	}                                                                  
-    	return number;                                            
+precedByZerosForLenght(number , lenght )
+    {
+        let strnumber=number+"";
+        while (strnumber.length<lenght)
+        {
+            strnumber= "0"+strnumber;
+        }
+        return strnumber;
     }
+
 declarer et executer une fonction encapsulee independante isolee scope: 
             objetouVariableExporteeAlexterieurfacultatif = (function (linkplusclairfacultatif, moduleaaugmenterEtReexporterSiCeModuleEstPartageParPlusieursFichiersDistincts) {
                 //code 
@@ -29153,13 +28910,21 @@ pour faire un drag and drop avec html5:
                   }
 pour faire drag and drop sur mobile
 	unelementdom.addEventListener('touchmove', handleMobileToucheMoveExtraitStart, false);
-	extraitElement.addEventListener('touchend', handleMobileToucheMoveExtraitEnd,false);
+	extraitElement.addEventListener('touchend', handleMobileToucheMoveExtraitEnd,false); // touchstart detect quand on appuye la sur le truc; pas quand on drag dessus.
 	puis
 	export function handleMobileToucheMoveExtraitStart(e) {
-    		let touchLocation = e.targetTouches[0];
+    		let touchLocation = e.targetTouches[0];// 0 zero c'est parce qu'on utilise un seul doigt
 	    	movingElement.style.top = touchLocation.pageY + 'px';
 		(...)
+		destinatairespotentiels.forEach((potentialtarget)=>{methodeOver(e,potentialtarget, movingElement)});
 	};
+	function mmethodeOver(evenement,elementPotentialTarget, elementMoving)
+	{
+	    let movingElementY= elementMoving.offsetTop;
+	    let targetPos=elementPotentialTarget.offsetTop;
+	    if (targetPos-movingElementY>30 && targetPos-movingElementY<60){elementPotentialTarget.classList.add('over');}
+	    else elementPotentialTarget.classList.remove('over');
+	}
 	function handleMobileToucheMoveExtraitEnd(){
 	    let extraitNameWithExtMoved = this.id+".s";
 		(...)
@@ -29692,10 +29457,7 @@ arrondir un chiffre avec des zeros: en faire des multiples de mille ici // regar
       }
 pour arrondire un chiffre avec deux chiffres apres la virgule: attention il arrondi bien sinon ya Math.floor(x) qui arrondit au int en dessous: inferieur et Math.ceil() qui arrondi au dessus 
       Math.round(maVariable*100)/100 	
-      ou
-      String format = new DecimalFormat("##.##").format(Math.random() * 1000).replace(",",".");
-        return Double.parseDouble(format);
-pour faire un split: morceaux decouper separateur token
+      pour faire un split: morceaux decouper separateur token
         alert(allsongs);
         			var reg=new RegExp("[ ,;]+", "g"); // va spliter sur espace, , et ;
         			var tableau=allsongs.split(reg);
