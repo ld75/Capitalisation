@@ -1,4 +1,4 @@
-(?=.*string)(?=.*plusieurs)(?=.*lignes)
+Darras123Baroco123Petit(?=.*string)(?=.*plusieurs)(?=.*lignes)
 AFAIRE :
     Entretien:
         qu'est ce que rest, architecture ntiers, polymorphisme, mvc, dto, bdd: gerkin  
@@ -8042,7 +8042,7 @@ pour se connecter avec un utilisateur user
 	groupby avec aggregate:
 		db.Invoice.aggregate([ // group by et count
 			{
-				$match:{
+				$match:{				//Facultatif on peut le mettre après le group
 					"UnChampQuiExiste":{
 						critere de recherche
 					}
@@ -8054,18 +8054,26 @@ pour se connecter avec un utilisateur user
 			{
 				$group:{
 					_id:{ // toujours mettre _id ici
-						UnNomDeChampAInventer:"$UnAutreChampQuiExisteAPlusieursNiveauAApplatir.UnSousChamp" //on groupby le souschamp.
-						,facultatifUnAutreNomDeChampAInventer:"$...etc
+						UnNomDeChampAInventer:"$UnAutreChampQuiExisteAPlusieursNiveauAApplatir.UnSousChamp" ou "$UnAutreChampDePremierLevel" //on groupby le souschamp.
+						,facultatifUnAutreNomDeChampAInventer:"$...etc									    // on groupby sur ces deux champs
 						},
+					doublons:{ $addToSet:"$_id"}, // ce truc rajoute un champ doublon qui est a true je crois quand deux docs ont le meme _id	
 					"count":{ "$sum":1}   //le count par groupe
+				}
+			},
+			{
+				$match:{				//Facultatif ne choisir que les doublons
+					"count":{"$gt":1}	
 				}
 			},
 			{
 				$sort:{count:1}} // ou -1 // block facultatif
 			}
-		])
+		]).forEach(function(doc){ // possibilité de faire un traitement sur le resultat
+			doc.dups.shift(); // ce truc je crois saute
 	faire un update:
-		db.Contract.update({marequetesansfind},{$set:{"champ.a.setter.3.en.profondeur" ou champASetterEnSurface:"nouvelle valeur"}}) wildcart n'a pas marché ni $ qui ferait office de wildcard
+		db.Contract.update({marequetesansfind},{$set:{"champ.a.setter.3.en.profondeur" ou "champTableau.$.sousChampAlindexDollarPointéParMaRequeteFind" ou "champTableau.$[].sousChampDansTousLesElementsDuChampTalbeau" ou champASetterEnSurface:"nouvelle valeur"}}) wildcart n'a pas marché ni $ qui ferait office de wildcard
+							
 	dupliquer copier des documents des elements dans une autre collection:(pas besoin de créer cette collection ca se fait tout seul) dans une meme base de donnee
 		db.macollection.find(....).forEach(function(doc){db.nouvellecollection.insert(doc)}) // il parrait qu'on peut aussi le faire avec copyTo() jamais essayé
 	copier une collection d'une base de donnée vers une autre base de donnée
@@ -8403,14 +8411,17 @@ ajouter des h2 ou directement du html
   yourpannel.add(html);
 pour qu'il ne compile permutation que pour un navigateur, plus rapide: ici chrome:
       dans fichier .gwt.xml sous les <inherit> mettre :<set-property name="user.agent" value="safari" /> 
-avec maven pour ne pas faire jouer les tests surfire : mettre :          <skipTests>true</skipTests> 
+avec maven pour ne pas faire jouer les tests surfire : mettre :          <skipTests>true</skipTests>  si les tests maven ne se run executent pas verifier ce plugin 
                       <plugin>
-                    <artifactId>maven-surefire-plugin</artifactId>
+                    <artifactId>maven-surefire-plugin</artifactId> LINKcucumberldfj
                     	<version>2.5</version>    il n'execute que les methodes qui commencent par test...dans les classes de test
                     <configuration>
                           <excludes>
                           <exclude>**/Import*Test.java</exclude> //pour qu'il n'execute pas certains tests(notemment marche pas bien si les tests executes par maven dependent de fichiers on dirait donc a desactiver )
                         </excludes>
+I			<includes>
+                        <include>**/*Test.java</include>
+                    </includes>
                              <systemProperties>
                       (...)
                       </systemProperties>
@@ -23281,6 +23292,7 @@ blob -> Image:
             }
           }
 Audio :
+	FFMPEG :
 	****convertisseurs
 	mp3>wav
 	ffmpeg -i 25fa39ea7f0ebf04c1a26f7b407a810e=51422196457796.mp3 25fa39ea7f0ebf04c1a26f7b407a810e=51422196457796.wav
@@ -23297,6 +23309,8 @@ Audio :
 	wmv>3gp
 	ffmpeg -y -i Memoclap3.wmv -r 20 -s 352x288 -b 400k -acodec aac -strict experimental -ac 1 -ar 8000 -ab 24k Memoclap3.3gp // -ar pour la frequence rate en Hz
 	ffmpeg -i micro2.wav -ar 16000 micro2out.wav // changer la frequence rate d'un wave
+	changer le framerate:
+		ffmpeg -i " fichierameodifier -ar nouveauframerate outputFile
 
 convettir les AMR en MP3
   amr to mp3 converter
@@ -24452,6 +24466,7 @@ pour faire copy paste du clipboard avec le terminal raccourci shortcut:
 snap est un outil d'installation de programmes qui delivre des packages standardises chez unix linux
 	snap install datagrip // pour installer datagrip
 	snap run datagrip // pour executer datagrip
+	sudo snap remove datagrip // pour desinstaller datagrip
 
 Pour utiliser USB avec mon mobile utiliser gnome_file (de son nom de programme "file") tiroir bleu
 pour convertir un package .rpm en .deb
@@ -25373,7 +25388,9 @@ u: undo si multiple undo ne marche pas: aptitude et charger vim
 :w sauve enregistrer
 :x sauve et ferme
 :sav autrenom pour sauver sous enregistrer sous save as un aure nom
-:sav! ~/.recovered // sauver sous un autre nom et basculer ensuite sur ce fichier. Puis faire :bn pour repasser sur le fichier editer precedemment utile pour gerer les problemes de swp puis faire en commande dans vi une comparaison cote a cote voir LINKlhlhlhlhlioie
+:sav! ~/.recovered // sauver sous un autre nom et basculer ensuite sur ce fichier. Puis faire :bn pour repasser sur le fichier editer precedemment
+	pour gerer les problemes de swp: :sav! ./xxxNonSWP ; :bn puis recover ; :!diff -C0 ./xxxNonQWP pathfichieractuelVisibleDansHeaderVi si retourne 2 et aucune difference alors :bn :bn supprimer le swp puis :!rm ./xxxNomSWP
+
 :!MaCommande faire une commande unix executer une commande unix
 :r ! MaCommande faire une commande unix et le resultat de la commande rentre dans le texte
 :%!xxd pour editer en hexadecimal: je peux alors modifier la partie centrale uniquement. revenir en mode normal après pour voir le resultat: :%!xxd -r
@@ -25747,12 +25764,13 @@ pour installer des programmes: applications: (le repository miroir local qui lui
       sudo apt-get install ksh pdksh    //ou bien avec aptitude     Linkkshsflk
     pour desinstaller
       sudo apt-get --purge remove nomprogramme
-   pour raffraichir reinitialiser nettoyer ma memoire aptget aptitutde apt-get:
+   pour raffraichir reinitialiser nettoyer ma memoire aptget aptitutde apt-get: liberer de l'espace
  	apt-get clean
   	apt-get autoclean
    	apt-get autoremove
    	apt-get update
    	apt-get upgrade
+	sudo journalctl --vacuum-time=3d // supprime un peu du journal dattant de plus de 3jours
     pour savoir quel language utilise un utilisateur
         grep "^utilisateur" /etc/passwd
     pour basculer le user en cours en ksh 
@@ -27334,7 +27352,7 @@ savoir si un element audio joue:
   pour avoir la proportion taille d'un element en pixcel au lieu de pourcentage largeur
       monelement.clientWidth
     savoir si un string est vide:
-        if(!lestring) renvoit true si c'est null, undefined ou "". ou bien typeof(unevariable). Sinon pour connaitre le type d'un objet: styleSheet.rules[0] instanceof CSSMediaRule renvoit true par ex
+        if(!lestring) renvoit true si c'est null, undefined ou "". ou bien typeof(unevariable).(attention renvoit "object" si unevariable est null. Sinon pour connaitre le type d'un objet: styleSheet.rules[0] instanceof CSSMediaRule renvoit true par ex
         du coup si je veux passer que si'il est defini faire
         if (!lestring==false)
     incrementer une valeur de margin-top sans prise de tete avec "px" pas besoin de faire substring:
@@ -27472,7 +27490,7 @@ tester le javascript TDD :
 						window.fetch= async function (){return Promise.resolve({status:200,
 								json: () => Promise.resolve({ status: 200}), // pas sur pour ça
 							    })};                             
-			  it("checkloop",()=>{...
+			  it("checkloop",()=>{... ou it("checkloop",async()=>{...
 			ou 	
 				test('nom du test,async()=>{
 					impossible de definir une variable globale pour un test. il faut raisonner en modules. et les modules ont leurs variables
@@ -28679,7 +28697,7 @@ pour faire un paint avec canvas: Attention ne jamais donner un style a un canvas
                                                                         pour multibrowser:
                                                                         if (window.addEventListener) // tout browser
                                                                         {
-                                                                                        window.addEventListener("keyup", toucheEntree, false); 
+                                                                                        window.addEventListener("keyup ou keydown selon besoin", toucheEntree, false);  //touche clavier
                                                                         } 
                                                                           else if (document.attachEvent)            // pour IE Internet explorer
                                                                           {
@@ -29911,7 +29929,7 @@ webcomponent :webcomponents : web-components : web components : custom elements 
 	pour avoir le nom de la classe de la balise d'un customelement custom-element webcomponent: this.localName ou this.tagName
 https://developers.google.com/web/fundamentals/web-components/customelements#attrchanges
  au final dans mon html j'aurais:
- <script src="laurent-moncomponent1.js"/>  
+ <script src="laurent-moncomponent1.js"/>  ou 	<script type="module" src="laurent-moncomponent.js"></script>
   <laurent-moncompoentn1 blabla="toto"></laurent-moncompoentn1> // toujours mettre la balise fermante
   dans laurent-moncompoentn1.js j'ai: import<-customcomponent(shadowdom(template))
       template:
@@ -29941,7 +29959,6 @@ METHODE CLASS: THEBEST? classes es6
                                           2)            constructor() // execute en premier à la creation MAIS n'est pas encore dans le DOM. // declarer mes proprietes ici pas au dessus
                                                         { 
                                                           super(); // a faire toujours en premier
-                                                          var varmaclasse=this; // heu.. marche plus ? du coup utiliser .bind(this)
                                                           this.id="tata"; // defini direct l'id du dom element|_ATTENTION ne marche que si on instancie la classe en javascript. Pas si on met la balise html dans la page
                                                           this.toto=true;// c'est une propriete properties    |
                                             //         creer un shadowdom: Maintenant FFOx supporte aussi. Avant: (pas encore supporte sur firefox: besoin faire about:config puis dom.webcomponents.enabled et dom.webcomponents.shadowdom.enabled a true)
@@ -29982,11 +29999,12 @@ METHODE CLASS: THEBEST? classes es6
                                                         }
                                               4)       connectedCallback()//execute chaque fois que l'element est insere dans le DOM ATTENTION! Execute une fois AVANT le constructor!!! disconnectedCallback() existe aussi
                                                         { 
+                                                          var varmaclasse=this; ou bien utiliser .bind(this)
                                                                                 LINKsansshadowlkjsdgh (ici j'utilise pas de shadowdom dans mon webcomponent)
                                                                                  if (this.cloneDuTemplate!=undefined){
                                                                                     this.appendChild(this.cloneDuTemplate);
                                                                                   }
-                                                          this.addEventListener('mousedown' ou 'click',function(evt){varmaclasse.maMethodeOnClick();} // ailleurs dans la classe: maMethodeOnClick(e){...} LINKlkjsdflh voir LINKautredatabiding
+                                                          this.addEventListener('mousedown' ou 'click',function(evt){varmaclasse.maMethodeOnClick(); ou plutot this.maMethodeOnclick()}.bind(this) // ailleurs dans la classe: maMethodeOnClick(e){...} LINKlkjsdflh voir LINKautredatabiding
                                                           et si c'est un string faire: // convertir un string en fonction function
                                                             this.maMethodeOnClick=new Function ("uneMethode(argument);");
 
@@ -30016,6 +30034,8 @@ METHODE CLASS: THEBEST? classes es6
                                                         mamethodperso() // a appeler imperativement comme ça this.mamethodeperso(); // si this c'est pas ma classe je peux hors du scope faire varmaclasse=this puis appeler ma methodeperso: maclasse=mamethodeperso (LINKautredatabiding)
                                                         {....
                                                             var timer=setInterval(this.uneautremethodepersodecetteclasse.bind(this), 7000); // bind pour que dans le setInterval, this corresponde à cette classe et non pas à window
+							    var utiliserunenestedclasse=new MaNestedClasse(this)
+  							    utiliserunenestedclasse.uneMethodeDemaNestedClasse()
                                                         }
                                                         this.dispatchEvent(new CustomEvent('unNomQueJ'invente',{unobjetJSON}); // envoie un event vers l'univers! heu non ca ne marche qu'avec les webworkers// CustomEvent ne marche pas avec unobjetJSON vide alors dans ce cas utiliser juste l'ojbet new Event("toto")
                                                         this.addEventListener('unNomQueJ'invente',function(e){        // reception d'un event depuis l'univers (dans cet exemple il s'envoie a lui meme car même nomQueJinvente: n'a pas de sens mais c pour l'exemple)
@@ -30030,7 +30050,14 @@ METHODE CLASS: THEBEST? classes es6
                                                  //instancier mon tag:<laurent-moncompoentn1></laurent-moncompoentn1> // toujours mettre "-"
                                                  //ou en js: faire var toto = document.createElement('laurent-moncompoentn1'); ou var toto = new montag(); 
                                                  //     puis document.body.appendChild(toto);
-
+						je peux definir des nested classes inner classes dans mon web component: mettre ceci sous windows.customElement....etc...
+							let MaNestedClasse= function(varmaclasse) {
+								this.tototo="haha";
+							    this.uneMethodeDemaNestedClasse = function (x, y) {
+								varmaclasse.ctx.=this.tototo;
+							    }
+							}
+							
         appeller une methode d'un custom element depuis l'exterieur: 
                     var toto = document.querySelector("memoclap-alertmessage");
                       toto.maMethode();
@@ -34800,3 +34827,4 @@ mimic :
 	<input type="button" onclick="send()" value="go"/>
 	<input type="button" onclick="close()" value="stop"/>
 	</html>
+
