@@ -397,6 +397,7 @@ tester: on test sur des data jamais vu avant par la machine
     net est dense = pas de synapses supprimées elles existent toutes
                 
 chrome :
+	remote debugging aller sur chrome://inspect/#devices + sur le telephone dans options pour developpeur > selectionner la configuraiton USB choisir PTP
     exporter importer les flux d'echanges http avec fichier .har:
          existe extension chrome (http archive viewer)
     pour focuser trouver un element html par son xpath
@@ -699,12 +700,12 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
 		-v(mais preferer--mount à-v) $(pwd)(ou un repertoire du host os. S'il n'existe pas le volume est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container du coup le DRIVER du volume est de type local)
 	par defaut c'est executé sur le reseau bridgé partage entre tous les containers et même le host. Suffit de se connecter dans le container et voir leur IP
   docker start -ia(comme -it avec run) nomduconteneurARedemarrer // existe aussi docker stop nomduconteneur ou idduconteneur pour stopper un conteneur
-  docker container stop IDDuContainer // pour stopper l'execution d'un container (par son ID ça marche mieux voir donc la liste.)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+  docker container stop IDDuContainer1 NameDuContainer2... // pour stopper l'execution d'un container (par son ID ça marche mieux voir donc la liste.)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
   docker stop $(docker ps -a -q) // pour stopper tous all tout les containers
   docker inspect nomduconteneur ou nomduneimage | grep networkparex // pour avoir plein de details infos donnees exposedPorts sur mon conteneur ou mon image                                  
   docker logs -f(comme tail -f)facultatifUnAutreNomJeCroisQueJeDonneAMonContainer // a faire apres avoir fait run pour afficher les logs
   docker attach nomduconteneur ou permierscharDuIdDuConteneur // pour se rattaché à un conteneur demarré en backgroud LINKlgkezoiur
-  docker cp fichierDansHost.txt moncontainer:/estination/dans/container.txt // pour copier un fichier du host vers le container
+  docker cp fichierDansHost.txt moncontainer:/destination/dans/container.txt // pour copier un fichier du host vers le container
   docker cp moncontainer:/fichierDansMonContainer.txt fichierDansLeHost.txt // pour copier un fichier du container vers le host
   docker history nomduneImageDocker:sonTag > fichieroutput.txt// pour afficher l'historique d'ajout de ce conteneur: utile si je veux merger appender additionner deux images dockers 
   docker image rm -f repository:portOuIdD'uneImage ou host   ||registry:5000portregistry/aliasImageCloneDeRegistry // pour le supprimer l'image ou son clone de registryregistre
@@ -760,14 +761,14 @@ docker-compose : dockercompose : s'installe avec apt-get ou aptitude
 			links: // utile pour que plusieurs services se voient avec des noms d'hosts determinés (et pour ne pas utiliser "localhost" par defaut qui pour chacun est lui meme)
 				- unautreservice:hostnamedansmoncontainer
             		command: npm run // overrite CMD ci dessus: en general la commande ici sert à demarrer un serveur
-                            ports: // ATTENTION tous les services qui se voient entre eux se voient avec le port INTERNE DANS le container et pas le port exposé à l'host.
-                                - 80:80  // quand on met - c'est parce que c'est une liste
-                                - 81:80  // comme pour -p (cote hote:cote conteneur)
-                            environment:
-                                - UNE_VARIABLE1=lavaleur1
-                                - UNE_VARIABLE2=lavaleur2
-                                - UNE_VARIABLE3=nomdemonservice2 // on peut avoir ca si nomdemonservice1 accede à nomdemonservice2
-                            networks:// ce service va baigner dans ce network. Dans un seul dockercompose.yml c'est pas utile car par defaut il cree un network appelé "repertoireSousLequelSeTrouveDockerPointYml_default" et baigne tous les services de mon dockercompose dedans. Sauf si je veux faire des sous-reseau dans un dockercompose. Si je veux que deux docker-compose.yml puissent se voir LINKnetworkdockercompose
+                        ports: // ATTENTION tous les services qui se voient entre eux se voient avec le port INTERNE DANS le container et pas le port exposé à l'host.
+                         - 80:80  // quand on met - c'est parce que c'est une liste
+                         - 81:80  // comme pour -p (cote hote:cote conteneur)
+                        environment:
+                         - UNE_VARIABLE1=lavaleur1
+                         - UNE_VARIABLE2=lavaleur2
+                         - UNE_VARIABLE3=nomdemonservice2 // on peut avoir ca si nomdemonservice1 accede à nomdemonservice2
+                        networks:// ce service va baigner dans ce network. Dans un seul dockercompose.yml c'est pas utile car par defaut il cree un network appelé "repertoireSousLequelSeTrouveDockerPointYml_default" et baigne tous les services de mon dockercompose dedans. Sauf si je veux faire des sous-reseau dans un dockercompose. Si je veux que deux docker-compose.yml puissent se voir LINKnetworkdockercompose
                                 - unreseaubridgéDansLequelCeServiceBaigne  //le service utilise donc ce network: LINKdeclareutilisationnetwork
 	                volumes: // je crois que cette partie n'est exploitée que lors de docker-compose up
                         - type: bind // ou volume ou tmpfs(temporaire est ephemere)
@@ -1343,14 +1344,14 @@ pom voir arbre des dependances hierarchie transitive > dans la vue maven: clique
         encore mieux: charger https://plugins.jetbrains.com/plugin/7179-maven-helper et installer le plugin: installe le directement depuis settings>plugins>il est là
         permet aussi d'afficher menu contextuel maven run debug dans projets project (si inactif  appuyer sur "+" a droite pannel maven)
         sous pannel editeur il y a le tab dependencyAnalyzer onglet dependency analyser à gauche on y voit les artifactID:version
-si le pom.xml maven est en erreur: rafraichir refresh dans la vue maven +  faire une mvn:compilation pour le forcer à charger les dependances et montrer les vraies erreurs
+si le pom.xml maven est en erreur: rafraichir refresh dans la vue maven +  faire une mvn:compile pour le forcer à charger les dependances et montrer les vraies erreurs, cliquer dans l'editeur sur la notification comme quoi maven doit etre raffraichi et aussi verifier que dans le projet il n'y a pas un .iml corrompu pourri à effacer
 gradle: creer si j'ai Could not find GradleWrapperMain il faut creer projet\gradle\wrapper\gradle-wrapper.jar
       ouvrir view gradle > a cote de run ouvrir editconfiguration > ajouter un conf gradle avec la Task:createWrapper executer ça.
 Error:Unable to make the module: config-server_main, related gradle configuration was not found. Please, re-import the Gradle project and try again.
       ouvrir view gradle > rafraichir
 convertir le projet en projet maven:
     click droit sur mon pom -> add module maven ou un truc comme ça      
-ajouter un module equivaut a importer un projet dans le worskpace: module intellij: project structure> "+" importer > choisir Maven ou Gradle sinon pas bon si je choisis "from existing sources" à priori
+ajouter un module equivaut a importer un projet dans le worskpace: module intellij: project structure> "+" importer > choisir Maven ou Gradle sinon pas bon si je choisis "from existing sources" à priori et oui je confirme
   main/java=source
   test>java = test
 voir les windows cote a cote split au milieu comparer comparaison
@@ -2640,7 +2641,7 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 		3-agent: tous les threads peuvent en envoyant un "send" changer et voir la référence qui change de façon asynchrone par une queue qui respecte l'ordre et indépendemment des autres threads. Possible utiliser un callback avec await.
 		
 J2EE : jee : jee8 :javaee : EE4J : jakartaee : https://github.com/eclipse-ee4j/jakartaee-tutorial-examples et https://github.com/eclipse-ee4j/jakartaee-tutorial
-        <dependency> necessite
+        <dependency> necessite //LINKjakartayahooo
                <groupId>javax</groupId>
                <artifactId>javaee-web-api</artifactId> ou? <artifactId>javaee-api</artifactId>  
                <version>8.0</version>
@@ -2709,11 +2710,11 @@ Cycle de vie du CDI bean:
                  @TransactionAttribute pouf gerer les transactions (marche aussi sur ejb de type  @Stateful, @Stateless and @Singleton @ManagedBean, @WebServlet, @WebListener, @WebFilter)           
           utilisation d'un champ injecté:                                       définition de la classe de l'autre coté:
             Injection par field:
-                @Inject                                                        @ApplicationScoped
+                @Injectde //de import javax.inject.Inject (voir LINKjakartayahooo) @ApplicationScoped
                 @Named("simpleIs")//utiliser plutot @Qualifier.Ms ça c pour jsp  @Named("simpleIs")//utiliser plutot @Qualifier.Ms ça c pour jsp
                 private IdentityStore simpleIdentityStore;                       public class SimpleIdentityStore implements IdentityStore {
             Injection par constructeur(mieux car crée immutable)
-               @Inject 
+               @Inject  
                @MonQualifier               
                 MaClasse(IdentityStore estinjecte){this.identitystore=estinjecte}
             Injection par methode
@@ -4260,6 +4261,27 @@ Pour faire un serveur serveur de chat etc... fonctionnement des sockets
  si erreur java.net.SocketException socket closed This exception means that you closed the socket, and then continued to try to use it. os.close(); And you closed it here. Closing either the input or the output stream of a Socket closes the other stream and the Socket. 
 	en javascript voir LINKWebsocket
 
+pour faire un client de websocket:
+		<dependency>
+		<groupId>com.neovisionaries</groupId>
+		<artifactId>nv-websocket-client</artifactId>
+		<version>2.9</version>
+	    </dependency>
+	com.neovisionaries.ws.client.WebSocketFactory factory = new WebSocketFactory();
+        WebSocket ws = factory.createSocket("ws://localhost:2700");
+        ws.addListener(new WebSocketAdapter() {
+            @Override
+            public void onTextMessage(WebSocket websocket, String message) {
+                System.out.println("message : "+message); 
+                results.add(message);  // traitement des messages recus en asynchrone
+                recieveLatch.countDown();
+            }
+        });
+        ws.connect(); // j'etablie la connexion
+	ws.sendBinary(buf); // j'envoie de la donnée en masse (mettre ca dans une boucle par exemple)
+	ws.sendText("{\"eof\" : 1}"); // j'envoie le caractère de fin a la toute fin
+	ws.disconnect(); // je peux fermer la connexion 
+	
 eventsource : event source :sse :(server-sent-event) autre alternative aux websocket mais ca ne fonctionne que dans un sens : serveur->client: rafraichit en live la page dans une seule requete
     voir https://github.com/mdn/dom-examples/blob/master/server-sent-events/sse.php
     coté serveur:
@@ -5574,7 +5596,7 @@ effet de degrade:
           .gradient-bg {
                 background: #466368;
                 background: linear-gradient(#4A4C4B, #000000);
-                background:linear-gradient(3deg, #4A4C4B 0%, #000000 30%,#093833 100%); // a tester avec background-color             
+                background:linear-gradient(90deg, #4A4C4B 0%, #000000 30%,#093833 100%); // pas avec background-color. Mettre le meme pourcentage pour avoir un degardé net 
 
           avant: 
              /* fallback/image non-cover color */
@@ -5583,22 +5605,6 @@ effet de degrade:
              /* Safari 5.1+, Mobile Safari, Chrome 10+ */
              background-image: -webkit-linear-gradient(top, #A19D9A x%, #853B3B y%); top ou right ou left, couleur1 x%, couleur2 x%
                ainsi on peut enchainer les couleurs les unes à la suite des autres:
-               -webkit-linear-gradient(left, #FFFFFF 5%, #FFFFFF 20%, #853B3B 20%, #853B3B 65%, #FFFFFF 65%)
-              
-          
-             /* Firefox 3.6+ */
-             background-image: -moz-linear-gradient(top, #A19D9A, #853B3B);
-             background-image: -moz-linear-gradient(top, white 0%, #ccc 4%);
-          
-             /* IE 10+ */
-             background-image: -ms-linear-gradient(top, #A19D9A, #853B3B);
-          
-             /* Opera 11.10+ */
-             background-image: -o-linear-gradient(top, #A19D9A, #853B3B);
-             
-             
-             /* Safari 4+, Chrome 1-9 */
-             background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#2F2727), to(#853B3B));
 
           }
 
@@ -8056,9 +8062,8 @@ pour se connecter avec un utilisateur user
 					_id:{ // toujours mettre _id ici
 						UnNomDeChampAInventer:"$UnAutreChampQuiExisteAPlusieursNiveauAApplatir.UnSousChamp" ou "$UnAutreChampDePremierLevel" //on groupby le souschamp.
 						,facultatifUnAutreNomDeChampAInventer:"$...etc									    // on groupby sur ces deux champs
-						},
-					doublons:{ $addToSet:"$_id"}, // ce truc rajoute un champ doublon qui est a true je crois quand deux docs ont le meme _id	
-					"count":{ "$sum":1}   //le count par groupe
+						iddundoublon:{ $addToSet:"$_id"}, // ce truc rajoute un champ iddundoublon qui permet ci dessous de manipuler dans le pipe les objets
+						"count":{ "$sum":1}   //le count par groupe
 				}
 			},
 			{
@@ -8069,8 +8074,10 @@ pour se connecter avec un utilisateur user
 			{
 				$sort:{count:1}} // ou -1 // block facultatif
 			}
-		]).forEach(function(doc){ // possibilité de faire un traitement sur le resultat
-			doc.dups.shift(); // ce truc je crois saute
+		]).forEach(function(doc){ // possibilité de faire un traitement sur le resultat ici on va supprimer les doublons
+			doc.dups.shift(); // ce truc je crois saute un des elements du doublon
+			db.Invoice.remove({_id:{$in:doc.iddundoublon}}); // pour supprimer les doublons
+		   })
 	faire un update:
 		db.Contract.update({marequetesansfind},{$set:{"champ.a.setter.3.en.profondeur" ou "champTableau.$.sousChampAlindexDollarPointéParMaRequeteFind" ou "champTableau.$[].sousChampDansTousLesElementsDuChampTalbeau" ou champASetterEnSurface:"nouvelle valeur"}}) wildcart n'a pas marché ni $ qui ferait office de wildcard
 							
@@ -8096,6 +8103,14 @@ pour se connecter avec un utilisateur user
                     db.uneCollection.remove(...) //pour supprimer ce qui match. Comment faire pour tout supprimer de la collection ?  
 		pour complettement effacer supprimer la collection: 
 			db.uneCollection.drop()
+	pour supprimer toutes les bases de donnees :
+			faire un script js:
+					var dbs = db.getMongo().getDBNames()
+					for(var i in dbs){
+					    db = db.getMongo().getDB( dbs[i] );
+					    print( "dropping db " + db.getName() );
+					    db.dropDatabase();
+					}
             db.uneCollection.insert({ _id: 1, jsFunc: function(){ print("hello") } } ) // si uneCollection n'existe pas elle est automatiquement créee
             db.myNewCollection3.createIndex( { y: 1 } ) // ajoute un indexe dans la collection
 	creer une view:vue:
@@ -17804,6 +17819,12 @@ faire un peu durer le temps:
         	  					// jattends quil se bouge le cul
         	  			  }
 pour attendre qu'une resource se libere: 
+utiliser les counterLatch c pas mal: 
+	recieveLatch = new CountDownLatch(50); // un count down à initialiser dans thread 1
+	initialisation et lancement du thread 2
+	recieveLatch.await(); // thread1 attends ici tant que dans thread 2 il n'y a pas eu recieveLatch.countDown() jusqu'à atteindre zero
+	on peut utiliser ca pour que thread1 par exemple attende que  plusieurs autres threads font des countdown jusqu'à ce que ensemble ils atteignent zero
+avant:
     int i=0;
 	    	while (!file.exists())
 	    	{
@@ -18081,7 +18102,7 @@ pour imposer qu'il ya  qu'une seule instance de mon batch java qui tourne:
               sinon on peut ecrire dans un fichier ou mieux dans la base comme ca on peut changer la valeur dans la base 
 
        
-pour connaitre le mimetype d'un fichier si je ne connais pas sa vraie extension c'est galère en java pur obligé d'utiliser la librairie apache.tika: alors que si c'est une requete http je peux faire param.get("content-type") ici non je suis dans le filesysteme.
+pour connaitre le mimetype d'un fichier si je ne connais pas sa vraie extension c'est galère en java pur obligé d'utiliser la librairie apache.tika: alors que si c'est une requete http je peux faire param.get("content-type") ici non je suis dans le filesysteme. ou utiliser peut etre java.nio.file.Files.probeContentType(chemindufichier)
 	Tika tika = new Tika()
 	String	contentType=	tika.detect(unObjetTypeFichierEtPasUnString);
 	if (contentType.contains("spreadsheetml")) contentType="/xlsx";
@@ -23311,6 +23332,8 @@ Audio :
 	ffmpeg -i micro2.wav -ar 16000 micro2out.wav // changer la frequence rate d'un wave
 	changer le framerate:
 		ffmpeg -i " fichierameodifier -ar nouveauframerate outputFile
+	passer de stereo vers mono:
+		ffmpeg -i fichierstereo.wav -ac 1 sortiemono;
 
 convettir les AMR en MP3
   amr to mp3 converter
@@ -25389,7 +25412,7 @@ u: undo si multiple undo ne marche pas: aptitude et charger vim
 :x sauve et ferme
 :sav autrenom pour sauver sous enregistrer sous save as un aure nom
 :sav! ~/.recovered // sauver sous un autre nom et basculer ensuite sur ce fichier. Puis faire :bn pour repasser sur le fichier editer precedemment
-	pour gerer les problemes de swp: :sav! ./xxxNonSWP ; :bn puis recover ; :!diff -C0 ./xxxNonQWP pathfichieractuelVisibleDansHeaderVi si retourne 2 et aucune difference alors :bn :bn supprimer le swp puis :!rm ./xxxNomSWP
+	pour gerer les problemes de swp: :sav! ./xxxNonSWP ; :bn puis recover ; :!diff -C0 ./xxxNonSWP pathfichieractuelVisibleDansHeaderVi si retourne 2 c'est qu'un path est faut, si retourne rien alors aucune difference alors :bn :bn (oui deux fois) supprimer le swp puis :!rm ./xxxNomSWP
 
 :!MaCommande faire une commande unix executer une commande unix
 :r ! MaCommande faire une commande unix et le resultat de la commande rentre dans le texte
@@ -26214,6 +26237,7 @@ NGNIX : nginx :
 	   listen 80;
 	   listen [::]:80;//facultatif
 	   server_name www.undomaine.com undomaine.com; 
+	   client_max_body_size 50M; // si mes requetes posts sont trop grosses en taille nginx bloque avec ce message "client intended to send too large body".  Pour resoudre utiliser ca.
 	   return 301 https://$host$request_uri; // redirection https peut etre utilisee pour faire tout type de redirection d'url exemple: return 301 https://$host/wwwconnect; return prend le pas sur location si les deux sont au meme niveau quelquesoit l'ordre. on peut mettre le return dans un location
 		ou
 	    location /{					location '/unpathtoto'{ ou    location ~ ^/$ { // pour que ce soit que le path root "/"  pour plusieurs urls mettre: location ~^(/premiere/url|/deuxieme/url|^/$|/quatrieme/url|...){
@@ -26655,7 +26679,7 @@ faire un speech input:
               }
               var input = document.querySelector('[x-webkit-speech]');
               input.addEventListener('change', inputChange, false); // c'est ce genre de listener "change" qu'il faut utiliser pour les checkbox et radio pour detecter quand ils changent de statut mais après il faudra tester si ils sont checkes ou pas
-              input.addEventListener('webkitspeechchange', inputChange, false);
+              input.addEventListener('webkitspeechchange', inputChange, false); (voir LINKaddevtlist)
 pour faire un ancre: 
         <a href="#x" // x c'est en fait l'identifant de l'element vers lequel je veux que mon scroll pointe. exemple: href= "#3"
 pour faire un lien de telechargement download:
@@ -27109,6 +27133,10 @@ oe de coeur: &#339;
 euros:
     &#128; ou Alt+0128(windows-1252 sinon &#8364 Unicode) (1252: francais. 1250: tcheque)
 Javascript :
+pour recuperer la taille de l'ecran (pour qu'un canvas prenne par exemple toute la taille du body)
+		this.querySelector("#paint").width=document.body.offsetWidth;
+                this.querySelector("#paint").height=document.body.offsetHeight;
+
 JSON :
 	piege: pour instancier un objet en JSON ceci ne marche pas:
 		let monobjet={unevariable:unevaleur}
@@ -27157,7 +27185,8 @@ fetch : LINKsljqffetch
      }
 duree d'une balise audio: 
 	<audio>.... document.querySelector("audio").duration;
-
+pour enlever les accents d'un string:
+	return strAccents.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
 ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch). Ajax ne supporte pas les redirection 302 venant du serveur: il faut envoyer un response.status=302 manuellement dans la servlet et traiter avec cote javascript avec un window.location=nouvelleUrlVersOuRediriger
                         ans = canvas.toDataURL("image/png");  // converti l'image en base64. Pour sauver un canvas sur le serveur en image png ou jpg il faut obligatoirement envoyer les donnees en POST sinon le fichier genere est pourri:
             	    		var formData = new FormData(); ou new FormData(document.getElementById("forText")); // forText est juste un form html recuperable avec document.getElement...ATTENTION les champs de mon formulaire doivent avoir un name sinon ils ne sont pas ajoute dans les formdata 
@@ -27226,7 +27255,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                         }
                       };
                       pour faire une progresse bar de chargement:
-                      xhr.upload.addEventListener("progress",  onUploadProgress, false); //on s'abonne à l'evenement progress pour savoir où en est l'upload
+                      xhr.upload.addEventListener("progress",  onUploadProgress, false); //on s'abonne à l'evenement progress pour savoir où en est l'upload (voir LINKaddevtlist)
                                   et
                                                             function onUploadProgress(event) {
                                                                if (event.lengthComputable) { // event.target est l'element sur lequel on a cliqué
@@ -27342,7 +27371,7 @@ savoir si un element audio joue:
     if(document.getElementById(lecteur).paused
     possible de mettre a jour le texte du css avec du javascript mais tout d'un coup pas possible (pas trouvé) de façon chirurgicale
         document.getElementById("identifiantDeMaBaliseStyle").innerHTML
-	Si c'est possible : document.styleSheets //  pour recuperer un tableau de tous les styles: un element par block de styles je crois.
+	Si c'est possible: document.styleSheets //  pour recuperer un tableau de tous les styles: un element par block de styles je crois.
 	document.styleSheet[3].href // sera egal à www.path/vers/mon.css
 	document.styleSheets[1].cssRules[3].style.fontSize="1000px" // prend la feuille de style 1, le troisieme block (attention les blocks media sont=undefined), definit-y le style font-size à 100px  
 			ou .cssRules[x].cssRules[y] pour les media //TODO a bien finir
@@ -27383,6 +27412,23 @@ savoir si un element audio joue:
               };
             
             }
+	utiliser le clipboard presspapier copier coller:
+
+		navigator.permissions.query({name: "clipboard-write"}).then(result => {
+		  if (result.state == "granted" || result.state == "prompt") 
+		  {
+			
+		function updateClipboard(newClip) {
+		  navigator.clipboard.writeText(newClip).then(function() {
+		    /* clipboard successfully set */
+		  }, function() {
+		    /* clipboard write failed */
+		  });
+		}
+
+
+		  }
+		});
 tester le javascript TDD :
     tester avec jest : le meilleur d'apres sylvain. 
         les fichiers de tests doivent s'appeler xxxx.test.js            
@@ -28496,7 +28542,7 @@ pour faire un worker: workers : (web worker : web-worker : webworker :)
               }
             var monWorker = new Worker('autoWorker.js');// path par rapport à la page html
             //les deux lignes ci dessous marchent et font la meme chose: 
-                monWorker.addEventListener("message", function (event){console.log('Je recoisunmessageDepuisLeWorkerVersIci'); document.getElementById("workchrono").innerHTML = event.data;}, false);
+                monWorker.addEventListener("message", function (event){console.log('Je recoisunmessageDepuisLeWorkerVersIci'); document.getElementById("workchrono").innerHTML = event.data;}, false); (voir LINKaddevtlist)
                 monWorker.onmessage = function (event) {console.log(''Je recoisunmessageDepuisLeWorkerVersICI'); document.getElementById("workchrono").innerHTML = event.data;};
               // On demarre le worker en lui envoyant la commande 'init'
               monWorker.postMessage(new WorkerMessage('hello', null));
@@ -28519,7 +28565,7 @@ pour faire un worker: workers : (web worker : web-worker : webworker :)
                  this.close();// pour killer le worker 
               }
             }
-            this.addEventListener('message',messageHandler,false);
+            this.addEventListener('message',messageHandler,false); (voir LINKaddevtlist)
 pour mettre une image dans un canvas:
    myimage = new Image();
    myimage.src="dina.jpg";
@@ -28606,7 +28652,7 @@ pour faire un paint avec canvas: Attention ne jamais donner un style a un canvas
                             // Pencil tool instance.
                             tool = new tool_pencil();
                             // Attach the mousedown, mousemove and mouseup event listeners.
-                            canvas.addEventListener('mousedown', ev_canvas, false);
+                            canvas.addEventListener('mousedown', ev_canvas, false); voir LINKaddevtlist
                             canvas.addEventListener('mousemove', ev_canvas, false);
                             canvas.addEventListener('mouseup',   ev_canvas, false);
                             // pour empecher que le curseur devienne un curseur pour saisir texte
@@ -28652,7 +28698,7 @@ pour faire un paint avec canvas: Attention ne jamais donner un style a un canvas
                             // Pencil tool instance.
                             tool = new tool_ecrire();
                             // Attach the mousedown, mousemove and mouseup event listeners.
-                            canvas.removeEventListener('mousedown', ev_canvas, false); // removeEventListener des fois ne marche pas parce que c'est chiant faut etre super precis. Du coup faire comme ca pour supprimer effacer les eventlisteners LINKrmvEvntListner
+                            canvas.removeEventListener('mousedown', ev_canvas, {capture :false,passive : true, once:true});// LINKaddevtlist: c'est mieux de mettre les options comme ici. Capture stop la propagation des ecoutes mais bof ne semble pas marcher. Once marche tres bien!!!! du coup plus besoin du remove si besoin oneshot // removeEventListener des fois ne marche pas parce que c'est chiant faut etre super precis. Du coup faire comme ca pour supprimer effacer les eventlisteners LINKrmvEvntListner
                             canvas.removeEventListener('mousemove', ev_canvas, false);
                             canvas.addEventListener('mouseup',   ev_canvas, false);
                             canvas.classList.add('ecrire');
@@ -28927,7 +28973,7 @@ pour faire un drag and drop avec html5:
                     
                   }
 pour faire drag and drop sur mobile
-	unelementdom.addEventListener('touchmove', handleMobileToucheMoveExtraitStart, false);
+	unelementdom.addEventListener('touchmove', handleMobileToucheMoveExtraitStart, false); (voir LINKaddevtlist)
 	extraitElement.addEventListener('touchend', handleMobileToucheMoveExtraitEnd,false); // touchstart detect quand on appuye la sur le truc; pas quand on drag dessus.
 	puis
 	export function handleMobileToucheMoveExtraitStart(e) {
@@ -29248,7 +29294,7 @@ pour setter le float:
       closebtn.style.cssFloat="right";
       closebtn.styleFloat = "right"; // pour les deux navigateurs 
 pour detecter qu'on a presse sur la touche entre retour chariot appuye sur une touhce sur n'importe quel element: 
-      document.getElementById('acteurtxt').addEventListener('keydown',  function(e) { handleKeys(e); }, false);
+      document.getElementById('acteurtxt').addEventListener('keydown',  function(e) { handleKeys(e); }, false); (voir LINKaddevtlist)
       handleKeys = function(e)
       {
         if(e.keyCode==13) // 13 ou 16=touche entree     8 c'est backspace: effacer
@@ -29821,6 +29867,7 @@ pour sauver ecrire recuperer les cookies: en javascript: LINKcooklskjhh
               }							
 pour executer du javascript a chaque fois qu'on appuie sur le clavier, qu'on presse un bouton, qu'on change la valeur d'un champ:
 		onkeyup // et non pas onchange qui s'execute au changement du focus
+		input //  a mettre dans addeventlistener. Lui s'execute carrement à chaque modif changement de la value de l'input mais pas à une modif faite par javascript direct on dirait...
 pour qu'une fenetre fille quand elle se ferme fasse une action dans la fenetre parente: affiche ou masque une div
 				<body onunload="confirmeOk();">
 				<?php echo javascript_tag("
@@ -29980,7 +30027,7 @@ METHODE CLASS: THEBEST? classes es6
                                                         div.setAttribute('unattributdutaghtmltoujourstoutenminuscules','valeurDeLattributStringPasBoolean'); PIEGE! utiliser ça et ne pas utiliser unElementHTML.unattribut=xxx (ca ne modifie que la classe pas le html et du coup attributeChangedCallback n'est pas appele)
                                                         
                                                         on peut ajouter un listnener au slot si celui ci change en javascript: par contre si je veux modifier le innerhtml du slot voir LINKrmvEvntListner
-                                                            monslot.addEventListener('slotchange', e => {
+                                                            monslot.addEventListener('slotchange', e => { //voir LINKaddevtlist
                                                                 ...e.currentTarget..
                                                                 this.innerHTML;  // est alors accessible. C'est la propriete: contenu de la balise de mon custom element. This est mon custom element. Par contre this.outerText; et this.innerText; n'ont pas marche?
                                                                 du coup faire: si jai <slot name="contenu">-> querySelector("slot[name=contenu]") si je suis hors du slot
@@ -30143,7 +30190,7 @@ PWA : progressive webapps :
             pluggin chrome "lighthouse"
     service-workers : serviceworkers : POUR SUPPRIMER TOUT CACHE POUR TESTER: 1)debugger chrome>onglet application > clearstorage> bouton clear site data. A son propre systeme de cache manipulable et qui se place AVANT le cache http quand j'envoie une requete vers le serveur: user->CachePWA->CacheHTTP(voir LINKcachehttp)->Serveur
     pour faire un site qui marche offline avec les service workers: html5: P envoyer notifications meme quand navigateur est fermé car c'est un worker(thread) indépendant de tous les navigateurs.(un peu comme un programme nodejs) Peut travailler avec indexDB database voir LINKpwanotif
-    ça ne marche que en https ou en http://localhost mais si je veux le faire en local en https alors faire un certif auto signé, le declarer dans voir LINKàç<çç_à  et demarrer chrome comme ça: ./google-chrome-stable --ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=https://www.fauxmemoclap.co./google-chrome-stable --ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=https://www.fauxmemoclap.com
+    ça ne marche que en https ou en http://localhost et dans ce cas faire  chrome://flags/#unsafely-treat-insecure-origin-as-secure AVANT mais bof:  ou faire:un certif auto signé, le declarer dans voir LINKàç<çç_à  et demarrer chrome comme ça: ./google-chrome-stable --ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=https://www.fauxmemoclap.co./google-chrome-stable --ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=https://www.fauxmemoclap.com
     serviceworker.js:
     if ('serviceWorker' in navigator) { // s'assurer que servicerworker est supporte par le navigateur
             navigator.serviceWorker.register('https://mon_site/service-worker-v1.js',{scope:'./'}).then(function(registration) {      // .register(uneUrlVersUneResource) renvoit une promesse. service-worker.js doit être placé dans un repertoire à la racine pour que toutes les urls soient gérées. Car si je le mets sous https://mon_site/tata/service-worker.js alors seulement la partie sous tata pourra etre offline
@@ -30497,7 +30544,7 @@ PWA : progressive webapps :
 						});
 						function precache() {
 						  return caches.open(cacheVersion).then(function (cache) {
-						    return cache.addAll(cacheFilesDoitEtreUneArrayD'URL); // ca direct enregistre les requests ET leurs responses respectives dans le cache 
+						    return cache.addAll(cacheFilesDoitEtreUneArrayD'URL); // ca direct enregistre les requests ET leurs responses respectives dans le cache du coup effectivement il requete tout et stocke en cle valeur request,responseRetournee
 						  }).catch(err=>{console.log("WORKER ERR: "+err)})
 						}
 
@@ -33880,7 +33927,7 @@ acceder aux drivers gestionnaire de peripheriques sous windows 8:
     faire une recherche dans menu demarer: gestionnaire peripheriques
 pour installer un driver
        le mieux c daller dans le gestionnaire des taches trouver le driver qui va pas et faire mettre à jour et si on a le driver en local choisir son repertoire et go    
-pour avoir la liste des taches (control alt suppr; ctrl alt suppr): 
+pour avoir la liste des taches processus (control alt suppr; ctrl alt suppr): 
   lancer cmd puis tapper taskmgr
   pour touch metre à jour la date des fichiers *.jsp à la date du jour: 
 	         COPY /B *.jsp +,,
@@ -33947,7 +33994,7 @@ Excell : excel :
   figer les volets Affichage > figer les volets
 pour masquer le quadrillage lignes, colonnes:
   Outils > Options> cocher quadrillage  
-pour que la touche entrer enter passe à doite colonne suivante ou en bas ligne suivate
+pour que la touche entrer enter passe à droite colonne suivante ou en bas ligne suivate
 	fichier>option>avance> enter....
 Si les lignes ne s'ajustent pas automatiquement: tout ne rentre pas dans la case
   c'est parce que j'ai ecrit en gras et en gras ca prend plus de place dans la case mais pour autant la ligne n'ajuste pas sa hauteur: solution: augmenter un peu la taille de la police
@@ -34036,6 +34083,8 @@ RechercheVerticale search vertical
 
 empecher excel de creer des colonnes separateur separation
   toujours convertir et decocher les cases
+une cellule vide retourne toujours zero si on fait =verscellulePouvantEtreVide. 
+	pour eviter ca faire =SI(ESTVIDE(cellulePouvantEtreVide);"";cellulePouvantEtreVide)
 
 
 ACTIVEX : (ne peut pas s'executer sur un serveur)
