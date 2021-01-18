@@ -711,7 +711,7 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
   docker image rm -f repository:portOuIdD'uneImage ou host   ||registry:5000portregistry/aliasImageCloneDeRegistry // pour le supprimer l'image ou son clone de registryregistre
   docker rm -f nomOuIdDunContainer // pour le supprimer le container -v pour supprimer aussi son volume
   docker rm $(docker ps -a -q)	// pour supprimer tout tous all les containers arretes
- docker save nomdelimageactuelement nomdurepositoryQuonVeutQuilAitLorsDuReimport:tagduRepositoryQuonVeutQuilAitLorsDuReimport > unnom.tar et docker load < unfichier.tar // save pour dumper exporter mon image docker dans un tar que je peux envoyer a un client. et lui de son cote fait docker load monTar pour charger mon image livrable. Si j'ai erreur "Error response from daemon: open /var/lib/docker/tmp/docker-import-" c'est parce que mon tar est corrompu
+ docker save nomdelimageactuelement nomdurepositoryQuonVeutQuilAitLorsDuReimportFacultatif:tagduRepositoryQuonVeutQuilAitLorsDuReimportFacultatif > unnom.tar et docker load < unfichier.tar // save pour dumper exporter mon image docker dans un tar que je peux envoyer a un client. et lui de son cote fait docker load monTar pour charger mon image livrable. Si j'ai erreur "Error response from daemon: open /var/lib/docker/tmp/docker-import-" c'est parce que mon tar est corrompu. Si lors du load j'ai Error processing tar file(exit status 1): .... no space left on device je dois liberer de la place sur mon file system (meme si je ne suis à moins de 90% de remplissage je peux avoir ce message)
   docker exec -it nomconteneurDejaRunne bash ou sh ou ksh // LINKjgjgjgaba: execute une commande dans un conteneur déja actif. ici la commande bash est executée dans le container qui demarre en mode -it(interactif) donc du coup je vais avoir le prompt bash DANS mon container. virer le -t si je veux juste executer une commande par exemple executer du sql direct depuis l'exterieur dans le container sinon j'aurais le message d'erreur "not a TTY". Dans le container, si j'execute top je ne vois que les process qui tournent DANS le container
         de là je peux faire du apt-get pour installer d'autres librairies si besoin. 
         ensuite regarder aussi sur le hub.docker la doc de l'image si je veux enrichir cette image.            
@@ -5171,6 +5171,8 @@ enleve expres
 pour faire des gif animes: 
   imageReady
 Css :
+pour faire des formes variees d'un div (comme un masque)
+	clip-path: polygon(x% x%, x% x%.....) // il y a des sites online pour nous aider à faire ca
 les tailles: width, height: 
       pour la largeur il vaut mieux toujours mettre des pourcentages pour que ca passe sur tous les ecrans.
       Pour la hauteur il vaut mieux mettre des pixels fixe uniquement dans les elements les plus profonds de l'arborescence.
@@ -5430,6 +5432,7 @@ pour faire un background avec des zones pour cliquer lien absoluts absolu
       <a style="position:absolute; left:15%; top: 78%; height:20%; width:20%; text-decoration:none" href="./show/gallery.php"></a>
       <a style="position:absolute; left:78%; top: 78%; height:20%; width:20%; text-decoration:none" href="./about/gallery.php"></a>
 faire un background color transparant: 
+	background-blend-mode:xxxxx // met des effets sur le background image
       aller sur http://www.css3maker.com/css-3-rgba.html
       mettre par ex: background-color: rgba(255, 255, 255, 0.1);
 faire un background image transparent:
@@ -6110,6 +6113,97 @@ demarrer sur tomcat :auto :
                           			</plugin>
                           		</plugins>
                           	</build>
+ programme : spring pour envoyer des fichiers sur le reseau par morceaux en multithreades : multithreads : de CMX :
+		largeFileTransferService.storeFileCore(String docid, Path filePath, FileInfo fileInfo){
+				iitiateMultiPartUpload(docid,filePath,fileInfo){	
+						generateHttpEntity(filePath,fileInfo){
+							LinkedMultiValueMap<String,Object> body=	generateBody(filePathy,fileInfo){
+														bodyMap.add("fileContentType",Files.probeContentType(filePath));
+														bodyMap.add("fileName",fileInfo.getFilename();
+														bodyMap.add("fileSize",fileSize)
+														return bodyMap;	
+													}
+							authHeader = 	generateAuthHeader();{ return new HttpHeaders().add(token,...); header.setContentType(mediaType) }
+org.springframework.http.HttpEntity<MultivalueMap<String,Object>> restEntity= return new HttpEntity<>(body,authHeader);
+			ResponseEntity<String>	fileInfoDto=	org.springframework.web.client.restTemplate.postForEntity("une url/files/initiateFileParts", restEntity, String.class); RETOURNE PAR InitiateMultiPartUpload
+			long startTime=System.nanoTime();
+			try(UploadRequestFactory requestFactory=UploadStrategyEnum.DISK==strategyEnum? new DiskUploadRequestStrategy(filePath,partSize):new MemoryUploadRequestStrategy(filePath,partSize)
+			uploadPartWithStrategy(documentId,...,requestStrategy)
+					{
+						final BlockingQueue<PartRequest> blockingQueue=new ArrayBlockingQueue<>(threadNumber=3parex);
+						final AtomicBoolean isDoneStatus=new AtomicBoolean(false);
+						ExecutorService producerPool = Executors.newFixedThreadPool(1);
+						producerPool.execute(new LargeFileProducer(blockingQueue,isDoneStatus,uploadRequestStrategy)); (voir dessous) // rajoute dans la queue des bouts de request renvoyés par l'uploadStrategy
+						ExecutorService consumerPool=Executors.newFixedThreadPool(threadNumber=3parex);
+						List<CompletableFuture<Void> futureList=new ArrayList<>();
+						for (int i=0; i<threadNumber; i++){
+							CompletableFuture<Void> future=CompletableFuture.runAsync(new LargeFileConsumer(blockingQueue,this=MultiThreadTransfertService,documentId,fileId,isDoneStatus),consumerPool) (voir dessous)
+							futureList.add(future);
+						}
+						shutdown(producerPool); shutdown(consumerPool);
+					}FINUploadPartWithStrategy
+			completeMultiPartUpload(documentId,...fileInfo){ requestEntity=new HttpEntity<MultiValueMap<String,Object>>(authHeader); restTemplate.exchange("url/files/{fileID}/mergeFileParts",HttpMethod.PATCH,requestEntity,String.class)}
+	LargeFileProducer: implements Runnable
+			public void run(){
+				while (uploadRequestStrategy.hasMoreRequests()){
+					blockingQueue.put(uploadRequestStrategy.getNextUploadPartRequest());
+				}
+				isDoneStatus.set(true)
+				finally{FilesUtils.closeQuietly(uploadRequestStrategy)
+	LargeFileConsummer: implement Runnable
+			boolean isDone=isDoneStatus.get();
+			while(!isDone || !blockingqueue.isEmpty()){
+				PartRequest take queue.pool(timeout=5,TimeUnit.SECONDS);
+				isDone=isDoneStatus.get();
+				if (take==null) continue;
+				process(PartRequest take){ MultiThreadTransferService.uploadPart(take,documentId,fileID);}
+				finally{if(take instanceof DiskUploadPartRequest) Files.deleteIfExists(take.getFile().toPath())
+	MultiPartTransferService.uploadPart(PartRequest nextpart,String documentId, UUID fileID){
+		(...)
+		httpEntity=new HttpEntity<>(bodypart,authHeader);
+		org.springframework.retry.support.RetryTemplate.execute(context->{
+										ResponseEntity<String>=restTemplate.exchange(url,HttpMethod.POST, httpentity,String.class);
+										}
+	DiskUploadStrategy implmenets UploadRequestFactory
+	{
+		FileChannel fileChannel;
+		constructeur(Path filePath, long partSize)
+		{
+			this.file=filePath.toFile(); this.remainingBytes=file.length(); this.totalNumberOfParts=(int)Math.ceil((double) this.remainingBytes/partSize); thisPartSize=partSize; this.randomAccess=new RandomAccessFile(file,"r"); fileChannel=randomAccess.getChannel();
+		}
+		boolean hasMoreRequest(){ return remainingBytes>0)
+		DiskUploadPartRequest getNextUploadPartRequest(){
+			long requestPartSize=Math.min(this.partSize,remainingBytes);
+			java.io.File tempFile=File.createTempFile("part-"+(partNumber+1)+"-",null,file.getParentFile()); // fichier temporaires interessant! AFAIRE UTILISER SUR MEMOCLAP
+			tempFile.deleteOnExit();
+			try(    OutputStream os= Files.newOutputStream(tempFile.toPath()); // INTERESSANT: nouvelle facon de recuperer un OutputStream d'un fichier: AFAIRE mettre en avant
+				WritableByteChannel dest = Channels.newChannel(os)
+			   )
+			{
+				long read = fileChannel.transferTo(offset,requestPartSize,dest);
+				offset +=read;
+				remainingBytes -=read;
+				partNumber++;
+			}
+			return new DiskUploadPartRequest(tempFile,partNumber);
+		}
+		close(){FilesUtils.closeQuietly(raf);}
+	}		
+	MemoryUploadRequestStrategy implements UploadRequestFactory{
+		constructeur(exactement le meme que celui de DiskUploadStrategy)
+		haseMoreRequest (exactement le meme que celui de DiskUploadStrategy)
+		MeoryUploadPartRequest getNextUploadPartRequest(){
+			long requestPartSize=Math.min(this.partSize,remainingBytes);
+			ByteBuffer byteBuffer ByteBuffer.allocate(Math.toIntExact(requestPartSize)); // AFAIRE interessant
+			int read = fileChannel.read(bteByffer,(int)offset);	
+			offset +=read;
+			remainingBytes -=read;
+			partNumber++;
+			return new MemoryUploadPartRequest(file.getName(),partNumber,byteBuffer.array());
+		}
+	    close.. pareil que DiskUploadPartRequest
+	FIN CMX envoi fichiers mutithreades
+
  
 maven: 
               <parent>spring-boot-starter-parent: pas besoin specif versions dans maven
@@ -21121,6 +21215,29 @@ pour convertir un int en string
         
 ***********************************************************************
 Utils : Utils java :
+	pour convertir une liste de valeurs en une colonne en plusieurs colonnes (programme fait chez axa)
+		outoutIdFromTextFileByGroupOfXColumns(filePath,fileName,22432=nombre de colonnes){
+			Integer[] progression={0,nombreDeColonnes}
+			applyMethodToAllMatchingNameRegexFiles(path,fileName,(String fileName)->{
+				outputIdsByGroupOfMaxlimitNumber(filePath,fileName,progression));
+			});
+		}
+	applyMethodToAllMatchingRegexFiles(String directoryPath,String fileName, ThrowingConsumer<String,Exception>consumer){
+		File directoryFile=new File(directoryPath);
+		try(DirectoryStream<Path> iteration=Files.newDirectoryStream(Paths.get(directoryPath))){ StreamSupport.stream(Spliterators.spliteratorUnnknownSize(iteration.iterator(),Spliterator.ORDERED),false).filter(fname->fname.getFileName().toString().matches-(matchingRegexFileName))
+		.forEach(file->{ consumer.accept(file.getFilename().toString());))
+	outputIdsByGroupOfMaxlimitNumber(String filePath,StringfileName,Integer[] progression)
+	{
+		Set<String> aribaIdAlreadyOutputted = new HasSet<>();
+		List<String> lines getLinesFromCsvFile(filePath,fileName) {return File.readallLines(path)}
+		for (String line:lines){
+			String aribaFieldId= getIDFromLine(line)
+			if (ignoreDoublons(aribaIdAlreadyOutputted,aribaFieldId)) continue; // ignoreDoublons(Set, String){ if (set.contains(String) return true}
+			if(progression[0]==O){ progression[0]++;SOUT(aribaFileId+";")
+			else if (progressionHasNotReachedItsLimit(progression)){ // progressionHasNotReachedItsLimit(progression){return progression[0]<progression[1]}
+			{progression[0]++; SOUT(aribaFiellId+";")}
+			else {progression[0]=0;SOUT(aribaFileId)
+			
 tuple :bean couple paire deux :
 	depuis java15 records :
 		on peut aussi meme en mettre directement dans une methode.
@@ -27772,13 +27889,13 @@ erreur: (intermediate value)(...) is not a function
           .reduce(function(carry, number){       ou sinon mais pas reussi a le faire marcher avec une liste de chiffre: return costCategories.values().stream().map(cost=>cost.visible).reduce((carry,elt)->carry+elt).get();
                 return carry + number;
             }, 0)	// attention ne pas oublier ici la première valeur initiale! sinon ca renvoit undefined
-            .forEach((numbers)=>{ // equivalent: .forEach(function(number){//ATTENTION E majuscule Equivalent de forEach((variablepassee)=>untrucaexecuter(variablepassee));
+            .forEach((numbers)=>{ // equivalent: .forEach(function(number){//ATTENTION E majuscule Equivalent de forEach((variablepassee)=>untrucaexecuter(variablepassee)); Attention: Après un forEach je ne peux plus faire suivre mon stream. Si je veux par exemple faire un console.log dans un foreach avant un map autant mettre le console.log dans le map juste avant son return
                     ou(index,value)   
                 doSomethingWith(number); // faire un traitement... a creuser
             });;
 	pour faire un minus: tableau1 minus tableau2: moins, soustraire
 		console.log("minus :"); console.log(talkingActors.filter(actor=>shuttedUpActors.indexOf(actor) < 0));
-	si c'est un NodeList faire Array.from(lanodelist).forEach(.... exemple Array.from(querySelectorAll("...")).filter
+	si c'est un NodeList faire Array.from(lanodelist).forEach(....) Exemple Array.from(querySelectorAll("...")).filter
         par exemple cherche dans un tableau si les valeurs existent dans un autre tableau: boucle imbriquee:
           if(unTableauAParcourir.filter(function(act,idx){return unAutreTableauAParcourir.filter(function(actor){return actor == idx;}).length>0;})
                                                  .filter(function(act){return (act!=null //sur le resultat de l'imbrication on peut enchainer avec dauters filtres
@@ -30188,7 +30305,7 @@ PWA : progressive webapps :
        tester mon pwa avec chrome:
             dev>application>service workers>offline
             pluggin chrome "lighthouse"
-    service-workers : serviceworkers : POUR SUPPRIMER TOUT CACHE POUR TESTER: 1)debugger chrome>onglet application > clearstorage> bouton clear site data. A son propre systeme de cache manipulable et qui se place AVANT le cache http quand j'envoie une requete vers le serveur: user->CachePWA->CacheHTTP(voir LINKcachehttp)->Serveur
+    service-worker : serviceworker :service-workers : serviceworkers : POUR SUPPRIMER TOUT CACHE POUR TESTER: 1)debugger chrome>onglet application > clearstorage> bouton clear site data. A son propre systeme de cache manipulable et qui se place AVANT le cache http quand j'envoie une requete vers le serveur: user->CachePWA->CacheHTTP(voir LINKcachehttp)->Serveur
     pour faire un site qui marche offline avec les service workers: html5: P envoyer notifications meme quand navigateur est fermé car c'est un worker(thread) indépendant de tous les navigateurs.(un peu comme un programme nodejs) Peut travailler avec indexDB database voir LINKpwanotif
     ça ne marche que en https ou en http://localhost et dans ce cas faire  chrome://flags/#unsafely-treat-insecure-origin-as-secure AVANT mais bof:  ou faire:un certif auto signé, le declarer dans voir LINKàç<çç_à  et demarrer chrome comme ça: ./google-chrome-stable --ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=https://www.fauxmemoclap.co./google-chrome-stable --ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=https://www.fauxmemoclap.com
     serviceworker.js:
