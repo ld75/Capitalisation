@@ -6175,7 +6175,7 @@ org.springframework.http.HttpEntity<MultivalueMap<String,Object>> restEntity= re
 		DiskUploadPartRequest getNextUploadPartRequest(){
 			long requestPartSize=Math.min(this.partSize,remainingBytes);
 			java.io.File tempFile=File.createTempFile("part-"+(partNumber+1)+"-",null,file.getParentFile()); // fichier temporaires interessant! AFAIRE UTILISER SUR MEMOCLAP
-			tempFile.deleteOnExit();
+			tempFile.deleteOnExit(); // sinon je peux tous les supprimer dans un finally mais pour ca faut les initialiser à =null en dehors du try
 			try(    OutputStream os= Files.newOutputStream(tempFile.toPath()); // INTERESSANT: nouvelle facon de recuperer un OutputStream d'un fichier: AFAIRE mettre en avant
 				WritableByteChannel dest = Channels.newChannel(os)
 			   )
@@ -26916,13 +26916,13 @@ pour definir la gestion du cache en html5:
           toto.jpg
           FALLBACK
           urlRelativeSurLeReseauDoncLeServeur.png urlRelativeLocaleDeRepliSiReseauNonDispo.png
-pour manipuler le css directement:
+pour manipuler le css directement: modifier le css en javascript css
     attention tester monobjet.style.unstyle==tototo ne marche que si on l'a sette en javascript. Ca ne permet pas de voir dans le css initial comment ça a ete sette.
                       Pour le faire il faut faire:
                         getComputedStyle(monobjet).monstyle==tototo       
     renvoit un tableau de tous les styles
           document.styleSheets
-          ensuite y inserer un style:
+          ensuite y inserer un style: ajouter style css en javascript
               document.styleSheets[0].insertRule(".have-border { border: 1px solid black;}", 0);
           ensuite y supprimer un style:
                 document.styleSheets[0].deleteRule(index),  // index peut etre recupere par: document.styleSheets[0].cssRules
@@ -28121,7 +28121,7 @@ pour tester si une variable est un array est une table est un tableau type d'une
     {}
 pour mettre tous les caracteres en majuscule, minuscule: 
   monstring.toLowerCase(), monstring.toUpperCase()
-rediriger vers une page pour mobile si ecran plus petit:     attention screen.width et height sont incorrect quand la page vient de charger. Faut faire un timeout ou mieux utiliser plutot window.innerWidth et window.innerHeight qui sont plus fiables
+rediriger redirection vers une page pour mobile si ecran plus petit:     attention screen.width et height sont incorrect quand la page vient de charger. Faut faire un timeout ou mieux utiliser plutot window.innerWidth et window.innerHeight qui sont plus fiables
     <script> if (!document.URL.match("mobile.php$") && screen.width<=699){document.location="mobile.php";}</script>
                     .match("xxx") retourne une array si il trouve sinon il retourne null
 connaitre l'URL de la page actuelle:
