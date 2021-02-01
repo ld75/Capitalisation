@@ -985,7 +985,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
     preparer un commit:(on peut le faire plusieurs fois avant de commiter) 
       git add -v(verbose) * ou /xx/* ou . ou NomFichier ou '**/pom.xml' (si c'est dans un long path sous-repertoire) // repertoirelocal->index est indexe:Pour rajouter QUE LES NOUVEAUX/UPDATED FICHIERS dès lors toutes les modifs faites AVANT add seulement vont etre commitees quand je ferais git commit... si je modif d'autres fichiers Apres et je commit direct, ils ne sont pas envoyes. A utiliser si j'ai erreur "needs merge you need to resolve your current index first" car il desindexe les fichiers qui n'ont pas bien mergé
       si j'ai le message hint: You've added another git repository inside your current repository embedded.... et que je veux conserver le sous module git faire: d'abord "git rm -f --cached phpExtLib/PHPMailer" pour revenir en arriere puis "git submodule add https://github.com/PHPMailer/PHPMailer.git phpExtLib/PHPMailer". Il faudra alors pusher .gitmodules pour les autres developpeurs. Les autres developpeurs devront faire "git submodule init" puis "git submodule update"
-      git rm --cached <filePath1 filePath2> //LINKrmgit a utiliser aussi si gitignore ne semble pas marcher ou si j'ai l'erreur in unpopulated submodule(c parce que j'ai supprimé .git): ignore l'indexation et le suivi d'un fichier. ATTENTION PEUT SUPPRIMER LES FICHIERS. SI je ne veux pas faire git reset HEAD monfichier pour l'ignorer. Les vire de untracked file mais certains fichiers on y arrive pas... voir LINKcheckoutquandmeme
+      git rm --cached <filePath1 filePath2> //LINKrmgit a utiliser aussi si gitignore ne semble pas marcher ou si j'ai l'erreur in unpopulated submodule(c parce que j'ai supprimé .git): ignore l'indexation et le suivi d'un fichier. ATTENTION PEUT SUPPRIMER LES FICHIERS. SI je ne veux plus: faire git reset HEAD monfichier pour l'ignorer. Les vire de untracked file mais certains fichiers on y arrive pas... voir LINKcheckoutquandmeme
       git rm -r --cached <filePath> //-r pour recursif
       git status -uno//(-uno pour ne pas voir les untracked) pour savoir quels fichiers vont etre commites ( a faire si j'ai le message Changes not staged for commit)
       git commit:  apres commit je peux faire un fetch((recupere du repo distant vers le local dans une autre localisation:pour l'instant n'a pas touché a mon espace de travail) puis pull (pour récupérer les dernières modifs des collegues et le merger avec mon espace de travail) puis ensuite un push
@@ -998,7 +998,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
      	 	ou
       		git reset pathfichieravecWildcard
       git reset HEAD~ annule/undo le dernier commit. Ne pas le faire après que mon dernier commit ait ete pushe et merge avec l'origin(remote) car cela desynchronise mon local du distant. SI je veux quand même le faire par necessite alors faire git reverT: ça recommiT un snap d'avant le commit pourri.
-                on peut aussi faire git commit --amend // pour redéfinir le message du dernier commit sans besoin de l'annuler
+                on peut aussi faire git commit --amend // pour redéfinir changer le message du dernier commit sans besoin de l'annuler
       git reset //LINKresetgit annuler le dernier add
       git reset --hard <identifiantcommit>  revenir en arriere sur identifiantcommit et virer definitivement tous les trucs qui ont suivi
       git reset --hard versionDuTag: ce tag revient dans le mon HEAD/branch + repertoire et vire tout ce qu'il y a eu après
@@ -1016,6 +1016,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
             git filter-branch --index-filter "git rm --cached -f --ignore-unmatch(ignoreleserreurs) PathDeMonGrosFichier.webm" (mettre -f si il le demande) --prune-empty --tag-name-filter cat -- --all
 	apres un git rebase il se peut que je ne puisse plus pusher. Alors je peux forcer avec precaution grace à git push --force-with-lease
       git log -- facultatifLePathDunFichierAObserverSeul //voir les commits. N'affiche pas les commits du futur donc voir LINKlkghhrghh
+      git log numerodecommit // pour voir que les logs a partir d'un certain commmit
       git log uneautrebrancheQueCelleOuJeSuis -- facultatifLePathDunFichierAObserverSeul
       git log --all // voir les commits du future si j'ai fait un checkout sur un commit du passé LINKlkghhrghh
       git log --name-status // voir tous les fichiers modifiés à chaque commit
@@ -1024,6 +1025,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git log --graph --oneline --decorate --all // affiche joli voir joli
       git log -L 2,5 ou +3:pathfichier.txt // genial: affiche entre la ligne 2 et la ligne 5 tout l'historique du bouzin utile pour chercher search find trouver grep ATTENTION pas d'espace avant le ":"
 		exemple : git log -L +1:apprentissage2JavaJ2ee.txt | grep Atomic
+		pour faire grep en pouvant voir le numero du commit: git log --grep="marecherche"
       git shortlog -s -n  // voir le nombre de commits par auteur: stats.statistiques
       git diff compare pour parametrer avec un meilleur visibilité: external tool:        
           installer C:\Program Files\KDiff3
@@ -1369,7 +1371,7 @@ bouger extraire extract une variable en variable declaree plus haut move deplace
 bouger une classe dans un autre package: dans package explorer faire ctrl+x puis ctrl+v(couper-coller)
 bouger un bloc: selectionner puis ctrl+shift+fleches
 supprimer ligne: Shift+suppr ou Ctrl+y
-wrap ligne line j'ai ajouté le raccourci Ctrl+w
+wrap ligne line (soft-wrap) j'ai ajouté le raccourci Ctrl+w
 Afficher masquer le menu du haut: alt+f11
 editer raccourcis shortcuts: key file>settings>keymap>Default> Editor Actions
 si les shortcuts ne marchent plus faire peut etre controle + alt + fleches pave numerique peut etre que ça debloque (j'ai reussi une fois mais sais pas trop comment)
@@ -2532,7 +2534,7 @@ erreurs codes http: LINKcodesHttp
 413 Payload Too Large
 415 Unsupported Media Type
 417 SC_EXPECTATION_FAILED 
-304: le serveur dit que le browser a deja toutes les infos dans son cache et pas besoin de renvoyer d'autres infos + code 200
+304: le serveur dit que le browser a deja toutes les infos dans son cache et pas besoin de renvoyer d'autres infos + code 200 voir LINKcachehttp
 500: erreur interne du serveur
 502: bad gateway : mauvais parametrage de nginx ou apache en amont d'un site web.
 504: gateway timeout	/
@@ -2931,7 +2933,7 @@ securite : security :(JSR375 implémenté par soteria qui est la reference) plus
 backend 
 du code java pour aller afficher une page html sans rien faire de special
   res.setContentType("text/html"); ou MediaType.APPLICATION_JSON
-  res.setHeader("pragma", "no-cache"); LINKcachehttp
+  res.setHeader("pragma", "no-cache"); voir LINKcachehttp
   ServletOutputStream out = res.getOutputStream();
   TemplateContext context = new ProxyBundle();
   context.setOutputStream(out);
@@ -3129,7 +3131,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                         ou voir LINKee"(çà)" si c'est multipart		 
                     (Il y a aussi: recuperer l'url du request 
                     request.getMethod() 
-                    request.getRequestURI() // pour connaitre l'url la page appelante incluant le contextPath. Exemple: toto/saml-landing ou /saml-landing si contexte="" 
+                    request.getRequestURI() // pour connaitre l'url la requete appelante incluant le contextPath. Exemple: toto/saml-landing ou /saml-landing si contexte="" 
                     request.getPathInfo() // recuperer le nom du fichier "/bip.wav"
                     request.getRequestURL() // renvoit tout l'URL: http://monespacerh-dev.idkidscommunity.com/saml-landing. attention si existe reverse proxy ca renvoit le bon port et le bon host.(je crois) pas l'url origine initiale du client SINON:parametrer apache avec http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#proxypreservehost voir LINKapachesetterHeaderUrlDuClientAuLieuDeUrlInterneDuServeur
                     request.getQueryString() // retourne l'url mais uniquement après "?"
@@ -3185,7 +3187,7 @@ pour recuperer une variable d'environnement qui est declaree dans web.xml:
 			pour recuperer le numero de version
 			String ttfPath = (String)ServiceLocator.getInstance().getRefByName("NOM_DE_LA_VARIABLE");
                  upload du fichier cote serveur servlet:
-          si apres servlet 3.0:  et completer avec voir LINKmultilkjfqsdf permet upload to tout type de champ
+          si apres servlet 3.0:  et completer avec voir LINKmultilkjfqsdf permet upload tout type de champ
                  je peux toujours faire request.getParameter("name") pour recuperer des parametres de l'url 
                   for (Part part : request.getParts()) { // il y a les fichiers en PJ puis les champs. Les fichiers en PJ toujours en premier.
                       //String fileName = getFileName(part);
@@ -5171,6 +5173,9 @@ enleve expres
 pour faire des gif animes: 
   imageReady
 Css :
+pour conserver les proportions d'un div:
+	width:une largeur à mettre
+	aspect-ratio 1/1 // ducoup ca reste carré
 pour faire des formes variees d'un div (comme un masque)
 	clip-path: polygon(x% x%, x% x%.....) // il y a des sites online pour nous aider à faire ca
 les tailles: width, height: 
@@ -5317,7 +5322,7 @@ pour empecher le body de scroller lui attribuer la classe:
   /* position: fixed; pour pas de scroll x ni y */
   overflow-x: hidden; 
   }
-adapter le css au mobile ecran plus petit switcher entre css en fonction taille ecran ou taille fenetre responsive : @media :
+adapter le css au mobile ecran plus petit switcher entre css en fonction taille ecran ou taille fenetre responsive : @media : preferer passer par grid et flexboxes
 Utiliser dans chrome "Responsive...." pas les differentes marques de phone: c trop long. avec responsive je bouge la fenetre à 30% de zoom et je teste tout comme ca d'un coup
       directement dans un css
             @media attention voir LINKlksdflqa
@@ -5459,13 +5464,13 @@ pour faire une animation en boucle sur une image par exemple avec css. (l'ere de
           p#doigt a:hover, p#doigt a:focus {
           background-color:#ff8c00; /* pour les vieux navigateurs */
           color: black;
-          animation-name: doigt; /* nom de l'animation */
+          animation-name: doigtchose; /* nom de l'animation */
           animation-duration: 4s; /* temps de l'animation (4s) */
           animation-iteration-count: infinite; /* nombre de boucles (infinie) */
           animation-timing-function: linear; /* acceleration de l'animation (constant) */ease-in; ease-out
           }
           /* deuxième etape */
-          @keyframes doigt {
+          @keyframes doigtchose {
           0% {background:rgba(255,140,0,0.4) url(/images/main.png) no-repeat 5px 10px;}
           50% {background:rgba(255,140,0,1) url(/images/main.png) no-repeat 50px 10px;}
           100% {background:rgba(255,140,0,0.4) url(/images/main.png) no-repeat 5px 10px;}
@@ -5473,7 +5478,7 @@ pour faire une animation en boucle sur une image par exemple avec css. (l'ere de
 pour eviter qu'un texte aille à la chariot retour casse ligne quand il y a des espaces: 
     white-space: nowrap;          
 quand un texte depasse un div mais qu'on ne veut pas le masquer mais qu'il aille a la ligne: 
-    style='word-wrap:break-word'
+    style="word-break:break-word" avant: style='word-wrap:break-word'
 pour faire un menu deroulant:
                       .menu:hover{
                           
@@ -5674,6 +5679,20 @@ pour centrer direct:
     flex-wrap: wrap ou nowrap ou wrap-reverse
   }
   enfants: jouer avec les width:x%; pour passer à la ligne et les padding pour les espaces
+top du top pour que ce soit responsive pas besoin de @media: voir plein d'exemples sur http://1linelayouts.glitch.me
+ .parent {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content:baseline;
+  }
+
+  parent > .children {
+    flex: 1 1 150px; /*  Stretching: */prendre ca  (premier 1 c'est pour j'autorise l'etirement, et le deuxieme j'autorise la reduction je crois)
+    flex: 0 1 150px; /*  No stretching: */override ci dessus
+    margin: 5px;
+  }
+
 selectors: selecteurs: LINKcsslkhkhkhkhkh
      :nth-child veut dire selectionner element si:
           It is a paragraph element
@@ -5867,7 +5886,7 @@ CSS grids : cssgrid : css grid : cssgrid : pour faire des mises en page responsi
     grid-template-rows: auto 1fr 3fr; //fr c'est le facteur de flexibilité: autant mettre des pourcentages: 33.33% 33.33% auto
     grid-column-gap: 10px; // distance entre les colonnes
     grid-row-gap: 15px; // distance entre les lignes
-    grid-template-areas: //facultatif on peut aussi utiliser ???2/3
+    grid-template-areas: //facultatif on peut aussi utiliser 2/3 // met toi de la conlonne 2 à la colonne 3
       "title title" // title prend la place de 2 colonnes // attention a ne pas couper des areas sinon c'est invalid
       "min header"
       "main sidebar";  // mettre un point "." pour mettre une cellule vide
@@ -8837,7 +8856,8 @@ MCD/MPD :
                                   |       |                                         |              |                         |
                                sont def ds le realm(genre login-config.xml)         |             ce mapping se defini au niveau du serveur (genre dans glassfish-web.xml)
                                                                                 se retrouvent dans web.xml>security-role
-JPA : Specification d'ORM. Implementé par hibernate, eclipselink...
+JPA : Specification d'ORM : Implementé par hibernate :, eclipselink :...
+
     pour faire du reverse engineering java vers base de donnee java2db
     monProjet>Properties>Ajouter Facelets JPA; //bof 
     Recuperer dans eclipse Help>Update>Plugin Hibernate tools (http://download.jboss.org/jbosstools/updates/stable/indigo)
@@ -8967,7 +8987,19 @@ config de la base de donnée donnee: en jee
                         em.createNativeQuery(sql).executeUpdate(); // pour les updates natifs
 			User user = em.find(User.class, uid); //Pour trouver directement par identifiant a condition que @Id soit defini sur le champ d'identifiant. renvoit null si identifiant non trouvé. Ca fait un select par identifiant mais attention : pas d'updates possibles apres. Donc si besoin alors utiliser.find
 			em.persist(unObjet) // ceci va inserer l'objet et cet objet deviendra alors persisant donc chaque modif dedans DANS une transaction sera immediatement modifiée en base
-			em.merge(unobjet) // ceci fait un upsert de l'objet: insertion si n'existe pas et update si existe. L'objet ne devient pas persistant donc modifiable a souhait (je crois) comme pour .persist.
+			em.merge(unobjet) // ceci fait un upsert de l'objet: insertion si n'existe pas et update si existe(meme pour ses sous-objets). L'objet ne devient pas persistant donc modifiable a souhait mais merge retourne un objet persistant.
+			em.remove(unobjetpersistant) pose un flag de suppression sur mon objet qui a la prochaine occasion sera supprimé de la base. L'objet passe au statut Removed mais peut toujours etre repassé en persist avec persist() tant qu'il est là.
+			entityManager.clear(); // detache moi toutes les entitées en cours.
+			pour savoir si une entitée est persistante ou pas (detached ou transient...):
+				entityManager.contains(student) // returne true si l'entitée est persistente.
+	les etats :
+                          Transient	Any object created by the developer that do are not persisted. n'existe pas en base.  Le merger le sauve en base et retourne l'entitée persistante
+                          Persistent est rattaché a une ligne en base. Si je le modifie dans ses setters ca change la base direct. Le merger le sert à rien sauf pour les sous objets en cascade
+                          Detached arrive quand Persistent--detach()_ou_close()_ou_clear()-->Detached. A un equivalent en base mais pour faire un update en base je dois le merger. Changer via setter ne suffit pas. Le merger met à jour son equivalent en base et retourne l'objet persistant SANS changé l'objet detatched cependant
+							   quand transaction,commit,roolback
+								ou l'entitee est passée par valeur
+								ou l'entitymanager s'est fermé									
+ 
                 JPA_API_CRITERIA : Cest trop de la merde!!!!!!!!!
                         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
                         CriteriaQuery<MonEntite> query = cb.createQuery(MonEntite.class);
@@ -17580,7 +17612,8 @@ decompiler :
           java -jar D:\Dev\fernflower\fernflower.jar D:\Projets\FondationDAuteuilSAML\hraspace\classes D:\Projets\FondationDAuteuilSAML\hraspace\classes
       JavaDecompiler (jad nt ). mieux: mettre le plugin net.sf.jadclipse_3.3.0.jar J'ai mis jad sous D:/installation. faire: "d:\Installations>jad d:\LocalData\p036782\Desktop\theo\WEB-INF\classes\renault\wec\dmd\form\FicheForm.class"
 
-    
+   parcourt d'arbre avec stack :
+	stack: last in first out 
  
 erreurs : messages : messages d'erreur :
 Si lors du deploiement vous avez cette erreur: 
@@ -17693,7 +17726,7 @@ logs :logguer : logger :tracer :
                         et puis n'importe où ailleurs: 
                             HandlerForGeneralLogger.LOGGER.log(Level.SEVERE,"Erreur",e+ Utils.printStackTraceOnLogs(e));
 
-slf4j : (vieux voir LinkLogutils)Bonne methode copier L'interface  jdk.internal.instrumentation.Logger;(a améliorer car n'accepte que des strings) et créer son propre logger (je ne peux pas l'utiliser dans java10) qui pourra s'appuyer sur slf4j par exemple ou n'importe quoi dautre
+slf4j : (vieux voir LinkLogutils? non.)Bonne methode copier L'interface  jdk.internal.instrumentation.Logger;(a améliorer car n'accepte que des strings) et créer son propre logger (je ne peux pas l'utiliser dans java10) qui pourra s'appuyer sur slf4j par exemple ou n'importe quoi dautre
 }
      Dependance à ajouter imperativement:    
       1- SLF4j
@@ -20945,6 +20978,10 @@ pour faire une expression reguliere: regexp:
           echapper le "." "\\."
 	pour inserer des separateurs entre des strings:
 		String.join("leseperateur","premierstring","deuxiemestring".....etc... ou tableauDeStrings); //depuis java8
+	public static String toUpperCase(String valeur) { //mettre majuscule au premier char camelcase
+		return Character.toUpperCase(valeur.charAt(0))+valeur.substring(1);
+	    }
+	
 pour savoir si pourcent est dans une chaine de caractère, ne pas faire contains mais monstring.indexOf('%');	
 Pour utilisation des expressions regulieres conditionnelles avec sorte de callback en java pour trouver un caractère: regexp: attention !!! ca ne marche pas pareil sur unix: super galere donc eviter. Ruser avec Substring plutot
 ici on cherche des coommentaires: *
@@ -25529,7 +25566,7 @@ u: undo si multiple undo ne marche pas: aptitude et charger vim
 :x sauve et ferme
 :sav autrenom pour sauver sous enregistrer sous save as un aure nom
 :sav! ~/.recovered // sauver sous un autre nom et basculer ensuite sur ce fichier. Puis faire :bn pour repasser sur le fichier editer precedemment
-	pour gerer les problemes de swp: :sav! ./xxxNonSWP ; :bn puis recover ; :!diff -C0 ./xxxNonSWP pathfichieractuelVisibleDansHeaderVi si retourne 2 c'est qu'un path est faut, si retourne rien alors aucune difference alors :bn :bn (oui deux fois) supprimer le swp puis :!rm ./xxxNomSWP
+	pour gerer les problemes de swp: :sav! ./xxxNonSWP ; :bn puis recover ; :!diff -C0 ./xxxNonSWP pathfichieractuelVisibleDansHeaderVi si retourne 2 c'est qu'un path est faux, si retourne rien alors aucune difference alors :bn :bn (oui deux fois) supprimer le swp puis :!rm ./xxxNomSWP
 
 :!MaCommande faire une commande unix executer une commande unix
 :r ! MaCommande faire une commande unix et le resultat de la commande rentre dans le texte
@@ -26106,7 +26143,7 @@ Electrum :
 	wget https://download.electrum.org/4.0.4/Electrum-4.0.4.tar.gz
 	
 	cd /home/laurent/Bureau/Electrum
-	python3 Electrum-4.0.4/run_electron
+	python3 Electrum-4.0.4/run_electrum
 PHP :     
 pour faire marcher php avec oracle: (wamp) il faut que j'utilise l'utilitaire de wamp pour activer les extensions dll et decommenter aussi les lignes dans php.ini( deux lignes.. ora et oci un truc comme ca)
 ORACLE_HOME 
@@ -26297,7 +26334,7 @@ definir le contexte pour les images avec maven: LINKlrroqlkjqdflmh
             par
             <init-param>
               <param-name>cacheControl</param-name>
-              <param-value>no-store,no-cache,must-revalidate</param-value> LINKcachehttp
+              <param-value>no-store,no-cache,must-revalidate</param-value> voir LINKcachehttp
             </init-param>
   cd /opt/jetty
   (les webapps sont sous /opt/jetty/webapps)
@@ -26822,6 +26859,11 @@ pour savoir quand le src d'une image est charge:
                 ....
             }
 centrer un texte dans un div: 
+  .parent {
+    display: grid;
+    place-items: center;
+  }
+avant:
           <div style="display: table;overflow: hidden;margin: 0 auto;">
              <div align="center" style="
               border: 1px solid blue;
@@ -27250,6 +27292,9 @@ oe de coeur: &#339;
 euros:
     &#128; ou Alt+0128(windows-1252 sinon &#8364 Unicode) (1252: francais. 1250: tcheque)
 Javascript :
+si j'ai l'erreur 
+	Only one element on document allowed.
+	au lieu de faire document.appendChild... faire document.body.appendChild...
 pour recuperer la taille de l'ecran (pour qu'un canvas prenne par exemple toute la taille du body)
 		this.querySelector("#paint").width=document.body.offsetWidth;
                 this.querySelector("#paint").height=document.body.offsetHeight;
@@ -27266,7 +27311,7 @@ STT : speach to text:
 		var msg = new SpeechSynthesisUtterance();
 		msg.text="Bonjour";
 		window.speechSynthesis.speak(msg) // on peut changer les voix aussi.
-    quand on appelle une fonction, le dernier argument c'est toujours l'event
+    quand on appelle une fonction, le dernier argument c'est toujours l'event mais ca m'oblige a appeller la fonction comme ca onclick="titito(event)" or c'est obsolete donc faire onclick="titito(this)"
 enfant child childrens d'un element: 
     this.children (que les enfants de type elements)
     this.childNodes (tous les enfants meme les textes intercallés)
@@ -27305,36 +27350,47 @@ duree d'une balise audio:
 pour enlever les accents d'un string:
 	return strAccents.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
 ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch). Ajax ne supporte pas les redirection 302 venant du serveur: il faut envoyer un response.status=302 manuellement dans la servlet et traiter avec cote javascript avec un window.location=nouvelleUrlVersOuRediriger
-                        ans = canvas.toDataURL("image/png");  // converti l'image en base64. Pour sauver un canvas sur le serveur en image png ou jpg il faut obligatoirement envoyer les donnees en POST sinon le fichier genere est pourri:
+	                        ans = canvas.toDataURL("image/png");  // converti l'image en base64. Pour sauver un canvas sur le serveur en image png ou jpg il faut obligatoirement envoyer les donnees en POST sinon le fichier genere est pourri:
             	    		var formData = new FormData(); ou new FormData(document.getElementById("forText")); // forText est juste un form html recuperable avec document.getElement...ATTENTION les champs de mon formulaire doivent avoir un name sinon ils ne sont pas ajoute dans les formdata 
                             formData.append('ans', ans); // Append extra data before send.
                             formData.append('idp', idprojetEnCours); // Append extra data before send.
                             formData.append('fs', askValidator.fs); // Append extra data before send.
-			    formData.append('unfichier',monChampInputFile.file[0]); // pour uploader un fichier. Voir aussi LINKee"(çà)"
-                            pour recuperer une valeur  :formData.get("fs")
-                      var xhr = new XMLHttpRequest();
-                        // ne pas mettre ces lignes ci dessous sinon ca ne marche pas... ??....pq? 
-                     /*         et
+				creer a la volée un champ type fichier:
+					export function buildUploadFileForm() {
+					    let htmlForm = document.createElement("form");
+					    htmlForm.id = "temp";
+					    let fileinput = document.createElement("input");
+					    fileinput.type="file"; fileinput.name="files";
+					    fileinput.accept="*/*";
+					    htmlForm.appendChild(fileinput)
+					    return htmlForm;
+					} puis htmlform.querySelector("input").addEventListener("change", function () {.htmlform ici est un formData..} puis htmlform.querySelector("input").click(); pour le declancher
+            	    	    formData.append('unfichier',monChampInputFile.file[0]); // pour uploader un fichier. Voir aussi LINKee"(çà)"
+			       // ne pas mettre ces lignes ci dessous sinon ca ne marche pas... ??....pq? 
+                     		/*et
                               xhr.setRequestHeader("X-File-Name", file.fileName);
                               xhr.setRequestHeader("X-File-Size", file.fileSize);
                               xhr.setRequestHeader("X-File-Type", file.type);*/
-             	    		  
-                      xhr.open('POST', "AudioLoopOnlinePushAnsDRW.php ou url", true); ou xhr.open('POST', form.action, true); // alors remplir le payload LINK564894 sauf si x-www-form-urlencoded// true  veut dire en mode asynchrone. false en mode synchrone mais attention ne pas mettre false dans le mainthread sinon j'ai l'erreur memoclap.js?version=2.20.28:6693 [Deprecation] Synchronous XMLHttpRequest on the main thread is deprecated because of its detrimental effects to the end user's experience. For more help, check https://xhr.spec.whatwg.org/.
-                      ou
-                      xhr.open("POST", "/musclesWeb/strongPassword?action="+JSON.stringify(jsontable), true); //alors mettre au dessus: xhr.setRequestHeader("Content-Type", "application/json"); recuperable dans servlet java: httpServletRequest.getParameter("action"); voir convert conversion champs formulaire en json LINKç'ç'ç"_() 
-                      ou
-                      xhr.open("GET", "AudioLoopOnlineDownloadText.php?target=sons/"+idprojetEnCours+"/"+numfichierEnCours+"_"+cursec+".txt", true);
-			ci dessous, Attention A METTRE APRES LE .open.
-                      xhr.setRequestHeader("Content-Type", "multipart/form-data"); // c'est ca par défaut si j'utilise FormData()! pour le gerer sur une servlet sans avoir a regarder dans le payload mettre LINKmultilkjfqsdf 
-                      ou
-                      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");  dans ce cas c'est dans l'URL que sont les parametres comme un GET. Si on ne veut pas que notre formulaire puisse envoyer des fichiers
-                      si probleme d'encodage lors de l'envoi si j'ai une page en ISOetc etc... ma base aussi mais il faut que lors de l'envoie je specifie bien l'encodage:
-                      xhr.overrideMimeType("text/html; charset=ISO-8859-15"); (sinon en base il enregistre de la m...) si je veux envoyer du javascript, le mime c'est "application/javascript"
-                      xhr.responseType = 'text';  ou 'blob' si c'est pour un upload de fichier
-                      
-                    $.ajax({url:"xxx",success:qdcfini}) // jamais teste... marche pas car $ inconnu
-                    qdcfini=(res)=>{alert(res)} // jamais teste
-                
+                            pour recuperer une valeur  :formData.get("fs")
+                	      var xhr = new XMLHttpRequest();
+				xhr.open('POST', "AudioLoopOnlinePushAnsDRW.php", true);
+			      xhr.open('POST', "AudioLoopOnlinePushAnsDRW.php ou url", true); ou xhr.open('POST', form.action, true); // alors remplir le payload LINK564894 sauf si x-www-form-urlencoded// true  veut dire en mode asynchrone. false en mode synchrone mais attention ne pas mettre false dans le mainthread sinon j'ai l'erreur memoclap.js?version=2.20.28:6693 [Deprecation] Synchronous XMLHttpRequest on the main thread is deprecated because of its detrimental effects to the end user's experience. For more help, check https://xhr.spec.whatwg.org/.
+			      ou
+			      xhr.open("POST", "/musclesWeb/strongPassword?action="+JSON.stringify(jsontable), true); //alors mettre au dessus: xhr.setRequestHeader("Content-Type", "application/json"); recuperable dans servlet java: httpServletRequest.getParameter("action"); voir convert conversion champs formulaire en json LINKç'ç'ç"_() 
+			      ou
+			      xhr.open("GET", "AudioLoopOnlineDownloadText.php?target=sons/"+idprojetEnCours+"/"+numfichierEnCours+"_"+cursec+".txt", true);
+				ci dessous, Attention A METTRE APRES LE .open.
+			      xhr.setRequestHeader("Content-Type", "multipart/form-data"); // c'est ca par défaut si j'utilise FormData()! si j'ai pas de FormData je dois en utiliser un quitte a faire new FormData(unform). pour le gerer sur une servlet sans avoir a regarder dans le payload mettre LINKmultilkjfqsdf 
+			      ou
+			      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");  dans ce cas c'est dans l'URL que sont les parametres comme un GET. Si on ne veut pas que notre formulaire puisse envoyer des fichiers
+			      si probleme d'encodage lors de l'envoi si j'ai une page en ISOetc etc... ma base aussi mais il faut que lors de l'envoie je specifie bien l'encodage:
+			      xhr.overrideMimeType("text/html; charset=ISO-8859-15"); (sinon en base il enregistre de la m...) si je veux envoyer du javascript, le mime c'est "application/javascript"
+			      xhr.responseType = 'text';  ou 'blob' si c'est pour un upload de fichier
+			      
+			    $.ajax({url:"xxx",success:qdcfini}) // jamais teste... marche pas car $ inconnu
+			    qdcfini=(res)=>{alert(res)} // jamais teste
+			    }
+				Cote php: voir LINKphpajax
 
                     xhr.onloadstart=function(e)
                     {
@@ -27404,6 +27460,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                        {
                        console.log(e)
                        }                                              	    		
+		      xhr.send(formData);
                       xhr.send(file); // marche pas.. plutot envoyer le formulaire comme ci-dessous            	    		
             	    		xhr.send(formData); // on utilise ça que pour du multipart: envoi de fichier ou canvas voir côte servlet là:LINKee"(çà)"
             	    		xhr.send(txt); // ou txt = "file=" + url +  "&content=" + content; // on utilise ça en Post. pour Get voir plus haut. Alors request.getParameter marche (je crois)
@@ -27653,6 +27710,12 @@ tester le javascript TDD :
 						window.fetch= async function (){return Promise.resolve({status:200,
 								json: () => Promise.resolve({ status: 200}), // pas sur pour ça
 							    })};                             
+				  mocker localStorage
+					    let localStorageMock={};
+					    localStorageMock.getItem= jest.fn((valeur)=>{ return bouclechecksotrage}); ou definir une classe LocalStorageMock et faire let localStorageMock= new LocalStorageMock();
+					    Object.defineProperty(window, 'localStorage', {
+						value: localStorageMock
+					    });
 			  it("checkloop",()=>{... ou it("checkloop",async()=>{...
 			ou 	
 				test('nom du test,async()=>{
@@ -27955,7 +28018,8 @@ promesses : promese :promeses :Promises :promise : ne plus utiliser les callback
                     return promesse;
               }
         utilisation1: il faut remonter la promesse le plus haut j->UI pour que l'utilisateur final voit les erreurs catchees. Ne pas les cacher dans des console.log (mouais...)
-              totoEstObligatoirementUnePromese = mamethodeQuiRetourneUnePromesseDoncDedansCestToujoursAsychrone("dd")
+              totoEstObligatoirementUnePromese = mamethodeQuiRetourneUnePromesseDoncDedansCestToujoursAsychrone("dd"). En soit les then s'executent immediatement mais c'est ce qui est a l'interieur qui attend les resolves des promeses du dessus
+								toto.then(uneautremethode())// INTERDIT JAMAIS!!!!!! car ce then là va bypasser toute la chaine de promeses et on tombe sur ce then avant la fin de ce qui precede
                                                                 toto.then(resATOUJOURSMETTRE=>{console.log(res); return ToujoursRetournerQqch ou throw new Error(x)} //res = unobjetrenvoyéparLaPromessToto}  // then arrive a un moment on sait pas quand en asynchrone. 2 arguments=fonctions: 1ere: si ok 2eme si ko
                                                                           ,(err)=>{console.log(err); //err = l'objetderreurici} // facultatif. est la resultante d'un return reject(x) de la promesse anterieure. preferer thrower des Exception et utiliser .catch
 								    .then(res=>saveIntoLocalStorage()) // attention pas de ";"pointvirgule apres la methode dans cette syntaxe
@@ -28651,6 +28715,7 @@ pour faire un onclick si ca ne marche pas par la methode simple faire comme ca:
   onclick="clique('toto',event)" // si on fait ca (meme en html) le event est envoyée à la méthode. pratique pour recup la position etc...
       closebtn.onclick = function() { isParsing=false; document.getElementById('prompt').style.display='none'};
 pour faire un worker: workers : (web worker : web-worker : webworker :) 
+	pour debugger un webworker seule solution mettre un console.log dedans
           cote ui:
               WorkerMessge = function (cmd,parameter)
               {
@@ -28709,25 +28774,7 @@ pour mettre une image dans un canvas:
     faire les contours d'un rectangle  border:
                     ctx.strokeStyle = "#0000ff";
                     	ctx.strokeRect(this.xT,this.yT,this.wT,this.hT);
-Pour sauver un canvas sur le serveur en image png ou jpg il faut obligatoirement envoyer les donnees en POST sinon le fichier genere est pourri: 
-              	    if (canvas.toDataURL().length>0)// toDataURL converti l'image en base64
-            	    {
-            	    		ans = canvas.toDataURL("image/png");
-            	    		askValidator.ans=ans;
-            	    		var formData = new FormData(document.getElementById("forText"));
-                            formData.append('idp', idprojetEnCours); // Append extra data before send.
-                            formData.append('fs', askValidator.fs); // Append extra data before send.
-                            formData.append('ans', askValidator.ans); // Append extra data before send.
-            	    		xhr.open('POST', "AudioLoopOnlinePushAnsDRW.php", true);
-            	    		var req=arguments.callee;
-            	    		xhr.onload = function(e)
-            	    		{
-            	    			askValidator.class_AskValidator.record.call(this);
-            	    		};
-            	    		xhr.send(formData);
-            	    }
-        Cote php: voir LINKphpajax
-         pour mettre une variable reference dans le settimeout
+        pour mettre une variable reference dans le settimeout
         setTimeout(function() { 
           HideNum(someNum); 
         }, 200);
@@ -29375,7 +29422,7 @@ pour les avoir tous d'un coup:
 pour deplacer un objet du dom
     document.querySelector("#prompt>#prompt1>div").appendChild(document.getElementById('blah'));
 pour placer ajouter inserer dans un element un objet quelquepart (puissant!)
-elementDansQUoiJeVeuxAjouter.insertAdjacentElement('afterbegin', elementaajouter); //beforebegin ou afterbegin ou beforeend ou afterend // si j'ai erreur insertAdjacentElement' on 'Element': parameter 2 is not of type 'Element' "document-fragment" parce que j'utilise un template: essayer methode LINKhgjhjhjhjh    
+elementDansQUoiJeVeuxAjouter.insertAdjacentElement('afterbegin', elementaajouter); //beforebegin ou afterbegin ou beforeend ou afterend // si j'ai erreur insertAdjacentElement' on 'Element': parameter 2 is not of type 'Element' "document-fragment" parce que j'utilise un template: essayer methode LINKhgjhjhjhjh     ou insertAdjacentHTML("beforeend",template.innerHTML)
 remplacer un dom par un autre: elementParent.replaceChild(nouveaudom,ancienadegager)
 pour placer dans le dom un objet avant: LINKhgjhjhjhjh 
   unElementParent.insertBefore(nouvelobjet,unFilsAvantQuiJeVeuxMettre);
@@ -30117,7 +30164,7 @@ https://developers.google.com/web/fundamentals/web-components/customelements#att
           `; // ` ` marche partout pour faire des strings qui vont a la ligne ! 
 METHODE CLASS: THEBEST? classes es6
 						import SiBesoinUnAutreCustomElementIciCLeNomDeSaClasse from "./chemin/versLautre/custom/element.js";
-                        			(export default A METTRE SI ES6) class MonElement extends HTMLElement ou un autre element webcomponent (avec de l'animation par exemple) du coup pour que le fils appelle une methode du parent il doit faire super.methodeDuParent()
+                        			export default(facultatif) class MonElement extends HTMLElement ou un autre element webcomponent (avec de l'animation par exemple) du coup pour que le fils appelle une methode du parent il doit faire super.methodeDuParent()
                                                  {
                                                  // attention les alerts ne marchent dans un webcomponent faire console.log (si j'en ai besoin chercher sur internet)
                                           2)            constructor() // execute en premier à la creation MAIS n'est pas encore dans le DOM. // declarer mes proprietes ici pas au dessus
@@ -30135,13 +30182,13 @@ METHODE CLASS: THEBEST? classes es6
                                                                                              `${super.gui()}` //pour appeler dans le template un autre template retourne dans la classe parente
                                                                                         ou autre facon de definir un template: <template id="x">lklkjsqf ${une.variable}jsdf</template> et on peut faire let montemplate = document.getElementById("x").content.cloneNode(true)
                                                          var cloneDuTemplate = monTemplate.content.cloneNode(true);  // true: il est recursif dans le dom
-                                                        this.shadowRoot.appendChild(cloneDuTemplate); ou root.appendChild(cloneDuTemplate); ou root.appendChild(document.importNode(cloneDuTemplate,true)); ou root.innerHtml=... ou ou this.shadowRoot.innerHTML=""; ou this.shadowRoot.querySelector.....
+                                                        this.shadowRoot.appendChild(cloneDuTemplate); ou root.appendChild(cloneDuTemplate); ou root.appendChild(document.importNode(cloneDuTemplate,true)); ou root.innerHtml=... ou ou this.shadowRoot.innerHTML=""; ou this.shadowRoot.querySelector.....this.shadowRoot.insertAdjacentHTML("beforeend",template.innerHTML)
                                                         sans shadowdom: faire this.cloneDuTemplate=monTemplate.content.cloneNode(true); puis voir LINKsansshadowlkjsdgh
                                                           dansuneboucleparex P faire: 
                                                                      cloneDuTemplate.querySelector(...).innerText=untruc;
                                                                        mondiv ou thisSiJeSuisDansUneClasseHtmlElement.appendChild(cloneDuTemplate); // ajoute le template dans la page (devient visible) MARCHE PAS
                                                         findansuneboucleparex
-                                                        div.setAttribute('unattributdutaghtmltoujourstoutenminuscules','valeurDeLattributStringPasBoolean'); PIEGE! utiliser ça et ne pas utiliser unElementHTML.unattribut=xxx (ca ne modifie que la classe pas le html et du coup attributeChangedCallback n'est pas appele)
+                                                        div ou thisMonCustomElementMeme.setAttribute('unattributdutaghtmltoujourstoutenminuscules','valeurDeLattributStringPasBoolean'); PIEGE! utiliser ça et ne pas utiliser unElementHTML.unattribut=xxx (ca ne modifie que la classe pas le html et du coup attributeChangedCallback n'est pas appele)
                                                         
                                                         on peut ajouter un listnener au slot si celui ci change en javascript: par contre si je veux modifier le innerhtml du slot voir LINKrmvEvntListner
                                                             monslot.addEventListener('slotchange', e => { //voir LINKaddevtlist
@@ -30201,12 +30248,14 @@ METHODE CLASS: THEBEST? classes es6
 							    var utiliserunenestedclasse=new MaNestedClasse(this)
   							    utiliserunenestedclasse.uneMethodeDemaNestedClasse()
                                                         }
-                                                        this.dispatchEvent(new CustomEvent('unNomQueJ'invente',{unobjetJSON}); // envoie un event vers l'univers! heu non ca ne marche qu'avec les webworkers// CustomEvent ne marche pas avec unobjetJSON vide alors dans ce cas utiliser juste l'ojbet new Event("toto")
-                                                        this.addEventListener('unNomQueJ'invente',function(e){        // reception d'un event depuis l'univers (dans cet exemple il s'envoie a lui meme car même nomQueJinvente: n'a pas de sens mais c pour l'exemple)
-                                                                        this.toto=e.detail.unparametreARecuperer;
-                                                                        this.titi=e.detail.unAutreParametreARecuperer;
+                                                        this.addEventListener('unNomQueJ'invente',function(evt){        // reception d'un event depuis voir ci dessous LINKtriggerEvent
+                                                                        this.toto=evt.detail.unparametreARecupererDansLobjetJson;
+                                                                        this.titi=evt.detail.unAutreParametreARecupererDansLobjetJson;
                                                                          this.parentElement.openclose(); // pour appeller une methode de l'element qui entoure englobe cette classe (pas l'heritage mais au niveau html)
                                                                     }.bind(this) // possible de faire ca si this n'est plus ma classe mais un slot ou quoi... comme ça dans la fonction ci dessus this sera mon custom element.
+                                                        LINKtriggerEvent:
+							this.dispatchEvent(new CustomEvent('unNomQueJ'invente',{detail:unobjetJSON}); // toujours mettre detail. demande l'execution de ci-dessus. Ca ne marche qu'avec les webworkers// CustomEvent ne marche pas avec unobjetJSON detail vide alors dans ce cas utiliser juste l'ojbet new Event("toto")
+
                                                     }
                                                  }
                                                 Puis
@@ -30306,6 +30355,7 @@ PWA : progressive webapps :
             dev>application>service workers>offline
             pluggin chrome "lighthouse"
     service-worker : serviceworker :service-workers : serviceworkers : POUR SUPPRIMER TOUT CACHE POUR TESTER: 1)debugger chrome>onglet application > clearstorage> bouton clear site data. A son propre systeme de cache manipulable et qui se place AVANT le cache http quand j'envoie une requete vers le serveur: user->CachePWA->CacheHTTP(voir LINKcachehttp)->Serveur
+	il y en a qu'un par application et sa durée de vie perdure apres fermeture du browser tab contrairement aux web-workers
     pour faire un site qui marche offline avec les service workers: html5: P envoyer notifications meme quand navigateur est fermé car c'est un worker(thread) indépendant de tous les navigateurs.(un peu comme un programme nodejs) Peut travailler avec indexDB database voir LINKpwanotif
     ça ne marche que en https ou en http://localhost et dans ce cas faire  chrome://flags/#unsafely-treat-insecure-origin-as-secure AVANT mais bof:  ou faire:un certif auto signé, le declarer dans voir LINKàç<çç_à  et demarrer chrome comme ça: ./google-chrome-stable --ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=https://www.fauxmemoclap.co./google-chrome-stable --ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=https://www.fauxmemoclap.com
     serviceworker.js:
@@ -30318,6 +30368,12 @@ PWA : progressive webapps :
     } else {
         navigateur supporte pas serviceworkers
     }
+	cote initializer:LINKServiceworkerinitializer
+	    // Pour la reception de messages depuis le serviceworker
+	    navigator.serviceWorker.addEventListener('message', event => {
+	    //    console.log(event.data.msg, event.data.url);
+        }
+
     -----------dans service-worker.js(a renommer a chaque version: service-worker-v1 puis v2 etc si je le change):
                                         // voir https://ponyfoo.com/articles/progressive-networking-serviceworker et https://serviceworke.rs/strategy-network-or-cache.html en haut a droite
 						class EssaisParUrl {
@@ -30740,7 +30796,7 @@ PWA : progressive webapps :
 						{
 						    self.clients.matchAll().then(function (clients){
 									    clients.forEach(function(client){
-									      client.postMessage({
+									      client.postMessage({ // voir LINKServiceworkerinitializer 
 										msg: messageType,
 										url: detail
 									      });
@@ -34813,14 +34869,18 @@ Cobol :
     TOTO(20:) tronque et conserve les premiers 20 caractères
 seo : 
   pour bien referencer sa page referencement: 
-        <head>
+        <head> LINKcachehttp:
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-      <meta http-equiv="cache-control" content="max-age=12" /> est moins bien que expires ci dessous. Dans les 12 prochaines secondes le browser n'essayera meme pas DUTOUT de requeter et prendra directement dans son cache. Je peux mettre 0 pour qu'il ne cache jamais.
-      <meta http-equiv="cache-control" content="no-cache" />   est moins bien que expires ci dessous.: no-cache signifie qu'il garde en cache mais avant de l'utiliser demande au serveur s'il faut rafraichir ou pas. no-store est vraiment sans cache par contre LINKcachehttp
-      <meta http-equiv="expires" content="0" />
+      <meta http-equiv="cache-control" content="max-age=12" /> Dans les 12 prochaines secondes le browser n'essayera meme pas DUTOUT de requeter et prendra directement dans son cache. Je peux mettre 0 pour qu'il ne cache jamais.
+					must-revalidate: si le max-age est passé, tu dois A 100% valider comparer ton Etag avec celui renvoyé par le serveur pour eventuellement rerecuperer l'original sur le serveur si c'est différent.// si je ne mets pas ça a coté de max-age, il ne valide que à son bon vouloir un peu quand il veut. DONC A METTRE!!!
+					public/private: private a utiliser pour les pages de login pour que personne d'autre ne cache comme par exemple un CDN qui est intermédiaire sur le reseau (CDN rapproche les caches aux utilisateurs pour gain bandwith). donc en général mettre public pour plus de perfs.
+      <meta http-equiv="cache-control" content="no-cache" />   no-cache signifie qu'il garde en cache mais avant de l'utiliser demande au serveur s'il faut rafraichir ou pas. no-store est vraiment sans cache par contre 
+							validate!// je crois accompagne no-cache. C'est je crois qu'on demande de valider avec le Etag.
+      <meta http-equiv="expires" content="0" /> NON google dit que expire fonctionne mais cache-control le remplace completement
       <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" /> // mettre dans le serveur une date dans quelques jours ameliore efficacité car pas besoin de requeter dutout avant cette date. plus efficace donc que ETag
       <meta http-equiv="pragma" content="no-cache" />
-	ETag: "d72fc-4f51df8b04180"
+	ETag: "d72fc-4f51df8b04180" est dans la response et est un hash de son contenu. Si egal, code reponse renvoyée est 304. c'est une requete supplémentaire si precedement un etag a été envoyé. Donc a eviter si le fichier est petit. Le serveur web se charge de les envoyer lui meme en principe. Ca plombe si j'ai beaucoup de fichiers plutôt qu'un gros
+	la recette gagnante est donc: max-age=0 must-revalidate public + pour les fichiers qui ne changent pas beaucoup comme les images mettre un cache-controle avec un grox max-age=31536000,immutable. et qu'ils aient (des noms avec un hash a la fin NON TROP RISQUE SI N'EXISTE PLUS) ou que les requetes soient avec un ?memeHashmemeimage a la fin // imutable est a ajouter pour les vieux browser de merde pour qui un gros max-age ne suffit pas
 
       <meta name="google-site-verification" content="QR2ftvbXhfKdlLXVS7iM8yOWKpN4uH--pegRciX_yvo" />
       <meta name="keywords" content="vêtement ecologique ethique bio durable environnement prêt-à-porter ecochic feminin t-shirt pull robe jupe wenhua duverge duverge duverger" />
