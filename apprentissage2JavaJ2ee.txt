@@ -3011,7 +3011,7 @@ ou remote                       peute etre sur classe meme un webservice. Peut a
 <<
   @Inject ou @EJB ou @Ressources (c'est pareil)// injection de dep: autant utiliser @Inject partout. Le container trouve tout seul grace au nom de ma classe mon bean EJB en cherchant tout seul dans le jndi. // il faut avoir qu'une seul sous classe de cette interface pour que ca marche
                         // facultatif (name="monlookupnomdebean" ou/et beanName="nomDeLaClasseSiC'estUneImplementationDinterfaceEtQuilYEnADautres")
-  static MonInterfaceDeBeanDEJB ejbbean; ATTENTION ca DOIT etre une interface si il y en a une. Si yen a pas ca marche avec la classe direct. Si je fais pas ça il n'arrive pas a injecter avec erreur WELD-001408
+  static MonInterfaceDeBeanDEJB ejbbean; ATTENTION ca DOIT etre une interface si il y en a une. Si yen a pas ca marche avec la classe direct. Si je fais pas ça il n'arrive pas a injecter avec erreur WELD-001408 ou parce que j'ai pas de constructeur vide (implicite ou explicite)
 ==public static void main(String[] args)
   {
      String toto = ejbbean.calcule(4,2);
@@ -5438,6 +5438,7 @@ pour faire un background avec des zones pour cliquer lien absoluts absolu
       <a style="position:absolute; left:78%; top: 78%; height:20%; width:20%; text-decoration:none" href="./about/gallery.php"></a>
 faire un background color transparant: 
 	background-blend-mode:xxxxx // met des effets sur le background image
+	fonctionne avec background:url() et background-color:...
       aller sur http://www.css3maker.com/css-3-rgba.html
       mettre par ex: background-color: rgba(255, 255, 255, 0.1);
 faire un background image transparent:
@@ -5458,6 +5459,23 @@ pour faire clignoter un texte:
   text-decoration: blink; 
 pour centrer un tableau une table dans un div lui mettre: 
   pas text-align:center mais margin: 0 auto;
+centrer un texte dans un div: 
+  .parent {
+    display: grid;
+    place-items: center;
+  }
+avant:
+          <div style="display: table;overflow: hidden;margin: 0 auto;">
+             <div align="center" style="
+              border: 1px solid blue;
+              height: 50px;
+              width: 284px;
+              display: table-cell;
+              vertical-align: middle;
+              align-items: center;">FRY - TRAVEL</div>
+          </div>						          
+pour centrer une image dans un div: 
+  <p align="center"><img...../></p>
 pour faire une animation en boucle sur une image par exemple avec css. (l'ere des gif annimes est revolue!) panorama defile
         ATTENTION pour les animations annimations en css utiliser en priorite opacity et transition ou transform 
           /* première etape */
@@ -5590,7 +5608,7 @@ superposition d'image:
 pour que l'image background de fond prenne toute la place
   .fond
   {
-	background: url(accueil.jpg) no-repeat center center fixed; 
+	background: url(accueil.jpg) no-repeat center center fixed;  ou center/100% pour centrer: 100% remplace le css background-size
   -webkit-background-size: cover; // a utiliser avec radius
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -16403,7 +16421,7 @@ tests : mocks :
 								}
 			@Test... MaClasseTesteeEtStubeeEnMemeTemps.methodeTestee(); //cette methodeTestee appellera laMethodeStubee
 		SelfShut d'unclebob:
-				ma classe de test implemente l'interface de l'objet que je veux mocker stuber et j'injecte ma classe meme dans le getter de la classe que je veux tester.
+				ma classe de test implemente l'interface ou extend la classe de l'objet que je veux mocker stuber et j'injecte ma classe meme dans le getter de la classe que je veux tester.
 
 JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIRE comprendre jmockit et à documenter voir D:\RD\hello-world-war-master\src\test\tests\JMockitTest.java
     (plus reussi à le faire marcher avec Junit5. Mais Mockito si)
@@ -17853,7 +17871,7 @@ log4j.appender.pae.layout.ConversionPattern=[%d{dd/MM/yyyy HH:mm:ss,SSS}] %t %c 
                                                                           %d	Used to output the date of the logging event. For example, %d{HH:mm:ss,SSS} or %d{dd MMM yyyy HH:mm:ss,SSS}.
                                                                           %F	Used to output the file name where the logging request was issued.
                                                                           %l	Used to output location information of the caller which generated the logging event.
-                                                                          %L	Used to output the ligne line number from where the logging request was issued.
+                                                                          %L	Used to output the ligne line number numero ligne from where the logging request was issued.
                                                                           %m	Used to output the application supplied message associated with the logging event.
                                                                           %M	Used to output the method name where the logging request was issued.
                                                                           %n	Outputs the platform dependent line separator character or characters.
@@ -18369,7 +18387,7 @@ pour convertir une LinkedHashMap en array Json correctement:
                 			}
                 			else if(key instanceof Double)
                 			{
-                				ret = fillJSonUntil(ret,Integer.parseInt(Long.toString(Math.round((Double)key)))); // pour arrondir un double
+                				ret = fillJSonUntil(ret,Integer.parseInt(Long.toString(Math.round((Double)key)))); // pour arrondir un double voir aussi LINKrounddouble
                 				ret.set(Integer.parseInt(Long.toString(Math.round((Double)key))), val.toString());
                 			}
                 			else
@@ -20416,7 +20434,6 @@ execution : executer :
             tapper jshell et je peux tester des petit bouts snippets de code java sans m'inqueter des exeptions et des ";" point virgules pointvirgule                                                       
 		pour quitter terminer /exit
       depuis java9 existe aussi - VarHandle pour passer rapidos de noeud en noeud d'un coup.
-                                - ProcessBuilder: executer une commande externe sortir pid unix linux autre programme process
         pour lancer executer un programme java faire ca: (ATTENTION ne marche plus depuis la version 1.6?)
         depuis java9 si j'ai Caused by: java.lang.ClassNotFoundException: javax.activation.DataSource (c parce que ca a degagé de la jvm alors ratacher le module automatique avec maven: 
                         <dependency>
@@ -20813,6 +20830,11 @@ pour copier les proprietes d'un bean formulaire vers un autre bean de type info 
 ************************
 externe : systeme : depuis java:
 pour executer une commande externe en java:
+  - ProcessBuilder: executer une commande externe sortir pid unix linux autre programme process
+	ProcessBuilder pb =new ProcessBuilder("jpegoptim", "-m 0", jpegAbsolutePath);
+	Process p = pb.start();
+	log.debug(utils.getStringFromInputStream(p.getInputStream(),"UTF-8")); // le inputStream du process p c'est le output de unix
+ou avant:
 Pour lancer votre application externe il vous suffit maintenant d'appeler l'une des six methodes exec() de la classe Runtime et dont voici les declarations:
 ne pas faire ca:
 Runtime runtime = Runtime.getRuntime();
@@ -22791,7 +22813,8 @@ Pour lire les mails :
 --------------------------------
 Pour formater un chiffre: taille zeros string 
 numberTest = 1;
-private static DecimalFormat  nf = new DecimalFormat("000" ); ou "00.000" ou "##.###" (dans ce dernier cas c pas pareil: je crois que les zero apres virgules ne s'affichent pas si c'est zero)
+private static DecimalFormat  nf = new DecimalFormat("000" ); ou "00.000" ou "##.###" (dans ce dernier cas c pas pareil: je crois que les zero apres virgules ne s'affichent pas si c'est zero) LINKrounddouble 
+				puis nf.format(mondouble)
             decimalformat peut etre remplacé par string.format pour ecrire les millions  String.format("%.2fM", theNumber/ 1000000.0); ou String.format("%,.2f",totalNPV) LINKStringFOrmatNumb 
 String retour =code.concat(nf.format(numberTest));
 retour va etre egal à 001
@@ -24201,7 +24224,8 @@ DEVOPS :
  possible rollback en 1 click sur 1 bouton
  historisation des deploys: qui? quand? VersQuelEnv? pourQuelResultat? diffAvant-Apres?: a chaque deploy tous recoivent cet historique par email ou chat
  pas de branches: trunk based developpement: tous dans le trunck des que les tests automatises signalent une erreur, tout le monde s'arrete et on corrige l'erreur.->vert. Chaque commit peut tout casser. C normal voir LINKgatedcommit. Reception alerte automatique ->on repare tout de suite.
- LINKgatedcommit: gated commit: lors du commit, avant le system regarde si merge et build ok. Si ko le commit ne se fait pas->alerte au developpeur 
+ LINKgatedcommit: gated commit: petits commits. Lors du commit, avant le system regarde si merge et build ok aussi code review (par email par ex ou peer prog) avant commit. Si ko le commit ne se fait pas->alerte au developpeur.  
+	un pullresquest doit etre une prose qui explique le contexte:pourquoi ce changement, comment, quels sont les risques, comment paler aux risques + l'id des tickets
  On ne répare plus un environnement, on le remplace: creation d'un env est très rapide et automatique. Interdit de modif en prod. passer par version control et tout recreer from scrach
  reduire le nombre de "handof"(je passe le relai a qq d'autre)
  usecase->dev->test->opProd: livrer 100x/jour des touts petits lots(a chaque dev terminé)(incite la com) businessvaluevisiblespour client. Livrer de A à Z(prod) avant de faire autre chose.
@@ -24715,7 +24739,7 @@ pour recharger le .profile // fichier chargé lorsque je me connecte au demarrag
 changer mot de passe d'un utilisateur:
   changepasswd ou passwd nomutilisateur    
 creer un nouvel utilisateur: 
-      useradd -m -s /bin/bash(son shell prefere) -d /chemin/vers/son/home/directory nomduuser
+      useradd -m -s /bin/bash(son shell prefere) -d /chemin/vers/son/home/directory nomduuser //-m pour creer son home directory -s pour choisir son shell prefere
       puis faire 
           passwd nomduuser // pour definir son password 
       du coup liste des utilisateurs users avec password mots de passe sous /etc/passwd il va y avoir:
@@ -24723,7 +24747,7 @@ creer un nouvel utilisateur:
       commande unshadow combine le fichier passwd et shadow
             unshadow fichierpasswd fichiershadow > fichierresultant
 supprimer un user (il va le supprimer dans passwd lui meme)
-    userdel loginduuser
+    userdel loginduuser // cette commande n'efface pas son home directory pour faire ca faire userdel -r loginduuser
 liste des machines qui ont le droit de se logger sur mon serveur
   vi /etc/hosts.allow 
   je peux interdir à une adresse ip de se connecter sous /etc/hosts.deny
@@ -25137,10 +25161,11 @@ mkdir pour creer un repertoire.
 cal [-jysm13] mois annee. pour afficher date calendrier
 pour changer le groupe de mon fichier:
 chgrp [-R] nomgroupe nomfichierOuRepertoire -R pour recursif
-plour savoir a quelle groupe un user appartien:
+pour savoir a quelle groupe un user appartien:
 id username
 Pour ajouter add un utilisateur user dans un groupe
-usermod -aG legroupe nomduuser // a faire en sudo si command not found. Necessite de se relogger ou faire su -s monusername
+usermod -aG legroupe nomduuser // ca ajoute le user a un autre groupe. Le user du coup peut appartenir a plusieurs groupes. a faire en sudo si command not found. Necessite de se relogger ou faire su -s monusername
+newgrp autregroupe // en tant qu'utilisateur, pour switcher de groupe si j'en ai plusieurs. Des lors toutes mes actions se font avec les droits de cet autre groupe au nom de cet autre groupe
 pour compter le nombre de lignes renvoyees par un find par exemple: find . -name 'R*.xml' | wc -l
 uname -a nom machine etc...
 stty: (config clavier)
@@ -26053,6 +26078,7 @@ xfce : xcfe : // bureautique debian :
 	packages disponible avec application discover
 	copie d'ecran impr ecran: le programe est deja installe et s'appelle screen ou capture d'ecran
 	si la bare d'en haut du bureau a disparu faire alt+f2 puis xfce4-pannel...
+	si ca freeze obligé : forcer le terminal: CTRL+Alt+F1 et là je peux killer des trucs MAIS ATTENTION je ne sais pas comment revenir au bureau: seule solution trouvée c'est sudo reboot donc sert à rien ce truc
 IMAGES GENEREES EN JAVA SUR UNIX:
 Question:
 Why is the following error message displayed "java.lang.InternalError: Can't connect to X11 window server using ':0.0' as the value of the DISPLAY variable" ?
@@ -26858,23 +26884,6 @@ pour savoir quand le src d'une image est charge:
           image.onload = function () {		
                 ....
             }
-centrer un texte dans un div: 
-  .parent {
-    display: grid;
-    place-items: center;
-  }
-avant:
-          <div style="display: table;overflow: hidden;margin: 0 auto;">
-             <div align="center" style="
-              border: 1px solid blue;
-              height: 50px;
-              width: 284px;
-              display: table-cell;
-              vertical-align: middle;
-              align-items: center;">FRY - TRAVEL</div>
-          </div>						          
-pour centrer une image dans un div: 
-  <p align="center"><img...../></p>
 ligne de separation horizontale: 
     <hr></hr>
 pour mettre un retour chario dans la value d'un bouton: 
@@ -27327,7 +27336,7 @@ fetch : LINKsljqffetch
             en mode synchro:
                         async function mamethode() { 
                               const response = await fetch("/hello");
-                              const { greeting } = await response.json();
+                              const { greeting } = await response.json(); ou response.text()
                               this.innerHTML = `
                                   <h2>${greeting}</h2>
                               `;
@@ -30254,7 +30263,7 @@ METHODE CLASS: THEBEST? classes es6
                                                                          this.parentElement.openclose(); // pour appeller une methode de l'element qui entoure englobe cette classe (pas l'heritage mais au niveau html)
                                                                     }.bind(this) // possible de faire ca si this n'est plus ma classe mais un slot ou quoi... comme ça dans la fonction ci dessus this sera mon custom element.
                                                         LINKtriggerEvent:
-							this.dispatchEvent(new CustomEvent('unNomQueJ'invente',{detail:unobjetJSON}); // toujours mettre detail. demande l'execution de ci-dessus. Ca ne marche qu'avec les webworkers// CustomEvent ne marche pas avec unobjetJSON detail vide alors dans ce cas utiliser juste l'ojbet new Event("toto")
+							this.dispatchEvent(new CustomEvent('unNomQueJ'invente',{detail:unobjetJSON})); // toujours mettre detail. demande l'execution de ci-dessus. CustomEvent ne marche pas avec unobjetJSON detail vide alors dans ce cas utiliser juste l'ojbet new Event("toto")
 
                                                     }
                                                  }
@@ -34988,6 +34997,7 @@ seo :
           http://advsys.net/ken/utils.htm voir dans D:/DEV/pngout.exe // a executer en ligne de commande sur windows: pngout.exe Lot4devFrontEND.PNG Lot4devFrontENDOUT.png
           http://freecode.com/projects/jpegoptim    D:/Dev/jpegoptim-1.3.0-win32-binary/jpegoptim.exe d:/Profiles/lduverge/Ah02hight.jpg ATTENTION je crois qu'il ecrase l'ancien fichier
                                                     F:\Mesdocuments\Installations\jpegoptim-1.3.0-win32-binary/jpegoptim.exe F:/PHOTOS/aeffacer/*.jpg
+						sous unix : jpegoptim -m 0 monimage.jpg //-m 0 facultatif reduit la qualité a que dalle
 		ou bien 
 			    	BufferedImage img = ImageIO.read(imageInputStream); // load image
 				BufferedImage scaledImg = Scalr.resize(img, 300, 300);
