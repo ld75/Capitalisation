@@ -926,9 +926,9 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
                  eval $(ssh-agent -s) // utiliser ca si ma cle n'est pas sous .ssh: demarrer le ssh-agent (il se peut qu'il ne soit pas demarré c pour ca.) sert aussi pour une authentification automatique. si ne marche pas sur windows le faire avec git desktop console
                  ssh-add /c/path/vers/ma/cle/prive/toto_rsa // ajouter ma paire de clé au ssh agent (je peux renommer id_rsa comme je veux: toto ou toto_rsa par ex)
         sur certains serveurs on peut etre amené à devoir declarer des certificats pour se connecter au serveur git
-            git config --global http.sslcert /c/Users/ut2sn0/My_IT_Applications/configs/Gitas_mygitcert.crt
+            git config --global http.sslcert /c/Users/ut2sn0/My_IT_Applications/configs/Gitas_mygitcert.crt il doit etre au format pem(base64) et non pas cer ou der comme l'exporte internetexplorer alors que firefox l'export en pem
             git config --global http.sslkey /c/Users/ut2sn0/My_IT_Applications/configs/Gitas_mygitcert.key
-            git config --global http.sslcainfo /c/Users/ut2sn0/My_IT_Applications/configs/Gitas_cagitcert.crt
+            git config --global http.sslcainfo /c/Users/ut2sn0/My_IT_Applications/configs/Gitas_cagitcert.crt //un certificat format pem 
             git config --global http.sslverify false
             ou bien plus recemment remplacer tout ca par
             git config --global http.sslBackend schannel // il va directement cercher les certifs installés dans windows: plus besoin de mettre le chemin comme ci dessus. Cette commande rend http.sslcainfo ignorée.
@@ -1258,6 +1258,8 @@ Adobe illustrator :
 
   
 intelliji : intellij : Afaire: utiliser le git et l'apprendre.(dixit christophe)
+Si erreur no tests were found
+	Redemarrer Intellij ou faire une mise a jour et le redemarrer
 Si le clavier ne marche plus:
 		Go to "Help | Edit Custom VM options..." and add -Drecreate.x11.input.method=true to a new line
 		Restart IDE
@@ -1459,6 +1461,7 @@ focus vers maven project pannel j'ai rajouté le shortcut Alt+F8
 focus precedent: alt+ctrl+fleches
 fullscreen agrandire aggrandire plain ecrant full size Maximise editor Ctrl+Shift+F12
 creer surround suround trycatch Selectionner puis Ctrl+Alt+T
+surround avec trywithresource voir LINKtrywithresintellij
 creer surround suround synchronizd syncronized Selectionner puis Ctrl+Alt+T
 autocompletion Alt+Maj+Espace ou Ctrl+Espace
 fille fils methode sous classe: Ctrl+Alt+B
@@ -5302,8 +5305,6 @@ faire effet blur smooth filtre: genial.
  pour faire une ombre centrale à l'interieur assombrir l'image
         filter: brightness(70%); // une valeur >100% eclairci l'image (120%)
  
-centrer un texte middle verticalement: 
-      line-height:39px; et rien d'autre
 pour faire un effet 3d avec les caractères: 
       -webkit-transform: rotateX(89deg);
 pour supprimer personnaliser dans tout imput select radio checkbox le bleu qui entoure quand on est en focus: 
@@ -5474,6 +5475,10 @@ avant:
               vertical-align: middle;
               align-items: center;">FRY - TRAVEL</div>
           </div>						          
+ou 
+centrer un texte middle verticalement: 
+      line-height:39px; et rien d'autre
+	
 pour centrer une image dans un div: 
   <p align="center"><img...../></p>
 pour faire une animation en boucle sur une image par exemple avec css. (l'ere des gif annimes est revolue!) panorama defile
@@ -5704,7 +5709,6 @@ top du top pour que ce soit responsive pas besoin de @media: voir plein d'exempl
     justify-content: center;
     align-content:baseline;
   }
-
   parent > .children {
     flex: 1 1 150px; /*  Stretching: */prendre ca  (premier 1 c'est pour j'autorise l'etirement, et le deuxieme j'autorise la reduction je crois)
     flex: 0 1 150px; /*  No stretching: */override ci dessus
@@ -13461,7 +13465,7 @@ certificats : certificat : formats: types
                                     peut etre transcode en .pem (contenant le certif et la cle privee.) 
                               Le format PKCS #7 ou P7B  (.p7b ou .p7c ou .keystore) Chiffré en Base64 ASCII Standard de syntaxe de message de chiffrement
                               _     prend en charge le stockage des certificats et de tous les certificats du chemin d’accès de certification. (keytool utilise ce format) 
-                             | DER X.509 (.cer ou .der) (PKCS #8) La version binaire(!=bas64) de PEM. Tout le monde peut devenir un DER. Ne contiennent pas "BEGIN CERTIFICATE / END CERTIFICATE"
+                             | DER X.509 (.cer ou .der) (PKCS #8) La version binaire(!=bas64) de PEM(qui est base64). Tout le monde peut devenir un DER. Ne contiennent pas "BEGIN CERTIFICATE / END CERTIFICATE"
                              |       Le format DER (Distinguished Encoding Rules) prend en charge le stockage d’un seul certificat. Ce format ne prend pas en charge le stockage de la clé privée ou du chemin d’accès de certification.
   un.cer .crt peut etre soit | PEM (.pem) format texte. version Base64 de DER Chiffré en Base64 X.509 x509 (commence par ----BEGIN fini par END---) pour en crée une avec mobaxterm faire Conversion>ExportSSH key
   importable dans browser    |       Le format Base64 ASCII prend en charge le stockage d’un seul certificat. Peut etre un csr.
@@ -13741,9 +13745,9 @@ Pour recuperer le user utilisateur connecte à travers un certificat
 Cryptage : crypto : en java
         algos : algorithmes :
                 MD5 et SHA1: obsoletes pour hasher. SHA1>MD5
-                RSA = asymetrique paire de cles (taille cle peut varier) (symetrique plus rapide que asymetrique)
+                RSA = asymetrique paire de cles (taille cle peut varier) (symetrique plus rapide que asymetrique) doit etre utilisé avec le padding OAEP
                     RSA-SHA256 = RS256
-		AES successeur de DES = symetrique = DESED?  //AES 1)ECB:bof que pour les tout petites chaines de char<128bits. 2)CBC:s'utilise avec un Padding et un IV InitializationVector(vecteur a pour vocation de ne servir qu'une seule fois et le transmettre au parti et le changer à chaque fois.) qui est juste un randomdata de 128bits ne doit s'utiliser qu'une fois et peut etre public 3)CTR:IV sert sur tous les blocs.<M-F12>
+		AES successeur de DES = symetrique = DESED?  //AES 1)ECB:bof que pour les tout petites chaines de char<128bits bof car il encrypte toujours de la meme facon un bloc avec une cle donnee 2)CBC:s'utilise avec un Padding et un IV InitializationVector(vecteur a pour vocation de ne servir qu'une seule fois et le transmettre au parti et le changer à chaque fois.) qui est juste un randomdata de 128bits ne doit s'utiliser qu'une fois et peut etre public. avec le padding PKCS#5 ou #7 il est vulnérable au padding oracle attacks 3)CTR:IV sert sur tous les blocs.<M-F12>
 			3DES plus fort que DES
                 ECDSA = asymetrique (plus lent que symetriques)
                     ECDSA-SHA512 = ES512 
@@ -13817,7 +13821,12 @@ Cryptage : crypto : en java
 		     IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
 		    SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
 		    //crypter
-		    Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+		    Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING"); // ne plus faire ça c'est vulnérable. faire ça
+					// Recommended for block ciphers
+					Cipher c5 = Cipher.getInstance("AES/GCM/NoPadding"); // Compliant
+					// Recommended for RSA
+					Cipher c15 = Cipher.getInstance("RSA/None/OAEPWithSHA-1AndMGF1Padding"); // Compliant
+					Cipher c16 = Cipher.getInstance("RSA/None/OAEPWITHSHA-256ANDMGF1PADDING"); // Compliant
 		    cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
 		    byte[] encrypted = cipher.doFinal(valeurACrypterDecrypter.getBytes());
 			System.out.println("nonUtilisable: "+new String(encrypted));
@@ -15549,7 +15558,7 @@ hacking : haking : hack :
         redirectionexterne // une servlet redirige vers un autre site! http://monsite?maservletTresConne?forward=http://un_autre_site
         CSRF :=XSRF :(CrossSiteRequestForgery :) LINKc.s.r.f (Cross-site scripting appartient à csrf) 
           inciter quelqu'un qui est connecté avec sa session sur le site X à lui faire executer une requette HTTP (genre rm -r*) par javascript caché (dans une image par ex) depuis un autre site web sur le meme navigateur.           
-              la parrade est: 
+              la parrade est: CORS
                       - limiter Access-Control-Allow-Origin : ainsi le serveur fait une preflight request method=OPTION qui verifie si cette requete provient de source sure avant de faire la vraie requete.
                       - la meilleure soluce: Utiliser des jetons de validité dans les formulaires: faire en sorte qu'un formulaire posté ne soit accepté que s'il a été produit quelques minutes auparavant: le jeton de validité en sera la preuve. Le jeton de validité stokés coté serveur dans la session de l'utilisateur est envoyé sur le browsser. Au retour il doit être transmis en paramètre et vérifié côté serveur puis supprimé de la session.
                       - Effectuer une vérification du référent referer dans les pages sensibles: connaître la provenance du client permet de sécuriser ce genre d'attaques. Ceci consiste à bloquer la requête du client si la valeur de son référent est différente de la page d'où il doit théoriquement provenir.
@@ -16423,6 +16432,82 @@ tests : mocks :
 		SelfShut d'unclebob:
 				ma classe de test implemente l'interface ou extend la classe de l'objet que je veux mocker stuber et j'injecte ma classe meme dans le getter de la classe que je veux tester.
 
+    Mockito : Mokito :dans mon test:
+    si JUNIT5
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>3.0.0</version>
+            <scope>test</scope>
+        </dependency>
+    si JUNIT4<!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
+      <dependency>
+          <groupId>org.mockito</groupId>
+          <artifactId>mockito-all</artifactId> // difference entre mockito core et mockito all. Mockito core c'est que mockito et mockito all contient les dependances avec hamcrest et objenesis. c'etait utile quand on buildait avec ant. A8 utiliser que Mockito core: maven ou gradle s'occuperont d'ajouter les dependances ou sinon ajouter les 2 autres dependances à la main.
+          <version>1.10.19</version>
+          <scope>test</scope>
+      </dependency>
+      @ExtendWith(MockitoExtension.class)  // si junit5 seulement
+        public class UploadToServerServiceTest {
+    		@InjectMocks // facultatif Mock peut marcher sans. Classe qui est testee dans laquelle on injectera les mocks
+    		private RealTimePathCoverageController realTimePathCoverageController = new RealTimePathCoverageController(); // equivalent de @Tested dans jmockit : c'est une classe a tester dans laquelle je peux injecter des mocks LINKpourquecamarcheFairemokito
+                                                                                ou =spy(new MockRealTimePathCoverageController()); //on peut utiliser ça direct sans annoter @Spy et a mettre sous un @InjectMock si on veut injecter niveau en dessous de @l'InjectMock. Necessite le LINKlkfjjgjgjgozo. avec @InjectMocks en haut c'est top! on peut remplacer facilement par un mock et en plus injecter dedans ce quon veut comme autre @Mock
+										memoclap.saveActorsNameOnServer=jest.fn(()=>{console.log("aaaaaaaaaaaa")});
+										def stub:un objet qui renvoit juste des constantes utiles. 
+										def spy: c'est un stub qui contient des variables de mémoire qui retiennent ce qui s'est passé pour qu'on puisse les assserter. Je peux faire de ma classe de test elle meme le spy en la faisant implementer plusieurs interfaces.
+										def mock veritable: c'est un spy qui retient dans une liste l'historique des actions effectuees et à la fin du test on peut lui asserter que toutes les actions ont bien été executées grace à comparaison listaction enregistrées et liste actions requises. Est fortement couplé à l'algoritme de prod.
+										def fake: c'est un "faux mock" il mime l'implementation de prod: leur pb c'est qu'ils peuvent devenir tres complexes. a eviter.
+    		@Mock ou @Spy     //Mock par defaut n'execute rien et on peut changer son comportement. Spy par defaut execute tout et on peut ecouter. Si un mock ou spy est null c'est peut etre parce que le type de classe de l'objet mocké ne correspond pas: par ex si dans le code j'ai une interface je dois aussi avoir cette interface dans la classe de test et non pas la classe implementant.
+            private RestTemplate restTemplate; // (peut etre une classe ou une interface) mock qui sera injectée dans RealTimePathCoverageController.
+    			@BeforeEach ou @Before // selon junit5 ou 4
+    				public void setup()
+    				{
+    					MockitoAnnotations.initMocks(this); //LINKlkfjjgjgjgozo ca active les anotations @InjectMocks et @Mocks et @Spy // attention @Spy qui doit etre accompagné de par exemple @Autowired dans mon test car le bean doit exister avant que le spy s'applique: CA CA NE MARCHE PAS:mon objet spyé n'est pas toujours le meme que celui qui est injecté dans le runcode. 
+    				}
+    				FilterConfig filterConfig = mock(FilterConfig.class); // c'est soit je fais comme ca, soit j'utilise les anotations ci dessus. les deux font la meme chose
+    				ServletContext context = mock(ServletContext.class);
+		pour mocker injecter une @Value genre string de Spring:
+			ReflectionTestUtils.setField(lebeanquicontientleValue,"nomduchampJavaDansLeBean","la valeur qu'on lui donne");(pas sur que ça marche)
+                    pour qu'une meme classe soit testée et spyée:// on test certaines de ces methodes et on spy certaines de ces methodes fonctions //plutot faire comme unclebob LINKmockmethodeunclebob
+                        Machin machinATesterEtSpyer = new Machin()
+                        Mockito.spy(machinATesterEtSpyer);
+			ou bien l'annoter @Spy et @InjectMock puis mocker ses methodes comme ca:
+			Mockito.doReturn(unTrucQuiDoitEtreRetourne).when(unMockPasUnSpy).uneMethodeAMocker(anyString()); //plutot faire comme unclebob LINKmockmethodeunclebob
+                    ResultDao rd =mock ou spy(unObjetNONANNOTE ou new ResultDao() ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
+                    Mockito.doReturn(toto).when(rd).getLaMethodeNONSTATIQUEResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy. ou pour qu'un spy ne fasse rien: Mockito.doNothing().when(monSpy).lamethodeDeMonSpyQuiPeutEtreVoid();
+    				when(filterConfig.getServNONSTATIQUEletContext( // ca s'appelle faire du "stub" utiliser ca je crois pour les mock. Attention si c'est une methode finale il va rentrer dedans avant de traiter le when donc pour mocker une methode finale depuis Mockito2 seulement on crée un fichier sous src/test/resources/mockito-extensions/org.mockito.plugins/MockMaker et dedans on ecrit mock-maker-inline
+    				ou                                   anyString()//tout string
+    				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça . si je met des variables direct alors j'ai l'erreur InvalidUseOfMatchersException
+										pour faire un equals "eq(" en profondeur : 
+												ArgumentCaptor<User> argument = ArgumentCaptor.forClass(User.class);//definir un argumentcaptor.
+												verify(userStore, times(1)).createNewUser(argument.capture()); //faire mon verify mais avec mon argumentcaptor
+												Assertions.assertEquals(userCreated.id, argument.getValue().getId()); // et voila je peux asserter
+												Assertions.assertEquals(userCreated.getEmail(), argument.getValue().getEmail());
+												Assertions.assertEquals(userCreated.getUsername(), argument.getValue().getUsername());
+                                                        ,anyList() // ne pas utiliser anyObject si j'ai une liste
+                                                        ,isNull() // si c'est null
+    													,ArgumentMatchers.any(UneClasse.class) ou eq(UneClasse.class Si la methode prend vraiment un param .class) avant: Matchers.any(UneClasse.class) avant: anyObject(UneClasse.class)
+    													).thenReturn(untruclapremierefois,unautretruclasecondefois...).getMock();
+                                                        ou
+                                                        .thenAnswer(
+                                                                    new Answer<String>() // pour controler les retours conditionnellement LINKmktoanswrweld
+                                                                    {
+                                                                        @Override
+                                                                        public String answer(InvocationOnMock invocationOnMock) throws Throwable
+                                                                        {
+                                                                            if (invocationOnMock.getArgument(0).toString().equals("SOUND_PATH")) return classPath;
+                                                                            else if (invocationOnMock.getArgument(0).toString().equals("ENV")) return "dev";
+                                                                            else return "UTF-8";
+                                                                        }
+                                                                    }
+                 pour mocker l'iterateur iterate dans une boucle avec deux points: when(iterable.iterator()).thenReturn(cursor) ou cursor est un mock: when(cursor.hasNext().thenReturn(true).thenReturn(true).thenReturn(false); et when(cursor.next()).thenReturn(xxx).thenReturn(yy);    
+		pour indiquer de retourner une exception à un spy ou stub
+                            Mockito.doThrow(new HibernateException("err")).when(userWebDAO).create(Matchers.any(UserWebEntity.class)); 
+                    verifier qu'une methode throw une exception voir LINKlkfghdfg
+                    validation verifier qu'un mock(pasUnSpy) a été appelé invoké invoquée par une methode x fois nombre compter combien:
+                            verify(userDetailDAOMock, times(2)).laMathodeDuMock(any(UserDetailsEntity.class));
+				si erreur userDetailDAOMock is not a mock! parce que cet objet est testé (@InjectMock) je peux lui mettre @InjectMock UserDetailDAOMock userDetailDAOMock=mock(WordpressLoginModule.class)
+
 JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIRE comprendre jmockit et à documenter voir D:\RD\hello-world-war-master\src\test\tests\JMockitTest.java
     (plus reussi à le faire marcher avec Junit5. Mais Mockito si)
                              <dependency>
@@ -16504,82 +16589,6 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
                             }
                           }
                         
-
-    Mockito : Mokito :dans mon test:
-    si JUNIT5
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <version>3.0.0</version>
-            <scope>test</scope>
-        </dependency>
-    si JUNIT4<!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
-      <dependency>
-          <groupId>org.mockito</groupId>
-          <artifactId>mockito-all</artifactId> // difference entre mockito core et mockito all. Mockito core c'est que mockito et mockito all contient les dependances avec hamcrest et objenesis. c'etait utile quand on buildait avec ant. A8 utiliser que Mockito core: maven ou gradle s'occuperont d'ajouter les dependances ou sinon ajouter les 2 autres dependances à la main.
-          <version>1.10.19</version>
-          <scope>test</scope>
-      </dependency>
-      @ExtendWith(MockitoExtension.class)  // si junit5 seulement
-        public class UploadToServerServiceTest {
-    		@InjectMocks // facultatif Mock peut marcher sans. Classe qui est testee dans laquelle on injectera les mocks
-    		private RealTimePathCoverageController realTimePathCoverageController = new RealTimePathCoverageController(); // equivalent de @Tested dans jmockit : c'est une classe a tester dans laquelle je peux injecter des mocks LINKpourquecamarcheFairemokito
-                                                                                ou =spy(new MockRealTimePathCoverageController()); //on peut utiliser ça direct sans annoter @Spy et a mettre sous un @InjectMock si on veut injecter niveau en dessous de @l'InjectMock. Necessite le LINKlkfjjgjgjgozo. avec @InjectMocks en haut c'est top! on peut remplacer facilement par un mock et en plus injecter dedans ce quon veut comme autre @Mock
-										memoclap.saveActorsNameOnServer=jest.fn(()=>{console.log("aaaaaaaaaaaa")});
-										def stub:un objet qui renvoit juste des constantes utiles. 
-										def spy: c'est un stub qui contient des variables de mémoire qui retiennent ce qui s'est passé pour qu'on puisse les assserter. Je peux faire de ma classe de test elle meme le spy en la faisant implementer plusieurs interfaces.
-										def mock veritable: c'est un spy qui retient dans une liste l'historique des actions effectuees et à la fin du test on peut lui asserter que toutes les actions ont bien été executées grace à comparaison listaction enregistrées et liste actions requises. Est fortement couplé à l'algoritme de prod.
-										def fake: c'est un "faux mock" il mime l'implementation de prod: leur pb c'est qu'ils peuvent devenir tres complexes. a eviter.
-    		@Mock ou @Spy     //Mock par defaut n'execute rien et on peut changer son comportement. Spy par defaut execute tout et on peut ecouter
-            private RestTemplate restTemplate; // (peut etre une classe ou une interface) mock qui sera injectée dans RealTimePathCoverageController.
-    			@BeforeEach ou @Before // selon junit5 ou 4
-    				public void setup()
-    				{
-    					MockitoAnnotations.initMocks(this); //LINKlkfjjgjgjgozo ca active les anotations @InjectMocks et @Mocks et @Spy // attention @Spy qui doit etre accompagné de par exemple @Autowired dans mon test car le bean doit exister avant que le spy s'applique: CA CA NE MARCHE PAS:mon objet spyé n'est pas toujours le meme que celui qui est injecté dans le runcode. 
-    				}
-    				FilterConfig filterConfig = mock(FilterConfig.class); // c'est soit je fais comme ca, soit j'utilise les anotations ci dessus. les deux font la meme chose
-    				ServletContext context = mock(ServletContext.class);
-		pour mocker injecter une @Value genre string de Spring:
-			ReflectionTestUtils.setField(lebeanquicontientleValue,"nomduchampJavaDansLeBean","la valeur qu'on lui donne");(pas sur que ça marche)
-                    pour qu'une meme classe soit testée et spyée:// on test certaines de ces methodes et on spy certaines de ces methodes fonctions //plutot faire comme unclebob LINKmockmethodeunclebob
-                        Machin machinATesterEtSpyer = new Machin()
-                        Mockito.spy(machinATesterEtSpyer);
-			ou bien l'annoter @Spy et @InjectMock puis mocker ses methodes comme ca:
-			Mockito.doReturn(unTrucQuiDoitEtreRetourne).when(unMockPasUnSpy).uneMethodeAMocker(anyString()); //plutot faire comme unclebob LINKmockmethodeunclebob
-                    ResultDao rd =mock ou spy(unObjetNONANNOTE ou new ResultDao() ou ResultDao.class); mock c'est pour mocker tout l'objet spy c'est pour mocker partiellement l'objet pour mocker qu'une seule methode dans l'objet mais du coup les injections d'autres objets dedans ne se font pas automatiquement et il faut alors utiliser des setters si j'ai besoin d'injecter des trucs dans le spy.
-                    Mockito.doReturn(toto).when(rd).getLaMethodeNONSTATIQUEResult("1"); // retourner toto quand on execute resultdao.getResult("1"); Utiliser ça pour les spy. ou pour qu'un spy ne fasse rien: Mockito.doNothing().when(monSpy).lamethodeDeMonSpyQuiPeutEtreVoid();
-    				when(filterConfig.getServNONSTATIQUEletContext( // ca s'appelle faire du "stub" utiliser ca je crois pour les mock. Attention si c'est une methode finale il va rentrer dedans avant de traiter le when donc pour mocker une methode finale depuis Mockito2 seulement on crée un fichier sous src/test/resources/mockito-extensions/org.mockito.plugins/MockMaker et dedans on ecrit mock-maker-inline
-    				ou                                   anyString()//tout string
-    				given                                  , eq(Http.GET)// si je peux pas faire "any" je fais ça . si je met des variables direct alors j'ai l'erreur InvalidUseOfMatchersException
-										pour faire un equals "eq(" en profondeur : 
-												ArgumentCaptor<User> argument = ArgumentCaptor.forClass(User.class);//definir un argumentcaptor.
-												verify(userStore, times(1)).createNewUser(argument.capture()); //faire mon verify mais avec mon argumentcaptor
-												Assertions.assertEquals(userCreated.id, argument.getValue().getId()); // et voila je peux asserter
-												Assertions.assertEquals(userCreated.getEmail(), argument.getValue().getEmail());
-												Assertions.assertEquals(userCreated.getUsername(), argument.getValue().getUsername());
-                                                        ,anyList() // ne pas utiliser anyObject si j'ai une liste
-                                                        ,isNull() // si c'est null
-    													,ArgumentMatchers.any(UneClasse.class) ou eq(UneClasse.class Si la methode prend vraiment un param .class) avant: Matchers.any(UneClasse.class) avant: anyObject(UneClasse.class)
-    													).thenReturn(untruclapremierefois,unautretruclasecondefois...).getMock();
-                                                        ou
-                                                        .thenAnswer(
-                                                                    new Answer<String>() // pour controler les retours conditionnellement LINKmktoanswrweld
-                                                                    {
-                                                                        @Override
-                                                                        public String answer(InvocationOnMock invocationOnMock) throws Throwable
-                                                                        {
-                                                                            if (invocationOnMock.getArgument(0).toString().equals("SOUND_PATH")) return classPath;
-                                                                            else if (invocationOnMock.getArgument(0).toString().equals("ENV")) return "dev";
-                                                                            else return "UTF-8";
-                                                                        }
-                                                                    }
-                 pour mocker l'iterateur iterate dans une boucle avec deux points: when(iterable.iterator()).thenReturn(cursor) ou cursor est un mock: when(cursor.hasNext().thenReturn(true).thenReturn(true).thenReturn(false); et when(cursor.next()).thenReturn(xxx).thenReturn(yy);    
-		pour indiquer de retourner une exception à un spy ou stub
-                            Mockito.doThrow(new HibernateException("err")).when(userWebDAO).create(Matchers.any(UserWebEntity.class)); 
-                    verifier qu'une methode throw une exception voir LINKlkfghdfg
-                    validation verifier qu'un mock(pasUnSpy) a été appelé invoké invoquée par une methode x fois nombre compter combien:
-                            verify(userDetailDAOMock, times(2)).laMathodeDuMock(any(UserDetailsEntity.class));
-				si erreur userDetailDAOMock is not a mock! parce que cet objet est testé (@InjectMock) je peux lui mettre @InjectMock UserDetailDAOMock userDetailDAOMock=mock(WordpressLoginModule.class)
 cucumber : il fait ce que fait junit mais permet à des non techniciens de comprendre les tests.LINKcucumberldfj 
       Feature: action globale
         Scenario: User case label
@@ -17649,10 +17658,16 @@ si j'ai erreur
       java.lang.AbstractMethodError c'est peut etre parce que j'ai mis un @override alors qu'il n'y a pas de raison.(peut etre)
 si j'ai erreur Error:java: exporting a package from system module java.instrument is not allowed with --release
     Maven: maven-compiler-plugin passer à la bonne version (8->9->10)
-try with resources trywithresources try-with-resources // ne plus utiliser finally pour closer un stream. utiliser ça.
+try with resources trywithresources try-with-resources // ne plus utiliser finally pour closer un stream. utiliser ça. Intellij nous le fait automatiquement avec Alt+Enter LINKtrywithresintellij
         try(Writer writer = new FileWriter(unfichier)){ si un objet a besoin de .close() ce truc le fait automatiquement au moment ou la classe qui contient cet objet est detruite.
             pour que ca marche il faut que FileWriter implemente AutoClosable je crois
         } 
+	autre exemple avec un stream
+	 try (Stream<Path> walk = Files.walk(path)) {
+            result = walk.filter(Files::isRegularFile)
+                    .collect(Collectors.toList());
+        }
+        return result;
 		      
 logs :logguer : logger :tracer :
    LinkLogutils avec java.util.logging.* (ne semble pas marcher si librairie log4j est dans le classpath et est utilisee aussi)
@@ -19866,7 +19881,7 @@ les enums : enum :
                       }
                       public enum ActionTypeEnum 
                                         {
-                                         	eleve(0,"ELEVE"),admin(1,"ADMIN"); // ici j'ai defini deux elements de liste de l'enum. (ca appelle le constructeur ci dessous)
+                                         	eleve(0,"ELEVE"),admin(1,"ADMIN"); // ici j'ai defini deux elements de liste de l'enum. (ca appelle le constructeur ci dessous) toujours mettre ça en haut
                                             ou 
                                             eleve,admin;
                                             
@@ -20843,7 +20858,10 @@ car cela risque de poser des problèmes si l'un de vos paramètres contient un e
 faire ca: 
 Runtime runtime = Runtime.getRuntime();
 public Process exec(String command, String[] envp, File dir);
-ou runtime.exec(new String[] { "monappli", "un paramètre avec des espaces", "param2" } );
+ou Process proc = runtime.exec(new String[] { "monappli", "un paramètre avec des espaces", "param2" } );
+	proc.waitFor();
+	proc.getInputStream() // pour lire le output
+	proc.getErrorStream() // pour lire les erreurs
 ou runtime.exec(new String[] { "C:\\Program Files\\MonAppli\\monappli.exe" } );
 Remarque: Les variables d'environnement specifiees doivent l'être selon le format nom=valeur. 
 ************************
@@ -21775,7 +21793,7 @@ pour savoir si une chaine de characteres est toute en majuscule ou minuscule:
     		return enMaj;
     	}
 
-Remplacement de chaine1 (toutes les occurrences de chaine1) ,par chaine2
+Remplacement de chaine1 (toutes les occurrences de chaine1) ,par chaine2 aujourd'hui utiliser string.replace( et non pas replaceAll
   il ya normalement replaceall mais si vieille version java <1.4: 
           public static String replaceAll(String target, String from, String to) {   
           //   target is the original string
@@ -23042,7 +23060,7 @@ pour creer des repertoires: create directories creer un repertoire create a dire
 -----------------------
 traitement de fichiers : fichier :
 pour creer un nouveau fichier temporaire de travail: 
-  nomFichierTemporaireCourant = File.createTempFile super pratique car genere lui meme le nom du fichier aleatoires
+  nomFichierTemporaireCourant = File.createTempFile("out",".wav",convertedFile.getParentFile()); super pratique car genere lui meme le nom du fichier aleatoires
   nomFichierTemporaireCourant.deleteOnExit(); // supprime le fichier quand la JVM a fini le process
 
 				--------------------------------
@@ -23511,9 +23529,25 @@ Audio :
 		ffmpeg -i " fichierameodifier -ar nouveauframerate outputFile
 	passer de stereo vers mono:
 		ffmpeg -i fichierstereo.wav -ac 1 sortiemono;
-
-convettir les AMR en MP3
-  amr to mp3 converter
+	concatener plusieurs fichiers (jamais testé)
+		ffmpeg -i 1.wav -i 2.wav -i 3.wav ...... -i {n}.wav -filter_complex '[0:0][1:0]......[{n-1}:0]concat=n={n}:v=0:a=1[out]' -map '[out]' final.wav
+	mixer deux fichiers audio:
+		ffmpeg -i /path1/file1.wav -i /path2/file2.wav -filter_complex amix=inputs=2:duration=first:dropout_transition=0,volume=0.5 -ac 1 /out.wav 
+		dropout_transition c'est pour faire un fadeout: au lieu de 0 je peux mettre 5 par exemple pour avoir 5 secondes de fadeout
+		duration=first ou longest facultatif: pour que le file2 se coupe si le son 1 fini avant ou a la plus longue durée
+		-ac 1 facultatif pour sortir du mono
+		volume baisse le son de moitiee ici en sortie pour tous.
+		mixer avec des volumes differents:
+			String command = "ffmpeg -i "+file1Path+" -i "+file2Path+" -filter_complex \"[0:0]volume=0.2[a];[1:0]volume=3[b];[a][b]amix=inputs=2:duration=longest\" -ac 1 "+outfilePath;
+	convettir les AMR en MP3
+	 String command = "ffmpeg -i " + amrFilePath + " -ac 1 " + mp3FilePath; 
+	ou
+	  amr to mp3 converter
+	alonger la durée du wave (ajouter du blanc à la fin) jamais testé
+		ffmpeg -i beep.mp3 -af apad -t 5 beep.wav
+	baisser le volume d'un audio :
+		ffmpeg -i /path1/file2.wav -filter_complex volume=0.1 /path/out.wav
+		
 convertir mp3 en wave: 
     utiliser 
     tritonus-share-0.3.7-2.jar
@@ -24224,7 +24258,7 @@ DEVOPS :
  possible rollback en 1 click sur 1 bouton
  historisation des deploys: qui? quand? VersQuelEnv? pourQuelResultat? diffAvant-Apres?: a chaque deploy tous recoivent cet historique par email ou chat
  pas de branches: trunk based developpement: tous dans le trunck des que les tests automatises signalent une erreur, tout le monde s'arrete et on corrige l'erreur.->vert. Chaque commit peut tout casser. C normal voir LINKgatedcommit. Reception alerte automatique ->on repare tout de suite.
- LINKgatedcommit: gated commit: petits commits. Lors du commit, avant le system regarde si merge et build ok aussi code review (par email par ex ou peer prog) avant commit. Si ko le commit ne se fait pas->alerte au developpeur.  
+ LINKgatedcommit: gated commit: petits commits. Lors du commit, avant le system regarde si merge et build ok aussi code review (par email par ex ou peer prog) avant commit. Execution testUnitaires et testIntegration sont OK. Si ko le commit ne se fait pas->alerte au developpeur.  
 	un pullresquest doit etre une prose qui explique le contexte:pourquoi ce changement, comment, quels sont les risques, comment paler aux risques + l'id des tickets
  On ne répare plus un environnement, on le remplace: creation d'un env est très rapide et automatique. Interdit de modif en prod. passer par version control et tout recreer from scrach
  reduire le nombre de "handof"(je passe le relai a qq d'autre)
@@ -24691,7 +24725,7 @@ pour connaitre la temperature du processeur chauffe : tapper sensors
   quelle est ma version type de linux:
       cat /etc/*-release
       et/ou
-      lsb_release -a
+      lsb_release -a //si j'ai message no LSB module available faire sudo apt-get install lsb-core
       et/ou (pour connaitre le kernel)
       uname -a pour savoir sur quelle plateforme on est os systeme d'exploitation
       uname -a nom machine etc...
@@ -26548,7 +26582,7 @@ pour redemarrer apache sur ubuntu:
       ou bien invoke-rc.d apache2 start(/etc/init.d) ou stop ou reload
 
 htaccess :   super outil de test:https://htaccess.madewithlove.be/   LINKrewri99
-Autoriser le cross-domain: si par exemple le canvas fait une erreur tainted canvas etc...
+Autoriser le cross-domain: si par exemple le canvas fait une erreur tainted canvas etc... CORS
     dans .htaccess
     <IfModule mod_headers.c>
        Header set Access-Control-Allow-Origin * // on peut utiliser les wild card  wildcard ici comme par ex *.memoclap.com en utilisant au max une regexp  pour limiter le hack
@@ -27314,7 +27348,7 @@ JSON :
 			il faut faire:
 			let monobjet={};
 			monobjet[unevariable]=unevaleur
-STT : speach to text:
+STT : speach to text: speech to text speechtotext
 	Regarder CMUSphinx https://cmusphinx.github.io/wiki/tutorialsphinx4/ les modeles de langues sont sous https://sourceforge.net/projects/cmusphinx/files/Acoustic%20and%20Language%20Models/
 	TTS : text to speach :texttospeach :
 		var msg = new SpeechSynthesisUtterance();
@@ -27332,6 +27366,8 @@ pour faire des dessins animes avec background facon sprites:
           	document.getElementById("avatar").style.backgroundPosition=table[Math.round(Math.random()*13)]+"% 10%";
 si dans une table on veut masquer les borders à l'interieur: 
       <table rules="none"
+pour afficher les logs en profondeur plus de details:
+	console.log(JSON.stringify(document.getElementById("fond").classList))
 fetch : LINKsljqffetch
             en mode synchro:
                         async function mamethode() { 
@@ -27654,6 +27690,20 @@ tester le javascript TDD :
                                         }
                             et dans la classe de test pour utiliser un webcomponents customelements custom-elements faire ca:
                             let progressionaudiorepere = new ProgressionAudioRepere(); document.body.appendChild(progressionaudiorepere); progressionaudiorepere.connectedCallback();
+		   si dans mes webcomponents j'ai des shadowroot jest n'aura pas acces en javascript à l'interieur donc dans ce cas définir dans le constructeur du webcomponent:
+			constructor()
+				    {
+					super();
+					this.setTestMode(false);
+				    }
+			setTestMode(istestmode) {
+					if (istestmode) this.root=this;
+					else{
+					this.attachShadow({mode: 'open'});
+					this.root = this.shadowRoot;
+					}
+				    }
+	
                                                    
                     les fichiers de tests doivent s'appeler xxxx.test.js
                     dans xxxx.test.js:
@@ -28871,7 +28921,7 @@ pour faire un paint avec canvas: Attention ne jamais donner un style a un canvas
                             // Pencil tool instance.
                             tool = new tool_ecrire();
                             // Attach the mousedown, mousemove and mouseup event listeners.
-                            canvas.removeEventListener('mousedown', ev_canvas, {capture :false,passive : true, once:true});// LINKaddevtlist: c'est mieux de mettre les options comme ici. Capture stop la propagation des ecoutes mais bof ne semble pas marcher. Once marche tres bien!!!! du coup plus besoin du remove si besoin oneshot // removeEventListener des fois ne marche pas parce que c'est chiant faut etre super precis. Du coup faire comme ca pour supprimer effacer les eventlisteners LINKrmvEvntListner
+                            canvas.removeEventListener('mousedown', ev_canvas, {capture:false,passive: true, once:true});// LINKaddevtlist: c'est mieux de mettre les options comme ici. Capture stop la propagation des ecoutes mais bof ne semble pas marcher. Once marche tres bien!!!! du coup plus besoin du remove si besoin oneshot // removeEventListener des fois ne marche pas parce que c'est chiant faut etre super precis. Du coup faire comme ca pour supprimer effacer les eventlisteners LINKrmvEvntListner
                             canvas.removeEventListener('mousemove', ev_canvas, false);
                             canvas.addEventListener('mouseup',   ev_canvas, false);
                             canvas.classList.add('ecrire');
@@ -29051,7 +29101,7 @@ dessiner un cercle dans un canvas:
       context.stroke();         
 pour faire des graphs graphiques 
     interactifs avec canvas prendre exemple sur memoclap diagram.php
-    utiliser superbe librairie data-driver-documents d3 : 
+    utiliser superbe librairie data-driver-documents d3 : (non c'est asbeen)
                 <canvas></canvas>
                const svg = canvas.append("svg")
                             .attr("width",600)
@@ -29173,7 +29223,7 @@ pour setter le name l'attribut la propriete d'un element tag html:
 generer une image à la volee:
         var img=new Image();
        img.src="clearmute.png";
-pour faire un onchange en javascript: upload de fichier: bouton parcourir: 
+pour faire un onchange : en javascript: upload de fichier: bouton parcourir: 
         <input name="files" class="modifier" id="files" onchange="createProject.handleFileSelect(this)" onclick="this.value=null;" type="file" accept="*/*" /> //onclick="this.value=null" c'est pour permettre de rechoisir le meme fichier à uploader
                     accept= peut etre:
                                 .jpg,.pdf,.doc,audio/*,video/*,image/*,.csv ou */* pour tout type.
