@@ -827,8 +827,8 @@ Kubernetes :(K8) le cluster K8 contient des Nodes(Masters et Workers)
 		kubectl // pour tester que c bien installe
 		minikube //pour tester que c bien installe
 		
-	pod=wrapper de container(pod pourrait avoir plusieurs container mais c rare) est ephemere  <  NodeWorkers sont des mirroirs de groupes de pods qui partagent entre PodsMirroirs les memes SERVICES(=ip). Chaque NodeWorker contient x Pods, 1ContainerRuntime(exple:docker) à installer dans chaque NodeWorker, 1Kubelet qui interragit avec ContainerRuntime et le NodeWorker pour assigner les resources du NodeWorker au Pod en passant par ContainerRuntime,1KubeProxy qui forward les requetes qui passent par les services de façon la plus optimale en terme de trajet. 
-	au sein du NodeWorker les pods ont un network dedié. donc ont chacun une adrssIP interne.
+	pod=wrapper de container(pod pourrait avoir plusieurs container mais c rare) est ephemere  <  NodeWorkers sont des mirroirs de groupes de pods qui partagent entre NodesWorkers les memes SERVICES(=ip). Chaque NodeWorker contient x Pods, 1ContainerRuntime(exple:docker) à installer dans chaque NodeWorker, 1Kubelet qui interragit avec ContainerRuntime et le NodeWorker pour assigner les resources du NodeWorker au Pod en passant par ContainerRuntime,1KubeProxy qui forward les requetes qui passent par les services de façon la plus optimale en terme de trajet. 
+	au sein du NodeWorker les pods ont un network dedié. donc chaque NodeWorker a chacun une adrssIP interne.
 									MAIS NodesWorker sont ephemeres aussi comme le pod donc chaque pod partage avec d'autres podsmirroirs un serviceInterne qui lui est persistant qui son adresse IPInterne aussi et qui est aussi un loadbalancer
 									url du serviceExterne est http://adresse.ip.du.nodeworker:portDuService
 									url de l'ingress httpS://NomDeDomaine (l'ingress forward le trafic au serviceExterne)
@@ -958,7 +958,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
         git clone D:/path/repertoireacloner (besoin peut etre faire commit dans ce repository(repertoireacloner) pour l'initialiser) 
     branches: master; develop; etc etc... elles existent en local et sur le repo distant et sont toutes TOUTES indépendantes les unes des autres c a d: je peux avoir en local un master qui push dans le develop distant. Les branches c de la merde. DEVOPS.
         si j'ai (HEAD detached from 351dcab) c'est parce que mon HEAD est orphelin et dans aucune branche(parce que j'ai fait un git checkout sur un commit). faire git stash save "bla"; git checkout master; git merge codeDeMonHeadDetached. Ancienne methode: pour le recuperer dabord le rattacher a une branche temporaire: git branch temp puis git checkout temp. Ensuite il faut ecraser une branche par temp (voir ci dessous)
-      git branch -vv// pour voir toutes les branches et a quel repository origin elles sont liées(attention ne montre pas toutes les branches en fait. pour les voir toutes je ne sais pas comment faire) et voir quelle branche est activee A8. Ou est mon HEAD. Les branches c la merde. DEVOPS
+      git branch -vv// pour voir toutes les branches et a quel repository origin elles sont liées(attention ne montre pas toutes les branches en fait. pour les voir toutes git branch -av) et voir quelle branche est activee A8. Ou est mon HEAD. Les branches c la merde. DEVOPS
       git branch nomdelabrancheacreer // pour creer une nouvelle branche: ca ne cre pas une branche vide: ca copie la branche actuelle au commit ou je me trouve (meme ce qui n'est pas addé) dans la nouvelle branche. Les branches c la merde. DEVOPS
                                           maintenant je peux checkouter sur cette nouvelle branche ET avant tout faire un commit dessus sinon LINK98530!!!! puis je peux la pusher sur le repo distant: si le nom de la branche local est le meme que sur une branche du repository distant alors il va pusher dans cette branche qui a ce meme nom. Pas mal pour pusher sur une autre branche facilement.
       git branch -d nombrancheasupprimerDeleter // supprimer une branche. Ne pas se placer dans cette branche avant de faire ca.
@@ -966,7 +966,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       
     switcher d'une branche à l'autre: ca remplace mes fichiers par ceux de la branche que je choisis. 
       se mettre dans le repertoire du projet au meme niveau que le .git (je pense)
-      git checkout nombranche_vers_laquelle_aller. Le HEAD devient cette nombranche_vers_laquelle_aller LINK98530: attention juste apres la creation de branch faire un premier commit sinon lors du checkout on ne voir rien bouger dans l'éditeur
+      git checkout nombranche_vers_laquelle_allerPAS_SON_IDENTIFIANT_ET_PAS_AVEC_REMOTE/ORIGIN_AVANT. Le HEAD devient cette nombranche_vers_laquelle_aller LINK98530: attention juste apres la creation de branch faire un premier commit sinon lors du checkout on ne voir rien bouger dans l'éditeur
       git checkout numerodanciencommitdeMaBranche // pour aller en arriere dans le temps. ensuite pour revenir faire git checkout MaBranche
       git checkout -b nomBranche_vers_laquelle_aller_et_si_elle_n'existePasIlLaCreeDansLaFoulee
       git checkout master // reviens dans le master et le HEAD maintenant est dans le master
@@ -997,10 +997,11 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
      	 	git reset  pour tout enlever du add 
      	 	ou
       		git reset pathfichieravecWildcard
-      git reset HEAD~ annule/undo le dernier commit. Ne pas le faire après que mon dernier commit ait ete pushe et merge avec l'origin(remote) car cela desynchronise mon local du distant. SI je veux quand même le faire par necessite alors faire git reverT: ça recommiT un snap d'avant le commit pourri.
+      git revert -m 1 [hash d'un commit precedent ou d'un commit-merge de branche] // se mettre dans la branche qui a recu le commit ou le commit-merge d'une autre branche. Ca va annuler ce commit ou commit-merge-de-branche et ca va ajouter un nouveau commit dans ma branche actuelle: pratique pour annuler un commit ou un merge du passé anterieur
+      git reset HEAD~ annule/undo le dernier commit. Ne pas le faire après que mon dernier commit ait ete pushe et merge avec l'origin(remote) car cela desynchronise mon local du distant. Si ca a déja été pushé alors faire git reverT: ça recommiT un snap d'avant le commit pourri.
                 on peut aussi faire git commit --amend // pour redéfinir changer le message du dernier commit sans besoin de l'annuler
       git reset //LINKresetgit annuler le dernier add
-      git reset --hard <identifiantcommit>  revenir en arriere sur identifiantcommit et virer definitivement tous les trucs qui ont suivi
+      git reset --hard <identifiantcommit>  revenir en arriere sur identifiantcommit par déplacement du HEAD sur identifiantcmmit vire definitivement tous les trucs qui ont suivi
       git reset --hard versionDuTag: ce tag revient dans le mon HEAD/branch + repertoire et vire tout ce qu'il y a eu après
       git reset --hard // sans rien: pour annuler un pull qui vient d'etre fait
       git rebase //attention si bloque pas hesiter a abandonner et retenter
@@ -1022,7 +1023,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git log --name-status // voir tous les fichiers modifiés à chaque commit
       git log -p // ajouter -p pour avoir le detail de ce qui a été modifié
       git log --follow -- path/du/fichier // pour voir les commits d'un fichier specifique
-      git log --graph --oneline --decorate --all // affiche joli voir joli
+      git log --graph --oneline --decorate --all // affiche joli voir joli ne pas mettre --all ca affiche toutes les branches et c'est le bordel si le projet est brouillon
       git log -L 2,5 ou +3:pathfichier.txt // genial: affiche entre la ligne 2 et la ligne 5 tout l'historique du bouzin utile pour chercher search find trouver grep ATTENTION pas d'espace avant le ":"
 		exemple : git log -L +1:apprentissage2JavaJ2ee.txt | grep Atomic
 		pour faire grep en pouvant voir le numero du commit: git log --grep="marecherche"
@@ -1257,7 +1258,7 @@ Adobe illustrator :
 
 
   
-intelliji : intellij : Afaire: utiliser le git et l'apprendre.(dixit christophe)
+intelliji : intellij : 
 Si erreur no tests were found
 	Redemarrer Intellij ou faire une mise a jour et le redemarrer
 Si le clavier ne marche plus:
@@ -1317,7 +1318,17 @@ position des accolades a la ligne code format
         File>Settings>projectSettings>codeStyle-java >Wrapping and braces > Braces placement options > Next Line
 pour faire un jar directement sans passer par maven: 
   file>projectStructure>Artifacts>ajouter jar (ne pas choisir "empty") et parametrer. Pour le builder: Build> BuildArtifact
+git:
 voir les logs git vcs: alt+9
+	au centre:
+		les etiquettes grises indiquent des tags
+		les etiquetes bleus indiquent un bout de branche
+	a droite ca concerne QUE le comit sélectionné et en bas on voit dans quelle branche AU FINAL ce commit est présent
+	en bas a gauche la branche ou je suis et les branches locales et les branches remotes. On peut checkouter de branches en branches ici
+	CTRL+K pour commiter, puis CTRL+Alt+K pour push
+git pull tous les projets/modules en une seule fois VCS>Update projects... // il ne fait que fetch. Penser à cliquer ensuite dans l'onglet VCS du bas pour voir ce qui se passe sinon suis aveugle. Il faudra faire pull après!(voir les fichiers D://git/pull.xls et D://git/pull.bat). 
+si je n'arrive pas à cloner un projet git directement avec intellij (a cause erreur password): cmd windows, me placer dans le bon repertoire, faire un git clone. Revenir sur intellij>settings>VersionControl>ajouter (+) le path du projet dans la liste.           
+      pour commiter un nouveau projet: VCS > Import into VersionControl > share project into subversion...>Atention, là je peux choisir le repository mais si je ne fais que ça il va copier les sous repertoires de mon projet donc il faut appyer sur + et mettre le repository+/RepertoireDuProjet (meme si il fait une erreur rouge continuer comme ça)
 svn:
     parcourir:
     >VCS>BrowseVCSRepository>BrowseSubersionRepository:
@@ -1326,16 +1337,12 @@ changer de compte user svn deconnecter:
             File>Settings>Subversion>Clear Auth Cache
 svn disconnect: installer le plugin pour ça.
       menu VCS>SvnDisconnect // attention en fait lui il deconnecte carrement mon appli du svn.
-      GIT est pourri sur intellij. Utiliser tortoise LINKtortoiseGItsdflk
     svn taguer tag tager: creer une branche, copier le trunk dans un tag ou dans une branche
             VCS>Subersion>Branch or Tag... copie de mon env de local ou d'une URL du repository au choix >>>vers un tag ou une branche
             si en local j'ai un tag ou une branche, lors du commit ca commit dans le tag ou la branche pas dans le trunk
     svn rempalcer trunk par une branche ou un tag. repository browser puis choisir le trunck--move-->oldTrunk puis tag/1.2.1---copy-->trunk ou commiter vers le path que je veux et je choisis trunk
-git pull tous les projets/modules en une seule fois VCS>Update projects... // il ne fait que fetch. Penser à cliquer ensuite dans l'onglet VCS du bas pour voir ce qui se passe sinon suis aveugle. Il faudra faire pull après!(voir les fichiers D://git/pull.xls et D://git/pull.bat). 
 si j'ai erreur source release 1.7 requires target release 1.7
           mettre pareil dans settings>build,execution,depl>compiler>javacompiler; projectstructure>project; projectstructure>modules>sources; dans le pom maven;
-si je n'arrive pas à cloner un projet git directement avec intellij (a cause erreur password): cmd windows, me placer dans le bon repertoire, faire un git clone. Revenir sur intellij>settings>VersionControl>ajouter (+) le path du projet dans la liste.           
-      pour commiter un nouveau projet: VCS > Import into VersionControl > share project into subversion...>Atention, là je peux choisir le repository mais si je ne fais que ça il va copier les sous repertoires de mon projet donc il faut appyer sur + et mettre le repository+/RepertoireDuProjet (meme si il fait une erreur rouge continuer comme ça)
 rafraichir refresh librairies gradle double cliquer sur build.gradle ou
       dans build.gradle ecrire: apply plugin: 'idea' And then run: gradle idea If you modify the dependencies you will need to rerun the above again.
 si vue project projet ne se rafraichit pas refresh pas
@@ -2944,6 +2951,7 @@ du code java pour aller afficher une page html sans rien faire de special
   out.close();
 Pour afficher du html en sortie de servlet ou du texte en sortie de servlet ou n'importe quoi d'autre
 ejbs : ejb : beans EJB
+	Internet Inter-ORB Protocol = iiop une url comme iiop://UN_HOSTNAME:12080/ permet à un serveur qui fait de l'EJB de recuperer en remote un objet java directement par injection EJB
  ejb :3.0,3.1
     on utilise les annotation et pour les besoins plus specifiques on ajoute du metadata dans ejb-jar.xml(facultatif en 3.1. Peut etre vide dans 3.0)
     si pas d'annotations: le container utilise des valeurs par defaut
@@ -11690,7 +11698,7 @@ Tous les scopes:
                                     <type>pom</type> // inutile de mettre ca si c'est un jar car dans ce cas c importe du parent
                                     </dependency>
                                     <dependency>
-                                        un artifact qui a la dependance transitive TATATA. Et bien la version sera celle definie dans le <dependencyManagement> soit de ce pom là sinon du parent de ce pom.
+                                        un artifact qui a la dependance transitive TATATA_BASNIVEAUDESBASFONDS. Et bien la version de TATA_BASNIVEAUDESBASFONDS sera celle definie dans le <dependencyManagement> soit de ce pom là sinon du parent de ce pom.
                                     </dependency>
                                 </dependencies>
 
@@ -15519,7 +15527,8 @@ hacking : haking : hack :
                 affiche une liste de modules puis use un_des_modules_affiche puis "show options" pour afficher les options du modules puis les definir exemple: "set SOURCE <ADDR_IP> puis "run". Manuel: "show info". Si besoin voir cle: "show keys". Si besoin definir cle: "key add facebook_api<CLE_API>". revenir au menu precedent "back"
       nikto -h adresse_ipOu_url // pour voir les vulnerabilites d'un site web
             OSVDB-xxx est un identifiant(nonmaintenuA8) pour trouver plus d'info sur internet
-     owasp : owasp zap: outil pour trouver les failles d'un site web:sur kalilinux LINKfkjOwasplkjsg . Owasp=organisation d'evangelisation de hack a but non lucratif
+     owasp : existe aussi https://cvedetails.com/cve/CVE-2013-2186 (CVE sont les identifiants des failles)
+	 owasp zap: outil pour trouver les failles d'un site web:sur kalilinux LINKfkjOwasplkjsg . Owasp=organisation d'evangelisation de hack a but non lucratif
           sur maven faire: 
                 <plugin>
 				<groupId>org.owasp</groupId>
@@ -20280,7 +20289,7 @@ pour tester la performance : perfs : perf : performances : performences :
                                             >Memory Analyzer >File >open heap dump>choisir mon fichier.
                                             >open denominator tree for entire heap pour voir les plus gros consommateurs
               pour voir l'evolution de la memoire en live:
-                  depuis java11: java flight recorder: 
+                  depuis java11: java flight recorder: LINKghmlkrty 
                       java -XX:StartFlightRecording (Jamais testé)
                     ou java mission control: https://jdk.java.net/jmc (Jamais testé )
                   avant:
@@ -20800,7 +20809,7 @@ POUR LES FOREACH A 2 ARGUMENTS: j'ai d'un coté:
 
 compresser des images jpg jpeg en java:LINKjpgnsdflka 
 	
-mapping :mapper :mappage :d'une classe A en une classe B (si c'est pour les DTO voir LINKemdlksqj)
+mapping :mapper :mappage :d'une classe A en une classe B (si c'est pour les DTO voir LINKemdlksqj) voir librairie Eureka
  methodeA:
         public class MaClasseItemProcessor implements ItemProcessor<ClasseA, ClasseB> 
       {
@@ -25001,7 +25010,7 @@ les comptes utilisateurs sont sur etc/password (si un jour un gars qu'on ne conn
 SUPER methode pour trouver les plus gros fichiers: il y a aussi apparemment sur unix baobab l'equivalent de windirstat.  
 du -sk -h * | grep '[0-9\.]\+[M;G]'
 du -sh * c'est mieux c'est plus clair ou du -sh . pour voir la taille du repertoire courant
-probleme d'espace disque disk? voir aussi LINKinode utiliser ncdu c'est top. (faire ncdu repertoirequonVeutSiOnMetRienCestOuOnEst. d pour supprimer. r pour recalculer la ou je suis   Pour liberer de l'espace: apt-get clean
+probleme d'espace disque disk? voir aussi LINKinode utiliser ncdu c'est top. ncdu -x / pour qu'il reste dans le meme filesystem! super! (faire ncdu repertoirequonVeutSiOnMetRienCestOuOnEst. d pour supprimer. r pour recalculer la ou je suis   Pour liberer de l'espace: apt-get clean
 du -s -k -h *: permet de voir la taille espace du repertoire courant: en kilo. (-h pour voir si c M ou G ...)
 du -s -m *: en MEGA 
 ou 
@@ -25231,6 +25240,8 @@ pour zipper ziper un fichier ziper: zip monfichier.zip *
 pour zipper ziper un repertoire ziper: zip -r lenomdemonzip.zip * (* contient le repertoire.) -r pour zipper de manière recursive 
 dos2unix: la commande unix est: Dos2Unix fichier_original fichier destination // sinon si cette commande n'existe pas faire: vi puis:set ff=unix ou:set ff=dos puis sauver le fichier
 ssh : se logger sur une machine a distance par le port 22
+	si message The ECDSA host key for www.memoclap.com has changed
+		faire ce qu'il dit ca reinitialise known_host et basta on refait ca revient
 	si j'ai erreur Received disconnect from xxxx too many authentication failures rajouter apres ssh: -o IdentitiesOnly=yes à ma commande ssh
     installer ssh sur debian:
       si serveur openssh deja la faire /etc/init.d/ssh reload
@@ -26112,7 +26123,7 @@ xfce : xcfe : // bureautique debian :
 	packages disponible avec application discover
 	copie d'ecran impr ecran: le programe est deja installe et s'appelle screen ou capture d'ecran
 	si la bare d'en haut du bureau a disparu faire alt+f2 puis xfce4-pannel...
-	si ca freeze obligé : forcer le terminal: CTRL+Alt+F1 et là je peux killer des trucs MAIS ATTENTION je ne sais pas comment revenir au bureau: seule solution trouvée c'est sudo reboot donc sert à rien ce truc
+	si ca freeze obligé : forcer le terminal: CTRL+Alt+F1 et là je peux killer des trucs puis pour revenir Ctrl+Alt+F7 Si impossible revenir au bureau: seule solution trouvée c'est sudo reboot donc sert à rien ce truc
 IMAGES GENEREES EN JAVA SUR UNIX:
 Question:
 Why is the following error message displayed "java.lang.InternalError: Can't connect to X11 window server using ':0.0' as the value of the DISPLAY variable" ?
@@ -26842,7 +26853,12 @@ proxy :et reverse proxy :
 
   
 
-cft :
+cft : gere les acuses de reception, reprise de transfert etc... s'appuye sur TCP/IP
+	s'installe sur un serveur qui souhaite utiliser cft
+	echanges se fait entre "partenaires" déclarés dans un fichier AnnuaireCFT:
+		partenaire1: ADL1 // adresse logique 1
+		partenaire2: ADL2 // adresse logique 2
+	c'est le destinataire qui decide quand il veut recevoir 
     MonScriptShell.csh = 
     #!/bin/csh 
     CFTUTIL send idf=MonFichier,part=MonPartenaire,fname=&fname 
@@ -35047,7 +35063,7 @@ seo :
           http://advsys.net/ken/utils.htm voir dans D:/DEV/pngout.exe // a executer en ligne de commande sur windows: pngout.exe Lot4devFrontEND.PNG Lot4devFrontENDOUT.png
           http://freecode.com/projects/jpegoptim    D:/Dev/jpegoptim-1.3.0-win32-binary/jpegoptim.exe d:/Profiles/lduverge/Ah02hight.jpg ATTENTION je crois qu'il ecrase l'ancien fichier
                                                     F:\Mesdocuments\Installations\jpegoptim-1.3.0-win32-binary/jpegoptim.exe F:/PHOTOS/aeffacer/*.jpg
-						sous unix : jpegoptim -m 0 monimage.jpg //-m 0 facultatif reduit la qualité a que dalle
+						sous unix: jpegoptim -m 0 monimage.jpg //-m 0 facultatif reduit la qualité a que dalle
 		ou bien 
 			    	BufferedImage img = ImageIO.read(imageInputStream); // load image
 				BufferedImage scaledImg = Scalr.resize(img, 300, 300);
