@@ -827,7 +827,7 @@ Kubernetes :(K8) le cluster K8 contient des Nodes(Masters et Workers)
 		kubectl // pour tester que c bien installe
 		minikube //pour tester que c bien installe
 		
-	pod=wrapper de container(pod pourrait avoir plusieurs container mais c rare) est ephemere  <  NodeWorkers sont des mirroirs de groupes de pods qui partagent entre NodesWorkers les memes SERVICES(=ip). Chaque NodeWorker contient x Pods, 1ContainerRuntime(exple:docker) à installer dans chaque NodeWorker, 1Kubelet qui interragit avec ContainerRuntime et le NodeWorker pour assigner les resources du NodeWorker au Pod en passant par ContainerRuntime,1KubeProxy qui forward les requetes qui passent par les services de façon la plus optimale en terme de trajet. 
+	pod=wrapper de container(pod pourrait avoir plusieurs container mais c rare) est ephemere  <  NodeWorkers sont des mirroirs de groupes de pods qui partagent entre NodesWorkers les memes SERVICES(=ip). Chaque NodeWorker contient: x Pods, 1ContainerRuntime(exple:docker) à installer dans chaque NodeWorker, 1Kubelet qui interragit avec ContainerRuntime et le NodeWorker pour assigner les resources du NodeWorker au Pod en passant par ContainerRuntime,1KubeProxy qui forward les requetes qui passent par les services de façon la plus optimale en terme de trajet. 
 	au sein du NodeWorker les pods ont un network dedié. donc chaque NodeWorker a chacun une adrssIP interne.
 									MAIS NodesWorker sont ephemeres aussi comme le pod donc chaque pod partage avec d'autres podsmirroirs un serviceInterne qui lui est persistant qui son adresse IPInterne aussi et qui est aussi un loadbalancer
 									url du serviceExterne est http://adresse.ip.du.nodeworker:portDuService
@@ -24772,7 +24772,7 @@ sudo : // si command not found faire d'abord su - puis apt-get install sudo -y
     /usr/include declaration de fonctions systemes
     /usr/src sources de logiciels + du noyau Linux
     /usr/share fichiers de donnees
-    /opt applications logiciels commerciaux installes
+    /opt applications logiciels commerciaux programmes installes
     /home repertoires persos pour utilisateur
     /var donnees frequements reecrites
 	/var/log contient le journal des erreurs
@@ -25208,6 +25208,8 @@ pour savoir a quelle groupe un user appartien:
 id username
 Pour ajouter add un utilisateur user dans un groupe
 usermod -aG legroupe nomduuser // ca ajoute le user a un autre groupe. Le user du coup peut appartenir a plusieurs groupes. a faire en sudo si command not found. Necessite de se relogger ou faire su -s monusername
+pour changer le homedirectory d'un user utilisateur
+usermod -d /nouveau/path nomduuser
 newgrp autregroupe // en tant qu'utilisateur, pour switcher de groupe si j'en ai plusieurs. Des lors toutes mes actions se font avec les droits de cet autre groupe au nom de cet autre groupe
 pour compter le nombre de lignes renvoyees par un find par exemple: find . -name 'R*.xml' | wc -l
 uname -a nom machine etc...
@@ -25239,6 +25241,20 @@ deziper: unzip GroupNet.zip (on peut aussi deziper un ear et un war) PEUT ETRE b
 pour zipper ziper un fichier ziper: zip monfichier.zip *
 pour zipper ziper un repertoire ziper: zip -r lenomdemonzip.zip * (* contient le repertoire.) -r pour zipper de manière recursive 
 dos2unix: la commande unix est: Dos2Unix fichier_original fichier destination // sinon si cette commande n'existe pas faire: vi puis:set ff=unix ou:set ff=dos puis sauver le fichier
+sftp :
+	pour cote serveur permettre à un utilisateur de faire du sftp:
+		dans /etc/ssh/sshd_config
+		a la fin ajouter 
+		Match User(ou Group mais pas encore essaye) nomduuserquejeveuxautoriserEtQuiAEteCreeCoteServeur (pas besoin de modifier son home par defaut)
+			X11Forwarding no // bien mettre un tab
+			AllowTcpForwarding no
+			ChrootDirectory /un/path/ou/toute/la/chaine/de/repertoiresDoiventAppartenirARootEtEtreEnEcritureQuePourRoot //LINKljqksdfpljkggjgjgj ils doivent tous etre en chmod 755 et appartenir au user root
+			ForceCommand internal-sftp
+	de plus plus haut rajouter à la fin de 
+		Subsystem sftp /usr/lib/openssh/sftp-server AJOUTER ICI: -l INFO
+	mettre port 22 quand je vais me connecter coté client (facultatif)	
+	si j'ai l'erreur fatal: bad ownership or modes for chroot directory component
+	 c'est parce que LINKljqksdfpljkggjgjgj 	
 ssh : se logger sur une machine a distance par le port 22
 	si message The ECDSA host key for www.memoclap.com has changed
 		faire ce qu'il dit ca reinitialise known_host et basta on refait ca revient
@@ -25358,6 +25374,8 @@ ssh : se logger sur une machine a distance par le port 22
                       	chmod 0600 .ssh/authorized_keys
                       	cat $1 >> .ssh/authorized_keys
                       	rm -f $1
+	pour voir l'etat et les logs de sftp, ssh et voir qui est connecté
+		systemctl status sshd
 scp :commande
 	si j'ai erreur Received disconnect from xxxx too many authentication failures rajouter apres ssh: -o IdentitiesOnly=yes à ma commande ssh
   pour downloader recuperer telecharger transferer un fichier d'un serveur à un autre voir aussi rsync
@@ -25856,6 +25874,8 @@ bon exemplde ksh de lancement de batch:
                                     // "/s"=remplacer. remplace ce qui ya après s/ (codeCible="") par (/) codeCible="0" /g: cad partout. $1= parametre: on ecrit le resultat dans $HOME/tfi/$1.tmp
                                     // du coup pour trouver certains fichiers et remplacer dans ceux trouvés une chaine par une autre faire: 
                                             find . -type f -not -name '*.mp3' -not -name '*.bak'(important!) | xargs sed -i.bak -e "s/remplacemoi(/parca(/g"
+						ou  plutot
+						find * -type f -name 'ask.html' -print0 | xargs -0 sed -i -e "s/simon\&gt;/memoclap-simon\&gt;/g" //grace à -print0 et -0 les & sont echappés par \
                                 ret=$?  // on defini ret etant le retour du sed ci dessus: peut etre =1 ou 0V
                                 if [ $ret -ne 0 ] // si ca ne renvoie pas 0 (0=erreur 1=OK) OU savoir si la derniere execution renvoit une erreur: if [[ "$?" -ne 0 ]] ; then // si ca ne renvoit pas derreur alors....heu marche pas bien encore. Pour que le programme s'interrompe en cas d'erreur mettre en tete du fichier bash : #!/bin/bash -e
                                         then
@@ -27969,7 +27989,7 @@ ES6 :modules: une page html/js peut importer une page html/js qui importe aussi:
               export function projectsMEMENOM(arg){...}                                        AAA
             Exporter qu'un truc
               export default class(ne marche que avec class) UnComponentAttentionMEMENOM{....} DDD a eviter.Preferer UUU avec un named export et non pas un default export voir ci dessus.
-	      export class UnComponent {...}						       UUU
+	      export class UnComponent {...}						       UUU mais attention pour l'utiliser ailleurs voir LINKutilisationclassjs
               export default {unTrucDefiniPlusHaut}; // a mettre a la fin du fichier   CCC
 	   Exporter plusieurs classes
 	     export class UneClasse{...}     |_RRR
@@ -28009,7 +28029,7 @@ async await : asyncawait :
       return res; // await a converti la promise en valeur retournée par celle ci. Ne surtout pas oublier le await sinon c'est le bordel.
   }
  puis	function methodequiappelleAsync(){
-		unemethode().then( // then est obligé car si je ne met pas then unemethode execute en asynchrone. pour palier à ca appeler unemethode comme ca à son tour: await unemethode() et mettre async devant methodequiappelleAsync: je propage le truc vers le haut. LINKasynawaitdfsf quitte a faire une methode async anonyme anonymous: .then(async ()=> {await unemthodeasync();autresmethodes();
+		unemethodeprefixéeAsync().then( // then est obligé car si je ne met pas then unemethode execute en asynchrone. pour palier à ca appeler unemethode comme ca à son tour: await unemethode() et mettre async devant methodequiappelleAsync: je propage le truc vers le haut. LINKasynawaitdfsf quitte a faire une methode async anonyme anonymous: .then(async ()=> {await unemthodeasync();autresmethodes();
 erreur: (intermediate value)(...) is not a function
     c a d il manque un ";" qqpart. ou il y a des ";" là ou il ne devrait pas y en avoir
     
@@ -29293,7 +29313,7 @@ nouvelle facon de definir les classes et l'heritage: mais en javascript on peut 
                 }
                 let huhu = this.tintin(); // tintin peut etre defini ou overridé dans une sous classe
           }
-          ggg=new Toto()
+          ggg=new Toto() //utiliser ailleurs. LINKutilisationclassjs Je ne peux pas faire Toto.unemethode()
           ggg.tals()        mais si je fais let xx=toto.tals; alors xx() va faire undefined car this est undefined. Il faut faire xx.bind(toto); xx.(); et là ca marche. Attribue un objet à this.
        export class Titi extends Toto{
 		constructor(){super()} // si je mets constructor, je DOIS faire appel à super()
@@ -30272,7 +30292,8 @@ METHODE CLASS: THEBEST? classes es6
                                                                 du coup faire: si jai <slot name="contenu">-> querySelector("slot[name=contenu]") si je suis hors du slot
                                                                 et si je suis dans le slot:
                                                                 this.querySelector("[slot=contenu]").style.height=this.taillecontenu; // je change le contenu dynamique dans mon customelement
-                                                                this.querySelector("[slot=contenu]").outerHTML; // permet de recuperer le node vers lequel pointe pointeur mon slot                       
+                                                                this.querySelector("[slot=contenu]").outerHTML; // permet de recuperer le node vers lequel pointe pointeur mon slot
+								this.shadowRoot.querySelector("slot").assignedNodes ou .assignedElements car innerHTML marche pas pour recuperer le contenu du slot
                                                             });
                                                                 LINKrmvEvntListner: this.shadowRoot.querySelector("slot").addEventListener('slotchange', this.changeHtml.bind(this),false); on peut faire ca aussi d'un javascript exterieur au webcomponent. elt.querySelector("slot").appendChild(... car si je fais juste elt.appendChild(... ca ne mettra pas DANS le slot de elt.
                                                             }//fin de constructor.
