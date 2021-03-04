@@ -1004,7 +1004,11 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git reset --hard <identifiantcommit>  revenir en arriere sur identifiantcommit par déplacement du HEAD sur identifiantcmmit vire definitivement tous les trucs qui ont suivi
       git reset --hard versionDuTag: ce tag revient dans le mon HEAD/branch + repertoire et vire tout ce qu'il y a eu après
       git reset --hard // sans rien: pour annuler un pull qui vient d'etre fait
-      git rebase //attention si bloque pas hesiter a abandonner et retenter
+    git rebase entre branches: pour que le log soit propre avec une branche en trait et pas qui parte dans tous les sens: a faire a la place de merge sur une meme branche locale/remote
+      git rebase brancheDontJeVeuxRecupererLesCommitsEnUneLigneDroiteLaOuJeSuisMaintenant
+    git rebase sur une meme branche entre local/remote
+     git pull --rebase  //comme ca c'est plus propre dans les logs d'une meme branche. LINKlkjgjgjzooa
+    git rebase entre commits://attention si bloque pas hesiter a abandonner et retenter 
       git rebase commitquinebougepasEtQuiVaRecevoirLaSuiteDeLHistoire commitQuiVaMettreSonHistoireALaSuiteDuPremierArgument // a la toute fin faire rebase DernierCommit master pour que le master se remette au bout
       git rebase -i identifiantCommitDuPassé // ouvre un editeur affiche les commit du plus vieux en haut au plus recent en bas et je peux manipuler mes commits du passe pas a pas un par un jusqu'a aujourd'hui. J'ai du utiliser ca pour supprimer les indexs de fichiers trop gros qui m'empechaient de pusher sur le repo distant ou pour fusionner des commits
                 si je veux commencer depuis le debut faire git rebase -i --root
@@ -1326,7 +1330,7 @@ voir les logs git vcs: alt+9
 	a droite ca concerne QUE le comit sélectionné et en bas on voit dans quelle branche AU FINAL ce commit est présent
 	en bas a gauche la branche ou je suis et les branches locales et les branches remotes. On peut checkouter de branches en branches ici
 	CTRL+K pour commiter, puis CTRL+Alt+K pour push
-git pull tous les projets/modules en une seule fois VCS>Update projects... // il ne fait que fetch. Penser à cliquer ensuite dans l'onglet VCS du bas pour voir ce qui se passe sinon suis aveugle. Il faudra faire pull après!(voir les fichiers D://git/pull.xls et D://git/pull.bat). 
+git pull tous les projets/modules en une seule fois VCS>Update projects... //choisir pour une meme branche de preference la strategie rebase voir LINKlkjgjgjzooa. Si il ne fait que fetch. Penser à cliquer ensuite dans l'onglet VCS du bas pour voir ce qui se passe sinon suis aveugle. Il faudra faire pull après!(voir les fichiers D://git/pull.xls et D://git/pull.bat). 
 si je n'arrive pas à cloner un projet git directement avec intellij (a cause erreur password): cmd windows, me placer dans le bon repertoire, faire un git clone. Revenir sur intellij>settings>VersionControl>ajouter (+) le path du projet dans la liste.           
       pour commiter un nouveau projet: VCS > Import into VersionControl > share project into subversion...>Atention, là je peux choisir le repository mais si je ne fais que ça il va copier les sous repertoires de mon projet donc il faut appyer sur + et mettre le repository+/RepertoireDuProjet (meme si il fait une erreur rouge continuer comme ça)
 svn:
@@ -20558,6 +20562,11 @@ lambdas : lambda : lambdas expression :     (lire http://labs.excilys.com/2014/1
                                                    .unelisteDuneInterface.stream().map(i->(ComponentGeneric)i)... //en un autre casting
                                                    convertir une observablelist observable liste en liste:
                                                     observableliste.stream().collect(Collectors.toList());  
+		pour faire un forEach avec l'index
+                    IntStream.range(0, laListe.size())
+                            .forEach(index -> unemethode(laliste, index));
+
+
         on peut faire: maclasse.envoimail("adresse",UneClasse::uneMethodeDeUneClasse); c'est la mort du pattern strategie strategy-template ou encore voir DesignPatterns.doc 
 				depuis java8 je peux faire
 				methodeAcceuilantUnConsumer((TypeDeArgument1 argument1)->{
@@ -20592,7 +20601,7 @@ lambdas : lambda : lambdas expression :     (lire http://labs.excilys.com/2014/1
       distinct=.distinct() // vire les doublons. 
       join    =.flatMap(e->...stream()) // fonctionne avec Optional: LINKOptsngz exemple flatMap(c->c.getSubElements().stream()) (recupere proprement la sousliste)   
                       retourne les fils    
-              evite les listes de listes  
+              evite les listes de listes applati enleve un niveau
               exemple pour recuperer les sous-listes sousliste sous listes à concatenner entre elles: List<Allocations<Component>> allocations = instanceFeatures.stream().map(f -> f.getAllocations()).flatMap(List::stream).collect(Collectors.toList()); ou .collect(Collectors.toCollection(FXCollections::observableArrayList));
             LINKOptsngz optionnal : Optionnels : optionnel :(c 1 monad): ignore les valeurs empty nulles et retourne un Optional // a utiliser que si j'ai un probleme avec null Traitement des valeurs pouvant etre nulles depuis java8 LINKjajsdfliuaerOpt c'est a utiliser dans le cadre de functionnal programming lambda. Ne jamais mettre un optionnal dans un parametre de methode (ni un setter) mais toujours que en sortie.
                                              Optional<UneClasse> optional = Optional.ofNullable(unevariablepouvantPotentiellementEtrenull);                                                                                                     |_a la place faire monOptinal.map(unefonction)
@@ -20631,7 +20640,7 @@ lambdas : lambda : lambdas expression :     (lire http://labs.excilys.com/2014/1
                 .forEach(System.out::println);
                 .sum();
             codecasts.removeIf(c->c.getId()==i) // pour supprimer remove delete un element d'une liste de facon conditionnelle                
-            clientsRoles.getItems().stream().forEach(w->logger.debug("clients role: "+ w));                                                                          
+            clientsRoles.getItems().stream().forEach(w->logger.debug("clients role: "+ w));  
                public class Calculator 
                {
                   @FunctionalInterface // ne compile plus si j'ai plus de deux methodes non default dans l'interface. Le reste des methodes peut etre "default"
@@ -20749,10 +20758,10 @@ POUR LES FOREACH A 2 ARGUMENTS: j'ai d'un coté:
                                         
                 POUR LES FILTRES:    utilisation: .filter(handlingPredicateWrapper(gen ->getThisSameSymbolicParameterValue(gen, classificationNode, parameter).equals("Y"),Exception.class))
                                         declaration:
-                                        public static <T, E extends Exception> Predicate<T> handlingPredicateWrapper(ThrowingPredicate<T, E> throwingConsumer, Class<E> exceptionClass) {
+                                        public static <T, E extends Exception> Predicate<T> handlingPredicateWrapper(ThrowingPredicate<T, E> throwingPredicate, Class<E> exceptionClass) {
                                               return i -> {                                         // ca retourne donc un PREDICATE
                                                   try {
-                                                      return ThrowingPredicate.test(i);              // ca retourne donc un PREDICATE donc ThrowingPredicate a la meme methode que Predicate mais lui il throw une exception contrairement a predicate
+                                                      return throwingPredicate.test(i);              // ca retourne donc un PREDICATE donc ThrowingPredicate a la meme methode que Predicate mais lui il throw une exception contrairement a predicate
                                                   } catch (Exception ex) {
                                                       try {
                                                           E exCast = exceptionClass.cast(ex);
@@ -20768,6 +20777,7 @@ POUR LES FOREACH A 2 ARGUMENTS: j'ai d'un coté:
                                           public interface ThrowingPredicate<T, X extends Throwable> {
                                               public boolean test(T t) throws X;
                                           }
+			utilisation:.filter(Utils.handlingPredicateWrapper(antisechPath -> "machintruc".indexOf(txt) > -1,Exception.class))
                                                         
             exemple lambda imbriquees: une liste A contient une liste B. je dois filtrer A qui ont seulement certains B (converti un stream en liste directement dans le filtre)  A REVOIR
                             List<Result> toto = resultList.stream()
@@ -21884,7 +21894,8 @@ pour faire un tri (trier ordonner ordre) une ArrayList qui contient des objets: 
         les dates les chiffres: 
         hour.sort((p1, p2) -> p1.before(p2)?-1:1); // tri du plus petit au plus grand
     ou
-      	ArrayList<SyntheseObj> synthese = new ArrayList<SyntheseObj>(indic.size()); // liste à trier
+      	ArrayList<SyntheseObj> synthese = new ArrayList<SyntheseObj>(indic.size()); // liste à trier //indic.size determine juste la capacité initiale de l'ArrayList mais n'insert pas des elements nulls dedans pour en augmenter sa taille. Si je veux vraiment y insserer x nulls elements : faire List<String> list = new ArrayList<>(Collections.nCopies(10, null));
+										// pour augmenter la taille d'un array faut d'abord le convertir en tableau puis : tableToFill= Arrays.copyOf(tableToFill,nouvelleTaille);
       	Collections.sort(synthese, new ComparSynthese());
 	mais c'est mieux de faire pour les acces concurents:
     malistnontriee=uneliste... 
@@ -22368,7 +22379,7 @@ petite fonction utile:getKeyByValue d'une Hashmap:
           		}
           		return ret;
           	}
-pour merger deux collections listes:
+pour combiner merger deux collections listes:
 		Collection.retainAll(Collection c) (c'est comme un "et") voir LINKDLKJSDF
 pour faire un "ou"
 		Collection.addAll(Collection c)
@@ -25163,6 +25174,7 @@ prstat idemn
 htop mieux que top // utiliser les touches F
 top idemn mais encore mieux... on peut l'installer facilement en le recuperant sur SUN top (sun.com, package top ou prstat si on veut). Faire tab+p pour classer conso mem cpu par ordre decroissant
     ensuite faire maj+m pour trier par ordre decroissant sort.
+iotop pour avoir des infos plus précises sur l'utilisation des IO input/output
 free ou free -m ou -h // -m pour mega, -h pour giga. pour voir si mon disque swap beaucoup trop (on peut voir la qte de memoire virtuelle dispo/utilisee et le swap qui ne doit pas depasser 56xxx=56Mega) 
 pour rajouter du swap:
   sudo swapon --show // verifier ce que j'ai comme swap
@@ -27813,7 +27825,7 @@ tester le javascript TDD :
 					    });
 			  it("checkloop",()=>{... ou it("checkloop",async()=>{...
 			ou 	
-				test('nom du test,async()=>{
+				test('nom du test,async()=>{ // mettre async si j'ai un await dans ma methode de test
 					impossible de definir une variable globale pour un test. il faut raisonner en modules. et les modules ont leurs variables
 						console.log("xxx possible");
                               		    expect(bidule)(.not).toEqual({one: 1, two: 2}); //.not est facultatif. // toEqual regarde l'egalité en profondeur Assertions equals
@@ -27865,6 +27877,7 @@ tester le javascript TDD :
 			        });
 				describe("Contact form", () => {
 				  test("lead can submit a contact request", async () => {
+					jest.setTimeout(6000); // je peux mettre ça pour que le test n'aille pas au dela de 6sec et attende au moins jusqu'à 6sec
 				    const validForwNext = jest.fn((mode)=>{page.alert("oui "+mode)});
 				    await page.goto("http://127.0.0.1:8080/webapp/js/widgets/drawerboardTEST.html");
 				    await page.waitForSelector("memoclap-drawerboard"); // attends l'apparition d'un element sur la page avant de poursuivre
@@ -28144,6 +28157,8 @@ promesses : promese :promeses :Promises :promise : ne plus utiliser les callback
           },(err)=>console.log(err) // pas sur de la synthaxe ici
 	utilisation3: boucles de promesses loop for(while(:
 		const status = await Promise.all(tableauDeVars.map(element=> methodePrRetournantUnePromese((variale)))
+	fonction await anonyme:
+		await (async function(){....})();
 pour recuperer le jour du mois month sur deux chiffre d'un objet Date                                                                                          
       utiliser moment.js:                                                                                                                                     
             var d = new Date();
