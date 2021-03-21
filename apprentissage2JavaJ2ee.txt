@@ -1030,7 +1030,8 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git log --graph --oneline --decorate --all // affiche joli voir joli ne pas mettre --all ca affiche toutes les branches et c'est le bordel si le projet est brouillon
       git log -L 2,5 ou +3:pathfichier.txt // genial: affiche entre la ligne 2 et la ligne 5 tout l'historique du bouzin utile pour chercher search find trouver grep ATTENTION pas d'espace avant le ":"
 		exemple : git log -L +1:apprentissage2JavaJ2ee.txt | grep Atomic
-		pour faire grep en pouvant voir le numero du commit: git log --grep="marecherche"
+      git log --grep="marecherche" // pour faire grep en pouvant voir le numero du commit: 
+      git log --name-status -- **/memoclapCreate_hsqldb.sql // rechercher trouver un fichier qu'on a supprime ou modifié
       git shortlog -s -n  // voir le nombre de commits par auteur: stats.statistiques
       git diff compare pour parametrer avec un meilleur visibilité: external tool:        
           installer C:\Program Files\KDiff3
@@ -1052,6 +1053,7 @@ git diff compare mon workspacepasencoreadded avec le dernier commit
       git diff --name-only // affiche que les noms des fichiers differents
       Linktaggit:  le tag ne se push pas par defaut: pour le pusher faire git push origin <identifiant du tag>
       git checkout pathfichiermodifieMaisPasAdded //undo retour recupere annuler mes modifs 
+      git checkout numerodecommit pathdufichierARecupereDunCommitPassé
       git checkout <nom_du_tag> pour revenir à une ancienne version// ne marche pas si je veux remplacer mon working directory modifié par le dernier commit: dans ce cas faire git chekout -- pathAvecWildcardDesFichiersQueJaiModifieDansLeWorkSpaceMaisQueJeNaiPasAdded (undo) Linkcheckout
       git checkout -f <nom_du_tag> pour ignorer le message "The following untracked working tree files would be overwritten by checkout" ATTENTION d'avoir commité avant et d'etre sur que le warning ne parle que de fichiers dont je m'en fous. LINKcheckoutquandmeme  
       si j'ai l'erreur "Please commit your changes or stash them before you merge." quand je pull: soit je stash soit je LINKcheckoutquandmeme
@@ -1263,6 +1265,8 @@ Adobe illustrator :
 
   
 intelliji : intellij : 
+Shortcut pour Afficher le related problem
+	voir la view "problems" tapper related problem pour tomber sur la ligne, keyClickDroit>Fix>show problem > jump (A MIEUX DECRIRE)
 Si erreur no tests were found
 	Redemarrer Intellij ou faire une mise a jour et le redemarrer
 Si le clavier ne marche plus:
@@ -9028,7 +9032,7 @@ config de la base de donnée donnee: en jee
 				entityManager.contains(student) // returne true si l'entitée est persistente.
 	les etats :
                           Transient	Any object created by the developer that do are not persisted. n'existe pas en base.  Le merger le sauve en base et retourne l'entitée persistante
-                          Persistent est rattaché a une ligne en base. Si je le modifie dans ses setters ca change la base direct. Le merger le sert à rien sauf pour les sous objets en cascade
+                          Persistent est rattaché a une ligne en base. Si je le modifie dans ses setters ca change la base direct. Le merger ne sert à rien sauf pour les sous objets en cascade
                           Detached arrive quand Persistent--detach()_ou_close()_ou_clear()-->Detached. A un equivalent en base mais pour faire un update en base je dois le merger. Changer via setter ne suffit pas. Le merger met à jour son equivalent en base et retourne l'objet persistant SANS changé l'objet detatched cependant
 							   quand transaction,commit,roolback
 								ou l'entitee est passée par valeur
@@ -16112,7 +16116,13 @@ pour faire du ldaps :
                                     C - Pour que la "paging method" fonctionne j'ai du aussi overrider la classe PagedResultsDirContextProcessor. J'ai appele la nouvelle classe CustomPagedResultsDirContextProcessor AF recuperer
     
                                                             duplusprecis---->>>>>au plushaut
-
+BDD :
+ Exemple: 
+	Scenario: Les employes au travail à l'heure doivent 	etre paye de moitiee plus pour plus de 40 heures
+	Given: un employe au travail a l'heure avec un salaire de 12$/h qui a soumis un CRAM de 52 heures la semaine dernière
+	When: Payroll run
+	Then: le salaire sera de 696$ avec xxxxetc etc...
+        les tests sont ecrit sous forme de tableau en HTML et passent au vert avec Fitness sans parler dutout de GUI. Le buisness alanist doit savoir rediger de tels tests
 SELENIUM :(mettre les -D avant le -jar) (pour les tests d'integration: utilisation de failsafe) Autre solution: Jest / Pupetter puppetter puppeter ou Cypress ou Katalon Recorder
 "%JAVA_HOME%\bin\java" -Dhttp.proxyHost=172.26.80.141 -Dhttp.proxyPort=3128 -Dhttp.proxyUser=p036782 -Dhttp.proxyPassword=rcwkdr2 -jar selenium-server.jar -interactive -multiWindow
 "%JAVA_HOME%\bin\java" -jar selenium-server.jar -interactive -multiWindow
@@ -16181,8 +16191,7 @@ test :les tests : Linktestdevopsç9349
   non-functionnal testing: tester le code de pupett -> pupett-lint  + cucumber (qui met en place l'env)
                                               ||         ||
                                               chef  ->   food-critic
-
-JUNIT : (pour les tests unitaires c mieux d'utiliser le plugin maven surefire)// parce que ça génère des fichiers xml de rapport de tests.voir aussi LINKcucumberldfj
+JUNIT : (pour les tests unitaires c mieux d'utiliser le plugin maven surefire)// parce que ça génère des fichiers xml de rapport de tests.voir aussi LINKcucumberldfj si mes tests maven mvn ne s'executent pas regarder dans les impots si j'importe pas une mauvaise librairie de test
 TDD : existe mutationTest= PIT test: pitest.org: AFAIRE: essayer ça
     inutile pour tester l'UI, l'accès à des fichiers (à isoler dans methodes non testees)
     1er test doit etre Degenerate test: tester la base de la base sans rien faire dans code et avancer petits pas par petits pas aux suivants sans inclure les dépendances necessaires. Ne pas viser l'objectif. Tout doit pouvoir etre mocké
@@ -16247,7 +16256,8 @@ junit5 : junit 5 :  version 5: // https://stackify.com/junit-5/ tests repetees, 
                 @Test
                 @Disabled // remplace @Ignore
                 public void siJaiCetEtat_AlorsJeMattendsACa.....Assertions.assertEquals(3,res.size());
-			return new File(UtilsForTest.class.getClassLoader().getResource("A.wav").getPath()).getParent() + "/../../src/test/resources/"; // pour acceder aux resources du test dans le src
+			String tempPath = this.getClass().getClassLoader().getResource("processTextFileInTempDirAddExtraitOfProjectTest/temp/").getPath(); //resources pour tdd test
+			return new File(UtilsForTest.class.getClassLoader().getResource("A.wav").getPath()).getParent() + "/../../src/test/resources/"; // pour acceder aux resources du test dans le src ou sinon voir LINKresmlkjsdfgmlkjq
                 assertAll("user", // regroupement d'assertions 
                       () -> assertEquals("Johnson", user.getName()),
                       () -> assertEquals("johnson@gmail.com", user.getEmail()));
@@ -20986,7 +20996,7 @@ si un seul false ->if est false: donc il s'arrete dès qu'il ya un false
   Suis sur que c ca.
 
 if(a&b&c)
-si a=true, b=false,c=true ->if est false MAIS il va d'abord tout evaluer avant de rendre la reponse. Il ne s'arrete pas au moindre false.
+si a=true, b=false,c=true ->if est true MAIS il va d'abord tout evaluer avant de rendre la reponse. Il ne s'arrete pas au moindre false.
 
 if(a||b||c)
 si a=true ->if est true
@@ -23410,7 +23420,7 @@ pour externaliser externalisation d'autres fichiers de conf:
         		}
         		
 	}
-pour acceder à un fichier situe dans le classpath: 
+pour acceder à un fichier situe dans le classpath:  LINKresmlkjsdfgmlkjq
 			this.getClass().(getClassLoader()?.)getResourceAsStream("cheminVers/monFichier.toto)); (getClass est une methode de l'objet java "Object" verifier avec System.out.println("CLASSPATH: " + System.getProperty("java.class.path")); System.out.println("ClassLoader resource path: " + SaveXMLTest.class.getClassLoader().getResource("").getPath() ou HRParameters.class.getClassLoader().getResource("hr-openhr-for-ta.properties")); System.out.println("ClassLoader resource path: " + ClassLoader.getSystemResourceAsStream("hr-openhr-for-ta.properties"));   LINKgetRes9
 pour lire charger recuperer les properties proprietes d'un fichier de configuration dans un batch java: (voir aussi ci dessous PropertyResourceBundle) 
 public static void loadProperties () throws Exception {
@@ -25270,7 +25280,7 @@ sftp :
 ssh : se logger sur une machine a distance par le port 22
 	si message The ECDSA host key for www.memoclap.com has changed
 		faire ce qu'il dit ca reinitialise known_host et basta on refait ca revient
-	si j'ai erreur Received disconnect from xxxx too many authentication failures rajouter apres ssh: -o IdentitiesOnly=yes à ma commande ssh
+	si j'ai erreur Received disconnect from xxxx too many authentication failures rajouter apres ssh: -o IdentitiesOnly=yes à ma commande ssh voir LINKieieiutrutukeke
     installer ssh sur debian:
       si serveur openssh deja la faire /etc/init.d/ssh reload
       les cles cles : la securite : LINK94949494
@@ -25389,9 +25399,9 @@ ssh : se logger sur une machine a distance par le port 22
 	pour voir l'etat et les logs de sftp, ssh et voir qui est connecté
 		systemctl status sshd
 scp :commande
-	si j'ai erreur Received disconnect from xxxx too many authentication failures rajouter apres ssh: -o IdentitiesOnly=yes à ma commande ssh
+	si j'ai erreur Received disconnect from xxxx too many authentication failures rajouter apres ssh: -o IdentitiesOnly=yes à ma commande ssh // en fait ce message arrive parce que la cle privée choisie n'est pas la bonne ou il doit chercher tout seul parmis les cles privees et il ne fait trop de fois du coup ca depasse la limite autorisee donc forcer la bonne cle privee. LINKieieiutrutukeke
   pour downloader recuperer telecharger transferer un fichier d'un serveur à un autre voir aussi rsync
-    -r pour recursif si c un repertoire.
+    scp -r pour recursif si c un repertoire. -i etc....
     -vvv pour verbose (mode debug)
     pull: PUTAIN j'arrivaispas à faire marcher avec cle: toujours permission denied (publickey) meme apres avoir declare ma cle publique sur le serveur> il falait utiliser une cle privee de type .pem pour que ca marche et non pas .ppk (sur windows en tout cas)
         si j'ai le message Permission denied c'est parce que je n'ai pas les droits d'ecriture dans le repertoire de destination: faire un chmod
@@ -27383,6 +27393,8 @@ oe de coeur: &#339;
 euros:
     &#128; ou Alt+0128(windows-1252 sinon &#8364 Unicode) (1252: francais. 1250: tcheque)
 Javascript :
+si j'ai l'erreur
+	cannot access before initialization javascript// regarder si j'ai déclaré/importé ailleurs mon module notemment je l'ai fait ET en html <script module... ET en javascript : import... dans ce cas virer celui du html
 si j'ai l'erreur 
 	Only one element on document allowed.
 	au lieu de faire document.appendChild... faire document.body.appendChild...
@@ -27704,7 +27716,8 @@ tester le javascript TDD :
 			jest.config.js
 				dedans je peux mettre des variables globales pour tous les tests:
 						globals: {
-						   "pageContextRequestContextPath":"./"
+						   "pageContextRequestContextPath":"./",
+						   "toto":[]
 						   },
                  faire ca pour que jest comprenne ES6 imports exports
                     npm i --save-dev babel-jest @babel/core @babel/preset-env
@@ -27961,6 +27974,7 @@ DDD : autour d'une table avec tous les acteurs on redige ceci:
 			
 	
 ES6 :modules: une page html/js peut importer une page html/js qui importe aussi: le browser gère les doublons si yen a // pas implemente dans firefox et safari?
+	si erreur Uncaught TypeError: Failed to resolve module specifier "xxx". Relative references must start with either "/", "./", or "../". // il arrive bien a charger le module mais c'est DANS le module qu'il y ades chemins mal definis
 	copier cloner les proprietes d'un objet dans un autre rapidement: 
 		const {unprop,unautreprop,troisiemeprop:nomfinal} = unautrepbjet // equivaut à faire unprop=unautreobjet.unprop, unautreprop=unautreobjet.unautreprop,nomfinal=unautreobjet.troisiemeprop ATTENTION les noms de variables doivent etre les memes sinon ca ne marche pas
 		du coup une methode peut retourner PLUSIEURS variables: 
@@ -27988,8 +28002,13 @@ ES6 :modules: une page html/js peut importer une page html/js qui importe aussi:
         pour que ca marche ne plus mettre 
             <script type="text/javascript" src="... 
             mais 
-            <script type="module" src="... 
-        dans main.js: // attention toutes les variables primitives exportees sont readonly. Faire des setters si je veux les modifier 
+            <script type="module" src="..."/> 
+		ou
+			<script type="module">
+		   	 import * as global from '../../js/diagram/diagramIntoGraph.js';
+			    global.init();
+			</script>
+        dans main.js: // attention toutes les variables primitives exportees sont readonly. Faire des setters si je veux les modifier. si j'ai toujours l'erreur Cannot assign to read only property 'recorderFiles' of object '[object Module]' je dois virer le "this" dans la methode setter de mon module 
              import {toto,blabla} from "./path/xxx.js";                          RRR  // autant mettre le ".js" c'est normalement supporté partout
              import {projectsMEMENOM} from './js/memoclap-projectsFieldsets.js';  UUU  // toujours mettre accolades meme si qu'un seul objet
 	     import * as bidule from './js/memoclap-projectsFieldsets.js'; AAA   // j'importe tous les exports de bidule et ici ils sont prefixes par "bidule"
@@ -29319,7 +29338,7 @@ heritage:
 nouvelle facon de definir les classes et l'heritage: mais en javascript on peut aussi faire des factory functions =composition voir Linkfactoryfnct
        export class Toto {         
              // je ne peux pas definir de variables ici... faire comme ci dessous          
-                constructor() // Facultatif
+                constructor() // Facultatif attention voir LINKcstrr
                 {
                   this.sound="zzzz" // attention cette variable depuis ailleurs sera undefined si je n'initialise pas ma classe Toto par new Toto()
                 }
@@ -29331,12 +29350,12 @@ nouvelle facon de definir les classes et l'heritage: mais en javascript on peut 
           ggg=new Toto() //utiliser ailleurs. LINKutilisationclassjs Je ne peux pas faire Toto.unemethode()
           ggg.tals()        mais si je fais let xx=toto.tals; alors xx() va faire undefined car this est undefined. Il faut faire xx.bind(toto); xx.(); et là ca marche. Attribue un objet à this.
        export class Titi extends Toto{
-		constructor(){super()} // si je mets constructor, je DOIS faire appel à super()
+		constructor(){super()} // LINKcstrr si je mets constructor, je DOIS faire appel à super()
           tals(){blabla} // override la methode tals du parent
        }
  
  heritage avec de purs objets (duck typing) (import et export ne marche qu'avec un petit serveur (npm))
-  export Toto ={                   
+  export var Toto ={                   
           this.sound="zzzz" // apparemment ne marche plus (this genere erreur)
           tals(){alert(this.sound)},
           zozo(){xxx}
@@ -29344,7 +29363,7 @@ nouvelle facon de definir les classes et l'heritage: mais en javascript on peut 
           };
           ggg= Toto
           ggg.tals()
-       export Titi ={
+       export var Titi ={
           tals(){blabla} // override la methode tals du parent
        };
        Object.assign(Titi, Toto); // du coup titi va etendre toto
@@ -30141,7 +30160,7 @@ pour sauver ecrire recuperer les cookies: en javascript: LINKcooklskjhh
               }							
 pour executer du javascript a chaque fois qu'on appuie sur le clavier, qu'on presse un bouton, qu'on change la valeur d'un champ:
 		onkeyup // et non pas onchange qui s'execute au changement du focus
-		input //  a mettre dans addeventlistener. Lui s'execute carrement à chaque modif changement de la value de l'input mais pas à une modif faite par javascript direct on dirait...
+		input //  a mettre dans addeventlistener. Lui s'execute carrement à chaque modif changement de la value de l'input mais pas à une modif faite par javascript direct. Pour ca il faut utiliser un customevent
 pour qu'une fenetre fille quand elle se ferme fasse une action dans la fenetre parente: affiche ou masque une div
 				<body onunload="confirmeOk();">
 				<?php echo javascript_tag("
@@ -32710,7 +32729,7 @@ est fait pour gerer que authorization à la base. Pas pour Authentification: On 
         ImplicitMode(deconseille): ne passe que par le frontchanell: on bypasse la partie "ask code"-"recieve code": on obtien direct l'accessToken (pour les apps qui sont pure javascript)
         Resource Owner password[credential] flow mode : ne passe que par back (pour la compat des vieilles applis et de confiance    |
                                                    homme envoit user/password au client EDSN(prd la place du client_secret je crois) |_client demande à l'authorizationServer un accessToken direct+ recommandé:un refreshtoken
-             Client credientials flow : ne passe que par back(pour les échanges entre machines uniquement)                           |
+             Client credientials flow: ne passe que par back(pour les échanges entre machines uniquement)                           |
                                                    
     Run:
       USER va sur EDSN(Client)
