@@ -827,21 +827,24 @@ Kubernetes :(K8) le cluster K8 contient des Nodes(Masters et Workers)
 		kubectl // pour tester que c bien installe
 		minikube //pour tester que c bien installe
 		
-	pod=wrapper de container(pod pourrait avoir plusieurs container mais c rare) est ephemere  <  NodeWorkers sont des mirroirs de groupes de pods qui partagent entre NodesWorkers les memes SERVICES(=ip). Chaque NodeWorker contient: x Pods, 1ContainerRuntime(exple:docker) à installer dans chaque NodeWorker, 1Kubelet qui interragit avec ContainerRuntime et le NodeWorker pour assigner les resources du NodeWorker au Pod en passant par ContainerRuntime,1KubeProxy qui forward les requetes qui passent par les services de façon la plus optimale en terme de trajet. 
-	au sein du NodeWorker les pods ont un network dedié. donc chaque NodeWorker a chacun une adrssIP interne.
-									MAIS NodesWorker sont ephemeres aussi comme le pod donc chaque pod partage avec d'autres podsmirroirs un serviceInterne qui lui est persistant qui son adresse IPInterne aussi et qui est aussi un loadbalancer
-									url du serviceExterne est http://adresse.ip.du.nodeworker:portDuService
-									url de l'ingress httpS://NomDeDomaine (l'ingress forward le trafic au serviceExterne)
-	ConfigMap texte pur non securisé contient la conf des applications (ca remplace la conf qu'on met dans le docker-compose pour que les services se voient)	|
-		DB_URL=la_vraie_url / dans dockercompose j'ai la ref DB_URL // comme ca plus besoin de refaire l'image quand lien change				|_ sont connectés aux pods
-	Secret:=ConfigMap mais crypté puis en base64 on y met les password et certificats										|
+	pod=wrapper de container(pod pourrait avoir plusieurs container mais c rare) est ephemere  <  WorkerNodes sont des mirroirs de groupes de podsX,Y,Z qui partagent entre NodesWorkers les memes SERVICES(=ip). Chaque NodeWorker contient: x Pods differents, 1ContainerRuntime(exple:docker mais on a plus besoin d'ecrire du docker) à installer dans chaque NodeWorker, 1Kubelet qui interragit avec ContainerRuntime et le WorkerNode pour assigner les resources du WorkerNode au Pod en passant par ContainerRuntime,1KubeProxy qui forward les requetes qui passent par les services et vont vers les pods de façon la plus optimale en terme de trajet. 
+	au sein du WorkerNode les podsX,Y,Z ont un network dedié. donc chaque pod a chacun son adrssIP interne et chaque WorkerNodes aussi
+									MAIS les pod comme les NodesWorker sont ephemeres donc chaque podDeTypeA partagera avec les autres podsmirroirsDeType A un serviceInternePourPodA qui lui est persistant et qui a son adresse IPInterne aussi et qui est aussi un loadbalancer qui distribue les requetes entrantes
+								    Il y a 2 types de services persistants: ServicesExterne et Service Interne.
+                                	1) url du serviceExterne est http://adresse.ip.du.nodeworker:portDuService
+									   url de l'ingress httpS://NomDeDomaineDuMondeExterieur (l'ingress forward le trafic depuis le monde exterieur vers le serviceExterne)
+                                    2) url du serviceInterne n'est pas accessible depuis le monde exterieur (utile pour DB par ex)
+	                |ConfigMap texte pur non securisé pour contenir les urls + conf des applications (ca remplace la conf qu'on met dans le docker-compose pour que les services se voient)	
+les Pods voient_____|	  DB_URL=la_vraie_urlDuServiceDuPodDeLaDB / et dans dockercompose ya "DB_URL=urlPropreADockerSur?" // comme ca plus besoin de refaire l'image quand lien change				
+	                |Secret:=ConfigMap mais crypté puis en base64 on y met les password et clesprives										
 	Deployement defini les podsMirroirsSTATELESS(tout sauf DATABASES) partageant des services. Défini aussi les scales(nb de pods mirroirs loadbalancés). Finallement un Deployement c'est comme un wrapper d'un pod qui sous jacament sont des pods miroirs
 	StatefulSet defini les podsMirroirsSTATEFULL(DATABASES) partagent des services. Capable de synchro des Databases pour ne pas corrompre la base.(difficile à faire donc en general la database est hors de K8)	
-	un pod peut etre relie a un volume(PERSISTANT contrairement au pod) qui lui peut etre dans le meme NodeWorker ou ailleurs du cluster K8: cloud etc...
-	MasterNodeS gerent le cycle de vie des Nodes et Pods: 1)ApiServer sécurisé=uniqueEntrypoint. On communique avec à travers un CLI(=kubectl c le plus puissant) ou une UI ou une API. 2) Sceduler: decide intelligement dans quel Node qui a le plus de resources dispo demarrer le pod et demande à Kubelet de le faire. 3)ControllerManager detecte les pods qui tombent dire au scheduler de les remplacer. 4) etcd = Map du state en mémoire (quels pods sont morts, resources restantes des nodes etc...)
+	un pod peut etre relie a un volume(PERSISTANT contrairement au pod) qui lui peut etre dans le meme WorkerNode ou ailleurs du cluster K8: cloud etc...
+	MasterNodeS gerent le cycle de vie des WorkerNodes et Pods: 1)ApiServer sécurisé=uniqueEntrypoint. On communique avec à travers un CLI(=kubectl c le plus puissant) ou une UI ou une API. 1 ApiServer est partagé par tous les MasterNodes par loadBalancing 2) Sceduler: decide intelligement dans quel WorkerNode qui a le plus de resources dispo demarrer un pod et demande à Kubelet de le faire. 3)ControllerManager detecte les pods qui tombent et demande au scheduler de les remplacer. 4) etcd = Map du state en mémoire (quels pods sont morts, resources restantes des nodes etc...). 1 Etcd est partage par tous les MasterNodes
 		entre eux ils partagent virtuelement le meme etcd et ApiServeur qui sont synchronisés entre MasterNodes. MasterNodes consomment peu de resources.
 		ratio MasterNodes/WorkerNodes = 1/2 
-	Minikube=kubernetes cluster en local dans une virtualbox auto-creee où NodeWorkers et MasterNodes bossent dans un seul et meme node qui contient un dockerContainerRuntime preinstallé
+    Master Et Worker Nodes s'installent sur des serveurs virtuels ou physiques distincts
+	Minikube=kubernetes cluster en local dans une virtualbox auto-creee où WorkerNodes et MasterNodes bossent dans un seul et meme node qui contient un dockerContainerRuntime preinstallé
 	minikube start --vm-driver=kvm2 // crée et demarre un cluster kubernetes mini en demarrant sur la machine virtuelle kvm que j'ai déjà installé. Si je ne mets pas d'option il arrive a demarrer mais du coup je ne sais pas ou il tourne
 	kubectl get nodes // liste moi les Nodes(il y en a qu'un dans minikube)
 	minikube status // info sur le statut de mon cluster
