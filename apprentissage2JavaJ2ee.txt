@@ -24721,7 +24721,13 @@ AFAIRE:capitaliser
  host -T A memoclap.com
  vi /etc/resolv.conf
  docker ps -a
-
+ssd : checker mon disque ssd:
+    windows: christaldiskinfo
+    unix: smartctl
+            apt-install smartmontools
+            sudo smartctl -i /mondrive(pas ma partition ni mon systeme de fichier) // pour lire les infos s.m.a.r.t de mon ssd
+            sudo smartctl -t shortOulong -a /mondrive
+            
 pour faire copy paste du clipboard avec le terminal raccourci shortcut:
 	sudo apt-get install xclip -y
 	et creer les alias suivants:
@@ -24766,20 +24772,20 @@ pour connaitre la temperature du processeur chauffe : tapper sensors
 sudo : // si command not found faire d'abord su - puis apt-get install sudo -y
     sudo -l // pour voir quels sudo je peux executer.
     sudo -L // pour voir la liste des options sudo dispo
-    sudo unecommande //execute cette commande avec les droits de root// si message erreur is not a sudoer: se connecter en root et rajouter l'utilisateur au group sudo
+    sudo unecommande //execute cette commande avec les droits de root// si message erreur is not a sudoer: se connecter en root et rajouter l'utilisateur au group sudo voir LINKsudoenr
     sudo su unuser //pour devenir ce user
     pour passer en role profile root: sudo su
-    pour éditer le comportement de sudo faire "visudo"
-              visudo: // paramétrage du com portement de sudo
+    pour éditer le comportement de sudo faire "visudo -f /etc/sudoers.d/unnomquejinvente". on peut aussi faire visudo direct mais eviter car ca édite le fichier etc/sudoers directement et c pas bien. Mieux vaut editer les fichiers sous sudoers.d LINKsudoenr
                 Cmnd_Alias  UNALIASCOMMANCETOUJOURSPARUNEMAJUSCULE=commande1,commande2,.... // je définit un alias pour la suite
                 Defaults targetpw  # si non commenté, il demande le mot de passe de l'utilisateur cible sinon il demande mon mot de passe quand je change d'utilisateur
-                ALL           ALL                                  = (ALL)                                        ALL  # ATTENTION! À n'utiliser QUE avec 'Defaults targetpw'!
+                ALL <tab>     ALL      <pasdespace>                =(ALL)  <espace>                              ALL  # ATTENTION! À n'utiliser QUE avec 'Defaults targetpw'!
                 utilisateur   connexionLocaleOuDistanteOuLesDeux   = (quelle(s)Identite(s)IlALeDroitDePrendre)    Quelle,Commandes,Il,PourraAlors,ExecuterSepares,Par,Virgule,Wildcart?possiblesMaisPas*UNALIASCOMMANCETOUJOURSPARUNEMAJUSCULE // je peux mettre mon alias ci dessus ici
                 ou                                                    ou 
                 %groupe(utilisateurs appartenant à ce groupe)         NOPASSWD:
                 lire la suite ici:http://www.linuxpedia.fr/doku.php/commande/su_sudo
 	si message n'apparait pas dans le fichier sudoer faire
 		adduser nomdemonuserAAutoriserPourFaireSudo sudo                
+    pour changer l'editeur par defaut dans visudo et passer de nano vers vi faire update-alternatives-configeditor et choisir la ligne contenant vi
   avant on utilisait "su"
     su // switch ma session dans la connexion d'un autre utilisateur. Par defaut root.
     su toto ou su - toto// je deviens l'utilisateur user toto
@@ -25062,20 +25068,23 @@ pour voir les disques (les montages les partitions)
 pour voir les partitions: 
   more /proc/partitions
 montage des disques parametres au lancement sur (ou à une commande mount avec un seul argument: partition ou repertoire)  
-    cat /etc/fstab ou bien sudo blkid ou lsblk -a --output NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT,PARTLABEL,UUID (-a pour afficher aussi les disques vides) ou lspci pour voir les periferiques 
-      c'est là qu'on declare les montages et lorsqu'on reboot ce fichier est lu pour remonter le volume dans l'arborescence du sys de fichier
+    cat /etc/fstab // fichier qui liste les peripheriques montés automatiquement au demarrage
       fstab on y voit quelquechose comme:
-        Les disques(la partition)   les chemins       mettre_ext3     mettre_defaults
+        Les disques(la partition)   les chemins       mettre_ext3ou4    mettre_defaults
         /dev/xvda1                    /                 ext3            rw,noatime,errors=remount-ro  0    1
         devpts                        /dev/pts          devpts          defaults      0 0
         none                          /proc             proc            rw,nosuid,noexec  0    0
         /dev/xvdb                      /srv/backup      ext3            defaults          0    2
+                                                        3 types de disque formattage formatage possible: NTFS(windows),ext4,FAT32. Attention un transfert de repertoire de ext4 vers ntfs doit toujours se faire dans un tar car ntfs fout le bordel avec les droits des repertoires. Dans le tar c'est protégé
               donc tout ce qui est sous /blabla/blibi va etre dans le disque /dev/xdva1 sauf /srv/backup, /proc et /dev/pts
+        sudo blkid // pour lister les partitions pouvant etre montees.
+        lsblk -a --output NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT,PARTLABEL,UUID (-a pour afficher aussi les disques vides) // pour lister les partitions
+        lspci pour voir les periferiques/disques montés ou pas et leurs partitions
   pour demonter un disque, remonter: 
     umount nom_de_mon_volume_a_demonter (pas sur pour le parametre)    ou bien umount systeme/de/fichier
     umount /srv/backup ou umount /dev/xvdb              
   Donc quand je vais monter un disque en ecrivant: 
-      mount /dev/xvdb: automatiquement il va le monter sur /srv/backup
+      mount /dev/xvdb: automatiquement il va le monter sur /srv/backup (on ne peut monter que des partitions, pas des disques directement)
       EXEMPLE 1:si je fais ça: 
       mount /dev/xvdb /un/repertoie
       puis
@@ -25587,6 +25596,8 @@ raccourcis shortcut commandes: deplacer le curseur mot a mot dessus
 	Ctrl+e fin ligne
 	Alt+b arriere
 	Alt+f avant
+editeur nano :
+        quitter: Ctrl+x
 sur vi : 
 diviser split ecran CTRL+w puis
 	v: cree un nouveau split vertical
@@ -26042,9 +26053,14 @@ raid :
     raid0: j'ai plusieurs disque mais une seule interface et je crois avoir qu'un seul disque. Si un disque pete je perds tout.
     raid1: j'ai plusieurs disques et l'info est dupliquée entre les deux
     raid1.0 ou 0.1: j'ai au moins 4 disques 2 dupliqués à 2 et une paire correspond pour moi a un seul disque.
-lvm : (et zfs=zol) ce n'est pas une sauvegarde en cas de crash car les snapshot demeurent sur le meme disque
+lvm : (et zfs=zol) ce n'est pas une sauvegarde en cas de crash car les snapshot demeurent sur le meme disque.
     equivalent de git avec des snapshots mais pour les disques unix    
-    
+        PV:physique =partitions hard(ex:sdb, sda...)
+        VG:groupe = groupe de partitions
+        LV Logique = groupe de VG
+        commande à executer en sudo
+        lvdisplay unVGouLV //donne le detail info
+        lvm fullreport // affiche tout
 pour installer des programmes: applications: (le repository miroir local qui lui indique ou chercher les paquets determine aussi la version de l'os. On peut le modifier. C'est le texte /etc/apt/sources.list C'est aussi ce fichier qu'utilise aptitude. Attention a respecter mon code version debian dedans)
     avec apt : apt-get : (sinon il ya aussi la commande yum)
     apt-cache search unelibrairie // pour chercher une librairie que je pourrais puller avec apt-get install
@@ -26060,6 +26076,8 @@ pour installer des programmes: applications: (le repository miroir local qui lui
    	apt-get update
    	apt-get upgrade
 	sudo journalctl --vacuum-time=3d // supprime un peu du journal dattant de plus de 3jours
+    journalctl pour lire le journal en more
+    journalctl -f pour lire le journal en tail -f
     pour savoir quel language utilise un utilisateur
         grep "^utilisateur" /etc/passwd
     pour basculer le user en cours en ksh 
@@ -26154,7 +26172,7 @@ iptables : pour configurer le firewall netfilte de unix
           sort par ex par eth0<--
                       cable<--
       
-xfce : xcfe : // bureautique debian :
+xfce : xcfe : // bureautique debian : pour installer un autre desktop comme gnu: tasksel
 	modifier les shortcuts raccourcis clavier: xfce>parametres>gestionnaire de parametres > gestionnaire de fenetre > clavier
 	raccourci shortcut pour demarrer un programme: alt+f2 puis faire fleche vers le bas puis commencer à saisir
 	si le bureau ne s'affiche plus tapper la commande xfdesktop
