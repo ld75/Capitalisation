@@ -834,9 +834,9 @@ Kubernetes :(K8) le cluster K8 contient des Nodes(Masters et Workers)
                                 	1) url du serviceExterne est http://adresse.ip.du.nodeworker:portDuService
 									   url de l'ingress httpS://NomDeDomaineDuMondeExterieur (l'ingress forward le trafic depuis le monde exterieur vers le serviceExterne)
                                     2) url du serviceInterne n'est pas accessible depuis le monde exterieur (utile pour DB par ex)
-	                |ConfigMap texte pur non securisé pour contenir les urls + conf des applications (ca remplace la conf qu'on met dans le docker-compose pour que les services se voient)	
+                    |ConfigMap texte pur non securisé pour contenir les urls + conf des applications (ca remplace la conf qu'on met dans le docker-compose pour que les services se voient)	
 les Pods voient_____|	  DB_URL=la_vraie_urlDuServiceDuPodDeLaDB / et dans dockercompose ya "DB_URL=urlPropreADockerSur?" // comme ca plus besoin de refaire l'image quand lien change				
-	                |Secret:=ConfigMap mais crypté puis en base64 on y met les password et clesprives										
+                    |Secret:=ConfigMap mais crypté puis en base64 on y met les password et clesprives										
 	Deployement defini les podsMirroirsSTATELESS(tout sauf DATABASES) partageant des services. Défini aussi les scales(nb de pods mirroirs loadbalancés). Finallement un Deployement c'est comme un wrapper d'un pod qui sous jacament sont des pods miroirs
 	StatefulSet defini les podsMirroirsSTATEFULL(DATABASES) partagent des services. Capable de synchro des Databases pour ne pas corrompre la base.(difficile à faire donc en general la database est hors de K8)	
 	un pod peut etre relie a un volume(PERSISTANT contrairement au pod) qui lui peut etre dans le meme WorkerNode ou ailleurs du cluster K8: cloud etc...
@@ -845,10 +845,54 @@ les Pods voient_____|	  DB_URL=la_vraie_urlDuServiceDuPodDeLaDB / et dans docker
 		ratio MasterNodes/WorkerNodes = 1/2 
     Master Et Worker Nodes s'installent sur des serveurs virtuels ou physiques distincts
 	Minikube=kubernetes cluster en local dans une virtualbox auto-creee où WorkerNodes et MasterNodes bossent dans un seul et meme node qui contient un dockerContainerRuntime preinstallé
-	minikube start --vm-driver=kvm2 // crée et demarre un cluster kubernetes mini en demarrant sur la machine virtuelle kvm que j'ai déjà installé. Si je ne mets pas d'option il arrive a demarrer mais du coup je ne sais pas ou il tourne
-	kubectl get nodes // liste moi les Nodes(il y en a qu'un dans minikube)
+	minikube start --vm-driver=kvm2 //option facultative. crée et demarre un cluster kubernetes mini en demarrant sur la machine virtuelle kvm que j'ai déjà installé. Si je ne mets pas d'option il arrive a demarrer mais du coup je ne sais pas ou il tourne
 	minikube status // info sur le statut de mon cluster
-	
+		commande minikube ne sert qu'a demarrer ou clear le cluster c tout.
+	on peut mettre -h a la fin de chacune de ces commandes ci dessous pour avoir l'aide
+	kubectl get all // affiche tous les types d'objets
+	kubectl get nodes // liste moi les Nodes(il y en a qu'un dans minikube)
+        kubectl // tout court affiche l'aide help	
+        kubectl version // la version kubernetes est indiquee dans GitVersion. Hé oui c'est un nom mal choisi. Ya le ClientVersion et le ServerVersion
+	kubectl get nodes // affiche le status des Nodes
+	kubectl get pod (-A pour all si besoin) // statut possibles ContainerCreating //??? voir LINKjfjfjfjzizi ImagePullBackOff //????
+	kubectl describe pod iddupod // affiche des infos du pod ex pourquoi il ne demarre pas,son ip
+	kubectl exec -it iddupod -- bin/bash // comme avec docker on peut rentrer dans le containerpod
+	kubectl logs nomDuPodDontJeVeuxVoirLesLogs
+	kubectl get service
+	kubectl describe service idduservice // affiche des infos du service: dans Endpoints on peut voir les ip des pods destinataires, le label (selector), le TargetPort.
+	kubectl get deployment
+	kubectl get deployment iddudeployment -o yaml // pour voir son status dans etcd. On peut sauver ecrire le resultat dans un fichier en sortie: > monfichier mais si je veux reutiliser ce fichier,faudra virer les truc auto-generes
+	kubectl delete deployment nomdudeploymentasupprimer // ca supprime tous les replicaset et pods sous-jacents
+	kubectl delete -f unfichierQueJaiDejaChargeAvantParApply.yml //supprime tout ce qui compose ce fichier.
+	kubectl get replicaset // les id des replicaset sont = aux debut des ids des pods auquels ils appartiennent. Nombre de pod de ce type que contient ce replicaset. On passe toujours pas deployment pour gerer.
+	kubectl create xxxxx // On ne cree pas de pods directement mais on cree un deployment
+		kubectl create deployment unnomQueJattribueACeDeployment --image=nomDelimageDeMonContainerSiIlNexistePasLocallementVaDirectLeChercherSurLeNet --dry-runFacultatifChaisPasAQuoiCaSertDoncNeLeMetPasPourLinstant optionsPourSpecifierLeNombreDeReplicasetNotemment // ca cree un deployment ET un pod direct ET un replicaset
+		kubectl edit deploymentOuService unnomQueJaiAttribueACeDeploymentEtQuiExisteDeja // ca m'ouvre un vi sur la conf auto-generee du deployment au format LINKcjzlapg. Je peux y  modif la version de l'image par ex. A chaque edition si besoin ca recree automatiquement les pod/replicas mis à jour et supprime les anciens
+	kubectl apply -f /pathBonnePratiqueDansMonCodeApplicatif/vers/monfichierde/config-file.yml //fichier pour deployment ou pour service. Meme format que LINKcjzlapg. On peut mettre a jour ce fichier et reexecuter cette commande plusieurs fois. Si le deployment existe il fait un update sinon il fait un create
+	la conf:LINKcjzlapg 
+		kind: Deployment ou Service...// de quoi on parle
+		metadata: // entete
+			name:xxxxx // nom du deployment
+			labels:
+				name: xxxxxLINKflagxxxx // un nom en commun entre Deployment,Pod,Service: même réseau network
+		spec:	//details. structure depend du kind.
+			replicas:2 // nombre de podsDeCesTypesLa dans ce replica
+			selector:
+			 (...) app: xxxxxLINKflagxxxx
+		template: //conf du podDeCeTypeLa
+			metadata: //entete
+				labels:
+					name:xxxxxLINKflagxxxx 
+			spec:	//details
+				containers: // on peut mettre des pods de plusieurs types
+					- name: nomPodDeCeTypeLa	// 1er pod.
+					  image: nomImageDocker:version
+					  ports:
+						port:111
+						targetPort:222 //pour le service: il ecoute sur 111 et transmet sur 222
+						containerPort: 222 // pour le pod: il ecoute sur 222
+		status: // est automatiquement ecrit par kubernetes. ca lui sert à suivre l'evolution des modifs de la conf. Cette info est stockée dans etcd.
+			
 visualstudiocode :editeur:
   acceder au fichier trouver: ctrl+p
 gource : annimation de git
