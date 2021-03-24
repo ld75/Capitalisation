@@ -830,10 +830,10 @@ Kubernetes :(K8) le cluster K8 contient des Nodes(Masters et Workers)
 	pod=wrapper de container(pod pourrait avoir plusieurs container mais c rare) est ephemere  <  WorkerNodes sont des mirroirs de groupes de podsX,Y,Z qui partagent entre NodesWorkers les memes SERVICES(=ip). Chaque NodeWorker contient: x Pods differents, 1ContainerRuntime(exple:docker mais on a plus besoin d'ecrire du docker) à installer dans chaque NodeWorker, 1Kubelet qui interragit avec ContainerRuntime et le WorkerNode pour assigner les resources du WorkerNode au Pod en passant par ContainerRuntime,1KubeProxy qui forward les requetes qui passent par les services et vont vers les pods de façon la plus optimale en terme de trajet. 
 	au sein du WorkerNode les podsX,Y,Z ont un network dedié. donc chaque pod a chacun son adrssIP interne et chaque WorkerNodes aussi
 									MAIS les pod comme les NodesWorker sont ephemeres donc chaque podDeTypeA partagera avec les autres podsmirroirsDeType A un serviceInternePourPodA qui lui est persistant et qui a son adresse IPInterne aussi et qui est aussi un loadbalancer qui distribue les requetes entrantes
-								    Il y a 2 types de services persistants: ServicesExterne et Service Interne.
-                                	1) url du serviceExterne est http://adresse.ip.du.nodeworker:portDuService
-									   url de l'ingress httpS://NomDeDomaineDuMondeExterieur (l'ingress forward le trafic depuis le monde exterieur vers le serviceExterne)
-                                    2) url du serviceInterne n'est pas accessible depuis le monde exterieur (utile pour DB par ex)
+								    Il y a 2 types de services persistants: ServicesExterneOuIngress et Service Interne.
+                                	1a) url du serviceExterne est http://adresse.ip.du.nodeworker:portDuService// utilisé surtout pour dev en local
+					1b) url de l'ingress httpS://NomDeDomaineDuMondeExterieur (l'ingress forward le trafic depuis le monde exterieur vers des InternalServices)Pour la prod car capable jouer role de Nginx
+                                    2) url du InternalService n'est pas accessible depuis le monde exterieur (utile pour DB par ex)
                     |ConfigMap texte pur non securisé pour contenir les urls + conf des applications (ca remplace la conf qu'on met dans le docker-compose pour que les services se voient)	
 les Pods voient_____|	  DB_URL=la_vraie_urlDuServiceDuPodDeLaDB / et dans dockercompose ya "DB_URL=urlPropreADockerSur?" // comme ca plus besoin de refaire l'image quand lien change				
                     |Secret:=ConfigMap mais crypté puis en base64 on y met les password et clesprives										
@@ -849,36 +849,48 @@ les Pods voient_____|	  DB_URL=la_vraie_urlDuServiceDuPodDeLaDB / et dans docker
 	minikube status // info sur le statut de mon cluster
 		commande minikube ne sert qu'a demarrer ou clear le cluster c tout.
 	on peut mettre -h a la fin de chacune de ces commandes ci dessous pour avoir l'aide
-	kubectl get all // affiche tous les types d'objets
-	kubectl get nodes // liste moi les Nodes(il y en a qu'un dans minikube)
+	kubectl get all // affiche tous les types d'objets -n unnamespace //pour se limiter à un namespace
+	kubectl get nodes // liste moi les Nodes(il y en a qu'un dans minikube) et leurs status
         kubectl // tout court affiche l'aide help	
         kubectl version // la version kubernetes est indiquee dans GitVersion. Hé oui c'est un nom mal choisi. Ya le ClientVersion et le ServerVersion
-	kubectl get nodes // affiche le status des Nodes
-	kubectl get pod (-A pour all si besoin) // statut possibles ContainerCreating //??? voir LINKjfjfjfjzizi ImagePullBackOff //????
+	kubectl get pod (-A pour all si besoin --watch pour suivre en live comme un baretail) -n nomnamespace pour ne pas prendre le namespace defaut mais un autre// statut possibles ContainerCreating //??? voir LINKjfjfjfjzizi ImagePullBackOff //????
 	kubectl describe pod iddupod // affiche des infos du pod ex pourquoi il ne demarre pas,son ip
 	kubectl exec -it iddupod -- bin/bash // comme avec docker on peut rentrer dans le containerpod
 	kubectl logs nomDuPodDontJeVeuxVoirLesLogs
-	kubectl get service
-	kubectl describe service idduservice // affiche des infos du service: dans Endpoints on peut voir les ip des pods destinataires, le label (selector), le TargetPort.
-	kubectl get deployment
+	kubectl get service  // ...get -n unNamespaceAutreQueDefault ...
+	kubectl describe service idduservice // affiche des infos du service: dans Endpoints /on peut voir les ip des pods destinataires, le label (selector), le TargetPort.
+	kubectl get deployment // ...get -n unNamespaceAutreQueDefault ... 
 	kubectl get deployment iddudeployment -o yaml // pour voir son status dans etcd. On peut sauver ecrire le resultat dans un fichier en sortie: > monfichier mais si je veux reutiliser ce fichier,faudra virer les truc auto-generes
 	kubectl delete deployment nomdudeploymentasupprimer // ca supprime tous les replicaset et pods sous-jacents
 	kubectl delete -f unfichierQueJaiDejaChargeAvantParApply.yml //supprime tout ce qui compose ce fichier.
-	kubectl get replicaset // les id des replicaset sont = aux debut des ids des pods auquels ils appartiennent. Nombre de pod de ce type que contient ce replicaset. On passe toujours pas deployment pour gerer.
+	kubectl get replicaset // les id des replicaset sont = aux debut des ids des pods auquels ils appartiennent. Nombre de pod de ce type que contient ce replicaset. On passe toujours pas deployment pour gerer.// ...get -n unNamespaceAutreQueDefault ... 
+	kubectl get secret  // ...get -n unNamespaceAutreQueDefault ... 
+	kubectl get namespace // chaque namespace defini tout un cluster virtuel au sein du cluster kubernetes. Namespace sert à regrouper par fonction et environnement. Exemple: NSBaseProd NsBaseDev NSAppliProd NSAppliDev NSNginxPourTous. Utile aussi pour le blue-green pattern. Utile aussi pour cloisonner le taf des differentes equipes avec restrictions d'access, Utile aussi pour limiter la conso resource(CPU,Ram,Stockage) par namespace. ATTENTION: ne pas partager de ConfigMap et Secret entre namespaces mais on peut partager des services entre namespaces.
+			kubernetes-dashboard est specifique a minikube
+			kube-system : namespace est dédié à kube. Ne pas y toucher.
+			kube-public : namespace d'un cluster interne public
+			default: le namespace utilise par defaut si on ne le precise pas dans la conf. l'appartenance à tel namespace se fait sous yaml metadata:>namespace:xxxxx
+		pour voir la liste de ce qui peut et ne peut pas etre namespaceable:
+			kubectl api-resources --namespaced=false ou true
+			
 	kubectl create xxxxx // On ne cree pas de pods directement mais on cree un deployment
 		kubectl create deployment unnomQueJattribueACeDeployment --image=nomDelimageDeMonContainerSiIlNexistePasLocallementVaDirectLeChercherSurLeNet --dry-runFacultatifChaisPasAQuoiCaSertDoncNeLeMetPasPourLinstant optionsPourSpecifierLeNombreDeReplicasetNotemment // ca cree un deployment ET un pod direct ET un replicaset
 		kubectl edit deploymentOuService unnomQueJaiAttribueACeDeploymentEtQuiExisteDeja // ca m'ouvre un vi sur la conf auto-generee du deployment au format LINKcjzlapg. Je peux y  modif la version de l'image par ex. A chaque edition si besoin ca recree automatiquement les pod/replicas mis à jour et supprime les anciens
 	kubectl apply -f /pathBonnePratiqueDansMonCodeApplicatif/vers/monfichierde/config-file.yml //fichier pour deployment ou pour service. Meme format que LINKcjzlapg. On peut mettre a jour ce fichier et reexecuter cette commande plusieurs fois. Si le deployment existe il fait un update sinon il fait un create
-	la conf:LINKcjzlapg 
-		kind: Deployment ou Service...// de quoi on parle
+	la conf:LINKcjzlapg . Voir aussi les templates ci dessous
+		kind: Deployment ou Service ou Secret...// de quoi on parle
 		metadata: // entete
-			name:xxxxx // nom du deployment
-			labels:
-				name: xxxxxLINKflagxxxx // un nom en commun entre Deployment,Pod,Service: même réseau network
-		spec:	//details. structure depend du kind.
+			name:xxxxx // nom du deployment ou du secret ou etc...
+			labels: // absent de secret car si je le met j'ai le message resource name may not be empty
+				app pour les deployments sinon name: xxxxxLINKflagxxxx // un nom en commun entre Deployment,Pod,Service: même réseau network, pour le Secret c'est une indentation en moins
+		spec:	//details. structure depend du kind. Absent pour les Secret
 			replicas:2 // nombre de podsDeCesTypesLa dans ce replica
 			selector:
 			 (...) app: xxxxxLINKflagxxxx
+		type: Opaque ou tls // specifique à Secret. Opaque=cle-valeur;tls=certificat tls pour l'ingress et la connexion https par ex voir  LINKhtththsie 
+		data: // specifique aux Secret
+			nomdelacle1: unevaleurquidoitEncodeeEnBase64 Voir LINKencodbasesxqatr 
+			nomdelacle2: unevaleurquidoitEncodeeEnBase64 Voir LINKencodbasesxqatr  
 		template: //conf du podDeCeTypeLa
 			metadata: //entete
 				labels:
@@ -888,11 +900,121 @@ les Pods voient_____|	  DB_URL=la_vraie_urlDuServiceDuPodDeLaDB / et dans docker
 					- name: nomPodDeCeTypeLa	// 1er pod.
 					  image: nomImageDocker:version
 					  ports:
-						port:111
+						port:111 //??
 						targetPort:222 //pour le service: il ecoute sur 111 et transmet sur 222
 						containerPort: 222 // pour le pod: il ecoute sur 222
+					  env: // variables d'environnement du pod
+						-name: NOMDELAVARIABLE1
+						value: VALEURENDURDELAVARIABLE1
+						-name: NOMDELAVARIABLE2
+				 			valueFrom: //la valeur de la variable est externalisee
+								secretKeyRef: //externalisee dans un secret
+									name: nomDuSecretSonMetadata>name
+									key: nomdelacle1
 		status: // est automatiquement ecrit par kubernetes. ca lui sert à suivre l'evolution des modifs de la conf. Cette info est stockée dans etcd.
-			
+TEMPLATE POUR DEPLOYMENT: //HelmCharts est un repository une librairie de yaml pour ne pas avoir à tout refaire soi-meme. Cap aussi matcher des templates contenant placeholders{{}} avec un values.yml Utile aussi pour deployer entre different k8 de chaque environnement
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nomdemondeployment // nom du deployment qui apparait quand je fais un get
+  labels:
+    app: labeldemondeployment // reference de ce deployment je crois
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: labelduTypeDePodDeCeReplicas-AAAAAA
+  template:
+    metadata:
+      labels:
+        app: labelDeCePod-AAAAAA
+    spec:
+      containers:
+      - name: mongo // ne sera pas le nom de mon pod quand on fera un kubctl get pod
+        image: mongo
+        ports:
+        - containerPort: 27017-UUUU
+        env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-secret-BBBBBBB
+                key: mongousername
+          - name: MONGO_INITDB_ROOT_PASSWORD 
+            valueFrom:
+              configMapKeyRef:
+                name: mongodb-configmap-IIIIIII
+                key: cleconfigmap-HHHHH		
+TEMPLATE DES INTERNALSERVICES
+apiVersion: v1 
+kind: Service 
+metadata: 
+  name: mongodb-service-CCCCCCC  // nom de mon service
+spec: 
+  selector: 
+    app: referenceverspod-AAAAAA
+  type: ClusterIP  // c'est ce qui fait que c'est un InternalService
+  ports: 
+  - name: blabla // besoin rajouter ca uniquement si mon pod destinataire a plus de 1 port targeté. Ainsi chaque different port a un nom
+  - protocol: TCP 
+    port: 27017-TTTTTT  // port de reception de ce service
+    targetPort: 27017-UUUU // port de reception du pod
+A)TEMPLATE DES EXTERNALSERVICE
+apiVersion: v1 
+kind: Service 
+metadata: 
+  name: nomduserviceexterne-OOOOOO // pour que ce service externe soit exposé quand on bosse sur minikube il faut executer la commande minikube service nomduserviceexterne-OOOOOO
+spec: 
+  selector: 
+    app: referenceversUnPodQuiDoitEtreOuvertVersLeMondeExerieur-AAAAA
+  type: LoadBalancer // du coup c'est un ExternalService  
+  ports: 
+  - protocol: TCP 
+    port: 80 // port de reception de ce service
+    targetPort: 27017-UUUUU //port de reception du pod
+    nodePort:30000 // port d'entrée du ExternalService doit etre entre 30000 et 32767 // c'est le port que je saisis par exemple sur le browser
+B)TEMPLATE DE L'INGRESS
+apiVersion: networking.k8s.io/v1beta1 
+kind: Ingress 
+metadata: 
+  name: nomdemoningress 
+  namespace: sonNameSpacedoitEtreLEMEMEQueCeluiDuInternalServiceEtPodDestinataire
+spec: 
+  tls:
+  - hosts:				    				  	     | //pour gerer le Https. voir LINKhtththsie 
+	- mon.nom.de.domaine.com         					     |
+	secretName: refVersUnSecretQuiDoitEtreDansLeMemeNamespaceQueCetIngress-BBBBBB| 
+  rules: // regles de routage à la Nginx
+  - host: mon.nom.de.domaine.com // doit etre valide soit chez un fournisseur d'acces soit dans ...etc/hosts où l'adresse IP correspondante est celle que l'Ingress va m'exposer. Voir Sa description. Ou bien d'un Nginx hors du K8 qui lui pointe vers l'IP de l'Ingress(jecrois) Ou un LoadBalancer du CloudProvider(jecrois)
+    http: // a partir de là on parle du lien Ingres<->InternalService. Rien à voir avec le monde exterieur. Ici c'est géré par un IngressController=des pods à installer sur minikube via "minikube addson enable ingress" ca installe K8sNginxImplementationOfIngressController: ca installe les pods ingress dans le namespace kube-system
+    	paths:
+    	- backend: // si du browser j'appelle un path qui n'existe pas: l'ingress va pointer vers le default-httpbackend qui dit juste "404". Pour customiser ça j'ai juste à creer un InternalService qui s'appelle default-httpbackend et son pod associé.
+    		serviceName: monServiceInternal-CCCCCCC
+    		servicePort: 27017-TTTTTT
+	- path: /unpath1  // regles de routage
+	  backend:
+		servi.....etc
+	- path: /unpath2
+	 ...
+  - host: un.sous.domaine.domaine.com // on peut router par sous-domaines aussi
+	...
+TEMPLATE POUR SECRET:
+apiVersion: v1
+kind: Secret
+metadata:
+    name: mongodb-secret-BBBBBB
+type: Opaque ou tls 	LINKhtththsie	
+data:
+  mongousername: bGF1cmVudA== ou bien tls.crt: certificatEncodéEnBase64 si c'est pour faire LINKhtththsie 
+  mongopassword: ZHVkdQ==	      tls.key: cleEncodeeEnBase64
+TEMPLATE POUR CONFIGMAP
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: nomDeMonConfigMap-IIIIIII
+data:
+  cle1deconfigmap-HHHH: peutReferenceUnServicePourQueLesAutresVoientCeService-CCCCCC ou nomduservice-CCCCCC.namespaceDansLequelSeTrouveCeService
+
 visualstudiocode :editeur:
   acceder au fichier trouver: ctrl+p
 gource : annimation de git
@@ -13504,7 +13626,7 @@ Curl : voir aussi wget : pour faire une requette request http doc:https://ec.hax
     post json: // mettre des guillemets autour des valeurs des options si il y a des espaces dans ces valeurs. Si c'est du json mettre single quotes
 	curl -v -X POST http://localhost:8080/web/api/login --header "Content-Type: application/json" -d '{"anonymousUser":"true","uuid":"uid","appAccessKey":"mycampusapikey"}' > fichieroul'outputjsonsecritdedans //-X pour methode
     post sans bodypayload comme un get
-    curl -v -X POST http://localhost:8080/web/api/login --header "Content-Type: application/x-www-form-urlencoded" -d 'grant_type=password&username=toto&password=titi' -H "Authorization: Basic $(echo -n codetestlaurent:hihi | base64)" // je peux appeler du bash ici et encoder/decoder en base64 (-n pour que le echo ne mette pas les retour chariot)
+    curl -v -X POST http://localhost:8080/web/api/login --header "Content-Type: application/x-www-form-urlencoded" -d 'grant_type=password&username=toto&password=titi' -H "Authorization: Basic $(echo -n codetestlaurent:hihi | base64)" // je peux appeler du bash ici et encoder/decoder en base64 (-n pour que le echo ne mette pas les retour chariot) LINKencodbasesxqatr
     pour passer par un proxy rajouter:
             -x http://le.proxy:port -U user:pwd
     post json avec headers
@@ -25771,7 +25893,7 @@ pour transformer la case: MAJ -> MIN ou l'inverse: altGR + ~
 
 bash :KSH :
 encoder en base64
-    echo -n blablablba | base64 // -n pour ne pas que echo retourne un retour chario a la fin
+    echo -n blablablba | base64 // -n pour ne pas que echo retourne un retour chario a la fin LINKencodbasesxqatr 
 parser du json avec unix: installer jq
         puis 
             jq .unparamettre unfichiercontenantdujson.json   // si dans mon fichier j'ai {"unparametre":"toto"} va retourner toto
