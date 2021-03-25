@@ -838,7 +838,9 @@ Kubernetes :(K8) le cluster K8 contient des Nodes(Masters et Workers)
 les Pods voient_____|	  DB_URL=la_vraie_urlDuServiceDuPodDeLaDB / et dans dockercompose ya "DB_URL=urlPropreADockerSur?" // comme ca plus besoin de refaire l'image quand lien change				
                     |Secret:=ConfigMap mais crypté puis en base64 on y met les password et clesprives										
 	Deployement defini les podsMirroirsSTATELESS(tout sauf DATABASES) partageant des services. Défini aussi les scales(nb de pods mirroirs loadbalancés). Finallement un Deployement c'est comme un wrapper d'un pod qui sous jacament sont des pods miroirs
-	StatefulSet defini les podsMirroirsSTATEFULL(DATABASES) partagent des services. Capable de synchro des Databases pour ne pas corrompre la base.(difficile à faire donc en general la database est hors de K8)	
+	StatefulSet defini les podsMirroirsSTATEFULL(DATABASES) partagent des services. Capable de synchro des Databases pour ne pas corrompre la base.(difficile à faire donc en general la database est hors de K8). Si on veut les mettre dans K8 chaque pod dedans est unique et les pods ne sont pas interchangeables, Ont chacun leur ID propre voir LINKStatfllpds
+				plusieurs podsMysql1(Master:R&W)ReliéàbasePhyExterne1AuCluster<-syncParHeadlessService->podMysql2(R)ReliéàbasePhyExterne2AuCluster<-syncParHeadlessService->podMysql3(R)ReliéàbasePhyExterne3AuCluster
+				si DB doit toujours etre reliée à volume (hors cluster)
 	un pod peut etre relie a un volume(PERSISTANT contrairement au pod) qui lui peut etre dans le meme WorkerNode ou ailleurs du cluster K8: cloud etc...
 	MasterNodeS gerent le cycle de vie des WorkerNodes et Pods: 1)ApiServer sécurisé=uniqueEntrypoint. On communique avec à travers un CLI(=kubectl c le plus puissant) ou une UI ou une API. 1 ApiServer est partagé par tous les MasterNodes par loadBalancing 2) Sceduler: decide intelligement dans quel WorkerNode qui a le plus de resources dispo demarrer un pod et demande à Kubelet de le faire. 3)ControllerManager detecte les pods qui tombent et demande au scheduler de les remplacer. 4) etcd = Map du state en mémoire (quels pods sont morts, resources restantes des nodes etc...). 1 Etcd est partage par tous les MasterNodes
 		entre eux ils partagent virtuelement le meme etcd et ApiServeur qui sont synchronisés entre MasterNodes. MasterNodes consomment peu de resources.
@@ -853,7 +855,7 @@ les Pods voient_____|	  DB_URL=la_vraie_urlDuServiceDuPodDeLaDB / et dans docker
 	kubectl get nodes // liste moi les Nodes(il y en a qu'un dans minikube) et leurs status
         kubectl // tout court affiche l'aide help	
         kubectl version // la version kubernetes est indiquee dans GitVersion. Hé oui c'est un nom mal choisi. Ya le ClientVersion et le ServerVersion
-	kubectl get pod (-A pour all si besoin --watch pour suivre en live comme un baretail) -n nomnamespace pour ne pas prendre le namespace defaut mais un autre// statut possibles ContainerCreating //??? voir LINKjfjfjfjzizi ImagePullBackOff //????
+	kubectl get pod (-A pour all si besoin --watch pour suivre en live comme un baretail) -n nomnamespace pour ne pas prendre le namespace defaut mais un autre// statut possibles ContainerCreating //??? voir LINKjfjfjfjzizi ImagePullBackOff //????  // pour voir les ip associes -o wide
 	kubectl describe pod iddupod // affiche des infos du pod ex pourquoi il ne demarre pas,son ip
 	kubectl exec -it iddupod -- bin/bash // comme avec docker on peut rentrer dans le containerpod
 	kubectl logs nomDuPodDontJeVeuxVoirLesLogs
@@ -877,101 +879,92 @@ les Pods voient_____|	  DB_URL=la_vraie_urlDuServiceDuPodDeLaDB / et dans docker
 		kubectl create deployment unnomQueJattribueACeDeployment --image=nomDelimageDeMonContainerSiIlNexistePasLocallementVaDirectLeChercherSurLeNet --dry-runFacultatifChaisPasAQuoiCaSertDoncNeLeMetPasPourLinstant optionsPourSpecifierLeNombreDeReplicasetNotemment // ca cree un deployment ET un pod direct ET un replicaset
 		kubectl edit deploymentOuService unnomQueJaiAttribueACeDeploymentEtQuiExisteDeja // ca m'ouvre un vi sur la conf auto-generee du deployment au format LINKcjzlapg. Je peux y  modif la version de l'image par ex. A chaque edition si besoin ca recree automatiquement les pod/replicas mis à jour et supprime les anciens
 	kubectl apply -f /pathBonnePratiqueDansMonCodeApplicatif/vers/monfichierde/config-file.yml //fichier pour deployment ou pour service. Meme format que LINKcjzlapg. On peut mettre a jour ce fichier et reexecuter cette commande plusieurs fois. Si le deployment existe il fait un update sinon il fait un create
-	la conf:LINKcjzlapg . Voir aussi les templates ci dessous
-		kind: Deployment ou Service ou Secret...// de quoi on parle
-		metadata: // entete
-			name:xxxxx // nom du deployment ou du secret ou etc...
-			labels: // absent de secret car si je le met j'ai le message resource name may not be empty
-				app pour les deployments sinon name: xxxxxLINKflagxxxx // un nom en commun entre Deployment,Pod,Service: même réseau network, pour le Secret c'est une indentation en moins
-		spec:	//details. structure depend du kind. Absent pour les Secret
-			replicas:2 // nombre de podsDeCesTypesLa dans ce replica
-			selector:
-			 (...) app: xxxxxLINKflagxxxx
-		type: Opaque ou tls // specifique à Secret. Opaque=cle-valeur;tls=certificat tls pour l'ingress et la connexion https par ex voir  LINKhtththsie 
-		data: // specifique aux Secret
-			nomdelacle1: unevaleurquidoitEncodeeEnBase64 Voir LINKencodbasesxqatr 
-			nomdelacle2: unevaleurquidoitEncodeeEnBase64 Voir LINKencodbasesxqatr  
-		template: //conf du podDeCeTypeLa
-			metadata: //entete
-				labels:
-					name:xxxxxLINKflagxxxx 
-			spec:	//details
-				containers: // on peut mettre des pods de plusieurs types
-					- name: nomPodDeCeTypeLa	// 1er pod.
-					  image: nomImageDocker:version
-					  ports:
-						port:111 //??
-						targetPort:222 //pour le service: il ecoute sur 111 et transmet sur 222
-						containerPort: 222 // pour le pod: il ecoute sur 222
-					  env: // variables d'environnement du pod
-						-name: NOMDELAVARIABLE1
-						value: VALEURENDURDELAVARIABLE1
-						-name: NOMDELAVARIABLE2
-				 			valueFrom: //la valeur de la variable est externalisee
-								secretKeyRef: //externalisee dans un secret
-									name: nomDuSecretSonMetadata>name
-									key: nomdelacle1
-		status: // est automatiquement ecrit par kubernetes. ca lui sert à suivre l'evolution des modifs de la conf. Cette info est stockée dans etcd.
+	dans les confs:
+ 		status: // est automatiquement ecrit par kubernetes. ca lui sert à suivre l'evolution des modifs de la conf. Cette info est stockée dans etcd.
+la conf:LINKcjzlapg
 TEMPLATE POUR DEPLOYMENT: //HelmCharts est un repository une librairie de yaml pour ne pas avoir à tout refaire soi-meme. Cap aussi matcher des templates contenant placeholders{{}} avec un values.yml Utile aussi pour deployer entre different k8 de chaque environnement
 apiVersion: apps/v1
 kind: Deployment
-metadata:
+metadata: // entete
   name: nomdemondeployment // nom du deployment qui apparait quand je fais un get
   labels:
     app: labeldemondeployment // reference de ce deployment je crois
 spec:
-  replicas: 1
+  replicas: 1 // nombre de pods de ce type là : donc en fait nombre de WorkerNodes
   selector:
     matchLabels:
-      app: labelduTypeDePodDeCeReplicas-AAAAAA
+      app: labelduTypeDePodDeCeReplicas-aaaaaaaaaa
   template:
-    metadata:
+    metadata: //entete du pod de ce type la
       labels:
-        app: labelDeCePod-AAAAAA
-    spec:
-      containers:
-      - name: mongo // ne sera pas le nom de mon pod quand on fera un kubctl get pod
-        image: mongo
+        app: labelDeCePod-AAAAAAAAAAAA
+    spec: //details du pod de ce type la
+      containers: // on peut mettre plusieurs containers de different type dans ce type de pod qui sera repliqué dans plusieurs nodesWorker
+      - name: mongo // 1er containerDansLePod. Ne sera pas le nom de mon pod quand on fera un kubctl get pod
+        image: nomImageDocker:version
         ports:
-        - containerPort: 27017-UUUU
-        env:
+        - containerPort: 27017-UUUUUUUUU // ce containerDansLePod ecoute sur le port 27017
+        env: // variables d'environnement du container
+	  -name: NOMDELAVARIABLE1
+		value: VALEURENDURDELAVARIABLE1
           - name: MONGO_INITDB_ROOT_USERNAME
-            valueFrom:
-              secretKeyRef:
-                name: mongodb-secret-BBBBBBB
-                key: mongousername
+            valueFrom:	//valeur de la variable est externalisée 
+              secretKeyRef:// externalisée dans un secret
+                name: mongodb-secret-bbbbbbbbbbbbb
+                key: nomDeLaCle1-zzzzzzzzzzzz
           - name: MONGO_INITDB_ROOT_PASSWORD 
             valueFrom:
               configMapKeyRef:
-                name: mongodb-configmap-IIIIIII
-                key: cleconfigmap-HHHHH		
+                name: mongodb-configmap-iiiiiiiii
+                key: cleconfigmap-hhhhhhhhhh		
+	volumeMounts:				//montage dans le container
+	- mountPath: "/le/path/parametre/dans/le/container/applicatif"  //volume1
+	name: lenomduvolumequimatchcepath-ppppp1ppppp
+	- mountPath: "/un/autre/path" 				// volume2
+	name: autrevolume-ppp2pppppp
+    volumes:					// montage dans le pod 
+	- name: lenomduvolumequimatchcepath-PPPP1PPPP //interfaceDeVolume1
+	persistentVolumeClaim:	// un pvc type volume externe au cluster	
+		claimName: nomduPVC-rrrrrrrrrrr
+	- name: unAutrePointeurVersUnVraiVolume-PPPPPP2PPP
+	configMap: // un volume type configMap
+		name: nomDuConfigMapFaisantOfficeDeVolume-iiiiiiiiii(voir la video Nana volumes)
+	- name: unAutrePointeurVersVolume-PPPP3PPPP
+	secret:
+		secretName: versUnSecret-bbbbbbbbbbbbbb
+TEMPLATE DES STATEFULL // le nom des pods n'est pas au hasard comme dans deployment mais est incremental et persistant LINKStatfllpds 
+			La creation des podes se fait dans l'ordre 1,2,3 et la suppression dans l'ordre 3,2,1
+			chaque pod a son service dédié Persistant dont le nom fixe est "podname.serviceNameDefini" + un service commun a tous les pods statefull de ce type
+			je dois moi meme gerer la synchro des bases, leur backup, stocker les volumes à l'exterieur sans l'aide de kubernetes
 TEMPLATE DES INTERNALSERVICES
 apiVersion: v1 
 kind: Service 
 metadata: 
   name: mongodb-service-CCCCCCC  // nom de mon service
 spec: 
-  selector: 
-    app: referenceverspod-AAAAAA
-  type: ClusterIP  // c'est ce qui fait que c'est un InternalService
+  selector:  // c'est à ce niveau qu'on peut param vers quel NodeWorker contenant ce type de pod on va diriger les requetes
+    app: referenceverspod-aaaaaaaaaa
+  type: ClusterIP  // c'est ce qui fait que c'est un InternalService. Si a la place de cette ligne je mets ClusterIp:None mon service devient un HeadlessService qui ne fait pas de loadBalancing et le service n'a pas d'adresse IP et le DNSLookup retourne l'adresse IP du pod direct à partir du nom demandé. Utile pour les Statefull pods à joindre.
   ports: 
-  - name: blabla // besoin rajouter ca uniquement si mon pod destinataire a plus de 1 port targeté. Ainsi chaque different port a un nom
+  - name: blabla // besoin rajouter ca uniquement si mon pod destinataire a plus de 1 port targeté. Ainsi chaque different port a un nom voir LINKjdjdhghgj 
   - protocol: TCP 
     port: 27017-TTTTTT  // port de reception de ce service
-    targetPort: 27017-UUUU // port de reception du pod
+    targetPort: 27017-uuuuuuuuuuu // port de reception du pod
+  //possible mettre plus de ports. LINKjdjdhghgj
+
 A)TEMPLATE DES EXTERNALSERVICE
 apiVersion: v1 
 kind: Service 
 metadata: 
-  name: nomduserviceexterne-OOOOOO // pour que ce service externe soit exposé quand on bosse sur minikube il faut executer la commande minikube service nomduserviceexterne-OOOOOO
+  name: nomduserviceexterne-OOOOOO // pour que ce service externe soit exposé quand on bosse sur minikube il faut executer la commande minikube service nomduserviceexterne-oooooooo
 spec: 
   selector: 
-    app: referenceversUnPodQuiDoitEtreOuvertVersLeMondeExerieur-AAAAA
-  type: LoadBalancer // du coup c'est un ExternalService  
+    app: referenceversUnPodQuiDoitEtreOuvertVersLeMondeExerieur-aaaaaaaaa
+  type: LoadBalancer // du coup c'est un ExternalService et il n'accepte les requetes du monde exterieur que d'un loadbalancer ou type:NodePort c'est pareil sauf qu'il accepte toute requete du monde exterieur par son ip et son port:pas tres safe mais utile pour tester seulement
   ports: 
   - protocol: TCP 
-    port: 80 // port de reception de ce service
-    targetPort: 27017-UUUUU //port de reception du pod
+    port: 80 // port de reception de ce service// hum pas tres clair: port du clusterIp???
+    targetPort: 27017-uuuuuuuuu //port de reception du pod
     nodePort:30000 // port d'entrée du ExternalService doit etre entre 30000 et 32767 // c'est le port que je saisis par exemple sur le browser
 B)TEMPLATE DE L'INGRESS
 apiVersion: networking.k8s.io/v1beta1 
@@ -983,14 +976,14 @@ spec:
   tls:
   - hosts:				    				  	     | //pour gerer le Https. voir LINKhtththsie 
 	- mon.nom.de.domaine.com         					     |
-	secretName: refVersUnSecretQuiDoitEtreDansLeMemeNamespaceQueCetIngress-BBBBBB| 
+	secretName: refVersUnSecretQuiDoitEtreDansLeMemeNamespaceQueCetIngress-bbbbbb| 
   rules: // regles de routage à la Nginx
   - host: mon.nom.de.domaine.com // doit etre valide soit chez un fournisseur d'acces soit dans ...etc/hosts où l'adresse IP correspondante est celle que l'Ingress va m'exposer. Voir Sa description. Ou bien d'un Nginx hors du K8 qui lui pointe vers l'IP de l'Ingress(jecrois) Ou un LoadBalancer du CloudProvider(jecrois)
     http: // a partir de là on parle du lien Ingres<->InternalService. Rien à voir avec le monde exterieur. Ici c'est géré par un IngressController=des pods à installer sur minikube via "minikube addson enable ingress" ca installe K8sNginxImplementationOfIngressController: ca installe les pods ingress dans le namespace kube-system
     	paths:
     	- backend: // si du browser j'appelle un path qui n'existe pas: l'ingress va pointer vers le default-httpbackend qui dit juste "404". Pour customiser ça j'ai juste à creer un InternalService qui s'appelle default-httpbackend et son pod associé.
-    		serviceName: monServiceInternal-CCCCCCC
-    		servicePort: 27017-TTTTTT
+    		serviceName: monServiceInternal-cccccccccccc
+    		servicePort: 27017-ttttttttttt
 	- path: /unpath1  // regles de routage
 	  backend:
 		servi.....etc
@@ -1001,19 +994,95 @@ spec:
 TEMPLATE POUR SECRET:
 apiVersion: v1
 kind: Secret
-metadata:
-    name: mongodb-secret-BBBBBB
-type: Opaque ou tls 	LINKhtththsie	
-data:
-  mongousername: bGF1cmVudA== ou bien tls.crt: certificatEncodéEnBase64 si c'est pour faire LINKhtththsie 
-  mongopassword: ZHVkdQ==	      tls.key: cleEncodeeEnBase64
+metadata: //secret n'a pas de label
+    name: mongodb-secret-BBBBBBBBBB
+type: Opaque ou tls specifique à Secret. Opaque=cle-valeur;tls=certificat tls pour l'ingress et la connexion https par ex voir  LINKhtththsie
+data: //specifique aux secrets
+  mongousrn-ZZZZZ: bGF1cmVudA== ou bien tls.crt: certificatEncodéEnBase64 si c'est pour faire LINKhtththsie 
+  mongopassword: ZHVkdQ==	      tls.key: cleEncodeeEnBase64 Voir LINKencodbasesxqatr
+
 TEMPLATE POUR CONFIGMAP
 apiVersion: v1
 kind: ConfigMap
 metadata:
     name: nomDeMonConfigMap-IIIIIII
 data:
-  cle1deconfigmap-HHHH: peutReferenceUnServicePourQueLesAutresVoientCeService-CCCCCC ou nomduservice-CCCCCC.namespaceDansLequelSeTrouveCeService
+cle1deconfigmap-HHHHHHHHH: peutReferenceUnServicePourQueLesAutresVoientCeService-ccccccccccc ou nomduservice-cccccccccc.namespaceDansLequelSeTrouveCeService // c'est à ce niveau qu'on peut param vers quel NodeWorker contenant ce type de pod on va diriger les requetes
+
+TEMPLATE POUR LES PERSISTANT VOLUME CLAIMS: les pods font appel à ca pour atteindre les volumes.(une forme d'interface pour les volumes) Pod et PVC liés doivent être dans le meme namespace
+kind: PersistentVolumeClaim // du coup tous les volumes qui répondent à ses critères sont des candidats potentiels à être le volume à lier.
+apiVersion: v1
+metadata:
+	name: nomDeMonPVC-RRRRRRRR
+spec:
+	storageClassName: unnomDeStorageclass-yyyyyyyyyyyyyy // au moment ou le pod va claimer au PVC le storage dont il ya besoin, kubernetes va creer automatiquement sur la base du storageClassName le volume persistant.
+	volumeMode: Filesystem
+	accessModes:
+		- ReadWriteOnce ou ...
+	resources:
+		requests:
+			storage: 10Gi
+TEMPLATE POUR LES VOLUMES C'est juste une interface mais c'est à moi de créer le volume physique: sur disque local, sur NFSdistant ou sur cloud. Les volumes sont hors Namespaces et accessibles à tout le cluster.
+apiVersion: v1			Le montage de ce volume existant DANS le pod puis dans le container se fait precisement quand un PVC démarre et le choisi
+kind: PersistantVolume
+metadata: // 1) Exemple pour un volume type NFS
+	name: nomduvolume-GGGGG
+spec:
+	capacity:
+		storage: 5Gi // taille max
+	volumeMode: Filesystem
+	accessModes:
+		- ReadWriteOnce ou ... // comment on a le droit d'y acceder ?
+	persistentVolumeReclaimPolicy: Recycle ou Delete...
+	storageClassName: slow
+	mountOptions:
+		- hard
+		- nfsvers=4.0
+	nfs:
+		path: /chemin/dans/le/serveur/nfs
+		server: 1.32.3.21.4 // adresse IP du serveur NFS
+metadata: // 2) Exemple pour un volume type GoogleCloud
+	name: nomduvolume-GGGGG
+	labels:
+		failure-domain.beta.kubernetes.io/zone: us-central-a__us-central-b
+spec:
+	capacity:
+		storage: 5Gi // taille max
+	accessModes:
+		- ReadWriteOnce ou ... // comment on a le droit d'y acceder ?
+	gcePersistentDisk:
+		pdName: mon-disque-sur-le-googlecloud
+		fsType: ext4
+metadata: // 3) Exemple pour un volume type local
+	name: nomduvolume-GGGGG
+spec:
+	capacity:
+		storage: 5Gi // taille max
+	volumeMode: Filesystem
+	accessModes:
+		- ReadWriteOnce ou ... // comment on a le droit d'y acceder ?
+	persistentVolumeReclaimPolicy: Recycle ou Delete...
+	storageClassName: local-storage
+	local:
+		path: /chemin/local
+	nodeAffinity: // le volume est sur le WorkerNode
+		required:
+			nodeSelectorTerms:
+			- matchExpression:
+				- key: kubernetes.io/hostname
+				operator: In
+				values:
+				- exemple-node
+TEMPLATE STORAGE_CLASS //pour creer des volumes automatiquement
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+	name: storage-class-nameYYYYYYYYYYY
+provisioner: kubernetes.io/aws-ebs // c'est ce qui est utilisé pour determiner le type de volumes à creer. chaque type de storage a son propre provisioner. kubernetes.io est un provisionner dejà en place dans kubernetes qu'on peut utiliser sinon faudra en recuperer un autre externe comme plugin
+parameters: // parametres transmis au storage.
+	type:io1
+	iopsPerGB:"10"
+	fsType:ext4
 
 visualstudiocode :editeur:
   acceder au fichier trouver: ctrl+p
