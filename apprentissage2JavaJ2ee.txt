@@ -1196,12 +1196,14 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
         git clone D:/path/repertoireacloner (besoin peut etre faire commit dans ce repository(repertoireacloner) pour l'initialiser) 
     branches: master; develop; etc etc... elles existent en local et sur le repo distant et sont toutes TOUTES indépendantes les unes des autres c a d: je peux avoir en local un master qui push dans le develop distant. Les branches c de la merde. DEVOPS.
         si j'ai (HEAD detached from 351dcab) c'est parce que mon HEAD est orphelin et dans aucune branche(parce que j'ai fait un git checkout sur un commit). faire git stash save "bla"; git checkout master; git merge codeDeMonHeadDetached. Ancienne methode: pour le recuperer dabord le rattacher a une branche temporaire: git branch temp puis git checkout temp. Ensuite il faut ecraser une branche par temp (voir ci dessous)
-      git branch -vv// pour voir toutes les branches et a quel repository origin elles sont liées(attention ne montre pas toutes les branches en fait. pour les voir toutes git branch -av) et voir quelle branche est activee A8. Ou est mon HEAD. Les branches c la merde. DEVOPS
+      git branch -vv// pour voir toutes les branches et a quel repository origin(origin=remote) elles sont liées(attention ne montre pas toutes les branches en fait. pour les voir toutes git branch -av) et voir quelle branche est activee A8. Ou est mon HEAD. Les branches c la merde. DEVOPS
       git branch nomdelabrancheacreer // pour creer une nouvelle branche: ca ne cre pas une branche vide: ca copie la branche actuelle au commit ou je me trouve (meme ce qui n'est pas addé) dans la nouvelle branche. Les branches c la merde. DEVOPS
                                           maintenant je peux checkouter sur cette nouvelle branche ET avant tout faire un commit dessus sinon LINK98530!!!! puis je peux la pusher sur le repo distant: si le nom de la branche local est le meme que sur une branche du repository distant alors il va pusher dans cette branche qui a ce meme nom. Pas mal pour pusher sur une autre branche facilement.
       git branch -d nombrancheasupprimerDeleter // supprimer une branche. Ne pas se placer dans cette branche avant de faire ca.
       git branch -f nomdelabrancheAEcraser nomdelabrancheQuivaPrendreLaPlaceDeLautreEtVaLecraser
-      
+      git branch -m nouveauNomDeLaBranche // pour renommer une branche
+		puis git push origin -u nouveauNomDeLaBranche
+		puis git push origin --delete ancienNomDeLaBranche
     switcher d'une branche à l'autre: ca remplace mes fichiers par ceux de la branche que je choisis. 
       se mettre dans le repertoire du projet au meme niveau que le .git (je pense)
       git checkout nombranche_vers_laquelle_allerPAS_SON_IDENTIFIANT_ET_PAS_AVEC_REMOTE/ORIGIN_AVANT. Le HEAD devient cette nombranche_vers_laquelle_aller LINK98530: attention juste apres la creation de branch faire un premier commit sinon lors du checkout on ne voir rien bouger dans l'éditeur
@@ -1215,8 +1217,8 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git merge NomDeLaBranchequejeveuxTirerVersLaBranchDansLaquelleJeSuis(en principe le master) master<----tototo ATTENTION TOUJOURS COMMITER AVANT DE FAIRE UN MERGE
             git merge -X theirs NomDeLaBranchequejeveuxTirerQUI_EST_PRIORITAIRE_ET_ECRASE_LA_OU_JE_SUISVersLaBranchDansLaquelleJeSuis
             git merge -s ours NomDeLaBranchequejeveuxTirerVersLaBranchDansLaquelleJeSuisQUI_EST_PRIORITAIRE_ET_PREND_LE_PAS_SUR_CE_QUI_EST_IMPORTE
-                merge manuellement <<<<<<< HEAD
-                                        mon cote
+                merge manuellement <<<<<<< HEAD 
+                                        mon cote // attention pas toujours ca depend si j'ai fait un rebase ou quoi et dans quel ordre
                                         =======
                                         son cote
                                         >>>>>>> blablabla
@@ -1226,8 +1228,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git rm --cached <filePath1 filePath2> //LINKrmgit a utiliser aussi si gitignore ne semble pas marcher ou si j'ai l'erreur in unpopulated submodule(c parce que j'ai supprimé .git): ignore l'indexation et le suivi d'un fichier. ATTENTION PEUT SUPPRIMER LES FICHIERS. SI je ne veux plus: faire git reset HEAD monfichier pour l'ignorer. Les vire de untracked file mais certains fichiers on y arrive pas... voir LINKcheckoutquandmeme
       git rm -r --cached <filePath> //-r pour recursif
       git status -uno//(-uno pour ne pas voir les untracked) pour savoir quels fichiers vont etre commites ( a faire si j'ai le message Changes not staged for commit)
-      git commit:  apres commit je peux faire un fetch((recupere du repo distant vers le local dans une autre localisation:pour l'instant n'a pas touché a mon espace de travail) puis pull (pour récupérer les dernières modifs des collegues et le merger avec mon espace de travail) puis ensuite un push
-                      si j'ai l'erreur "Please commit your changes or stash them before you merge." quand je fetch-pull soit je stash soit je LINKcheckoutquandmeme
+      git commit:  
       git commit -m "blablamMonCommentaire"// index->masterOuBrancheQuiALeHEAD:jusqu'a present tout est encore en local. voir git add si il ne commit pas malgres tout.
       git commit -am // -a pour ne commiter que les fichiers je crois ou bien -a pour forcer l'ajout de fichier non indexes avant de faire le commit
       apres commit je peux faire un pull puis ensuite un push
@@ -1235,20 +1236,20 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
      	 	git reset  pour tout enlever du add 
      	 	ou
       		git reset pathfichieravecWildcard
+
       git revert -m 1 [hash d'un commit precedent ou d'un commit-merge de branche] // se mettre dans la branche qui a recu le commit ou le commit-merge d'une autre branche. Ca va annuler ce commit ou commit-merge-de-branche et ca va ajouter un nouveau commit dans ma branche actuelle: pratique pour annuler un commit ou un merge du passé anterieur
       git reset HEAD~ annule/undo le dernier commit. Ne pas le faire après que mon dernier commit ait ete pushe et merge avec l'origin(remote) car cela desynchronise mon local du distant. Si ca a déja été pushé alors faire git reverT: ça recommiT un snap d'avant le commit pourri.
                 on peut aussi faire git commit --amend // pour redéfinir changer le message du dernier commit sans besoin de l'annuler
       git reset //LINKresetgit annuler le dernier add
-      git reset --hard <identifiantcommit>  revenir en arriere sur identifiantcommit par déplacement du HEAD sur identifiantcmmit vire definitivement tous les trucs qui ont suivi
+      git reset --hard <identifiantcommit>  revenir en arriere sur identifiantcommit par déplacement du HEAD sur identifiantcmmit et vire definitivement tous les trucs qui ont suivi mais le pb avec cette methode c'est que ca efface l'historique donc faire plutot git revert commitidDontJeNeVeuxPlus // ca vire ce commit là et ce qu'il a fait de mon historique????questcequej'ai voulu dire?
       git reset --hard versionDuTag: ce tag revient dans le mon HEAD/branch + repertoire et vire tout ce qu'il y a eu après
       git reset --hard // sans rien: pour annuler un pull qui vient d'etre fait
     git rebase entre branches: pour que le log soit propre avec une branche en trait et pas qui parte dans tous les sens: a faire a la place de merge sur une meme branche locale/remote
       git rebase brancheDontJeVeuxRecupererLesCommitsEnUneLigneDroiteLaOuJeSuisMaintenant
     git rebase sur une meme branche entre local/remote
-     git pull --rebase  //comme ca c'est plus propre dans les logs d'une meme branche. LINKlkjgjgjzooa
     git rebase entre commits://attention si bloque pas hesiter a abandonner et retenter 
       git rebase commitquinebougepasEtQuiVaRecevoirLaSuiteDeLHistoire commitQuiVaMettreSonHistoireALaSuiteDuPremierArgument // a la toute fin faire rebase DernierCommit master pour que le master se remette au bout
-      git rebase -i identifiantCommitDuPassé // ouvre un editeur affiche les commit du plus vieux en haut au plus recent en bas et je peux manipuler mes commits du passe pas a pas un par un jusqu'a aujourd'hui. J'ai du utiliser ca pour supprimer les indexs de fichiers trop gros qui m'empechaient de pusher sur le repo distant ou pour fusionner des commits
+      git rebase -i identifiantCommitDuPasséSeraExcluLorsDuRebase // ouvre un editeur affiche les commit du plus vieux en haut au plus recent en bas et je peux manipuler mes commits du passe pas a pas un par un jusqu'a aujourd'hui. J'ai du utiliser ca pour supprimer les indexs de fichiers trop gros qui m'empechaient de pusher sur le repo distant ou pour fusionner des commits
                 si je veux commencer depuis le debut faire git rebase -i --root
                 quand j'ai remplacé chaque pick souhaité par edit(changer le commit) ou squash (merger-fusionner des commits), faire comme dans vi: sauver et quitter. il fait alors du pas a pas sur chaque edit ou a chaque fois je fait soit git commit --amend(modifier le commit en cours) ou git rebase --continue(au suivant!)
                         quand je fais git commit --amend alors il ouvre un editeur montrant le commit.(si il fait erreur de fusion faire git diff --check si toujours tenter git rebase --skip) Executer comme dans vi:!macommandeGit (exemple faire un checkout pour supprimer de l'index) et Entree a chaque fois. Quand fini faire:wq. et puis git rebase --continue et ainsi de suite pour finir avec un git rebase --continue jusqu'à ce que la branche rebase soit automatiquement mergée avec mon master.
@@ -1320,14 +1321,17 @@ git diff compare mon workspacepasencoreadded avec le dernier commit
         git push origin masterOudevelopOuBrancheLocale //HEAD(origin)->ServeurDistantOuRepertoireQQpart(master ou develop) envoi sur le serveurOuRepertoireRepoQQpart pour merger avec le master: ça fetche+merge+commit là bas.
             ne pushe pas les repertoires vides: pour ça ajouter juste un fichier avec "x" dedans
             si j'ai error: failed to push some refs to // peut etre j'ai oublié de commité ou bien il faut puller avant
-	gut push --set-upstream origin nomdelabranchequejecreeADistanceSurLeOrigin // quand je suis dans une branche qui n'existe pas sur le repository distant "origin" il cree cette branche dans origin avec le nom nomdelabranchequejecreeADistanceSurLeOrigin
+	gut push --set-upstream(equivalent de -u) origin nomdelabranchequejecreeADistanceSurLeOrigin // quand je suis dans une branche qui n'existe pas sur le repository distant "origin" il cree cette branche dans origin avec le nom nomdelabranchequejecreeADistanceSurLeOrigin
         git config credential.helper store // pour ne plus qu'il demande le user/pass en https
-        git pull: fait automatiquement un git fetch avant si ca na pas été deja fait
+        git pull: fait automatiquement un git fetch avant si ca na pas été deja fait. Pour récupérer les dernières modifs des collegues et le merger avec mon espace de travail)
         la premiere fois faire git pull origin master
+     	git pull --rebase  //comme ca c'est plus propre dans les logs d'une meme branche. LINKlkjgjgjzooa puis corriger les pb de merge > confimer le rebase a la fin et ca fait bien une branche droite
 	git pull en gardant les modifis a moi les miennes en priorité: git pull -s recursive -X ours
         git pull URLouPathRepositoryDistantPeutEtreLocal si il veut pas et/ou met message refusing to merge unrelated histories mettre:--allow-unrelated-histories//recupere les derniers push des autres sur mon HEAD local // si il dit "not a git repository" il faut que je me place dans le projet git
-                    si il dit "....be overwritten by merge" c'est que quelqun a poste sur le repo des choses qu'il n'aurait pas du. 2 solutions: 1)faire un git clone ailleurs du projet puis git rm fichiersquinauraientpasdusetrouverdanslerepo puis commit et push 2)aller sur le repo et les supprimer
-        si j'ai l'erreur cannot stat permission denied au moment d'une manip
+            si j'ai l'erreur "Please commit your changes or stash them before you merge." quand je fetch-pull soit je stash soit je LINKcheckoutquandmeme
+            si il dit "....be overwritten by merge" c'est que quelqun a poste sur le repo des choses qu'il n'aurait pas du. 2 solutions: 1)faire un git clone ailleurs du projet puis git rm fichiersquinauraientpasdusetrouverdanslerepo puis commit et push 2)aller sur le repo et les supprimer
+        git fetch((recupere du repo distant vers le local dans une autre localisation:pour l'instant n'a pas touché a mon espace de travail)
+		 si j'ai l'erreur cannot stat permission denied au moment d'une manip
                 c'est a cause de windows. il ya un fichier locké par un autre programme. Tout fermer et recommencer
 		pour faire du mirroring automatiquement par un petit script:
 			unrepogitdistant---->monpc---->unautrerepogitdistant 
@@ -1552,7 +1556,7 @@ si j'ai message
 formatter forme affichier le xml: 
     code->reformat
 pour paster un ancien paste du clipboard clip board collé: coller copier 
-        Ctrl+Shift+Insert
+        Ctrl+Shift+Insert //pour augmenter le nobre de clipboard historisés menu File> Settintgs > General > Limits > c'est là
 tapper saisir abrege abregé racourci shortcut pour ecrire methode main: psvm
 Si intellij ne demarre plus a cause d'une erreur initializ initialis fatal xdebug supprimer son cache: reset marche plus. Ou si intellij me cache des fichiers meme si dans projet>rouecrantee je coche quil doit tout afficher 
   supprimer repertoire D:\Profiles\lduverge\.IdeaIC2017.3 ou .idea
@@ -1575,6 +1579,7 @@ voir les logs git vcs: alt+9
 git pull tous les projets/modules en une seule fois VCS>Update projects... //choisir pour une meme branche de preference la strategie rebase voir LINKlkjgjgjzooa. Si il ne fait que fetch. Penser à cliquer ensuite dans l'onglet VCS du bas pour voir ce qui se passe sinon suis aveugle. Il faudra faire pull après!(voir les fichiers D://git/pull.xls et D://git/pull.bat). 
 si je n'arrive pas à cloner un projet git directement avec intellij (a cause erreur password): cmd windows, me placer dans le bon repertoire, faire un git clone. Revenir sur intellij>settings>VersionControl>ajouter (+) le path du projet dans la liste.           
       pour commiter un nouveau projet: VCS > Import into VersionControl > share project into subversion...>Atention, là je peux choisir le repository mais si je ne fais que ça il va copier les sous repertoires de mon projet donc il faut appyer sur + et mettre le repository+/RepertoireDuProjet (meme si il fait une erreur rouge continuer comme ça)
+git rebase: je suis sur branche1, je fais rebase current onto selected veut ire prend le contenu de branche2 et ramene le ici sur branche1 où je suis
 svn:
     parcourir:
     >VCS>BrowseVCSRepository>BrowseSubersionRepository:
@@ -1600,8 +1605,9 @@ taille des logs dans la console: settings>console>overrideconsolebuffersize
 pom voir arbre des dependances hierarchie transitive > dans la vue maven: clique droit sur projet > show effective pom ATTENTION A RAFRAICHIR refresh dans vue maven sinon la hierarchie est obsolete
         encore mieux: charger https://plugins.jetbrains.com/plugin/7179-maven-helper et installer le plugin: installe le directement depuis settings>plugins>il est là
         permet aussi d'afficher menu contextuel maven run debug dans projets project (si inactif  appuyer sur "+" a droite pannel maven)
-        sous pannel editeur il y a le tab dependencyAnalyzer onglet dependency analyser à gauche on y voit les artifactID:version
+        sous pannel editeur il y a le tab dependencyAnalyzer onglet dependency analyser à gauche on y voit les artifactID:version: boutons utils: conflicts, alldependencyastree. A droite il faut lire les bouts d'arbres de bas en haut. En bas c'est la dependance directe du pom dans lequel je suis et la racine de l'arbre en haut c'est ce que j'ai selectionné à gauche. Click droit jump to source en fait je clique directment sur la ligne dans le pom. C'est comme ça qu'il faut le voir 
 si le pom.xml maven est en erreur: rafraichir refresh dans la vue maven +  faire une mvn:compile pour le forcer à charger les dependances et montrer les vraies erreurs, cliquer dans l'editeur sur la notification comme quoi maven doit etre raffraichi et aussi verifier que dans le projet il n'y a pas un .iml corrompu pourri à effacer
+il y a un toggle button skipTests dans la fenetre maven
 gradle: creer si j'ai Could not find GradleWrapperMain il faut creer projet\gradle\wrapper\gradle-wrapper.jar
       ouvrir view gradle > a cote de run ouvrir editconfiguration > ajouter un conf gradle avec la Task:createWrapper executer ça.
 Error:Unable to make the module: config-server_main, related gradle configuration was not found. Please, re-import the Gradle project and try again.
@@ -1682,6 +1688,7 @@ pour modifier un type de fichier source: en faire un source, un repertoire de te
 erreur error details probleme explication Ctrl+F1
 search trouver rechercher partout Ctrl+shift+f // si ne marche plus bien, arreter intellij, supprimer .idea et redemarrer car il ne reindexe plus
 	pour conserver l'historique de recherche: tab find > roue crantée > open results in new tab
+	pour eclure un fileMask: mettre ! devant mon filtre fileMask
 recherche trouver search partout meme les noms de methodes fonctions: maj maj
 afficher toutes les erreurs problemes: pour les voir il faut faire un build
 parcourir atteindre erreurs problems F2/Maj+F2
@@ -2899,7 +2906,7 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 		3-agent: tous les threads peuvent en envoyant un "send" changer et voir la référence qui change de façon asynchrone par une queue qui respecte l'ordre et indépendemment des autres threads. Possible utiliser un callback avec await.
 		
 J2EE : jee : jee8 :javaee : EE4J : jakartaee : https://github.com/eclipse-ee4j/jakartaee-tutorial-examples et https://github.com/eclipse-ee4j/jakartaee-tutorial
-        <dependency> necessite //LINKjakartayahooo
+        <dependency> necessite //LINKjakartayahooo rajouter cette dependance j2ee si erreur MockHttpServletRequest java.lang.ClassFormatError: Absent Code attribute in method that is not native or abstract in class file javax/servlet/ServletException
                <groupId>javax</groupId>
                <artifactId>javaee-web-api</artifactId> ou? <artifactId>javaee-api</artifactId>  
                <version>8.0</version>
@@ -6844,7 +6851,7 @@ AILLEURS: injecter mes beans par constructeur
                        ou bien mettre un filtre dans web.xml du tomcat ou meme de l'appli?      
                 dans Tomcat context.xml, LINK39210                                     pour faire les tests: mocker un jndi en conf: Pour declarer une data base de donnée pour requetes sql
                         <Resource                                                      <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"> 
-                               name="jdbc/sqliteDS"                                      <bean id="dataSource" class="org.apache.tomcat.dbcp.dbcp.BasicDataSource ou org.springframework.jdbc.datasource.DriverManagerDatasource" destroy-method="close"> (cette classe à pour interface javax.sql.Datasource et c ca qu'on utilise dans le code) ou <bean id="dataSourceRepository" class="org.springframework.jdbc.datasource.DriverManagerDataSource">  
+                               name="jdbc/sqliteDS"                                      <bean id="dataSource" class="org.apache.tomcat.dbcp.dbcp.BasicDataSource ou org.springframework.jdbc.datasource.DriverManagerDataSource" destroy-method="close"> (cette classe à pour interface javax.sql.Datasource et c ca qu'on utilise dans le code) ou <bean id="dataSourceRepository" class="org.springframework.jdbc.datasource.DriverManagerDataSource">  
                                auth="Container"                                            <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />                      
                                type="javax.sql.DataSource"                                 <property name="url" value="jdbc:oracle:thin:@server:port:instance" />                           
                                maxActive="4"                                               <property name="username" value="user" />                                                          
@@ -6920,7 +6927,7 @@ Spring : XML STYLE
         		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
         	</filter> permet d'utiliser la force de spring pour injecter dans mon filter
         	spring-context.xml:
-        	 <bean id="samlResponseFilter" class="com.hraccess.hraspace.sso.saml.filter.SAMLAuthResponseFilter" parent="abstractSamlFilter" init-method="initFilter">
+        	 <bean id="samlResponseFilter" class="com.hraccess.hraspace.sso.saml.filter.SAMLAuthResponseFilter" parent="abstractSamlFilter" init-method="initFilter"> //parent en fait le bean est = au parent et est comme lui.
                 		<property name="parser" ref="parserPool" />
                 		<property name="uriComparator" ref="uriComparator" />
                 		<property name="principalExtractor" ref="principalExtractor" />
@@ -6970,6 +6977,7 @@ Spring : XML STYLE
                                                                                            xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
                                                                                     
                                                                                         <context:component-scan base-package="com.hraspace.controller"/>
+											<context:spring-configured/> // peut etre besoin mettre ca. Foutu spring!Quest ce que ca veut dire hein???
                                                                                         <mvc:annotation-driven /> // Enables the Spring MVC @Controller programming model
                                                                                         <mvc:resources mapping="/resources/**" location="/, classpath:/META-INF/web-resources/" /> //Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory
                                                                                         <mvc:resources mapping="/images/**" location="/images/" /> 
@@ -8556,6 +8564,7 @@ pour se connecter avec un utilisateur user
             }
             private static Connection getConnection() throws SQLException {
                 return DriverManager.getConnection("jdbc:hsqldb:mem:employees", "vinod", "vinod");// bien mettre mem sinon il fait chier avec les connexions mais c'est que pour tester car volatile
+						"jdbc:postgresql://127.0.0.1:5432/finisight",postres","password")) // pour postgres
             }
             @Test
             public void getTotalRecordsTest() {
@@ -10398,7 +10407,11 @@ h2 : embedded database:
          }  
       conn.close(); 
        			
-SQL : (oracle :)
+SQL :
+postgres :
+	initialiser une base de donnée:
+		pg_ctl init -D "C:/Installations/pgsqldata" // chemin vers le stockage filesystem
+ (oracle :)
 BLOBS : 
 La manipulation simplifiee des blob fonctionne egalement avec ORACLE et 
 le driver ojdbc14_9208.jar.
@@ -11354,7 +11367,7 @@ liaison avec git: // jenkins peut exectuer les commandes maven scm sur un projet
         <tag>HEAD</tag>
     </scm>    
 si un plugin n'est pas exectute peut etre c parce que dans le pom les pluggins sont entoures par pluginManagement. Virer ces balises
-possible d'overrider dans le pom lurl du repository: AH... n'a pas l'air de prendre le pas sur ce qui est def dans le settings.xml parametre dans eclipse>preferences>maven
+possible d'overrider dans le pom lurl du repository: AH... n'a pas l'air de prendre le pas sur ce qui est def dans le settings.xml parametre dans eclipse>preferences>maven du coup bonne pratique: ne rien mettre dans settings et mettre dans le pom plutot
   dans pom.xml:
     <project...blabla..>.... 
     	<repositories>
@@ -11374,13 +11387,13 @@ possible d'overrider dans le pom lurl du repository: AH... n'a pas l'air de pren
       </server>
   </servers>
   ...
-     <mirrors>
+     <mirrors> // les mirroirs sont ecrits dans settings et servent à remplacer un repository declaré au moins dans les poms et ciblés par <mirrorOf> vers un autre repository
       <mirror>
        			<id>xxx</id>
        			<mirrorOf>*</mirrorOf> si * ce repository va essayer de resoudre tous les artifacts: donc un seul repo pour tous!.
        			<url>https://url d'un repository</url>         (dans https://mvnrepository.com quand on cherche une librairie, pour connaitre l'url du repository ou elle est, chercher "Note: this artifact it located at...")
        		</mirror>
-       		..plusieurs mirrors possible // mais en fait jamais reussi a comprendre et a faire marcher l'utilisation de plusieurs repository repositories avec mirrors: utiliser plutot dans settings les profiles
+       		..plusieurs mirrors possible 
       </mirrors>                                             comme ca dans settings.xml (activer le profile all lors de l'execution)
                                                                 <profile>
                                                                 <id>all</id>
@@ -11468,7 +11481,7 @@ exemple de pom racine
 	 <parent>
       <groupId>net.nanthrax.examples</groupId>
       <artifactId>jaxrs-blueprint</artifactId>
-      <version>1.0-SNAPSHOT</version> // snapshot indique des versions en cours de dev. Possible de deployer même versions contenant code different: le dernier dans le temps sera pris en compte par maven 
+      <version>1.0-SNAPSHOT</version> // snapshot indique des versions en cours de dev. Possible de deployer même versions contenant code source different: le dernier dans le temps sera pris en compte par maven 
       <relativePath>../pom.xml</relativePath>
   </parent>
 	
@@ -11590,7 +11603,7 @@ exemple de pom racine
                   </plugin>          
                  <plugin>
                      <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId> // pour copier à partir de la base du projet qqchose (fichier de configuration, properties proprietes) vers un autre repertoire qui peut etre le classpath ou meme un repertoire du serveur embedded execute par maven. Ou bien LINK_ààà"çç". ne pas confondre avec <groupId>org.codehaus.mojo</groupId><artifactId>build-helper-maven-plugin</artifactId> qui sert à déposer de la conf dans le repository maven
+                    <artifactId>maven-resources-plugin</artifactId> // pour copier à partir de la base du projet qqchose (fichier de configuration, properties proprietes) vers un autre repertoire qui peut etre le classpath ou meme un repertoire du serveur embedded execute par maven. Ou bien LINK_ààà"çç". Mais si malgres ca met bien le fichier dans target mais pas dans le war final alors utiliser LINK**$**.  ne pas confondre avec <groupId>org.codehaus.mojo</groupId><artifactId>build-helper-maven-plugin</artifactId> qui sert à déposer de la conf dans le repository maven
                     <version>3.1.0</version>                           // je crois que par defaut copie /src/main/resource/* dans target/classes/*
                           <executions>
                              <execution>
@@ -11616,7 +11629,7 @@ exemple de pom racine
                                   <outputDirectory>${basedir}/target/tomcat/conf/mdl</outputDirectory> // si c'est un tomcat embedded et que dans une config de spring je mets: <context:property-placeholder location="file:///${catalina.base}/conf/mdl/import_excel.properties" /> 
                                   <resources>          
                                     <resource>  // ou bien LINK_ààà"çç"
-                                      <directory>${basedir}/src/main/resources</directory>
+                                      <directory>${basedir}/src/main/resources</directory> ou meme externe <directory>${basedir}../../unpath</directory> pour rajouter un fichier dans le war final
                                       <filtering>false</filtering> // du coup si je mets à true, remplacera dans les fichiers par les proprietes du profil encours voir LINKpfoflikjsdfv
                                       <includes>
                                           <include>*.jar</include> // ne marche que pour les fichiers par pour les directories repertoires
@@ -11822,6 +11835,7 @@ pour connaitre les profiles:
               <includes>
                 <include>**/web.xml</include> et dans web.xml je peux mettre: ${project.version} par exemple
               </includes>
+	     <targetPath>WEB-INF</targetPath> //facultatif
             </resource>
           </webResources>
           <warSourceDirectory>src/main/webapp</warSourceDirectory> // semble facultatif
@@ -11902,7 +11916,7 @@ pour exclure des sous-librairies: avec optional
                 uneAutreLibrairie qui elle fait appel à plein d'autres dependances. Trop pour monprojetPom.xml
                 alors mettre dans uneAutreLibrairiePom.xml
                                 <dependency>..a.
-                                    <optional>true</optional>
+                                    <optional>true</optional> //ca veut dire que l'editeur de cette librairie a eu besoin de la dependance pour compiler mais si toi qui utilise la librairie de l'editeur tu n'en a pas besoin, pas grave. Sinon faudra la mettre dans tes dépendances toi meme
                                 </dependency>
                                 <dependency>..b.
                                     <optional>true</optional>
@@ -18133,7 +18147,7 @@ log4j.logger.unnomOuUnPackage=DEBUG,pae, opc, stdout (ce logger a pour parent le
 log4j.appender.stdout=org.apache.log4j.ConsoleAppender
 log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
 log4j.appender.stdout.layout.ConversionPattern=%d{dd/MM/yyyy HH:mm:ss,SSS} app[%t] %-5p %m%n
-autre pattern gourmant en ressource mais tres pratique car affiche methode et classe: [%d] %F %M %-5p - %m%n
+autre pattern gourmant en ressource mais tres pratique car affiche methode et classei et numero de ligne: [%d] %F %M %-5p :%L - %m%n
 #l'appender pae: (voir additivity: ci dessous)
 log4j.appender.pae=org.apache.log4j.RollingFileAppender
 log4j.appender.pae.encoding=UTF ou ISO-8859-15 pour forcer l'encodage 
@@ -23982,6 +23996,66 @@ pour concatener deux fichiers WAV:
 -------------------------------
 itext :
 Pour generer du pdf en java utiliser l'api Itext (signature possible) (possible faire du excell aussi)
+	generate(response.getOutputStream());
+	response.setCntentType("application/pdf");
+	response.flushBuffer();
+	public static void generate(OutputStream outputStream){
+		try{
+			Doument document=new Document();
+			PdfWriter.getInstance(document,outputSream);
+			document.open();
+			//iText allows to add metadata to the PDF which can be viewed in your Adobe Reader under File>Properties
+			document.addTitle("Mon PDF");
+			document.addSubject("using itext");
+			document.addKeywords("Java PDF itext");
+			document.addAuthor("Jean");
+			document.addCreator("Jules");
+			//des lignes basiques appelées paragraphes:
+			Paragraph paragraph = new Paragraph();
+			paragraph.add(new Paragraph(" ")); // on ajoute une ligne vide:retour chariot
+			paragraph.add("blablablabla",catFont);// merde j'ai pas pris le catFont de la demo. Utile pour faire des H1,H2...
+			document.newPage();
+			//faire des chapitres
+			Anchor anchor= new Anchor("1er chapitre",catFont);//Next section
+			anchor.setName("1er chapt");
+			Chapter catPart = new Chapter(new Paragraph(anchor),1); // Second parameter is the number of the chapter
+			Section subCatPart = catPart.addSection(un objet paragraphe);
+			subCatPart.add(un objet paragraphe);
+			subCatPart = catPart.addSection(un objet paragraphe);
+			subCatPart.add(un objet paragraphe);
+			subCatPart.add(un objet paragraphe);
+		 	//faire des listes
+			List list = new List(true,false,10);
+			list.add(new ListItem("FirstPoint");
+			list.add(new ListItem("SecondPoint");
+		        subCatPart.add(list);
+			//faire un tableau
+				PdfPTable table = new PdfPTable(3);
+				// table.setBorderColor(BaseColor.GRAY);
+				// table.setPadding(4);
+				// table.setSpacing(4);
+				// table.setBorderWidth(1);
+			PdfPCell c1=new PdfPCell(new Phrase("Table Header 1"));
+			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			table.addCell(c1);
+			c1=new PdfPCell(new Phrase("Table Header2");
+			c1.setHorizontalAlignement(Element.ALIGN_CENTER);
+			table.addCell(c1);
+			c1=new PdfPCell(new Phrase("Table Header 3"));
+			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			table.addCell(c1);
+			table.setHeaderRows(1);
+			table.addCell("1.0");		
+			table.addCell("1.1");		
+			table.addCell("1.2");		
+			table.addCell("2.1");		
+			table.addCell("2.2");		
+			table.addCell("2.3");		
+			subCatPart.add(table);
+			// now add this to the document
+			document.add(catPart);
+			document.close();
+			} catch(Exception e){e.printStackTrace();}
 *********************************
 pdf :
     fop :
@@ -24714,6 +24788,9 @@ raccourcis shortcuts utiles: (pour les definir: WIndows>Preference>chercher "sho
       CTRL+MAJ+T: trouver un fichier dans les lib      
 Si eclipse ne se lance pas parce qu'il ne trouve pas la jvm java jre jdk alors que c'est pourtant parametre dans le path: externe
     modifier eclipse.ini: -vm [retourchariot]path vers le fichier javaw.exe (inclu) ATTENTION ne pas mettre après -vargs car vargs le prendra en parametre
+dans eclipse.ini on peut rajouter des truststore certificats:
+	-Djavax.net.ssl.trustStore=C:/pathversUnjks.jks
+	-Djavax.net.ssl.trustStorePassword=blablabla
 Quand je debug: 
   F5 = go inside
   F6 = one step
@@ -24766,8 +24843,6 @@ eclipse: si on a une erreur  eclipse JVM terminated. Exit code = 13  eclipse ne 
       Exit code = 1 c pas un java de la bonne version ou du bon 64b ou 32b
 pour demarrer eclipse avec une autre jvm si j'ai le message "version of jvm is not suitable":
 		eclipse.exe -vm "C:\Program Files\Java\jre1.5.0_09\bin\javaw.exe"
-    Si eclipse ne se lance pas parce qu'il ne trouve pas la jvm java jre jdk alors que c'est pourtant parametre dans le path: externe
-        modifier eclipse.ini: -vm [retourchariot]path vers le fichier javaw.exe (inclu) ATTENTION ne pas mettre après -vargs car vargs le prendra en parametre		
 pour demarer eclipse avec plus de memoire si il fait des runtime exception outofmemoryexception
           exemple: "C:\WASCE 2.1.0.1\eclipse.exe" -Xmx1800m ou modifier eclipse.ini a cote de eclipse.exe
 si c'est toujours le meme workspace qui s'ouvre parce qu'on a decoche un bouton:
@@ -25011,7 +25086,7 @@ sudo : // si command not found faire d'abord su - puis apt-get install sudo -y
     sudo -l // pour voir quels sudo je peux executer.
     sudo -L // pour voir la liste des options sudo dispo
     sudo unecommande //execute cette commande avec les droits de root// si message erreur is not a sudoer: se connecter en root et rajouter l'utilisateur au group sudo voir LINKsudoenr
-    sudo su unuser //pour devenir ce user
+    sudo su unuser //pour devenir ce user ou mieux: sesu - root
     pour passer en role profile root: sudo su
     pour éditer le comportement de sudo faire "visudo -f /etc/sudoers.d/unnomquejinvente". on peut aussi faire visudo direct mais eviter car ca édite le fichier etc/sudoers directement et c pas bien. Mieux vaut editer les fichiers sous sudoers.d LINKsudoenr
                 Cmnd_Alias  UNALIASCOMMANCETOUJOURSPARUNEMAJUSCULE=commande1,commande2,.... // je définit un alias pour la suite
@@ -26274,7 +26349,7 @@ Les levels: 0 eteint,  1  console de secour, 2 console sans reseau,3 avec reseau
 trouver ou se trouver un programme: (besoin de "locate:") (la nouvelle version c'est mlocate  ça marche.)
    installer locate par aptitude si il n'exite pas, 
    Faire updatedb pour mettre à jour la base de donnee de locate 
-   puis locate jetty (par exemple)
+   puis locate jetty (par exemple) pas besoin de wildcard il s'en occupe tout seul
 condition: 
   if [-z bla] //si bla=null return true.
 compter le nombre de fichiers dans un repertoire:
@@ -34320,7 +34395,9 @@ echo ren %WEB-INF-PAE%\classes\log4j.properties.template
 ren %WEB-INF-PAE%\classes\log4j.properties.template _dev.log4j.properties.template
 ren %WEB-INF-PAE%\classes\_integr.log4j.properties.template log4j.properties.template
 ) else (echo "exit")
-
+pour faire un cd - retour arriere back precedent
+	set OLDPWD=%cd%
+	et cd %OLDPWD% du coup revient en arriere
 ------------------
 pour executer regulièrement une tache on peut utiliser le scheduletaskmanager mais aussi un .bat peut le faire lui meme:
 	:loop
