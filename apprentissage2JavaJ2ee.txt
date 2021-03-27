@@ -846,8 +846,10 @@ les Pods voient_____|	  DB_URL=la_vraie_urlDuServiceDuPodDeLaDB / et dans docker
 		entre eux ils partagent virtuelement le meme etcd et ApiServeur qui sont synchronisés entre MasterNodes. MasterNodes consomment peu de resources.
 		ratio MasterNodes/WorkerNodes = 1/2 
     Master Et Worker Nodes s'installent sur des serveurs virtuels ou physiques distincts
-	Minikube=kubernetes cluster en local dans une virtualbox auto-creee où WorkerNodes et MasterNodes bossent dans un seul et meme node qui contient un dockerContainerRuntime preinstallé
+	Minikube=kubernetes cluster en local dans une virtualbox auto-creee où les taches des WorkerNodes et des MasterNodes bossent dans un seul et meme node qui contient un dockerContainerRuntime preinstallé
 	minikube start --vm-driver=kvm2 //option facultative. crée et demarre un cluster kubernetes mini en demarrant sur la machine virtuelle kvm que j'ai déjà installé. Si je ne mets pas d'option il arrive a demarrer mais du coup je ne sais pas ou il tourne
+	kubectl get nodes // liste moi les Nodes(il y en a qu'un dans minikube)
+
 	minikube status // info sur le statut de mon cluster
 		commande minikube ne sert qu'a demarrer ou clear le cluster c tout.
 	on peut mettre -h a la fin de chacune de ces commandes ci dessous pour avoir l'aide
