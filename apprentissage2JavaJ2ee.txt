@@ -690,7 +690,7 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
         CMD ["npm","start"] OU ["python", "app.py"]// executera npm start OU python app.py au moment ou on fera un run de l'image (app.py doit avoir été copie precedemment dans mon container dans le WORKDIR). cela s'ajoute à la fin de ENTRYPOINT sauf si je force dans docker run uneautrecmdquiprendralaplace
    docker build -t(pour tag) unnomquejedonneamonImageAcreer:untag -f ./path/AutreNomDeDockerfileSiCestPasJusteDockerfile dernierArgumentEstPathRelatifVersLeRepertoireContexteContenantLaRacineDuCodeSourceOnPeutMettrePoint/// Creer mon image docker qui rentre dans la liste repository d'images. executer ça où ya le fichier Dockerfile sinon mettre -f path/vers/Dockerfile.toto //attention tout ce qui est dans le contexte du dockerfile est envoye au daemon donc ne pas faire le build sur mon bureau par exemple
 	si j'ai l'erreur Couldn't connect to Docker daemon at http+docker://localhost - is it running?
-		c'est peut etre parce que j'ai mis le nom de mon image en majuscules. Pas supporté.
+		c'est peut etre parce que j'ai mis le nom de mon image en majuscules. Pas supporté. Ou surtout c parce que mon user n'est pas dans le groupe unix "docker"
   docker run -it(pour interactif voir LINKjgjgjgaba car si c'est une image PHP je vais avoir le prompt php> au lieu du prompt bash) --rm (pour supprimer le container une fois que son execution est terminee:du coup toutes les données dedans sont del. il ne reste que l'image. Sans -rm et si le contener s'arrete, quand on le redemarre on retrouve tout dedans) -e "nomDuneSystem.PropertySiJeVeux=savaeleur" ou --env(facultatif) JAVA_OPTS="-Dpropriete.java=yyyy -Dxxx=yyy" --link(facultatif et inutile au sein d'un docker-compose) nomduncontainerTypeDatabaseDansunNetworkBridge:nomDuHostNameDansLaConfDeMonProgrammeLeMotlocalhostEstInterditLINKjdbcdockerdatabase --name=facultatifUnAutreNomQueJeDonneAMonContainerce(nom peut etre lu grace à "docker image ls" voir LINKdckrimgls. Si on ne met pas, alors docker choisi lui meme un nom a la con) -d (--detatch) (pour executer en background LINKlgkezoiur. mettre -it si on prevoit d'utiliser de se detacher une fois dans le container grace à Ctrl+p Ctrl+q) -p 80:8080(cote hote:cote conteneur) -p 443:8443 -p 81(si qu'1 chiffre c'est le port coté conteneur et docker choisi coté host un port automatiquement. on peut enchainer plusieurs -p) --network(inutile au sein d'un docker-compose) unreseaubridge ou host si besoin ouvert(c'est alors plus rapide au niveau du network) -hNomDuHostnameSiParExempleCestUneBaseDeDoneeJeCrois nomD'uneImageAExecuter:tag(tag en fait il faut mettre un chiffre qui est la version. Facultatif?) OU identifiantDeLImage LaCommandeAExecuterDansMonContainer(si elle contient un path ca ne peut etre que un path dans mon container du coup voir l'option -v pour volumes)// run recupere l'image localement sinon du hub docker, crée TOUJOURS un nouveau contener et l'execute. En Foreground si je fais ctrl+c (unix seulement) ça kill le container nomdelimage
 )
 		VOLUMES:
@@ -1398,7 +1398,8 @@ importer/nettoyer les imports les packages automatiquement Ctrl+Alt+O
 undo: ctrl + z 
 redu ctrl+shift+z
 evaluate selection  Alt+F8
-retour back precedente edition pannel panel curseur revenir: ctrl+tab+ fleches ou Ctrl + alt + fleches ou Ctrl + e ou bien ça? ctrl+sift+delete
+retour back precedente edition pannel panel curseur revenir correspond dans raccourci à "Navigate back": ctrl+tab+ fleches ou Ctrl + alt + fleches ou Ctrl + e ou bien ça? ctrl+sift+delete
+		sur gnome faire gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-left "[]" et gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-right "[]" // pour que ca marche
 close tab: Ctrl+F4
 make recompiler projet: Ctrl+F9 eventuellement recharger dependances maven: clique droit sur pom.xml >maven>reimport
     si maven deconne trop toujours settings>maven>importing> decocher import maven automatically; si ça ne suffit pas: supprimer via explorateur windows tous les .iml et .idea et recréer le projet intellij from scrach
@@ -2584,7 +2585,7 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 		)
 
 	definir une fonction methode: // elles retournent TOUJOURS une valeur // bonne pratique :quand une fonction methode fait un mapping d'un format vers un autre, le nom de ma fonction doit s'appeler formattruc->formatmachin
-		(defn nomdemafonction [parametre1 parametre2 & parametrestypeliste] // fonction nomée nomdemafonction // le parmatre apres & c'est comme unevariable.... (= variable variadic) et du coup parametrestypeliste est en fait une liste. exemple: (nomdemafonction toto titi "a" "b" "c" "d") c'est tr
+		(defn nomdemafonction [parametre1 parametre2 & parametrestypeliste] // fonction nomée nomdemafonction // le parmatre apres & c'est comme "unevariable...." (= variable variadic) et du coup parametrestypeliste est en fait une liste. exemple: (nomdemafonction toto titi "a" "b" "c" "d")
 			(+ parametre1 parametre2)) // execute la fonction PLUS. on peut mettre virgule a la place de espace. Autre exemple: (defn nomdemamethode [x](+(*3 x)1))
 		ou
 		(def nomdemafonction
@@ -2605,21 +2606,23 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 			:quelquechose ;; enum ou clé de map. c'est un symbole. voir LINKcljie Un symbole est toujours truthy TOUJOURS
 			#".*xx.*" ;; # marque une regexp
 			nil ;;null
-			("a" "b" 10.5 5) ;;liste est multitype. Donc le code clojure est aussi une liste mais on utilise plutot les vecteurs. la liste est utilisée pour les macros
+			'("a" "b" 10.5 5) ;;liste est multitype. Donc le code clojure est aussi une liste mais on utilise plutot les vecteurs. la liste est utilisée pour les macros
 					'(1 2) équivaut à (list 1 2) // c'(est une liste contenant 1 et 2. Utilisable comme stack
 					(first ou last ou second bli bla blo) // retourne le nième élément de la liste.
-			["a" "b" 10.5 5] ;; vecteur à utiliser comme une liste (("a" "b" 10.5 533) 4) renvoit 533 car une liste comme tout objet est aussi une fonction
+			["a" "b" 10.5 5] ;; vecteur à utiliser comme une liste (["a" "b" 10.5 533] 3) renvoit 533 car un vecteur comme tout objet est aussi une fonction
 						le vecteur peut grossir en rajoutant à la fin. Utilisable comme queue
-			#{"a" "b" 10.5 5} ;; set  (#{"a" "b" 10.5 5} 2) renvoit "b" car un set comme tout objet est aussi une fonction
+			#{"a" "b" 10.5 5} ;; set  (#{"a" "b" 10.5 5} 1) FAUX AFAIRE A TROUVER: renvoit "b" car un set comme tout objet est aussi une fonction
 		(:cle1 1,:cle2 "2",:cle3 3.5) ;;map les virgules sont optionelles. LINKcljie 
 			Struct est un map à considérer comme un objet avec des champs pouvant être instanciés plein de fois avec différentes valeurs dans les  champs
-	pour transformer un parametre de type liste en plusieurs parametres separes à la suiteiterer sur un parametre de type liste
-		(apply unefonctionappelee parametreNormal parametreDeTypeListe)  // ca va en realite faire (unefonctionappellee parametreNormal parametredetypeListe(1) parametredetypeliste(2) param... etc etc..)
+	pour transformer un parametre de type liste en plusieurs parametres separes à la suite iterer sur un parametre de type liste
+		(apply unefonctionappelee parametreDeTypeListe)  // ca va en realite faire (unefonctionappellee parametredetypeListe(0) parametredetypeliste(1) param... etc etc..) donc mafonctionappellee doit supporter autant de parametres en entrée
+		(apply unefonctionappelee parametreNormal parametreDeTypeListe)  // ca va en realite faire (unefonctionappellee parametreNormal parametredetypeListe(1) parametredetypeliste(2) param... etc etc..) donc mafonctionappellee doit supporter autant de parametres en entrée
 	pour concatener:
 		(str "a" " " "b")
 	pour convertir nombre en string
-		(str 2) je crois renvoit "2"
-	convertir un truc en vecteur: (vector montruc)
+		(str 2) renvoit "2"
+	convertir un truc en vecteur:
+		 (vector montruc)
 	fonction macro:
 		le nom de la methode est "->"
 		voir la doc et CAPITALISER
@@ -2630,13 +2633,16 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 			(filter odd? [1 2 3 4 5]) retourne (1 3 5)
 	maven de clojure = liningen
 		(defproject monprojet "1.2.3" :description "blabla")
-	les boucles loops sont faites par recursion ou par map ou faire une tail recursion en rappenant en tout dernier la meme methode avec 2 args pour suivre l'index. Comme la jvm ne fait pas de jump pour ne pas charger la stack on remplace cet reappel de fonction par "recur" et ca fait un jump et ya pas de stack qui se rempli (episode 53 Cleancoders)
+	les boucles loops sont faites par recursion ou par map ou faire une tail recursion en rappenant en tout dernier la meme methode avec 2 args pour suivre l'index. Comme la jvm ne fait pas de jump pour ne pas charger la stack on remplace ce reappel de fonction par "recur" et ca fait un jump et ya  pas de stack qui se rempli (episode 53 Cleancoders) 
 	pour comparer
 		(= false "machin") ;;compare false avec "machin" donc renvoit false.
 	conditions:
 		(if UNCONDITION RETOURNECASIOUI RETOURNECASINON) et chaque element est une fonction. nil et false sont les seules deux valeurs falsy. if est une macro en fait.
 			exemple: (if (= a b) c d)//si a)b retourne c sinon d
 				(if(empty? uneliste) etc...) ou (if (zero? untruc) 2 -4)
+		(cond X RETOURNECA Y RETOURNECA :else RETOURNECA) // ici on met :else par convention mais on peut metre n'imp
+		(and x y) (or x y)
+		(zero? x)
 	afficher la doc d'une fonction help aide
 		(doc nomdelafonctionquejecherche)
 	afficher le code source: (source nomdelafonctionquejecherche)
@@ -2660,6 +2666,16 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 		1-refs:threads modifie des références à des datas imutables dans des transactions synchrones atomiques. En coulisse les readers voient des snapshots comités uniquement et les writers modifient(alter) chacun à son tour le pointage de la référence vers une nouvelle version de l'objet "modifié".
 		3-agent: tous les threads peuvent en envoyant un "send" changer et voir la référence qui change de façon asynchrone par une queue qui respecte l'ordre et indépendemment des autres threads. Possible utiliser un callback avec await.
 		
+	package : (ns mon.package)
+		mon programme	
+	cursive: le nom du projet doit etre tout en minuscule sinon leiningen ne s'initialise pas bien.
+		charger d'abord leiningen:
+		curl https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein > lein
+		sudo mv lein /usr/local/bin/lein
+		sudo chmod a+x /usr/local/bin/lein
+		lein version
+		
+	
 J2EE : jee : jee8 :javaee : EE4J : jakartaee : https://github.com/eclipse-ee4j/jakartaee-tutorial-examples et https://github.com/eclipse-ee4j/jakartaee-tutorial
         <dependency> necessite //LINKjakartayahooo
                <groupId>javax</groupId>
@@ -24722,6 +24738,12 @@ AFAIRE:capitaliser
  vi /etc/resolv.conf
  docker ps -a
 
+pour savoir quelle est la carte mere
+	sudo dmidecode | grep -A3 '^System Information'
+avoir des infos sur la ram
+	sudo dmidecode -t memory
+savoir la memoire max de ram supportée par la carte mere
+	sudo dmidecode -t 16
 pour faire copy paste du clipboard avec le terminal raccourci shortcut:
 	sudo apt-get install xclip -y
 	et creer les alias suivants:
@@ -25194,7 +25216,20 @@ pour rajouter du swap:
   sudo swapon /swapfile // activer le swapp
   sudo vi /etc/fstab // besoin d'ajouter dedans:/swapfile swap swap defaults 0 0
   verifier avec free que ca a bien augmenté
-	
+  optionel: verifier le parametrage de frequence d'autorisation d'utilisation du swap: 
+	cat /proc/sys/vm/swappiness // plus la valeur est elevee plus le system utilisera volontier le swap. ICI ça ne sert qu'a visualiser
+	pour changer cette valeur faire 
+		sudo sysctl vm.swappiness=80
+	pour que cette valeur devienne persistante faire 
+		sudo vi  /etc/sysctl.conf et ajouter à la fin cette ligne : vm.swappiness=80
+pour virer le swap si je veux le refaire differemment:
+	sudo swapoff -v /swapfile
+	dans le fichier /etc/fstab virer la ligne contenant /swapfile swap swap defaults 0 0 
+	sudo rm /swapfile // virer le fichier swapfile
+
+Finally, delete the actual swapfile file:
+
+sudo rm /swapfile	
 a utiliser pour regarder si CPU sature.: avec top on peut recuperer un ID de process... faire un kill -15 dessus par ex.
 pour savoir combien j'ai de coeurs cpu
     cat /proc/cpuinfo | grep processor | wc -l
@@ -25403,7 +25438,7 @@ scp :commande
   pour downloader recuperer telecharger transferer un fichier d'un serveur à un autre voir aussi rsync
     scp -r pour recursif si c un repertoire. -i etc....
     -vvv pour verbose (mode debug)
-    pull: PUTAIN j'arrivaispas à faire marcher avec cle: toujours permission denied (publickey) meme apres avoir declare ma cle publique sur le serveur> il falait utiliser une cle privee de type .pem pour que ca marche et non pas .ppk (sur windows en tout cas)
+    pull: PUTAIN j'arrivaispas à faire marcher avec cle: toujours permission denied (publickey) meme apres avoir declare ma cle publique sur le serveur> il falait utiliser une cle privee de type .pem pour que ca marche et non pas .ppk (sur windows en tout cas) sinon verifier que dans le repertoire local ou je veux poser les fichiers j'ai les droits et dans le remote aussi
         si j'ai le message Permission denied c'est parce que je n'ai pas les droits d'ecriture dans le repertoire de destination: faire un chmod
       scp -i cheminVersMaClePriveeFacultatifDeType.pem user@machine:fichier(s)quejeveuxcopierDeLaMachineDistanteOuRepertoireSiJaiMisMoins_r repertoireoujeveuxlecopiersurMAmachineSansSlashALaFin ATTENTION espace interdits apres le:
     push:
@@ -26153,7 +26188,8 @@ iptables : pour configurer le firewall netfilte de unix
             nat POSTROUTING SNAT<--
           sort par ex par eth0<--
                       cable<--
-      
+gnome :
+	voir la version:ouvrir menu > ecrire "a propos"      
 xfce : xcfe : // bureautique debian :
 	modifier les shortcuts raccourcis clavier: xfce>parametres>gestionnaire de parametres > gestionnaire de fenetre > clavier
 	raccourci shortcut pour demarrer un programme: alt+f2 puis faire fleche vers le bas puis commencer à saisir
@@ -34143,7 +34179,7 @@ pour que windows7 recherche aussi dans le contenu des fichiers:
       valeur variable: %JAVA_HOME%\bin;%ANT_HOME%\bin
       puis dans CMD: 
       C:\>echo %ANT_HOME%
-pour savoir quelle est ma carte mère
+pour savoir quelle est ma carte mere
   executer windows>msinfo32
 
 
