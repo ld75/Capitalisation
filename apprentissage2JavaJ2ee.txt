@@ -827,25 +827,265 @@ Kubernetes :(K8) le cluster K8 contient des Nodes(Masters et Workers)
 		kubectl // pour tester que c bien installe
 		minikube //pour tester que c bien installe
 		
-	pod=wrapper de container(pod pourrait avoir plusieurs container mais c rare) est ephemere  <  NodeWorkers sont des mirroirs de groupes de pods qui partagent entre NodesWorkers les memes SERVICES(=ip). Chaque NodeWorker contient: x Pods, 1ContainerRuntime(exple:docker) à installer dans chaque NodeWorker, 1Kubelet qui interragit avec ContainerRuntime et le NodeWorker pour assigner les resources du NodeWorker au Pod en passant par ContainerRuntime,1KubeProxy qui forward les requetes qui passent par les services de façon la plus optimale en terme de trajet. 
-	au sein du NodeWorker les pods ont un network dedié. donc chaque NodeWorker a chacun une adrssIP interne.
-									MAIS NodesWorker sont ephemeres aussi comme le pod donc chaque pod partage avec d'autres podsmirroirs un serviceInterne qui lui est persistant qui son adresse IPInterne aussi et qui est aussi un loadbalancer
-									url du serviceExterne est http://adresse.ip.du.nodeworker:portDuService
-									url de l'ingress httpS://NomDeDomaine (l'ingress forward le trafic au serviceExterne)
-	ConfigMap texte pur non securisé contient la conf des applications (ca remplace la conf qu'on met dans le docker-compose pour que les services se voient)	|
-		DB_URL=la_vraie_url / dans dockercompose j'ai la ref DB_URL // comme ca plus besoin de refaire l'image quand lien change				|_ sont connectés aux pods
-	Secret:=ConfigMap mais crypté puis en base64 on y met les password et certificats										|
+	pod=wrapper de container(pod pourrait avoir plusieurs container mais c rare) est ephemere  <  WorkerNodes sont des mirroirs de groupes de podsX,Y,Z qui partagent entre NodesWorkers les memes SERVICES(=ip). Chaque NodeWorker contient: x Pods differents, 1ContainerRuntime(exple:docker mais on a plus besoin d'ecrire du docker) à installer dans chaque NodeWorker, 1Kubelet qui interragit avec ContainerRuntime et le WorkerNode pour assigner les resources du WorkerNode au Pod en passant par ContainerRuntime,1KubeProxy qui forward les requetes qui passent par les services et vont vers les pods de façon la plus optimale en terme de trajet. 
+	au sein du WorkerNode les podsX,Y,Z ont un network dedié. donc chaque pod a chacun son adrssIP interne et chaque WorkerNodes aussi
+									MAIS les pod comme les NodesWorker sont ephemeres donc chaque podDeTypeA partagera avec les autres podsmirroirsDeType A un serviceInternePourPodA qui lui est persistant et qui a son adresse IPInterne aussi et qui est aussi un loadbalancer qui distribue les requetes entrantes
+								    Il y a 2 types de services persistants: ServicesExterneOuIngress et Service Interne.
+                                	1a) url du serviceExterne est http://adresse.ip.du.nodeworker:portDuService// utilisé surtout pour dev en local
+					1b) url de l'ingress httpS://NomDeDomaineDuMondeExterieur (l'ingress forward le trafic depuis le monde exterieur vers des InternalServices)Pour la prod car capable jouer role de Nginx
+                                    2) url du InternalService n'est pas accessible depuis le monde exterieur (utile pour DB par ex)
+                    |ConfigMap texte pur non securisé pour contenir les urls + conf des applications (ca remplace la conf qu'on met dans le docker-compose pour que les services se voient)	
+les Pods voient_____|	  DB_URL=la_vraie_urlDuServiceDuPodDeLaDB / et dans dockercompose ya "DB_URL=urlPropreADockerSur?" // comme ca plus besoin de refaire l'image quand lien change				
+                    |Secret:=ConfigMap mais crypté puis en base64 on y met les password et clesprives										
 	Deployement defini les podsMirroirsSTATELESS(tout sauf DATABASES) partageant des services. Défini aussi les scales(nb de pods mirroirs loadbalancés). Finallement un Deployement c'est comme un wrapper d'un pod qui sous jacament sont des pods miroirs
-	StatefulSet defini les podsMirroirsSTATEFULL(DATABASES) partagent des services. Capable de synchro des Databases pour ne pas corrompre la base.(difficile à faire donc en general la database est hors de K8)	
-	un pod peut etre relie a un volume(PERSISTANT contrairement au pod) qui lui peut etre dans le meme NodeWorker ou ailleurs du cluster K8: cloud etc...
-	MasterNodeS gerent le cycle de vie des Nodes et Pods: 1)ApiServer sécurisé=uniqueEntrypoint. On communique avec à travers un CLI(=kubectl c le plus puissant) ou une UI ou une API. 2) Sceduler: decide intelligement dans quel Node qui a le plus de resources dispo demarrer le pod et demande à Kubelet de le faire. 3)ControllerManager detecte les pods qui tombent dire au scheduler de les remplacer. 4) etcd = Map du state en mémoire (quels pods sont morts, resources restantes des nodes etc...)
+	StatefulSet defini les podsMirroirsSTATEFULL(DATABASES) partagent des services. Capable de synchro des Databases pour ne pas corrompre la base.(difficile à faire donc en general la database est hors de K8). Si on veut les mettre dans K8 chaque pod dedans est unique et les pods ne sont pas interchangeables, Ont chacun leur ID propre voir LINKStatfllpds
+				plusieurs podsMysql1(Master:R&W)ReliéàbasePhyExterne1AuCluster<-syncParHeadlessService->podMysql2(R)ReliéàbasePhyExterne2AuCluster<-syncParHeadlessService->podMysql3(R)ReliéàbasePhyExterne3AuCluster
+				si DB doit toujours etre reliée à volume (hors cluster)
+	un pod peut etre relie a un volume(PERSISTANT contrairement au pod) qui lui peut etre dans le meme WorkerNode ou ailleurs du cluster K8: cloud etc...
+	MasterNodeS gerent le cycle de vie des WorkerNodes et Pods: 1)ApiServer sécurisé=uniqueEntrypoint. On communique avec à travers un CLI(=kubectl c le plus puissant) ou une UI ou une API. 1 ApiServer est partagé par tous les MasterNodes par loadBalancing 2) Sceduler: decide intelligement dans quel WorkerNode qui a le plus de resources dispo demarrer un pod et demande à Kubelet de le faire. 3)ControllerManager detecte les pods qui tombent et demande au scheduler de les remplacer. 4) etcd = Map du state en mémoire (quels pods sont morts, resources restantes des nodes etc...). 1 Etcd est partage par tous les MasterNodes
 		entre eux ils partagent virtuelement le meme etcd et ApiServeur qui sont synchronisés entre MasterNodes. MasterNodes consomment peu de resources.
 		ratio MasterNodes/WorkerNodes = 1/2 
-	Minikube=kubernetes cluster en local dans une virtualbox auto-creee où NodeWorkers et MasterNodes bossent dans un seul et meme node qui contient un dockerContainerRuntime preinstallé
-	minikube start --vm-driver=kvm2 // crée et demarre un cluster kubernetes mini en demarrant sur la machine virtuelle kvm que j'ai déjà installé. Si je ne mets pas d'option il arrive a demarrer mais du coup je ne sais pas ou il tourne
+    Master Et Worker Nodes s'installent sur des serveurs virtuels ou physiques distincts
+	Minikube=kubernetes cluster en local dans une virtualbox auto-creee où les taches des WorkerNodes et des MasterNodes bossent dans un seul et meme node qui contient un dockerContainerRuntime preinstallé
+	minikube start --vm-driver=kvm2 //option facultative. crée et demarre un cluster kubernetes mini en demarrant sur la machine virtuelle kvm que j'ai déjà installé. Si je ne mets pas d'option il arrive a demarrer mais du coup je ne sais pas ou il tourne
 	kubectl get nodes // liste moi les Nodes(il y en a qu'un dans minikube)
+
 	minikube status // info sur le statut de mon cluster
-	
+		commande minikube ne sert qu'a demarrer ou clear le cluster c tout.
+	on peut mettre -h a la fin de chacune de ces commandes ci dessous pour avoir l'aide
+	kubectl get all // affiche tous les types d'objets -n unnamespace //pour se limiter à un namespace
+	kubectl get nodes // liste moi les Nodes(il y en a qu'un dans minikube) et leurs status
+        kubectl // tout court affiche l'aide help	
+        kubectl version // la version kubernetes est indiquee dans GitVersion. Hé oui c'est un nom mal choisi. Ya le ClientVersion et le ServerVersion
+	kubectl get pod (-A pour all si besoin --watch pour suivre en live comme un baretail) -n nomnamespace pour ne pas prendre le namespace defaut mais un autre// statut possibles ContainerCreating //??? voir LINKjfjfjfjzizi ImagePullBackOff //????  // pour voir les ip associes -o wide
+	kubectl describe pod iddupod // affiche des infos du pod ex pourquoi il ne demarre pas,son ip
+	kubectl exec -it iddupod -- bin/bash // comme avec docker on peut rentrer dans le containerpod
+	kubectl logs nomDuPodDontJeVeuxVoirLesLogs
+	kubectl get service  // ...get -n unNamespaceAutreQueDefault ...
+	kubectl describe service idduservice // affiche des infos du service: dans Endpoints /on peut voir les ip des pods destinataires, le label (selector), le TargetPort.
+	kubectl get deployment // ...get -n unNamespaceAutreQueDefault ... 
+	kubectl get deployment iddudeployment -o yaml // pour voir son status dans etcd. On peut sauver ecrire le resultat dans un fichier en sortie: > monfichier mais si je veux reutiliser ce fichier,faudra virer les truc auto-generes
+	kubectl delete deployment nomdudeploymentasupprimer // ca supprime tous les replicaset et pods sous-jacents
+	kubectl delete -f unfichierQueJaiDejaChargeAvantParApply.yml //supprime tout ce qui compose ce fichier.
+	kubectl get replicaset // les id des replicaset sont = aux debut des ids des pods auquels ils appartiennent. Nombre de pod de ce type que contient ce replicaset. On passe toujours pas deployment pour gerer.// ...get -n unNamespaceAutreQueDefault ... 
+	kubectl get secret  // ...get -n unNamespaceAutreQueDefault ... 
+	kubectl get namespace // chaque namespace defini tout un cluster virtuel au sein du cluster kubernetes. Namespace sert à regrouper par fonction et environnement. Exemple: NSBaseProd NsBaseDev NSAppliProd NSAppliDev NSNginxPourTous. Utile aussi pour le blue-green pattern. Utile aussi pour cloisonner le taf des differentes equipes avec restrictions d'access, Utile aussi pour limiter la conso resource(CPU,Ram,Stockage) par namespace. ATTENTION: ne pas partager de ConfigMap et Secret entre namespaces mais on peut partager des services entre namespaces.
+			kubernetes-dashboard est specifique a minikube
+			kube-system : namespace est dédié à kube. Ne pas y toucher.
+			kube-public : namespace d'un cluster interne public
+			default: le namespace utilise par defaut si on ne le precise pas dans la conf. l'appartenance à tel namespace se fait sous yaml metadata:>namespace:xxxxx
+		pour voir la liste de ce qui peut et ne peut pas etre namespaceable:
+			kubectl api-resources --namespaced=false ou true
+			
+	kubectl create xxxxx // On ne cree pas de pods directement mais on cree un deployment
+		kubectl create deployment unnomQueJattribueACeDeployment --image=nomDelimageDeMonContainerSiIlNexistePasLocallementVaDirectLeChercherSurLeNet --dry-runFacultatifChaisPasAQuoiCaSertDoncNeLeMetPasPourLinstant optionsPourSpecifierLeNombreDeReplicasetNotemment // ca cree un deployment ET un pod direct ET un replicaset
+		kubectl edit deploymentOuService unnomQueJaiAttribueACeDeploymentEtQuiExisteDeja // ca m'ouvre un vi sur la conf auto-generee du deployment au format LINKcjzlapg. Je peux y  modif la version de l'image par ex. A chaque edition si besoin ca recree automatiquement les pod/replicas mis à jour et supprime les anciens
+	kubectl apply -f /pathBonnePratiqueDansMonCodeApplicatif/vers/monfichierde/config-file.yml //fichier pour deployment ou pour service. Meme format que LINKcjzlapg. On peut mettre a jour ce fichier et reexecuter cette commande plusieurs fois. Si le deployment existe il fait un update sinon il fait un create
+	dans les confs:
+ 		status: // est automatiquement ecrit par kubernetes. ca lui sert à suivre l'evolution des modifs de la conf. Cette info est stockée dans etcd.
+la conf:LINKcjzlapg
+TEMPLATE POUR DEPLOYMENT: //HelmCharts est un repository une librairie de yaml pour ne pas avoir à tout refaire soi-meme. Cap aussi matcher des templates contenant placeholders{{}} avec un values.yml Utile aussi pour deployer entre different k8 de chaque environnement
+apiVersion: apps/v1
+kind: Deployment
+metadata: // entete
+  name: nomdemondeployment // nom du deployment qui apparait quand je fais un get
+  labels:
+    app: labeldemondeployment // reference de ce deployment je crois
+spec:
+  replicas: 1 // nombre de pods de ce type là : donc en fait nombre de WorkerNodes
+  selector:
+    matchLabels:
+      app: labelduTypeDePodDeCeReplicas-aaaaaaaaaa
+  template:
+    metadata: //entete du pod de ce type la
+      labels:
+        app: labelDeCePod-AAAAAAAAAAAA
+    spec: //details du pod de ce type la
+      containers: // on peut mettre plusieurs containers de different type dans ce type de pod qui sera repliqué dans plusieurs nodesWorker
+      - name: mongo // 1er containerDansLePod. Ne sera pas le nom de mon pod quand on fera un kubctl get pod
+        image: nomImageDocker:version
+        ports:
+        - containerPort: 27017-UUUUUUUUU // ce containerDansLePod ecoute sur le port 27017
+        env: // variables d'environnement du container
+	  -name: NOMDELAVARIABLE1
+		value: VALEURENDURDELAVARIABLE1
+          - name: MONGO_INITDB_ROOT_USERNAME
+            valueFrom:	//valeur de la variable est externalisée 
+              secretKeyRef:// externalisée dans un secret
+                name: mongodb-secret-bbbbbbbbbbbbb
+                key: nomDeLaCle1-zzzzzzzzzzzz
+          - name: MONGO_INITDB_ROOT_PASSWORD 
+            valueFrom:
+              configMapKeyRef:
+                name: mongodb-configmap-iiiiiiiii
+                key: cleconfigmap-hhhhhhhhhh		
+	volumeMounts:				//montage dans le container
+	- mountPath: "/le/path/parametre/dans/le/container/applicatif"  //volume1
+	name: lenomduvolumequimatchcepath-ppppp1ppppp
+	- mountPath: "/un/autre/path" 				// volume2
+	name: autrevolume-ppp2pppppp
+    volumes:					// montage dans le pod 
+	- name: lenomduvolumequimatchcepath-PPPP1PPPP //interfaceDeVolume1
+	persistentVolumeClaim:	// un pvc type volume externe au cluster	
+		claimName: nomduPVC-rrrrrrrrrrr
+	- name: unAutrePointeurVersUnVraiVolume-PPPPPP2PPP
+	configMap: // un volume type configMap
+		name: nomDuConfigMapFaisantOfficeDeVolume-iiiiiiiiii(voir la video Nana volumes)
+	- name: unAutrePointeurVersVolume-PPPP3PPPP
+	secret:
+		secretName: versUnSecret-bbbbbbbbbbbbbb
+TEMPLATE DES STATEFULL // le nom des pods n'est pas au hasard comme dans deployment mais est incremental et persistant LINKStatfllpds 
+			La creation des podes se fait dans l'ordre 1,2,3 et la suppression dans l'ordre 3,2,1
+			chaque pod a son service dédié Persistant dont le nom fixe est "podname.serviceNameDefini" + un service commun a tous les pods statefull de ce type
+			je dois moi meme gerer la synchro des bases, leur backup, stocker les volumes à l'exterieur sans l'aide de kubernetes
+TEMPLATE DES INTERNALSERVICES
+apiVersion: v1 
+kind: Service 
+metadata: 
+  name: mongodb-service-CCCCCCC  // nom de mon service
+spec: 
+  selector:  // c'est à ce niveau qu'on peut param vers quel NodeWorker contenant ce type de pod on va diriger les requetes
+    app: referenceverspod-aaaaaaaaaa
+  type: ClusterIP  // c'est ce qui fait que c'est un InternalService. Si a la place de cette ligne je mets ClusterIp:None mon service devient un HeadlessService qui ne fait pas de loadBalancing et le service n'a pas d'adresse IP et le DNSLookup retourne l'adresse IP du pod direct à partir du nom demandé. Utile pour les Statefull pods à joindre.
+  ports: 
+  - name: blabla // besoin rajouter ca uniquement si mon pod destinataire a plus de 1 port targeté. Ainsi chaque different port a un nom voir LINKjdjdhghgj 
+  - protocol: TCP 
+    port: 27017-TTTTTT  // port de reception de ce service
+    targetPort: 27017-uuuuuuuuuuu // port de reception du pod
+  //possible mettre plus de ports. LINKjdjdhghgj
+
+A)TEMPLATE DES EXTERNALSERVICE
+apiVersion: v1 
+kind: Service 
+metadata: 
+  name: nomduserviceexterne-OOOOOO // pour que ce service externe soit exposé quand on bosse sur minikube il faut executer la commande minikube service nomduserviceexterne-oooooooo
+spec: 
+  selector: 
+    app: referenceversUnPodQuiDoitEtreOuvertVersLeMondeExerieur-aaaaaaaaa
+  type: LoadBalancer // du coup c'est un ExternalService et il n'accepte les requetes du monde exterieur que d'un loadbalancer ou type:NodePort c'est pareil sauf qu'il accepte toute requete du monde exterieur par son ip et son port:pas tres safe mais utile pour tester seulement
+  ports: 
+  - protocol: TCP 
+    port: 80 // port de reception de ce service// hum pas tres clair: port du clusterIp???
+    targetPort: 27017-uuuuuuuuu //port de reception du pod
+    nodePort:30000 // port d'entrée du ExternalService doit etre entre 30000 et 32767 // c'est le port que je saisis par exemple sur le browser
+B)TEMPLATE DE L'INGRESS
+apiVersion: networking.k8s.io/v1beta1 
+kind: Ingress 
+metadata: 
+  name: nomdemoningress 
+  namespace: sonNameSpacedoitEtreLEMEMEQueCeluiDuInternalServiceEtPodDestinataire
+spec: 
+  tls:
+  - hosts:				    				  	     | //pour gerer le Https. voir LINKhtththsie 
+	- mon.nom.de.domaine.com         					     |
+	secretName: refVersUnSecretQuiDoitEtreDansLeMemeNamespaceQueCetIngress-bbbbbb| 
+  rules: // regles de routage à la Nginx
+  - host: mon.nom.de.domaine.com // doit etre valide soit chez un fournisseur d'acces soit dans ...etc/hosts où l'adresse IP correspondante est celle que l'Ingress va m'exposer. Voir Sa description. Ou bien d'un Nginx hors du K8 qui lui pointe vers l'IP de l'Ingress(jecrois) Ou un LoadBalancer du CloudProvider(jecrois)
+    http: // a partir de là on parle du lien Ingres<->InternalService. Rien à voir avec le monde exterieur. Ici c'est géré par un IngressController=des pods à installer sur minikube via "minikube addson enable ingress" ca installe K8sNginxImplementationOfIngressController: ca installe les pods ingress dans le namespace kube-system
+    	paths:
+    	- backend: // si du browser j'appelle un path qui n'existe pas: l'ingress va pointer vers le default-httpbackend qui dit juste "404". Pour customiser ça j'ai juste à creer un InternalService qui s'appelle default-httpbackend et son pod associé.
+    		serviceName: monServiceInternal-cccccccccccc
+    		servicePort: 27017-ttttttttttt
+	- path: /unpath1  // regles de routage
+	  backend:
+		servi.....etc
+	- path: /unpath2
+	 ...
+  - host: un.sous.domaine.domaine.com // on peut router par sous-domaines aussi
+	...
+TEMPLATE POUR SECRET:
+apiVersion: v1
+kind: Secret
+metadata: //secret n'a pas de label
+    name: mongodb-secret-BBBBBBBBBB
+type: Opaque ou tls specifique à Secret. Opaque=cle-valeur;tls=certificat tls pour l'ingress et la connexion https par ex voir  LINKhtththsie
+data: //specifique aux secrets
+  mongousrn-ZZZZZ: bGF1cmVudA== ou bien tls.crt: certificatEncodéEnBase64 si c'est pour faire LINKhtththsie 
+  mongopassword: ZHVkdQ==	      tls.key: cleEncodeeEnBase64 Voir LINKencodbasesxqatr
+
+TEMPLATE POUR CONFIGMAP
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: nomDeMonConfigMap-IIIIIII
+data:
+cle1deconfigmap-HHHHHHHHH: peutReferenceUnServicePourQueLesAutresVoientCeService-ccccccccccc ou nomduservice-cccccccccc.namespaceDansLequelSeTrouveCeService // c'est à ce niveau qu'on peut param vers quel NodeWorker contenant ce type de pod on va diriger les requetes
+
+TEMPLATE POUR LES PERSISTANT VOLUME CLAIMS: les pods font appel à ca pour atteindre les volumes.(une forme d'interface pour les volumes) Pod et PVC liés doivent être dans le meme namespace
+kind: PersistentVolumeClaim // du coup tous les volumes qui répondent à ses critères sont des candidats potentiels à être le volume à lier.
+apiVersion: v1
+metadata:
+	name: nomDeMonPVC-RRRRRRRR
+spec:
+	storageClassName: unnomDeStorageclass-yyyyyyyyyyyyyy // au moment ou le pod va claimer au PVC le storage dont il ya besoin, kubernetes va creer automatiquement sur la base du storageClassName le volume persistant.
+	volumeMode: Filesystem
+	accessModes:
+		- ReadWriteOnce ou ...
+	resources:
+		requests:
+			storage: 10Gi
+TEMPLATE POUR LES VOLUMES C'est juste une interface mais c'est à moi de créer le volume physique: sur disque local, sur NFSdistant ou sur cloud. Les volumes sont hors Namespaces et accessibles à tout le cluster.
+apiVersion: v1			Le montage de ce volume existant DANS le pod puis dans le container se fait precisement quand un PVC démarre et le choisi
+kind: PersistantVolume
+metadata: // 1) Exemple pour un volume type NFS
+	name: nomduvolume-GGGGG
+spec:
+	capacity:
+		storage: 5Gi // taille max
+	volumeMode: Filesystem
+	accessModes:
+		- ReadWriteOnce ou ... // comment on a le droit d'y acceder ?
+	persistentVolumeReclaimPolicy: Recycle ou Delete...
+	storageClassName: slow
+	mountOptions:
+		- hard
+		- nfsvers=4.0
+	nfs:
+		path: /chemin/dans/le/serveur/nfs
+		server: 1.32.3.21.4 // adresse IP du serveur NFS
+metadata: // 2) Exemple pour un volume type GoogleCloud
+	name: nomduvolume-GGGGG
+	labels:
+		failure-domain.beta.kubernetes.io/zone: us-central-a__us-central-b
+spec:
+	capacity:
+		storage: 5Gi // taille max
+	accessModes:
+		- ReadWriteOnce ou ... // comment on a le droit d'y acceder ?
+	gcePersistentDisk:
+		pdName: mon-disque-sur-le-googlecloud
+		fsType: ext4
+metadata: // 3) Exemple pour un volume type local
+	name: nomduvolume-GGGGG
+spec:
+	capacity:
+		storage: 5Gi // taille max
+	volumeMode: Filesystem
+	accessModes:
+		- ReadWriteOnce ou ... // comment on a le droit d'y acceder ?
+	persistentVolumeReclaimPolicy: Recycle ou Delete...
+	storageClassName: local-storage
+	local:
+		path: /chemin/local
+	nodeAffinity: // le volume est sur le WorkerNode
+		required:
+			nodeSelectorTerms:
+			- matchExpression:
+				- key: kubernetes.io/hostname
+				operator: In
+				values:
+				- exemple-node
+TEMPLATE STORAGE_CLASS //pour creer des volumes automatiquement
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+	name: storage-class-nameYYYYYYYYYYY
+provisioner: kubernetes.io/aws-ebs // c'est ce qui est utilisé pour determiner le type de volumes à creer. chaque type de storage a son propre provisioner. kubernetes.io est un provisionner dejà en place dans kubernetes qu'on peut utiliser sinon faudra en recuperer un autre externe comme plugin
+parameters: // parametres transmis au storage.
+	type:io1
+	iopsPerGB:"10"
+	fsType:ext4
+
 visualstudiocode :editeur:
   acceder au fichier trouver: ctrl+p
 gource : annimation de git
@@ -958,12 +1198,14 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
         git clone D:/path/repertoireacloner (besoin peut etre faire commit dans ce repository(repertoireacloner) pour l'initialiser) 
     branches: master; develop; etc etc... elles existent en local et sur le repo distant et sont toutes TOUTES indépendantes les unes des autres c a d: je peux avoir en local un master qui push dans le develop distant. Les branches c de la merde. DEVOPS.
         si j'ai (HEAD detached from 351dcab) c'est parce que mon HEAD est orphelin et dans aucune branche(parce que j'ai fait un git checkout sur un commit). faire git stash save "bla"; git checkout master; git merge codeDeMonHeadDetached. Ancienne methode: pour le recuperer dabord le rattacher a une branche temporaire: git branch temp puis git checkout temp. Ensuite il faut ecraser une branche par temp (voir ci dessous)
-      git branch -vv// pour voir toutes les branches et a quel repository origin elles sont liées(attention ne montre pas toutes les branches en fait. pour les voir toutes git branch -av) et voir quelle branche est activee A8. Ou est mon HEAD. Les branches c la merde. DEVOPS
+      git branch -vv// pour voir toutes les branches et a quel repository origin(origin=remote) elles sont liées(attention ne montre pas toutes les branches en fait. pour les voir toutes git branch -av) et voir quelle branche est activee A8. Ou est mon HEAD. Les branches c la merde. DEVOPS
       git branch nomdelabrancheacreer // pour creer une nouvelle branche: ca ne cre pas une branche vide: ca copie la branche actuelle au commit ou je me trouve (meme ce qui n'est pas addé) dans la nouvelle branche. Les branches c la merde. DEVOPS
                                           maintenant je peux checkouter sur cette nouvelle branche ET avant tout faire un commit dessus sinon LINK98530!!!! puis je peux la pusher sur le repo distant: si le nom de la branche local est le meme que sur une branche du repository distant alors il va pusher dans cette branche qui a ce meme nom. Pas mal pour pusher sur une autre branche facilement.
       git branch -d nombrancheasupprimerDeleter // supprimer une branche. Ne pas se placer dans cette branche avant de faire ca.
       git branch -f nomdelabrancheAEcraser nomdelabrancheQuivaPrendreLaPlaceDeLautreEtVaLecraser
-      
+      git branch -m nouveauNomDeLaBranche // pour renommer une branche
+		puis git push origin -u nouveauNomDeLaBranche
+		puis git push origin --delete ancienNomDeLaBranche
     switcher d'une branche à l'autre: ca remplace mes fichiers par ceux de la branche que je choisis. 
       se mettre dans le repertoire du projet au meme niveau que le .git (je pense)
       git checkout nombranche_vers_laquelle_allerPAS_SON_IDENTIFIANT_ET_PAS_AVEC_REMOTE/ORIGIN_AVANT. Le HEAD devient cette nombranche_vers_laquelle_aller LINK98530: attention juste apres la creation de branch faire un premier commit sinon lors du checkout on ne voir rien bouger dans l'éditeur
@@ -977,8 +1219,8 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git merge NomDeLaBranchequejeveuxTirerVersLaBranchDansLaquelleJeSuis(en principe le master) master<----tototo ATTENTION TOUJOURS COMMITER AVANT DE FAIRE UN MERGE
             git merge -X theirs NomDeLaBranchequejeveuxTirerQUI_EST_PRIORITAIRE_ET_ECRASE_LA_OU_JE_SUISVersLaBranchDansLaquelleJeSuis
             git merge -s ours NomDeLaBranchequejeveuxTirerVersLaBranchDansLaquelleJeSuisQUI_EST_PRIORITAIRE_ET_PREND_LE_PAS_SUR_CE_QUI_EST_IMPORTE
-                merge manuellement <<<<<<< HEAD
-                                        mon cote
+                merge manuellement <<<<<<< HEAD 
+                                        mon cote // attention pas toujours ca depend si j'ai fait un rebase ou quoi et dans quel ordre
                                         =======
                                         son cote
                                         >>>>>>> blablabla
@@ -988,8 +1230,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git rm --cached <filePath1 filePath2> //LINKrmgit a utiliser aussi si gitignore ne semble pas marcher ou si j'ai l'erreur in unpopulated submodule(c parce que j'ai supprimé .git): ignore l'indexation et le suivi d'un fichier. ATTENTION PEUT SUPPRIMER LES FICHIERS. SI je ne veux plus: faire git reset HEAD monfichier pour l'ignorer. Les vire de untracked file mais certains fichiers on y arrive pas... voir LINKcheckoutquandmeme
       git rm -r --cached <filePath> //-r pour recursif
       git status -uno//(-uno pour ne pas voir les untracked) pour savoir quels fichiers vont etre commites ( a faire si j'ai le message Changes not staged for commit)
-      git commit:  apres commit je peux faire un fetch((recupere du repo distant vers le local dans une autre localisation:pour l'instant n'a pas touché a mon espace de travail) puis pull (pour récupérer les dernières modifs des collegues et le merger avec mon espace de travail) puis ensuite un push
-                      si j'ai l'erreur "Please commit your changes or stash them before you merge." quand je fetch-pull soit je stash soit je LINKcheckoutquandmeme
+      git commit:  
       git commit -m "blablamMonCommentaire"// index->masterOuBrancheQuiALeHEAD:jusqu'a present tout est encore en local. voir git add si il ne commit pas malgres tout.
       git commit -am // -a pour ne commiter que les fichiers je crois ou bien -a pour forcer l'ajout de fichier non indexes avant de faire le commit
       apres commit je peux faire un pull puis ensuite un push
@@ -997,20 +1238,20 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
      	 	git reset  pour tout enlever du add 
      	 	ou
       		git reset pathfichieravecWildcard
+
       git revert -m 1 [hash d'un commit precedent ou d'un commit-merge de branche] // se mettre dans la branche qui a recu le commit ou le commit-merge d'une autre branche. Ca va annuler ce commit ou commit-merge-de-branche et ca va ajouter un nouveau commit dans ma branche actuelle: pratique pour annuler un commit ou un merge du passé anterieur
       git reset HEAD~ annule/undo le dernier commit. Ne pas le faire après que mon dernier commit ait ete pushe et merge avec l'origin(remote) car cela desynchronise mon local du distant. Si ca a déja été pushé alors faire git reverT: ça recommiT un snap d'avant le commit pourri.
                 on peut aussi faire git commit --amend // pour redéfinir changer le message du dernier commit sans besoin de l'annuler
       git reset //LINKresetgit annuler le dernier add
-      git reset --hard <identifiantcommit>  revenir en arriere sur identifiantcommit par déplacement du HEAD sur identifiantcmmit vire definitivement tous les trucs qui ont suivi
+      git reset --hard <identifiantcommit>  revenir en arriere sur identifiantcommit par déplacement du HEAD sur identifiantcmmit et vire definitivement tous les trucs qui ont suivi mais le pb avec cette methode c'est que ca efface l'historique donc faire plutot git revert commitidDontJeNeVeuxPlus // ca vire ce commit là et ce qu'il a fait de mon historique????questcequej'ai voulu dire?
       git reset --hard versionDuTag: ce tag revient dans le mon HEAD/branch + repertoire et vire tout ce qu'il y a eu après
       git reset --hard // sans rien: pour annuler un pull qui vient d'etre fait
     git rebase entre branches: pour que le log soit propre avec une branche en trait et pas qui parte dans tous les sens: a faire a la place de merge sur une meme branche locale/remote
       git rebase brancheDontJeVeuxRecupererLesCommitsEnUneLigneDroiteLaOuJeSuisMaintenant
     git rebase sur une meme branche entre local/remote
-     git pull --rebase  //comme ca c'est plus propre dans les logs d'une meme branche. LINKlkjgjgjzooa
     git rebase entre commits://attention si bloque pas hesiter a abandonner et retenter 
       git rebase commitquinebougepasEtQuiVaRecevoirLaSuiteDeLHistoire commitQuiVaMettreSonHistoireALaSuiteDuPremierArgument // a la toute fin faire rebase DernierCommit master pour que le master se remette au bout
-      git rebase -i identifiantCommitDuPassé // ouvre un editeur affiche les commit du plus vieux en haut au plus recent en bas et je peux manipuler mes commits du passe pas a pas un par un jusqu'a aujourd'hui. J'ai du utiliser ca pour supprimer les indexs de fichiers trop gros qui m'empechaient de pusher sur le repo distant ou pour fusionner des commits
+      git rebase -i identifiantCommitDuPasséSeraExcluLorsDuRebase // ouvre un editeur affiche les commit du plus vieux en haut au plus recent en bas et je peux manipuler mes commits du passe pas a pas un par un jusqu'a aujourd'hui. J'ai du utiliser ca pour supprimer les indexs de fichiers trop gros qui m'empechaient de pusher sur le repo distant ou pour fusionner des commits
                 si je veux commencer depuis le debut faire git rebase -i --root
                 quand j'ai remplacé chaque pick souhaité par edit(changer le commit) ou squash (merger-fusionner des commits), faire comme dans vi: sauver et quitter. il fait alors du pas a pas sur chaque edit ou a chaque fois je fait soit git commit --amend(modifier le commit en cours) ou git rebase --continue(au suivant!)
                         quand je fais git commit --amend alors il ouvre un editeur montrant le commit.(si il fait erreur de fusion faire git diff --check si toujours tenter git rebase --skip) Executer comme dans vi:!macommandeGit (exemple faire un checkout pour supprimer de l'index) et Entree a chaque fois. Quand fini faire:wq. et puis git rebase --continue et ainsi de suite pour finir avec un git rebase --continue jusqu'à ce que la branche rebase soit automatiquement mergée avec mon master.
@@ -1082,14 +1323,17 @@ git diff compare mon workspacepasencoreadded avec le dernier commit
         git push origin masterOudevelopOuBrancheLocale //HEAD(origin)->ServeurDistantOuRepertoireQQpart(master ou develop) envoi sur le serveurOuRepertoireRepoQQpart pour merger avec le master: ça fetche+merge+commit là bas.
             ne pushe pas les repertoires vides: pour ça ajouter juste un fichier avec "x" dedans
             si j'ai error: failed to push some refs to // peut etre j'ai oublié de commité ou bien il faut puller avant
-	gut push --set-upstream origin nomdelabranchequejecreeADistanceSurLeOrigin // quand je suis dans une branche qui n'existe pas sur le repository distant "origin" il cree cette branche dans origin avec le nom nomdelabranchequejecreeADistanceSurLeOrigin
+	gut push --set-upstream(equivalent de -u) origin nomdelabranchequejecreeADistanceSurLeOrigin // quand je suis dans une branche qui n'existe pas sur le repository distant "origin" il cree cette branche dans origin avec le nom nomdelabranchequejecreeADistanceSurLeOrigin
         git config credential.helper store // pour ne plus qu'il demande le user/pass en https
-        git pull: fait automatiquement un git fetch avant si ca na pas été deja fait
+        git pull: fait automatiquement un git fetch avant si ca na pas été deja fait. Pour récupérer les dernières modifs des collegues et le merger avec mon espace de travail)
         la premiere fois faire git pull origin master
+     	git pull --rebase  //comme ca c'est plus propre dans les logs d'une meme branche. LINKlkjgjgjzooa puis corriger les pb de merge > confimer le rebase a la fin et ca fait bien une branche droite
 	git pull en gardant les modifis a moi les miennes en priorité: git pull -s recursive -X ours
         git pull URLouPathRepositoryDistantPeutEtreLocal si il veut pas et/ou met message refusing to merge unrelated histories mettre:--allow-unrelated-histories//recupere les derniers push des autres sur mon HEAD local // si il dit "not a git repository" il faut que je me place dans le projet git
-                    si il dit "....be overwritten by merge" c'est que quelqun a poste sur le repo des choses qu'il n'aurait pas du. 2 solutions: 1)faire un git clone ailleurs du projet puis git rm fichiersquinauraientpasdusetrouverdanslerepo puis commit et push 2)aller sur le repo et les supprimer
-        si j'ai l'erreur cannot stat permission denied au moment d'une manip
+            si j'ai l'erreur "Please commit your changes or stash them before you merge." quand je fetch-pull soit je stash soit je LINKcheckoutquandmeme
+            si il dit "....be overwritten by merge" c'est que quelqun a poste sur le repo des choses qu'il n'aurait pas du. 2 solutions: 1)faire un git clone ailleurs du projet puis git rm fichiersquinauraientpasdusetrouverdanslerepo puis commit et push 2)aller sur le repo et les supprimer
+        git fetch((recupere du repo distant vers le local dans une autre localisation:pour l'instant n'a pas touché a mon espace de travail)
+		 si j'ai l'erreur cannot stat permission denied au moment d'une manip
                 c'est a cause de windows. il ya un fichier locké par un autre programme. Tout fermer et recommencer
 		pour faire du mirroring automatiquement par un petit script:
 			unrepogitdistant---->monpc---->unautrerepogitdistant 
@@ -1314,7 +1558,7 @@ si j'ai message
 formatter forme affichier le xml: 
     code->reformat
 pour paster un ancien paste du clipboard clip board collé: coller copier 
-        Ctrl+Shift+Insert
+        Ctrl+Shift+Insert //pour augmenter le nobre de clipboard historisés menu File> Settintgs > General > Limits > c'est là
 tapper saisir abrege abregé racourci shortcut pour ecrire methode main: psvm
 Si intellij ne demarre plus a cause d'une erreur initializ initialis fatal xdebug supprimer son cache: reset marche plus. Ou si intellij me cache des fichiers meme si dans projet>rouecrantee je coche quil doit tout afficher 
   supprimer repertoire D:\Profiles\lduverge\.IdeaIC2017.3 ou .idea
@@ -1337,6 +1581,7 @@ voir les logs git vcs: alt+9
 git pull tous les projets/modules en une seule fois VCS>Update projects... //choisir pour une meme branche de preference la strategie rebase voir LINKlkjgjgjzooa. Si il ne fait que fetch. Penser à cliquer ensuite dans l'onglet VCS du bas pour voir ce qui se passe sinon suis aveugle. Il faudra faire pull après!(voir les fichiers D://git/pull.xls et D://git/pull.bat). 
 si je n'arrive pas à cloner un projet git directement avec intellij (a cause erreur password): cmd windows, me placer dans le bon repertoire, faire un git clone. Revenir sur intellij>settings>VersionControl>ajouter (+) le path du projet dans la liste.           
       pour commiter un nouveau projet: VCS > Import into VersionControl > share project into subversion...>Atention, là je peux choisir le repository mais si je ne fais que ça il va copier les sous repertoires de mon projet donc il faut appyer sur + et mettre le repository+/RepertoireDuProjet (meme si il fait une erreur rouge continuer comme ça)
+git rebase: je suis sur branche1, je fais rebase current onto selected veut ire prend le contenu de branche2 et ramene le ici sur branche1 où je suis
 svn:
     parcourir:
     >VCS>BrowseVCSRepository>BrowseSubersionRepository:
@@ -1362,8 +1607,9 @@ taille des logs dans la console: settings>console>overrideconsolebuffersize
 pom voir arbre des dependances hierarchie transitive > dans la vue maven: clique droit sur projet > show effective pom ATTENTION A RAFRAICHIR refresh dans vue maven sinon la hierarchie est obsolete
         encore mieux: charger https://plugins.jetbrains.com/plugin/7179-maven-helper et installer le plugin: installe le directement depuis settings>plugins>il est là
         permet aussi d'afficher menu contextuel maven run debug dans projets project (si inactif  appuyer sur "+" a droite pannel maven)
-        sous pannel editeur il y a le tab dependencyAnalyzer onglet dependency analyser à gauche on y voit les artifactID:version
+        sous pannel editeur il y a le tab dependencyAnalyzer onglet dependency analyser à gauche on y voit les artifactID:version: boutons utils: conflicts, alldependencyastree. A droite il faut lire les bouts d'arbres de bas en haut. En bas c'est la dependance directe du pom dans lequel je suis et la racine de l'arbre en haut c'est ce que j'ai selectionné à gauche. Click droit jump to source en fait je clique directment sur la ligne dans le pom. C'est comme ça qu'il faut le voir 
 si le pom.xml maven est en erreur: rafraichir refresh dans la vue maven +  faire une mvn:compile pour le forcer à charger les dependances et montrer les vraies erreurs, cliquer dans l'editeur sur la notification comme quoi maven doit etre raffraichi et aussi verifier que dans le projet il n'y a pas un .iml corrompu pourri à effacer
+il y a un toggle button skipTests dans la fenetre maven
 gradle: creer si j'ai Could not find GradleWrapperMain il faut creer projet\gradle\wrapper\gradle-wrapper.jar
       ouvrir view gradle > a cote de run ouvrir editconfiguration > ajouter un conf gradle avec la Task:createWrapper executer ça.
 Error:Unable to make the module: config-server_main, related gradle configuration was not found. Please, re-import the Gradle project and try again.
@@ -1445,6 +1691,7 @@ pour modifier un type de fichier source: en faire un source, un repertoire de te
 erreur error details probleme explication Ctrl+F1
 search trouver rechercher partout Ctrl+shift+f // si ne marche plus bien, arreter intellij, supprimer .idea et redemarrer car il ne reindexe plus
 	pour conserver l'historique de recherche: tab find > roue crantée > open results in new tab
+	pour eclure un fileMask: mettre ! devant mon filtre fileMask
 recherche trouver search partout meme les noms de methodes fonctions: maj maj
 afficher toutes les erreurs problemes: pour les voir il faut faire un build
 parcourir atteindre erreurs problems F2/Maj+F2
@@ -2677,7 +2924,7 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 		
 	
 J2EE : jee : jee8 :javaee : EE4J : jakartaee : https://github.com/eclipse-ee4j/jakartaee-tutorial-examples et https://github.com/eclipse-ee4j/jakartaee-tutorial
-        <dependency> necessite //LINKjakartayahooo
+        <dependency> necessite //LINKjakartayahooo rajouter cette dependance j2ee si erreur MockHttpServletRequest java.lang.ClassFormatError: Absent Code attribute in method that is not native or abstract in class file javax/servlet/ServletException
                <groupId>javax</groupId>
                <artifactId>javaee-web-api</artifactId> ou? <artifactId>javaee-api</artifactId>  
                <version>8.0</version>
@@ -6622,7 +6869,7 @@ AILLEURS: injecter mes beans par constructeur
                        ou bien mettre un filtre dans web.xml du tomcat ou meme de l'appli?      
                 dans Tomcat context.xml, LINK39210                                     pour faire les tests: mocker un jndi en conf: Pour declarer une data base de donnée pour requetes sql
                         <Resource                                                      <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"> 
-                               name="jdbc/sqliteDS"                                      <bean id="dataSource" class="org.apache.tomcat.dbcp.dbcp.BasicDataSource ou org.springframework.jdbc.datasource.DriverManagerDatasource" destroy-method="close"> (cette classe à pour interface javax.sql.Datasource et c ca qu'on utilise dans le code) ou <bean id="dataSourceRepository" class="org.springframework.jdbc.datasource.DriverManagerDataSource">  
+                               name="jdbc/sqliteDS"                                      <bean id="dataSource" class="org.apache.tomcat.dbcp.dbcp.BasicDataSource ou org.springframework.jdbc.datasource.DriverManagerDataSource" destroy-method="close"> (cette classe à pour interface javax.sql.Datasource et c ca qu'on utilise dans le code) ou <bean id="dataSourceRepository" class="org.springframework.jdbc.datasource.DriverManagerDataSource">  
                                auth="Container"                                            <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />                      
                                type="javax.sql.DataSource"                                 <property name="url" value="jdbc:oracle:thin:@server:port:instance" />                           
                                maxActive="4"                                               <property name="username" value="user" />                                                          
@@ -6698,7 +6945,7 @@ Spring : XML STYLE
         		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
         	</filter> permet d'utiliser la force de spring pour injecter dans mon filter
         	spring-context.xml:
-        	 <bean id="samlResponseFilter" class="com.hraccess.hraspace.sso.saml.filter.SAMLAuthResponseFilter" parent="abstractSamlFilter" init-method="initFilter">
+        	 <bean id="samlResponseFilter" class="com.hraccess.hraspace.sso.saml.filter.SAMLAuthResponseFilter" parent="abstractSamlFilter" init-method="initFilter"> //parent en fait le bean est = au parent et est comme lui.
                 		<property name="parser" ref="parserPool" />
                 		<property name="uriComparator" ref="uriComparator" />
                 		<property name="principalExtractor" ref="principalExtractor" />
@@ -6748,6 +6995,7 @@ Spring : XML STYLE
                                                                                            xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
                                                                                     
                                                                                         <context:component-scan base-package="com.hraspace.controller"/>
+											<context:spring-configured/> // peut etre besoin mettre ca. Foutu spring!Quest ce que ca veut dire hein???
                                                                                         <mvc:annotation-driven /> // Enables the Spring MVC @Controller programming model
                                                                                         <mvc:resources mapping="/resources/**" location="/, classpath:/META-INF/web-resources/" /> //Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory
                                                                                         <mvc:resources mapping="/images/**" location="/images/" /> 
@@ -8334,6 +8582,7 @@ pour se connecter avec un utilisateur user
             }
             private static Connection getConnection() throws SQLException {
                 return DriverManager.getConnection("jdbc:hsqldb:mem:employees", "vinod", "vinod");// bien mettre mem sinon il fait chier avec les connexions mais c'est que pour tester car volatile
+						"jdbc:postgresql://127.0.0.1:5432/finisight",postres","password")) // pour postgres
             }
             @Test
             public void getTotalRecordsTest() {
@@ -10176,7 +10425,11 @@ h2 : embedded database:
          }  
       conn.close(); 
        			
-SQL : (oracle :)
+SQL :
+postgres :
+	initialiser une base de donnée:
+		pg_ctl init -D "C:/Installations/pgsqldata" // chemin vers le stockage filesystem
+ (oracle :)
 BLOBS : 
 La manipulation simplifiee des blob fonctionne egalement avec ORACLE et 
 le driver ojdbc14_9208.jar.
@@ -11132,7 +11385,7 @@ liaison avec git: // jenkins peut exectuer les commandes maven scm sur un projet
         <tag>HEAD</tag>
     </scm>    
 si un plugin n'est pas exectute peut etre c parce que dans le pom les pluggins sont entoures par pluginManagement. Virer ces balises
-possible d'overrider dans le pom lurl du repository: AH... n'a pas l'air de prendre le pas sur ce qui est def dans le settings.xml parametre dans eclipse>preferences>maven
+possible d'overrider dans le pom lurl du repository: AH... n'a pas l'air de prendre le pas sur ce qui est def dans le settings.xml parametre dans eclipse>preferences>maven du coup bonne pratique: ne rien mettre dans settings et mettre dans le pom plutot
   dans pom.xml:
     <project...blabla..>.... 
     	<repositories>
@@ -11152,13 +11405,13 @@ possible d'overrider dans le pom lurl du repository: AH... n'a pas l'air de pren
       </server>
   </servers>
   ...
-     <mirrors>
+     <mirrors> // les mirroirs sont ecrits dans settings et servent à remplacer un repository declaré au moins dans les poms et ciblés par <mirrorOf> vers un autre repository
       <mirror>
        			<id>xxx</id>
        			<mirrorOf>*</mirrorOf> si * ce repository va essayer de resoudre tous les artifacts: donc un seul repo pour tous!.
        			<url>https://url d'un repository</url>         (dans https://mvnrepository.com quand on cherche une librairie, pour connaitre l'url du repository ou elle est, chercher "Note: this artifact it located at...")
        		</mirror>
-       		..plusieurs mirrors possible // mais en fait jamais reussi a comprendre et a faire marcher l'utilisation de plusieurs repository repositories avec mirrors: utiliser plutot dans settings les profiles
+       		..plusieurs mirrors possible 
       </mirrors>                                             comme ca dans settings.xml (activer le profile all lors de l'execution)
                                                                 <profile>
                                                                 <id>all</id>
@@ -11246,7 +11499,7 @@ exemple de pom racine
 	 <parent>
       <groupId>net.nanthrax.examples</groupId>
       <artifactId>jaxrs-blueprint</artifactId>
-      <version>1.0-SNAPSHOT</version> // snapshot indique des versions en cours de dev. Possible de deployer même versions contenant code different: le dernier dans le temps sera pris en compte par maven 
+      <version>1.0-SNAPSHOT</version> // snapshot indique des versions en cours de dev. Possible de deployer même versions contenant code source different: le dernier dans le temps sera pris en compte par maven 
       <relativePath>../pom.xml</relativePath>
   </parent>
 	
@@ -11368,7 +11621,7 @@ exemple de pom racine
                   </plugin>          
                  <plugin>
                      <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId> // pour copier à partir de la base du projet qqchose (fichier de configuration, properties proprietes) vers un autre repertoire qui peut etre le classpath ou meme un repertoire du serveur embedded execute par maven. Ou bien LINK_ààà"çç". ne pas confondre avec <groupId>org.codehaus.mojo</groupId><artifactId>build-helper-maven-plugin</artifactId> qui sert à déposer de la conf dans le repository maven
+                    <artifactId>maven-resources-plugin</artifactId> // pour copier à partir de la base du projet qqchose (fichier de configuration, properties proprietes) vers un autre repertoire qui peut etre le classpath ou meme un repertoire du serveur embedded execute par maven. Ou bien LINK_ààà"çç". Mais si malgres ca met bien le fichier dans target mais pas dans le war final alors utiliser LINK**$**.  ne pas confondre avec <groupId>org.codehaus.mojo</groupId><artifactId>build-helper-maven-plugin</artifactId> qui sert à déposer de la conf dans le repository maven
                     <version>3.1.0</version>                           // je crois que par defaut copie /src/main/resource/* dans target/classes/*
                           <executions>
                              <execution>
@@ -11394,7 +11647,7 @@ exemple de pom racine
                                   <outputDirectory>${basedir}/target/tomcat/conf/mdl</outputDirectory> // si c'est un tomcat embedded et que dans une config de spring je mets: <context:property-placeholder location="file:///${catalina.base}/conf/mdl/import_excel.properties" /> 
                                   <resources>          
                                     <resource>  // ou bien LINK_ààà"çç"
-                                      <directory>${basedir}/src/main/resources</directory>
+                                      <directory>${basedir}/src/main/resources</directory> ou meme externe <directory>${basedir}../../unpath</directory> pour rajouter un fichier dans le war final
                                       <filtering>false</filtering> // du coup si je mets à true, remplacera dans les fichiers par les proprietes du profil encours voir LINKpfoflikjsdfv
                                       <includes>
                                           <include>*.jar</include> // ne marche que pour les fichiers par pour les directories repertoires
@@ -11600,6 +11853,7 @@ pour connaitre les profiles:
               <includes>
                 <include>**/web.xml</include> et dans web.xml je peux mettre: ${project.version} par exemple
               </includes>
+	     <targetPath>WEB-INF</targetPath> //facultatif
             </resource>
           </webResources>
           <warSourceDirectory>src/main/webapp</warSourceDirectory> // semble facultatif
@@ -11680,7 +11934,7 @@ pour exclure des sous-librairies: avec optional
                 uneAutreLibrairie qui elle fait appel à plein d'autres dependances. Trop pour monprojetPom.xml
                 alors mettre dans uneAutreLibrairiePom.xml
                                 <dependency>..a.
-                                    <optional>true</optional>
+                                    <optional>true</optional> //ca veut dire que l'editeur de cette librairie a eu besoin de la dependance pour compiler mais si toi qui utilise la librairie de l'editeur tu n'en a pas besoin, pas grave. Sinon faudra la mettre dans tes dépendances toi meme
                                 </dependency>
                                 <dependency>..b.
                                     <optional>true</optional>
@@ -13473,7 +13727,7 @@ Curl : voir aussi wget : pour faire une requette request http doc:https://ec.hax
     post json: // mettre des guillemets autour des valeurs des options si il y a des espaces dans ces valeurs. Si c'est du json mettre single quotes
 	curl -v -X POST http://localhost:8080/web/api/login --header "Content-Type: application/json" -d '{"anonymousUser":"true","uuid":"uid","appAccessKey":"mycampusapikey"}' > fichieroul'outputjsonsecritdedans //-X pour methode
     post sans bodypayload comme un get
-    curl -v -X POST http://localhost:8080/web/api/login --header "Content-Type: application/x-www-form-urlencoded" -d 'grant_type=password&username=toto&password=titi' -H "Authorization: Basic $(echo -n codetestlaurent:hihi | base64)" // je peux appeler du bash ici et encoder/decoder en base64 (-n pour que le echo ne mette pas les retour chariot)
+    curl -v -X POST http://localhost:8080/web/api/login --header "Content-Type: application/x-www-form-urlencoded" -d 'grant_type=password&username=toto&password=titi' -H "Authorization: Basic $(echo -n codetestlaurent:hihi | base64)" // je peux appeler du bash ici et encoder/decoder en base64 (-n pour que le echo ne mette pas les retour chariot) LINKencodbasesxqatr
     pour passer par un proxy rajouter:
             -x http://le.proxy:port -U user:pwd
     post json avec headers
@@ -17911,7 +18165,7 @@ log4j.logger.unnomOuUnPackage=DEBUG,pae, opc, stdout (ce logger a pour parent le
 log4j.appender.stdout=org.apache.log4j.ConsoleAppender
 log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
 log4j.appender.stdout.layout.ConversionPattern=%d{dd/MM/yyyy HH:mm:ss,SSS} app[%t] %-5p %m%n
-autre pattern gourmant en ressource mais tres pratique car affiche methode et classe: [%d] %F %M %-5p - %m%n
+autre pattern gourmant en ressource mais tres pratique car affiche methode et classei et numero de ligne: [%d] %F %M %-5p :%L - %m%n
 #l'appender pae: (voir additivity: ci dessous)
 log4j.appender.pae=org.apache.log4j.RollingFileAppender
 log4j.appender.pae.encoding=UTF ou ISO-8859-15 pour forcer l'encodage 
@@ -23760,6 +24014,66 @@ pour concatener deux fichiers WAV:
 -------------------------------
 itext :
 Pour generer du pdf en java utiliser l'api Itext (signature possible) (possible faire du excell aussi)
+	generate(response.getOutputStream());
+	response.setCntentType("application/pdf");
+	response.flushBuffer();
+	public static void generate(OutputStream outputStream){
+		try{
+			Doument document=new Document();
+			PdfWriter.getInstance(document,outputSream);
+			document.open();
+			//iText allows to add metadata to the PDF which can be viewed in your Adobe Reader under File>Properties
+			document.addTitle("Mon PDF");
+			document.addSubject("using itext");
+			document.addKeywords("Java PDF itext");
+			document.addAuthor("Jean");
+			document.addCreator("Jules");
+			//des lignes basiques appelées paragraphes:
+			Paragraph paragraph = new Paragraph();
+			paragraph.add(new Paragraph(" ")); // on ajoute une ligne vide:retour chariot
+			paragraph.add("blablablabla",catFont);// merde j'ai pas pris le catFont de la demo. Utile pour faire des H1,H2...
+			document.newPage();
+			//faire des chapitres
+			Anchor anchor= new Anchor("1er chapitre",catFont);//Next section
+			anchor.setName("1er chapt");
+			Chapter catPart = new Chapter(new Paragraph(anchor),1); // Second parameter is the number of the chapter
+			Section subCatPart = catPart.addSection(un objet paragraphe);
+			subCatPart.add(un objet paragraphe);
+			subCatPart = catPart.addSection(un objet paragraphe);
+			subCatPart.add(un objet paragraphe);
+			subCatPart.add(un objet paragraphe);
+		 	//faire des listes
+			List list = new List(true,false,10);
+			list.add(new ListItem("FirstPoint");
+			list.add(new ListItem("SecondPoint");
+		        subCatPart.add(list);
+			//faire un tableau
+				PdfPTable table = new PdfPTable(3);
+				// table.setBorderColor(BaseColor.GRAY);
+				// table.setPadding(4);
+				// table.setSpacing(4);
+				// table.setBorderWidth(1);
+			PdfPCell c1=new PdfPCell(new Phrase("Table Header 1"));
+			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			table.addCell(c1);
+			c1=new PdfPCell(new Phrase("Table Header2");
+			c1.setHorizontalAlignement(Element.ALIGN_CENTER);
+			table.addCell(c1);
+			c1=new PdfPCell(new Phrase("Table Header 3"));
+			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			table.addCell(c1);
+			table.setHeaderRows(1);
+			table.addCell("1.0");		
+			table.addCell("1.1");		
+			table.addCell("1.2");		
+			table.addCell("2.1");		
+			table.addCell("2.2");		
+			table.addCell("2.3");		
+			subCatPart.add(table);
+			// now add this to the document
+			document.add(catPart);
+			document.close();
+			} catch(Exception e){e.printStackTrace();}
 *********************************
 pdf :
     fop :
@@ -24492,6 +24806,9 @@ raccourcis shortcuts utiles: (pour les definir: WIndows>Preference>chercher "sho
       CTRL+MAJ+T: trouver un fichier dans les lib      
 Si eclipse ne se lance pas parce qu'il ne trouve pas la jvm java jre jdk alors que c'est pourtant parametre dans le path: externe
     modifier eclipse.ini: -vm [retourchariot]path vers le fichier javaw.exe (inclu) ATTENTION ne pas mettre après -vargs car vargs le prendra en parametre
+dans eclipse.ini on peut rajouter des truststore certificats:
+	-Djavax.net.ssl.trustStore=C:/pathversUnjks.jks
+	-Djavax.net.ssl.trustStorePassword=blablabla
 Quand je debug: 
   F5 = go inside
   F6 = one step
@@ -24544,8 +24861,6 @@ eclipse: si on a une erreur  eclipse JVM terminated. Exit code = 13  eclipse ne 
       Exit code = 1 c pas un java de la bonne version ou du bon 64b ou 32b
 pour demarrer eclipse avec une autre jvm si j'ai le message "version of jvm is not suitable":
 		eclipse.exe -vm "C:\Program Files\Java\jre1.5.0_09\bin\javaw.exe"
-    Si eclipse ne se lance pas parce qu'il ne trouve pas la jvm java jre jdk alors que c'est pourtant parametre dans le path: externe
-        modifier eclipse.ini: -vm [retourchariot]path vers le fichier javaw.exe (inclu) ATTENTION ne pas mettre après -vargs car vargs le prendra en parametre		
 pour demarer eclipse avec plus de memoire si il fait des runtime exception outofmemoryexception
           exemple: "C:\WASCE 2.1.0.1\eclipse.exe" -Xmx1800m ou modifier eclipse.ini a cote de eclipse.exe
 si c'est toujours le meme workspace qui s'ouvre parce qu'on a decoche un bouton:
@@ -24737,13 +25052,18 @@ AFAIRE:capitaliser
  host -T A memoclap.com
  vi /etc/resolv.conf
  docker ps -a
-
 pour savoir quelle est la carte mere
 	sudo dmidecode | grep -A3 '^System Information'
 avoir des infos sur la ram
 	sudo dmidecode -t memory
 savoir la memoire max de ram supportée par la carte mere
 	sudo dmidecode -t 16
+ssd : checker mon disque ssd:
+    windows: christaldiskinfo
+    unix: smartctl
+            apt-install smartmontools
+            sudo smartctl -i /mondrive(pas ma partition ni mon systeme de fichier) // pour lire les infos s.m.a.r.t de mon ssd
+            sudo smartctl -t shortOulong -a /mondrive
 pour faire copy paste du clipboard avec le terminal raccourci shortcut:
 	sudo apt-get install xclip -y
 	et creer les alias suivants:
@@ -24788,20 +25108,20 @@ pour connaitre la temperature du processeur chauffe : tapper sensors
 sudo : // si command not found faire d'abord su - puis apt-get install sudo -y
     sudo -l // pour voir quels sudo je peux executer.
     sudo -L // pour voir la liste des options sudo dispo
-    sudo unecommande //execute cette commande avec les droits de root// si message erreur is not a sudoer: se connecter en root et rajouter l'utilisateur au group sudo
-    sudo su unuser //pour devenir ce user
+    sudo unecommande //execute cette commande avec les droits de root// si message erreur is not a sudoer: se connecter en root et rajouter l'utilisateur au group sudo voir LINKsudoenr
+    sudo su unuser //pour devenir ce user ou mieux: sesu - root
     pour passer en role profile root: sudo su
-    pour éditer le comportement de sudo faire "visudo"
-              visudo: // paramétrage du com portement de sudo
+    pour éditer le comportement de sudo faire "visudo -f /etc/sudoers.d/unnomquejinvente". on peut aussi faire visudo direct mais eviter car ca édite le fichier etc/sudoers directement et c pas bien. Mieux vaut editer les fichiers sous sudoers.d LINKsudoenr
                 Cmnd_Alias  UNALIASCOMMANCETOUJOURSPARUNEMAJUSCULE=commande1,commande2,.... // je définit un alias pour la suite
                 Defaults targetpw  # si non commenté, il demande le mot de passe de l'utilisateur cible sinon il demande mon mot de passe quand je change d'utilisateur
-                ALL           ALL                                  = (ALL)                                        ALL  # ATTENTION! À n'utiliser QUE avec 'Defaults targetpw'!
+                ALL <tab>     ALL      <pasdespace>                =(ALL)  <espace>                              ALL  # ATTENTION! À n'utiliser QUE avec 'Defaults targetpw'!
                 utilisateur   connexionLocaleOuDistanteOuLesDeux   = (quelle(s)Identite(s)IlALeDroitDePrendre)    Quelle,Commandes,Il,PourraAlors,ExecuterSepares,Par,Virgule,Wildcart?possiblesMaisPas*UNALIASCOMMANCETOUJOURSPARUNEMAJUSCULE // je peux mettre mon alias ci dessus ici
                 ou                                                    ou 
                 %groupe(utilisateurs appartenant à ce groupe)         NOPASSWD:
                 lire la suite ici:http://www.linuxpedia.fr/doku.php/commande/su_sudo
 	si message n'apparait pas dans le fichier sudoer faire
 		adduser nomdemonuserAAutoriserPourFaireSudo sudo                
+    pour changer l'editeur par defaut dans visudo et passer de nano vers vi faire update-alternatives-configeditor et choisir la ligne contenant vi
   avant on utilisait "su"
     su // switch ma session dans la connexion d'un autre utilisateur. Par defaut root.
     su toto ou su - toto// je deviens l'utilisateur user toto
@@ -25084,20 +25404,23 @@ pour voir les disques (les montages les partitions)
 pour voir les partitions: 
   more /proc/partitions
 montage des disques parametres au lancement sur (ou à une commande mount avec un seul argument: partition ou repertoire)  
-    cat /etc/fstab ou bien sudo blkid ou lsblk -a --output NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT,PARTLABEL,UUID (-a pour afficher aussi les disques vides) ou lspci pour voir les periferiques 
-      c'est là qu'on declare les montages et lorsqu'on reboot ce fichier est lu pour remonter le volume dans l'arborescence du sys de fichier
+    cat /etc/fstab // fichier qui liste les peripheriques montés automatiquement au demarrage
       fstab on y voit quelquechose comme:
-        Les disques(la partition)   les chemins       mettre_ext3     mettre_defaults
+        Les disques(la partition)   les chemins       mettre_ext3ou4    mettre_defaults
         /dev/xvda1                    /                 ext3            rw,noatime,errors=remount-ro  0    1
         devpts                        /dev/pts          devpts          defaults      0 0
         none                          /proc             proc            rw,nosuid,noexec  0    0
         /dev/xvdb                      /srv/backup      ext3            defaults          0    2
+                                                        3 types de disque formattage formatage possible: NTFS(windows),ext4,FAT32. Attention un transfert de repertoire de ext4 vers ntfs doit toujours se faire dans un tar car ntfs fout le bordel avec les droits des repertoires. Dans le tar c'est protégé
               donc tout ce qui est sous /blabla/blibi va etre dans le disque /dev/xdva1 sauf /srv/backup, /proc et /dev/pts
+        sudo blkid // pour lister les partitions pouvant etre montees.
+        lsblk -a --output NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT,PARTLABEL,UUID (-a pour afficher aussi les disques vides) // pour lister les partitions
+        lspci pour voir les periferiques/disques montés ou pas et leurs partitions
   pour demonter un disque, remonter: 
     umount nom_de_mon_volume_a_demonter (pas sur pour le parametre)    ou bien umount systeme/de/fichier
     umount /srv/backup ou umount /dev/xvdb              
   Donc quand je vais monter un disque en ecrivant: 
-      mount /dev/xvdb: automatiquement il va le monter sur /srv/backup
+      mount /dev/xvdb: automatiquement il va le monter sur /srv/backup (on ne peut monter que des partitions, pas des disques directement)
       EXEMPLE 1:si je fais ça: 
       mount /dev/xvdb /un/repertoie
       puis
@@ -25622,6 +25945,8 @@ raccourcis shortcut commandes: deplacer le curseur mot a mot dessus
 	Ctrl+e fin ligne
 	Alt+b arriere
 	Alt+f avant
+editeur nano :
+        quitter: Ctrl+x
 sur vi : 
 diviser split ecran CTRL+w puis
 	v: cree un nouveau split vertical
@@ -25748,7 +26073,7 @@ pour transformer la case: MAJ -> MIN ou l'inverse: altGR + ~
 
 bash :KSH :
 encoder en base64
-    echo -n blablablba | base64 // -n pour ne pas que echo retourne un retour chario a la fin
+    echo -n blablablba | base64 // -n pour ne pas que echo retourne un retour chario a la fin LINKencodbasesxqatr 
 parser du json avec unix: installer jq
         puis 
             jq .unparamettre unfichiercontenantdujson.json   // si dans mon fichier j'ai {"unparametre":"toto"} va retourner toto
@@ -26060,7 +26385,7 @@ Les levels: 0 eteint,  1  console de secour, 2 console sans reseau,3 avec reseau
 trouver ou se trouver un programme: (besoin de "locate:") (la nouvelle version c'est mlocate  ça marche.)
    installer locate par aptitude si il n'exite pas, 
    Faire updatedb pour mettre à jour la base de donnee de locate 
-   puis locate jetty (par exemple)
+   puis locate jetty (par exemple) pas besoin de wildcard il s'en occupe tout seul
 condition: 
   if [-z bla] //si bla=null return true.
 compter le nombre de fichiers dans un repertoire:
@@ -26077,9 +26402,14 @@ raid :
     raid0: j'ai plusieurs disque mais une seule interface et je crois avoir qu'un seul disque. Si un disque pete je perds tout.
     raid1: j'ai plusieurs disques et l'info est dupliquée entre les deux
     raid1.0 ou 0.1: j'ai au moins 4 disques 2 dupliqués à 2 et une paire correspond pour moi a un seul disque.
-lvm : (et zfs=zol) ce n'est pas une sauvegarde en cas de crash car les snapshot demeurent sur le meme disque
+lvm : (et zfs=zol) ce n'est pas une sauvegarde en cas de crash car les snapshot demeurent sur le meme disque.
     equivalent de git avec des snapshots mais pour les disques unix    
-    
+        PV:physique =partitions hard(ex:sdb, sda...)
+        VG:groupe = groupe de partitions
+        LV Logique = groupe de VG
+        commande à executer en sudo
+        lvdisplay unVGouLV //donne le detail info
+        lvm fullreport // affiche tout
 pour installer des programmes: applications: (le repository miroir local qui lui indique ou chercher les paquets determine aussi la version de l'os. On peut le modifier. C'est le texte /etc/apt/sources.list C'est aussi ce fichier qu'utilise aptitude. Attention a respecter mon code version debian dedans)
     avec apt : apt-get : (sinon il ya aussi la commande yum)
     apt-cache search unelibrairie // pour chercher une librairie que je pourrais puller avec apt-get install
@@ -26095,6 +26425,8 @@ pour installer des programmes: applications: (le repository miroir local qui lui
    	apt-get update
    	apt-get upgrade
 	sudo journalctl --vacuum-time=3d // supprime un peu du journal dattant de plus de 3jours
+    journalctl pour lire le journal en more
+    journalctl -f pour lire le journal en tail -f
     pour savoir quel language utilise un utilisateur
         grep "^utilisateur" /etc/passwd
     pour basculer le user en cours en ksh 
@@ -26190,7 +26522,7 @@ iptables : pour configurer le firewall netfilte de unix
                       cable<--
 gnome :
 	voir la version:ouvrir menu > ecrire "a propos"      
-xfce : xcfe : // bureautique debian :
+xfce : xcfe : // bureautique debian : pour installer un autre desktop comme gnu: tasksel
 	modifier les shortcuts raccourcis clavier: xfce>parametres>gestionnaire de parametres > gestionnaire de fenetre > clavier
 	raccourci shortcut pour demarrer un programme: alt+f2 puis faire fleche vers le bas puis commencer à saisir
 	si le bureau ne s'affiche plus tapper la commande xfdesktop
@@ -34100,7 +34432,9 @@ echo ren %WEB-INF-PAE%\classes\log4j.properties.template
 ren %WEB-INF-PAE%\classes\log4j.properties.template _dev.log4j.properties.template
 ren %WEB-INF-PAE%\classes\_integr.log4j.properties.template log4j.properties.template
 ) else (echo "exit")
-
+pour faire un cd - retour arriere back precedent
+	set OLDPWD=%cd%
+	et cd %OLDPWD% du coup revient en arriere
 ------------------
 pour executer regulièrement une tache on peut utiliser le scheduletaskmanager mais aussi un .bat peut le faire lui meme:
 	:loop
