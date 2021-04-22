@@ -26451,11 +26451,39 @@ raid :
     raid1.0 ou 0.1: j'ai au moins 4 disques 2 dupliqués à 2 et une paire correspond pour moi a un seul disque.
 lvm : (et zfs=zol) ce n'est pas une sauvegarde en cas de crash car les snapshot demeurent sur le meme disque.
     equivalent de git avec des snapshots mais pour les disques unix    
+        commandes à executer en sudo
         PV:physique =partitions hard(ex:sdb, sda...)
+		Creer un PV: 
+			pvcreate /dev/sdb(doit etre un de mes disques affichés par fdisk -l)
+		voir les PVs:
+			pvdisplay // mettre sudo si commande n'existe pas. Chaque bloc affiché est un PV.
         VG:groupe = groupe de partitions
+		creer un VG:
+			vgcreate nomDuVGACreer nomDuPV1ilCommenceParSlashDev nomDuPV2IlCommenceParSlashDev..etc...
+		Ajouter un PV a un VG
+			vgextend nomDuVG nomDuPVIlCommenceParSlashDev
+		voir les VGs:
+			vgdisplay
         LV Logique = groupe de VG
-        commande à executer en sudo
-        lvdisplay unVGouLV //donne le detail info
+        	Afficher les LV:
+			lvdisplay unVGouLVFacultatif //donne le detail info
+		Créer un LV:
+			lvcreate -n NomduLv -L tailleAvecALaFingoExemple3go nomDeMonVGLeMeme
+			Je peux refaire la commande pour un autre LV sur le meme VG
+			lvcreate -n NomduLv2 -L taillego nomDeMonVGLeMeme
+		Ensuite il faut rattacher un LV à un emplacement fichier:
+			mkfs -t ext4 /dev/nomDuVG/NomDuLV (est synonyme de /dev/mapper/nomDuVG-NomDuLV)
+			puis
+			mount /dev/nomDuVG/NomDuLV /un/path/vers/un/fichier
+		Supprimer un LV:
+			umount /un/path/vers/le/repertoire/associé/au/lv
+			lvremove /dev/nomDuVG/NomDuLV  //est definitif
+		Augmenter taille d'un LV:
+			umount /un/path/vers/le/repertoire/associé/au/lv
+			puis
+			lvresize --resizefs --size +5G /dev/nomDuVG/NomDuLV
+			puis refaire le mount
+
         lvm fullreport // affiche tout
 pour installer des programmes: applications: (le repository miroir local qui lui indique ou chercher les paquets determine aussi la version de l'os. On peut le modifier. C'est le texte /etc/apt/sources.list C'est aussi ce fichier qu'utilise aptitude. Attention a respecter mon code version debian dedans)
     avec apt : apt-get : (sinon il ya aussi la commande yum)
