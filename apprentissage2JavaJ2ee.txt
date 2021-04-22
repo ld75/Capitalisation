@@ -218,7 +218,7 @@ cleancoding :cleancode : clean coding :LA SEULE FACON D ALLER VITE C EST D ALLER
               Liskov'sSubstitutionPrinciple: A-parentde->B alors B doit être cohérent avec toutes les methodes et proprietes de A. A ne doit pas proposer des choses que B ne pourra pas faire. B peut faire tout ce que A fait mais à sa façon. Il faut que instances de B puisse prendre la place de instances de A sans problème. LSP est cassé si ya des if sur les types. Donc préférer la Composition à l'héritage: ne plus faire d'heritage: annimal->chien mais bouge->nage->coule voir plus bas prototype LINKpptypeksdf
               InterfaceSegregationPrinciple: faire plusieurs petites interfaces plutot qu'une grande pour qu'il n'y ait pas de methodes qui servent à rien pour certaines classes implementantes (Composition over heritage):un DAO ne doit pas traverser transversallement de la DB vers l'UI
               DependencyInjectionPrinciple: eviter de faire new X() dans une classe pour ne pas être dependant de X: utiliser les interfaces
-              Demeter=DontTalkToStrangers(PourUneClasse): a.toto(x).titi(y).tata()INTERDIT! Faire: a.tata(): chaque methode ne doit servir qu'a faire UN truc et doit avoir son test(petit). Decoupler! Le moins de dependance possible. si on peut pas eviter passer par interface et non par classe. ne pas faire "new classeA" dans "classeB"
+              Demeter=DontTalkToStrangers(PourUneClasse): a.toto(x).titi(y).tata()INTERDIT dans des objets metiers mais dans des objets data on peut violer cette loi. Faire: a.tata(): je dis aux autre classes de faire, je ne leur dis pas quoi faire. Decoupler! Le moins de dependance possible. si on peut pas eviter passer par interface et non par classe. ne pas faire "new classeA" dans "classeB"
                                                                                    |_utiliser plutot des variables intermediaires
               kiss: keep it simple stupid                             
               Packaging: ne pas mettre dans un meme package des classes qui seront dans des composants (jars) differents...(?... a clarifier)
@@ -229,7 +229,7 @@ cleancoding :cleancode : clean coding :LA SEULE FACON D ALLER VITE C EST D ALLER
                     Extends ne doit servir que pour le design pattern strategie strategy(=template) 
              -Object objet: a variables privees et expose methodes pour modifier ces variables|_ca ne peut pas etre les deux en meme temps
             |
-             -DataStructure: n'a pas de methode que des getters et setters publics ou variables publiques
+             -DataStructure: n'a pas de methode que des getters et setters publics ou variables publiques // faire des getters et setters finals permet d'empecher qu'une sous classe reecrive ces methodes: pour respecter le Liskov's SubstitutionPrinciple
              Ne pas gerer les exception: le thrower au niveau le plus haut
              Les classes constant doivent être des classes abstraites. (ne sont pas instanciables et l'implementation est incomplette et sert à ses classes derivees)
              UI n'a pas a etre tester (visuellement): il faut tester le Presenter(objet java)
@@ -480,6 +480,8 @@ nodejs : node.js : node : npm :  (https://www.npmjs.com/package tous les program
             babel converti du javascript recent pour les vieux navigateurs(ES5:vieux) voir LINKBBLE
 si problemes dans npm: https://github.com/npm/npm/wiki/Troubleshooting: on peut par ex supprimer package-lock.json et node_modules et refaire un npm install pour tout remettre.
   installer npm:
+	via aptitude 
+	ou
    aller sur https://nodejs.org/en/download/ (downloader npm: sur internet)
   dans un repertoire faire
   (path/vers/npm)npm init // cree package.json là ou je suis// il me pause des questions pour bien le remplir ATTENTION pas d'espace dans le nom. l'important c'est le entry-point: indiquernomfichier.js qui est le point d'entree. je peux l'executer en faisant node indiquernomfichier.js
@@ -499,6 +501,10 @@ si problemes dans npm: https://github.com/npm/npm/wiki/Troubleshooting: on peut 
             npm config rm https-proxy        
   afficher un module dispo sur le net:
       npm search --name react   ou npm search --name angular
+ si j'ai l'erreur was compiled against a different 
+	juste changer dans package.json la version du module en question
+	ou
+	faire npm uninstall lemoduleEnquestion puis npm install leModuleEnQuestion
  si je suis sous mon repertoire projet et je fais npm install: //-g pour installer dans le repository(globalement sur mon systeme) et non pas dans le projet; --save alors il ajoute la dependance "dependencies" dans le package.json où je suis. avec --save-dev il ajoute la dependance dans le package.json dans "devDependencies" et dans le repertoire qu'il cree node_modules ou je suis: c'est un package que j'installe qui ne sera utile que pour les tests de dev et non pas la prod
         va installer toutes les dependances necessaire du projet (grace a package.json) dans mon repository npm
 mettre à jour npm:// pour installer la derniere version update upgrade
@@ -699,7 +705,7 @@ docker : créer une image (executable)-> builder ->image(classe) devient contain
 		OU
 		-v(mais preferer--mount à-v) $(pwd)(ou un repertoire du host os. S'il n'existe pas le volume est automatiquement créé):/ext-mount (Monte moi le repertoire actuel (pwd) dans le repertoire /ext-mount dans mon container du coup le DRIVER du volume est de type local)
 	par defaut c'est executé sur le reseau bridgé partage entre tous les containers et même le host. Suffit de se connecter dans le container et voir leur IP
-  docker start -ia(comme -it avec run) nomduconteneurARedemarrer // existe aussi docker stop nomduconteneur ou idduconteneur pour stopper un conteneur
+  docker start -ia(ia facultatif c pour mettre en frontal comme -it avec run) nomduconteneurARedemarrer // existe aussi docker stop nomduconteneur ou idduconteneur pour stopper un conteneur
   docker container stop IDDuContainer1 NameDuContainer2... // pour stopper l'execution d'un container (par son ID ça marche mieux voir donc la liste.)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
   docker stop $(docker ps -a -q) // pour stopper tous all tout les containers
   docker inspect nomduconteneur ou nomduneimage | grep networkparex // pour avoir plein de details infos donnees exposedPorts sur mon conteneur ou mon image                                  
@@ -1240,14 +1246,14 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       		git reset pathfichieravecWildcard
 
       git revert -m 1 [hash d'un commit precedent ou d'un commit-merge de branche] // se mettre dans la branche qui a recu le commit ou le commit-merge d'une autre branche. Ca va annuler ce commit ou commit-merge-de-branche et ca va ajouter un nouveau commit dans ma branche actuelle: pratique pour annuler un commit ou un merge du passé anterieur
-      git reset HEAD~ annule/undo le dernier commit. Ne pas le faire après que mon dernier commit ait ete pushe et merge avec l'origin(remote) car cela desynchronise mon local du distant. Si ca a déja été pushé alors faire git reverT: ça recommiT un snap d'avant le commit pourri.
+      git reset HEAD~ annule/undo le dernier commit. Ne pas le faire après que mon dernier commit ait ete pushe et merge avec l'origin(remote) car cela desynchronise mon local du distant. Si je veux quand meme le faire par necessite alors faire git reverT <commitpourri>: ça recommiT un snap d'avant le commit pourri.
                 on peut aussi faire git commit --amend // pour redéfinir changer le message du dernier commit sans besoin de l'annuler
       git reset //LINKresetgit annuler le dernier add
       git reset --hard <identifiantcommit>  revenir en arriere sur identifiantcommit par déplacement du HEAD sur identifiantcmmit et vire definitivement tous les trucs qui ont suivi mais le pb avec cette methode c'est que ca efface l'historique donc faire plutot git revert commitidDontJeNeVeuxPlus // ca vire ce commit là et ce qu'il a fait de mon historique????questcequej'ai voulu dire?
       git reset --hard versionDuTag: ce tag revient dans le mon HEAD/branch + repertoire et vire tout ce qu'il y a eu après
       git reset --hard // sans rien: pour annuler un pull qui vient d'etre fait
     git rebase entre branches: pour que le log soit propre avec une branche en trait et pas qui parte dans tous les sens: a faire a la place de merge sur une meme branche locale/remote
-      git rebase brancheDontJeVeuxRecupererLesCommitsEnUneLigneDroiteLaOuJeSuisMaintenant
+      git rebase brancheDontJeVeuxRecupererLesCommitsEnUneLigneDroiteLaOuJeSuisMaintenant // attention on peut utiliser -Xours ou -Xtheirs apres "rebase" mais c'est l'inverse : ours met les modifs de la branche etrangere en priorité
     git rebase sur une meme branche entre local/remote
     git rebase entre commits://attention si bloque pas hesiter a abandonner et retenter 
       git rebase commitquinebougepasEtQuiVaRecevoirLaSuiteDeLHistoire commitQuiVaMettreSonHistoireALaSuiteDuPremierArgument // a la toute fin faire rebase DernierCommit master pour que le master se remette au bout
@@ -1260,7 +1266,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
         pour supprimer tous les gros fichiers de l'historique pour que je puisse pusher sur github
         si j'ai "error: could not read '.git/rebase-merge/head-name': No such file or directory" faire git reflog // permet de voir l'historique du commit dans lequel on est
             git filter-branch --index-filter "git rm --cached -f --ignore-unmatch(ignoreleserreurs) PathDeMonGrosFichier.webm" (mettre -f si il le demande) --prune-empty --tag-name-filter cat -- --all
-	apres un git rebase il se peut que je ne puisse plus pusher. Alors je peux forcer avec precaution grace à git push --force-with-lease
+	apres un git rebase il se peut que je ne puisse plus pusher. Alors je peux forcer avec precaution grace à git push --force-with-lease // qui veut dire remplace la branche du repo distant par la mienne sauf si entretemps quelqu'un a commité dans le repo distant alors stop.
       git log -- facultatifLePathDunFichierAObserverSeul //voir les commits. N'affiche pas les commits du futur donc voir LINKlkghhrghh
       git log numerodecommit // pour voir que les logs a partir d'un certain commmit
       git log uneautrebrancheQueCelleOuJeSuis -- facultatifLePathDunFichierAObserverSeul
@@ -1324,7 +1330,10 @@ git diff compare mon workspacepasencoreadded avec le dernier commit
             ne pushe pas les repertoires vides: pour ça ajouter juste un fichier avec "x" dedans
             si j'ai error: failed to push some refs to // peut etre j'ai oublié de commité ou bien il faut puller avant
 	gut push --set-upstream(equivalent de -u) origin nomdelabranchequejecreeADistanceSurLeOrigin // quand je suis dans une branche qui n'existe pas sur le repository distant "origin" il cree cette branche dans origin avec le nom nomdelabranchequejecreeADistanceSurLeOrigin
+	si j'ai message [remote rejected] master -> master(pre-receive hook declined) // parce que brache master est protégé sur le repo distant par défaut. dans gitlab faire Open your project > Settings > Repository and go to protected branches, find "master" branch into the list and click "Unprotect" and try again
         git config credential.helper store // pour ne plus qu'il demande le user/pass en https
+	pour remplacer toute la branche locale par la branche remote:
+		git fetch puis git reset --hard @{u}
         git pull: fait automatiquement un git fetch avant si ca na pas été deja fait. Pour récupérer les dernières modifs des collegues et le merger avec mon espace de travail)
         la premiere fois faire git pull origin master
      	git pull --rebase  //comme ca c'est plus propre dans les logs d'une meme branche. LINKlkjgjgjzooa puis corriger les pb de merge > confimer le rebase a la fin et ca fait bien une branche droite
@@ -1581,7 +1590,8 @@ voir les logs git vcs: alt+9
 git pull tous les projets/modules en une seule fois VCS>Update projects... //choisir pour une meme branche de preference la strategie rebase voir LINKlkjgjgjzooa. Si il ne fait que fetch. Penser à cliquer ensuite dans l'onglet VCS du bas pour voir ce qui se passe sinon suis aveugle. Il faudra faire pull après!(voir les fichiers D://git/pull.xls et D://git/pull.bat). 
 si je n'arrive pas à cloner un projet git directement avec intellij (a cause erreur password): cmd windows, me placer dans le bon repertoire, faire un git clone. Revenir sur intellij>settings>VersionControl>ajouter (+) le path du projet dans la liste.           
       pour commiter un nouveau projet: VCS > Import into VersionControl > share project into subversion...>Atention, là je peux choisir le repository mais si je ne fais que ça il va copier les sous repertoires de mon projet donc il faut appyer sur + et mettre le repository+/RepertoireDuProjet (meme si il fait une erreur rouge continuer comme ça)
-git rebase: je suis sur branche1, je fais rebase current onto selected veut ire prend le contenu de branche2 et ramene le ici sur branche1 où je suis
+git rebase: je suis sur branche1, je fais rebase current onto selected veut dire prend le contenu de branche2 et ramene le ici sur branche1 où je suis
+git merge: aller dans menu VCS>git>Merge... ACONTINUER LA CAPITALISATION ET AUSSI REFAIRE CELLE DU REBASE QUI EST PAS TOP ON DIRAIT
 svn:
     parcourir:
     >VCS>BrowseVCSRepository>BrowseSubersionRepository:
@@ -2817,7 +2827,7 @@ PRG :
                     DELETE: ne fait que supprimer un data du système. Peut etre async. voir LINKcodesHttp 20x 
           
 Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme (retournée) dans une fonction est reelement un pointeur vers cette fonction anonyme (la fonction anonyme est une closure.)
-	supporte le sequencage par imbrication de fonctions, la selection par les cond, et les loopboucles par la recursion ou mieux tailrecursion
+	supporte le sequencage par imbrication de fonctions mais aussi comme ca: (...) (...) (...), la selection par les cond, et les loopboucles par la recursion ou mieux tailrecursion
 	installation:
 		curl -O https://download.clojure.org/install/linux-install-1.10.1.536.sh
 		sudo ./linux-install-1.10.1.536.sh
@@ -2836,7 +2846,7 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 			(+ parametre1 parametre2)) // execute la fonction PLUS. on peut mettre virgule a la place de espace. Autre exemple: (defn nomdemamethode [x](+(*3 x)1))
 		ou
 		(def nomdemafonction
-			(fn [parametre1 parametre2] // en fait ca c'est une fonctin anonyme. Equivalent de #(+ %1 %2) autre exemple: (fn [](exec "blah)) equiv: #(exec "blah"); autre exemple: (fn [unseulparam] (exec unseulparam "titi")) equiv: #(exec % "titi)
+			(fn [parametre1 parametre2] // en fait ca c'est une fonctin anonyme. l'utiliser de preference quand elle a des parametres sinon l'equivalent de #(+ %1 %2) autre exemple: (fn [](exec "blah")) equiv: #(exec "blah"); autre exemple: (fn [unseulparam] (exec unseulparam "titi")) equiv: #(exec % "titi)
 				(+ parametre1 parametre2))) // on peut mettre virgule a la place de espace
 	fonctions multyArity = en fait c juste une fonction qui a le meme nom mais au comportement different selon le nombre de params envoyés. Comme en java.
 			(defn unefonction
@@ -2853,13 +2863,39 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 			:quelquechose ;; enum ou clé de map. c'est un symbole. voir LINKcljie Un symbole est toujours truthy TOUJOURS
 			#".*xx.*" ;; # marque une regexp
 			nil ;;null
-			'("a" "b" 10.5 5) ;;liste est multitype. Donc le code clojure est aussi une liste mais on utilise plutot les vecteurs. la liste est utilisée pour les macros
-					'(1 2) équivaut à (list 1 2) // c'(est une liste contenant 1 et 2. Utilisable comme stack
+	LISTES:
+		(count unVecteurOuListeOuMap) // size length
+		pour ajouter des elements à une liste ou un vector: (conj laliste elt1 elt2 elt3)	
+		convertir un truc en vecteur: (vector montruc)
+		array:
+			'("a" "b" 10.5 5) ;;le code clojure etant  aussi une liste il faut mettre ' avant. la liste est utilisée pour les macros. contrairement aux vecteurs, ne sont pas indexees. On recupere les elements par (first laliste) et (rest laliste)
+					'(1 2) équivaut à (list 1 2) // c'(est une liste contenant 1 et 2. Utilisable comme stack: les elements s'ajoutent au debut de la liste
 					(first ou last ou second bli bla blo) // retourne le nième élément de la liste.
+					(peek laliste) (pop laliste) AFAIRE:CAPITALISER
+		vecteur:
 			["a" "b" 10.5 5] ;; vecteur à utiliser comme une liste (["a" "b" 10.5 533] 3) renvoit 533 car un vecteur comme tout objet est aussi une fonction
 						le vecteur peut grossir en rajoutant à la fin. Utilisable comme queue
-			#{"a" "b" 10.5 5} ;; set  (#{"a" "b" 10.5 5} 1) FAUX AFAIRE A TROUVER: renvoit "b" car un set comme tout objet est aussi une fonction
-		(:cle1 1,:cle2 "2",:cle3 3.5) ;;map les virgules sont optionelles. LINKcljie 
+	 					un vecteur est une liste dont les elements sont indexes [2 "3" 4.0] pour recuperer un element du vecteur: (get monvecteur index)
+		set:	
+			#{"a" "b" 10.5 5} ;; set  (#{"a" "b" 10.5 5} 1) FAUX AFAIRE A TROUVER: renvoit "b" car un set comme tout objet est aussi une fonction. ordonne les elements naturellement, pour changer l'ordre utiliser la methode sorted-set-by
+						retirer un element du set:(disj leset "element1" "element2")
+					verifier si un element existe: (contains? monset "element1")
+			pour mettre une liste dans une autre liste à plat: (into listeQuiVaSaggrandir listeDontLesElementsDoiventEtreAjoutes)
+		map:
+			{"cle1" valeur1 "cle2" valeur2} map literals. Pour trouver la valeur d'apres la cle (get monmap "lacle" facultatifValeurParDefautARetournerSiNonTrouve)
+			{:cle1 1,:cle2 "2",:cle3 3.5} ;;map avec des constantes comme cles: les virgules sont optionelles. LINKcljie 
+						Pour ajouter ou modifier une paire cle-valeur à un map (assoc monMap "nouvelleOuExistanteCle" nouvellevaleur) si la cle existe deja ca remplace. 
+						Pour ajouter ou modifier en profondeur: (assoc-in monMapTopNiveau [:cleMapNiveau1 :cleMapNiveau2] "nouvelleValeur")
+						Pour retirer supprimer une paire cle-valeur (dissoc monmap "cleARetirer" ou :clearetirer). 
+						pour recuperer une value ici on utilise pas get mais directement (monmap :lacle facultatifValeurARenvoyerParDefautSiNonTrouve) ou (:lacle monmap facultatifValeurARenvoyerParDefautSiNonTrouve) c pareil
+						pour recuperer value en profondeur si le map a plusieurs niveaux level: (get-in monMapTopNiveau [:cleMap1erNiveau :cleMap2emeNiveau...])
+						pour voir si un element existe dans la map (contains? monmap "lacle")
+						pour recuperer une paire cle-valeur du map (find monmap "lacle") // retourne un vecteur avec les deux.
+						pour recuperer que les cles du map (keys monmap) // retourne une liste
+						pour recuperer que les valeurs de mon map (vals monmap) // retourne une liste
+						pour convertir une liste en map avec des valeurs identiques: (zipmap monmap (repeat "lavaleurquejeveuxpourtous"))
+						pour creer une map ordonnee: (sorted-map "cle1" valeur1 "cle2" valeur2 ....)
+						pour combiner plusieurs maps (merge map1 map2 map3 etc)// si ya des redondances de cle un seul gagne. pour gerer ca utiliser (merge-with lafonctionQuiSertADepartager map1 map2 map2 etc)
 			Struct est un map à considérer comme un objet avec des champs pouvant être instanciés plein de fois avec différentes valeurs dans les  champs
 	pour transformer un parametre de type liste en plusieurs parametres separes à la suite iterer sur un parametre de type liste
 		(apply unefonctionappelee parametreDeTypeListe)  // ca va en realite faire (unefonctionappellee parametredetypeListe(0) parametredetypeliste(1) param... etc etc..) donc mafonctionappellee doit supporter autant de parametres en entrée
@@ -2868,13 +2904,11 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 		(str "a" " " "b")
 	pour convertir nombre en string
 		(str 2) renvoit "2"
-	convertir un truc en vecteur:
-		 (vector montruc)
 	fonction macro:
 		le nom de la methode est "->"
 		voir la doc et CAPITALISER
 	fonctions de streams:
-		map: c'est comme reduce:
+		la fonction map: c'est comme reduce en java:
 			(map inc [1 2 3]) retourne (2 3 4) c.a.d on ecrit (map unemethode untableau) ca retourne un tableau dont chaque element est passé par la methode: donc en fait map fait une boucle loop
 		filter:
 			(filter odd? [1 2 3 4 5]) retourne (1 3 5)
@@ -2903,10 +2937,10 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 	systemoutprint:
 		(println UNTRUCAECRIRE) 
 	equivalent java:
-		(MaClasse."unParametreDuConstructeur") //= new MaClasse("unParametreDuConstructeur") //instancier un objet java
+		(MaClasse. ATTENTIONESPACEICI "unParametreDuConstructeur") //= new MaClasse("unParametreDuConstructeur") //instancier un objet java
 		(.unemethodeNonStatiqueJava linstancejava) //= linstancejava.unemethodeNonStatiqueJava(); appeler une methode non statique. Exemple d'utilisation: #(.length %) // du coup % peut etre un string
-		(ObjetJava/methodeStatique parametre) //=ObjetJava.methodeStatique(parametre)
-		(.-nomduchampNonStatique objetjava) // champ java = objetjava.nomduchampNonStatique
+		(ObjetJava/methodeStatique parametre) //=ObjetJava.methodeStatique(parametre) exemple: (Math/sin x) ici j'utilise java.lang.Math.sin
+		(.-nomduchampOuMethodeNonStatique objetjava) // champ java = objetjava.nomduchampNonStatique
 		(ObjetJava/nomDuChampStatique) // ObjetJava.nomDuChampStatique 
 	pointeurs references dans clojure:
 		1-vars:globales et propres qu'à 1 thread voir LINKclojrvar
@@ -2921,8 +2955,16 @@ Clojure : homoiconicité=le language est aussi de la data. Une fonction anonyme 
 		sudo mv lein /usr/local/bin/lein
 		sudo chmod a+x /usr/local/bin/lein
 		lein version
-		
-	
+		executer demarrer un repl: dans paver package selectionner mon projet> cliquedroit> startRepl, ctrl+entree pour executer
+		enlever supprimer retirer un niveau de parentheses: Alt+s
+		ajouter un niveau de parentheses: selectionner puis touche parenthese ouvrante
+		focus sur REPL: alt+tab+r
+	fonctions pratiques:
+		slurp transform un stream en string
+		envoyer une requete et recuperer son contenu:
+			(defn fetchurl [url]
+				  (slurp (java.net.URL. url)) ou c pareil: (slurp (.openStream (java.net.URL. url))))
+		reduce: (reduce uneFunctionA2Parametres // ATERMINER
 J2EE : jee : jee8 :javaee : EE4J : jakartaee : https://github.com/eclipse-ee4j/jakartaee-tutorial-examples et https://github.com/eclipse-ee4j/jakartaee-tutorial
         <dependency> necessite //LINKjakartayahooo rajouter cette dependance j2ee si erreur MockHttpServletRequest java.lang.ClassFormatError: Absent Code attribute in method that is not native or abstract in class file javax/servlet/ServletException
                <groupId>javax</groupId>
@@ -13920,7 +13962,7 @@ fin c ca que j'ai fait qui marche PAS jusqu'au bout.
                                 ou faire openssl dgst -md5 monfichier
                                 ou bien charger openssl
                   Il n'est possible de signer que de petits documents. Pour signer un gros document on calcule d'abord une empreinte de ce document. La commande dgst permet de le faire.
-                    pour hasher un document:(md5...)
+                    pour hasher un document:(md5 attention est obsolete prendre sh2 ou sh3...)
                     openssl dgst <hachage: -md5 ou -sha1 ou -ripemd160> −out <empreinte> <fichier_entree>
                         donc pour verifier l'integrite d'un fichier:
                             openssl dgst -sha512 apache-tomee-8.0.0-webprofile.zip
@@ -13938,7 +13980,7 @@ fin c ca que j'ai fait qui marche PAS jusqu'au bout.
        keytool :
               http://www.keystore-explorer.org/specifications.html
                       First I have generated the keystore et une paire de cle englobes dans un certif: creer  genererer jks date limite validite 
-               JKS:         pour sha1: D:\Java\jdk1.6.0_45\bin\keytool -genkeypair  -dname "CN=Lurent Duverge, OU=Hr Access, O=Soprahr, L=Paris, ST=Paris, C=FR" -v -alias moncertifpkcs -validity 10800 -storetype pkcs12  -keystore dgac2.p12 -keysize 2048 ou 4096 -keyalg RSA -sigalg SHA256withRSA -storepass mdpmdp -keypass mdpcert
+               JKS:         pour sha1:"D:\Progame Files\jdk1.6.0_45\bin\keytool" -genkeypair  -dname "CN=Lurent Duverge, OU=Hr Access, O=Soprahr, L=Paris, ST=Paris, C=FR" -v -alias moncertifpkcs -validity 10800 -storetype pkcs12  -keystore dgac2.p12 -keysize 2048 ou 4096 -keyalg RSA -sigalg SHA256withRSA -storepass mdpmdp -keypass mdpcert
                                       D:\Java\jdk1.6.0_45\bin\keytool -genkeypair -v -alias aliasdemoncertif -validity 360ou3650 -storetype voircidessous(facultatif) -keystore mon.keystore.p12 -keysize 4096(facttf) -keyalg RSA -sigalg SHA1withRSAparexmpleOuSHA256withRSA(facultatifMaisAttentionAuDefaut) -storepass monpasswordDuTrousseau(facttf) // sert à creer nouveau trousseau ou rajouter une cle dans trousseau existant (il demandera la creation du password de la cle). Dans ce cas -storepass doitEtreLeMdpDuTrousseau
                .P12         pour sha2: D:\Java\jdk1.6.0_45\bin\keytool -genkeypair  -v -alias fondationauteuil -validity 10800 -storetype pkcs12  -keystore fondationauteuilks.p12 -keysize 4096 -keyalg RSA -sigalg SHA256withRSA -storepass fondation2017
                                           (un .p12 peut contenir ou pas une cle privée dedans)
@@ -15837,6 +15879,8 @@ hacking : haking : hack :
        	Feature-Policy: pour dire si j'ai le droit d'executer un type de truc
 		Feature-Policy unsized-media 'self' https://un.site.com; geolocation 'none' camera *;  // lire de droite à gauche: ici: camera marchera depuis n'importe quel autre site, geolocation complettement OFF; unsized-media seulement par moi et un.site.com en https
          xss ://crosssitescripting // ma servlet vulnerable fait executer au navigateur du javascript passé en parametre de ma requete. ce javascript pourrait lire mes cookies (de session!): LINKcooklskjhh LINKc.s.r.f  et le pirate de se connecter à ma place
+			3 types:
+				reflected: user clique sur un lien malicieux qui contient un payload de javascript 
 			securehtml validite champ formulaire field
                     pour s'en premunire faire du @safeHTML 
 			ou faire  org.jsoup.Jsoup.isValid(lechampatester); ou return Jsoup.parse(field).select("script").size()==0 sur les champs pour que du javascript ne puisse pas etre injecté dedans. aussi empecher le javascript d'acceder aux cookies.
@@ -15846,7 +15890,7 @@ hacking : haking : hack :
         CSRF :=XSRF :(CrossSiteRequestForgery :) LINKc.s.r.f (Cross-site scripting appartient à csrf) 
           inciter quelqu'un qui est connecté avec sa session sur le site X à lui faire executer une requette HTTP (genre rm -r*) par javascript caché (dans une image par ex) depuis un autre site web sur le meme navigateur.           
               la parrade est: CORS
-                      - limiter Access-Control-Allow-Origin : ainsi le serveur fait une preflight request method=OPTION qui verifie si cette requete provient de source sure avant de faire la vraie requete.
+                      - limiter Access-Control-Allow-Origin : ainsi le serveur fait une preflight request method=OPTION qui verifie si cette requete provient de source sure avant d'acceper la vraie requete.
                       - la meilleure soluce: Utiliser des jetons de validité dans les formulaires: faire en sorte qu'un formulaire posté ne soit accepté que s'il a été produit quelques minutes auparavant: le jeton de validité en sera la preuve. Le jeton de validité stokés coté serveur dans la session de l'utilisateur est envoyé sur le browsser. Au retour il doit être transmis en paramètre et vérifié côté serveur puis supprimé de la session.
                       - Effectuer une vérification du référent referer dans les pages sensibles: connaître la provenance du client permet de sécuriser ce genre d'attaques. Ceci consiste à bloquer la requête du client si la valeur de son référent est différente de la page d'où il doit théoriquement provenir.
                       - captcha mais tres tres bof ici car lourd pour l'utilisateur: faire un captcha pour chaque formulaire beurk
@@ -21618,6 +21662,7 @@ tuple :bean couple paire deux :
 	depuis java15 records :
 		on peut aussi meme en mettre directement dans une methode.
 			public record MonXuple(int unchiffre, String unTruc){} et c'est tout j'ai automatiquement un constructeur, les getters setters et le tostring que je peux overrider bien sur
+			pas besoin d'implementer equals pour les egalites: meme si deux objets sont differents si leurs valeurs internes sont identiques alors ya egalité (objets-valeurs)
         depuis java10: 
             var x = new Object() {int a = 1; int b =2;} // mais ne marche que à un seul endroit. Si je return cet objet, la haut ils ne retrouvent pas mes champs
             toto = x.a; // toto=1
@@ -26333,7 +26378,7 @@ bon exemplde ksh de lancement de batch:
                                     echo "CLASSPATH: " $CLASSPATH
                                     echo "*------------------- Batch.cfg termine -------------------*"
 rsync :
-    pour faire une syncrho: comme une copie 
+    pour faire une synchro: comme une copie 
         rsync -avrun /var/www/ /srv/data/var/www/ //n pour tester
     rsync -avrun (archive verbose update_cad n'efface pas les plus recents sur la destination n pour faire juste un test /mon/repertoireSource/ monServeurDestinataire:/monRepertoire/Destinataire (NE PAS mettre / ni /* à la fin de dest sinon il syncrho pas tout) (le slash après le source folder c pour dire de ne pas copier le dernier folder dans dest sinon il mettra repertoireSOurce dans Destinataire
     rsync -vru --list-only --exclude 'sarge' --exclude 'theatre' /cygdrive/c/Users/Laurent/Documents/documents/ /cygdrive/e/Mesdocuments
@@ -26366,6 +26411,8 @@ rsync :
                   De local vers serveur                      
                       rsync --ignore-existing -avunr /cygdrive/f/BackupServeurGandiDemeter2/srv/data/var/www/www.wenhuaduverge.com www-data@www.wenhuaduverge.com:/srv/data/var/www/www.wenhuaduverge.com
                   rsync -avu --exclude sons --exclude proc --exclude tmp root@www.wenhuaduverge.com:/srv/data /cygdrive/f/BackupServeurGandiDemeterCASSE/srv/data                                                                                                                                                                                                                                                                                                                                                 
+		  Vers UI
+  		    rsync -avru --exclude '$RECYCLE.BIN' /media/laurent/OUGARIT/ /media/laurent/UUI/
                     Vers Doroty
                     rsync -vrn --exclude 'PHOTOS' --exclude 'Karie' --exclude 'theatre' --exclude 'icecream' --exclude 'avance services' --exclude 'AUDIOLOOPPLUS2' --exclude 'AUDIOLOOPPLUS' --exclude 'AH1*' --exclude 'PE1*' --exclude 'ImagesPhotos' --exclude '*.avi' --exclude '*.MOD'  --exclude 'Cakewalk*' --exclude 'Chinoisfacile' --exclude 'IntelliJ IDEA Community Edition 2017.2.2' /media/laurent/OUGARIT/Mesdocuments/ /media/laurent/Doroty/documents/
                       rsync -vr --exclude 'testcubase' --exclude '*.au' /cygdrive/f/MaMusique/ /cygdrive/e/Mamusique 
@@ -27762,7 +27809,7 @@ euros:
     &#128; ou Alt+0128(windows-1252 sinon &#8364 Unicode) (1252: francais. 1250: tcheque)
 Javascript :
 si j'ai l'erreur
-	cannot access before initialization javascript// regarder si j'ai déclaré/importé ailleurs mon module notemment je l'ai fait ET en html <script module... ET en javascript : import... dans ce cas virer celui du html
+	cannot access before initialization javascript// regarder si j'ai déclaré/importé ailleurs mon module notemment je l'ai fait ET en html <script module... ET en javascript: import... dans ce cas virer celui du html
 si j'ai l'erreur 
 	Only one element on document allowed.
 	au lieu de faire document.appendChild... faire document.body.appendChild...
@@ -27800,7 +27847,7 @@ fetch : LINKsljqffetch
             en mode synchro:
                         async function mamethode() { 
                               const response = await fetch("/hello");
-                              const { greeting } = await response.json(); ou response.text()
+                              const { greeting } = await response.json(); ou response.text().then(function(texte){...pas reussi a utiliser await pour text})
                               this.innerHTML = `
                                   <h2>${greeting}</h2>
                               `;
@@ -27820,6 +27867,7 @@ fetch : LINKsljqffetch
      }
 duree d'une balise audio: 
 	<audio>.... document.querySelector("audio").duration;
+	<audio controls="controls" ontimeupdate = "..." onpause="..." onplay="..." onended="...">
 pour enlever les accents d'un string:
 	return strAccents.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
 ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch). Ajax ne supporte pas les redirection 302 venant du serveur: il faut envoyer un response.status=302 manuellement dans la servlet et traiter avec cote javascript avec un window.location=nouvelleUrlVersOuRediriger
@@ -27867,11 +27915,10 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
 
                     xhr.onloadstart=function(e)
                     {
-                      printStacktrace(req.name);
+                      printStacktrace(req.name); //obsolete voir stacktrace
                       // quand le chargement a demarre
                     };
                     xhr.onload = function(e) { // retour du serveur: "e" c'est progressEvent et "this" c'est la reponse du serveur. SI j'ai besoin de this pour une classe faire LINKbindthisclasseresponse ou bien utiliser le e comme ça: e.target.response e.target.status
-                            printStacktrace(req.name);
                              askValidator.class_AskValidator.record.call(this);
                                if(this.getResponseHeader("Content-type").indexOf("text/html")!=-1) on peut recuperer ça et autre...
                               if (this.status == 200) {
@@ -27968,15 +28015,12 @@ jouer un fichier audio sans objet audio
         				  var req=arguments.callee;
         				  request.onload = function() 
         				  {
-        					  printStacktrace(req.name);
         				    context.decodeAudioData(request.response, function(buffer) 
         				   	{
-        				   	printStacktrace();
         				      soundBuffer = buffer;
         				      playSound(soundBuffer);
     function playSound(buffer) 
       {
-      printStacktrace();
         source = context.createBufferSource(); // creates a sound source
         source.buffer = buffer;                    // tell the source which sound to play
         //source.connect(filter);       
@@ -28166,9 +28210,9 @@ tester le javascript TDD :
                               	it(.skip pour ignorer)('nom du test', () => {
                                     // pour mocker un objet(xhr pour requete ajax par exemple)
                                   un module: pour le spyer
-						en fait pas besoin de jest on peut direct redefinir une methode d'un objet: memoclap.runmachin=async function(){return Promise.resolve("unittest")}; et si c'est memoclap a  une methode memoclap.toto qui appelle elle meme memoclap.runmachin alors pour que ça marche memoclap.toto(){exports.runmachin()} sinon le mock va pointer sur l'origine meme runmachin et non pas le mock mais attention exports n'est pas supporté par les browsers alors le seul moyen que j'ai trouvé pour réussir à le faire marcher sur un browser c'est ca: if (typeof(exports)=="undefined") promese=setAudioSrc(...) else promese=exports.setAudioSrc(...)
-						memoclap.saveActorsNameOnServer=jest.fn(()=>{console.log("aaaaaaaaaaaa")}); // le top pour faire un spy mais n'a pas marché une fois dans un Promise
-						unmodule.unemethode=jest.fn(); // pour que la methode d'un module ne fasse rien
+						en fait pas besoin de jest on peut direct redefinir une methode d'un objet: memoclap.runmachin=async function(){return Promise.resolve("unittest")}; et si memoclap a une methode memoclap.toto qui appelle elle meme memoclap.runmachin alors pour que ça marche memoclap.toto(){exports.runmachin()} sinon le mock va pointer sur l'origine meme runmachin et non pas le mock mais attention exports n'est pas supporté par les browsers alors le seul moyen que j'ai trouvé pour réussir à le faire marcher sur un browser c'est ca: if (typeof(exports)=="undefined") promese=setAudioSrc(...) else promese=exports.setAudioSrc(...) Ne marche pas si dans le run on fait new monmodule avant d'appeler la fonction
+						memoclap.saveActorsNameOnServer=jestPASBESOINMETTREDIRECT"function".fn(()=>{console.log("aaaaaaaaaaaa")}); // le top pour faire un spy mais n'a pas marché une fois dans un Promise. Ne marche pas si dans le run on fait new monmodule avant d'appeler la fonction
+						unmodule.unemethode=jestPASBESOINMETTREDIRECT"function".fn(); // pour que la methode d'un module ne fasse rien
 					
 
 						jest.spyOn(unModule, 'NomDeLamethodeDeCeModule').mockReturnValue(true) // mocker la methode d'un module partout. ici  retournera tout le temps true. Attention ne marche pas si cette methode est appelé sans mettre "this." devant ou module.NomDeLamethodeDeCeModule
@@ -28262,7 +28306,13 @@ tester le javascript TDD :
 				    const validForwNext = jest.fn((mode)=>{page.alert("oui "+mode)});
 				    await page.goto("http://127.0.0.1:8080/webapp/js/widgets/drawerboardTEST.html");
 				    await page.waitForSelector("memoclap-drawerboard"); // attends l'apparition d'un element sur la page avant de poursuivre
-
+				    await (async function(){
+					return new  Promise(resolve=> {
+					    setTimeout(function(){
+					...untruc...
+					    },1000)
+					})
+				    })();
 				    const tooltip = await page.$eval("#forwImg", el => el.getAttribute("tooltip")); // verifier qu'un truc dans le dom est correcte Assertion equal
 				    expect(tooltip).toEqual("Image/film suivant.");
 
@@ -28771,7 +28821,6 @@ pour detecter si navigateur peut lire vorbid audio mp3:
                   }
                   function isDefined(value)
                   {
-                  	printStacktrace();
                   	if (value==undefined || value=="undefined" || value==null || value=="") return false;
                   	else return true;
                   }
@@ -28790,18 +28839,15 @@ pour detecter si navigateur peut lire vorbid audio mp3:
                   }
                   function erreur(e)
                   {
-                  printStacktrace();
                     console.log("erreur");
                     //console.log(e);
                   }
                   function onError(e)
                   {
-                  printStacktrace();
                   console.log(e);
                   }
                   function radioValue(name)
                   {
-                  printStacktrace();
                     var value=-1;
                     var elements = document.getElementsByName(name);
                     for (var i=0; i < elements.length; i++)
@@ -28817,7 +28863,6 @@ pour detecter si navigateur peut lire vorbid audio mp3:
                   
                    function selectOption(element, value)
                   {
-                  printStacktrace();
                   								  for(var i = 0; i < element.options.length; i++) 
                   								  {
                   								    if (element.options[i].value==value)
@@ -28828,13 +28873,11 @@ pour detecter si navigateur peut lire vorbid audio mp3:
                   }
                   
                     function isNull(element, index, array) {
-                    printStacktrace();  
                     return (element == null);  
                   }
                   
                   function existvalue (tableau, valeur)
                   {
-                  printStacktrace();
                     ret= -1;
                     for (var i=0; i<tableau.length; i++)
                     {
@@ -28849,7 +28892,6 @@ pour detecter si navigateur peut lire vorbid audio mp3:
                   
                   function existObjectValue(tableau, valeur,field)
                   {
-                  printStacktrace();
                     ret= -1;
                      if (tableau!=null)
                     {                      
@@ -28871,7 +28913,6 @@ pour detecter si navigateur peut lire vorbid audio mp3:
                     	  //   1 si date_1>date_2
                   	  //  -1 si date_1<date_2	  
                   	  function compare(date_1, date_2){ // hum attention pas sur que ce marche: utiliser plustot une conversion avec dateToMs
-                  	  printStacktrace();
                   	    diff = date_1.getTime()-date_2.getTime(); // getTime retourne les millisecondes depuis 19??
                   	    return (diff==0?diff:diff/Math.abs(diff));
                   	  }
@@ -28891,7 +28932,6 @@ pour detecter si navigateur peut lire vorbid audio mp3:
                   	  //On suppose que la date entree a ete validee auparavant
                   	  //au format dd/mm/yyyy
                   	  function getDate(strDate){
-                      printStacktrace();	  
                   	    day = strDate.substring(10,12);
                   		month = strDate.substring(6,8);
                   		year = strDate.substring(0,4);
@@ -28907,7 +28947,6 @@ pour detecter si navigateur peut lire vorbid audio mp3:
                   	  
                   	function dateToMs(date)
                   	{
-                  	printStacktrace();
                       date=date.replace(" ","");
                       date=date.replace(":","");
                       date=date.replace("-","");
@@ -28928,7 +28967,7 @@ pour detecter si navigateur peut lire vorbid audio mp3:
                         if (hour   > 11) { ap = "PM";        }
                         if (hour   > 12) { hour = hour - 12; }
                         if (hour   == 0) { hour = 12;        }
-                  	function printStacktrace(nom)
+                  	function printStacktrace(nom) //obsolete voir stacktrace
                   	{
                         //afficher les fonctions appelantes
                   		  if (arguments.callee.caller.arguments.callee.caller!=undefined)
@@ -28942,7 +28981,6 @@ pour detecter si navigateur peut lire vorbid audio mp3:
                   	}
                   	function getIndexFromTableByElementValue(arrayName,arrayElement)
                   	{
-                  	printStacktrace();
                   	var ret=-1;
                   	for(var i=0; i<arrayName.length;i++ )
                   	 { 
@@ -28956,7 +28994,6 @@ pour detecter si navigateur peut lire vorbid audio mp3:
                   	}
                   	function getLastIndexFromTableByElementValue(arrayName,arrayElement)
                   	{
-                  	printStacktrace();
                   	var ret=-1;
                   	for(var i=arrayName.length; i>-1;i-- )
                   	 { 
@@ -28970,7 +29007,6 @@ pour detecter si navigateur peut lire vorbid audio mp3:
                   	}
                   	function getIndexFromTableByObjectFieldElementValue(arrayName,arrayObjectFieldElement,fieldName)
                   	{
-                  	printStacktrace();
                   	  var ret=-1;
                   	  for(var i=0; i<arrayName.length;i++ )
                   	   { 
@@ -28984,7 +29020,6 @@ pour detecter si navigateur peut lire vorbid audio mp3:
                   	}
                   	function getFirstKeyFromTable(arrayName)
                   	{
-                  		printStacktrace();
                   		var ret=-1;
                   		for(var i=0; i<arrayName.length;i++ )
                   		   {
@@ -28998,7 +29033,6 @@ pour detecter si navigateur peut lire vorbid audio mp3:
                   	}
                   	  function removeFromTableByElementValue(arrayName,arrayElement)
                   	 {
-                  	 printStacktrace();
                   	  for(var i=0; i<arrayName.length;i++ )
                   	   { 
                   	  if(arrayName[i]==arrayElement)
@@ -29872,7 +29906,7 @@ supprimer tous les fils:
           node.removeChild(node.lastChild);
     }
       
-    localStorage:
+    localStorage : // le javascript n'accede que au localstorage de son domaine
             memoire illimitee dans le temps 
           <script type="text/javascript">
             localStorage.lastname="Smith";
@@ -29888,8 +29922,8 @@ supprimer tous les fils:
             localStorage.getItem("myProjects")!=undefined
             pour supprimer tout le localstorage de mon domain: 
               localStorage.clear();
-    sessionStorage:
-        memoire rattachee a la session de l'utilisateur: ephemere:
+    sessionStorage :// le javascript n'accede que au sessionStorage de son domaine
+        memoire rattachee a la session de l'utilisateur: ephemere: c a d à la fenetre courante
               <script type="text/javascript">
                 sessionStorage.lastname="Smith";
                 document.write(sessionStorage.lastname);
