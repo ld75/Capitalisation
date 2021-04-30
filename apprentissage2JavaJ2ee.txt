@@ -1204,7 +1204,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
         git clone D:/path/repertoireacloner (besoin peut etre faire commit dans ce repository(repertoireacloner) pour l'initialiser) 
     branches: master; develop; etc etc... elles existent en local et sur le repo distant et sont toutes TOUTES indépendantes les unes des autres c a d: je peux avoir en local un master qui push dans le develop distant. Les branches c de la merde. DEVOPS.
         si j'ai (HEAD detached from 351dcab) c'est parce que mon HEAD est orphelin et dans aucune branche(parce que j'ai fait un git checkout sur un commit). faire git stash save "bla"; git checkout master; git merge codeDeMonHeadDetached. Ancienne methode: pour le recuperer dabord le rattacher a une branche temporaire: git branch temp puis git checkout temp. Ensuite il faut ecraser une branche par temp (voir ci dessous)
-      git branch -vv// pour voir toutes les branches et a quel repository origin(origin=remote) elles sont liées(attention ne montre pas toutes les branches en fait. pour les voir toutes git branch -av) et voir quelle branche est activee A8. Ou est mon HEAD. Les branches c la merde. DEVOPS
+      git branch -vv// pour voir toutes les branches et a quel repository origin(origin=remote) elles sont liées(attention ne montre pas toutes les branches en fait. pour les voir toutes git branch -av si toujours pas toutes faire git fetch avant) et voir quelle branche est activee A8. Ou est mon HEAD. Les branches c la merde. DEVOPS
       git branch nomdelabrancheacreer // pour creer une nouvelle branche: ca ne cre pas une branche vide: ca copie la branche actuelle au commit ou je me trouve (meme ce qui n'est pas addé) dans la nouvelle branche. Les branches c la merde. DEVOPS
                                           maintenant je peux checkouter sur cette nouvelle branche ET avant tout faire un commit dessus sinon LINK98530!!!! puis je peux la pusher sur le repo distant: si le nom de la branche local est le meme que sur une branche du repository distant alors il va pusher dans cette branche qui a ce meme nom. Pas mal pour pusher sur une autre branche facilement.
       git branch -d nombrancheasupprimerDeleter // supprimer une branche. Ne pas se placer dans cette branche avant de faire ca.
@@ -1535,7 +1535,7 @@ shortcut pour deplacer le splitpannel du projet: Ctrl+Shift+fleches droite et ga
 si j'ai unexpected end of file ou fin de fichier premature: c parce que j'ai des retours chario crlf au lieu de lf: faire file > line separator
 shortcut pour System.out.println ecrire sout puis tab ou ctrl+espace
 Changer la couleur des instances selectionnées: settings>(editor>color scheme>general pas obligéToutCaEntreParentheses)> chercher "identifier under caret" // j'ai du faire ça car le bleu de fond était trop pale et non visible
-pour voir les dependances depandenc dependency dependencies le diagrame c pourri et en plus c'est que sur ultimate. mieux vaut faire Analyze>Analyze Dependencies....
+pour voir les dependances depandenc dependency dependencies le diagrame c pourri et en plus c'est que sur ultimate. mieux vaut faire Analyze>Analyze Dependencies.... ou Ctrl+alt+maj+u
 ajouter une dependence un pluggin dans le pom: alt+insert
 pour desactiver/activer l'autosuggestion pendant que je tappe: settings> chercher completion > decocher/cocher "Show suggestions as you type"+"insert selectd suggestion by pressing space,dot or other con...."
 pour voir les stats (nombre de lignes de code etc...) charger le plugin de statistiques https://plugins.jetbrains.com/plugin/4509-statistic: on voit tout en bas une nouvelle icone pour les afficher   
@@ -1657,7 +1657,7 @@ evaluate selection  Alt+F8
 retour back precedente edition pannel panel curseur revenir correspond dans raccourci à "Navigate back": ctrl+tab+ fleches ou Ctrl + alt + fleches ou Ctrl + e ou bien ça? ctrl+sift+delete
 		sur gnome faire gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-left "[]" et gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-right "[]" // pour que ca marche
 close tab: Ctrl+F4
-make recompiler projet: Ctrl+F9 eventuellement recharger dependances maven: clique droit sur pom.xml >maven>reimport
+make recompiler projet: Ctrl+F9 eventuellement  si toujours pas toutes faire git fetch avantrecharger dependances maven: clique droit sur pom.xml >maven>reimport
     si maven deconne trop toujours settings>maven>importing> decocher import maven automatically; si ça ne suffit pas: supprimer via explorateur windows tous les .iml et .idea et recréer le projet intellij from scrach
 les cases à cocher profile de la view maven ne servent à rien on dirait. qu'à montrer les profils dispos.
 parcourir tabs de la vue view active: alt right et alt left
@@ -1701,7 +1701,7 @@ pour modifier un type de fichier source: en faire un source, un repertoire de te
 erreur error details probleme explication Ctrl+F1
 search trouver rechercher partout Ctrl+shift+f // si ne marche plus bien, arreter intellij, supprimer .idea et redemarrer car il ne reindexe plus
 	pour conserver l'historique de recherche: tab find > roue crantée > open results in new tab
-	pour eclure un fileMask: mettre ! devant mon filtre fileMask
+	pour exclure excepter sauf un fileMask: mettre ! devant mon filtre fileMask exemple: !*Test.java
 recherche trouver search partout meme les noms de methodes fonctions: maj maj
 afficher toutes les erreurs problemes: pour les voir il faut faire un build
 parcourir atteindre erreurs problems F2/Maj+F2
@@ -1740,6 +1740,7 @@ autocompletion Alt+Maj+Espace ou Ctrl+Espace
 fille fils methode sous classe: Ctrl+Alt+B
 Acceder à la methode de la sous classe implementant l'interface: Ctrl+b ou Ctrl+Alt+b
 generer la methode d'une sous classe dans l'interface: ajouter @Override et faire alt+entree sur l'erreur affichee > pull upSelectionner de plus en plus Ctrl+w
+pour selectionner toute la ligne j'ai cree un raccourci: shift+!
 commenter/decommenter Ctrl+barre oblique Ctrl+maj+barre oblique DU NUMPAD!
 
 Audacity:
@@ -5497,6 +5498,7 @@ enleve expres
 pour faire des gif animes: 
   imageReady
 Css :
+flip horizontalement: transform: scaleX(-1);
 pour conserver les proportions d'un div:
 	width:une largeur à mettre
 	aspect-ratio 1/1 // ducoup ca reste carré
@@ -10165,6 +10167,8 @@ MYSQL :
                                           alter user 'root'@'localhost' identified by 'nouveau password';
 		faire un update de plusieurs champs 
 			update toto set a=b,c=d...
+			update de date:
+				update ..... ladate = '2020-12-24'
     sur unix: 
     cd /var/run/
     /var/run/mysql -uroot -p
@@ -15981,7 +15985,7 @@ letsencrypt en shell avec dehydrated :
             WELLKNOWN=path/vers/le/repertoire/.well-known/acme-challenge  // dans ce repertoire je dépose le fichier texte token de preuve que j'ai la maitrise du serveur (je peux utiliser un alias apache si besoin LINKaliasdlkjsdfapche)
             CA="https://acme-staging.api.letsencrypt.org/directory" // url de test ACMEv1 (pour ne pas utiliser directement la prod letsencrypt)
             CA="https://acme-staging-v02.api.letsencrypt.org/directory" // url de test ACMEv2      
-    domains.txt contient:
+    domains.txt contient: (pour memoclap et eraspot gospeech je dois remplacer domains.txt soit par domains-memoclap.txt soit par domains-eraspot.txt et modifier le fichier de config voir les commentaires)
         unautredomaine.net www.unautredomaine.net bidule.unautredomaine.net > aliasducertificatassocieacestroisdomaines // le certificat est stocké sous CERTDIR/aliasducertificatassocieacestroisdomaines
         *.jepeuxutiliserwildcardsurnomdedomaine.com > aliascertificat
         mondomaine.org >aliascertificat // exemple le plus simple
@@ -16759,7 +16763,7 @@ junit3 : junit 3 : Version 1.3:
       	
 
 tests : mocks :
-	mocker la methode d'une classe qu'on test: LINKmockmethodeunclebob et si c'est une interface que je veux mocker je peux faire que ma classe elle meme implemente l'interface ou meme plusieurs pour toutes les spyer/mocker
+	mocker la methode d'une classe qu'on test: LINKmockmethodeunclebob et si c'est une interface que je veux mocker je peux faire que ma classe de test elle meme implemente l'interface ou meme plusieurs pour toutes les spyer/mocker
 		dans le test:  
 			MaClasseTesteeEtStubeeEnMemeTemps = new MaClasseTesteeEtStubeeEnMemeTemps{
 									protected String laMethodeStubee() // attention ne marche que si la methode n'est pas private
@@ -22117,7 +22121,7 @@ pour faire un message avec des {0}{1}{2}...  qui sont remplace par des strings: 
           MessageFormat form= new MessageFormat(  "The disk \"{1}\" contains {0} file(s).");
           String result = form.format(arguments);
 ou bien 
-   String toto = String.format("%4$-5S(PASDESPACEICI)%3$2s(PASDESPACEICI)%2$2s(PASDESPACEICI)%1$2s", "a","b","c","dd"); //%argumentNumeroCommenceParUn$-tailleMinARespecterAjouteEspaceSiPlusPetitObligatoire (si l'argument est plus grand que -xS il ne le tronque pas) S pour convertir tout en uppercase ou s pour respecter la case casse
+   String toto = String.format("%4$-5S(ESPACEICIFACULTATIF)%3$2s(ESPACEICIFACULTATIF)%2$2s(ESPACEICIFACULTATIF)%1$2s", "a","b","c","dd"); //%argumentNumeroCommenceParUn$-tailleMinARespecterAjouteEspaceSiPlusPetitObligatoire (si l'argument est plus grand que -xS il ne le tronque pas) S pour convertir tout en uppercase ou s pour respecter la case casse
    retourne DD     c  b  a                                                                                   |                                                                               |
    exemple:                                                                                                 (-): les espaces sont a droite. si rien les espaces sont a gauche                x doit etre superieur à 0 mais le nombre d'espace visible sera x+1 donc je dois mettre nombreDespaceVoulu-1 
    logger.warn("User "+String.format("%s %s %s", tPrincipal.getNom(),tPrincipal.getLogin(),tPrincipal.getEmail())+ "in webservice has no roles");
@@ -24652,7 +24656,22 @@ pour retoucher un fichier excell et l'envoyer en response: avec f1j11swing.jar s
 
 		return csvReader;
 ---------------------------
-
+imprimante : brother wenhua sur debian
+installation des drivers:
+cd Téléchargements/
+ sudo dpkg -i --force-all mfcj4620dwlpr-3.0.1-1.i386.deb  //telecharger et installer ces drivers 
+ dpkg -l | grep Brother // pour verifier que le driver est bien installé
+ sudo vi /etc/printcap // modifier ce fichier (voir la doc sur le site web de brother: besoin lire sur l'imprimante son adresse ip)
+ sudo dpkg -i --force-all brscan4-0.4.10-1.amd64.deb  // pour scanner installer ce driver
+ sudo dpkg -l | grep Brother
+ hostname // connaitre le nom de ma machine pour la commande ci dessous
+ brsaneconfig4 -a name=debianlaurent model=MFC-J46200W ip=192.168.0.16 //modele et adresse ip du scanner
+ chmod 777 brscan-skey-0.3.1-2.amd64.deb // logiciel de scan supplementaire
+ 1144  sudo dpkg -i --force-all brscan-skey-0.3.1-2.amd64.deb 
+ 1145  dpkg -l | grep Brother
+ brscan-skey // demarrer le dameon pour la reception de scans
+ brscan-skey -l // verifier que le daemon est bien démarré
+	maintenant sur l'imprimante pour scanner je choisis scan> fichier sur ordinateur > mon ordi et la (j'ai ouvert gimp pour etre sur) ca va ouvrir direct sur mon pc l'image	
  
 DEVOPS : 
     "Mutability of system is enhanced by immutability of its components"
@@ -26479,7 +26498,7 @@ lvm : (et zfs=zol) ce n'est pas une sauvegarde en cas de crash car les snapshot 
 			umount /un/path/vers/le/repertoire/associé/au/lv
 			lvremove /dev/nomDuVG/NomDuLV  //est definitif
 		Augmenter taille d'un LV:
-			umount /un/path/vers/le/repertoire/associé/au/lv
+			umount /un/path/vers/le/repertoire/associé/au/lv //facultatif de faire un umount d'abord.
 			puis
 			lvresize --resizefs --size +5G /dev/nomDuVG/NomDuLV
 			puis refaire le mount
@@ -27307,6 +27326,8 @@ reseau tracer:     utiliser fiddler (onglet inspector) wireshark whireShark; sni
            Pierre-6 unite=donnee *Presentation chiffrement/dechiffrement 
           *Alain -7 unite=donnee *Application (http))
     TCPIP TCP/IP est un autre standard + simple(n'a que les * ci-dessus) qui ressemble à OSI. TCPIP c ce qui est utilise pour Internet.
+fiddler :
+	pour modifier une requete et la renvoyer: de la gauche la dragdroper dans l'onglet compose à droite (le bouton execute va alors s'afficher) et avant d'appuyer sur execute je peux modifier la requete/
 proxy :et reverse proxy :
         pour se connecter : http://proxypac.renault.fr/proxy.cgi
       proxy: (sert à aller sur internet avec un contrôle) 
@@ -28303,7 +28324,7 @@ tester le javascript TDD :
                       afterAll(() => {
                         return clearCityDatabase();
                       });
-		execution: LINKjestexecute: sous mon projet avec package.json faire npm test cheminfichieratester ou  ./node_modules/.bin/jest monfichierdetest.test.js
+		execution: LINKjestexecute: sous mon projet avec package.json faire npm test cheminfichieratester ou  ./node_modules/.bin/jest monfichierdetest.test.js du coup je peux faire mon testsuite comme ça
            jest+puppeter : pupetter : pupeter : puppetter : tests online facon selenium
                 faire 
                 npm i --save-dev puppeteer // pour utiliser pupetter au moins.
@@ -28425,6 +28446,7 @@ ES6 :modules: une page html/js peut importer une page html/js qui importe aussi:
 		const {unprop,unautreprop,troisiemeprop:nomfinal} = unautrepbjet // equivaut à faire unprop=unautreobjet.unprop, unautreprop=unautreobjet.unautreprop,nomfinal=unautreobjet.troisiemeprop ATTENTION les noms de variables doivent etre les memes sinon ca ne marche pas
 		du coup une methode peut retourner PLUSIEURS variables: 
 		let {indexprohtmlText, htmltemplatesText} = unemethode(); et unemethode(){....return {indexprohtmlText, htmltemplatesText}; // ca s'appelle je crois destructuration
+		ou si marche pas let unobjet = unemethod(){return {truc,muche}) du coup apres je fais unobjet.truc et unobjet.muche
 		ou 
 		let lastOuvreBouche=0;
 		let lastTalkingActor=0;
@@ -30115,7 +30137,8 @@ tableaux suite:
        function isNull(element, index, array) 
        {  
                 return (element == null);  
-       } 
+       }
+ tableaufinal=talbeau1.concat(tableau2) // ca fait un pushall flat appati aplati tous les elements de talbeau 2 et du tableau1 sont ajoutés dans tableaufinal
   pop supprime dernier element tableau. push ajoute dernier element tableau; shift supprime premier element tableau et decale le reste (retourne la valeur supprimee). unshift: ajoute???premier element tableau et decalle le reste
   attention push renvoit non pas l'array mais ce qu'on a ajoute
   pour remplacer les elements d'un tableau: array.splice(0,5,"lkf","lkjfs","sdlfkj,"olkj","lkjsdf"); // de l'element 0 pendant un nombre 5. Liste des elements qui remplacent.(facultatif)
@@ -30699,7 +30722,7 @@ webcomponent :webcomponents : web-components : web components : custom elements 
 	pour avoir le nom de la classe de la balise d'un customelement custom-element webcomponent: this.localName ou this.tagName
 https://developers.google.com/web/fundamentals/web-components/customelements#attrchanges
  au final dans mon html j'aurais:
- <script src="laurent-moncomponent1.js"/>  ou 	<script type="module" src="laurent-moncomponent.js"></script>
+ <script src="laurent-moncomponent1.js"/>  ou 	<script type="module" src="laurent-moncomponent.js"></script> ou <script type="module">import button from '../../../webapp/js/widgets/button.js';</script>
   <laurent-moncompoentn1 blabla="toto"></laurent-moncompoentn1> // toujours mettre la balise fermante
   dans laurent-moncompoentn1.js j'ai: import<-customcomponent(shadowdom(template))
       template:
