@@ -1,7 +1,7 @@
 Darras123Baroco123Petit(?=.*string)(?=.*plusieurs)(?=.*lignes)
 AFAIRE :
     Entretien:
-        qu'est ce que rest, architecture ntiers, polymorphisme, mvc, dto, bdd: gerkin  
+        qu'est ce que rest, architecture ntiers, polymorphisme, mvc, dto, bdd: gerkin(non est maintenant bof d'apres michael azerhad)
         voir vert.x; kubernetes elastisearch, vuejs reacx
         Afaire go, play, ngix 
         bootstrap=tweeter; materialUI
@@ -1302,7 +1302,7 @@ git diff compare mon workspacepasencoreadded avec le dernier commit
       git checkout pathfichiermodifieMaisPasAdded //undo retour recupere annuler mes modifs 
       git checkout numerodecommit pathdufichierARecupereDunCommitPassé
       git checkout <nom_du_tag> pour revenir à une ancienne version// ne marche pas si je veux remplacer mon working directory modifié par le dernier commit: dans ce cas faire git chekout -- pathAvecWildcardDesFichiersQueJaiModifieDansLeWorkSpaceMaisQueJeNaiPasAdded (undo) Linkcheckout
-      git checkout -f <nom_du_tag> pour ignorer le message "The following untracked working tree files would be overwritten by checkout" ATTENTION d'avoir commité avant et d'etre sur que le warning ne parle que de fichiers dont je m'en fous. LINKcheckoutquandmeme  
+      git checkout -f <nom_du_tag> pour ignorer le message "The following untracked working tree files would be overwritten by checkout" ATTENTION d'avoir commité avant et d'etre sur que le warning ne parle que de fichiers dont je m'en fous. ou faire d'abord git reset --hard @{u} si c'est pour un pull que j'arrive pas à forcer LINKcheckoutquandmeme  
       si j'ai l'erreur "Please commit your changes or stash them before you merge." quand je pull: soit je stash soit je LINKcheckoutquandmeme
       git stash save "<message a ecrire>"// sauve mes repertoires dans un truc temporaire et revient à la version du dernier commit.
           puis git pull puis resolve tout (il merge ).
@@ -10521,7 +10521,7 @@ pour desactiver une contrainte:
 			 alter table TA_TABLE disable constraint TA_CONTRAINTE;
 pour reactiver une contrainte:
 			 alter table TA_TABLE enable constraint TA_CONTRAINTE;
-    
+   ORA-28040 c'est juste que je n'utilise pas la bonne version de la librairie driver cliente par rapport à la base de donnée oracle 
     si j'ai l'erreur oracle ORA-01034 Oracle not available
     il faut faire 
     svrmgrl 
@@ -16434,13 +16434,6 @@ pour faire du ldaps :
                                     C - Pour que la "paging method" fonctionne j'ai du aussi overrider la classe PagedResultsDirContextProcessor. J'ai appele la nouvelle classe CustomPagedResultsDirContextProcessor AF recuperer
     
                                                             duplusprecis---->>>>>au plushaut
-BDD :
- Exemple: 
-	Scenario: Les employes au travail à l'heure doivent 	etre paye de moitiee plus pour plus de 40 heures
-	Given: un employe au travail a l'heure avec un salaire de 12$/h qui a soumis un CRAM de 52 heures la semaine dernière
-	When: Payroll run
-	Then: le salaire sera de 696$ avec xxxxetc etc...
-        les tests sont ecrit sous forme de tableau en HTML et passent au vert avec Fitness sans parler dutout de GUI. Le buisness alanist doit savoir rediger de tels tests
 SELENIUM :(mettre les -D avant le -jar) (pour les tests d'integration: utilisation de failsafe) Autre solution: Jest / Pupetter puppetter puppeter ou Cypress ou Katalon Recorder
 "%JAVA_HOME%\bin\java" -Dhttp.proxyHost=172.26.80.141 -Dhttp.proxyPort=3128 -Dhttp.proxyUser=p036782 -Dhttp.proxyPassword=rcwkdr2 -jar selenium-server.jar -interactive -multiWindow
 "%JAVA_HOME%\bin\java" -jar selenium-server.jar -interactive -multiWindow
@@ -16498,11 +16491,13 @@ cmd=open&1=http://www.google.com/webhp&sessionId=162675
                   }
               }
                       	
-                                  
+TDD :                                  
 test :les tests : Linktestdevopsç9349
-  unitaire: isolé, rapide, test ce que le developpeur attend: ils doivent couvrir un max car rapides
+	on ne teste pas une methode mais un comportement
+  unitaire: tests independants les uns des autres(c pour ça qu'une db ou un filesystem PARTAGES ne doit pas exister parmis tests), rapide, test ce que le developpeur attend: ils doivent couvrir un max car rapides
             microtests: test juste une fonction ou petit groupe de fonctions
             functionaltests: plus large que microtest avec mocks pour mocker les composants lents
+  si j'ai besoin de tester une methode privée d'abord me poser la question si cette methodes est bien un behaviour. Si oui je la met publique si non je remonte un niveau du dessus pour ne pas à faire privée->publique
   acceptance: peut etre connecte à l'exterieur(database), test ce que le client attend: est plannifié et testé par l'eaquipe UAT
   integration:connecte à l'exterieur(database), test connecté avec tous les systemes externes de prod: reduire leur nombre car lents. DOivent etre joués en parallele avec les performance tests. Ne doivent pas tester business rules mais seulement que tout est bien parametré
   performance tests: à mettre en place dès le début d'un projet car complexes à mettre en place. (assert swatch durée < oldvalue)  
@@ -16510,7 +16505,7 @@ test :les tests : Linktestdevopsç9349
                                               ||         ||
                                               chef  ->   food-critic
 JUNIT : (pour les tests unitaires c mieux d'utiliser le plugin maven surefire)// parce que ça génère des fichiers xml de rapport de tests.voir aussi LINKcucumberldfj si mes tests maven mvn ne s'executent pas regarder dans les impots si j'importe pas une mauvaise librairie de test
-TDD : existe mutationTest= PIT test: pitest.org: AFAIRE: essayer ça
+ : existe mutationTest= PIT test: pitest.org: AFAIRE: essayer ça
     inutile pour tester l'UI, l'accès à des fichiers (à isoler dans methodes non testees)
     1er test doit etre Degenerate test: tester la base de la base sans rien faire dans code et avancer petits pas par petits pas aux suivants sans inclure les dépendances necessaires. Ne pas viser l'objectif. Tout doit pouvoir etre mocké
     Je ne peux dev code tant que j'ai pas un test qui echoue d'abord
@@ -16929,8 +16924,16 @@ JMockit :(le top car permet de tester l'intestable)>Mockito>EasyMock>Jmock AFAIR
                             }
                             }
                           }
+BDD :
+ Exemple: 
+	Scenario: Les employes au travail à l'heure doivent 	etre paye de moitiee plus pour plus de 40 heures
+	Given: un employe au travail a l'heure avec un salaire de 12$/h qui a soumis un CRAM de 52 heures la semaine dernière
+	When: Payroll run
+	Then: le salaire sera de 696$ avec xxxxetc etc...
+        les tests sont ecrit sous forme de tableau en HTML et passent au vert avec Fitness sans parler dutout de GUI. Le buisness alanist doit savoir rediger de tels tests
                         
-cucumber : il fait ce que fait junit mais permet à des non techniciens de comprendre les tests.LINKcucumberldfj 
+cucumber :ATDD remplace jira: c'est de la doc business de feature plugée au code source et donc permet à des non techniciens de comprendre l'avancement grace aux tests sous-jacents.LINKcucumberldfj 
+		n'est pas fait pour tester. les tests c'est le TDD qui s'en occupe. (je crois que les fichiers features c'est des gerkins:bof aujourd'hui d'apres Azerhad)
       Feature: action globale
         Scenario: User case label
           Given quand machin fait ça
@@ -18098,7 +18101,8 @@ logs :logguer : logger :tracer :
                         au début quand le programme se lance il faut appeler 
                             HandlerForGeneralLogger.init();
                         et puis n'importe où ailleurs: 
-                            HandlerForGeneralLogger.LOGGER.log(Level.SEVERE,"Erreur",e+ Utils.printStackTraceOnLogs(e));
+                            HandlerForGeneralLogger.LOGGER.log(Level.SEVERE,"Erreur",e+ Utils.printStackTraceOnLogs(e)); ou mieux pour print le stacktrace:
+				logger.log(Level.SEVERE,exception.getMessage(),exception);
 
 slf4j : (vieux voir LinkLogutils? non.)Bonne methode copier L'interface  jdk.internal.instrumentation.Logger;(a améliorer car n'accepte que des strings) et créer son propre logger (je ne peux pas l'utiliser dans java10) qui pourra s'appuyer sur slf4j par exemple ou n'importe quoi dautre
 }
@@ -19945,7 +19949,7 @@ pour logger un prepared statement de manière d'un select:
                             			throw e;
                             		} finally {
                             			try {
-                            				if (resultSet != null) {
+                            				if (resultSet != null) { // resultSet et son preparestatement doivent etre toujours fermé au meme level et au meme moment sinon c'est le bordel avec oracle: il fait des exceptions au resultset.next()
                             					resultSet.close();
                             				}
                             			} catch (Exception e) {
@@ -20890,6 +20894,8 @@ lambdas : lambda : lambdas expression :     (lire http://labs.excilys.com/2014/1
                                                    .unelisteDuneInterface.stream().map(i->(ComponentGeneric)i)... //en un autre casting
                                                    convertir une observablelist observable liste en liste:
                                                     observableliste.stream().collect(Collectors.toList());  
+		pour recuperer le dernier last element d'un stream: 
+			String lastFileName = stream.reduce((first, second) -> second).orElse(null); // renverra null si la liste ne contient aucun element
 		pour faire un forEach avec l'index
                     IntStream.range(0, laListe.size())
                             .forEach(index -> unemethode(laliste, index));
@@ -21663,10 +21669,13 @@ Utils : Utils java :
 			else {progression[0]=0;SOUT(aribaFileId)
 			
 tuple :bean couple paire deux :
-	depuis java15 records :
+	depuis java15 records :  LINKobjerlkb
 		on peut aussi meme en mettre directement dans une methode.
 			public record MonXuple(int unchiffre, String unTruc){} et c'est tout j'ai automatiquement un constructeur, les getters setters et le tostring que je peux overrider bien sur
-			pas besoin d'implementer equals pour les egalites: meme si deux objets sont differents si leurs valeurs internes sont identiques alors ya egalité (objets-valeurs)
+			pas besoin d'implementer equals pour les egalites: meme si deux objets sont differents si leurs valeurs internes sont identiques alors ya egalité (objets-valeurs value object objet valeur)
+			Bonne pratique: ILS DOIVENT ETRE immutables
+			pour faire des clones utiliser le pattern builder ou essence
+			peuvent contenir des operations business dans leurs methodes:exemple:Money contient add ou Email contient verifyFormat 
         depuis java10: 
             var x = new Object() {int a = 1; int b =2;} // mais ne marche que à un seul endroit. Si je return cet objet, la haut ils ne retrouvent pas mes champs
             toto = x.a; // toto=1
@@ -24665,14 +24674,16 @@ cd Téléchargements/
  sudo dpkg -i --force-all brscan4-0.4.10-1.amd64.deb  // pour scanner installer ce driver
  sudo dpkg -l | grep Brother
  hostname // connaitre le nom de ma machine pour la commande ci dessous
- brsaneconfig4 -a name=debianlaurent model=MFC-J46200W ip=192.168.0.16 //modele et adresse ip du scanner
+ brsaneconfig4 -a name=debianlaurent model=MFC-J46200W ip=192.168.0.14 //modele et adresse ip du scanner
+ brsaneconfig4 -r debianlaurent //pour supprimer une config si j'ai besoin de refaire la commande ci dessus avec une autre adresse IP
  chmod 777 brscan-skey-0.3.1-2.amd64.deb // logiciel de scan supplementaire
  1144  sudo dpkg -i --force-all brscan-skey-0.3.1-2.amd64.deb 
  1145  dpkg -l | grep Brother
  brscan-skey // demarrer le dameon pour la reception de scans
  brscan-skey -l // verifier que le daemon est bien démarré
+brscan-skey -t pour arreter le daemon si j'ai besoin de le redemarre apres une modif de configuration
 	maintenant sur l'imprimante pour scanner je choisis scan> fichier sur ordinateur > mon ordi et la (j'ai ouvert gimp pour etre sur) ca va ouvrir direct sur mon pc l'image	
- 
+	je peux modif les params sur http://192.168.0.16/scan/scantomedia.html 
 DEVOPS : 
     "Mutability of system is enhanced by immutability of its components"
  voir Linktestdevopsç9349 et LINKDevopslksjqgfvmlka
@@ -24705,7 +24716,7 @@ DEVOPS :
  Run tests auto à chaque commit (et non pas periodiquement)
  les environnements aussi doivent être dans versionControlGit-svn. Sont versionnés.
  Si pb detecté pendant livraison: feedback(a chaque livr) info a transmettre à tous.(pas blamer mais informer)
- Chaque jourou chaque soir ou lors meeting(avec les devs+ops): ce que j'ai fait hier, ce que je fais aujourd'hui, ce qui m'empêche d'avancer
+ Chaque jour ou chaque soir ou lors meeting(avec les devs+ops): ce que j'ai fait hier, ce que je fais aujourd'hui, ce qui m'empêche d'avancer
  meeting fin d'un cycle de dev: ce qui a fonctionné, ce qui peut etre amélioré
   Tout le monde (Dev et Ops) utilisent le meme mantis
   chat avec historique et possible à plusieurs. 
@@ -24719,12 +24730,15 @@ DEVOPS :
                     ServAppl servWebBlue____
            1seuleDB/                        \_loadbalancer ne dirige que sur serveur Blue les clients. et sur serveurGreen l'équipeDev. tous les deployement se font d'abord sur serveur Green puis quand on a bien testé. Bascule sur ServeurGreen. On a developpe pour que DB soit la meme car on fait extensions et non pas modifs de la DB. bascule le trafic sur serveur Green et dorénevent les push se font sur serveurBlue.
                    \ServApp2 servWebGreen                                                                                                                                                                                                                                                                                                                                               
-                
-        
-  APPLICATION-BASED-releasepattern: (=darklaunching) 
-            chaque evol est accessible en prod qu'à un nombre limité de personnes (besoin modif code applicatif pour ça. 1% des clients + Tous les devs + 50% des admins par ex) et au fur et à mesure des tests on ouvres les fonctionnalités à tout le monde via modif de conf prise en compte à chaud. Rollback facile.
+ c) Feature flipping
+	on est cap d'activer/desactiver des features grace au dev déjà fait préalablement cap de s'activer ou pas selon une conf               
+
+ d)darklaunching: l'evolution est testée en live en prod de manière invisible pour les utilisateurs pour etre sur que les perfs sont ok
+ e) APPLICATION-BASED-releasepattern:=canary release 
+            chaque evol est accessible en prod qu'à un nombre limité de personnes sur nouveaux serveurs N+1 (besoin modif code applicatif pour ça. 1% des clients + Tous les devs + 50% des admins par ex) et au fur et à mesure des tests on ouvres les fonctionnalités à tout le monde via modif de conf prise en compte à chaud. Rollback facile.
             implique que en horsprods toutes les nouvelles fonctionnalites soient à ON pour tous. pour etre sur que qui peut le plus peut le moins
-  RUN:
+
+  RUN: ne pas faire de tests de perfs car c'est jamais realiste. Mais etre cap d'observer ce qui se passe voir (b)
     monitor envPRODouRECouEtc... doit etre très dispo. Plus que l'env lui meme.
     Centraliser les logs et metrics de tous(DB,app,builds,deploiementMVN....) au meme endroit. Logs rotation auto, deletion auto. voir linux syslog -> donnees statistiques/logs + durees exec ->(StatsD+Graphite accessible a tous)->conf alertes->notifications auto(mail+(jenkins+catlight))
           si Docker ne pas loguer dans des fichiers mais dans stderr et stdout et laisser docker gerer (???)
@@ -25659,7 +25673,7 @@ pour compter le nombre de lignes renvoyees par un find par exemple: find . -name
 uname -a nom machine etc...
 stty: (config clavier)
 xterm (x terminal) (peut etre besoin faire un export display avant?)
-si je veux  voir contient contenu zip ce qui a dans un .jar: jar -tvf nomdujar.jar | more
+si je veux  voir contient contenu zip ce qui a dans un .jar: jdk/bin/jar -tvf nomdujar.jar | more
 pour extraire tout le jar: jar -xvf nodujar.jar (je pense: xvf)
 sous unix on peut faire une liste de commandes separees par un ";"
 tar est un type de compression puissant
@@ -27739,7 +27753,7 @@ pour qu'un objet a une fleche multidirectionelle quand on place le curseur curso
       this.style.cursor="move"; // pour garder la fleche normale: "default"
       ou en html
       style="cursor:move"      
-pour rendre un div editable en html: 
+pour rendre un div ou span editable en html: 
     contenteditable      
 pour faire un drop de upload de fichier: 
       document.querySelector('#dropzone').ondrop = function(e) 
@@ -27857,6 +27871,11 @@ oe de coeur: &#339;
 euros:
     &#128; ou Alt+0128(windows-1252 sinon &#8364 Unicode) (1252: francais. 1250: tcheque)
 Javascript :
+si je ne peux pas cliquer sur un bouton à cause de la propagation sur un objet en contrebat qui fout la merde et que je n'ai pas de pointeur avec le curseur de ma souris sur le bouton alors mettre ce style:
+ .monboutoncliquable > * {
+                      pointer-events: none;
+                     }
+si j'ai l'erreur file chooser dialog can only be shown with a user activation: je ne dois pas utiliser un addEventListener mais un attribut onclick dans le tag
 si j'ai l'erreur
 	cannot access before initialization javascript// regarder si j'ai déclaré/importé ailleurs mon module notemment je l'ai fait ET en html <script module... ET en javascript: import... dans ce cas virer celui du html
 si j'ai l'erreur 
@@ -27903,7 +27922,7 @@ fetch : LINKsljqffetch
                         ou en mode callback:
                fetch(url,{
               method:'GET',
-              credentials:'omit'// sans jsessionid ni cookies ou 'same-origin' ou 'include'//tout le temps meme en cross-origin
+              credentials:'omit'// sans jsessionid ni cookies ou 'same-origin' ou 'include'//tout le temps meme en cross-origin CORS
           })
           .then(response=>response.json()) // attention renvoit une promesse a retraiter comme telle car en fait response contient le header mais response.json() fait appel à recup la promesse du body
           .then((json)=>{
@@ -28438,18 +28457,23 @@ DDD : autour d'une table avec tous les acteurs on redige ceci:
 		exemples:
 			xxxxxxxxxxxx
 	Scenario2)... etc...
-			
-	
+     on demarre par la definition d'objet valeur qui matchent des concepts business. Ne pas faire un objet money=BigDecimal mais money=Money(wrapper de BigDecimal)|_se poser la question: estce un objetvalue ou un entity voir LINKobjerlkb
+     entity à l'inverse d'un objet-valeur sont identifiés par un identifiant uniques et sont mutables en faire le moins possible/objetvalue car plus durs à gerer  |
+     un crud n'est pas justifié si ya pas de besoin business derriere	
+     Agregat = entiteRootPointDentreUnique contenant une grape d'entites et de valueObjets. Son etat est toujours consistant
+    jointure entre agregats doit se faire de preference via leurs ID et non pas via l'objet en soi. Eviter layzy loadings des orms
+    preferer l'optimistic locking: comme sur memoclap par modif de updatedate:Necessite un reesai plus tard du user. PessimistickLocking: pendant toute la duree du update ya un lock qui empeche toute autre ecriture.
+    modif >=1 agregate par transaction
 ES6 :modules: une page html/js peut importer une page html/js qui importe aussi: le browser gère les doublons si yen a // pas implemente dans firefox et safari?
 	si erreur Uncaught TypeError: Failed to resolve module specifier "xxx". Relative references must start with either "/", "./", or "../". // il arrive bien a charger le module mais c'est DANS le module qu'il y ades chemins mal definis
 	copier cloner les proprietes d'un objet dans un autre rapidement: 
-		const {unprop,unautreprop,troisiemeprop:nomfinal} = unautrepbjet // equivaut à faire unprop=unautreobjet.unprop, unautreprop=unautreobjet.unautreprop,nomfinal=unautreobjet.troisiemeprop ATTENTION les noms de variables doivent etre les memes sinon ca ne marche pas
-		du coup une methode peut retourner PLUSIEURS variables: 
-		let {indexprohtmlText, htmltemplatesText} = unemethode(); et unemethode(){....return {indexprohtmlText, htmltemplatesText}; // ca s'appelle je crois destructuration
-		ou si marche pas let unobjet = unemethod(){return {truc,muche}) du coup apres je fais unobjet.truc et unobjet.muche
-		ou 
-		let lastOuvreBouche=0;
+		une methode peut retourner PLUSIEURS variables: 
+		let ou const {indexprohtmlText, htmltemplatesText} = unemethode(); et unemethode(){....return {indexprohtmlText:unvariable, htmltemplatesText:uneautrevariable}; // ca s'appelle je crois destructuration
+		ou let unobjet = unemethod(){return {truc,muche}) du coup apres je fais unobjet.truc et unobjet.muche
+		OU 
+		let lastOuvreBouche=0; // obligatoire de declarer mes variables avant sinon ca ne marche pas
 		let lastTalkingActor=0;
+		ou let lastOuvreBouche, lastTalkingActor;
 		[lastOuvreBouche, lastTalkingActor] = methretourne2(); et si je veux recuperer que une des deux faire methoderetourne2()[0] (dans methoderetourne2 je return [x,y] 
 	trois petits points spread syntax operator
 		export function getSecurrelyDeepValueFromTable(table, ...indexes)
@@ -28483,10 +28507,11 @@ ES6 :modules: une page html/js peut importer une page html/js qui importe aussi:
              import projects from './js/memoclap-projectsFieldsets.js';    CCC  //du coup j'appellerais projects.unTrucDefiniPlusHaut.uneDeSesMethodes()
              import UnComponentAttentionMemeNom from './js/alertmsg.js';    DDD (pour les default export de classes)
              on peut faire new unmodule.UnObjetDuModule();                     
+		si un import n'arrive pas à se faire et qu'il le zappe complettement "montruc is not defined" c'est parce que dans cet objet importer il y a un import foireux
         dans path/xxx.js:  
             Exporter plusieurs trucs
               export var projectsMEMENOM ={...des methodes dedans....                          UUU   
-              export function projectsMEMENOM(arg){...}                                        AAA
+              export function projectsPASSURMEMENOM(arg){...},export etc...                    AAA
             Exporter qu'un truc
               export default class(ne marche que avec class) UnComponentAttentionMEMENOM{....} DDD a eviter.Preferer UUU avec un named export et non pas un default export voir ci dessus.
 	      export class UnComponent {...}						       UUU mais attention pour l'utiliser ailleurs voir LINKutilisationclassjs
@@ -28495,9 +28520,11 @@ ES6 :modules: une page html/js peut importer une page html/js qui importe aussi:
 	     export class UneClasse{...}     |_RRR
 	     export class UneAutreClasse{...}| 
          pour que les onclick html fonctionnent je dois pointer la methode du module que je veux depuis window: ca rend le module global visible par tous.
+		à mettre dans un <script type="module"> avec les imports qui vont bien
                     window.setModeMenu=memoclap.setModeMenu; // Si j'ai fait un javascript avec un export de methode dedans. ainsi je peux faire onclick="setModeMenu('hihi')"; mais attention la methode est totallement extraite de son contexte si elle est dans un objet
                     window.memoclap=memoclap; // si j'ai fait un .js avec plein d'exports dedans. Je peux faire onclick="memoclap.setModeMenu() tester aussi memoclap.memoclap.setModeMenu()" 
 		    window.UneClasse=new UnClasse(); // si j'ai fait un export class...
+	si j'ai l'erreur trucmuch is not extensible: virer le this.
   avant dans un .js charger en ajax un autre .js et faire eval sur le retour pour executer. executer un javascript dans un tag script renvoyé par le serveur. ATTENTION impossible de eval de nouvelles fonctions elles ne seront pas visibles par le browser pour execution depuis la page principale
   avant: dans un .html creer un src et l'ajouter au document          
   avant: methode ancienne: <link rel="import" href="laurent-moncompoentn1.html">              
@@ -28647,10 +28674,14 @@ promesses : promese :promeses :Promises :promise : ne plus utiliser les callback
 	fonction await anonyme:
 		await (async function(){....})();
 pour recuperer le jour du mois month sur deux chiffre d'un objet Date                                                                                          
+	les dates javascript ont bien evolue depuis: unedate.toLocaleDateString("FR-fr")
+	avant:
       utiliser moment.js:                                                                                                                                     
             var d = new Date();
             var daydeparture = moment(d).format("DD-MM-YYYY");
              var madate = moment(document.getElementById("daydeparture").value, "YYYY-MM-DD").format("DD-MM-YYYY"); //daydeparture est un input date. Sa valeur a toujours la forme yyyy-mm-dd
+	pour afficher une date en userfriendly:
+	 unedate.toLocaleDateString("FR-fr")
 fenetre modale en javascript: 
    function frontwin(element)
     {
@@ -29269,6 +29300,8 @@ replace all replaceall remplace:
 Si j'ai l'erreur is not a constructor
        c parce que j'ai quelquepart en global une variable qui a le meme nom que mon constructeur (ma fonction)
 pour effacer supprimer un element par son Id du dom c le seul moyen: 
+	elementasupprimer.remove();
+	avant:
         element = document.getElementById("element-id");
         element.parentNode.removeChild(element);
 
@@ -29744,7 +29777,19 @@ pour setter le name l'attribut la propriete d'un element tag html:
         It will work, however, with myelement.setAttribute("nametoujourstoutenminuscules","toto"). // ne pas mettre de boolean, toujours string
 generer une image à la volee:
         var img=new Image();
-       img.src="clearmute.png";
+       img.src="clearmute.png"; // le probleme c'est que la suite du code peut s'executer alors que l'image n'est pas encore chargée donc pour pallier à ca faire avec une promise: 
+		loadImage()
+		{
+		return new Promise((resolve, reject) => {
+		const img = new Image();
+	 	 img.addEventListener('load', () => resolve(img));
+	  	img.addEventListener('error', (err) => reject(err));
+	  	img.src = url;
+		});
+
+	loadImage("example.com/house.jpg")
+	  .then(img => console.log(`w: ${img.width} | h: ${img.height}`))
+	  .catch(err => console.error(err));
 pour faire un onchange : en javascript: upload de fichier: bouton parcourir: 
         <input name="files" class="modifier" id="files" onchange="createProject.handleFileSelect(this)" onclick="this.value=null;" type="file" accept="*/*" /> //onclick="this.value=null" c'est pour permettre de rechoisir le meme fichier à uploader
                     accept= peut etre:
@@ -30754,7 +30799,7 @@ METHODE CLASS: THEBEST? classes es6
                                                           super(); // a faire toujours en premier
                                                           this.id="tata"; // defini direct l'id du dom element|_ATTENTION ne marche que si on instancie la classe en javascript. Pas si on met la balise html dans la page
                                                           this.toto=true;// c'est une propriete properties    |
-                                            //         creer un shadowdom: Maintenant FFOx supporte aussi. Avant: (pas encore supporte sur firefox: besoin faire about:config puis dom.webcomponents.enabled et dom.webcomponents.shadowdom.enabled a true)
+                                            //         creer un shadowdom: 
                                                          var root = thisMonElement.attachShadow({mode:'open ou closed LINKkddkdkdkd'}); // host maintenant devient un shadowroot: tout ce qu'il a a l'interieur devient invisible. open/closed= atteignable ou pas par javascript et querySelector('div').shadowRoot est visible par le javascript ou pas selon. LINKkddkdkdkd: si j'ai mis closed alors xxx.shadowRoot=null pour l'avoir faire une variable dans le custom element: this.shadow = this.attachShadow({mode:'closed'});  et je réutilise this.shadow partout. Les customcssproprietesProperties ne peuvent pas non plus l'atteindre dans des customelement>shadow>sous-customelements sauf si je redeclare mes cssproperties dans le webcomponent parent:bof bientôt ::part et ::theme devraiment permettre de faire ça. LINKcustomcssljqdf
                                                           on peut juste faire aussi 
                                                           thisMonElement.attachShadow({mode:'open'}); // ca va créer automatiquement this.shadowRoot dans mas classe. Pas besoin de var root                                                        
