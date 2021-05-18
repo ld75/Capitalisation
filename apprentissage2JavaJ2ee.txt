@@ -27871,6 +27871,8 @@ oe de coeur: &#339;
 euros:
     &#128; ou Alt+0128(windows-1252 sinon &#8364 Unicode) (1252: francais. 1250: tcheque)
 Javascript :
+trois petits points:
+		return [...unevariable,unAutreTruc,{bla:1,...uneautrevariable}] //A CAPITALISER
 si je ne peux pas cliquer sur un bouton à cause de la propagation sur un objet en contrebat qui fout la merde et que je n'ai pas de pointeur avec le curseur de ma souris sur le bouton alors mettre ce style:
  .monboutoncliquable > * {
                       pointer-events: none;
@@ -27915,7 +27917,7 @@ fetch : LINKsljqffetch
             en mode synchro:
                         async function mamethode() { 
                               const response = await fetch("/hello");
-                              const { greeting } = await response.json(); ou response.text().then(function(texte){...pas reussi a utiliser await pour text})
+                              const greeting ou {greeting}  = await response.json(); ou response.text().then(function(texte){...pas reussi a utiliser await pour text})
                               this.innerHTML = `
                                   <h2>${greeting}</h2>
                               `;
@@ -28286,10 +28288,9 @@ tester le javascript TDD :
 						jest.spyOn(unModule, 'NomDeLamethodeDeCeModule').mockReturnValue(true) // mocker la methode d'un module partout. ici  retournera tout le temps true. Attention ne marche pas si cette methode est appelé sans mettre "this." devant ou module.NomDeLamethodeDeCeModule
 												.mockReturnValue(Promise.resolve())
 												.mockImplementation(function(){...})
-					pour le mocker:
+				pour le mocker:
 					jest.mock(memoclap);
 					memoclap.unemethode.mockImplementation(() => Promise.resolve({ data: { name: 'Jimmy Jedi' } }))	
-
 				       const mockMonObjet = ()=> ({// toujours nommer cet objet en commencant par "mock" C'EST CA QUE JE DOIS UTILISER POUR MOCKER XMLHTTPREQUEST ajax ou Worker voir aussi LINKmockwork
                                          ou
                                          const mockMonObjet={ // si marche pas (le new mock ne peut pas s'instancier au run essayer ci dessus
@@ -28301,6 +28302,7 @@ tester le javascript TDD :
                                                 open:jest.fn().mockImplementation(function(){this.status=200;}),// je peux setter une variable dans le mock. Attention on ne peux pas renvoyer return un truc je crois
                                                 overrideMimeType:jest.fn().mockImplementation(function(){}), // si on ne veut rien faire
                                          })
+					unmodule.unemethodeamocker=jest.fn(()=>{});
   				      window.confirm = jest.fn(()=>{return true}); LINKmockwork
 				     window.alert = jest.fn(()=>{return true});
                                       window.XMLHttpRequest = jest.fn().mockImplementation(mockMonObjet);
@@ -28308,7 +28310,7 @@ tester le javascript TDD :
 					jest ne supporte pas la methode native scrollIntoView alors faire: Element.prototype.scrollIntoView = jest.fn();
 				    mocker fetch: 
 						window.fetch= async function (){return Promise.resolve({status:200,
-								json: () => Promise.resolve({ status: 200}), // pas sur pour ça
+								json: () => Promise.resolve(du json), // pas sur pour ça
 							    })};                             
 				  mocker localStorage
 					    let localStorageMock={};
@@ -28575,7 +28577,7 @@ erreur: (intermediate value)(...) is not a function
                 return carry + number;
             }, 0)	// attention ne pas oublier ici la première valeur initiale! sinon ca renvoit undefined
             .forEach((numbers)=>{ // equivalent: .forEach(function(number){//ATTENTION E majuscule Equivalent de forEach((variablepassee)=>untrucaexecuter(variablepassee)); Attention: Après un forEach je ne peux plus faire suivre mon stream. Si je veux par exemple faire un console.log dans un foreach avant un map autant mettre le console.log dans le map juste avant son return
-                    ou(index,value)   
+                    ou(index,value)ou plutot l'inverse: (value,index)   
                 doSomethingWith(number); // faire un traitement... a creuser
             });;
 	pour faire un minus: tableau1 minus tableau2: moins, soustraire
@@ -30015,6 +30017,8 @@ supprimer tous les fils:
             localStorage.setItem("fichiersNames",JSON.stringify(myProjectTemp.fichiersNames));
             pour recuperer:
             localStorage.getItem("myProjects")!=undefined
+	    pour supprimer un localstorage: 
+		localStorage.removeItem("xxxx");
             pour supprimer tout le localstorage de mon domain: 
               localStorage.clear();
     sessionStorage :// le javascript n'accede que au sessionStorage de son domaine
@@ -30680,7 +30684,7 @@ pour recharger la fenetre à partir d'une iframe
      document.location.reload(true)	
      ou 
       window.top.location='/{!Lead.id}'; //une adresse (la ca marche sur salesforce)
-pour appeller une methode du frame parent: self.parentWindow.mamethode();  ou document.parentWindow.mamethode();  si message unsafe javascript.crosssitecross-site.. essayer avec <iframe src="..." sandbox="allow-top-navigation ou alllow-forms ou allow-scripts ou allow-same-origin (ne pas mettre ces deux derniers ensemble) ou allow-popups ou allow-pointer-lock" en utilisant au max une regexp  pour limiter le hack
+pour appeller une methode du frame parent: self.parentWindow ou parentwindows .mamethode();  ou document.parentWindow ou parentwindows.mamethode();  si message unsafe javascript.crosssitecross-site.. essayer avec <iframe src="..." sandbox="allow-top-navigation ou alllow-forms ou allow-scripts ou allow-same-origin (ne pas mettre ces deux derniers ensemble) ou allow-popups ou allow-pointer-lock" en utilisant au max une regexp  pour limiter le hack
 pour appeller une methode de la fenetre parente: window.opener.monFormulaire 
 ou window.opener.maFonctionJavascript ...(pas sur)
 			autre exemple: opener.document.getElementById('mask').style.display='inline';// inline si c du texte, block si c'est un div( avec une image par exemple)
