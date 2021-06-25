@@ -1203,12 +1203,12 @@ github : guitub :  git : gitub : (installable sur mobaxterm:depoxer le plugin da
       dupliquer/copier/recuperer un repertoire-repository local vers mon nouvel espace de travail
         git clone D:/path/repertoireacloner (besoin peut etre faire commit dans ce repository(repertoireacloner) pour l'initialiser) 
     branches: master; develop; etc etc... elles existent en local et sur le repo distant et sont toutes TOUTES indépendantes les unes des autres c a d: je peux avoir en local un master qui push dans le develop distant. Les branches c de la merde. DEVOPS.
-        si j'ai (HEAD detached from 351dcab) c'est parce que mon HEAD est orphelin et dans aucune branche(parce que j'ai fait un git checkout sur un commit). faire git stash save "bla"; git checkout master; git merge codeDeMonHeadDetached. Ancienne methode: pour le recuperer dabord le rattacher a une branche temporaire: git branch temp puis git checkout temp. Ensuite il faut ecraser une branche par temp (voir ci dessous)
+        si j'ai (HEAD detached from 351dcab) c'est parce que mon HEAD est orphelin et dans aucune branche(parce que j'ai fait un git checkout sur un commit). faire git stash save "bla"; git branc pour noter le nom de mon detached; git checkout master; git merge codeDeMonHeadDetached. Ancienne methode: pour le recuperer dabord le rattacher a une branche temporaire: git branch temp puis git checkout temp. Ensuite il faut ecraser une branche par temp (voir ci dessous)
       git branch -vv// pour voir toutes les branches et a quel repository origin(origin=remote) elles sont liées(attention ne montre pas toutes les branches en fait. pour les voir toutes git branch -av si toujours pas toutes faire git fetch avant) et voir quelle branche est activee A8. Ou est mon HEAD. Les branches c la merde. DEVOPS
       git branch -a // pour voir aussi toutes les branches remote repository
       git branch nomdelabrancheacreer // pour creer une nouvelle branche: ca ne cre pas une branche vide: ca copie la branche actuelle au commit ou je me trouve (meme ce qui n'est pas addé) dans la nouvelle branche. Les branches c la merde. DEVOPS
                                           maintenant je peux checkouter sur cette nouvelle branche ET avant tout faire un commit dessus sinon LINK98530!!!! puis je peux la pusher sur le repo distant: si le nom de la branche local est le meme que sur une branche du repository distant alors il va pusher dans cette branche qui a ce meme nom. Pas mal pour pusher sur une autre branche facilement.
-      git branch -d nombrancheasupprimerDeleter // supprimer une branche. Ne pas se placer dans cette branche avant de faire ca.
+      git branch -d nombrancheasupprimerDeleter // supprimer une branche. Ne pas se placer dans cette branche avant de faire ca. Pour supprimer la branche remote: git push origin --delete nomdemabranch (ce dernier jamais encore teste donc je l'ai fait depuis le gitlab github)
       git branch -f nomdelabrancheAEcraser nomdelabrancheQuivaPrendreLaPlaceDeLautreEtVaLecraser
       git branch -m nouveauNomDeLaBranche // pour renommer une branche
 		puis git push origin -u nouveauNomDeLaBranche
@@ -1298,6 +1298,8 @@ git diff compare mon workspacepasencoreadded avec le dernier commit
       git diff <branche1> <branche2>
       git diff --cached <optionel num commit> <wildcardPathOptionel> compare index avec HEAD ou unCommit
       git diff numcommitavantOuDeNimpQuelleBranche numcommitapresOuDeNimpQuelleBranche <wildcardPathOptionel> compare 2 commits (respecter ordre commits pour que ce soit plus comprehensible)
+      pour voir la liste des tags: 
+	git tag -n
       git tag 1.2.0 (sans mettre "v")// tag le dernier commit fait dans mon repo. ce tag ne se push pas.... voir Linktaggit
       git tag 1.2.0 iducommit fourni par >git log // cree un tag pour le désigné
       git diff --name-only // affiche que les noms des fichiers differents
@@ -20807,8 +20809,13 @@ execution : executer :
                 java9 : java10 : java11 :
                       java --module-path /=ModulePath/chemin/vers/les/modules/dont/ici/je/depend -m nom.du.module(/facultatif.package.et.ClassMainAExecuter) // entre parentheses: obligatoire si je n'ai pas compilé avec --main-class ci dessus
                           -classpath est valide si on veut porter du code/jars java <9 sur un java9 // tout ce qui sera dans le classpath sera stocké dans un unnamedmodule mais les named modules java9 ne peuvent pas dependre de ces unnamedmodules.
-                  Créer un executable adapté à la plateforme sur laquelle je suis. est léger: attention jlink ne marche pas avec les automatic modules dont mon rootmodule depend
-                      jlink --module-path /path/vers/tous/mes/modules.jar;/meme/mon/mes/root/modules.jar --add-modules nom.de.mon.module.a.rendre.executable --addmods nom.(jamaisfait)encore.dun.autre.module --output nomdel'appliExecutableCree 
+                  Créer un executable autonome adapté à la plateforme sur laquelle je suis. est léger: attention jlink ne marche pas avec les automatic modules dont mon rootmodule depend
+                      jlink 
+				--add-modules java.base,java.se,java.logging,autreModuleAInclure  // les modules que je veux ajouter à mon executable separes par virgule. Ces noms doivent correspondre aux noms dans module-info.java
+				--module-path /path/vers/tous/mes/modules.jar;/meme/mon/mes/root/modules.jar  // les paths de tous les modules ci dessus separes par pointvirgule
+				--addmods nom.(jamaisfait)encore.dun.autre.module //???facultatif
+				--output nomACreer 
+				--launcher nomAChoisirDexecutable=nomACreer/package.vers.ma.classe.main.MaclasseMain // va creer un nomAChoisirDexecutable.bat ou .sh
                       // en fait il crée un repertoire avec /bin dedans avec mon propre java dedans. je peux faire voir LINKjavalistmod sur ce java là.
                       mon programme est executable via l'appelle à ./mon.module.qui.est.sous.bin                       
                   voir le diagramme des dependances
@@ -20850,7 +20857,7 @@ Depuis la version 1.6 utiliser -classpath ou -cp (c pareil) et separer par des ;
 				"C:\Program Files\JavaSoft\JRE\1.5.0_12\bin\javaw.exe" -jar monJar.jar
 				si on a un noclassdeffounderror voir plus bas
 		executer execution d'un .class: (qui s'appelle Main.class)
-				java Main
+				java Main // dans ce cas Main.class est dans aucun package
 		executer execution d'un .class en envoyer une propriete à la jvm LINKù*ù
 					$ java -DTOTOTI="blabli" Main
 		executer execution d'un .class en envoyer une propriete = à une variable d'environneent à la jvm
@@ -22255,6 +22262,16 @@ en JAVA =<1.3:
 pour classer les elements d'une liste dans l'ordre alphabetique:
 Collections.sort(namesList);
 		ou nameList est une liste. Attention c'est un ordre alpha pas top avec les chiffres: besoin mettre un zero avant les dizaines...
+
+
+// pour augmenter la taille d'un array faut d'abord le convertir en tableau puis :
+	 tableToFill= Arrays.copyOf(tableToFill,nouvelleTaille);
+	ou
+	 public List<?> increaseArraySizeTo(List<?> tableToIncrease, Integer size) {
+		Object[] stringArray = (Object[])tableToIncrease.toArray(new Object[tableToIncrease.size()]);
+		List<Object> objects = Arrays.asList(Arrays.copyOf(stringArray, size));
+		return objects;
+	    }
 pour faire un tri (trier ordonner ordre) une ArrayList qui contient des objets: LINKordrelkjglfkdjss
     avec les lambdas: 
         personList.sort((p1, p2) -> p1.firstName.compareTo(p2.firstName));
@@ -22262,7 +22279,6 @@ pour faire un tri (trier ordonner ordre) une ArrayList qui contient des objets: 
         hour.sort((p1, p2) -> p1.before(p2)?-1:1); // tri du plus petit au plus grand
     ou
       	ArrayList<SyntheseObj> synthese = new ArrayList<SyntheseObj>(indic.size()); // liste à trier //indic.size determine juste la capacité initiale de l'ArrayList mais n'insert pas des elements nulls dedans pour en augmenter sa taille. Si je veux vraiment y insserer x nulls elements : faire List<String> list = new ArrayList<>(Collections.nCopies(10, null));
-										// pour augmenter la taille d'un array faut d'abord le convertir en tableau puis : tableToFill= Arrays.copyOf(tableToFill,nouvelleTaille);
       	Collections.sort(synthese, new ComparSynthese());
 	mais c'est mieux de faire pour les acces concurents:
     malistnontriee=uneliste... 
@@ -24694,24 +24710,24 @@ pour retoucher un fichier excell et l'envoyer en response: avec f1j11swing.jar s
 
 		return csvReader;
 ---------------------------
-imprimante : brother wenhua sur debian
+imprimante : brother wenhua sur debian scanner
 installation des drivers:
 cd Téléchargements/
  sudo dpkg -i --force-all mfcj4620dwlpr-3.0.1-1.i386.deb  //telecharger et installer ces drivers 
  dpkg -l | grep Brother // pour verifier que le driver est bien installé
- sudo vi /etc/printcap // modifier ce fichier (voir la doc sur le site web de brother: besoin lire sur l'imprimante son adresse ip)
+> sudo vi /etc/printcap // modifier ce fichier (voir la doc sur le site web de brother: besoin lire sur l'imprimante son adresse ip)
  sudo dpkg -i --force-all brscan4-0.4.10-1.amd64.deb  // pour scanner installer ce driver
  sudo dpkg -l | grep Brother
  hostname // connaitre le nom de ma machine pour la commande ci dessous
- brsaneconfig4 -a name=debianlaurent model=MFC-J46200W ip=192.168.0.14 //modele et adresse ip du scanner
- brsaneconfig4 -r debianlaurent //pour supprimer une config si j'ai besoin de refaire la commande ci dessus avec une autre adresse IP
+> brsaneconfig4 -a name=debianlaurent model=MFC-J46200W ip=192.168.0.132 //modele et adresse ip du scanner
+> brsaneconfig4 -r debianlaurent //pour supprimer une config si j'ai besoin de refaire la commande ci dessus avec une autre adresse IP
  chmod 777 brscan-skey-0.3.1-2.amd64.deb // logiciel de scan supplementaire
  1144  sudo dpkg -i --force-all brscan-skey-0.3.1-2.amd64.deb 
  1145  dpkg -l | grep Brother
- brscan-skey // demarrer le dameon pour la reception de scans
- brscan-skey -l // verifier que le daemon est bien démarré
-brscan-skey -t pour arreter le daemon si j'ai besoin de le redemarre apres une modif de configuration
-	maintenant sur l'imprimante pour scanner je choisis scan> fichier sur ordinateur > mon ordi et la (j'ai ouvert gimp pour etre sur) ca va ouvrir direct sur mon pc l'image	
+> brscan-skey // demarrer le dameon pour la reception de scans
+> brscan-skey -l // verifier que le daemon est bien démarré
+>brscan-skey -t pour arreter le daemon si j'ai besoin de le redemarre apres une modif de configuration
+	maintenant sur l'imprimante pour scanner je choisis scan> fichier sur ordinateur > mon ordi et la (j'ai ouvert gimp pour etre sur) ca va ouvrir direct sur mon pc l'image qui sera placé dans la destination /home/laurent//brscan
 	je peux modif les params sur http://192.168.0.16/scan/scantomedia.html 
 DEVOPS : 
     "Mutability of system is enhanced by immutability of its components"
@@ -25170,7 +25186,8 @@ ssd : checker mon disque ssd:
     unix: smartctl
             apt-install smartmontools
             sudo smartctl -i /mondrive(pas ma partition ni mon systeme de fichier) // pour lire les infos s.m.a.r.t de mon ssd
-            sudo smartctl -t shortOulong -a /mondrive
+            sudo smartctl -t shortOulong -a /mondrive 
+		apres ca verifier les resutlats du test: les erreurs: smartctl -l error /mondrive et les resultats du test: smartctl -l selftest /mondrive
 pour faire copy paste du clipboard avec le terminal raccourci shortcut:
 	sudo apt-get install xclip -y
 	et creer les alias suivants:
@@ -26573,6 +26590,7 @@ pour installer des programmes: applications: (le repository miroir local qui lui
             apt-get update  (apt-get upgrade si suffit pas pour la commande suivante)
             apt-get install aptitude
       sudo aptitude
+      pour faire une recherche /tappermarecherche puis entree. Pour revenir utiliser les fleches directionelles haut et/ou gauche
       Ctrl+t ou F10 pour acceder au menu et utiliser aptitude. refaire Ctrl+t pour fermer le menu
       les touches 'haut', 'bas', 'gauche', 'droite' pour naviguer.
       la touche 'entree' pour deplier/replier
@@ -28236,7 +28254,7 @@ savoir si un element audio joue:
 		  }
 		});
 tester le javascript TDD :
-    tester avec jest : le meilleur d'apres sylvain. 
+    tester avec jest : sur intellij je peux executer le test suite complet sur tous mes fichiers test.js Run> Run... et definir un prog d'execution qui pointe vers le repertoire qui contient tous mes tests, selectionner "Alltests"
         les fichiers de tests doivent s'appeler xxxx.test.js            
         	    npm install --save-dev jest //--save-dest voir npm.
                     (./node_modules/.bin/)jest --init // il crée le fichier 
@@ -28323,9 +28341,9 @@ tester le javascript TDD :
 				beforeEach(() => {....});
 				afterEach(() => {....});
                               	it(.skip pour ignorer)('nom du test', () => {
-                                    // pour mocker un objet(xhr pour requete ajax par exemple)
+                                    // pour mocker un objet(xhr pour requete ajax par exemple voir ci dessous et LINKjbiss)
                                   un module: pour le spyer
-						en fait pas besoin de jest on peut direct redefinir une methode d'un objet: memoclap.runmachin=async function(){return Promise.resolve("unittest")}; et si memoclap a une methode memoclap.toto qui appelle elle meme memoclap.runmachin alors pour que ça marche memoclap.toto(){exports.runmachin()} sinon le mock va pointer sur l'origine meme runmachin et non pas le mock mais attention exports n'est pas supporté par les browsers alors le seul moyen que j'ai trouvé pour réussir à le faire marcher sur un browser c'est ca: if (typeof(exports)=="undefined") promese=setAudioSrc(...) else promese=exports.setAudioSrc(...) Ne marche pas si dans le run on fait new monmodule avant d'appeler la fonction
+						en fait pas besoin de jest on peut direct redefinir une methode d'un objet: memoclap.runmachin=async function(){return Promise.resolve("unittest")}; (si besoin mettre en variable temp la fonction originale et la retablire à la fin d'un test pour ne pas que ça perturbe les autres tests) et si memoclap a une methode memoclap.toto qui appelle elle meme memoclap.runmachin alors pour que ça marche memoclap.toto(){exports.runmachin()} sinon le mock va pointer sur l'origine meme runmachin et non pas le mock mais attention exports n'est pas supporté par les browsers alors le seul moyen que j'ai trouvé pour réussir à le faire marcher sur un browser c'est ca: if (typeof(exports)=="undefined") promese=setAudioSrc(...) else promese=exports.setAudioSrc(...) Ne marche pas si dans le run on fait new monmodule avant d'appeler la fonction
 						memoclap.saveActorsNameOnServer=jestPASBESOINMETTREDIRECT"function".fn(()=>{console.log("aaaaaaaaaaaa")}); // le top pour faire un spy mais n'a pas marché une fois dans un Promise. Ne marche pas si dans le run on fait new monmodule avant d'appeler la fonction
 						unmodule.unemethode=jestPASBESOINMETTREDIRECT"function".fn(); // pour que la methode d'un module ne fasse rien
 					
@@ -28348,9 +28366,10 @@ tester le javascript TDD :
                                                 overrideMimeType:jest.fn().mockImplementation(function(){}), // si on ne veut rien faire
                                          })
 					unmodule.unemethodeamocker=jest.fn(()=>{});
+					Si le mock d'une methode d'un module ne marche alors je dois le binder jusqu'à ce qu'il faut (exemple dans une methode de onclick)
   				      window.confirm = jest.fn(()=>{return true}); LINKmockwork
 				     window.alert = jest.fn(()=>{return true});
-                                      window.XMLHttpRequest = jest.fn().mockImplementation(mockMonObjet);
+                                      window.XMLHttpRequest = jest.fn().mockImplementation(mockMonObjet);LINKjbiss 
                                              (.. mes tests..)
 					jest ne supporte pas la methode native scrollIntoView alors faire: Element.prototype.scrollIntoView = jest.fn();
 				    mocker fetch: 
@@ -28511,7 +28530,10 @@ DDD : autour d'une table avec tous les acteurs on redige ceci:
     jointure entre agregats doit se faire de preference via leurs ID et non pas via l'objet en soi. Eviter layzy loadings des orms
     preferer l'optimistic locking: comme sur memoclap par modif de updatedate:Necessite un reesai plus tard du user. PessimistickLocking: pendant toute la duree du update ya un lock qui empeche toute autre ecriture.
     modif >=1 agregate par transaction
-ES6 :modules: une page html/js peut importer une page html/js qui importe aussi: le browser gère les doublons si yen a // pas implemente dans firefox et safari?
+	USECASE:
+	userProfile->declanche->process:{policy:[1 ou NCOMMANDs(policy) chacun->sur un->Aggregate->trigger->Event]->declanche->policy:[1ouN COMMANDs(policy)->etc...]}
+ES6 :modules: voir https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures
+	 une page html/js peut importer une page html/js qui importe aussi: le browser gère les doublons si yen a // pas implemente dans firefox et safari?
 	si erreur Uncaught TypeError: Failed to resolve module specifier "xxx". Relative references must start with either "/", "./", or "../". // il arrive bien a charger le module mais c'est DANS le module qu'il y ades chemins mal definis
 	copier cloner les proprietes d'un objet dans un autre rapidement: 
 		une methode peut retourner PLUSIEURS variables: 
@@ -28608,7 +28630,7 @@ erreur: (intermediate value)(...) is not a function
     c a d il manque un ";" qqpart. ou il y a des ";" là ou il ne devrait pas y en avoir
     
     lambda en javascript fonctionnal programing :functionnal programing :
-        var newNumbers = tableau.filter(function(number,indexFacultatif){ // indexFacultatif si on a besoin de l'index ouaou.:-)
+        var newNumbers = tableauOuObject.keys(monobjet)OuObject.values(monobjet)OuObject.entries(monobjet).filter(function(number,indexFacultatif){ // indexFacultatif si on a besoin de l'index ouaou.:-)
 			contraction: filter((number,indexFacultatif)=>{return xxxx}); ou filter((number,indexFacultatif)=>uncalculSiJeMetsPasReturn)
 		.find(....) // comme filter mais retourne que LE PREMIER element qu'il trouve sans embarquer toute l'arbo comme filter/javascript:
               return (number % 2 !== 0); //filtrer. doit retourner un boolean// ne rien modifier dedans
@@ -28865,6 +28887,8 @@ rediriger redirection vers une page pour mobile si ecran plus petit:     attenti
                     .match("xxx") retourne une array si il trouve sinon il retourne null
 connaitre l'URL de la page actuelle:
   document.URL
+(new URL(document.URL)).hostname.replace('www','')
+(new URL(document.URL)).pathname ou protocol ou search // autres bouts de l'url
 connaitre les bouts de l'URL: 
 var newURL = window.location.protocol + "//" + window.location.host +(window.location.port?':'+location.port:'') "/" + window.location.pathname; // le scheme le domaine le port le path
 pour modifier la duree et son accelleration d'une animation css: 
@@ -31769,7 +31793,9 @@ angular : Angularjs2 : ANGULAR2 : typescript :
                 `<xx *ngFor="#mesvariable of mesvariables">
                 {{mesvariable}}</xx>`
 
-      
+bitcoin : bitcoins :
+	quand A envoie l'argent à B, A signe avec sa cle privée puis verifie avec sa cle publiqueA la concatenation HashHistorique+clepubliqueB      
+	blockchain= groupe de transactions hashées. Les clients stockent tous la concatenation de plusieurs blockhaines
             
 
 
